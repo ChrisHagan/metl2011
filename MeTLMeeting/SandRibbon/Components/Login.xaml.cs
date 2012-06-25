@@ -201,7 +201,7 @@ namespace SandRibbon.Components
         private void clearAndClose(object sender, RoutedEventArgs e)
         {
             WorkspaceStateProvider.ClearSettings();
-            Commands.CloseApplication.Execute(null, this);
+            Commands.CloseApplication.Execute(null);
         }
     }
     class LoginAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

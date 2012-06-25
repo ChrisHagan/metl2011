@@ -81,6 +81,7 @@ namespace SandRibbon
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => Logger.CleanupLogQueue()));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -1188,6 +1189,7 @@ namespace SandRibbon
             }
             else
             {
+                Commands.CloseApplication.Execute(null);
                 Application.Current.Shutdown();
             }
         }
@@ -1199,7 +1201,6 @@ namespace SandRibbon
         private void ribbon_SelectedTabChanged(object sender, EventArgs e)
         {
             var ribbon = sender as Ribbon;
-            Globals.IsManagementAccessible = ribbon.SelectedTab != null && ribbon.SelectedTab.Name == "conversationManagement";
         }
         /* Awesomium commented out
         private void setStackVisibility(Visibility visible)

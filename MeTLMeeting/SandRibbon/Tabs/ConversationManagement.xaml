@@ -11,6 +11,7 @@
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
         <dict:Button Text="Page Reorder" ToolTip="{DynamicResource PageReorderToolTip}" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
+        <ToggleButton Content="Ban Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Checked="OnBanContentChanged" Unchecked="OnBanContentChanged"/>
     </sr:RibbonGroup>
 
 </sr:RibbonTab>

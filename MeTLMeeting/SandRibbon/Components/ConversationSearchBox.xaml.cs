@@ -107,6 +107,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
             Version = ConfigurationProvider.instance.getMetlVersion();
             versionNumber.DataContext = Version;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;

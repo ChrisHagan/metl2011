@@ -19,6 +19,12 @@ namespace SandRibbon.Tabs
         private void updateConversationDetails(ConversationDetails details)
         {
             editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
+            banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OnBanContentChanged(object sender, RoutedEventArgs e)
+        {
+            Globals.IsManagementAccessible = banContent.IsChecked ?? false; 
         }
     }
 }

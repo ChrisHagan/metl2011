@@ -140,11 +140,12 @@ namespace SandRibbon.Utils
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>((who) => privacy = who));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = Globals.me));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
 
             logQueue = new LogQueue(workerCount: 1);
         }
 
-        static void CleanupLogQueue()
+        public static void CleanupLogQueue()
         {
             // just to make sure the threads are cleaned up
             if (logQueue != null)

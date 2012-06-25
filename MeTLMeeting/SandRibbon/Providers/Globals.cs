@@ -71,7 +71,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                if(me == null || conversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
+                if (me == null || conversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
                 return me == conversationDetails.Author;
             }
         }

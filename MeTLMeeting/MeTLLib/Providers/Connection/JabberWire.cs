@@ -461,6 +461,11 @@ namespace MeTLLib.Providers.Connection
         
         public void Logout()
         {
+            if (heartbeat != null)
+            {
+                heartbeat.Dispose();
+                heartbeat = null;
+            }
             conn.OnClose -= OnClose;//Don't automatically reconnect this time
             conn.Close();
         }

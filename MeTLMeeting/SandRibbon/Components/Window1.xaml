@@ -20,7 +20,6 @@
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
-        <CommandBinding Command="{x:Static api:Commands.CloseApplication}" Executed="closeApplication" />
     </sr:RibbonWindow.CommandBindings>
     <sr:RibbonWindow.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
@@ -45,8 +44,7 @@
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
                    PreviewMouseDoubleClick="ApplicationPopup_PreviewMouseDoubleClick"
-                   ApplicationButtonImage="\Resources\MeTLNewIcon.png"
-                   SelectedTabChanged="ribbon_SelectedTabChanged">
+                   ApplicationButtonImage="\Resources\MeTLNewIcon.png">
             <sr:Ribbon.ApplicationPopup>
                 <sr:ApplicationPopup 
                     OptionsText="Options" ExitText="Quit MeTL" ShowOptions="ApplicationPopup_ShowOptions"

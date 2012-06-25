@@ -703,6 +703,32 @@ namespace SandRibbon.Components
              });
         }
 
+        public IEnumerable<String> GetSelectedAuthors()
+        {
+            var authorList = new List<string>();
+
+            var strokeList = filterExceptMine(Work.GetSelectedStrokes());
+            var elementList = filterExceptMine(Work.GetSelectedElements());
+
+            foreach (var stroke in strokeList)
+            {
+                authorList.Add(stroke.tag().author);
+            }
+            foreach (var element in elementList)
+            {
+                if (element is Image) 
+                {
+                    authorList.Add((element as Image).tag().author);
+                }
+                else if (element is MeTLTextBox)
+                {
+                    authorList.Add((element as MeTLTextBox).tag().author);
+                }
+            }
+
+            return authorList.Distinct();
+        }
+
         private StrokeCollection filterExceptMine(IEnumerable<Stroke> strokes)
         {
             var me = Globals.me;

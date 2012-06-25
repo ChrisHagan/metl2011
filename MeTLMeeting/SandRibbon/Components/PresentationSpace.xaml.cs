@@ -86,22 +86,18 @@ namespace SandRibbon.Components
             new colorCodedUsers(authorColor).ShowDialog();
            * */
         }
+
         private void BanHammerSelectedItems(object obj)
         {
-            /*
-            var authors = new List<string>();
-            authors.AddRange(stack.handwriting.getSelectedAuthors());
-            authors.AddRange(stack.text.GetSelectedAuthors());
-            authors.AddRange(stack.images.GetSelectedAuthors());
+            var authorList = stack.GetSelectedAuthors();
             var details = Globals.conversationDetails;
-            foreach(var author in authors.Distinct())
+            foreach (var author in authorList)
             {
-                if(!details.blacklist.Contains(author))
+                if (!details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
             Commands.SetPrivacyOfItems.Execute("private");
-             * */
         }
 
         private void setUpSyncDisplay(int slide)
