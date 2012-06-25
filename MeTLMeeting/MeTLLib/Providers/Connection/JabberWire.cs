@@ -194,10 +194,21 @@ namespace MeTLLib.Providers.Connection
                 NetworkChange.NetworkAvailabilityChanged += networkAvailabilityChanged;
             }
         }
+
         private void establishHeartBeat()
         {
             heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
         }
+
+        private void shutdownHeartBeat()
+        {
+            if (heartbeat != null)
+            {
+                heartbeat.Dispose();
+                heartbeat = null;
+            }
+        }
+
         private Timer ConnectionTimeoutTimer;
         private void EstablishConnectionTimer(){ 
             ConnectionTimeoutTimer = new Timer((_unused) => {
@@ -461,11 +472,7 @@ namespace MeTLLib.Providers.Connection
         
         public void Logout()
         {
-            if (heartbeat != null)
-            {
-                heartbeat.Dispose();
-                heartbeat = null;
-            }
+            shutdownHeartBeat();
             conn.OnClose -= OnClose;//Don't automatically reconnect this time
             conn.Close();
         }
