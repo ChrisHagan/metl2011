@@ -92,6 +92,9 @@ namespace SandRibbon.Components.Submissions
         }
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
+            if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
+                return;
+
             if (!IHaveThisSubmission(submission))
             {
                 submissionList.Add(submission);
@@ -113,7 +116,7 @@ namespace SandRibbon.Components.Submissions
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  MeTLLib.ClientFactory.Connection().UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                                 (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission","public",hostedFileName));
+                                 (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission","public",hostedFileName, new List<string>()));
                                  MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

@@ -48,14 +48,13 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <ProductName>MeTL</ProductName>
+    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>295</ApplicationRevision>
-    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
+    <ApplicationVersion>1.0.0.295</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -160,6 +159,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Components\BannedContent\BannedContent.xaml.cs">
+      <DependentUpon>BannedContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Utility\ContentFilter.cs" />
     <Compile Include="Components\Utility\StrokeChecksumFilter.cs" />
     <Compile Include="Components\Utility\TextFilter.cs" />
@@ -211,6 +213,10 @@
     <Page Include="Components\BackStageNav.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\BannedContent\BannedContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\blacklistController.xaml">
       <Generator>MSBuild:Compile</Generator>

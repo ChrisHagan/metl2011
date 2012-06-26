@@ -97,7 +97,27 @@ namespace SandRibbon.Components
                     details.blacklist.Add(author);
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
+            GenerateBannedContentScreenshot(new List<string>(details.blacklist));
             Commands.SetPrivacyOfItems.Execute("private");
+        }
+
+        private void GenerateBannedContentScreenshot(List<string> blacklisted)
+        {
+            var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
+            DelegateCommand<string> sendScreenshot = null;
+            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
+                             {
+                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
+                                 var conn = MeTLLib.ClientFactory.Connection();
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide,Globals.me,"bannedcontent","private",hostedFileName, blacklisted));
+                             });
+            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
+            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
+                                                    {
+                                                        time = time,
+                                                        message = string.Format("Banned content submission at {0}", new DateTime(time)),
+                                                        showPrivate = false
+                                                    });
         }
 
         private void setUpSyncDisplay(int slide)

@@ -82,6 +82,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ConnectToSmartboard = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DisconnectFromSmartboard = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ViewSubmissions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ViewBannedContent = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand Reconnecting = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BackstageModeChanged = new DefaultableCompositeCommand();

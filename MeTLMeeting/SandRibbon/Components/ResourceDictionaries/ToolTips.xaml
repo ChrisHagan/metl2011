@@ -96,6 +96,10 @@
                                         TitleText="View submissions"
                                         ImageSource="\Resources\ViewSubmission.png" 
                                         ContentText="View any submissions students have sent you in this conversation."/>
+    <resources:MeTLImageToolTip x:Key="BanContentToolTip" 
+                                        TitleText="Banned Content"
+                                        ImageSource="\Resources\banhammer.png" 
+                                        ContentText="Banned content management."/>
     <resources:MeTLImageToolTip x:Key="SubmitSubmissionToolTip" 
                                         TitleText="Send Submission"
                                         ImageSource="\Resources\SendSubmission.png" 

@@ -167,6 +167,9 @@ namespace SandRibbon.Components.Submissions
 
         private void recieveSubmission(TargettedSubmission submission)
         {
+            if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
+                return;
+
             var addedToBucket = false;
 
             // find the bucket the submission belongs to

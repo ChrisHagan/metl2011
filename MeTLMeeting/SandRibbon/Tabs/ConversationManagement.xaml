@@ -12,6 +12,9 @@
     <sr:RibbonGroup>
         <dict:Button Text="Page Reorder" ToolTip="{DynamicResource PageReorderToolTip}" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
         <ToggleButton Content="Ban Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Checked="OnBanContentChanged" Unchecked="OnBanContentChanged"/>
+        <dict:Button x:Name="bannedContentManagement" Command="{x:Static api:Commands.ViewBannedContent}" 
+                                  Text="Banned Content Management" 
+                                  ToolTip="{DynamicResource BanContentToolTip}"/>
     </sr:RibbonGroup>
 
 </sr:RibbonTab>

@@ -100,20 +100,24 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedSubmission : TargettedElement
     {
-        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Url, long Time)
+        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Url, long Time, List<string> Blacklisted)
             : base(Slide, Author, Target, Privacy)
         {
             url = Url;
             time = Time;
+            blacklisted = Blacklisted;
         }
         public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedSubmission)) return false;
-            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedSubmission)obj).url == url && ((TargettedSubmission)obj).time == time);
+            var submission = obj as TargettedSubmission; 
+            return (base.ValueEquals(obj) && submission.url == url && submission.time == time && ((submission.blacklisted == null && blacklisted == null) || 
+                submission.blacklisted.Where(x => !blacklisted.Any(x1 => x1 == x)).Union(blacklisted.Where(x => !submission.blacklisted.Any(x1 => x1 == x))).Count() == 0));
 
         }
         public string url { get; set; }
         public long time { get; set; }
+        public List<string> blacklisted { get; set; }
     }
     public class TargettedStroke : TargettedElement
     {
@@ -1040,19 +1044,21 @@ namespace MeTLLib.DataTypes
         }
         public class LocalSubmissionInformation
         {
-            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File)
+            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File, List<string> Blacklisted)
             {
                 slide = Slide;
                 author = Author;
                 target = Target;
                 privacy = Privacy;
                 file = File;
+                blacklisted = Blacklisted;
             }
             public string author;
             public string file;
             public string privacy;
             public int slide;
             public string target;
+            public List<string> blacklisted;
         }
         public class LocalVideoInformation
         {
@@ -1090,6 +1096,7 @@ namespace MeTLLib.DataTypes
             public static string URL = "url";
             public static string SLIDE = "slide";
             public static string TIME = "time";
+            public static string BLACKLIST = "blackList";
 
             public ScreenshotSubmission()
             {
@@ -1107,20 +1114,68 @@ namespace MeTLLib.DataTypes
                 return this;
             }
             private MeTLServerAddress server;
+
             public TargettedSubmission parameters
             {
                 get
                 {
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    return new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)));
+                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)), new List<string>());
+
+                    if (HasTag(BLACKLIST))
+                    {
+                        foreach (var node in ChildNodes)
+                        {
+                            if (node.GetType() == typeof(BlackList))
+                                submission.blacklisted.Add(((BlackList)node).parameters);
+                        }
+                    }
+
+                    return submission;
                 }
                 set
                 {
                     var strippedUrl = INodeFix.StripServer(value.url);
                     SetTag(AUTHOR, value.author);
                     SetTag(URL, strippedUrl);
+                    SetTag(targetTag, value.target);
                     SetTag(SLIDE, value.slide.ToString());
                     SetTag(TIME, value.time.ToString());
+                    foreach (var banned in value.blacklisted)
+                    {
+                        var bannedElement = new BlackList(banned);
+                        AddChild(bannedElement);
+                    }
+                }
+            }
+        }
+        public class BlackList : Element
+        {
+            static BlackList()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(BlackList));
+            }
+            public static string TAG = "blackList";
+            public static readonly string USERNAME = "username";
+
+            public BlackList()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public BlackList(string parameters) : this()
+            {
+                this.parameters = parameters;
+            }
+            public string parameters
+            {
+                get
+                {
+                    return GetTag(USERNAME);
+                }
+                set
+                {
+                    SetTag(USERNAME, value);
                 }
             }
         }
