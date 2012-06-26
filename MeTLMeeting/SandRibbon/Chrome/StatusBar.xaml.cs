@@ -41,11 +41,19 @@ namespace SandRibbon.Chrome
                 Dispatcher.adopt(() =>
                 {
                     var details = Globals.conversationDetails;
-                    var status = details.IsEmpty || String.IsNullOrEmpty(Globals.location.activeConversation) ? Strings.Global_ProductName : string.Format(
-                            "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
-                            Globals.privacy,
-                            MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
-                            details.Subject, Globals.me);
+                    var status = "";
+                    if (details.UserIsBlackListed(Globals.me))
+                    {
+                        status = "You have been banned for inappropriate content";
+                    }
+                    else
+                    {
+                        status = details.IsEmpty || String.IsNullOrEmpty(Globals.location.activeConversation) ? Strings.Global_ProductName : string.Format(
+                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                             Globals.privacy,
+                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
+                             details.Subject, Globals.me);
+                    }
 #if DEBUG
                     status += String.Format(" | You are operating against the {1}{2} server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
                         App.isExternal ? "external " : "", App.isStaging && !App.isExternal ? "staging" : "");

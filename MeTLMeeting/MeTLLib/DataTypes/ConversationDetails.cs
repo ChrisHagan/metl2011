@@ -202,6 +202,11 @@ namespace MeTLLib.DataTypes
             }
         }
  
+        public bool UserIsBlackListed(string userId)
+        {
+            return blacklist.Any(user => user == userId);
+        }
+
         public bool IsJidEqual(string thatJid)
         {
             if (!String.IsNullOrEmpty(Jid) && String.IsNullOrEmpty(thatJid))
@@ -210,6 +215,7 @@ namespace MeTLLib.DataTypes
             // Microsoft says we can use GetHashCode to safely compare two strings
             return Jid.GetHashCode() == thatJid.GetHashCode();
         }
+
 
         public bool UserHasPermission(Credentials credentials)
         {
