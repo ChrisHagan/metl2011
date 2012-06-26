@@ -41,6 +41,24 @@ namespace SandRibbon.Components
     }
     public class TextInformation : TagInformation
     {
+        public TextInformation()
+        {
+        }
+
+        public TextInformation(TextInformation copyTextInfo)
+        {
+            Author = copyTextInfo.Author;
+            IsPrivate = copyTextInfo.IsPrivate;
+            Id = copyTextInfo.Id;
+            Size = copyTextInfo.Size;
+            Family = copyTextInfo.Family;
+            Underline = copyTextInfo.Underline;
+            Bold = copyTextInfo.Bold;
+            Italics = copyTextInfo.Italics;
+            Strikethrough = copyTextInfo.Strikethrough;
+            Color = copyTextInfo.Color;
+        }
+
         public double Size;
         public FontFamily Family;
         public bool Underline;
@@ -111,7 +129,7 @@ namespace SandRibbon.Components
         {
             get
             {
-                return Keyboard.FocusedElement as MeTLTextBox;
+                return FocusManager.GetFocusedElement(Window.GetWindow(this)) as MeTLTextBox;
             }
             set
             {
