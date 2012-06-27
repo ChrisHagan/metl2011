@@ -34,7 +34,7 @@ namespace MeTLLib.Providers
                 if (token.authenticated)
                 {
                     var eligibleGroups = token.groups;
-                    var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups);
+                    var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups, token.mail);
                     Globals.credentials = credentials;
                     return credentials;
                 }
@@ -53,6 +53,7 @@ namespace MeTLLib.Providers
             public List<AuthorizedGroup> groups = new List<AuthorizedGroup>();
             public bool authenticated = false;
             public List<String> errors = new List<String>();
+            public string mail { get; set; }
         }
         public AuthToken login(string AuthcateName, string AuthcatePassword)
         {
@@ -78,6 +79,15 @@ namespace MeTLLib.Providers
                 token.groups.Add(new AuthorizedGroup(
                     doc.GetElementsByTagName("user")[0].Attributes["name"].Value,
                     "username"));
+                foreach (XmlElement group in doc.GetElementsByTagName("information"))
+                {
+                    var mail = group.Attributes["type"];
+                    if (mail != null && mail.Value == "mail")
+                    {
+                        token.mail = group.InnerText.Replace("\"", "");
+                        break;
+                    }
+                }
                 token.authenticated = true;
             }
             else

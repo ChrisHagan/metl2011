@@ -130,6 +130,15 @@ namespace SandRibbon.Components
         private void loaded(object sender, RoutedEventArgs e)
         {
             username.Focus();
+
+#if DEBUG
+            if (!String.IsNullOrEmpty(App.Username) && !String.IsNullOrEmpty(App.Password))
+            {
+                username.Text = App.Username;
+                password.Password = App.Password;
+                attemptAuthentication(null, null);
+            }
+#endif
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {

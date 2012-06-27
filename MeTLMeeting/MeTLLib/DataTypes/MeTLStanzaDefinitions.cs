@@ -44,6 +44,7 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.DirtyLiveWindow();
             new MeTLStanzas.TeacherStatusStanza();
             new MeTLStanzas.ScreenshotSubmission();
+            new MeTLStanzas.BlackList();
         }
     }
     public class WormMove

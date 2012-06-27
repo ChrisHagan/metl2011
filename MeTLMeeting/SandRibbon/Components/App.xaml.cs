@@ -40,6 +40,9 @@ namespace SandRibbon
 
         private static SplashScreen splashScreen;
 
+        public static string Username { get; private set; }
+        public static string Password { get; private set; } 
+
         public static void ShowSplashScreen()
         {
             splashScreen = new SplashScreen("resources/splashScreen.png");
@@ -210,6 +213,15 @@ namespace SandRibbon
         }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            if (e.Args[0] == "-user")
+            {
+                Username = e.Args[1];
+            }
+            if (e.Args[2] == "-pass")
+            {
+                Password = e.Args[3];
+            }
+
             EventManager.RegisterClassHandler(typeof(TextBox),
             TextBox.GotKeyboardFocusEvent,
             new RoutedEventHandler(AnyTextBoxGetsFocus));

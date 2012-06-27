@@ -48,13 +48,14 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
+    <ProductName>MeTL</ProductName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>295</ApplicationRevision>
-    <ApplicationVersion>1.0.0.295</ApplicationVersion>
+    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

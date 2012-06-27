@@ -9,6 +9,10 @@
                                         TitleText="Show submission"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
                                         ContentText="Import this submission onto a new page, so that you can show it publicly."/>
+    <resources:MeTLImageToolTip x:Key="EmailReportTooltip" 
+                                        TitleText="Email report"
+                                        ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
+                                        ContentText="Email a report to the conversation owner containing the banned participants, a screenshot of the content and other relevant information."/>
     <resources:MeTLImageToolTip x:Key="BlankWhiteboardConversationTypeToolTip" 
                                         TitleText="Blank Whiteboard"
                                         ImageSource="\Resources\Whiteboard.png" 

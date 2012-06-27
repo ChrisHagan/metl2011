@@ -20,20 +20,24 @@ namespace SandRibbon.Tabs
         {
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
         }
+
         private void viewBannedContent(object _obj)
         {
             var bannedContent = new BannedContent(submissionList);
             bannedContent.Owner = Window.GetWindow(this);
             bannedContent.Show();
         }
+
         private bool canViewBannedContent(object _e)
         {
            return submissionList.Count > 0;
         }
+
         private void PreParserAvailable(PreParser parser)
         {
             foreach(var submission in parser.submissions)
@@ -44,9 +48,15 @@ namespace SandRibbon.Tabs
             editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
             banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        private void JoinConversation(string jid)
+        {
+            submissionList.Clear();
+        }
+
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
-            if (submission.target != "bannedcontent")
+            if (string.IsNullOrEmpty(submission.target) || submission.target != "bannedcontent")
                 return;
 
             if (!IHaveThisSubmission(submission))

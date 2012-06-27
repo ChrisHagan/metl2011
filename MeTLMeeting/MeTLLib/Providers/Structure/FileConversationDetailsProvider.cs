@@ -178,7 +178,7 @@ namespace MeTLLib.Providers.Structure
                 var filtered = jids.Where(jid => !deletedConversationJids.Contains(jid)).Select(jid => conversations.First(c => c.Jid == jid)).Take(maxResults).ToList();
                 return filtered;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<SearchConversationDetails>();
             }

@@ -44,7 +44,7 @@ namespace SandRibbon.Chrome
                     var status = "";
                     if (details.UserIsBlackListed(Globals.me))
                     {
-                        status = "You have been banned for inappropriate content";
+                        status = "Banned for inappropriate content: public exposure has been disabled";
                     }
                     else
                     {
@@ -55,7 +55,7 @@ namespace SandRibbon.Chrome
                              details.Subject, Globals.me);
                     }
 #if DEBUG
-                    status += String.Format(" | You are operating against the {1}{2} server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
+                    status += String.Format(" | Connected to {1}{2} server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
                         App.isExternal ? "external " : "", App.isStaging && !App.isExternal ? "staging" : "");
 #endif
                     StatusLabel.Text = status;
