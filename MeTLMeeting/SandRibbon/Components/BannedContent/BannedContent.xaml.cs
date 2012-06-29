@@ -22,6 +22,7 @@ namespace SandRibbon.Components.BannedContent
     public partial class BannedContent : Window
     {
         public ObservableCollection<TargettedSubmission> submissionList { get; private set; }
+        public ObservableCollection<string> blackList { get; private set; }
         private CollectionViewSource submissionsView;
         public BannedContent()
         {
@@ -42,6 +43,7 @@ namespace SandRibbon.Components.BannedContent
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<TargettedSubmission>(userSubmissions);
+            blackList = new ObservableCollection<string>(Globals.conversationDetails.blacklist);
 
             DataContext = this;
         }
@@ -70,11 +72,12 @@ namespace SandRibbon.Components.BannedContent
         private void emailReport_Click(object sender, RoutedEventArgs e)
         {
             emailReport.IsEnabled = false;
+            emailReport.Visibility = Visibility.Collapsed;
             var fileName = SaveImageTemporarilyToFile();
             ThreadPool.QueueUserWorkItem((state) =>
                 {
                     SendEmail(fileName);
-                    Dispatcher.adopt(() => emailReport.IsEnabled = true);
+                    Dispatcher.adopt(() => { emailReport.IsEnabled = true; emailReport.Visibility = Visibility.Visible; });
                 });
         }
 
@@ -159,7 +162,10 @@ namespace SandRibbon.Components.BannedContent
             {
                 var username = participant.Content as string;
                 if (participant.IsChecked ?? false)
+                {
                     details.blacklist.Remove(username);
+                    blackList.Remove(username);
+                }
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
         }

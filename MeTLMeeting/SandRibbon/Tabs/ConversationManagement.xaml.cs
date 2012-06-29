@@ -74,7 +74,13 @@ namespace SandRibbon.Tabs
 
         private void OnBanContentChanged(object sender, RoutedEventArgs e)
         {
-            Globals.IsManagementAccessible = banContent.IsChecked ?? false; 
+            var banMode = banContent.IsChecked ?? false;
+            Globals.IsManagementAccessible = banMode;
+
+            if (banMode)
+            {
+                Commands.SetInkCanvasMode.Execute("Select");
+            }
         }
     }
 }

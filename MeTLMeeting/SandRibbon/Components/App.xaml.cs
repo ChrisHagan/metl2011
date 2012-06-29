@@ -213,14 +213,19 @@ namespace SandRibbon
         }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            if (e.Args[0] == "-user")
+#if DEBUG
+            if (e.Args.Length == 4)
             {
-                Username = e.Args[1];
+                if (e.Args[0] == "-user")
+                {
+                    Username = e.Args[1];
+                }
+                if (e.Args[2] == "-pass")
+                {
+                    Password = e.Args[3];
+                }
             }
-            if (e.Args[2] == "-pass")
-            {
-                Password = e.Args[3];
-            }
+#endif
 
             EventManager.RegisterClassHandler(typeof(TextBox),
             TextBox.GotKeyboardFocusEvent,
