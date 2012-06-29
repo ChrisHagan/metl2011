@@ -90,6 +90,7 @@ namespace SandRibbon.Components
         private void BanHammerSelectedItems(object obj)
         {
             var authorList = stack.GetSelectedAuthors();
+            var authorColor = stack.ColourSelectedByAuthor(authorList);
             var details = Globals.conversationDetails;
             foreach (var author in authorList)
             {
@@ -97,11 +98,11 @@ namespace SandRibbon.Components
                     details.blacklist.Add(author);
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
-            GenerateBannedContentScreenshot(new List<string>(details.blacklist));
+            GenerateBannedContentScreenshot(authorColor);
             Commands.SetPrivacyOfItems.Execute("private");
         }
 
-        private void GenerateBannedContentScreenshot(List<string> blacklisted)
+        private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
         {
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<string> sendScreenshot = null;

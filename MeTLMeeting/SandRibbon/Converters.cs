@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Submissions;
+using SandRibbon.Components.BannedContent;
 
 namespace SandRibbon
 {
@@ -439,7 +440,7 @@ namespace SandRibbon
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "Preview";
-            return string.Format("{0}", (new DateTime(((TargettedSubmission)value).time)));
+            return string.Format("{0}", (new DateTime(((PrivacyWrapper)value).time)));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -493,7 +494,7 @@ namespace SandRibbon
 
             if (value == null) return value;
             var converter = new ConvertStringToImageSource();
-            return converter.Convert(((TargettedSubmission)value).url, null, null, null);
+            return converter.Convert(((PrivacyWrapper)value).url, null, null, null);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

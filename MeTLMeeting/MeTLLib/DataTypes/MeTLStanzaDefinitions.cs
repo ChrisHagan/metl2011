@@ -101,7 +101,7 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedSubmission : TargettedElement
     {
-        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Url, long Time, List<string> Blacklisted)
+        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Url, long Time, List<MeTLStanzas.BlackListedUser> Blacklisted)
             : base(Slide, Author, Target, Privacy)
         {
             url = Url;
@@ -118,7 +118,7 @@ namespace MeTLLib.DataTypes
         }
         public string url { get; set; }
         public long time { get; set; }
-        public List<string> blacklisted { get; set; }
+        public List<MeTLStanzas.BlackListedUser> blacklisted { get; set; }
     }
     public class TargettedStroke : TargettedElement
     {
@@ -1043,23 +1043,41 @@ namespace MeTLLib.DataTypes
             {
             }
         }
+
+        public class BlackListedUser
+        {
+            public string UserName { get; private set; }
+            public string Color { get; private set; }
+
+            public BlackListedUser(string username, Color color)
+            {
+                UserName = username;
+                Color = Ink.colorToString(color);
+            }
+        }
+
         public class LocalSubmissionInformation
         {
-            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File, List<string> Blacklisted)
+            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File, Dictionary<string, Color> Blacklisted)
             {
                 slide = Slide;
                 author = Author;
                 target = Target;
                 privacy = Privacy;
                 file = File;
-                blacklisted = Blacklisted;
+
+                blacklisted = new List<BlackListedUser>();
+                foreach (var user in Blacklisted)
+                {
+                    blacklisted.Add(new BlackListedUser(user.Key, user.Value));
+                }
             }
             public string author;
             public string file;
             public string privacy;
             public int slide;
             public string target;
-            public List<string> blacklisted;
+            public List<BlackListedUser> blacklisted;
         }
         public class LocalVideoInformation
         {
@@ -1121,7 +1139,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)), new List<string>());
+                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
 
                     if (HasTag(BLACKLIST))
                     {
@@ -1158,25 +1176,37 @@ namespace MeTLLib.DataTypes
             }
             public static string TAG = "blackList";
             public static readonly string USERNAME = "username";
+            public static readonly string HIGHLIGHT = "highlight";
 
             public BlackList()
             {
                 this.Namespace = METL_NS;
                 this.TagName = TAG;
             }
-            public BlackList(string parameters) : this()
+            public BlackList(BlackListedUser parameters) : this()
             {
                 this.parameters = parameters;
             }
-            public string parameters
+            public BlackListedUser parameters
             {
                 get
                 {
-                    return GetTag(USERNAME);
+                    Color highlight;
+                    if (HasTag(HIGHLIGHT))
+                    {
+                        highlight = Ink.stringToColor(GetTag(HIGHLIGHT));
+                    }
+                    else
+                    {
+                        highlight = Colors.Black;
+                    }
+
+                    return new BlackListedUser(GetTag(USERNAME), highlight);
                 }
                 set
                 {
-                    SetTag(USERNAME, value);
+                    SetTag(USERNAME, value.UserName);
+                    SetTag(HIGHLIGHT, value.Color);
                 }
             }
         }

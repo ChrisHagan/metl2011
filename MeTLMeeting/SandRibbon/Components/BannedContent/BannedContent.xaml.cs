@@ -16,13 +16,65 @@ using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
+using MeTLLib.Providers;
+using System.Text;
+using System.Windows.Media;
 
 namespace SandRibbon.Components.BannedContent
 {
+    public class PrivateUser
+    {
+        public PrivateUser(string username, string displayname, Color displaycolor)
+        {
+            UserName = username;
+            DisplayName = displayname;
+            DisplayColor = displaycolor;
+        }
+
+        public string UserName { get; private set; }
+        public string DisplayName { get; private set; }
+        public Color DisplayColor { get; private set; }
+    }
+
+    public class PrivacyWrapper 
+    {
+        private TargettedSubmission targettedSubmission;
+        private List<PrivateUser> privateusers = new List<PrivateUser>();
+
+        public PrivacyWrapper(TargettedSubmission sub)
+        {
+            targettedSubmission = sub;
+
+            var labelIndex = 1;
+            foreach (var user in sub.blacklisted)
+            {
+                privateusers.Add(new PrivateUser(user.UserName, String.Format("Participant {0}", labelIndex++), MeTLStanzas.Ink.stringToColor(user.Color)));
+            }
+        }
+
+        public List<PrivateUser> PrivateUsers
+        {
+            get { return privateusers; }
+            set { privateusers = value; }
+        }
+
+        public string url 
+        { 
+            get { return targettedSubmission.url; } 
+            set { targettedSubmission.url = value; }
+        }
+
+        public long time 
+        {
+            get { return targettedSubmission.time; }
+            set { targettedSubmission.time = value; } 
+        }
+    }
+
     public partial class BannedContent : Window
     {
-        public ObservableCollection<TargettedSubmission> submissionList { get; private set; }
-        public ObservableCollection<string> blackList { get; private set; }
+        public ObservableCollection<PrivacyWrapper> submissionList { get; private set; }
+        public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
         public BannedContent()
         {
@@ -39,11 +91,40 @@ namespace SandRibbon.Components.BannedContent
         {
             Close();
         }
+
+        private List<PrivacyWrapper> WrapSubmissions(List<TargettedSubmission> submissions)
+        {
+            var privateSubmissions = new List<PrivacyWrapper>();
+
+            foreach (var sub in submissions)
+            {
+                var privSub = new PrivacyWrapper(sub);
+                privateSubmissions.Add(privSub);
+            }
+
+            return privateSubmissions;
+        }
+
+        private List<PrivateUser> WrapBlackList(List<string> blacklist)
+        {
+            var privateUsers = new List<PrivateUser>();
+            var alphabetSeq = new EnglishAlphabetSequence();
+
+            var labelIndex = 0;
+            foreach (var user in blacklist)
+            {
+                var privUser = new PrivateUser(user, String.Format("Participant {0}", alphabetSeq.GetEncoded((uint)labelIndex++)), Colors.Black);
+                privateUsers.Add(privUser);
+            }
+
+            return privateUsers;
+        }
+
         public BannedContent(List<TargettedSubmission> userSubmissions):this()
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
-            submissionList = new ObservableCollection<TargettedSubmission>(userSubmissions);
-            blackList = new ObservableCollection<string>(Globals.conversationDetails.blacklist);
+            submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
+            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(Globals.conversationDetails.blacklist));
 
             DataContext = this;
         }
@@ -53,7 +134,7 @@ namespace SandRibbon.Components.BannedContent
             if (submission.target != "bannedcontent")
                 return;
 
-            submissionList.Add(submission);
+            submissionList.Add(new PrivacyWrapper(submission));
         }
 
         private List<CheckBox> GetBannedUserCheckboxes()
@@ -63,7 +144,7 @@ namespace SandRibbon.Components.BannedContent
             {
                 var listBoxItem = bannedUsernames.ItemContainerGenerator.ContainerFromItem(item);
                 var contentPresenter = UIHelper.FindVisualChild<ContentPresenter>(listBoxItem);
-                var checkBox = contentPresenter.ContentTemplate.FindName("participantCheckbox", contentPresenter) as CheckBox;
+                var checkBox = contentPresenter.ContentTemplate.FindName("participantDisplay", contentPresenter) as CheckBox;
                 checkBoxes.Add(checkBox);
             }
             return checkBoxes;
@@ -74,20 +155,35 @@ namespace SandRibbon.Components.BannedContent
             emailReport.IsEnabled = false;
             emailReport.Visibility = Visibility.Collapsed;
             var fileName = SaveImageTemporarilyToFile();
+            var report = BuildReport();
             ThreadPool.QueueUserWorkItem((state) =>
                 {
-                    SendEmail(fileName);
+                    SendEmail(fileName, report);
                     Dispatcher.adopt(() => { emailReport.IsEnabled = true; emailReport.Visibility = Visibility.Visible; });
                 });
         }
 
-        private void SendEmail(string fileName)
+        private string BuildReport()
+        {
+            var currentSelection = submissions.SelectedItem as PrivacyWrapper;
+
+            var report = new StringBuilder("The following banned users were in the selected screenshot.\n\n");
+
+            foreach (var user in currentSelection.PrivateUsers)
+            {
+                report.AppendFormat("{0} => {1}\n", user.DisplayName, user.UserName);
+            }
+
+            return report.ToString();
+        }
+
+        private void SendEmail(string fileName, string report)
         {
             try
             {
                 var emailAddress = new MailAddress(Globals.credentials.mail);
                 const string subject = "MeTL Banned Content Report";
-                const string body = "Banned Content Report";
+                string body = report;
 
                 var smtpClient = new SmtpClient
                 {
@@ -160,11 +256,18 @@ namespace SandRibbon.Components.BannedContent
             var details = Globals.conversationDetails;
             foreach (var participant in bannedUsers)
             {
-                var username = participant.Content as string;
+                var priv = participant.DataContext as PrivateUser;
                 if (participant.IsChecked ?? false)
                 {
-                    details.blacklist.Remove(username);
-                    blackList.Remove(username);
+                    details.blacklist.Remove(priv.UserName);
+                    foreach (var usr in blackList)
+                    {
+                        if (usr.UserName == priv.UserName)
+                        {
+                            blackList.Remove(usr);
+                            break;
+                        }
+                    }
                 }
             }
             ClientFactory.Connection().UpdateConversationDetails(details);

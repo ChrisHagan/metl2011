@@ -721,7 +721,7 @@ namespace SandRibbon.Components
              });
         }
 
-        public IEnumerable<String> GetSelectedAuthors()
+        public List<String> GetSelectedAuthors()
         {
             var authorList = new List<string>();
 
@@ -744,7 +744,23 @@ namespace SandRibbon.Components
                 }
             }
 
-            return authorList.Distinct();
+            return authorList.Distinct().ToList();
+        }
+
+        public Dictionary<string, Color> ColourSelectedByAuthor(List<string> authorList)
+        {
+            var colors = ColorLookup.GetMediaColors();
+            var authorColor = new Dictionary<string, Color>();
+            foreach (var author in authorList)
+                authorColor.Add(author, colors.ElementAt(authorList.IndexOf(author)));
+            foreach (var stroke in Work.GetSelectedStrokes())
+                stroke.DrawingAttributes.Color = authorColor[stroke.tag().author];
+            foreach (var elem in Work.GetSelectedTextBoxes())
+                ((MeTLTextBox)elem).Foreground = new SolidColorBrush(authorColor[((MeTLTextBox)elem).tag().author]);
+            foreach (var elem in Work.GetSelectedImages())
+                ApplyHighlight((FrameworkElement)elem, authorColor[((Image)elem).tag().author]);
+
+            return authorColor;
         }
 
         private StrokeCollection filterExceptMine(IEnumerable<Stroke> strokes)
@@ -794,7 +810,6 @@ namespace SandRibbon.Components
        
         protected internal void AddAdorners()
         {
-            // TODO: configure which button adorners should be displayed depending on owner status and who owns the element selected
             ClearAdorners();
             var selectedStrokes = Work.GetSelectedStrokes();
             var selectedElements = Work.GetSelectedElements();
@@ -1349,6 +1364,13 @@ namespace SandRibbon.Components
 
             applyShadowEffectTo(element, Colors.Black);
         }
+
+        public FrameworkElement ApplyHighlight(FrameworkElement element, Color color)
+        {
+            element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
+            return element;
+        }
+
         public FrameworkElement applyShadowEffectTo(FrameworkElement element, Color color)
         {
             element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };

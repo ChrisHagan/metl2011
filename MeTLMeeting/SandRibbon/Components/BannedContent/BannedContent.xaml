@@ -7,7 +7,7 @@
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     Title="Banned Content"
     x:Name="bannedContent"
-    SizeToContent="WidthAndHeight">
+    ResizeMode="NoResize"> 
     <Window.Resources>
         <CollectionViewSource Source="{Binding Path=submissionList}" x:Key="sortedSubmissionsView">
             <CollectionViewSource.SortDescriptions>
@@ -18,8 +18,8 @@
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <Grid MaxHeight="450">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MaxWidth="325"/>
-                <ColumnDefinition MinWidth="500"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition MinWidth="450" Width="*"/> <!-- MinWidth=500-->
                 <ColumnDefinition MaxWidth="325"/>
             </Grid.ColumnDefinitions>
             <ListBox Grid.Column="0" x:Name="submissions" SelectionMode="Single" Background ="Transparent" SelectedIndex="0"
@@ -36,6 +36,7 @@
             <Grid x:Name="GridContainer" Grid.Column="1" Width="Auto" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.Resources>
                     <SandRibbon:BoolToVisibilityWithHidden x:Key="boolToVisibility" Collapse="False" Negate="True" />
+                    <SandRibbon:BoolToVisibilityWithHidden x:Key="boolToVisibilityCollapse" Collapse="True" Negate="False"/>
                 </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -51,7 +52,9 @@
                     <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
                     Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
                 </Viewbox>
-                <Button x:Name="emailReport" Grid.Row="2" Margin="5,5,0,5" Width="100" HorizontalAlignment="Left" ToolTip="{DynamicResource EmailReportTooltip}" Click="emailReport_Click">Email Report</Button>
+                <Button x:Name="emailReport" Grid.Row="2" Margin="5,5,0,5" Width="100" HorizontalAlignment="Left" 
+                        Visibility="{Binding Path=IsEnabled, Converter={StaticResource boolToVisibilityCollapse}}" 
+                        ToolTip="{DynamicResource EmailReportTooltip}" Click="emailReport_Click">Email Report</Button>
                 <components:CircularProgressBar x:Name="progressBar" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Margin="5,5,0,5" 
                                                Visibility="{Binding ElementName=emailReport, Path=IsEnabled, Converter={StaticResource boolToVisibility}}"/>
                 <TextBlock x:Name="sendEmail" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic" Margin="30,5,0,5" Text="Sending email..." 
@@ -65,19 +68,24 @@
                 </Grid.RowDefinitions>
                 <DockPanel Grid.Row="0" LastChildFill="True">
                     <TextBlock DockPanel.Dock="Top" Margin="5" FontWeight="Bold">Banned Participants</TextBlock>
-                    <ListView DockPanel.Dock="Bottom" x:Name="bannedUsernames" MinHeight="30" Height="Auto" Background="Transparent" SelectedIndex="0" 
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding ElementName=submissions,Path=SelectedItem.blacklisted}" 
-                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView DockPanel.Dock="Bottom" MinHeight="30" Height="Auto" Margin="5,0" Background="Transparent" SelectedIndex="0" 
+                             ItemsSource="{Binding ElementName=submissions,Path=SelectedItem.PrivateUsers}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Margin="5" x:Name="participantCheckbox" Content="{Binding}" />
+                                <TextBlock Margin="5" Text="{Binding Path=DisplayName}" Foreground="{Binding Path=DisplayColor}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </DockPanel>
                 <DockPanel Grid.Row="1" LastChildFill="True">
                     <TextBlock DockPanel.Dock="Top" Margin="5" FontWeight="Bold">Conversation Banned Participants</TextBlock>
-                    <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Path=blackList}" MinHeight="30" Height="Auto">
+                    <ListView DockPanel.Dock="Bottom" x:Name="bannedUsernames" Margin="5,0" ItemsSource="{Binding Path=blackList}" Background="Transparent" SelectedIndex="0" 
+                              MinHeight="30" Height="Auto">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Margin="5" x:Name="participantDisplay" Content="{Binding Path=DisplayName}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </DockPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
