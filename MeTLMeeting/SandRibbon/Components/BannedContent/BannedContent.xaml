@@ -7,6 +7,7 @@
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     Title="Banned Content"
     x:Name="bannedContent"
+    SizeToContent="WidthAndHeight"
     ResizeMode="NoResize"> 
     <Window.Resources>
         <CollectionViewSource Source="{Binding Path=submissionList}" x:Key="sortedSubmissionsView">
@@ -18,7 +19,7 @@
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <Grid MaxHeight="450">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition MaxWidth="125" />
                 <ColumnDefinition MinWidth="450" Width="*"/> <!-- MinWidth=500-->
                 <ColumnDefinition MaxWidth="325"/>
             </Grid.ColumnDefinitions>
@@ -68,18 +69,18 @@
                 </Grid.RowDefinitions>
                 <DockPanel Grid.Row="0" LastChildFill="True">
                     <TextBlock DockPanel.Dock="Top" Margin="5" FontWeight="Bold">Banned Participants</TextBlock>
-                    <ListView DockPanel.Dock="Bottom" MinHeight="30" Height="Auto" Margin="5,0" Background="Transparent" SelectedIndex="0" 
+                    <ListView DockPanel.Dock="Bottom" MinHeight="30" Height="Auto" Margin="5,0" SelectedIndex="0" 
                              ItemsSource="{Binding ElementName=submissions,Path=SelectedItem.PrivateUsers}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Margin="5" Text="{Binding Path=DisplayName}" Foreground="{Binding Path=DisplayColor}"/>
+                                <TextBlock Margin="5" Text="{Binding Path=DisplayName}" Foreground="{Binding Path=DisplayColor, Converter={x:Static SandRibbon:Converters.ColorToBrushConverter}}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </DockPanel>
                 <DockPanel Grid.Row="1" LastChildFill="True">
                     <TextBlock DockPanel.Dock="Top" Margin="5" FontWeight="Bold">Conversation Banned Participants</TextBlock>
-                    <ListView DockPanel.Dock="Bottom" x:Name="bannedUsernames" Margin="5,0" ItemsSource="{Binding Path=blackList}" Background="Transparent" SelectedIndex="0" 
+                    <ListView DockPanel.Dock="Bottom" x:Name="bannedUsernames" Margin="5,0" ItemsSource="{Binding Path=blackList}" SelectedIndex="0" 
                               MinHeight="30" Height="Auto">
                         <ListView.ItemTemplate>
                             <DataTemplate>
