@@ -7,6 +7,7 @@ using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.BannedContent;
 using SandRibbon.Providers;
+using System.Windows.Input;
 
 namespace SandRibbon.Tabs
 {
@@ -16,6 +17,7 @@ namespace SandRibbon.Tabs
     public partial class ConversationManagement : RibbonTab
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
+        public static RoutedCommand ManageBannedContent = new RoutedCommand();
         public ConversationManagement()
         {
             InitializeComponent();
@@ -36,6 +38,11 @@ namespace SandRibbon.Tabs
         private bool canViewBannedContent(object _e)
         {
            return submissionList.Count > 0;
+        }
+
+        private void CheckManageBannedAllowed(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = canViewBannedContent(null);
         }
 
         private void PreParserAvailable(PreParser parser)
@@ -66,6 +73,7 @@ namespace SandRibbon.Tabs
                 Commands.RequerySuggested(Commands.ViewBannedContent);
             }
         }
+
         private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
             if (submissionList.Where(s => s.time == submission.time && s.author == submission.author && s.url == submission.url).ToList().Count > 0)
@@ -73,7 +81,7 @@ namespace SandRibbon.Tabs
             return false;
         }
 
-        private void OnBanContentChanged(object sender, RoutedEventArgs e)
+        private void OnBanContentchanged(object sender, ExecutedRoutedEventArgs e)
         {
             var banMode = banContent.IsChecked ?? false;
             Globals.IsManagementAccessible = banMode;
