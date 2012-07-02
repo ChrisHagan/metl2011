@@ -25,7 +25,7 @@
             </Grid.ColumnDefinitions>
             <ListBox Grid.Column="0" x:Name="submissions" SelectionMode="Single" Background ="Transparent" SelectedIndex="0"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     ItemsSource="{Binding Source={StaticResource sortedSubmissionsView}}">
+                     ItemsSource="{Binding Source={StaticResource sortedSubmissionsView}}" SelectionChanged="submissions_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Viewbox Width="100" Height="100">

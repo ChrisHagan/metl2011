@@ -756,7 +756,8 @@ namespace SandRibbon.Components
             foreach (var stroke in Work.GetSelectedStrokes())
                 stroke.DrawingAttributes.Color = authorColor[stroke.tag().author];
             foreach (var elem in Work.GetSelectedTextBoxes())
-                ((MeTLTextBox)elem).Foreground = new SolidColorBrush(authorColor[((MeTLTextBox)elem).tag().author]);
+                ApplyHighlight((FrameworkElement)elem, authorColor[((MeTLTextBox)elem).tag().author]);
+                //((MeTLTextBox)elem).Foreground = new SolidColorBrush(authorColor[((MeTLTextBox)elem).tag().author]);
             foreach (var elem in Work.GetSelectedImages())
                 ApplyHighlight((FrameworkElement)elem, authorColor[((Image)elem).tag().author]);
 
@@ -1367,7 +1368,7 @@ namespace SandRibbon.Components
 
         public FrameworkElement ApplyHighlight(FrameworkElement element, Color color)
         {
-            element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
+            element.Effect = new DropShadowEffect { BlurRadius = 20, Color = color, ShadowDepth = 0, Opacity = 1 };
             return element;
         }
 

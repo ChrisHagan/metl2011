@@ -32,7 +32,7 @@ namespace SandRibbon.Components.BannedContent
         }
 
         public string UserName { get; private set; }
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; set; }
         public Color DisplayColor { get; private set; }
     }
 
@@ -41,14 +41,34 @@ namespace SandRibbon.Components.BannedContent
         private TargettedSubmission targettedSubmission;
         private List<PrivateUser> privateusers = new List<PrivateUser>();
 
-        public PrivacyWrapper(TargettedSubmission sub)
+        public PrivacyWrapper(TargettedSubmission sub, Dictionary<string, string> userMapping)
         {
             targettedSubmission = sub;
 
             var labelIndex = 1;
             foreach (var user in sub.blacklisted)
             {
-                privateusers.Add(new PrivateUser(user.UserName, String.Format("Participant {0}", labelIndex++), MeTLStanzas.Ink.stringToColor(user.Color)));
+                privateusers.Add(new PrivateUser(user.UserName, GenerateDisplayName(userMapping, user.UserName, ref labelIndex), MeTLStanzas.Ink.stringToColor(user.Color)));
+            }
+        }
+
+        private string GenerateDisplayName(Dictionary<string, string> userMapping, string userName, ref int labelIndex)
+        {
+            var displayName = "";
+            if (!userMapping.TryGetValue(userName, out displayName))
+            {
+                displayName = String.Format("User {0}", labelIndex++);
+                userMapping.Add(userName, displayName);
+            }
+            return displayName;
+        }
+
+        public void UpdateDisplayNames(Dictionary<string,string> userMapping)
+        {
+            var labelIndex = 1;
+            foreach (var user in PrivateUsers)
+            {
+                user.DisplayName = GenerateDisplayName(userMapping, user.UserName, ref labelIndex); 
             }
         }
 
@@ -76,6 +96,7 @@ namespace SandRibbon.Components.BannedContent
         public ObservableCollection<PrivacyWrapper> submissionList { get; private set; }
         public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
+        private Dictionary<string, string> userMapping = new Dictionary<string,string>();
         public BannedContent()
         {
             InitializeComponent();
@@ -98,7 +119,7 @@ namespace SandRibbon.Components.BannedContent
 
             foreach (var sub in submissions)
             {
-                var privSub = new PrivacyWrapper(sub);
+                var privSub = new PrivacyWrapper(sub, userMapping);
                 privateSubmissions.Add(privSub);
             }
 
@@ -113,14 +134,28 @@ namespace SandRibbon.Components.BannedContent
             var labelIndex = 0;
             foreach (var user in blacklist)
             {
-                var privUser = new PrivateUser(user, String.Format("Participant {0}", alphabetSeq.GetEncoded((uint)labelIndex++)), Colors.Black);
+                var displayName = "";
+                if (!userMapping.TryGetValue(user, out displayName))
+                {
+                    displayName = String.Format("User {0}", alphabetSeq.GetEncoded((uint)labelIndex++));
+                }
+                var privUser = new PrivateUser(user, displayName, Colors.Black);
                 privateUsers.Add(privUser);
             }
 
             return privateUsers;
         }
 
-        public BannedContent(List<TargettedSubmission> userSubmissions):this()
+        private void submissions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems != null)
+            {
+                var currentSelection = e.AddedItems[0] as PrivacyWrapper;
+                UpdateDisplayNames(currentSelection);
+            }
+        }
+
+        public BannedContent(List<TargettedSubmission> userSubmissions) : this()
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
@@ -134,7 +169,7 @@ namespace SandRibbon.Components.BannedContent
             if (submission.target != "bannedcontent")
                 return;
 
-            submissionList.Add(new PrivacyWrapper(submission));
+            submissionList.Add(new PrivacyWrapper(submission, userMapping));
         }
 
         private List<CheckBox> GetBannedUserCheckboxes()
@@ -157,10 +192,27 @@ namespace SandRibbon.Components.BannedContent
             var fileName = SaveImageTemporarilyToFile();
             var report = BuildReport();
             ThreadPool.QueueUserWorkItem((state) =>
-                {
-                    SendEmail(fileName, report);
-                    Dispatcher.adopt(() => { emailReport.IsEnabled = true; emailReport.Visibility = Visibility.Visible; });
+            {
+                SendEmail(fileName, report);
+                Dispatcher.adopt(() => 
+                { 
+                    emailReport.IsEnabled = true; 
+                    emailReport.Visibility = Visibility.Visible; 
                 });
+            });
+        }
+
+        private void UpdateDisplayNames(PrivacyWrapper sub)
+        {
+            userMapping.Clear();
+            sub.UpdateDisplayNames(userMapping);
+
+            blackList.Clear();
+            var updatedBlacklist = WrapBlackList(Globals.conversationDetails.blacklist);
+            foreach (var user in updatedBlacklist)
+            {
+                blackList.Add(user);
+            }
         }
 
         private string BuildReport()
@@ -171,7 +223,7 @@ namespace SandRibbon.Components.BannedContent
 
             foreach (var user in currentSelection.PrivateUsers)
             {
-                report.AppendFormat("{0} => {1}\n", user.DisplayName, user.UserName);
+                report.AppendFormat("{0} => {1} highlighted in {2}\n", user.DisplayName, user.UserName, ColorLookup.HumanReadableNameOf(user.DisplayColor));
             }
 
             return report.ToString();

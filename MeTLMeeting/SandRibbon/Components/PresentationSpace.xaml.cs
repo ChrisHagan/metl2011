@@ -117,7 +117,8 @@ namespace SandRibbon.Components
                                                     {
                                                         time = time,
                                                         message = string.Format("Banned content submission at {0}", new DateTime(time)),
-                                                        showPrivate = false
+                                                        showPrivate = false,
+                                                        dimensions = new Size(1024, 768)
                                                     });
         }
 
@@ -178,7 +179,7 @@ namespace SandRibbon.Components
             var file = "";
             Dispatcher.adopt(() =>
             {
-                var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack);
+                var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack, details.dimensions);
                 var bitmap = new RenderTargetBitmap((int)targetSize.Width ,(int)targetSize.Height, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())

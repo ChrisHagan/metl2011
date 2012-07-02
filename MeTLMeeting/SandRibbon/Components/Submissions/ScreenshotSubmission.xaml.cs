@@ -18,6 +18,7 @@ namespace SandRibbon.Components.Submissions
         public string message;
         public long time;
         public bool showPrivate;
+        public Size dimensions;
     }
     public partial class ScreenshotSubmission : UserControl
     {
