@@ -101,10 +101,11 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedSubmission : TargettedElement
     {
-        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Url, long Time, List<MeTLStanzas.BlackListedUser> Blacklisted)
+        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Url, string Title, long Time, List<MeTLStanzas.BlackListedUser> Blacklisted)
             : base(Slide, Author, Target, Privacy)
         {
             url = Url;
+            title = Title;
             time = Time;
             blacklisted = Blacklisted;
         }
@@ -112,11 +113,12 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is TargettedSubmission)) return false;
             var submission = obj as TargettedSubmission; 
-            return (base.ValueEquals(obj) && submission.url == url && submission.time == time && ((submission.blacklisted == null && blacklisted == null) || 
+            return (base.ValueEquals(obj) && submission.url == url && submission.title == title && submission.time == time && ((submission.blacklisted == null && blacklisted == null) || 
                 submission.blacklisted.Where(x => !blacklisted.Any(x1 => x1 == x)).Union(blacklisted.Where(x => !submission.blacklisted.Any(x1 => x1 == x))).Count() == 0));
 
         }
         public string url { get; set; }
+        public string title { get; set; }
         public long time { get; set; }
         public List<MeTLStanzas.BlackListedUser> blacklisted { get; set; }
     }
@@ -1058,13 +1060,14 @@ namespace MeTLLib.DataTypes
 
         public class LocalSubmissionInformation
         {
-            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File, Dictionary<string, Color> Blacklisted)
+            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File, string CurrentConversationName, Dictionary<string, Color> Blacklisted)
             {
                 slide = Slide;
                 author = Author;
                 target = Target;
                 privacy = Privacy;
                 file = File;
+                currentConversationName = CurrentConversationName;
 
                 blacklisted = new List<BlackListedUser>();
                 foreach (var user in Blacklisted)
@@ -1077,6 +1080,7 @@ namespace MeTLLib.DataTypes
             public string privacy;
             public int slide;
             public string target;
+            public string currentConversationName;
             public List<BlackListedUser> blacklisted;
         }
         public class LocalVideoInformation
@@ -1113,6 +1117,7 @@ namespace MeTLLib.DataTypes
             public static string TAG = "screenshotSubmission";
             public static string AUTHOR = "author";
             public static string URL = "url";
+            public static string TITLE = "title";
             public static string SLIDE = "slide";
             public static string TIME = "time";
             public static string BLACKLIST = "blackList";
@@ -1139,7 +1144,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
+                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
 
                     if (HasTag(BLACKLIST))
                     {
@@ -1157,6 +1162,7 @@ namespace MeTLLib.DataTypes
                     var strippedUrl = INodeFix.StripServer(value.url);
                     SetTag(AUTHOR, value.author);
                     SetTag(URL, strippedUrl);
+                    SetTag(TITLE, value.title);
                     SetTag(targetTag, value.target);
                     SetTag(SLIDE, value.slide.ToString());
                     SetTag(TIME, value.time.ToString());

@@ -89,6 +89,24 @@ namespace SandRibbon.Components.BannedContent
             get { return targettedSubmission.time; }
             set { targettedSubmission.time = value; } 
         }
+
+        public int slide
+        {
+            get { return targettedSubmission.slide; }
+            set { targettedSubmission.slide = value; } 
+        }
+
+        public string author
+        {
+            get { return targettedSubmission.author; }
+            set { targettedSubmission.author = value; } 
+        }
+
+        public string title
+        {
+            get { return targettedSubmission.title; }
+            set { targettedSubmission.title = value; }
+        }
     }
 
     public partial class BannedContent : Window
@@ -219,11 +237,20 @@ namespace SandRibbon.Components.BannedContent
         {
             var currentSelection = submissions.SelectedItem as PrivacyWrapper;
 
-            var report = new StringBuilder("The following banned users were in the selected screenshot.\n\n");
+            var report = new StringBuilder();
+
+            var time = new DateTime(currentSelection.time);
+            report.AppendFormat("\nDetails: \nConversation Owner: {0}\nConversation Title: {1}\nSlide Number: {2}\nTime Snapshot Taken: {3} {4}\n\n", 
+                currentSelection.author,
+                currentSelection.title,
+                currentSelection.slide,
+                time.ToShortDateString(), time.ToLongTimeString());
+
+            report.Append("The following banned users and corresponding authcates were recorded:\n\n");
 
             foreach (var user in currentSelection.PrivateUsers)
             {
-                report.AppendFormat("{0} => {1} highlighted in {2}\n", user.DisplayName, user.UserName, ColorLookup.HumanReadableNameOf(user.DisplayColor));
+                report.AppendFormat("{0} => Authcate {1} highlighted in {2}\n", user.DisplayName, user.UserName, ColorLookup.HumanReadableNameOf(user.DisplayColor));
             }
 
             return report.ToString();

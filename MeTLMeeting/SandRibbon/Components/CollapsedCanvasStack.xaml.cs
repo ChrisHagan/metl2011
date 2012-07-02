@@ -757,7 +757,6 @@ namespace SandRibbon.Components
                 stroke.DrawingAttributes.Color = authorColor[stroke.tag().author];
             foreach (var elem in Work.GetSelectedTextBoxes())
                 ApplyHighlight((FrameworkElement)elem, authorColor[((MeTLTextBox)elem).tag().author]);
-                //((MeTLTextBox)elem).Foreground = new SolidColorBrush(authorColor[((MeTLTextBox)elem).tag().author]);
             foreach (var elem in Work.GetSelectedImages())
                 ApplyHighlight((FrameworkElement)elem, authorColor[((Image)elem).tag().author]);
 
