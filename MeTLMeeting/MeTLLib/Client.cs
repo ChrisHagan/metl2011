@@ -28,7 +28,8 @@ namespace MeTLLib
     {
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
-        public enum serverMode { PRODUCTION, STAGING };
+        public Uri externalUri { get; set; }
+        public enum serverMode { PRODUCTION, STAGING, EXTERNAL};
         private serverMode mode;
         public void setMode(serverMode mode)
         {
@@ -38,7 +39,17 @@ namespace MeTLLib
         {
             get
             {
-                return mode == serverMode.PRODUCTION ? productionUri : stagingUri;
+                switch (mode)
+                {
+                    case serverMode.PRODUCTION:
+                        return productionUri;
+                    case serverMode.STAGING:
+                        return stagingUri;
+                    case serverMode.EXTERNAL:
+                        return externalUri;
+                    default:
+                        return stagingUri;
+                }
             }
         }
         public Uri secureUri { get { return new Uri("https://" + host); } }
