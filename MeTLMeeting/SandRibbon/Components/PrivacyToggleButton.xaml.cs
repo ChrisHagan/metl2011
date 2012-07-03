@@ -21,7 +21,7 @@ namespace SandRibbon.Components
                 deleteButton.Visibility = Visibility.Visible;
             else
                 deleteButton.Visibility = Visibility.Collapsed;
-            if(!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
+            if((!Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.blacklist.Contains(Globals.me)) && !Globals.isAuthor)
             {
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Collapsed;
