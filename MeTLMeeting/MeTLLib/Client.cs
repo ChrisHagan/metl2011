@@ -80,6 +80,7 @@ namespace MeTLLib
         void SendDirtyImage(TargettedDirtyElement tde);
         void SendDirtyVideo(TargettedDirtyElement tde);
         void SendSubmission(TargettedSubmission ts);
+        void SendTeacherStatus(TeacherStatus status);
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
         void SendQuizAnswer(QuizAnswer qa);
@@ -89,6 +90,7 @@ namespace MeTLLib
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
+        Uri UploadResource(Uri uri, string slideId);
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
