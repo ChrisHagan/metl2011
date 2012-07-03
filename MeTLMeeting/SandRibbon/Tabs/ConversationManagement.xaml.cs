@@ -8,6 +8,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.BannedContent;
 using SandRibbon.Providers;
 using System.Windows.Input;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Tabs
 {
@@ -42,7 +43,7 @@ namespace SandRibbon.Tabs
 
         private void CheckManageBannedAllowed(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = canViewBannedContent(null);
+            e.CanExecute = StateHelper.mustBeInConversation(); 
         }
 
         private void PreParserAvailable(PreParser parser)
