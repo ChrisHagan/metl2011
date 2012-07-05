@@ -129,7 +129,12 @@ namespace SandRibbon.Components
         {
             get
             {
-                return FocusManager.GetFocusedElement(Window.GetWindow(this)) as MeTLTextBox;
+                MeTLTextBox focusedTextBox = null;
+                Dispatcher.adopt(() =>
+                {
+                    focusedTextBox = FocusManager.GetFocusedElement(Window.GetWindow(this)) as MeTLTextBox;
+                });
+                return focusedTextBox;
             }
             set
             {
