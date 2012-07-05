@@ -17,7 +17,7 @@ namespace SandRibbon.Utils
             if (String.IsNullOrEmpty(input))
                 return "";
 
-            var b64string = ((input.Replace("-","+")).Replace("_","="));
+            var b64string = input.Replace("-", "+").Replace("_", "=").Replace(".", "/");
             var nonB64bytes = Convert.FromBase64String(b64string);
             var nonB64string = bytestostring(nonB64bytes, encoding);
             var decryptedString = decryptFromByteArray(nonB64bytes, encoding, Key, IV);
@@ -51,7 +51,7 @@ namespace SandRibbon.Utils
             ms.Write(paddingBytes, 0, paddingBytes.Length);
             byte[] merged = ms.GetBuffer();
             var Base64String = (Convert.ToBase64String(merged, System.Base64FormattingOptions.None));
-            var Base64FinalString = ((Base64String.Replace("+", "-")).Replace("=", "_"));
+            var Base64FinalString = Base64String.Replace("+", "-").Replace("=", "_").Replace("/", ".");
             return Base64FinalString;
         }
         private static byte[] encryptToByteArray(string input, Encoding encoding, byte[] Key, byte[] IV)
