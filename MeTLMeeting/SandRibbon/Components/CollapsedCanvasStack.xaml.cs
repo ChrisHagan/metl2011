@@ -328,7 +328,7 @@ namespace SandRibbon.Components
                 textBox.Focusable = curFocusable && (tag.author == curMe);
             });
         }
-        private UndoHistory.HistoricalAction deleteSelectedImages(List<UIElement> selectedElements)
+        private UndoHistory.HistoricalAction deleteSelectedImages(IEnumerable<UIElement> selectedElements)
         {
             if (selectedElements.OfType<Image>().Count() == 0) return new UndoHistory.HistoricalAction(()=> { }, ()=> { }, 0, "No images selected");
              Action undo = () =>
@@ -371,7 +371,7 @@ namespace SandRibbon.Components
             Action redo = () => removeStrokes(selectedStrokes.ToList());
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected ink");
         }
-        private UndoHistory.HistoricalAction deleteSelectedText(List<UIElement> elements)
+        private UndoHistory.HistoricalAction deleteSelectedText(IEnumerable<UIElement> elements)
         {
             var selectedElements = elements.Where(t => t is MeTLTextBox && ((MeTLTextBox)t).tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
             Action undo = () =>
@@ -417,9 +417,9 @@ namespace SandRibbon.Components
                                      selectedImages = Work.GetSelectedImages().ToList();
                                      selectedText = Work.GetSelectedTextBoxes().ToList();
                                  });
-            var ink = deleteSelectedInk(selectedStrokes);
-            var images = deleteSelectedImages(selectedImages);
-            var text = deleteSelectedText(selectedText);
+            var ink = deleteSelectedInk(filterOnlyMine(selectedStrokes));
+            var images = deleteSelectedImages(filterOnlyMine(selectedImages));
+            var text = deleteSelectedText(filterOnlyMine(selectedText));
             Action undo = () =>
                 {
                     ink.undo();
@@ -503,16 +503,20 @@ namespace SandRibbon.Components
         private List<Stroke> strokesAtTheStart = new List<Stroke>();
         private List<StrokeChecksum> strokeChecksums;
         private List<UIElement> imagesAtStartOfTheMove = new List<UIElement>();
-        private void SelectionMovingOrResizing (object _sender, InkCanvasSelectionEditingEventArgs e)
+        private void SelectionMovingOrResizing (object sender, InkCanvasSelectionEditingEventArgs e)
         {
+            // don't want to move or resize any uielements or strokes that weren't authored by the owner
+            var inkCanvas = sender as InkCanvas;
+            inkCanvas.Select(filterOnlyMine(inkCanvas.GetSelectedStrokes()), filterOnlyMine(inkCanvas.GetSelectedElements()));
+
             contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
-            contentBuffer.AddDeltaStrokes(Work.GetSelectedStrokes(), (st) => strokesAtTheStart.AddRange(st.Select(s => s.Clone())));
+            contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes(), (st) => strokesAtTheStart.AddRange(st.Select(s => s.Clone())));
 
             contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
-            contentBuffer.AddDeltaImages(GetSelectedClonedImages(), (img) => imagesAtStartOfTheMove.AddRange(img));
+            contentBuffer.AddDeltaImages(GetSelectedClonedImages().ToList(), (img) => imagesAtStartOfTheMove.AddRange(img));
 
             _boxesAtTheStart.Clear();
-            _boxesAtTheStart = Work.GetSelectedElements().Where(b=> b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
+            _boxesAtTheStart = inkCanvas.GetSelectedElements().Where(b=> b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
 
             if (e.NewRectangle.Width == e.OldRectangle.Width && e.NewRectangle.Height == e.OldRectangle.Height)
                 return;
@@ -609,7 +613,7 @@ namespace SandRibbon.Components
                 };           
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
         }
-        private UndoHistory.HistoricalAction InkSelectionMovedOrResized(List<Stroke> selectedStrokes, List<Stroke> undoStrokes)
+        private UndoHistory.HistoricalAction InkSelectionMovedOrResized(IEnumerable<Stroke> selectedStrokes, List<Stroke> undoStrokes)
         {
             Action undo = () =>
                 {
@@ -665,14 +669,14 @@ namespace SandRibbon.Components
         }
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
-            var selectedStrokes = absoluteizeStrokes(Work.GetSelectedStrokes().ToList()).Select(s => s.Clone()).ToList();
-            var selectedElements = absoluteizeElements(Work.GetSelectedElements().ToList());
+            var selectedStrokes = absoluteizeStrokes(filterOnlyMine(Work.GetSelectedStrokes())).Select(s => s.Clone()).ToList();
+            var selectedElements = absoluteizeElements(filterOnlyMine(Work.GetSelectedElements()));
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
-            var ink = InkSelectionMovedOrResized(selectedStrokes, undoStrokes);
-            var images = ImageSelectionMovedOrResized(selectedElements, startingSelectedImages);
-            var text = TextMovedOrResized(selectedElements, _boxesAtTheStart);
+            var ink = InkSelectionMovedOrResized(filterOnlyMine(selectedStrokes), undoStrokes);
+            var images = ImageSelectionMovedOrResized(filterOnlyMine(selectedElements), startingSelectedImages);
+            var text = TextMovedOrResized(filterOnlyMine(selectedElements), _boxesAtTheStart);
             Action undo = () =>
                 {
                     ClearAdorners();
@@ -694,7 +698,7 @@ namespace SandRibbon.Components
             redo(); 
             UndoHistory.Queue(undo, redo, "Selection moved or resized");
         }
-        private List<UIElement> GetSelectedClonedImages()
+        private IEnumerable<UIElement> GetSelectedClonedImages()
         {
             var selectedElements = new List<UIElement>();
             foreach (var element in Work.GetSelectedElements())
@@ -789,7 +793,7 @@ namespace SandRibbon.Components
         {
             return new StrokeCollection(strokes.Where(s => s.tag().author == Globals.me));
         }
-        private IEnumerable<UIElement> filterOnlyMine(ReadOnlyCollection<UIElement> elements)
+        private IEnumerable<UIElement> filterOnlyMine(IEnumerable<UIElement> elements)
         {
             var myText = elements.Where(e => e is MeTLTextBox && ((MeTLTextBox) e).tag().author == Globals.me);
             var myImages = elements.Where(e => e is Image && ((Image) e).tag().author == Globals.me);
@@ -946,7 +950,7 @@ namespace SandRibbon.Components
             canvas.Strokes.Remove(deadStrokes);
         }
 
-        private void addStrokes(List<Stroke> strokes)
+        private void addStrokes(IEnumerable<Stroke> strokes)
         {
             var newStrokes = new StrokeCollection(strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
             foreach (var stroke in newStrokes)
@@ -955,7 +959,7 @@ namespace SandRibbon.Components
             }
             contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
         }
-        private void removeStrokes(List<Stroke> strokes)
+        private void removeStrokes(IEnumerable<Stroke> strokes)
         {
              foreach(var stroke in strokes)
              {
@@ -1127,7 +1131,7 @@ namespace SandRibbon.Components
             redo();
             UndoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
-     protected static List<Stroke> absoluteizeStrokes(List<Stroke> selectedElements)
+     protected static IEnumerable<Stroke> absoluteizeStrokes(IEnumerable<Stroke> selectedElements)
         {
             foreach (var stroke in selectedElements)
             {
@@ -1149,7 +1153,6 @@ namespace SandRibbon.Components
                 }
             }
             return selectedElements;
-
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
@@ -1955,7 +1958,7 @@ namespace SandRibbon.Components
             }
 
         }
-        protected static List<UIElement> absoluteizeElements(List<UIElement> selectedElements)
+        protected static IEnumerable<UIElement> absoluteizeElements(IEnumerable<UIElement> selectedElements)
         {
             foreach (FrameworkElement element in selectedElements)
             {
