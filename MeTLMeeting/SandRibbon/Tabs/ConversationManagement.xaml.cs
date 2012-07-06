@@ -85,7 +85,7 @@ namespace SandRibbon.Tabs
         private void OnBanContentchanged(object sender, ExecutedRoutedEventArgs e)
         {
             var banMode = banContent.IsChecked ?? false;
-            Globals.IsManagementAccessible = banMode;
+            Commands.BanhammerActive.Execute(banMode);
 
             if (banMode)
             {

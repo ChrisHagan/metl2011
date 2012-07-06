@@ -232,7 +232,13 @@ namespace SandRibbon.Providers
             get { return new UserInformation(credentials, location, policy); }
         }
 
-        public static bool IsManagementAccessible { get; set; }
+        public static bool IsBanhammerActive 
+        { 
+            get 
+            {
+                return (bool)(Commands.BanhammerActive.IsInitialised ? Commands.BanhammerActive.LastValue() : false);
+            } 
+        }
 
         public static bool rememberMe 
         {

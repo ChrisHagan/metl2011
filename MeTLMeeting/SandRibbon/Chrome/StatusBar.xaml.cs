@@ -15,6 +15,7 @@ namespace SandRibbon.Chrome
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => SetIdentity()));
+            Commands.BanhammerActive.RegisterCommandToDispatcher(new DelegateCommand<bool>((_unused) => BanhammerActive()));
         }
         private void SetIdentity()
         {
@@ -25,6 +26,10 @@ namespace SandRibbon.Chrome
             showDetails();
         }
         private void JoinConversation(string _jid)
+        {
+            showDetails();
+        }
+        private void BanhammerActive() 
         {
             showDetails();
         }
@@ -45,6 +50,10 @@ namespace SandRibbon.Chrome
                     if (details.UserIsBlackListed(Globals.me))
                     {
                         status = "Banned for inappropriate content: public exposure has been disabled";
+                    }
+                    else if (Globals.IsBanhammerActive)
+                    {
+                        status = "Ban content mode is active";
                     }
                     else
                     {

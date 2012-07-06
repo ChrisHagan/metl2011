@@ -43,14 +43,14 @@ namespace SandRibbon.Components
                 hideButton.Visibility = Visibility.Visible;
             }
 
-            if (Globals.IsManagementAccessible)
+            if (Globals.IsBanhammerActive)
             {
                 deleteButton.Visibility = Visibility.Collapsed;
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Collapsed;
             }
 
-            if (Globals.IsManagementAccessible && Globals.isAuthor)
+            if (Globals.IsBanhammerActive && Globals.isAuthor)
                 banhammerButton.Visibility = Visibility.Visible;
             else
                 banhammerButton.Visibility = Visibility.Collapsed;

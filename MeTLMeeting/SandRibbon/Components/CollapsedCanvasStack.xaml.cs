@@ -717,7 +717,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
              {
-                 if (Globals.IsManagementAccessible)
+                 if (Globals.IsBanhammerActive)
                  {
                     e.SetSelectedElements(filterExceptMine(e.GetSelectedElements()));
                     e.SetSelectedStrokes(filterExceptMine(e.GetSelectedStrokes()));
@@ -806,6 +806,10 @@ namespace SandRibbon.Components
         private T filterOnlyMine<T>(UIElement element) where T : UIElement
         {
             UIElement filteredElement = null;
+
+            if (element == null)
+                return null;
+
             if (element is MeTLTextBox)
             {
                 filteredElement = ((MeTLTextBox)element).tag().author == Globals.me ? element : null; 
@@ -2619,10 +2623,10 @@ namespace SandRibbon.Components
         {
             if (me == Globals.PROJECTOR) return;
            //text 
-            var selectedElements = Work.GetSelectedElements().ToList();
-            var selectedStrokes = Work.GetSelectedStrokes().Select((s => s.Clone())).ToList();
+            var selectedElements = filterOnlyMine(Work.GetSelectedElements()).ToList();
+            var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes()).Select((s => s.Clone())).ToList();
             string selectedText = "";
-            if(myTextBox != null)
+            if(filterOnlyMine<MeTLTextBox>(myTextBox) != null)
                 selectedText = myTextBox.SelectedText;
 
             Action undo = () => Clipboard.GetData(typeof (MeTLClipboardData).ToString());
@@ -2739,10 +2743,10 @@ namespace SandRibbon.Components
         protected void HandleCut(object _args)
         {
             if (me == Globals.PROJECTOR) return;
-            var strokesToCut = Work.GetSelectedStrokes().Select(s => s.Clone());
-            var currentTextBox = myTextBox.clone();
-            var selectedImages = Work.GetSelectedImages().Select(i => ((Image)i).clone()).ToList();
-            var selectedText = Work.GetSelectedTextBoxes().Select(t => ((MeTLTextBox) t).clone()).ToList();
+            var strokesToCut = filterOnlyMine(Work.GetSelectedStrokes()).Select(s => s.Clone());
+            var currentTextBox = filterOnlyMine<MeTLTextBox>(myTextBox.clone());
+            var selectedImages = filterOnlyMine(Work.GetSelectedImages()).Select(i => ((Image)i).clone()).ToList();
+            var selectedText = filterOnlyMine(Work.GetSelectedTextBoxes()).Select(t => ((MeTLTextBox) t).clone()).ToList();
 
             Action redo = () =>
             {
