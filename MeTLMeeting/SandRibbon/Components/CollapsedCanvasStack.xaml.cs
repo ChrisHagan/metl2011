@@ -803,6 +803,20 @@ namespace SandRibbon.Components
             return myElements;
         }
 
+        private T filterOnlyMine<T>(UIElement element) where T : UIElement
+        {
+            UIElement filteredElement = null;
+            if (element is MeTLTextBox)
+            {
+                filteredElement = ((MeTLTextBox)element).tag().author == Globals.me ? element : null; 
+            }
+            else if (element is Image)
+            {
+                filteredElement = ((Image)element).tag().author == Globals.me ? element : null; 
+            }
+            return filteredElement as T;
+        }
+
         private void selectionChanged(object sender, EventArgs e)
         {
             Dispatcher.adopt(() =>
@@ -1973,9 +1987,13 @@ namespace SandRibbon.Components
         private void resetTextbox(object obj)
         {
             if (myTextBox == null && Work.GetSelectedElements().Count != 1) return;
-            if(myTextBox == null)
+            if (myTextBox == null)
                 myTextBox = (MeTLTextBox)Work.GetSelectedElements().Where(b => b is MeTLTextBox).First();
-            var currentTextBox = myTextBox;
+
+            var currentTextBox = filterOnlyMine<MeTLTextBox>(myTextBox); 
+            if (currentTextBox == null)
+                return;
+
             var undoInfo = getInfoOfBox(currentTextBox);
             Action undo = () =>
             {
@@ -2015,10 +2033,11 @@ namespace SandRibbon.Components
         {
             try
             {
+
                 _currentColor = info.Color;
                 _currentFamily = info.Family;
                 _currentSize = info.Size;
-                if (myTextBox != null)
+                if (filterOnlyMine<MeTLTextBox>(myTextBox) != null)
                 {
                     var caret = myTextBox.CaretIndex;
                     var currentTextBox = myTextBox.clone();
@@ -2067,9 +2086,13 @@ namespace SandRibbon.Components
                     myTextBox.GotFocus += textboxGotFocus;
                     */
                 }
-                else if (Work.GetSelectedElements().Count > 0)
+                else 
                 {
-                    var originalElements = Work.GetSelectedElements().ToList().Select(tb => ((MeTLTextBox)tb).clone());
+                    var filteredTextboxes = filterOnlyMine(Work.GetSelectedTextBoxes());
+                    if (filteredTextboxes.Count() < 1)
+                        return;
+
+                    var originalElements = filteredTextboxes.Select(tb => ((MeTLTextBox)tb).clone());
                     Action undo = () =>
                                       {
                                           ClearAdorners();
@@ -2094,7 +2117,6 @@ namespace SandRibbon.Components
                                       };
                     UndoHistory.Queue(undo, redo, "Styling of texzt changed");
                     redo();
-
                 }
             }
             catch (Exception e)
