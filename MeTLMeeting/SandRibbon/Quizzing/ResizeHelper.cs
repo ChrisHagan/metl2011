@@ -20,7 +20,7 @@ namespace SandRibbon.Quizzing
             var totalHeight = element.ActualHeight;
             var aspectRatio = totalWidth / totalHeight;
 
-            if (overrideSize == null || overrideSize.IsEmpty)
+            if (overrideSize == null || (overrideSize.Width * overrideSize.Height) < 1e-8)
             {
                 overrideSize.Width = ((double)Globals.DefaultCanvasSize.Width - (Globals.QuizMargin * 2));
                 overrideSize.Height = ((double)Globals.DefaultCanvasSize.Height - (Globals.QuizMargin * 2)); 
