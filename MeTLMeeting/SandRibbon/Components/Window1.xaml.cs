@@ -82,6 +82,7 @@ namespace SandRibbon
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -1195,6 +1196,7 @@ namespace SandRibbon
             }
             else
             {
+                Commands.CloseApplication.Execute(null);
                 Application.Current.Shutdown();
             }
         }

@@ -17,15 +17,17 @@ namespace SandRibbon.Components
         NoneVisible = 0,
         OwnerVisible = 1 << 0,
         TheirsVisible = 1 << 1,
-        MineVisible = 1 << 2,
-        AllVisible = OwnerVisible | TheirsVisible | MineVisible
+        MyPrivateVisible = 1 << 2,
+        MyPublicVisible = 1 << 3,
+        AllVisible = OwnerVisible | TheirsVisible | MyPrivateVisible | MyPublicVisible
     }
     
     public partial class ContentVisibility : INotifyPropertyChanged
     {
         private bool ownerVisible = true;
         private bool theirsVisible = true;
-        private bool mineVisible = true; 
+        private bool myPrivateVisible = true; 
+        private bool myPublicVisible = true; 
 
         public event PropertyChangedEventHandler PropertyChanged;
         public static readonly DependencyProperty IsConversationOwnerProperty =
@@ -76,15 +78,28 @@ namespace SandRibbon.Components
             }
         }
 
-        public bool MineVisible
+        public bool MyPrivateVisible
         {
-            get { return mineVisible; } 
+            get { return myPrivateVisible; } 
             set
             {
-                if (value != mineVisible)
+                if (value != myPrivateVisible)
                 {
-                    mineVisible = value;
-                    NotifyPropertyChanged("MineVisible");
+                    myPrivateVisible = value;
+                    NotifyPropertyChanged("MyPrivateVisible");
+                }
+            }
+        }
+
+        public bool MyPublicVisible
+        {
+            get { return myPublicVisible; } 
+            set
+            {
+                if (value != myPublicVisible)
+                {
+                    myPublicVisible = value;
+                    NotifyPropertyChanged("MyPublicVisible");
                 }
             }
         }
@@ -93,7 +108,8 @@ namespace SandRibbon.Components
         {
             var flags = OwnerVisible ? ContentVisibilityEnum.OwnerVisible : ContentVisibilityEnum.NoneVisible;
             flags |= TheirsVisible ? ContentVisibilityEnum.TheirsVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= MineVisible ? ContentVisibilityEnum.MineVisible : ContentVisibilityEnum.NoneVisible;
+            flags |= MyPrivateVisible ? ContentVisibilityEnum.MyPrivateVisible : ContentVisibilityEnum.NoneVisible;
+            flags |= MyPublicVisible ? ContentVisibilityEnum.MyPublicVisible : ContentVisibilityEnum.NoneVisible;
 
             // if the owner then ignore owner flag and only use mine flag
             if (Globals.isAuthor)
@@ -113,7 +129,8 @@ namespace SandRibbon.Components
         {
             OwnerVisible = IsVisibilityFlagSet(ContentVisibilityEnum.OwnerVisible, contentVisibility);
             TheirsVisible = IsVisibilityFlagSet(ContentVisibilityEnum.TheirsVisible, contentVisibility);
-            MineVisible = IsVisibilityFlagSet(ContentVisibilityEnum.MineVisible, contentVisibility); 
+            MyPrivateVisible = IsVisibilityFlagSet(ContentVisibilityEnum.MyPrivateVisible, contentVisibility); 
+            MyPublicVisible = IsVisibilityFlagSet(ContentVisibilityEnum.MyPublicVisible, contentVisibility); 
         }
 
         private bool IsVisibilityFlagSet(ContentVisibilityEnum mask, ContentVisibilityEnum flags)

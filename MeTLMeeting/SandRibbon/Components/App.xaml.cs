@@ -144,6 +144,7 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
+            Logger.Instantiate();
             //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);

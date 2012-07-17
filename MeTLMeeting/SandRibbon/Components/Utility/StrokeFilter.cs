@@ -24,6 +24,11 @@ namespace SandRibbon.Components.Utility
             return element.tag().author;
         }
 
+        protected override string PrivacyFromTag(Stroke element)
+        {
+            return element.tag().privacy;
+        }
+
         public IEnumerable<Stroke> StrokesWithChecksums(IEnumerable<string> checksums)
         {
             return contentCollection.Where(s => checksums.Contains(s.sum().checksum.ToString())).ToList();
