@@ -71,7 +71,7 @@ namespace SandRibbon.Utils
             try
             {
                 // content has been modified, so make sure "my" content is visible
-                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MineVisible);
+                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
             }
             catch (Exception)
             {

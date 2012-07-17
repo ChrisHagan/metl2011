@@ -194,6 +194,7 @@ namespace MeTLLib.Providers.Connection
                 NetworkChange.NetworkAvailabilityChanged += networkAvailabilityChanged;
             }
         }
+
         private void establishHeartBeat()
         {
             heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
@@ -458,9 +459,18 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-        
+                private void shutdownHeartBeat()
+        {
+            if (heartbeat != null)
+            {
+                heartbeat.Dispose();
+                heartbeat = null;
+            }
+        }
+
         public void Logout()
         {
+            shutdownHeartBeat();
             conn.OnClose -= OnClose;//Don't automatically reconnect this time
             conn.Close();
         }

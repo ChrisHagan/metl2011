@@ -20,7 +20,6 @@
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
-        <CommandBinding Command="{x:Static api:Commands.CloseApplication}" Executed="closeApplication" />
     </sr:RibbonWindow.CommandBindings>
     <sr:RibbonWindow.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />

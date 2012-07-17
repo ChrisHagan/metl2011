@@ -30,6 +30,11 @@ namespace SandRibbon.Components.Utility
             return (element as TextBox).tag().author;
         }
 
+        protected override string PrivacyFromTag(UIElement element)
+        {
+            return (element as TextBox).tag().privacy;
+        }
+
         List<UIElement> TextBoxes
         {
             get

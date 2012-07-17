@@ -73,7 +73,7 @@ namespace SandRibbon.Tabs.Groups
             fontSize.SelectionChanged += fontSizeSelected;
             fontFamily.SelectionChanged += fontFamilySelected;
 
-            Globals.currentTextInfo = info;
+            Globals.currentTextInfo = new TextInformation(info);
         }
         private void sendValues()
         {
@@ -88,7 +88,7 @@ namespace SandRibbon.Tabs.Groups
                 Strikethrough = TextStrikethroughButton.IsChecked == true,
                 Color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
             };
-            Globals.currentTextInfo = info;
+            Globals.currentTextInfo = new TextInformation(info);
             Commands.UpdateTextStyling.Execute(info);
         }
 

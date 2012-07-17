@@ -27,6 +27,10 @@ namespace SandRibbon.Components.Utility
         {
             return string.Empty;
         }
+        protected virtual string PrivacyFromTag(T element)
+        {
+            return string.Empty;
+        }
 
         public void Add(T element)
         {
@@ -162,14 +166,14 @@ namespace SandRibbon.Components.Utility
         public T FilterContent(T element, ContentVisibilityEnum contentVisibility)
         {
             var comparer = BuildComparer(contentVisibility);
-            return comparer.Any((comp) => comp(AuthorFromTag(element))) ? element : default(T);
+            return comparer.Any((comp) => comp(AuthorFromTag(element), PrivacyFromTag(element))) ? element : default(T);
         }
 
         public C FilterContent(C elements, ContentVisibilityEnum contentVisibility)
         {
             var comparer = BuildComparer(contentVisibility);
             var tempList = new C();
-            var matchedElements = elements.Where(elem => comparer.Any((comp) => comp(AuthorFromTag(elem))));
+            var matchedElements = elements.Where(elem => comparer.Any((comp) => comp(AuthorFromTag(elem), PrivacyFromTag(elem))));
 
             foreach (var elem in matchedElements)
             {
@@ -181,19 +185,22 @@ namespace SandRibbon.Components.Utility
 
         #region Helpers
 
-        private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
+        private List<Func<string, string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
         {
-            var comparer = new List<Func<string,bool>>();
+            var comparer = new List<Func<string, string, bool>>();
             var conversationAuthor = Globals.conversationDetails.Author;
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
-                comparer.Add((elementAuthor) => elementAuthor == conversationAuthor);
+                comparer.Add((elementAuthor, _unused) => elementAuthor == conversationAuthor);
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible))
-                comparer.Add((elementAuthor) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
+                comparer.Add((elementAuthor, _unused) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
 
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible))
-                comparer.Add((elementAuthor) => elementAuthor == Globals.me);
+            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MyPrivateVisible))
+                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy.ToLower() == Globals.PRIVATE);
+
+            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MyPublicVisible))
+                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy.ToLower() == Globals.PUBLIC);
 
             return comparer;
         }
