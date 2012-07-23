@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Timers;
 using System.Collections;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Utility
 {
@@ -29,9 +30,10 @@ namespace SandRibbon.Components.Utility
         {
             worker.Stop();
         }
-
+        private int numHits = 0;
         public void Add(Action timedAction)
         {
+            Debug.WriteLine(string.Format("Adding timed action Hits{0}", ++numHits));
             lock (lockObj)
             {
                 AddAction(timedAction);
