@@ -1869,33 +1869,19 @@ namespace SandRibbon.Components
                 var myText = undoText;
                 var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
                 sendTextWithoutHistory(updatedTextBox, updatedTextBox.tag().privacy);
-                //mybox.TextChanged -= SendNewText;
-                //mybox.Text = myText;
-                /*if (String.IsNullOrEmpty(myText))
-                    dirtyTextBoxWithoutHistory(mybox);
-                else*/
-                //mybox.TextChanged += SendNewText;
             };
             Action redo = () =>
             {
                 ClearAdorners();
                 var myText = redoText;
                 var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
-                Debug.WriteLine("Send Text Via SendNewText::Redo");
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
-                //mybox.TextChanged -= SendNewText;
-                //mybox.Text = myText;
-                /*if (String.IsNullOrEmpty(myText))
-                    dirtyTextBoxWithoutHistory(mybox);
-                else*/
-                //mybox.TextChanged += SendNewText;
             }; 
             UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
             // only do the change locally and let the timer do the rest
             ClearAdorners();
             UpdateTextBoxWithId(mybox, redoText);
-            Debug.WriteLine(string.Format("Updated text Via SendNewText [{0}]", redoText));
 
             var currentSlide = Globals.slide;
             Action typingTimedAction = () =>
@@ -1903,7 +1889,6 @@ namespace SandRibbon.Components
                 Dispatcher.adoptAsync(delegate
                 {
                     var senderTextBox = sender as MeTLTextBox;
-                    Debug.WriteLine("SendText Via Typing Timer");
                     sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
                     TypingTimer = null;
                     GlobalTimers.ExecuteSync();
@@ -2118,8 +2103,6 @@ namespace SandRibbon.Components
         }
         public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy, int slide)
         {
-            Debug.WriteLine("Sending text: " + box.Text);
-            //RemovePrivacyStylingFromElement(box);
             if (box.tag().privacy != Globals.privacy)
                 dirtyTextBoxWithoutHistory(box);
             var oldTextTag = box.tag();
