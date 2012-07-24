@@ -110,7 +110,14 @@
                 <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
                 <Grid Grid.Column="4" x:Name="rightDrawer">
                     <!--components:Drawer/-->
-                    <components:SlideDisplay x:Name="slides" />
+                    <TabControl x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
+                        <TabItem Header="Pages" Width="80">
+                            <components:SlideDisplay x:Name="slides" />
+                        </TabItem>
+                        <TabItem Header="Notes" Width="80">
+                           Notes go here 
+                        </TabItem>
+                    </TabControl>
                 </Grid>
             </Grid>
             <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >

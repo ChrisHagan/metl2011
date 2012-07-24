@@ -558,12 +558,27 @@ namespace SandRibbon
         {
             CanvasBlocker.Visibility = Visibility.Collapsed;
         }
+
+        private void EnsureConversationTabSelected()
+        {
+            // ensure the "pages" tab is selected
+            Action selectPagesTab = () =>
+                {
+                    if (contentTabs.SelectedIndex != 0) 
+                        contentTabs.SelectedIndex = 0;
+                };
+            Dispatcher.Invoke(selectPagesTab, System.Windows.Threading.DispatcherPriority.Normal);
+        }
+
         private void ExecuteMoveTo(int slide)
         {
+            EnsureConversationTabSelected();
             MoveTo(slide);
         }
         private void JoinConversation(string title)
         {
+            EnsureConversationTabSelected();
+
             if(ribbon.SelectedTab!=null)
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var thisDetails = ClientFactory.Connection().DetailsOf(title);
@@ -708,6 +723,8 @@ namespace SandRibbon
         }
         private void createConversation(object detailsObject)
         {
+            EnsureConversationTabSelected();
+
             var details = (ConversationDetails)detailsObject;
             if (details == null) return;
             if (Commands.CreateConversation.CanExecute(details))
