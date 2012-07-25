@@ -132,7 +132,7 @@ namespace SandRibbon.Components
                 MeTLTextBox focusedTextBox = null;
                 Dispatcher.adopt(() =>
                 {
-                    focusedTextBox = FocusManager.GetFocusedElement(Window.GetWindow(this)) as MeTLTextBox;
+                    focusedTextBox = FocusManager.GetFocusedElement(Work) as MeTLTextBox;
                 });
                 return focusedTextBox;
             }
@@ -733,21 +733,8 @@ namespace SandRibbon.Components
 
         private void selectionChanged(object sender, EventArgs e)
         {
-            Dispatcher.adopt(() =>
-                                      {
-                                          ClearAdorners();
-                                          /*var selectedTextBoxes = Work.GetSelectedElements().OfType<MeTLTextBox>();
-                                          if (me != Globals.PROJECTOR && selectedTextBoxes.Count() > 0)
-                                          {
-                                              FocusManager.SetFocusedElement(Window.GetWindow(this), selectedTextBoxes.First());
-                                          }*/
-                                          /*if (Work.GetSelectedTextBoxes().Count() > 0)
-                                              myTextBox = (MeTLTextBox)Work.GetSelectedTextBoxes().First();
-                                          else
-                                              myTextBox = null;*/
-                                          AddAdorners();
-                                          updateTools();
-                                      });
+            updateTools();
+            AddAdorners();
         }
        
         protected internal void AddAdorners()
@@ -1817,43 +1804,29 @@ namespace SandRibbon.Components
             e.Handled = true;
         }
 
-        private MeTLTextBox UpdateTextBoxWithId(MeTLTextBox textbox, string newText)
+        private MeTLTextBox FindOrCreateTextBoxFromId(MeTLTextBox textbox)
         {
-            // find textbox if it exists, otherwise create it
-            var createdNew = false;
             var box = textBoxFromId(textbox.tag().id);
             if (box == null)
             {
                 box = textbox.clone();
-                createdNew = true;
+                AddTextBoxToCanvas(box);
             }
 
-            var oldBox = textbox;
-            // update with changes
-            /*box.AcceptsReturn = true;
-            box.TextWrapping = TextWrapping.WrapWithOverflow;
-            box.BorderThickness = new Thickness(0);
-            box.BorderBrush = new SolidColorBrush(Colors.Transparent);
-            box.Background = new SolidColorBrush(Colors.Transparent);
-            box.tag(oldBox.tag());
-            box.FontFamily = oldBox.FontFamily;
-            box.FontStyle = oldBox.FontStyle;
-            box.FontWeight = oldBox.FontWeight;
-            box.TextDecorations = oldBox.TextDecorations;
-            box.FontSize = oldBox.FontSize;
-            box.Foreground = oldBox.Foreground;*/
-            box.TextChanged -= SendNewText;
-            //var caret = box.CaretIndex;
-            box.Text = newText;
-            //box.CaretIndex = caret;
-            box.TextChanged += SendNewText;
-            //box.Width = oldBox.Width;
-            //box.Height = OldBox.Height;
-            InkCanvas.SetLeft(box, InkCanvas.GetLeft(oldBox));
-            InkCanvas.SetTop(box, InkCanvas.GetTop(oldBox));
+            InkCanvas.SetLeft(box, InkCanvas.GetLeft(textbox));
+            InkCanvas.SetTop(box, InkCanvas.GetTop(textbox));
 
-            if (createdNew)
-                AddTextBoxToCanvas(box);
+            return box;
+        }
+
+        private MeTLTextBox UpdateTextBoxWithId(MeTLTextBox textbox, string newText)
+        {
+            // find textbox if it exists, otherwise create it
+            var box = FindOrCreateTextBoxFromId(textbox); 
+
+            box.TextChanged -= SendNewText;
+            box.Text = newText;
+            box.TextChanged += SendNewText;
 
             return box;
         }
@@ -1967,111 +1940,53 @@ namespace SandRibbon.Components
         {
             try
             {
-                _currentColor = info.Color;
-                _currentFamily = info.Family;
-                _currentSize = info.Size;
+                var selectedTextBoxes = new List<MeTLTextBox>();
                 if (myTextBox != null)
+                    selectedTextBoxes.Add(myTextBox);
+                selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
+                var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
+
+                if (selectedTextBox != null)
                 {
-                    var caret = myTextBox.CaretIndex;
-                    var currentTextBox = myTextBox.clone();
-                    var oldInfo = getInfoOfBox(currentTextBox);
+                    // create a clone of the selected textboxes and their textinformation so we can keep a reference to something that won't be changed
+                    var clonedTextBox = selectedTextBox.clone();
+                    var clonedTextInfo = getInfoOfBox(selectedTextBox); 
 
                     Action undo = () =>
-                                      {
-                                          ClearAdorners();
-                                          var currentInfo = oldInfo;
-                                          var activeTextbox = ((MeTLTextBox)Work.Children.ToList().Where(c => 
-                                            { 
-                                                if (c is MeTLTextBox) 
-                                                    return ((MeTLTextBox)c).tag().id == currentTextBox.tag().id; 
-                                                else 
-                                                    return false; 
-                                            }).FirstOrDefault());
-                                          if (activeTextbox != null)
-                                          {
-                                              activeTextbox.TextChanged -= SendNewText;
-                                              applyStylingTo(activeTextbox, currentInfo);
-                                              Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                              AddAdorners();
-                                              sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                              activeTextbox.TextChanged += SendNewText;
-                                          }
-                                      };
-                    Action redo = () =>
-                                      {
-                                          ClearAdorners();
-                                          var currentInfo = info;
-                                          var activeTextbox = ((MeTLTextBox) Work.TextChildren().ToList().Where( c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id). FirstOrDefault());
-                                          activeTextbox.TextChanged -= SendNewText;
-                                          applyStylingTo(activeTextbox, currentInfo);
-                                          Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                          AddAdorners();
-                                          sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                          activeTextbox.TextChanged += SendNewText;
+                      {
+                          ClearAdorners();
 
-                                      };
+                          // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
+                          var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
+                          if (activeTextbox != null)
+                          {
+                              var activeTextInfo = clonedTextInfo;
+                              activeTextbox.TextChanged -= SendNewText;
+                              applyStylingTo(activeTextbox, activeTextInfo);
+                              Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
+                              AddAdorners();
+                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              activeTextbox.TextChanged += SendNewText;
+                          }
+                      };
+                    Action redo = () =>
+                      {
+                          ClearAdorners();
+
+                          var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
+                          if (activeTextbox != null)
+                          {
+                              var activeTextInfo = info; 
+                              activeTextbox.TextChanged -= SendNewText;
+                              applyStylingTo(activeTextbox, activeTextInfo);
+                              Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
+                              AddAdorners();
+                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              activeTextbox.TextChanged += SendNewText;
+                          }
+                      };
                     UndoHistory.Queue(undo, redo, "Styling of text changed");
                     redo();
-                    /*
-                    myTextBox.GotFocus -= textboxGotFocus;
-                    myTextBox.CaretIndex = caret;
-                    myTextBox.Focus();
-                    myTextBox.GotFocus += textboxGotFocus;
-                    */
-                }
-                else if (Work.GetSelectedElements().OfType<MeTLTextBox>().Count() > 0)
-                {
-                    // create a clone of the selected textboxes and their textinformation
-                    var selectedTextBoxes = new List<MeTLTextBox>();
-                    var selectedTextBoxInfos = new List<TextInformation>();
-                    foreach (var textbox in Work.GetSelectedElements().OfType<MeTLTextBox>())
-                    {
-                        selectedTextBoxes.Add(textbox.clone());
-                        selectedTextBoxInfos.Add(getInfoOfBox(textbox));
-                    }
-                    var currentTextBox = myTextBox.clone();
-                    var oldInfo = getInfoOfBox(currentTextBox);
-
-                    var originalElements = Work.GetSelectedElements().ToList().Select(tb => ((MeTLTextBox)tb).clone());
-                    Action undo = () =>
-                                      {
-                                          // TODO: replace with the myTextBox != null undo code, should be the same. refactor this whole function.
-                                          ClearAdorners();
-                                          var currentInfo = oldInfo;
-                                          // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
-                                          //var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
-                                          var activeTextbox = ((MeTLTextBox)Work.Children.ToList().Where(c => 
-                                            { 
-                                                if (c is MeTLTextBox) 
-                                                    return ((MeTLTextBox)c).tag().id == currentTextBox.tag().id; 
-                                                else 
-                                                    return false; 
-                                            }).FirstOrDefault());
-                                          if (activeTextbox != null)
-                                          {
-                                              activeTextbox.TextChanged -= SendNewText;
-                                              applyStylingTo(activeTextbox, currentInfo);
-                                              Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                              AddAdorners();
-                                              sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                              activeTextbox.TextChanged += SendNewText;
-                                          }
-                                      };
-                    Action redo = () =>
-                                      {
-                                          ClearAdorners();
-                                          var currentInfo = info;
-                                          var activeTextbox = ((MeTLTextBox) Work.TextChildren().ToList().Where( c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id). FirstOrDefault());
-                                          activeTextbox.TextChanged -= SendNewText;
-                                          applyStylingTo(activeTextbox, currentInfo);
-                                          Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                          AddAdorners();
-                                          sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                          activeTextbox.TextChanged += SendNewText;
-                                      };
-                    UndoHistory.Queue(undo, redo, "Styling of text changed");
-                    redo();
-
                 }
             }
             catch (Exception e)
@@ -2203,10 +2118,10 @@ namespace SandRibbon.Components
         private void textboxGotFocus(object sender, RoutedEventArgs e)
         {
             if (((MeTLTextBox)sender).tag().author != me) return; //cannot edit other peoples textboxes
-          if (me != Globals.PROJECTOR)
-          {
-              FocusManager.SetFocusedElement(Window.GetWindow(this), sender as MeTLTextBox);
-          } 
+            if (me != Globals.PROJECTOR)
+            {
+              FocusManager.SetFocusedElement(Work, sender as MeTLTextBox);
+            } 
             CommandManager.InvalidateRequerySuggested();
             if (myTextBox == null) 
                 return;
