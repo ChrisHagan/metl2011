@@ -459,7 +459,8 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-                private void shutdownHeartBeat()
+        
+        private void shutdownHeartBeat()
         {
             if (heartbeat != null)
             {

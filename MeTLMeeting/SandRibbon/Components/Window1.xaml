@@ -102,7 +102,7 @@
                         <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
                         </Grid>
                     </Grid>
-                    <components:ScrollBar x:Name="adornerScroll"/>
+                    <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}"/>
                     <AdornerDecorator>
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
@@ -115,7 +115,20 @@
                             <components:SlideDisplay x:Name="slides" />
                         </TabItem>
                         <TabItem Header="Notes" Width="80">
-                           Notes go here 
+                            <Grid>
+                                <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
+                                    <InkCanvas EditingMode="None" Background="Transparent" x:Name="notesAdorner"/>
+                                    <Viewbox x:Name="notesViewBox" SizeChanged="zoomConcernedControlSizeChanged">
+                                        <ScrollViewer x:Name="notesScroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                            <components:PrivateNotepadSpace Height="auto" Width="auto"  x:Name="privateNotes" />
+                                        </ScrollViewer>
+                                    </Viewbox>
+                                </Grid>
+                                <components:ScrollBar x:Name="notesAdornerScroll"/>
+                                <AdornerDecorator>
+                                    <Canvas x:Name="notesPrivacyTools"/>
+                                </AdornerDecorator>
+                            </Grid>
                         </TabItem>
                     </TabControl>
                 </Grid>

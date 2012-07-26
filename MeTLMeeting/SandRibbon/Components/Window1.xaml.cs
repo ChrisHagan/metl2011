@@ -145,9 +145,6 @@ namespace SandRibbon
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
             Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
-            adornerScroll.scroll = scroll;
-            adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
-            adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
             AddWindowEffect(null);

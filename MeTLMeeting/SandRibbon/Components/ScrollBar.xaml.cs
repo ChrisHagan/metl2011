@@ -6,65 +6,86 @@ namespace SandRibbon.Components
 {
     public partial class ScrollBar : UserControl
     {
-        public ScrollViewer scroll;
+        public static readonly DependencyProperty ScrollViewerProperty =
+            DependencyProperty.Register("ScrollViewer", typeof(ScrollViewer), typeof(ScrollBar));
+
+        public ScrollViewer ScrollViewer
+        {
+            get { return (ScrollViewer)GetValue(ScrollViewerProperty); }
+            set 
+            { 
+                SetValue(ScrollViewerProperty, value);
+
+                if (value != null)
+                {
+                    ScrollViewer.SizeChanged += sizeChanged;
+                    ScrollViewer.ScrollChanged += scrollChanged;
+                }
+            }
+        }
+
         public ScrollBar()
         {
             InitializeComponent();
-            scroll = new ScrollViewer();
-            scroll.SizeChanged += scrollChanged;
-            scroll.ScrollChanged += scroll_ScrollChanged;
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
 
             updateScrollBarButtonDistances();
             VScroll.SmallChange = 10;
             HScroll.SmallChange = 10;
         }
-        public void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+
+        private void scrollChanged(object sender, ScrollChangedEventArgs e)
         {
             adjustScrollers();
         }
-        public void scrollChanged(object sender, SizeChangedEventArgs e)
+
+        private void sizeChanged(object sender, SizeChangedEventArgs e)
         {
             adjustScrollers();
         }
+
         private void ExtendBoth(object _unused)
         {
-            var canvas = (FrameworkElement)scroll.Content;
+            var canvas = (FrameworkElement)ScrollViewer.Content;
             Commands.ExtendCanvasBySize.Execute(new Size(canvas.ActualWidth * 1.2, canvas.ActualHeight * 1.2));
         }
+
         private void VScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (scroll.VerticalOffset != VScroll.Value)
+            if (ScrollViewer.VerticalOffset != VScroll.Value)
             {
-
-                scroll.ScrollToVerticalOffset(VScroll.Value);
+                ScrollViewer.ScrollToVerticalOffset(VScroll.Value);
             }
         }
+
         private void HScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (scroll.HorizontalOffset != HScroll.Value)
-                scroll.ScrollToHorizontalOffset(HScroll.Value);
+            if (ScrollViewer.HorizontalOffset != HScroll.Value)
+                ScrollViewer.ScrollToHorizontalOffset(HScroll.Value);
         }
-        public void adjustScrollers()
+
+        private void adjustScrollers()
         {
-            if (scroll.VerticalOffset != VScroll.Value)
-                VScroll.Value = scroll.VerticalOffset;
-            if (scroll.HorizontalOffset != HScroll.Value)
-                HScroll.Value = scroll.HorizontalOffset;
-            if (scroll.ScrollableHeight != VScroll.Maximum)
-                VScroll.Maximum = scroll.ScrollableHeight;
-            if (scroll.ScrollableWidth != HScroll.Maximum)
-                HScroll.Maximum = scroll.ScrollableWidth;
-            HScroll.ViewportSize = scroll.ActualWidth;
-            VScroll.ViewportSize = scroll.ActualHeight;
+            if (ScrollViewer.VerticalOffset != VScroll.Value)
+                VScroll.Value = ScrollViewer.VerticalOffset;
+            if (ScrollViewer.HorizontalOffset != HScroll.Value)
+                HScroll.Value = ScrollViewer.HorizontalOffset;
+            if (ScrollViewer.ScrollableHeight != VScroll.Maximum)
+                VScroll.Maximum = ScrollViewer.ScrollableHeight;
+            if (ScrollViewer.ScrollableWidth != HScroll.Maximum)
+                HScroll.Maximum = ScrollViewer.ScrollableWidth;
+            HScroll.ViewportSize = ScrollViewer.ActualWidth;
+            VScroll.ViewportSize = ScrollViewer.ActualHeight;
+
             updateScrollBarButtonDistances();
         }
+
         private void updateScrollBarButtonDistances()
         {
-            if (scroll != null)
+            if (ScrollViewer != null)
             {
-                HScroll.LargeChange = scroll.ActualWidth;
-                VScroll.LargeChange = scroll.ActualHeight;
+                HScroll.LargeChange = ScrollViewer.ActualWidth;
+                VScroll.LargeChange = ScrollViewer.ActualHeight;
             }
         }
     }

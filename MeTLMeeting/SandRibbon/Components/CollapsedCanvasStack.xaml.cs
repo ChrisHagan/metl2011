@@ -1229,7 +1229,7 @@ namespace SandRibbon.Components
         {
             foreach (var image in images)
             {
-                if (image.slide == Globals.slide)
+                if (image.slide == Globals.slide && image.target == _target)
                 {
                     TargettedImage image1 = image;
                     if (image.author == me || image.privacy == Globals.PUBLIC)
@@ -1288,7 +1288,7 @@ namespace SandRibbon.Components
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-            if (!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
+            if ((!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor) || (_target == "notepad"))
             {
                 RemovePrivacyStylingFromElement(element);
                 return;

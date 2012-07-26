@@ -160,6 +160,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Components\PrivateNotepadSpace.xaml.cs">
+      <DependentUpon>PrivateNotepadSpace.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Utility\ContentFilter.cs" />
     <Compile Include="Components\Utility\StrokeChecksumFilter.cs" />
     <Compile Include="Components\Utility\TextFilter.cs" />
@@ -273,6 +276,10 @@
     <Page Include="Components\PrivacyToggleButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\PrivateNotepadSpace.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
