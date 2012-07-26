@@ -437,9 +437,9 @@ namespace SandRibbon
             var difference = val2 * tolerance;
             return val1 > (val2 - difference) && val1 > (val2 + difference);
         }
-        private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
+        private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info, FrameworkElement viewBox)
         {
-            var adorner = ((FrameworkElement)canvasViewBox);
+            var adorner = viewBox; 
             Dispatcher.adoptAsync(() =>
             {
                 var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
@@ -455,6 +455,14 @@ namespace SandRibbon
             if (adornerLayer == null) return null;
             return adornerLayer.GetAdorners(canvasViewBox);
         }
+
+        private Adorner[] GetNotepadPrivacyAdorners()
+        {
+            var adornerLayer = AdornerLayer.GetAdornerLayer(notesViewBox);
+            if (adornerLayer == null) return null;
+            return adornerLayer.GetAdorners(canvasViewBox);
+        }
+
         private void UpdatePrivacyAdorners()
         {
             var privacyAdorners = getPrivacyAdorners();
@@ -479,6 +487,33 @@ namespace SandRibbon
                         adornerLayer.Remove(adorner);
             });
         }
+
+        private void UpdateNotepadPrivacyAdorners()
+        {
+            var privacyAdorners = GetNotepadPrivacyAdorners();
+            RemoveNotepadPrivacyAdorners(null);
+            if (privacyAdorners != null && privacyAdorners.Count() > 0)
+                try
+                {
+                    var lastValue = Commands.AddPrivacyToggleButton.LastValue();
+                    if (lastValue != null)
+                        AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
+                }
+                catch (NotSetException) { }
+        }
+
+        private void RemoveNotepadPrivacyAdorners(object _unused)
+        {
+            Dispatcher.adoptAsync(delegate
+            {
+                var adorners = GetNotepadPrivacyAdorners();
+                var adornerLayer = AdornerLayer.GetAdornerLayer(canvasViewBox);
+                if (adorners != null)
+                    foreach (var adorner in adorners)
+                        adornerLayer.Remove(adorner);
+            });
+        }
+
         private void ProxyMirrorPresentationSpace(object unused)
         {
             Commands.MirrorPresentationSpace.ExecuteAsync(this);
@@ -819,55 +854,7 @@ namespace SandRibbon
                 e.CanExecute = (hTrue || vTrue) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
             }
         }
-        private void adornerGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //FixCanvasAspectAfterWindowSizeChanges(e.PreviousSize, e.NewSize);
-        }
-        private void FixCanvasAspectAfterWindowSizeChanges(System.Windows.Size oldSize, System.Windows.Size newSize)
-        {
-            var cvHeight = adornerGrid.ActualHeight;
-            var cvWidth = adornerGrid.ActualWidth;
-            var cvRatio = cvWidth / cvHeight;
-            var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
-            if (oldSize.Height == newSize.Height)
-            {
-                if (scroll.ActualHeight * cvRatio > scroll.ExtentWidth && !Double.IsNaN(scroll.Width))
-                {
-                    scroll.Width = scroll.ExtentWidth;
-                    return;
-                }
-                scroll.Width = scroll.ActualHeight * cvRatio;
-                return;
-            }
-            if (oldSize.Width == newSize.Width && !Double.IsNaN(scroll.Height))
-            {
-                if (scroll.ActualWidth / cvRatio > scroll.ExtentHeight)
-                {
-                    scroll.Height = scroll.ExtentHeight;
-                    return;
-                }
-                scroll.Height = scroll.ActualWidth / cvRatio;
-                return;
-            }
-            if (scrollRatio > cvRatio && !Double.IsNaN(scroll.Width))
-            {
-                var newWidth = scroll.ActualHeight * cvRatio;
-                scroll.Width = newWidth;
-                return;
-            }
-            if (scrollRatio < cvRatio && !Double.IsNaN(scroll.Height))
-            {
-                var newHeight = scroll.Width / cvRatio;
-                scroll.Height = newHeight;
-                return;
-            }
-            if (Double.IsNaN(scrollRatio))
-            {
-                scroll.Width = scroll.ExtentWidth;
-                scroll.Height = scroll.ExtentHeight;
-                return;
-            }
-        }
+
         private void doZoomIn(object sender, ExecutedRoutedEventArgs e)
         {
             Trace.TraceInformation("ZoomIn pressed");
@@ -1196,6 +1183,11 @@ namespace SandRibbon
         {
             UpdatePrivacyAdorners();
             BroadcastZoom();
+        }
+        private void notepadSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateNotepadPrivacyAdorners();
+            //BroadcastZoom();
         }
         private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {

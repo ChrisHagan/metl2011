@@ -7,21 +7,20 @@ namespace SandRibbon.Components
     public partial class ScrollBar : UserControl
     {
         public static readonly DependencyProperty ScrollViewerProperty =
-            DependencyProperty.Register("ScrollViewer", typeof(ScrollViewer), typeof(ScrollBar));
+            DependencyProperty.Register("ScrollViewer", typeof(ScrollViewer), typeof(ScrollBar), new FrameworkPropertyMetadata(OnScrollViewerPropertyChanged));
+        public static readonly DependencyProperty TargetProperty =
+            DependencyProperty.Register("Target", typeof(string), typeof(ScrollBar));
 
         public ScrollViewer ScrollViewer
         {
             get { return (ScrollViewer)GetValue(ScrollViewerProperty); }
-            set 
-            { 
-                SetValue(ScrollViewerProperty, value);
+            set { SetValue(ScrollViewerProperty, value); }
+        }
 
-                if (value != null)
-                {
-                    ScrollViewer.SizeChanged += sizeChanged;
-                    ScrollViewer.ScrollChanged += scrollChanged;
-                }
-            }
+        public string Target
+        {
+            get { return (string)GetValue(TargetProperty); }
+            set { SetValue(TargetProperty, value); }
         }
 
         public ScrollBar()
@@ -32,6 +31,15 @@ namespace SandRibbon.Components
             updateScrollBarButtonDistances();
             VScroll.SmallChange = 10;
             HScroll.SmallChange = 10;
+        }
+
+        private static void OnScrollViewerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ScrollBar scroll = d as ScrollBar;
+            var scrollViewer = e.NewValue as ScrollViewer;
+
+            scrollViewer.SizeChanged += scroll.sizeChanged;
+            scrollViewer.ScrollChanged += scroll.scrollChanged;
         }
 
         private void scrollChanged(object sender, ScrollChangedEventArgs e)
@@ -47,7 +55,7 @@ namespace SandRibbon.Components
         private void ExtendBoth(object _unused)
         {
             var canvas = (FrameworkElement)ScrollViewer.Content;
-            Commands.ExtendCanvasBySize.Execute(new Size(canvas.ActualWidth * 1.2, canvas.ActualHeight * 1.2));
+            Commands.ExtendCanvasBySize.Execute(new SizeWithTarget(canvas.ActualWidth * 1.2, canvas.ActualHeight * 1.2, Target));
         }
 
         private void VScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

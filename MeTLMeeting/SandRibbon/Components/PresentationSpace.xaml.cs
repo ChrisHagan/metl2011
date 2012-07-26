@@ -140,7 +140,7 @@ namespace SandRibbon.Components
                 Commands.SetPrivacy.ExecuteAsync("private");
             }
         }
-        public FrameworkElement GetAdorner()
+        private FrameworkElement GetAdorner()
         {
             var element = (FrameworkElement)this;
             while (element.Parent != null && !(element.Name == "adornerGrid"))

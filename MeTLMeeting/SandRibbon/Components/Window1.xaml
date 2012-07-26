@@ -91,7 +91,7 @@
                 <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" 
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
                 <Grid Grid.Column="2">
-                    <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
+                    <Grid x:Name="adornerGrid" Margin="0,0,27,27">
                         <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
                         <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
                             <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
@@ -102,7 +102,7 @@
                         <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
                         </Grid>
                     </Grid>
-                    <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}"/>
+                    <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
                     <AdornerDecorator>
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
@@ -116,15 +116,15 @@
                         </TabItem>
                         <TabItem Header="Notes" Width="80">
                             <Grid>
-                                <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
+                                <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">
                                     <InkCanvas EditingMode="None" Background="Transparent" x:Name="notesAdorner"/>
-                                    <Viewbox x:Name="notesViewBox" SizeChanged="zoomConcernedControlSizeChanged">
-                                        <ScrollViewer x:Name="notesScroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                            <components:PrivateNotepadSpace Height="auto" Width="auto"  x:Name="privateNotes" />
+                                    <Viewbox x:Name="notesViewBox" SizeChanged="notepadSizeChanged">
+                                        <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                            <components:PrivateNotepadSpace Height="auto" Width="auto" x:Name="privateNotes" />
                                         </ScrollViewer>
                                     </Viewbox>
                                 </Grid>
-                                <components:ScrollBar x:Name="notesAdornerScroll"/>
+                                <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
                                 <AdornerDecorator>
                                     <Canvas x:Name="notesPrivacyTools"/>
                                 </AdornerDecorator>

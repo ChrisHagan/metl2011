@@ -33,6 +33,20 @@ using System.Windows.Automation.Peers;
 
 namespace SandRibbon.Components
 {
+    public class SizeWithTarget
+    {
+        public SizeWithTarget(double width, double height, string target)
+        {
+            Size = new Size(width, height);
+            Target = target;
+        }
+
+        public string Target { get; private set; }
+        public Size Size { get; private set; }
+        public double Width { get { return Size.Width; } }
+        public double Height { get { return Size.Height; } }
+    }
+
     public class TagInformation
     {
         public string Author;
@@ -199,7 +213,7 @@ namespace SandRibbon.Components
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
            
  
-            Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<Size>(new DelegateCommand<Size>(extendCanvasBySize));
+            Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(new DelegateCommand<SizeWithTarget>(extendCanvasBySize));
 
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imageDropped));
             Commands.ImagesDropped.RegisterCommandToDispatcher(new DelegateCommand<List<ImageDrop>>(imagesDropped));
@@ -258,10 +272,13 @@ namespace SandRibbon.Components
             e.CanExecute = Work.GetSelectedElements().Count > 0 || Work.GetSelectedStrokes().Count > 0 || myTextBox != null;
         }
 
-        private void extendCanvasBySize(Size newSize)
+        private void extendCanvasBySize(SizeWithTarget newSize)
         {
-            Height = newSize.Height;
-            Width = newSize.Width;
+            if (_target == newSize.Target)
+            {
+                Height = newSize.Height;
+                Width = newSize.Width;
+            }
         }
 
         private InkCanvasEditingMode currentMode;
