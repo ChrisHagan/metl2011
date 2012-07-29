@@ -780,11 +780,11 @@ namespace SandRibbon.Components
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, allElementsCount != 0, Work.GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, allElementsCount != 0, Work.GetSelectionBounds(), _target));
         }
         private void ClearAdorners()
         {
-            Commands.RemovePrivacyAdorners.ExecuteAsync(null);
+            Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
         }
 #endregion
         #region ink

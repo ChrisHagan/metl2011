@@ -119,7 +119,7 @@
                                 <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">
                                     <InkCanvas EditingMode="None" Background="Transparent" x:Name="notesAdorner"/>
                                     <Viewbox x:Name="notesViewBox" SizeChanged="notepadSizeChanged">
-                                        <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                        <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="notepadScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                                             <components:PrivateNotepadSpace Height="auto" Width="auto" x:Name="privateNotes" />
                                         </ScrollViewer>
                                     </Viewbox>

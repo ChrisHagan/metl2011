@@ -133,7 +133,7 @@ namespace SandRibbon
             Commands.SetLayer.ExecuteAsync("Sketch");
 
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
-            Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
+            Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<string>((target) => { RemovePrivacyAdorners(target); }));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
 
@@ -437,62 +437,55 @@ namespace SandRibbon
             var difference = val2 * tolerance;
             return val1 > (val2 - difference) && val1 > (val2 + difference);
         }
-        private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info, FrameworkElement viewBox)
+
+        private void GetViewboxAndCanvasFromTarget(string targetName, out Viewbox viewbox, out UIElement container, out InkCanvas adornerContainer)
         {
-            var adorner = viewBox; 
+            if (targetName == "presentationSpace")
+            {
+                viewbox = canvasViewBox;
+                container = canvas;
+                adornerContainer = adorner;
+                return;
+            }
+            if (targetName == "notepad")
+            {
+                viewbox = notesViewBox;
+                container = privateNotes;
+                adornerContainer = notesAdorner;
+                return;
+            }
+
+            throw new ArgumentException(string.Format("Specified target {0} does not match a declared ViewBox", targetName));
+        }
+
+        private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
+        {
+            Viewbox viewbox = null;
+            UIElement container = null;
+            InkCanvas adornerContainer = null;
+            GetViewboxAndCanvasFromTarget(info.AdornerTarget, out viewbox, out container, out adornerContainer); 
             Dispatcher.adoptAsync(() =>
             {
-                var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
-                if (LessThan(adornerRect.Right, 0, 0.001) || GreaterThan(adornerRect.Right, canvasViewBox.ActualWidth, 0.001)
-                    || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, canvasViewBox.ActualHeight, 0.001)) return;
-                var adornerLayer = AdornerLayer.GetAdornerLayer(adorner);
-                adornerLayer.Add(new UIAdorner(adorner, new PrivacyToggleButton(info, adornerRect)));
-            });
-        }
-        private Adorner[] getPrivacyAdorners()
-        {
-            var adornerLayer = AdornerLayer.GetAdornerLayer(canvasViewBox);
-            if (adornerLayer == null) return null;
-            return adornerLayer.GetAdorners(canvasViewBox);
-        }
-
-        private Adorner[] GetNotepadPrivacyAdorners()
-        {
-            var adornerLayer = AdornerLayer.GetAdornerLayer(notesViewBox);
-            if (adornerLayer == null) return null;
-            return adornerLayer.GetAdorners(canvasViewBox);
-        }
-
-        private void UpdatePrivacyAdorners()
-        {
-            var privacyAdorners = getPrivacyAdorners();
-            RemovePrivacyAdorners(null);
-            if (privacyAdorners != null && privacyAdorners.Count() > 0)
-                try
-                {
-                    var lastValue = Commands.AddPrivacyToggleButton.LastValue();
-                    if (lastValue != null)
-                        AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
-                }
-                catch (NotSetException) { }
-        }
-        private void RemovePrivacyAdorners(object _unused)
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                var adorners = getPrivacyAdorners();
-                var adornerLayer = AdornerLayer.GetAdornerLayer(canvasViewBox);
-                if (adorners != null)
-                    foreach (var adorner in adorners)
-                        adornerLayer.Remove(adorner);
+                var adornerRect = new Rect(container.TranslatePoint(info.ElementBounds.TopLeft, viewbox), container.TranslatePoint(info.ElementBounds.BottomRight, viewbox));
+                if (LessThan(adornerRect.Right, 0, 0.001) || GreaterThan(adornerRect.Right, viewbox.ActualWidth, 0.001)
+                    || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, viewbox.ActualHeight, 0.001)) return;
+                var adornerLayer = AdornerLayer.GetAdornerLayer(adornerContainer);
+                adornerLayer.Add(new UIAdorner(adornerContainer, new PrivacyToggleButton(info, adornerRect)));
             });
         }
 
-        private void UpdateNotepadPrivacyAdorners()
+        private Adorner[] GetPrivacyAdorners(Viewbox viewbox, out AdornerLayer adornerLayer)
         {
-            var privacyAdorners = GetNotepadPrivacyAdorners();
-            RemoveNotepadPrivacyAdorners(null);
-            if (privacyAdorners != null && privacyAdorners.Count() > 0)
+            adornerLayer = AdornerLayer.GetAdornerLayer(viewbox);
+            if (adornerLayer == null) 
+                return null;
+
+            return adornerLayer.GetAdorners(viewbox);
+        }
+
+        private void UpdatePrivacyAdorners(string targetName)
+        {
+            if (RemovePrivacyAdorners(targetName))
                 try
                 {
                     var lastValue = Commands.AddPrivacyToggleButton.LastValue();
@@ -502,16 +495,27 @@ namespace SandRibbon
                 catch (NotSetException) { }
         }
 
-        private void RemoveNotepadPrivacyAdorners(object _unused)
+        private bool RemovePrivacyAdorners(string targetName)
         {
-            Dispatcher.adoptAsync(delegate
+            Viewbox viewbox;
+            UIElement container;
+            InkCanvas adornerContainer;
+            GetViewboxAndCanvasFromTarget(targetName, out viewbox, out container, out adornerContainer); 
+
+            bool hasAdorners = false;
+            AdornerLayer adornerLayer;
+            var adorners = GetPrivacyAdorners(viewbox, out adornerLayer);
+            Dispatcher.adopt(() =>
             {
-                var adorners = GetNotepadPrivacyAdorners();
-                var adornerLayer = AdornerLayer.GetAdornerLayer(canvasViewBox);
-                if (adorners != null)
+                if (adorners != null && adorners.Count() > 0)
+                {
+                    hasAdorners = true;
                     foreach (var adorner in adorners)
                         adornerLayer.Remove(adorner);
+                }
             });
+
+            return hasAdorners;
         }
 
         private void ProxyMirrorPresentationSpace(object unused)
@@ -1181,19 +1185,28 @@ namespace SandRibbon
         }
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdatePrivacyAdorners();
+            UpdatePrivacyAdorners(adornerScroll.Target);
             BroadcastZoom();
         }
-        private void notepadSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateNotepadPrivacyAdorners();
-            //BroadcastZoom();
-        }
+
         private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            UpdatePrivacyAdorners();
+            UpdatePrivacyAdorners(adornerScroll.Target);
             BroadcastZoom();
         }
+
+        private void notepadSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdatePrivacyAdorners(notesAdornerScroll.Target);
+            //BroadcastZoom();
+        }
+
+        private void notepadScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            UpdatePrivacyAdorners(notesAdornerScroll.Target);
+            //BroadcastZoom();
+        }
+
         private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)

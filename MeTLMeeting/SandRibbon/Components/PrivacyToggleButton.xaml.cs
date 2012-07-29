@@ -76,11 +76,14 @@ namespace SandRibbon.Components
             public string privacyChoice;
             public Rect ElementBounds;
             public bool showDelete;
-            public PrivacyToggleButtonInfo(string privacy, Boolean delete, Rect bounds)
+            public string AdornerTarget { get; private set; }
+
+            public PrivacyToggleButtonInfo(string privacy, Boolean delete, Rect bounds, string target)
             {
                 privacyChoice = privacy;
                 showDelete = delete;
                 ElementBounds = bounds;
+                AdornerTarget = target;
             }
         }
     }
