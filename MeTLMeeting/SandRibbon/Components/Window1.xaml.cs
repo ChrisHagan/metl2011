@@ -438,20 +438,18 @@ namespace SandRibbon
             return val1 > (val2 - difference) && val1 > (val2 + difference);
         }
 
-        private void GetViewboxAndCanvasFromTarget(string targetName, out Viewbox viewbox, out UIElement container, out InkCanvas adornerContainer)
+        private void GetViewboxAndCanvasFromTarget(string targetName, out Viewbox viewbox, out UIElement container)
         {
             if (targetName == "presentationSpace")
             {
                 viewbox = canvasViewBox;
                 container = canvas;
-                adornerContainer = adorner;
                 return;
             }
             if (targetName == "notepad")
             {
                 viewbox = notesViewBox;
                 container = privateNotes;
-                adornerContainer = notesAdorner;
                 return;
             }
 
@@ -462,15 +460,14 @@ namespace SandRibbon
         {
             Viewbox viewbox = null;
             UIElement container = null;
-            InkCanvas adornerContainer = null;
-            GetViewboxAndCanvasFromTarget(info.AdornerTarget, out viewbox, out container, out adornerContainer); 
+            GetViewboxAndCanvasFromTarget(info.AdornerTarget, out viewbox, out container); 
             Dispatcher.adoptAsync(() =>
             {
                 var adornerRect = new Rect(container.TranslatePoint(info.ElementBounds.TopLeft, viewbox), container.TranslatePoint(info.ElementBounds.BottomRight, viewbox));
                 if (LessThan(adornerRect.Right, 0, 0.001) || GreaterThan(adornerRect.Right, viewbox.ActualWidth, 0.001)
                     || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, viewbox.ActualHeight, 0.001)) return;
-                var adornerLayer = AdornerLayer.GetAdornerLayer(adornerContainer);
-                adornerLayer.Add(new UIAdorner(adornerContainer, new PrivacyToggleButton(info, adornerRect)));
+                var adornerLayer = AdornerLayer.GetAdornerLayer(viewbox);
+                adornerLayer.Add(new UIAdorner(viewbox, new PrivacyToggleButton(info, adornerRect)));
             });
         }
 
@@ -499,8 +496,7 @@ namespace SandRibbon
         {
             Viewbox viewbox;
             UIElement container;
-            InkCanvas adornerContainer;
-            GetViewboxAndCanvasFromTarget(targetName, out viewbox, out container, out adornerContainer); 
+            GetViewboxAndCanvasFromTarget(targetName, out viewbox, out container); 
 
             bool hasAdorners = false;
             AdornerLayer adornerLayer;

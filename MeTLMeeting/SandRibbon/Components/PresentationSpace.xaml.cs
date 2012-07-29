@@ -147,7 +147,7 @@ namespace SandRibbon.Components
                 element = (FrameworkElement)element.Parent;
 
             foreach (var child in ((Grid)element).Children)
-                if (((FrameworkElement)child).Name == "adorner")
+                if (((FrameworkElement)child).Name == "syncPageOverlay")
                     return (FrameworkElement)child;
             return null;
         }
