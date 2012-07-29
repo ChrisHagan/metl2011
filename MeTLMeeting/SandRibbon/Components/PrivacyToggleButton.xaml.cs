@@ -21,34 +21,43 @@ namespace SandRibbon.Components
                 deleteButton.Visibility = Visibility.Visible;
             else
                 deleteButton.Visibility = Visibility.Collapsed;
-            if(!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
+
+            if (mode.AdornerTarget == "presentationSpace")
+            {
+                if (!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
+                {
+                    showButton.Visibility = Visibility.Collapsed;
+                    hideButton.Visibility = Visibility.Collapsed;
+                }
+                else if (mode.privacyChoice == "show")
+                {
+                    showButton.Visibility = Visibility.Visible;
+                    hideButton.Visibility = Visibility.Collapsed;
+
+                }
+                else if (mode.privacyChoice == "hide")
+                {
+                    showButton.Visibility = Visibility.Collapsed;
+                    hideButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    showButton.Visibility = Visibility.Visible;
+                    hideButton.Visibility = Visibility.Visible;
+                }
+                /* Banhammer commented out
+                if (Globals.conversationDetails.Author == Globals.me)
+                    banhammerButton.Visibility = Visibility.Visible;
+                else
+                    banhammerButton.Visibility = Visibility.Collapsed;
+                // End Banhammer commented out
+                */
+            }
+            else
             {
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Collapsed;
             }
-            else if (mode.privacyChoice == "show")
-            {
-                showButton.Visibility = Visibility.Visible;
-                hideButton.Visibility = Visibility.Collapsed;
-            
-            }
-            else if(mode.privacyChoice == "hide")
-            {
-                showButton.Visibility = Visibility.Collapsed;
-                hideButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                showButton.Visibility = Visibility.Visible;
-                hideButton.Visibility = Visibility.Visible;
-            }
-            /* Banhammer commented out
-            if (Globals.conversationDetails.Author == Globals.me)
-                banhammerButton.Visibility = Visibility.Visible;
-            else
-                banhammerButton.Visibility = Visibility.Collapsed;
-            // End Banhammer commented out
-            */
         }
         private void showContent(object sender, RoutedEventArgs e)
         {
