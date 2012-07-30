@@ -293,6 +293,14 @@ namespace SandRibbon.Utils
                             actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
                         if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
                             actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
+
+                        // add the speaker notes
+                        var speakerNotes = slide.NotesPage.Shapes.Placeholders[2];
+                        if (speakerNotes != null)
+                        {
+                            speakerNotes.Tags.Add("speakerNotes", "true");
+                            privateShapes.Add(speakerNotes);
+                        }
                     }
                     catch (Exception)
                     {
@@ -432,7 +440,7 @@ namespace SandRibbon.Utils
             int shapeCount = 0;
             foreach (var text in shapes)
             {
-                var target = "presentationSpace";
+                var target = text.Attribute("target").Value;
                 var content = text.Attribute("content").Value;
                 var x = Double.Parse(text.Attribute("x").Value);
                 var y = Double.Parse(text.Attribute("y").Value);
@@ -556,11 +564,13 @@ namespace SandRibbon.Utils
                 I have no idea why it has to be this way, it just looks right when it is.*/
                 ExportShape(shapeObj, xSlide, currentWorkingDirectory, exportFormat, exportMode, backgroundWidth, backgroundHeight, Magnification);
             }
-            foreach (var notes in slide.NotesPage.Shapes)
+            /*foreach (var notes in slide.NotesPage.Shapes)
             {
                 var shape = (Microsoft.Office.Interop.PowerPoint.Shape)notes;
                 addPrivateText(xSlide, shape, Magnification);
-            }
+            }*/
+            // Placeholders[2] is always the speaker notes
+            addSpeakerNotes(xSlide, slide.NotesPage.Shapes.Placeholders[2], Magnification);
             xml.Add(xSlide);
         }
         private static void ExportShape( Microsoft.Office.Interop.PowerPoint.Shape shapeObj, XElement xSlide, string currentWorkingDirectory, PpShapeFormat exportFormat,
@@ -580,7 +590,13 @@ namespace SandRibbon.Utils
             if (shape.Type == MsoShapeType.msoPlaceholder)
                 //there're two of these on my sample slide.  They become the textboxes that have text in them, if you use the template's textbox placeholders.  Otherwise they'd be textboxes instead.
                 tags = shape.Tags.ToString();
-            if ((shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") || shape.Visible == FALSE)
+
+            var speakerNotes = shape.Tags["speakerNotes"];
+            if (!string.IsNullOrEmpty(speakerNotes) && speakerNotes == "true")
+            {
+                addSpeakerNotes(xSlide, shape, Magnification);
+            }
+            else if ((shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") || shape.Visible == FALSE)
             {
                 try
                 {
@@ -588,7 +604,7 @@ namespace SandRibbon.Utils
                     if (shape.HasTextFrame == MsoTriState.msoTrue &&
                         shape.TextFrame.HasText == MsoTriState.msoTrue &&
                         !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
-                        addPublicText(xSlide, shape, "private", Magnification);
+                        addPublicText(xSlide, shape, "private", "presentationSpace", Magnification);
                     else
                     {
                         try
@@ -620,7 +636,7 @@ namespace SandRibbon.Utils
                     if (shape.HasTextFrame == MsoTriState.msoTrue &&
                         shape.TextFrame.HasText == MsoTriState.msoTrue &&
                         !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
-                        addPublicText(xSlide, shape, "public", Magnification);
+                        addPublicText(xSlide, shape, "public", "presentationSpace", Magnification);
                     else
                     {
                         try
@@ -647,7 +663,7 @@ namespace SandRibbon.Utils
                     if (shape.HasTextFrame == MsoTriState.msoTrue &&
                         shape.TextFrame.HasText == MsoTriState.msoTrue &&
                         !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
-                        addPublicText(xSlide, shape, "public", Magnification);
+                        addPublicText(xSlide, shape, "public", "presentationSpace", Magnification);
                     else
                     {
                         try
@@ -670,7 +686,7 @@ namespace SandRibbon.Utils
                 }
         }
 
-        private static void addPublicText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, string privacy, double Magnification)
+        private static void addPublicText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, string privacy, string target, double Magnification)
         {
             //This should be used to create a RichTextbox, not a textbox, so that it can correctly represent PPT textboxes. 
             var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
@@ -686,11 +702,22 @@ namespace SandRibbon.Utils
                 string safeFont = "arial";
                 if (textFrame.TextRange.Font.Name != null)
                     safeFont = textFrame.TextRange.Font.Name;
+
+                var shapeX = shape.Left * Magnification;
+                var shapeY = shape.Top * Magnification;
+                // override with 5, 5 for the notepad target
+                if (target == "notepad")
+                {
+                    shapeX = 5;
+                    shapeY = 5;
+                }
+
                 xSlide.Add(new XElement("publicText",
                         new XAttribute("privacy", privacy),
+                        new XAttribute("target", target),
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
-                        new XAttribute("x", shape.Left * Magnification),
-                        new XAttribute("y", shape.Top * Magnification),
+                        new XAttribute("x", shapeX),
+                        new XAttribute("y", shapeY),
                         new XAttribute("width", shape.Width * Magnification),
                         new XAttribute("height", shape.Height * Magnification),
                         new XElement("font",
@@ -699,12 +726,13 @@ namespace SandRibbon.Utils
                             new XAttribute("color", safeColour))));
             }
         }
-        private static void addPrivateText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, double Magnification)
+        private static void addPrivateText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, string target, double Magnification)
         {
             var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
             if (check(textFrame.HasText))
             {
                 xSlide.Add(new XElement("privateText",
+                        new XAttribute("target", target),
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
                         new XAttribute("x", shape.Left * Magnification),
                         new XAttribute("y", shape.Top * Magnification),
@@ -715,6 +743,11 @@ namespace SandRibbon.Utils
                             new XAttribute("size", "12"),
                             new XAttribute("color", "Black"))));
             }
+        }
+
+        private static void addSpeakerNotes(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape placeholder, double Magnification)
+        {
+            addPublicText(xSlide, placeholder, "private", "notepad", Magnification);
         }
     }
 }
