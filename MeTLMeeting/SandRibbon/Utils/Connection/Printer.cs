@@ -43,21 +43,21 @@ namespace SandRibbon.Utils.Connection
         }
         public IEnumerable<MeTLInkCanvas> ToVisuaWithoutNotes()
         {
-            var canvases = createVisual();
+            var canvases = createVisual("presentationSpace", true);
             return new[] { canvases.First() };
         }
-        private IEnumerable<MeTLInkCanvas> createVisual()
+        private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic)
         {
             var canvas = new MeTLInkCanvas();
             foreach (var stroke in ink)
             {
-                if ((stroke.privacy == "public" || stroke.target == "presentationSpace"))
+                if ((includePublic && stroke.privacy == "public") || stroke.target == target)
                     canvas.Strokes.Add(stroke.stroke);
             }
             foreach (var image in images)
             {
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
-                if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
+                if ((includePublic && image.Value.privacy == "public") || image.Value.target == target)
                 {
                     Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 2 : 3);
                     canvas.Children.Add(imageToAdd);
@@ -69,17 +69,36 @@ namespace SandRibbon.Utils.Connection
                 textbox.BorderThickness = new Thickness(0);
                 textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
                 textbox.Background = new SolidColorBrush(Colors.Transparent);
-                if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
+                if ((includePublic && box.Value.privacy == "public") || box.Value.target == target)
                 {
                     Panel.SetZIndex(textbox, 1);
                     canvas.Children.Add(textbox);
                 }
             }
+
+            if (canvas.Children.Count == 0 && canvas.Strokes.Count == 0)
+                return new List<MeTLInkCanvas>();
+
             var tempPrinter = new PrintDialog();
             var size = new Size(tempPrinter.PrintableAreaWidth, tempPrinter.PrintableAreaHeight);
-                canvas.Measure(size);
-                canvas.Arrange(new Rect(new Point(0,0), size));
+            canvas.Measure(size);
+            canvas.Arrange(new Rect(new Point(0,0), size));
+
             return new[] { canvas };
+        }
+        private IEnumerable<MeTLInkCanvas> createVisual()
+        {
+            var canvasList = new List<MeTLInkCanvas>();
+
+            var presentationVisual = createVisual("presentationSpace", includePublic: true);
+            if (presentationVisual != null && presentationVisual.Count() > 0)
+                canvasList.AddRange(presentationVisual);
+
+            var notesVisual = createVisual("notepad", includePublic: false);
+            if (notesVisual != null && notesVisual.Count() > 0)
+                canvasList.AddRange(notesVisual);
+
+            return canvasList;
         }
         public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion details)
         {
