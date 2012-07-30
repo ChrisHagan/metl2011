@@ -192,9 +192,6 @@ namespace SandRibbon.Components
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
-            #if TOGGLE_CONTENT
-            Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
-            #endif
             Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
@@ -235,6 +232,13 @@ namespace SandRibbon.Components
                 {
                     _target = (string)FindResource("target");
                     _defaultPrivacy = (string)FindResource("defaultPrivacy");
+
+                    if (_target == "presentationSpace")
+                    {
+                        #if TOGGLE_CONTENT
+                        Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
+                        #endif
+                    }
                 }
             });
             Commands.ClipboardManager.RegisterCommand(new DelegateCommand<ClipboardAction>((action) => clipboardManager.OnClipboardAction(action)));

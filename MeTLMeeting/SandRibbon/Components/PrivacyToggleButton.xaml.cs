@@ -57,6 +57,7 @@ namespace SandRibbon.Components
             {
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Collapsed;
+                //banhammerButton.Visibility = Visibility.Collapsed;
             }
         }
         private void showContent(object sender, RoutedEventArgs e)
