@@ -604,7 +604,6 @@ namespace SandRibbon
 
         private void ExecuteMoveTo(int slide)
         {
-            EnsureConversationTabSelected();
             MoveTo(slide);
         }
         private void JoinConversation(string title)
