@@ -13,14 +13,12 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
         <ListBox
              x:Name="slides"
              ItemsSource="{Binding Path=thumbnailList}"
-             Grid.Row="1"
+             Grid.Row="0"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
              ScrollViewer.CanContentScroll="False"

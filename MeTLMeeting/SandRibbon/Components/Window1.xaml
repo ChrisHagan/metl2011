@@ -109,8 +109,13 @@
                 </Grid>
                 <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
                 <Grid Grid.Column="4" x:Name="rightDrawer">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
                     <!--components:Drawer/-->
-                    <TabControl x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
+                    <TabControl Grid.Row="1" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
                         <TabItem Header="Pages" Width="80">
                             <components:SlideDisplay x:Name="slides" />
                         </TabItem>
