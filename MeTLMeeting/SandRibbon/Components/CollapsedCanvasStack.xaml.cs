@@ -156,6 +156,7 @@ namespace SandRibbon.Components
             Work.SelectionMoved += SelectionMovedOrResized;
             Work.SelectionResizing += SelectionMovingOrResizing;
             Work.SelectionResized += SelectionMovedOrResized;
+            Work.GotKeyboardFocus += KeyboardFocusChanged;
             Work.AllowDrop = true;
             Work.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
             Work.Drop += ImagesDrop;
@@ -163,6 +164,15 @@ namespace SandRibbon.Components
             {
                 MouseUp += (c, args) => placeCursor(this, args);
             };
+        }
+
+        void KeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var focusedTextbox = e.NewFocus as MeTLTextBox;
+            if (focusedTextbox != null)
+            {
+                FocusManager.SetFocusedElement(Work, focusedTextbox);
+            }
         }
 
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -1941,9 +1951,9 @@ namespace SandRibbon.Components
             try
             {
                 var selectedTextBoxes = new List<MeTLTextBox>();
+                selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
                 if (myTextBox != null)
                     selectedTextBoxes.Add(myTextBox);
-                selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
                 var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
 
                 if (selectedTextBox != null)
@@ -1954,7 +1964,7 @@ namespace SandRibbon.Components
 
                     Action undo = () =>
                       {
-                          ClearAdorners();
+                          //ClearAdorners();
 
                           // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
                           var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
@@ -1964,14 +1974,14 @@ namespace SandRibbon.Components
                               activeTextbox.TextChanged -= SendNewText;
                               applyStylingTo(activeTextbox, activeTextInfo);
                               Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
-                              AddAdorners();
+                              //AddAdorners();
                               sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
                               activeTextbox.TextChanged += SendNewText;
                           }
                       };
                     Action redo = () =>
                       {
-                          ClearAdorners();
+                          //ClearAdorners();
 
                           var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
                           if (activeTextbox != null)
@@ -1980,7 +1990,7 @@ namespace SandRibbon.Components
                               activeTextbox.TextChanged -= SendNewText;
                               applyStylingTo(activeTextbox, activeTextInfo);
                               Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
-                              AddAdorners();
+                              //AddAdorners();
                               sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
                               activeTextbox.TextChanged += SendNewText;
                           }
