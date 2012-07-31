@@ -125,20 +125,16 @@ namespace SandRibbon.Components
             set { _me = value; }
         }
 
+        private MeTLTextBox _lastFocusedTextBox;
         private MeTLTextBox myTextBox
         {
             get
             {
-                MeTLTextBox focusedTextBox = null;
-                Dispatcher.adopt(() =>
-                {
-                    focusedTextBox = FocusManager.GetFocusedElement(Work) as MeTLTextBox;
-                });
-                return focusedTextBox;
+                return _lastFocusedTextBox;
             }
             set
             {
-                // do nothing
+                _lastFocusedTextBox = value;
             }
         }
 
@@ -156,7 +152,6 @@ namespace SandRibbon.Components
             Work.SelectionMoved += SelectionMovedOrResized;
             Work.SelectionResizing += SelectionMovingOrResizing;
             Work.SelectionResized += SelectionMovedOrResized;
-            Work.GotKeyboardFocus += KeyboardFocusChanged;
             Work.AllowDrop = true;
             Work.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
             Work.Drop += ImagesDrop;
@@ -164,15 +159,6 @@ namespace SandRibbon.Components
             {
                 MouseUp += (c, args) => placeCursor(this, args);
             };
-        }
-
-        void KeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            var focusedTextbox = e.NewFocus as MeTLTextBox;
-            if (focusedTextbox != null)
-            {
-                FocusManager.SetFocusedElement(Work, focusedTextbox);
-            }
         }
 
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -743,6 +729,7 @@ namespace SandRibbon.Components
 
         private void selectionChanged(object sender, EventArgs e)
         {
+            myTextBox = (MeTLTextBox)Work.GetSelectedTextBoxes().FirstOrDefault();
             updateTools();
             AddAdorners();
         }
@@ -2130,7 +2117,7 @@ namespace SandRibbon.Components
             if (((MeTLTextBox)sender).tag().author != me) return; //cannot edit other peoples textboxes
             if (me != Globals.PROJECTOR)
             {
-              FocusManager.SetFocusedElement(Work, sender as MeTLTextBox);
+                myTextBox = (MeTLTextBox)sender;
             } 
             CommandManager.InvalidateRequerySuggested();
             if (myTextBox == null) 
