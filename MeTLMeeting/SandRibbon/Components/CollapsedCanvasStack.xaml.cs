@@ -513,6 +513,10 @@ namespace SandRibbon.Components
         private Double zoom = 1;
         private void ZoomChanged(Double zoom)
         {
+            // notepad does not currently support zoom
+            if (_target == "notepad") 
+                return;
+
             this.zoom = zoom;
             if (Commands.SetDrawingAttributes.IsInitialised && Work.EditingMode == InkCanvasEditingMode.Ink)
             {
