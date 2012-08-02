@@ -247,6 +247,17 @@ namespace SandRibbon.Components
             clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
             Work.MouseMove += mouseMove;
             Work.StylusMove += stylusMove;
+            Work.IsKeyboardFocusWithinChanged += Work_IsKeyboardFocusWithinChanged;
+        }
+
+        void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue == true)
+            {
+                ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Pink);
+            }
+            else
+                ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Transparent);
         }
 
         private void JoinConversation()
@@ -467,7 +478,6 @@ namespace SandRibbon.Components
             Work.EditingMode = currentMode;
             AddAdorners();
         }
-
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -2287,17 +2297,17 @@ namespace SandRibbon.Components
         }
         public bool CanHandleClipboardPaste()
         {
-           return Work.IsMouseOver || myTextBox != null;
+            return Work.IsKeyboardFocusWithin; 
         }
 
         public bool CanHandleClipboardCut()
         {
-            return Work.IsMouseOver || myTextBox != null;
+            return Work.IsKeyboardFocusWithin; 
         }
 
         public bool CanHandleClipboardCopy()
         {
-            return Work.IsMouseOver || myTextBox != null;
+            return Work.IsKeyboardFocusWithin; 
         }
 
         public void OnClipboardPaste()
