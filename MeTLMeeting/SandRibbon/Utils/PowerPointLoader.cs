@@ -564,11 +564,6 @@ namespace SandRibbon.Utils
                 I have no idea why it has to be this way, it just looks right when it is.*/
                 ExportShape(shapeObj, xSlide, currentWorkingDirectory, exportFormat, exportMode, backgroundWidth, backgroundHeight, Magnification);
             }
-            /*foreach (var notes in slide.NotesPage.Shapes)
-            {
-                var shape = (Microsoft.Office.Interop.PowerPoint.Shape)notes;
-                addPrivateText(xSlide, shape, Magnification);
-            }*/
             // Placeholders[2] is always the speaker notes
             addSpeakerNotes(xSlide, slide.NotesPage.Shapes.Placeholders[2], Magnification);
             xml.Add(xSlide);
@@ -705,11 +700,13 @@ namespace SandRibbon.Utils
 
                 var shapeX = shape.Left * Magnification;
                 var shapeY = shape.Top * Magnification;
-                // override with 5, 5 for the notepad target
+                var fontSizeFactor = 1.0;
+                // overrides for the notepad target
                 if (target == "notepad")
                 {
                     shapeX = 5;
                     shapeY = 5;
+                    fontSizeFactor = 2.0;
                 }
 
                 xSlide.Add(new XElement("publicText",
@@ -722,7 +719,7 @@ namespace SandRibbon.Utils
                         new XAttribute("height", shape.Height * Magnification),
                         new XElement("font",
                             new XAttribute("family", safeFont),
-                            new XAttribute("size", textFrame.TextRange.Font.Size * Magnification),
+                            new XAttribute("size", textFrame.TextRange.Font.Size * fontSizeFactor * Magnification),
                             new XAttribute("color", safeColour))));
             }
         }

@@ -2287,17 +2287,17 @@ namespace SandRibbon.Components
         }
         public bool CanHandleClipboardPaste()
         {
-           return true;
+           return Work.IsMouseOver || myTextBox != null;
         }
 
         public bool CanHandleClipboardCut()
         {
-            return true;
+            return Work.IsMouseOver || myTextBox != null;
         }
 
         public bool CanHandleClipboardCopy()
         {
-            return true;
+            return Work.IsMouseOver || myTextBox != null;
         }
 
         public void OnClipboardPaste()
