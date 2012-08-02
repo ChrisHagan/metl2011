@@ -139,20 +139,16 @@ namespace SandRibbon.Components
             set { _me = value; }
         }
 
+        private MeTLTextBox _lastFocusedTextBox;
         private MeTLTextBox myTextBox
         {
             get
             {
-                MeTLTextBox focusedTextBox = null;
-                Dispatcher.adopt(() =>
-                {
-                    focusedTextBox = FocusManager.GetFocusedElement(Window.GetWindow(this)) as MeTLTextBox;
-                });
-                return focusedTextBox;
+                return _lastFocusedTextBox;
             }
             set
             {
-                // do nothing
+                _lastFocusedTextBox = value;
             }
         }
 
@@ -768,16 +764,9 @@ namespace SandRibbon.Components
 
         private void selectionChanged(object sender, EventArgs e)
         {
-            Dispatcher.adopt(() =>
-                                      {
-                                          ClearAdorners();
-                                          if (Work.GetSelectedTextBoxes().Count() > 0)
-                                              myTextBox = (MeTLTextBox)Work.GetSelectedTextBoxes().First();
-                                          else
-                                              myTextBox = null;
-                                          AddAdorners();
-                                          updateTools();
-                                      });
+            myTextBox = (MeTLTextBox)Work.GetSelectedTextBoxes().FirstOrDefault();
+            updateTools();
+            AddAdorners();
         }
        
         protected internal void AddAdorners()
@@ -920,18 +909,12 @@ namespace SandRibbon.Components
             {
                 doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
             }
-            contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
         }
         private void removeStrokes(List<Stroke> strokes)
         {
              foreach(var stroke in strokes)
              {
-                 if (stroke.tag().privacy == Globals.PUBLIC)
-                 {
-                     //var strokesToRemove = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
-                     //contentBuffer.RemoveStrokes(strokesToRemove, (st) => Work.Strokes.Remove(st));
-                     contentBuffer.RemoveStroke(stroke, (st) => RemoveExistingStrokeFromCanvas(Work, st));
-                 }
+                 contentBuffer.RemoveStroke(stroke, (st) => RemoveExistingStrokeFromCanvas(Work, st));
                  doMyStrokeRemovedExceptHistory(stroke);
             }
         }
@@ -1847,6 +1830,33 @@ namespace SandRibbon.Components
             e.Handled = true;
         }
 
+        private MeTLTextBox FindOrCreateTextBoxFromId(MeTLTextBox textbox)
+        {
+            var box = textBoxFromId(textbox.tag().id);
+            if (box == null)
+            {
+                box = textbox.clone();
+                AddTextBoxToCanvas(box);
+            }
+
+            InkCanvas.SetLeft(box, InkCanvas.GetLeft(textbox));
+            InkCanvas.SetTop(box, InkCanvas.GetTop(textbox));
+
+            return box;
+        }
+
+        private MeTLTextBox UpdateTextBoxWithId(MeTLTextBox textbox, string newText)
+        {
+            // find textbox if it exists, otherwise create it
+            var box = FindOrCreateTextBoxFromId(textbox); 
+
+            box.TextChanged -= SendNewText;
+            box.Text = newText;
+            box.TextChanged += SendNewText;
+
+            return box;
+        }
+
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
             if (_originalText == null) return; 
@@ -1860,32 +1870,23 @@ namespace SandRibbon.Components
             Action undo = () =>
             {
                 ClearAdorners();
-                var myText = undoText.Clone().ToString();
-                mybox.TextChanged -= SendNewText;
-                mybox.Text = myText;
-                /*if (String.IsNullOrEmpty(myText))
-                    dirtyTextBoxWithoutHistory(mybox);
-                else*/
-                    sendTextWithoutHistory(mybox, mybox.tag().privacy);
-                mybox.TextChanged += SendNewText;
+                var myText = undoText;
+                var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
+                sendTextWithoutHistory(updatedTextBox, updatedTextBox.tag().privacy);
             };
             Action redo = () =>
             {
                 ClearAdorners();
                 var myText = redoText;
-                mybox.TextChanged -= SendNewText;
-                mybox.Text = myText;
-                /*if (String.IsNullOrEmpty(myText))
-                    dirtyTextBoxWithoutHistory(mybox);
-                else*/
-                    sendTextWithoutHistory(mybox, mybox.tag().privacy);
-                mybox.TextChanged += SendNewText;
+                var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
+                sendTextWithoutHistory(mybox, mybox.tag().privacy);
             }; 
             UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
-            mybox.TextChanged -= SendNewText;
-            mybox.Text = redoText;
-            mybox.TextChanged += SendNewText;
+            // only do the change locally and let the timer do the rest
+            ClearAdorners();
+            UpdateTextBoxWithId(mybox, redoText);
+
             var currentSlide = Globals.slide;
             Action typingTimedAction = () =>
             {
@@ -1905,9 +1906,8 @@ namespace SandRibbon.Components
             else
             {
                 GlobalTimers.ResetSyncTimer();
-                TypingTimer.Add(typingTimedAction);
+                TypingTimer.ResetTimer();
             }
-
         }
         protected static List<UIElement> absoluteizeElements(List<UIElement> selectedElements)
         {
@@ -1966,86 +1966,53 @@ namespace SandRibbon.Components
         {
             try
             {
-                _currentColor = info.Color;
-                _currentFamily = info.Family;
-                _currentSize = info.Size;
+                var selectedTextBoxes = new List<MeTLTextBox>();
+                selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
                 if (myTextBox != null)
+                    selectedTextBoxes.Add(myTextBox);
+                var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
+
+                if (selectedTextBox != null)
                 {
-                    var caret = myTextBox.CaretIndex;
-                    var currentTextBox = myTextBox.clone();
-                    var oldInfo = getInfoOfBox(currentTextBox);
+                    // create a clone of the selected textboxes and their textinformation so we can keep a reference to something that won't be changed
+                    var clonedTextBox = selectedTextBox.clone();
+                    var clonedTextInfo = getInfoOfBox(selectedTextBox); 
 
                     Action undo = () =>
-                                      {
-                                          ClearAdorners();
-                                          var currentInfo = oldInfo;
-                                          var activeTextbox = ((MeTLTextBox)Work.Children.ToList().Where(c => 
-                                            { 
-                                                if (c is MeTLTextBox) 
-                                                    return ((MeTLTextBox)c).tag().id == currentTextBox.tag().id; 
-                                                else 
-                                                    return false; 
-                                            }).FirstOrDefault());
-                                          if (activeTextbox != null)
-                                          {
-                                              activeTextbox.TextChanged -= SendNewText;
-                                              applyStylingTo(activeTextbox, currentInfo);
-                                              Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                              AddAdorners();
-                                              sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                              activeTextbox.TextChanged += SendNewText;
-                                          }
-                                      };
-                    Action redo = () =>
-                                      {
-                                          ClearAdorners();
-                                          var currentInfo = info;
-                                          var activeTextbox = ((MeTLTextBox) Work.TextChildren().ToList().Where( c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id). FirstOrDefault());
-                                          activeTextbox.TextChanged -= SendNewText;
-                                          applyStylingTo(activeTextbox, currentInfo);
-                                          Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                          AddAdorners();
-                                          sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                          activeTextbox.TextChanged += SendNewText;
+                      {
+                          //ClearAdorners();
 
-                                      };
+                          // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
+                          var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
+                          if (activeTextbox != null)
+                          {
+                              var activeTextInfo = clonedTextInfo;
+                              activeTextbox.TextChanged -= SendNewText;
+                              applyStylingTo(activeTextbox, activeTextInfo);
+                              Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
+                              //AddAdorners();
+                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              activeTextbox.TextChanged += SendNewText;
+                          }
+                      };
+                    Action redo = () =>
+                      {
+                          //ClearAdorners();
+
+                          var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
+                          if (activeTextbox != null)
+                          {
+                              var activeTextInfo = info; 
+                              activeTextbox.TextChanged -= SendNewText;
+                              applyStylingTo(activeTextbox, activeTextInfo);
+                              Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
+                              //AddAdorners();
+                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              activeTextbox.TextChanged += SendNewText;
+                          }
+                      };
                     UndoHistory.Queue(undo, redo, "Styling of text changed");
                     redo();
-                    /*
-                    myTextBox.GotFocus -= textboxGotFocus;
-                    myTextBox.CaretIndex = caret;
-                    myTextBox.Focus();
-                    myTextBox.GotFocus += textboxGotFocus;
-                    */
-                }
-                else if (Work.GetSelectedElements().Count > 0)
-                {
-                    var originalElements = Work.GetSelectedElements().ToList().Select(tb => ((MeTLTextBox)tb).clone());
-                    Action undo = () =>
-                                      {
-                                          ClearAdorners();
-                                          foreach (var originalElement in originalElements)
-                                          {
-                                              dirtyTextBoxWithoutHistory(originalElement);
-                                              sendTextWithoutHistory(originalElement, originalElement.tag().privacy);
-                                          }
-                                          AddAdorners();
-                                      };
-                    Action redo = () =>
-                                      {
-                                          ClearAdorners();
-                                          var ids = originalElements.Select(b => b.tag().id);
-                                          var selection = Work.TextChildren().ToList().Where(b => ids.Contains(((MeTLTextBox)b).tag().id));
-                                          foreach (MeTLTextBox currentTextBox in selection)
-                                          {
-                                              applyStylingTo(currentTextBox, info);
-                                              sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
-                                          }
-                                          AddAdorners();
-                                      };
-                    UndoHistory.Queue(undo, redo, "Styling of texzt changed");
-                    redo();
-
                 }
             }
             catch (Exception e)
@@ -2107,7 +2074,6 @@ namespace SandRibbon.Components
         }
         public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy, int slide)
         {
-            RemovePrivacyStylingFromElement(box);
             if (box.tag().privacy != Globals.privacy)
                 dirtyTextBoxWithoutHistory(box);
             var oldTextTag = box.tag();
@@ -2143,13 +2109,13 @@ namespace SandRibbon.Components
             var box = (MeTLTextBox)sender;
             var currentTag = box.tag();
             ClearAdorners();
-            if (currentTag.privacy != Globals.privacy)
+            /*if (currentTag.privacy != Globals.privacy)
             {
                 Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(Globals.slide, Globals.me, _target, currentTag.privacy, currentTag.id));
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
                 Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(Globals.slide, Globals.me, _target, currentTag.privacy, box));
-            }
+            }*/
             myTextBox = null;
             requeryTextCommands();
             if (box.Text.Length == 0)
@@ -2178,14 +2144,17 @@ namespace SandRibbon.Components
         private void textboxGotFocus(object sender, RoutedEventArgs e)
         {
             if (((MeTLTextBox)sender).tag().author != me) return; //cannot edit other peoples textboxes
-            myTextBox = (MeTLTextBox)sender;
+            if (me != Globals.PROJECTOR)
+            {
+                myTextBox = (MeTLTextBox)sender;
+            } 
             CommandManager.InvalidateRequerySuggested();
             if (myTextBox == null) 
                 return;
             updateTools();
             requeryTextCommands();
             _originalText = myTextBox.Text;
-            Commands.ChangeTextMode.Execute("None");
+            Commands.ChangeTextMode.ExecuteAsync("None");
         }
         private void updateTools()
         {
@@ -2259,10 +2228,25 @@ namespace SandRibbon.Components
                 RemoveTextBoxWithMatchingId(element.identifier);
             });
         }
+
+        private bool TargettedTextBoxIsFocused(TargettedTextBox targettedBox)
+        {
+            var focusedTextBox = Keyboard.FocusedElement as MeTLTextBox;
+            if (focusedTextBox != null && focusedTextBox.tag().id == targettedBox.identity)
+            {
+                return true;
+            }
+            return false; 
+        }
+
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
-            if (targettedBox.target != _target) return;
+            if (targettedBox.target != _target ) return;
             //if (targettedBox.box.Text.Length == 0) return;
+
+            if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
+                return;
+
             if (targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
             {
                 /*var box = textBoxFromId(targettedBox.identity);
