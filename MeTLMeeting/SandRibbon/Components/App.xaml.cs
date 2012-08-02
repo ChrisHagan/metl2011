@@ -204,7 +204,7 @@ namespace SandRibbon
                 closeSplashEvent.Set();
             }
         }*/
-        /*private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
+        private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)delegate
             {
@@ -212,7 +212,8 @@ namespace SandRibbon
                 source.CaretIndex = source.Text.Length;
                 source.SelectAll();
             }, DispatcherPriority.Background);
-        }*/
+        }
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
 #if DEBUG
@@ -229,9 +230,7 @@ namespace SandRibbon
             }
 #endif
 
-            EventManager.RegisterClassHandler(typeof(TextBox),
-            TextBox.GotKeyboardFocusEvent,
-            new RoutedEventHandler(AnyTextBoxGetsFocus));
+            EventManager.RegisterClassHandler(typeof(TextBox), TextBox.GotKeyboardFocusEvent, new RoutedEventHandler(AnyTextBoxGetsFocus));
         }
     }
 }
