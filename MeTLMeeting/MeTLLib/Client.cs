@@ -28,7 +28,8 @@ namespace MeTLLib
     {
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
-        public enum serverMode { PRODUCTION, STAGING };
+        public Uri externalUri { get; set; }
+        public enum serverMode { PRODUCTION, STAGING, EXTERNAL};
         private serverMode mode;
         public void setMode(serverMode mode)
         {
@@ -38,7 +39,17 @@ namespace MeTLLib
         {
             get
             {
-                return mode == serverMode.PRODUCTION ? productionUri : stagingUri;
+                switch (mode)
+                {
+                    case serverMode.PRODUCTION:
+                        return productionUri;
+                    case serverMode.STAGING:
+                        return stagingUri;
+                    case serverMode.EXTERNAL:
+                        return externalUri;
+                    default:
+                        return stagingUri;
+                }
             }
         }
         public Uri secureUri { get { return new Uri("https://" + host); } }
@@ -80,6 +91,7 @@ namespace MeTLLib
         void SendDirtyImage(TargettedDirtyElement tde);
         void SendDirtyVideo(TargettedDirtyElement tde);
         void SendSubmission(TargettedSubmission ts);
+        void SendTeacherStatus(TeacherStatus status);
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
         void SendQuizAnswer(QuizAnswer qa);
@@ -89,6 +101,7 @@ namespace MeTLLib
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
+        Uri UploadResource(Uri uri, string slideId);
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);

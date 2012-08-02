@@ -17,7 +17,7 @@ namespace SandRibbon.Utils
             if (String.IsNullOrEmpty(input))
                 return "";
 
-            var b64string = input.Replace("-", "+").Replace("_", "=").Replace(".", "/");
+            var b64string = input.Replace("-","+").Replace("_","=").Replace(".", "/");
             var nonB64bytes = Convert.FromBase64String(b64string);
             var nonB64string = bytestostring(nonB64bytes, encoding);
             var decryptedString = decryptFromByteArray(nonB64bytes, encoding, Key, IV);

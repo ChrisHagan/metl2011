@@ -38,11 +38,12 @@ namespace SandRibbon
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
 
+#if DEBUG
+        public static string OverrideUsername { get; private set; }
+        public static string OverridePassword { get; private set; }
+#endif
+
         private static SplashScreen splashScreen;
-
-        public static string Username { get; private set; }
-        public static string Password { get; private set; } 
-
         public static void ShowSplashScreen()
         {
             splashScreen = new SplashScreen("resources/splashScreen.png");
@@ -219,11 +220,11 @@ namespace SandRibbon
             {
                 if (e.Args[0] == "-user")
                 {
-                    Username = e.Args[1];
+                    OverrideUsername = e.Args[1];
                 }
                 if (e.Args[2] == "-pass")
                 {
-                    Password = e.Args[3];
+                    OverridePassword = e.Args[3];
                 }
             }
 #endif

@@ -4,7 +4,7 @@
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    ShowDialogLauncher="False" Header="Content Filter">
+    ShowDialogLauncher="False" Header="Show Content">
     <sr:RibbonGroup.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>
     </sr:RibbonGroup.Resources>

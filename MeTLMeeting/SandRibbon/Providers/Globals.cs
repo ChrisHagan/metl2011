@@ -63,9 +63,9 @@ namespace SandRibbon.Providers
             }
         }
         public static Dictionary<string, List<string>> PresenceListing = new Dictionary<string, List<string>>();
-        public static string PUBLIC = "public";
-        public static string PRIVATE = "private";
-        public static string PROJECTOR = "projector";
+        public static readonly string PUBLIC = "public";
+        public static readonly string PRIVATE = "private";
+        public static readonly string PROJECTOR = "projector";
 
         public static bool isAuthor
         {

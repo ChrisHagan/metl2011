@@ -130,12 +130,11 @@ namespace SandRibbon.Components
         private void loaded(object sender, RoutedEventArgs e)
         {
             username.Focus();
-
 #if DEBUG
-            if (!String.IsNullOrEmpty(App.Username) && !String.IsNullOrEmpty(App.Password))
+            if (!string.IsNullOrEmpty(App.OverrideUsername) && !string.IsNullOrEmpty(App.OverridePassword))
             {
-                username.Text = App.Username;
-                password.Password = App.Password;
+                username.Text = App.OverrideUsername;
+                password.Password = App.OverridePassword;
                 attemptAuthentication(null, null);
             }
 #endif

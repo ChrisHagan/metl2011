@@ -131,8 +131,8 @@ namespace SandRibbon.Utils
                 "Error loading thumbnail:"};
         private static int slide = -1;
         private static string privacy = "Not set";
-        private static readonly string defaultUser = "UNKNOWN";
-        private static string user = "UNKNOWN";
+        private static readonly string unknownUser = "UNKNOWN";
+        private static string user = unknownUser;
         private static LogQueue logQueue;
 
         private Logger()
@@ -143,7 +143,7 @@ namespace SandRibbon.Utils
         {
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((where) => slide = where));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>((who) => privacy = who));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = string.IsNullOrEmpty(Globals.me) ? defaultUser : Globals.me));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = string.IsNullOrEmpty(Globals.me) ? unknownUser : Globals.me));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
 

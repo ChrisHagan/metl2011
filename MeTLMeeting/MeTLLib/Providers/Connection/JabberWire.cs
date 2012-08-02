@@ -469,7 +469,15 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-        
+                private void shutdownHeartBeat()
+        {
+            if (heartbeat != null)
+            {
+                heartbeat.Dispose();
+                heartbeat = null;
+            }
+        }
+
         public void Logout()
         {
             shutdownHeartBeat();

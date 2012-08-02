@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" xmlns:Components="clr-namespace:SandRibbon.Components"
-             xmlns:Utility="clr-namespace:SandRibbon.Components.Utility">
+    xmlns:Utility="clr-namespace:SandRibbon.Components.Utility">
      <UserControl.Resources>
         <Style TargetType="{x:Type Utility:MeTLTextBox}">
             <Setter Property="my:AttachedInputBindings.InputBindings">
@@ -41,6 +41,6 @@
         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
     </UserControl.InputBindings>
     <Grid MinHeight="540" MinWidth="720"  x:Name="canvasStack" Background="White">
-        <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent"/>
+        <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" FocusManager.IsFocusScope="True"/>
     </Grid>
 </UserControl>

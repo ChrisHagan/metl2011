@@ -23,6 +23,7 @@ namespace MeTLLib
                 productionUri = new Uri("http://" + prodServer, UriKind.Absolute);
                 var stagingServer = System.Xml.Linq.XElement.Parse(new System.Net.WebClient().DownloadString("http://metl.adm.monash.edu.au/stagingServer.xml")).Value;
                 stagingUri = new Uri("http://" + stagingServer, UriKind.Absolute);
+                externalUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
             }
             catch (WebException e) {
                 throw new TriedToStartMeTLWithNoInternetException(e);
