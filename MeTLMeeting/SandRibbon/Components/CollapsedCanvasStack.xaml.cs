@@ -874,18 +874,12 @@ namespace SandRibbon.Components
             {
                 doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
             }
-            //contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
         }
         private void removeStrokes(List<Stroke> strokes)
         {
              foreach(var stroke in strokes)
              {
-                 //if (stroke.tag().privacy == Globals.PUBLIC)
-                 {
-                     //var strokesToRemove = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
-                     //contentBuffer.RemoveStrokes(strokesToRemove, (st) => Work.Strokes.Remove(st));
-                     contentBuffer.RemoveStroke(stroke, (st) => RemoveExistingStrokeFromCanvas(Work, st));
-                 }
+                 contentBuffer.RemoveStroke(stroke, (st) => RemoveExistingStrokeFromCanvas(Work, st));
                  doMyStrokeRemovedExceptHistory(stroke);
             }
         }
