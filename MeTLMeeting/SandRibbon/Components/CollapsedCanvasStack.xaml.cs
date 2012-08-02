@@ -1892,14 +1892,8 @@ namespace SandRibbon.Components
                 Dispatcher.adoptAsync(delegate
                 {
                     var senderTextBox = sender as MeTLTextBox;
-                    /*if (mybox.Text.Length == 0)
-                    {
-                        dirtyTextBoxWithoutHistory(senderTextBox, currentSlide);
-                    }
-                    else*/
-                    {
-                        sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
-                    }
+                    sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
+                    TypingTimer = null;
                     GlobalTimers.ExecuteSync();
                 });
             };
