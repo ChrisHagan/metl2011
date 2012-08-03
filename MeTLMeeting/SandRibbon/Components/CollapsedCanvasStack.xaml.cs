@@ -185,6 +185,7 @@ namespace SandRibbon.Components
             wireInPublicHandlers();
             strokeChecksums = new List<StrokeChecksum>();
             contentBuffer = new ContentBuffer();
+            UndoHistory.ShowVisualiser(Window.GetWindow(this));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -2340,27 +2341,27 @@ namespace SandRibbon.Components
         }
         public void HandleInkPasteUndo(List<Stroke> newStrokes)
         {
-            var selection = new StrokeCollection();
+            //var selection = new StrokeCollection();
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if(Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() > 0)
+                if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() > 0)
                 {
-                    selection = new StrokeCollection(selection.Where(s => !MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
+                    //selection = new StrokeCollection(selection.Where(s => !MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
                     doMyStrokeRemovedExceptHistory(stroke);
                 }
             }
         }
         public void HandleInkPasteRedo(List<Stroke> newStrokes)
         {
-            var selection = new StrokeCollection();
+            //var selection = new StrokeCollection();
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if(!Work.Strokes.Contains(stroke))
+                if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() == 0)
                 {
-                    stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
-                    selection.Add(stroke);
+                    //stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
+                    //selection.Add(stroke);
                     doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                 }
             }
@@ -2488,13 +2489,13 @@ namespace SandRibbon.Components
             {
                 var data = (MeTLClipboardData) Clipboard.GetData(MeTLClipboardData.Type);
                 var currentChecksums = Work.Strokes.Select(s => s.sum().checksum);
-                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum));
+                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).ToList();
                 var boxes = createPastedBoxes(data.Text.ToList());
                 var images = createImages(data.Images.ToList());
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      HandleInkPasteUndo(ink.ToList());
+                                      HandleInkPasteUndo(ink);
                                       HandleImagePasteUndo(images);
                                       HandleTextPasteUndo(boxes, currentBox);
                                       AddAdorners();
@@ -2502,7 +2503,7 @@ namespace SandRibbon.Components
                 Action redo = () =>
                                   {
                                       ClearAdorners();
-                                      HandleInkPasteRedo(ink.ToList());
+                                      HandleInkPasteRedo(ink);
                                       HandleImagePasteRedo(images);
                                       HandleTextPasteRedo(boxes, currentBox);
                                       AddAdorners();
@@ -2555,23 +2556,17 @@ namespace SandRibbon.Components
             if(myTextBox != null)
                 selectedText = myTextBox.SelectedText;
 
-            Action undo = () => Clipboard.GetData(typeof (MeTLClipboardData).ToString());
-            Action redo = () =>
-                              {
-                                  var images = HandleImageCopyRedo(selectedElements);
-                                  var text = HandleTextCopyRedo(selectedElements, selectedText);
-                                  var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes);
-                                  Clipboard.SetData(MeTLClipboardData.Type,new MeTLClipboardData(text,images,copiedStrokes));
-                              };
-            UndoHistory.Queue(undo, redo, "Copied items");
-            redo();
+            // copy previously was an undoable action, ie restore the clipboard to what it previously was
+            var images = HandleImageCopyRedo(selectedElements);
+            var text = HandleTextCopyRedo(selectedElements, selectedText);
+            var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes);
+            Clipboard.SetData(MeTLClipboardData.Type,new MeTLClipboardData(text,images,copiedStrokes));
         }
         private void HandleImageCutUndo(IEnumerable<Image> selectedImages)
         {
                 var selection = new List<UIElement>();
                 foreach (var element in selectedImages)
                 {
-
                     if (!Work.ImageChildren().Contains(element))
                         Work.Children.Add(element);
                     sendThisElement(element);
