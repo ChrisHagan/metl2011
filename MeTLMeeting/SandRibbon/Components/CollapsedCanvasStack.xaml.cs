@@ -185,7 +185,6 @@ namespace SandRibbon.Components
             wireInPublicHandlers();
             strokeChecksums = new List<StrokeChecksum>();
             contentBuffer = new ContentBuffer();
-            UndoHistory.ShowVisualiser(Window.GetWindow(this));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -370,9 +369,9 @@ namespace SandRibbon.Components
                 textBox.Focusable = curFocusable && (tag.author == curMe);
             });
         }
-        private UndoHistory.HistoricalAction deleteSelectedImages(List<UIElement> selectedElements)
+        private UndoHistory.HistoricalAction deleteSelectedImages(IEnumerable<Image> selectedElements)
         {
-            if (selectedElements.OfType<Image>().Count() == 0) return new UndoHistory.HistoricalAction(()=> { }, ()=> { }, 0, "No images selected");
+            if (selectedElements.Count() == 0) return new UndoHistory.HistoricalAction(()=> { }, ()=> { }, 0, "No images selected");
              Action undo = () =>
                 {
                     foreach (var element in selectedElements)
@@ -384,7 +383,7 @@ namespace SandRibbon.Components
                         }
                        sendThisElement(element);
                     }
-                    Work.Select(selectedElements);
+                    Work.Select(selectedElements.Select(i => (UIElement)i));
                 };
             Action redo = () =>
                 {
@@ -413,9 +412,9 @@ namespace SandRibbon.Components
             Action redo = () => removeStrokes(selectedStrokes.ToList());
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected ink");
         }
-        private UndoHistory.HistoricalAction deleteSelectedText(List<UIElement> elements)
+        private UndoHistory.HistoricalAction deleteSelectedText(IEnumerable<MeTLTextBox> elements)
         {
-            var selectedElements = elements.Where(t => t is MeTLTextBox && ((MeTLTextBox)t).tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
+            var selectedElements = elements.Where(t => t.tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
             Action undo = () =>
                               {
                                   foreach (var box in selectedElements)
@@ -450,8 +449,8 @@ namespace SandRibbon.Components
         private void deleteSelectedElements(object _sender, ExecutedRoutedEventArgs _handler)
         {
             if (me == Globals.PROJECTOR) return;
-            var selectedImages = new List<UIElement>();
-            var selectedText = new List<UIElement>();
+            var selectedImages = new List<Image>();
+            var selectedText = new List<MeTLTextBox>();
             var selectedStrokes = new StrokeCollection();
             Dispatcher.adopt(() =>
                                  {
@@ -479,9 +478,8 @@ namespace SandRibbon.Components
                     ClearAdorners();
                     Work.Focus();
                 };
-         
-            redo();
             UndoHistory.Queue(undo, redo, "Delete selected items");
+            redo();
         }
         private void HideConversationSearchBox(object obj)
         {
@@ -934,7 +932,8 @@ namespace SandRibbon.Components
         }
         public void deleteSelectedItems(object obj)
         {
-            deleteSelectedElements(null, null); 
+            if (CanvasHasActiveFocus())
+                deleteSelectedElements(null, null); 
         }
         private string determineOriginalPrivacy(string currentPrivacy)
         {
@@ -2275,7 +2274,7 @@ namespace SandRibbon.Components
                   DoText(targettedBox);
         }
 
-        private bool CanHandleClipboardAction()
+        private bool CanvasHasActiveFocus()
         {
             return Globals.CurrentCanvasClipboardFocus == _target;
         }
@@ -2293,17 +2292,17 @@ namespace SandRibbon.Components
         }
         public bool CanHandleClipboardPaste()
         {
-            return CanHandleClipboardAction(); 
+            return CanvasHasActiveFocus(); 
         }
 
         public bool CanHandleClipboardCut()
         {
-            return CanHandleClipboardAction(); 
+            return CanvasHasActiveFocus(); 
         }
 
         public bool CanHandleClipboardCopy()
         {
-            return CanHandleClipboardAction(); 
+            return CanvasHasActiveFocus(); 
         }
 
         public void OnClipboardPaste()

@@ -81,21 +81,21 @@ namespace SandRibbon.Components.Utility
     public static class InkCanvasExtensions
     {
         // TODO: replace with Children.OfType<MeTLTextBox>(); etc
-        public static IEnumerable<UIElement> TextChildren(this InkCanvas canvas)
+        public static IEnumerable<MeTLTextBox> TextChildren(this InkCanvas canvas)
         {
-            return canvas.Children.ToList().Where(t => t is MeTLTextBox);
+            return canvas.Children.OfType<MeTLTextBox>();
         }
-        public static IEnumerable<UIElement> ImageChildren(this InkCanvas canvas)
+        public static IEnumerable<Image> ImageChildren(this InkCanvas canvas)
         {
-            return canvas.Children.ToList().Where(t => t is Image);
+            return canvas.Children.OfType<Image>();
         }
-        public static IEnumerable<UIElement> GetSelectedImages(this InkCanvas canvas)
+        public static IEnumerable<Image> GetSelectedImages(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().Where(i => i is Image);
+            return canvas.GetSelectedElements().OfType<Image>();
         }
-        public static IEnumerable<UIElement> GetSelectedTextBoxes(this InkCanvas canvas)
+        public static IEnumerable<MeTLTextBox> GetSelectedTextBoxes(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().Where(i => i is MeTLTextBox);
+            return canvas.GetSelectedElements().OfType<MeTLTextBox>();
         }
     }
     public static class TextBoxExtensions

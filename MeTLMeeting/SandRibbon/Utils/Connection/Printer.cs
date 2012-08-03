@@ -41,10 +41,10 @@ namespace SandRibbon.Utils.Connection
         {
             return createVisual();
         }
-        public IEnumerable<MeTLInkCanvas> ToVisuaWithoutNotes()
+        public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
         {
             var canvases = createVisual("presentationSpace", true);
-            return new[] { canvases.First() };
+            return new[] { canvases.FirstOrDefault() };
         }
         private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic)
         {
@@ -205,18 +205,18 @@ namespace SandRibbon.Utils.Connection
                                                                acc.AddRange(item);
                                                                return acc;
                                                            });
-            HandlePrint(visuals);
+            HandlePrint(visuals.Where(v => v != null));
         }
         private void ShowPrintDialogWithoutNotes(IEnumerable<PrintParser> parsers)
         {
-            var visuals = parsers.Select(p => p.ToVisuaWithoutNotes())
+            var visuals = parsers.Select(p => p.ToVisualWithoutNotes())
                                  .Aggregate(new List<MeTLInkCanvas>(),
                                                            (acc, item) =>
                                                            {
                                                                acc.AddRange(item);
                                                                return acc;
                                                            });
-            HandlePrint(visuals);
+            HandlePrint(visuals.Where(v => v != null));
         }
         private void HandlePrint(IEnumerable<MeTLInkCanvas> visuals)
         {
