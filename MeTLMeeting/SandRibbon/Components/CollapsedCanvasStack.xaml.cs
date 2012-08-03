@@ -234,6 +234,8 @@ namespace SandRibbon.Components
                         #if TOGGLE_CONTENT
                         Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
                         #endif
+
+                        Globals.CurrentCanvasClipboardFocus = _target;
                     }
                 }
             });
@@ -244,16 +246,27 @@ namespace SandRibbon.Components
             Work.MouseMove += mouseMove;
             Work.StylusMove += stylusMove;
             Work.IsKeyboardFocusWithinChanged += Work_IsKeyboardFocusWithinChanged;
+            Globals.CanvasClipboardFocusChanged += CanvasClipboardFocusChanged;
         }
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue == true)
             {
-                ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Pink);
+                Globals.CurrentCanvasClipboardFocus = _target;
+            }
+        }
+
+        void CanvasClipboardFocusChanged(object sender, EventArgs e)
+        {
+            if ((string)sender != _target)
+            {
+                ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Transparent);
             }
             else
-                ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Transparent);
+            {
+                ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Pink);
+            }
         }
 
         private void JoinConversation()
@@ -2261,6 +2274,10 @@ namespace SandRibbon.Components
                   DoText(targettedBox);
         }
 
+        private bool CanHandleClipboardAction()
+        {
+            return Globals.CurrentCanvasClipboardFocus == _target;
+        }
 
         private MeTLTextBox textBoxFromId(string boxId)
         {
@@ -2275,17 +2292,17 @@ namespace SandRibbon.Components
         }
         public bool CanHandleClipboardPaste()
         {
-            return Work.IsKeyboardFocusWithin; 
+            return CanHandleClipboardAction(); 
         }
 
         public bool CanHandleClipboardCut()
         {
-            return Work.IsKeyboardFocusWithin; 
+            return CanHandleClipboardAction(); 
         }
 
         public bool CanHandleClipboardCopy()
         {
-            return Work.IsKeyboardFocusWithin; 
+            return CanHandleClipboardAction(); 
         }
 
         public void OnClipboardPaste()

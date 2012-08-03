@@ -253,5 +253,30 @@ namespace SandRibbon.Providers
                 return _storedUIState;
             }
         }
+
+
+        public delegate void CanvasClipboardFocusChangedHandler(object sender, EventArgs e);
+
+        private static object lockCurrentCanvasClipboardFocus = new object();
+        private static string currentCanvasClipboardFocus = "";
+        public static event CanvasClipboardFocusChangedHandler CanvasClipboardFocusChanged;
+        public static string CurrentCanvasClipboardFocus
+        {
+            get
+            {
+                return currentCanvasClipboardFocus;
+            }
+            set
+            {
+                lock (lockCurrentCanvasClipboardFocus)
+                {
+                    currentCanvasClipboardFocus = value;
+                    if (CanvasClipboardFocusChanged != null)
+                    {
+                        CanvasClipboardFocusChanged(currentCanvasClipboardFocus, EventArgs.Empty);
+                    }
+                }
+            }
+        }
     }
 }
