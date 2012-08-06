@@ -59,7 +59,7 @@ namespace SandRibbon.Utils.Connection
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
                 if ((includePublic && image.Value.privacy == "public") || image.Value.target == target)
                 {
-                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 2 : 3);
+                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 1 : 2);
                     canvas.Children.Add(imageToAdd);
                 }
             }
@@ -71,7 +71,8 @@ namespace SandRibbon.Utils.Connection
                 textbox.Background = new SolidColorBrush(Colors.Transparent);
                 if ((includePublic && box.Value.privacy == "public") || box.Value.target == target)
                 {
-                    Panel.SetZIndex(textbox, 1);
+                    // positive Z is out of the screen
+                    Panel.SetZIndex(textbox, 3);
                     canvas.Children.Add(textbox);
                 }
             }
