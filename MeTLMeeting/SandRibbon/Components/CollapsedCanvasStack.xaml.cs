@@ -758,12 +758,13 @@ namespace SandRibbon.Components
             var authorColor = new Dictionary<string, Color>();
             foreach (var author in authorList)
                 authorColor.Add(author, colors.ElementAt(authorList.IndexOf(author)));
-            foreach (var stroke in Work.GetSelectedStrokes())
+
+            /*foreach (var stroke in Work.GetSelectedStrokes())
                 stroke.DrawingAttributes.Color = authorColor[stroke.tag().author];
             foreach (var elem in Work.GetSelectedTextBoxes())
                 ApplyHighlight((FrameworkElement)elem, authorColor[((MeTLTextBox)elem).tag().author]);
             foreach (var elem in Work.GetSelectedImages())
-                ApplyHighlight((FrameworkElement)elem, authorColor[((Image)elem).tag().author]);
+                ApplyHighlight((FrameworkElement)elem, authorColor[((Image)elem).tag().author]);*/
 
             return authorColor;
         }
