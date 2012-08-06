@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using SandRibbon.Components.Utility;
 using System.Windows.Automation;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {
@@ -227,38 +228,42 @@ namespace SandRibbon.Components
         }
         private void BackstageModeChanged(string mode)
         {
-            Dispatcher.adoptAsync(() =>
+            Action changeBackstage = () =>
             {
                 updateLiveButton(mode);
-                RefreshSortedConversationsList();
-            });
-            string searchButtonText;
-            switch (mode)
-            {
-                case "mine":
-                    searchButtonText = "Filter my Conversations";
-                    FillSearchResults(Globals.me);
-                    break;
-                default: 
-                    searchButtonText = "Search all Conversations"; 
-                    FillSearchResultsFromInput();
-                    break;
-            }
-            Dispatcher.adoptAsync(() =>
-            {
+
+                string searchButtonText;
+                switch (mode)
+                {
+                    case "mine":
+                        searchButtonText = "Filter my Conversations";
+                        FillSearchResults(Globals.me);
+                        break;
+                    default: 
+                        searchButtonText = "Search all Conversations"; 
+                        FillSearchResultsFromInput();
+                        break;
+                }
+
                 if (searchConversations == null) return;
                 searchConversations.Content = searchButtonText;
-            });
+            };
+
+            Dispatcher.Invoke(changeBackstage, DispatcherPriority.Normal);
         }
+
         private void updateLiveButton(string mode)
         {
             var elements = new[] {mine, find, currentConversation};
             foreach (var button in elements)
                 if (button.Name == mode)
+                {
                     button.IsChecked = true;
+                }
         }
+
         private void clearState(){
-            SearchInput.Text = "";
+            SearchInput.Clear();
             RefreshSortedConversationsList();
             SearchInput.SelectionStart = 0;
         }
@@ -289,6 +294,12 @@ namespace SandRibbon.Components
             }
             this.Visibility = Visibility.Visible;
             clearState();
+
+            if (!string.IsNullOrEmpty((string)o) && (string)o == "MyConversations")
+            {
+                BackstageModeChanged("mine");
+            }
+
             Dispatcher.queueFocus(SearchInput);
         }
         private void HideConversationSearchBox(object o)
