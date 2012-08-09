@@ -205,6 +205,9 @@ namespace SandRibbon.Components
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
            
+            #if TOGGLE_CONTENT
+            Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
+            #endif
  
             Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(new DelegateCommand<SizeWithTarget>(extendCanvasBySize));
 
@@ -231,10 +234,6 @@ namespace SandRibbon.Components
 
                     if (_target == "presentationSpace")
                     {
-                        #if TOGGLE_CONTENT
-                        Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
-                        #endif
-
                         Globals.CurrentCanvasClipboardFocus = _target;
                     }
                 }
@@ -872,6 +871,9 @@ namespace SandRibbon.Components
 
         public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
         {
+            if (_target == "notepad")
+                return;
+
             Commands.UpdateContentVisibility.Execute(contentVisibility);
 
             ClearAdorners();
