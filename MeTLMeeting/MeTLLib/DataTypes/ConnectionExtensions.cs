@@ -3,11 +3,12 @@ namespace MeTLLib.DataTypes
 {
     public class Credentials
     {
-        public Credentials(string Name, string Password, List<AuthorizedGroup> AuthorizedGroups)
+        public Credentials(string Name, string Password, List<AuthorizedGroup> AuthorizedGroups, string Mail)
         {
             name = Name;
             password = Password;
             authorizedGroups = AuthorizedGroups;
+            mail = Mail;
         }
         public bool ValueEquals(object obj)
         {
@@ -25,11 +26,12 @@ namespace MeTLLib.DataTypes
         public string name;
         public string password;
         public List<AuthorizedGroup> authorizedGroups;
+        public string mail;
         public static Credentials Empty
         {
             get
             {
-                return new Credentials("", "", new List<AuthorizedGroup>());
+                return new Credentials("", "", new List<AuthorizedGroup>(), "");
             }
         }
     }

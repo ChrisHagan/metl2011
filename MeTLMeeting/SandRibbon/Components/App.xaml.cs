@@ -44,7 +44,6 @@ namespace SandRibbon
 #endif
 
         private static SplashScreen splashScreen;
-
         public static void ShowSplashScreen()
         {
             splashScreen = new SplashScreen("resources/splashScreen.png");
@@ -214,6 +213,7 @@ namespace SandRibbon
                 source.SelectAll();
             }, DispatcherPriority.Background);
         }*/
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
 #if DEBUG

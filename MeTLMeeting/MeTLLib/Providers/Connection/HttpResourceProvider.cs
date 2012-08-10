@@ -156,6 +156,7 @@ namespace MeTLLib.Providers.Connection
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
             if (cert == null) return false;
+            if (!(sender is HttpWebRequest)) return true;
             if (((HttpWebRequest)sender).Address.Host.Contains("my.monash.edu")) return true;
             if ((cert.Subject == MonashCertificateSubject && (cert.Issuer == MonashCertificateIssuer || cert.Issuer == MonashExternalCertificateIssuer))
                 || (cert.Subject == StagingMeTLCertificateSubject && cert.Issuer == StagingMeTLCertificateIssuer)

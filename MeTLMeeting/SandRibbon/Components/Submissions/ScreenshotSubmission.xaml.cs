@@ -9,6 +9,7 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using System.Diagnostics;
 using SandRibbon.Components.Utility;
+using System.Windows.Media;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -17,6 +18,7 @@ namespace SandRibbon.Components.Submissions
         public string message;
         public long time;
         public bool showPrivate;
+        public Size dimensions;
     }
     public partial class ScreenshotSubmission : UserControl
     {
@@ -92,6 +94,9 @@ namespace SandRibbon.Components.Submissions
         }
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
+            if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
+                return;
+
             if (!IHaveThisSubmission(submission))
             {
                 submissionList.Add(submission);
@@ -113,7 +118,7 @@ namespace SandRibbon.Components.Submissions
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  MeTLLib.ClientFactory.Connection().UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                                 (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission","public",hostedFileName));
+                                 (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission","public",hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>()));
                                  MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

@@ -10,19 +10,12 @@ using MeTLLib.Providers;
 
 namespace MeTLLib.DataTypes
 {
-    public class SearchConversationDetails:ConversationDetails
+    public class SearchConversationDetails : ConversationDetails
     {
         public const int DEFAULT_MAX_SEARCH_RESULTS = 50;
 
         public int relevance { get; set; }
         public long LastModified { get; set; }
-        private static readonly string TITLE_TAG = "title";
-        private static readonly string AUTHOR_TAG = "author";
-        private static readonly string CREATED_TAG = "created";
-        private static readonly string JID_TAG = "jid";
-        private static readonly string RESTRICTION_TAG = "restriction";
-        private static readonly string RELEVANCE_TAG = "relevance";
-        private static readonly string LASTMODIFIED_TAG = "modified";
 
         public SearchConversationDetails(ConversationDetails conv) : base(conv)
         {
@@ -202,6 +195,11 @@ namespace MeTLLib.DataTypes
             }
         }
  
+        public bool UserIsBlackListed(string userId)
+        {
+            return blacklist.Any(user => user == userId);
+        }
+
         public bool IsJidEqual(string thatJid)
         {
             if (!String.IsNullOrEmpty(Jid) && String.IsNullOrEmpty(thatJid))
@@ -210,6 +208,7 @@ namespace MeTLLib.DataTypes
             // Microsoft says we can use GetHashCode to safely compare two strings
             return Jid.GetHashCode() == thatJid.GetHashCode();
         }
+
 
         public bool UserHasPermission(Credentials credentials)
         {
@@ -256,7 +255,7 @@ namespace MeTLLib.DataTypes
         }
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
-        private static readonly string CREATED_TAG = "created";
+        protected static readonly string CREATED_TAG = "created";
         private static readonly string LAST_ACCESSED_TAG = "lastAccessed";
         private static readonly string TAG_TAG = "tag";
         private static readonly string SUBJECT_TAG = "subject";

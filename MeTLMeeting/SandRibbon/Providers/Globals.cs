@@ -71,7 +71,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                if(me == null || conversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
+                if (me == null || conversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
                 return me == conversationDetails.Author;
             }
         }
@@ -230,6 +230,14 @@ namespace SandRibbon.Providers
         public static UserInformation userInformation
         {
             get { return new UserInformation(credentials, location, policy); }
+        }
+
+        public static bool IsBanhammerActive 
+        { 
+            get 
+            {
+                return (bool)(Commands.BanhammerActive.IsInitialised ? Commands.BanhammerActive.LastValue() : false);
+            } 
         }
 
         public static bool rememberMe 

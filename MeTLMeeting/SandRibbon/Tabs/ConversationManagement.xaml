@@ -3,14 +3,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
-    sr:KeyboardAccess.Keys="P" Text="Conversation Management" x:Name="classroomRoot">
+    sr:KeyboardAccess.Keys="P" Text="Conversation Management" x:Name="conversationManagement">
+    <sr:RibbonTab.CommandBindings>
+        <CommandBinding Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" CanExecute="CheckManageBannedAllowed" Executed="OnBanContentchanged"/>
+    </sr:RibbonTab.CommandBindings>
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>    
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
         <dict:Button Text="Page Reorder" ToolTip="{DynamicResource PageReorderToolTip}" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
+        <StackPanel Orientation="Horizontal">
+            <ToggleButton Margin="5" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}">
+                <StackPanel>
+                    <Image Source="/Resources/Banhammer.jpg" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Height="30"/>
+                    <TextBlock>Ban Content</TextBlock>
+                </StackPanel>
+            </ToggleButton>
+            <Button x:Name="bannedContentManagement" Margin="5" Height="25" Command="{x:Static api:Commands.ViewBannedContent}" Content="Manage Banned Content" ToolTip="{DynamicResource BanContentToolTip}"/>
+        </StackPanel>
     </sr:RibbonGroup>
-
 </sr:RibbonTab>

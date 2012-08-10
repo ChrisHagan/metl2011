@@ -72,7 +72,8 @@ namespace MeTLLibTests
                     new AuthorizedGroup("Office of the Deputy Vice-Chancellor (Education)","ou"), 
                     new AuthorizedGroup("Administration","ou"), 
                     new AuthorizedGroup("Staff", "ou"), 
-                    new AuthorizedGroup("eecrole","username"), });
+                    new AuthorizedGroup("eecrole","username"), },
+                    "EEC.Role@monash.edu");
             Credentials actual = target.attemptAuthentication(username, password);
             Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected.authorizedGroups, actual.authorizedGroups));
             Assert.AreEqual(expected.name, actual.name);
@@ -143,7 +144,7 @@ namespace MeTLLibTests
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials("","", new List<AuthorizedGroup>()); 
+            Credentials expected = new Credentials("","", new List<AuthorizedGroup>(), ""); 
             Credentials actual;
             actual = target.attemptAuthentication(username, password);
             Assert.AreEqual(expected, actual);
@@ -158,7 +159,7 @@ namespace MeTLLibTests
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials("","",new List<AuthorizedGroup>());
+            Credentials expected = new Credentials("","",new List<AuthorizedGroup>(), "");
             Credentials actual;
             actual = target.attemptAuthentication(username, password);
             Assert.AreEqual(expected, actual);
@@ -173,7 +174,7 @@ namespace MeTLLibTests
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials("","",new List<AuthorizedGroup>());
+            Credentials expected = new Credentials("","",new List<AuthorizedGroup>(), "");
             Credentials actual;
             actual = target.attemptAuthentication(username, password);
             Assert.AreEqual(expected, actual);

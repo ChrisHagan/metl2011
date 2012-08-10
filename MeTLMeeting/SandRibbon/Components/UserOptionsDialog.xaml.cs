@@ -26,7 +26,6 @@ namespace SandRibbon.Components
             // ChangeLanguage commented out for 182 staging release. Causing a crash.
             //Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(((UserOptions)DataContext).language));
 
-
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)

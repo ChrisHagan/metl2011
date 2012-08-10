@@ -199,6 +199,16 @@ namespace MeTLLib.Providers.Connection
         {
             heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
         }
+
+        private void shutdownHeartBeat()
+        {
+            if (heartbeat != null)
+            {
+                heartbeat.Dispose();
+                heartbeat = null;
+            }
+        }
+
         private Timer ConnectionTimeoutTimer;
         private void EstablishConnectionTimer(){ 
             ConnectionTimeoutTimer = new Timer((_unused) => {
@@ -460,15 +470,7 @@ namespace MeTLLib.Providers.Connection
             }
         }
         
-        private void shutdownHeartBeat()
-        {
-            if (heartbeat != null)
-            {
-                heartbeat.Dispose();
-                heartbeat = null;
-            }
-        }
-
+        
         public void Logout()
         {
             shutdownHeartBeat();

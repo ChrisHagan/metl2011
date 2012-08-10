@@ -11,20 +11,31 @@ namespace SandRibbon.Quizzing
     {
         public static Rect ScaleMajorAxisToCanvasSize(FrameworkElement element)
         {
+            return ScaleMajorAxisToCanvasSize(element, new Size());
+        }
+
+        public static Rect ScaleMajorAxisToCanvasSize(FrameworkElement element, Size overrideSize)
+        {
             var totalWidth = element.ActualWidth;
             var totalHeight = element.ActualHeight;
             var aspectRatio = totalWidth / totalHeight;
+
+            if (overrideSize == null || (overrideSize.Width * overrideSize.Height) < 1e-8)
+            {
+                overrideSize.Width = ((double)Globals.DefaultCanvasSize.Width - (Globals.QuizMargin * 2));
+                overrideSize.Height = ((double)Globals.DefaultCanvasSize.Height - (Globals.QuizMargin * 2)); 
+            }
 
             double scaledWidth = 0;
             double scaledHeight = 0;
             if (totalWidth > totalHeight)
             {
-                scaledWidth = ((double)Globals.DefaultCanvasSize.Width - (Globals.QuizMargin * 2));
+                scaledWidth = overrideSize.Width; //((double)Globals.DefaultCanvasSize.Width - (Globals.QuizMargin * 2));
                 scaledHeight = scaledWidth / aspectRatio;
             }
             else
             {
-                scaledHeight = ((double)Globals.DefaultCanvasSize.Height - (Globals.QuizMargin * 2));
+                scaledHeight = overrideSize.Height; // ((double)Globals.DefaultCanvasSize.Height - (Globals.QuizMargin * 2));
                 scaledWidth = scaledHeight * aspectRatio;
             }
             

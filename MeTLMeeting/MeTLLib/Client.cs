@@ -316,7 +316,7 @@ namespace MeTLLib
                 try
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, DateTimeFactory.Now().Ticks));
+                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                     if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
                 }
                 catch (Exception e)

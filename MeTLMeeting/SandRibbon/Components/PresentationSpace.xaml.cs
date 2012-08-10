@@ -86,22 +86,42 @@ namespace SandRibbon.Components
             new colorCodedUsers(authorColor).ShowDialog();
            * */
         }
+
         private void BanHammerSelectedItems(object obj)
         {
-            /*
-            var authors = new List<string>();
-            authors.AddRange(stack.handwriting.getSelectedAuthors());
-            authors.AddRange(stack.text.GetSelectedAuthors());
-            authors.AddRange(stack.images.GetSelectedAuthors());
+            var authorList = stack.GetSelectedAuthors();
+            var authorColor = stack.ColourSelectedByAuthor(authorList);
             var details = Globals.conversationDetails;
-            foreach(var author in authors.Distinct())
+            foreach (var author in authorList)
             {
-                if(!details.blacklist.Contains(author))
+                if (!details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
+            GenerateBannedContentScreenshot(authorColor);
             Commands.SetPrivacyOfItems.Execute("private");
-             * */
+        }
+
+        private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
+        {
+            var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
+            DelegateCommand<string> sendScreenshot = null;
+            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
+                             {
+                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
+                                 var conn = MeTLLib.ClientFactory.Connection();
+                                 var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1,Globals.me,"bannedcontent",
+                                     "private", hostedFileName, Globals.conversationDetails.Title, blacklisted));
+                             });
+            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
+            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
+                                                    {
+                                                        time = time,
+                                                        message = string.Format("Banned content submission at {0}", new DateTime(time)),
+                                                        showPrivate = false,
+                                                        dimensions = new Size(1024, 768)
+                                                    });
         }
 
         private void setUpSyncDisplay(int slide)
@@ -161,7 +181,7 @@ namespace SandRibbon.Components
             var file = "";
             Dispatcher.adopt(() =>
             {
-                var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack);
+                var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack, details.dimensions);
                 var bitmap = new RenderTargetBitmap((int)targetSize.Width ,(int)targetSize.Height, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())

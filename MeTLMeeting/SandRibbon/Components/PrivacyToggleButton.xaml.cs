@@ -24,7 +24,7 @@ namespace SandRibbon.Components
 
             if (mode.AdornerTarget == "presentationSpace")
             {
-                if (!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
+                if ((!Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.blacklist.Contains(Globals.me)) && !Globals.isAuthor)
                 {
                     showButton.Visibility = Visibility.Collapsed;
                     hideButton.Visibility = Visibility.Collapsed;
@@ -45,20 +45,19 @@ namespace SandRibbon.Components
                     showButton.Visibility = Visibility.Visible;
                     hideButton.Visibility = Visibility.Visible;
                 }
-                /* Banhammer commented out
-                if (Globals.conversationDetails.Author == Globals.me)
+
+            if (Globals.IsBanhammerActive)
+            {
+                deleteButton.Visibility = Visibility.Collapsed;
+                showButton.Visibility = Visibility.Collapsed;
+                hideButton.Visibility = Visibility.Collapsed;
+            }
+
+            if (Globals.IsBanhammerActive && Globals.isAuthor)
                     banhammerButton.Visibility = Visibility.Visible;
                 else
                     banhammerButton.Visibility = Visibility.Collapsed;
-                // End Banhammer commented out
-                */
-            }
-            else
-            {
-                showButton.Visibility = Visibility.Collapsed;
-                hideButton.Visibility = Visibility.Collapsed;
-                //banhammerButton.Visibility = Visibility.Collapsed;
-            }
+
         }
         private void showContent(object sender, RoutedEventArgs e)
         {
