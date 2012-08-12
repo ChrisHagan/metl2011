@@ -45,6 +45,7 @@ namespace SandRibbon.Components
                     showButton.Visibility = Visibility.Visible;
                     hideButton.Visibility = Visibility.Visible;
                 }
+            }
 
             if (Globals.IsBanhammerActive)
             {
@@ -54,11 +55,11 @@ namespace SandRibbon.Components
             }
 
             if (Globals.IsBanhammerActive && Globals.isAuthor)
-                    banhammerButton.Visibility = Visibility.Visible;
-                else
-                    banhammerButton.Visibility = Visibility.Collapsed;
-
+                banhammerButton.Visibility = Visibility.Visible;
+            else
+                banhammerButton.Visibility = Visibility.Collapsed;
         }
+
         private void showContent(object sender, RoutedEventArgs e)
         {
             Commands.SetPrivacyOfItems.ExecuteAsync("public");
