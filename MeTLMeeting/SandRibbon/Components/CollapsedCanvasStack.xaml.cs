@@ -112,7 +112,7 @@ namespace SandRibbon.Components
         }
     }
     
-    public partial class CollapsedCanvasStack : IClipboardHandler
+    public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
         private Color _currentColor = Colors.Black;
@@ -458,8 +458,8 @@ namespace SandRibbon.Components
                                      selectedText = Work.GetSelectedTextBoxes().ToList();
                                  });
             var ink = deleteSelectedInk(filterOnlyMine(selectedStrokes));
-            var images = deleteSelectedImages(filterOnlyMine(selectedImages));
-            var text = deleteSelectedText(filterOnlyMine(selectedText));
+            var images = deleteSelectedImages(filterOnlyMine(selectedImages.Cast<UIElement>()).Cast<Image>()); // TODO: fix the casting craziness
+            var text = deleteSelectedText(filterOnlyMine(selectedText.Cast<UIElement>()).Cast<MeTLTextBox>()); // TODO: fix the casting craziness
             Action undo = () =>
                 {
                     ink.undo();
@@ -2769,8 +2769,8 @@ namespace SandRibbon.Components
             if (me == Globals.PROJECTOR) return;
             var strokesToCut = filterOnlyMine(Work.GetSelectedStrokes()).Select(s => s.Clone());
             var currentTextBox = filterOnlyMine<MeTLTextBox>(myTextBox.clone());
-            var selectedImages = filterOnlyMine(Work.GetSelectedImages()).Select(i => ((Image)i).clone()).ToList();
-            var selectedText = filterOnlyMine(Work.GetSelectedTextBoxes()).Select(t => ((MeTLTextBox) t).clone()).ToList();
+            var selectedImages = filterOnlyMine(Work.GetSelectedImages().Cast<UIElement>()).Select(i => ((Image)i).clone()).ToList(); // TODO: fix the casting craziness
+            var selectedText = filterOnlyMine(Work.GetSelectedTextBoxes().Cast<UIElement>()).Select(t => ((MeTLTextBox) t).clone()).ToList(); // TODO: fix the casting craziness
 
             Action redo = () =>
             {
