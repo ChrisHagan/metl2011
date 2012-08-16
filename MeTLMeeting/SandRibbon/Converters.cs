@@ -440,7 +440,20 @@ namespace SandRibbon
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "Preview";
-            return string.Format("{0}", (new DateTime(((PrivacyWrapper)value).time)));
+
+            var submission = value as TargettedSubmission;
+            if (submission != null)
+            {
+                return string.Format("{0}", (new DateTime(submission.time)));
+            }
+
+            var privacyWrapper = value as PrivacyWrapper;
+            if (privacyWrapper != null)
+            {
+                return string.Format("{0}", (new DateTime(privacyWrapper.time)));
+            }
+
+            return "Preview";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -491,10 +504,22 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-
             if (value == null) return value;
             var converter = new ConvertStringToImageSource();
-            return converter.Convert(((PrivacyWrapper)value).url, null, null, null);
+
+            var submission = value as TargettedSubmission;
+            if (submission != null)
+            {
+                return converter.Convert(submission.url, null, null, null);
+            }
+
+            var privacyWrapper = value as PrivacyWrapper;
+            if (privacyWrapper != null)
+            {
+                return converter.Convert(privacyWrapper.url, null, null, null);
+            }
+
+            return value; 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
