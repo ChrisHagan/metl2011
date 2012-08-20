@@ -35,6 +35,8 @@ syntax: glob
 MSBuildExtensions\*
 
 *.orig
+*.Cache
+*\Properties\HgId.cs
 
 *.resharper.*
 

@@ -1,0 +1,5 @@
+namespace SandRibbon.Properties {
+/// <summary> Auto generated Mercurial ID class. </summary>
+internal class HgID {
+    /// <summary> Mercurial version ID [+ is modified] [Named branch]</summary>
+    public const string Version =

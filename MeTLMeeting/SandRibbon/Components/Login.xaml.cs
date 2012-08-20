@@ -53,7 +53,7 @@ namespace SandRibbon.Components
         private bool canLoginAgain = true;
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
-        public string Version { get; set; }
+        public string Version { get; private set; }
         private UserCredentials credentials = new UserCredentials();
         private int numErrorsOfCredentials = 0;
         public Login()
@@ -66,7 +66,11 @@ namespace SandRibbon.Components
 
             RetrieveReleaseNotes();
             Commands.AddWindowEffect.ExecuteAsync(null);
+#if DEBUG
+            Version = String.Format("{0} Build: {1}", ConfigurationProvider.instance.getMetlVersion(), SandRibbon.Properties.HgID.Version); 
+#else
             Version = ConfigurationProvider.instance.getMetlVersion();
+#endif
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             Commands.LoginFailed.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { LoginFailed(); }));
             if (WorkspaceStateProvider.savedStateExists())
