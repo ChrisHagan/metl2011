@@ -725,7 +725,13 @@ namespace SandRibbon
         private void UpdateTitle(ConversationDetails details)
         {
             if (Globals.conversationDetails != null && mustBeInConversation(null))
-                Title = messageFor(Globals.conversationDetails);
+            {
+                #if DEBUG
+                    Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), SandRibbon.Properties.HgID.Version); 
+                #else
+                    Title = messageFor(Globals.conversationDetails);
+                #endif 
+            }
             else
                 Title = Strings.Global_ProductName;
         }
