@@ -943,7 +943,8 @@ namespace MeTLLib.Providers.Connection
             }
             try
             {
-                cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message);
+                // JJNOTE: temporarily comment out while testing new server-side lib
+                //cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message);
             }
             catch (Exception e)
             {
@@ -975,6 +976,8 @@ namespace MeTLLib.Providers.Connection
                 actOnDirtyImageReceived(dirtyImage);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
                 actOnFileResource(file.injectDependencies(metlServerAddress));
+            foreach (var moveDelta in message.SelectElements<MeTLStanzas.MoveDeltaStanza>(true))
+                actOnMoveDelta(moveDelta);
         }
 
         public virtual void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
@@ -1017,6 +1020,10 @@ namespace MeTLLib.Providers.Connection
         public virtual void actOnDirtyTextReceived(MeTLStanzas.DirtyText dirtyText)
         {
             receiveEvents.receiveDirtyTextBox(dirtyText.element);
+        }
+        public virtual void actOnMoveDelta(MeTLStanzas.MoveDeltaStanza moveDelta)
+        {
+            receiveEvents.receiveMoveDelta(moveDelta.parameters);
         }
         public virtual void actOnImageReceived(TargettedImage image)
         {

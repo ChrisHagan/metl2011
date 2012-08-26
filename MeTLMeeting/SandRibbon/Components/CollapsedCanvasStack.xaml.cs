@@ -5,17 +5,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using MeTLLib.DataTypes;
+using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using SandRibbon.Components.Utility;
@@ -29,7 +29,6 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
-using System.Windows.Automation.Peers;
 
 namespace SandRibbon.Components
 {
@@ -196,7 +195,7 @@ namespace SandRibbon.Components
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
             Commands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
-
+            Commands.ReceiveMoveDelta.RegisterCommandToDispatcher(new DelegateCommand<TargettedMoveDelta>(ReceiveMoveDelta));
 
             Commands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<TargettedTextBox>(ReceiveTextBox));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<TextInformation>(updateStyling));
@@ -985,7 +984,7 @@ namespace SandRibbon.Components
             var strokeTarget = _target;
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
-                if (targettedStroke.author == me || targettedStroke.privacy == Globals.PUBLIC)
+                if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Globals.PUBLIC))
                     AddStrokeToCanvas(Work, new PrivateAwareStroke(targettedStroke.stroke, strokeTarget));
             }
         }
@@ -1348,6 +1347,22 @@ namespace SandRibbon.Components
             }
 
         }
+        public void ReceiveMoveDelta(TargettedMoveDelta moveDelta)
+        {
+            if (moveDelta != null && moveDelta.HasSameTarget(_target))
+            {
+                var xTrans = moveDelta.xTranslate;
+                var yTrans = moveDelta.yTranslate;
+                foreach (var text in Work.TextChildren().Where((t) => moveDelta.HasSameAuthor(t.tag().author)))
+                {
+                    var left = InkCanvas.GetLeft(text) + xTrans;
+                    var top = InkCanvas.GetTop(text) + yTrans;
+
+                    InkCanvas.SetLeft(text, left);
+                    InkCanvas.SetTop(text, top);
+                }
+            }
+        }
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
             foreach (var image in images)
@@ -1355,7 +1370,7 @@ namespace SandRibbon.Components
                 if (image.slide == Globals.slide && image.target == _target)
                 {
                     TargettedImage image1 = image;
-                    if (image.author == me || image.privacy == Globals.PUBLIC)
+                    if (image.HasSameAuthor(me) || image.HasSamePrivacy(Globals.PUBLIC))
                     {
                         Dispatcher.adoptAsync(() => 
                         {
@@ -1856,7 +1871,7 @@ namespace SandRibbon.Components
                                       {
                                           if (targettedBox.target != _target) return;
                                           if (targettedBox.slide == Globals.slide &&
-                                              (targettedBox.privacy == Globals.PUBLIC || targettedBox.author == me))
+                                              (targettedBox.HasSamePrivacy(Globals.PUBLIC) || targettedBox.HasSameAuthor(me)))
                                           {
 
                                               //var box = targettedBox.box.toMeTLTextBox();
@@ -1865,7 +1880,7 @@ namespace SandRibbon.Components
                                               //AddTextBoxToCanvas(box); 
                                               if (box != null)
                                               {
-                                                  if (!(targettedBox.author == me && _focusable))
+                                                  if (!(targettedBox.HasSameAuthor(me) && _focusable))
                                                       box.Focusable = false;
                                                   ApplyPrivacyStylingToElement(box, targettedBox.privacy);
                                               }
@@ -2364,7 +2379,7 @@ namespace SandRibbon.Components
             if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
 
-            if (targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
+            if (targettedBox.HasSameAuthor(me) && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
             {
                 /*var box = textBoxFromId(targettedBox.identity);
                 if (box != null)
@@ -2372,9 +2387,9 @@ namespace SandRibbon.Components
                 DoText(targettedBox);
                 return;
             }//I never want my live text to collide with me.
-            if (targettedBox.slide == Globals.slide && (targettedBox.privacy == Globals.PRIVATE || me == Globals.PROJECTOR))
+            if (targettedBox.slide == Globals.slide && (targettedBox.HasSamePrivacy(Globals.PRIVATE) || me == Globals.PROJECTOR))
                 RemoveTextBoxWithMatchingId(targettedBox.identity);
-            if (targettedBox.slide == Globals.slide && (targettedBox.privacy == Globals.PUBLIC || (targettedBox.author == me && me != Globals.PROJECTOR)))
+            if (targettedBox.slide == Globals.slide && (targettedBox.HasSamePrivacy(Globals.PUBLIC) || (targettedBox.HasSameAuthor(me) && me != Globals.PROJECTOR)))
                   DoText(targettedBox);
         }
 

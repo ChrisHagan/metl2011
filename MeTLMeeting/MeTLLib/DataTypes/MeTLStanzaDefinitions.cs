@@ -15,6 +15,8 @@ using MeTLLib.Providers;
 using System.Threading;
 using MeTLLib.Providers.Connection;
 using System.Diagnostics;
+using MeTLLib.Utilities;
+using System.Collections.ObjectModel;
 
 
 namespace MeTLLib.DataTypes
@@ -45,6 +47,8 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.TeacherStatusStanza();
             new MeTLStanzas.ScreenshotSubmission();
             new MeTLStanzas.BlackList();
+            new MeTLStanzas.MoveDeltaStanza();
+            new MeTLStanzas.ElementIdentityStanza();
         }
     }
     public class WormMove
@@ -76,13 +80,117 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is TargettedElement)) return false;
             var foreignTE = (TargettedElement)obj;
-            return (foreignTE.author == author && foreignTE.privacy == privacy && foreignTE.slide == slide && foreignTE.target == target);
+            return (HasSameAuthor(foreignTE.author) && HasSamePrivacy(foreignTE.privacy) && foreignTE.slide == slide && HasSameTarget(foreignTE.target));
         }
+
+        public bool HasSamePrivacy(string theirPrivacy)
+        {
+            return String.Compare(privacy, theirPrivacy, true) == 0;
+        }
+
+        public bool HasSameAuthor(string theirAuthor)
+        {
+            return String.Compare(author, theirAuthor, true) == 0;
+        }
+
+        public bool HasSameTarget(string theirTarget)
+        {
+            return String.Compare(target, theirTarget, true) == 0;
+        }
+
         public string author { get; set; }
         public string target;
         public string privacy;
         public int slide;
         public long timestamp;
+    }
+    public class TargettedMoveDelta : TargettedElement
+    {
+        public TargettedMoveDelta(int slide, string author, string target, string privacy) : base(slide, author, target, privacy)
+        {
+        }
+
+        public double xTranslate { get; set; }
+        public double yTranslate { get; set; }
+        public double xScale { get; set; }
+        public double yScale { get; set; }
+        public string newPrivacy { get; set; }
+        public bool isDeleted { get; set; }
+
+        private readonly HashSet<MeTLStanzas.ElementIdentity> _inkIds = new HashSet<MeTLStanzas.ElementIdentity>();
+        private ReadOnlyCollection<MeTLStanzas.ElementIdentity> _inkIdsView;
+        public ReadOnlyCollection<MeTLStanzas.ElementIdentity> inkIds 
+        { 
+            get 
+            {
+                if (_inkIdsView == null)
+                {
+                    _inkIdsView = new ReadOnlyCollection<MeTLStanzas.ElementIdentity>(_inkIds.ToList());
+                }
+                return _inkIdsView; 
+            } 
+        }
+        internal void AddInkId(MeTLStanzas.ElementIdentity elemId)
+        {
+            _inkIds.Add(elemId);
+        }
+
+        private readonly HashSet<MeTLStanzas.ElementIdentity> _textIds = new HashSet<MeTLStanzas.ElementIdentity>();
+        private ReadOnlyCollection<MeTLStanzas.ElementIdentity> _textIdsView;
+        public ReadOnlyCollection<MeTLStanzas.ElementIdentity> textIds 
+        { 
+            get 
+            {
+                if (_textIdsView == null)
+                {
+                    _textIdsView = new ReadOnlyCollection<MeTLStanzas.ElementIdentity>(_textIds.ToList());
+                }
+                return _textIdsView; 
+            } 
+        }
+        internal void AddTextId(MeTLStanzas.ElementIdentity elemId)
+        {
+            _textIds.Add(elemId);
+        }
+
+        private readonly HashSet<MeTLStanzas.ElementIdentity> _imageIds = new HashSet<MeTLStanzas.ElementIdentity>();
+        private ReadOnlyCollection<MeTLStanzas.ElementIdentity> _imageIdsView;
+        public ReadOnlyCollection<MeTLStanzas.ElementIdentity> imageIds 
+        { 
+            get 
+            {
+                if (_imageIdsView == null)
+                {
+                    _imageIdsView = new ReadOnlyCollection<MeTLStanzas.ElementIdentity>(_imageIds.ToList());
+                }
+                return _imageIdsView; 
+            } 
+        }
+        internal void AddImageId(MeTLStanzas.ElementIdentity elemId)
+        {
+            _imageIds.Add(elemId);
+        }
+
+        public new bool ValueEquals(object obj)
+        {
+            var moveDelta = obj as TargettedMoveDelta;
+            if (moveDelta == null) return false;
+
+            return (base.ValueEquals(obj) && 
+                MeTLMath.ApproxEqual(moveDelta.xTranslate, xTranslate) && 
+                MeTLMath.ApproxEqual(moveDelta.yTranslate, yTranslate) && 
+                MeTLMath.ApproxEqual(moveDelta.xScale, xScale) && 
+                MeTLMath.ApproxEqual(moveDelta.yScale, yScale) && 
+                string.Compare(moveDelta.newPrivacy, newPrivacy, true) == 0 &&
+                IsNullOrEqual(moveDelta._inkIds, _inkIds) &&
+                IsNullOrEqual(moveDelta._textIds, _textIds) &&
+                IsNullOrEqual(moveDelta._imageIds, _imageIds));
+        }
+
+        private bool IsNullOrEqual(HashSet<MeTLStanzas.ElementIdentity> elemIdsA, HashSet<MeTLStanzas.ElementIdentity> elemIdsB)
+        {
+            return (elemIdsA == null && elemIdsB == null) || elemIdsA.SetEquals(elemIdsB);
+        }
     }
     public class TargettedAutoShape : TargettedElement
     {
@@ -776,6 +884,101 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
+        public class MoveDeltaStanza : Element
+        {
+            #region xml element tags
+            static readonly string TAG = "metlMoveDelta";
+            static readonly string XTRANSLATE_TAG = "xTranslate"; 
+            static readonly string YTRANSLATE_TAG = "yTranslate";
+            static readonly string XSCALE_TAG = "xScale";
+            static readonly string YSCALE_TAG = "yScale";
+            static readonly string NEWPRIVACY_TAG = "newPrivacy";
+            static readonly string ISDELETED_TAG = "isDeleted";
+            static readonly string INKIDS_TAG = "inkIds";
+            static readonly string TEXTIDS_TAG = "textIds";
+            static readonly string IMAGEIDS_TAG = "imageIds";
+            #endregion
+
+            static MoveDeltaStanza()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(MoveDeltaStanza));
+            }
+
+            public MoveDeltaStanza()
+            {
+                this.TagName = TAG;
+                this.Namespace = METL_NS;
+            }
+
+            public MoveDeltaStanza(TargettedMoveDelta moveDelta) : this()
+            {
+                this.parameters = moveDelta;
+            }
+
+            public TargettedMoveDelta parameters
+            {
+                get
+                {
+                    var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag));
+
+                    moveDelta.xTranslate = GetTagDouble(XTRANSLATE_TAG);
+                    moveDelta.yTranslate = GetTagDouble(YTRANSLATE_TAG);
+                    moveDelta.xScale = GetTagDouble(XSCALE_TAG);
+                    moveDelta.yScale = GetTagDouble(YSCALE_TAG);
+                    moveDelta.newPrivacy = GetTag(NEWPRIVACY_TAG);
+                    moveDelta.isDeleted = GetTagBool(ISDELETED_TAG);
+
+                    GetChildren(moveDelta, INKIDS_TAG, (elemId) => moveDelta.AddInkId(elemId));
+                    GetChildren(moveDelta, TEXTIDS_TAG, (elemId) => moveDelta.AddTextId(elemId));
+                    GetChildren(moveDelta, IMAGEIDS_TAG, (elemId) => moveDelta.AddImageId(elemId));
+
+                    return moveDelta; 
+                }
+                set
+                {
+                    SetTag(slideTag, value.slide);
+                    SetTag(authorTag, value.author);
+                    SetTag(targetTag, value.target);
+                    SetTag(privacyTag, value.privacy);
+
+                    SetTag(XTRANSLATE_TAG, value.xTranslate);
+                    SetTag(YTRANSLATE_TAG, value.yTranslate);
+                    SetTag(XSCALE_TAG, value.xScale);
+                    SetTag(YSCALE_TAG, value.yScale);
+                    SetTag(NEWPRIVACY_TAG, value.newPrivacy);
+                    SetTag(ISDELETED_TAG, value.isDeleted);
+
+                    SetChildren(INKIDS_TAG, value.inkIds);
+                    SetChildren(TEXTIDS_TAG, value.textIds);
+                    SetChildren(IMAGEIDS_TAG, value.imageIds);
+                }
+            }
+
+            void SetChildren(string tagName, IEnumerable<ElementIdentity> elementIds)
+            {
+                var childElem = new Element(tagName);
+                foreach (var elemId in elementIds)
+                {
+                    var elemStanza = new ElementIdentityStanza(elemId);
+                    childElem.AddChild(elemStanza);
+                }
+                AddChild(childElem);
+            }
+
+            void GetChildren(TargettedMoveDelta moveDelta, string elementTag, Action<MeTLStanzas.ElementIdentity> addElem)
+            {
+                var elementIds = SelectSingleElement(elementTag);
+                if (elementIds != null)
+                {
+                    foreach (var elemId in elementIds.SelectElements<ElementIdentityStanza>())
+                    {
+                        addElem(elemId.identity);
+                    }
+                }
+            }
+        }
+
+
         public class TextBox : Element
         {
             static TextBox()
@@ -1055,6 +1258,104 @@ namespace MeTLLib.DataTypes
             {
                 UserName = username;
                 Color = Ink.colorToString(color);
+            }
+        }
+
+        public class ElementIdentity
+        {
+            public string Identity { get; private set; }
+
+            public ElementIdentity(string identity)
+            {
+                Identity = identity;
+            }
+
+            #region Equality methods and overrides
+            public override bool Equals(object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+
+                // if parameter can't be cast. note cast to object to avoid infinite recursion 
+                var elemId = obj as ElementIdentity;
+                if ((object)elemId == null)
+                {
+                    return false;
+                }
+
+                // ignoring case for the string compare
+                return (string.Compare(elemId.Identity, Identity, true) == 0);
+            }
+
+            public bool Equals(ElementIdentity elemId)
+            {
+                // if parameter is null return false
+                if ((object)elemId == null)
+                {
+                    return false;
+                }
+
+                // ignoring case for the string compare
+                return (string.Compare(elemId.Identity, Identity, true) == 0);
+            }
+
+            public override int GetHashCode()
+            {
+                return Identity.ToLower().GetHashCode();
+            }
+
+            public static bool operator ==(ElementIdentity elemA, ElementIdentity elemB)
+            {
+                if (object.ReferenceEquals(elemA, elemB))
+                {
+                    return true;
+                }
+
+                if (((object)elemA == null) || ((object)elemB == null))
+                {
+                    return false; 
+                }
+
+                return (string.Compare(elemA.Identity, elemB.Identity, true) == 0);
+            }
+
+            public static bool operator !=(ElementIdentity elemA, ElementIdentity elemB)
+            {
+                return !(elemA == elemB);
+            }
+            #endregion
+        }
+
+        public class ElementIdentityStanza: Element
+        {
+            static readonly string TAG = identityTag;
+
+            static ElementIdentityStanza()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(ElementIdentityStanza.TAG, METL_NS, typeof(ElementIdentityStanza));
+            }
+            public ElementIdentityStanza()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public ElementIdentityStanza(ElementIdentity elementId) : this()
+            {
+                this.identity = elementId;
+            }
+
+            public ElementIdentity identity
+            {
+                get
+                {
+                    return new ElementIdentity(GetTag(identityTag));
+                }
+                set
+                {
+                    SetTag(identityTag, value.Identity);
+                }
             }
         }
 

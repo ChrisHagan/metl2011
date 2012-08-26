@@ -116,6 +116,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ResourceUploader.cs" />
     <Compile Include="Utilities\DdMonitor.cs" />
+    <Compile Include="Utilities\MeTLMath.cs" />
     <Compile Include="Utilities\UIHelper.cs" />
     <Compile Include="XElementExtensions.cs" />
   </ItemGroup>

@@ -200,6 +200,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand FileUpload = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendImage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveImage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveMoveDelta = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendDirtyImage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveDirtyImage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand AddAutoShape = new DefaultableCompositeCommand();

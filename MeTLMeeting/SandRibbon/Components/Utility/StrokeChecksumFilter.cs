@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Ink;
 using MeTLLib.DataTypes;
-using SandRibbon.Utils;
-using System.Collections.ObjectModel;
-using System;
+using MeTLLib.Utilities;
 
 namespace SandRibbon.Components.Utility
 {

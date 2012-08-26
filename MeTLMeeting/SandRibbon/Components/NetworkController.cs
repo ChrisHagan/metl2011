@@ -249,6 +249,7 @@ namespace SandRibbon.Components
             client.events.DirtyStrokeAvailable += dirtyStrokeAvailable;
             client.events.DirtyTextBoxAvailable += dirtyTextBoxAvailable;
             client.events.DirtyVideoAvailable += dirtyVideoAvailable;
+            client.events.MoveDeltaAvailable += moveDeltaAvailable;
             client.events.DiscoAvailable += discoAvailable;
             client.events.FileAvailable += fileAvailable;
             client.events.ImageAvailable += imageAvailable;
@@ -281,6 +282,7 @@ namespace SandRibbon.Components
             client.events.DirtyStrokeAvailable -= dirtyStrokeAvailable;
             client.events.DirtyTextBoxAvailable -= dirtyTextBoxAvailable;
             client.events.DirtyVideoAvailable -= dirtyVideoAvailable;
+            client.events.MoveDeltaAvailable -= moveDeltaAvailable;
             client.events.DiscoAvailable -= discoAvailable;
             client.events.FileAvailable -= fileAvailable;
             client.events.ImageAvailable -= imageAvailable;
@@ -390,6 +392,10 @@ namespace SandRibbon.Components
         private void imageAvailable(object sender, ImageAvailableEventArgs e)
         {
             Commands.ReceiveImage.ExecuteAsync(new[] { e.image });
+        }
+        private void moveDeltaAvailable(object sender, MoveDeltaAvailableEventArgs e)
+        {
+            Commands.ReceiveMoveDelta.ExecuteAsync(e.moveDelta);
         }
         private void liveWindowAvailable(object sender, LiveWindowAvailableEventArgs e)
         {

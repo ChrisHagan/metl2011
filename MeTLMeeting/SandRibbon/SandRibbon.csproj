@@ -48,7 +48,7 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-	<ProductName>MeTL</ProductName>
+    <ProductName>MeTL</ProductName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
@@ -182,7 +182,6 @@
     <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\MeTLMath.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
       <DependentUpon>UndoHistoryVisualiserWindow.xaml</DependentUpon>
