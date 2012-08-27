@@ -112,6 +112,7 @@ namespace SandRibbon.Components
         private string startingSumTag = "startingSum";
         public static readonly string privacyTag = "privacy";
         public static readonly string authorTag = "author";
+        public static readonly string identityTag = "identity";
         private string metl_ns = "{monash:metl}";
         public List<Stroke> Ink
         {
@@ -138,7 +139,7 @@ namespace SandRibbon.Components
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
-                  stroke.tag(new StrokeTag( XmlStroke.Element(metl_ns + authorTag).Value, XmlStroke.Element(metl_ns + privacyTag).Value, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
+                  stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, XmlStroke.Element(metl_ns + privacyTag).Value, XmlStroke.Element(metl_ns + identityTag).Value, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
                   strokes.Add(stroke);
               }
               return strokes;
@@ -151,10 +152,10 @@ namespace SandRibbon.Components
                   var xShift = stroke.StylusPoints.First().X;
                   var yShift = stroke.StylusPoints.First().Y;
                   var newStroke = stroke.Clone();
-                  newStroke.tag(new StrokeTag(newStroke.tag().author, newStroke.tag().privacy, newStroke.sum().checksum, newStroke.tag().isHighlighter));
+                  newStroke.tag(new StrokeTag(newStroke.tag().author, newStroke.tag().privacy, newStroke.tag().id, newStroke.sum().checksum, newStroke.tag().isHighlighter));
                   //this code will translate all strokes to a 0,0 starting point
                   //newStroke.StylusPoints = new StylusPointCollection(stroke.StylusPoints.Select(p => new StylusPoint((p.X - xShift), (p.Y - yShift), p.PressureFactor)));
-                  data.Add(new MeTLStanzas.Ink(new TargettedStroke(Globals.slide,  newStroke.tag().author, "PresentationSpace", newStroke.tag().privacy,newStroke)).ToString());
+                  data.Add(new MeTLStanzas.Ink(new TargettedStroke(Globals.slide,  newStroke.tag().author, "PresentationSpace", newStroke.tag().privacy, newStroke.tag().id,newStroke, newStroke.tag().startingSum)).ToString());
               }
               _InkAsString = data;
           }

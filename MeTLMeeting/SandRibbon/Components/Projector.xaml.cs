@@ -137,10 +137,6 @@ namespace SandRibbon.Components
                 return true;
             if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
                 return true;
-            if (parser.videos.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.autoshapes.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
             return false;
         }
 

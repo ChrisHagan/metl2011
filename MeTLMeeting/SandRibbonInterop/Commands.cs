@@ -109,7 +109,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SendPing = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceivePong = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DoWithCurrentSelection = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand SendNewBubble = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BubbleCurrentSelection = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveNewBubble = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ExploreBubble = new DefaultableCompositeCommand();
@@ -191,11 +190,6 @@ namespace SandRibbon
         #region ImageCanvas
         public static DefaultableCompositeCommand ImageDropped = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ImagesDropped = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand AddVideo = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand SendVideo = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand ReceiveVideo = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand SendDirtyVideo = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand ReceiveDirtyVideo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand AddImage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand FileUpload = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendImage = new DefaultableCompositeCommand();
@@ -204,7 +198,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SendDirtyImage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveDirtyImage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand AddAutoShape = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand SendAutoShape = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendDirtyAutoShape = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveAutoShape = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveDirtyAutoShape = new DefaultableCompositeCommand();

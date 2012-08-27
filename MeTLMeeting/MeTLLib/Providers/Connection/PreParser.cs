@@ -14,14 +14,11 @@ namespace MeTLLib.Providers.Connection
     public class PreParser : JabberWire
     {
         public Dictionary<string, TargettedImage> images = new Dictionary<string, TargettedImage>();
-        public Dictionary<string, TargettedVideo> videos = new Dictionary<string, TargettedVideo>();
-        public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
         public List<QuizQuestion> quizzes = new List<QuizQuestion>();
         public List<TargettedFile> files = new List<TargettedFile>();
         public List<TargettedSubmission> submissions = new List<TargettedSubmission>();
         public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
-        public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
         public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider) 
@@ -37,10 +34,6 @@ namespace MeTLLib.Providers.Connection
             var canvas = new InkCanvas();
             foreach (var image in images)
                 canvas.Children.Add(image.Value.imageSpecification.curryEvaluation(metlServerAddress)());
-            foreach (var shape in autoshapes)
-                canvas.Children.Add(shape.Value.autoshape);
-            foreach (var video in videos)
-                canvas.Children.Add(video.Value.video);
             foreach (var textbox in text)
             {
                 textbox.Value.box.Background = new SolidColorBrush(Colors.Transparent);
@@ -74,23 +67,15 @@ namespace MeTLLib.Providers.Connection
                 foreach (var kv in parser.images)
                     if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);
-                foreach (var kv in parser.autoshapes)
-                    if(!returnParser.autoshapes.ContainsKey(kv.Key))
-                        returnParser.autoshapes.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.liveWindows)
                     if (!returnParser.liveWindows.ContainsKey(kv.Key))
                         returnParser.liveWindows.Add(kv.Key, kv.Value);
-                foreach (var kv in parser.videos)
-                    if (!returnParser.videos.ContainsKey(kv.Key))
-                        returnParser.videos.Add(kv.Key, kv.Value);
             }
             return returnParser;
         }
         public void Regurgitate()
         {
             receiveEvents.receiveStrokes(ink.ToArray());
-            foreach (var autoshape in autoshapes.Values)
-                receiveEvents.receiveAutoShape(autoshape);
             if (images.Values.Count > 0)
                 receiveEvents.receiveImages(images.Values.ToArray());
             foreach (var box in text.Values)
@@ -101,8 +86,6 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveQuizAnswer(answer);
             foreach (var window in liveWindows.Values)
                 receiveEvents.receiveLiveWindow(window);
-            foreach (var video in videos.Values)
-                receiveEvents.receiveVideo(video);
             foreach (var file in files)
                 receiveEvents.receiveFileResource(file);
             Commands.AllContentSent.Execute(location.currentSlide);
@@ -124,46 +107,23 @@ namespace MeTLLib.Providers.Connection
         }
         public override void actOnDirtyImageReceived(MeTLStanzas.DirtyImage image)
         {
-            if(images.ContainsKey(image.element.identifier))
-                images.Remove(image.element.identifier);
-        }
-        public override void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape element)
-        {
-            if (autoshapes.ContainsKey(element.element.identifier))
-                autoshapes.Remove(element.element.identifier);
+            if(images.ContainsKey(image.element.identity))
+                images.Remove(image.element.identity);
         }
         public override void actOnDirtyTextReceived(MeTLStanzas.DirtyText element)
         {
-            if(text.ContainsKey(element.element.identifier))
-                text.Remove(element.element.identifier);
-        }
-        public override void actOnDirtyVideoReceived(MeTLStanzas.DirtyVideo element)
-        {
-            if (videos.ContainsKey(element.element.identifier))
-                videos.Remove(element.element.identifier);
+            if(text.ContainsKey(element.element.identity))
+                text.Remove(element.element.identity);
         }
         public override void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk dirtyInk)
         {
-            var strokesToRemove = ink.Where(s => 
-                s.stroke.sum().checksum.ToString().Equals(dirtyInk.element.identifier)).ToList();
+            var strokesToRemove = ink.Where(s => s.HasSameIdentity(dirtyInk.element.identity)).ToList();
             foreach(var stroke in strokesToRemove)
                 ink.Remove(stroke);
         }
         public override void actOnImageReceived(TargettedImage image)
         {
-            images[image.id] = image;
-        }
-        public override void actOnAutoShapeReceived(TargettedAutoShape autoshape)
-        {
-            return;
-            /*try
-            {
-                autoshapes[(string)autoshape.autoshape.Tag] = autoshape;
-            }
-            catch (NullReferenceException)
-            {
-                Trace.TraceError("Null reference in collecting autoshape from preparser");
-            }*/
+            images[image.identity] = image;
         }
         public override void actOnStrokeReceived(TargettedStroke stroke)
         {
@@ -194,15 +154,7 @@ namespace MeTLLib.Providers.Connection
         }
         public override void actOnDirtyLiveWindowReceived(TargettedDirtyElement element)
         {
-            liveWindows.Remove(element.identifier);
-        }
-        public override void actOnVideoReceived(TargettedVideo video)
-        {
-            videos[video.id]=video;
-        }
-        public override void actOnBubbleReceived(TargettedBubbleContext bubble)
-        {
-            bubbleList.Add(bubble);
+            liveWindows.Remove(element.identity);
         }
         public static int ParentRoom(string room)
         {

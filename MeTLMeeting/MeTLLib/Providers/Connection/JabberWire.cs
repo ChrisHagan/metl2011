@@ -294,11 +294,6 @@ namespace MeTLLib.Providers.Connection
 #endif
         }
 
-
-        private void SendNewBubble(TargettedBubbleContext selection)
-        {
-            stanza(new MeTLStanzas.Bubble(selection));
-        }
         private void SendPing(string who)
         {
             directCommand(who, string.Format("{0} {1}", PING, credentials.name));
@@ -780,16 +775,8 @@ namespace MeTLLib.Providers.Connection
                     leaveRoom(fileConversationJid);
             }
         }
-        public void SendVideo(TargettedVideo video)
-        {
-            stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
-        }
         public void SendStanza(string where, Element what) {
             stanza(where, what);
-        }
-        public void SendAutoShape(TargettedAutoShape autoshape)
-        {
-            stanza(autoshape.slide.ToString(), new MeTLStanzas.AutoShape(autoshape));
         }
         private void SendChat(TargettedTextBox message)
         {
@@ -993,14 +980,6 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.receiveSubmission(submission);
         }
-        public virtual void actOnVideoReceived(TargettedVideo video)
-        {
-            receiveEvents.receiveVideo(video);
-        }
-        public virtual void actOnBubbleReceived(TargettedBubbleContext bubble)
-        {
-            receiveEvents.receiveBubble(bubble);
-        }
         public virtual void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
             receiveEvents.receiveDirtyAutoShape(dirtyAutoShape.element);
@@ -1028,10 +1007,6 @@ namespace MeTLLib.Providers.Connection
         public virtual void actOnImageReceived(TargettedImage image)
         {
             receiveEvents.receiveImage(image);
-        }
-        public virtual void actOnAutoShapeReceived(TargettedAutoShape autoshape)
-        {
-            receiveEvents.receiveAutoShape(autoshape);
         }
         public virtual void actOnQuizReceived(QuizQuestion quiz)
         {

@@ -28,10 +28,7 @@ namespace MeTLLib
         public delegate void TextBoxAvailableEventHandler(object sender, TextBoxAvailableEventArgs e);
         public delegate void DirtyElementAvailableEventHandler(object sender, DirtyElementAvailableEventArgs e);
         public delegate void MoveDeltaAvailableEventHandler(object sender, MoveDeltaAvailableEventArgs e);
-        public delegate void VideoAvailableEventHandler(object sender, VideoAvailableEventArgs e);
-        public delegate void AutoshapeAvailableEventHandler(object sender, AutoshapeAvailableEventArgs e);
         public delegate void LiveWindowAvailableEventHandler(object sender, LiveWindowAvailableEventArgs e);
-        public delegate void BubbleAvailableEventHandler(object sender, BubbleAvailableEventArgs e);
         public delegate void DiscoAvailableEventHandler(object sender, DiscoAvailableEventArgs e);
         public delegate void QuizAnswerAvailableEventHandler(object sender, QuizAnswerAvailableEventArgs e);
         public delegate void QuizQuestionAvailableEventHandler(object sender, QuizQuestionAvailableEventArgs e);
@@ -55,13 +52,10 @@ namespace MeTLLib
     public class PreParserAvailableEventArgs : EventArgs { public PreParser parser; }
     public class StrokeAvailableEventArgs : EventArgs { public TargettedStroke stroke;}
     public class ImageAvailableEventArgs : EventArgs { public TargettedImage image;}
-    public class VideoAvailableEventArgs : EventArgs { public TargettedVideo video;}
     public class TextBoxAvailableEventArgs : EventArgs { public TargettedTextBox textBox;}
     public class DirtyElementAvailableEventArgs : EventArgs { public TargettedDirtyElement dirtyElement;}
     public class MoveDeltaAvailableEventArgs : EventArgs { public TargettedMoveDelta moveDelta;}
-    public class AutoshapeAvailableEventArgs : EventArgs { public TargettedAutoShape autoshape;}
     public class LiveWindowAvailableEventArgs : EventArgs { public LiveWindowSetup livewindow;}
-    public class BubbleAvailableEventArgs : EventArgs { public TargettedBubbleContext bubble;}
     public class DiscoAvailableEventArgs : EventArgs { public string disco;}
     public class QuizAnswerAvailableEventArgs : EventArgs { public QuizAnswer QuizAnswer;}
     public class QuizQuestionAvailableEventArgs : EventArgs { public QuizQuestion quizQuestion;}
@@ -84,7 +78,6 @@ namespace MeTLLib
         void receiveImages(TargettedImage[] tia);
         void receiveImage(TargettedImage ti);
         void receiveTextBox(TargettedTextBox ttb);
-        void receiveVideo(TargettedVideo tv);
         void receiveDirtyStroke(TargettedDirtyElement tde);
         void receiveDirtyTextBox(TargettedDirtyElement tde);
         void receiveDirtyVideo(TargettedDirtyElement tde);
@@ -94,9 +87,7 @@ namespace MeTLLib
         void receivePreParser(PreParser pp);
         void receiveLiveWindow(LiveWindowSetup lws);
         void receiveDirtyLiveWindow(TargettedDirtyElement tde);
-        void receiveAutoShape(TargettedAutoShape tas);
         void receiveDirtyAutoShape(TargettedDirtyElement tde);
-        void receiveBubble(TargettedBubbleContext tbc);
         void receiveConversationDetails(ConversationDetails cd);
         void statusChanged(bool isConnected, Credentials credentials);
         void syncMoveRequested(int where);
@@ -119,7 +110,6 @@ namespace MeTLLib
         event MeTLLibEventHandlers.PreParserAvailableEventHandler PreParserAvailable;
         event MeTLLibEventHandlers.StrokeAvailableEventHandler StrokeAvailable;
         event MeTLLibEventHandlers.ImageAvailableEventHandler ImageAvailable;
-        event MeTLLibEventHandlers.VideoAvailableEventHandler VideoAvailable;
         event MeTLLibEventHandlers.TextBoxAvailableEventHandler TextBoxAvailable;
         event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyTextBoxAvailable;
         event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyImageAvailable;
@@ -128,9 +118,7 @@ namespace MeTLLib
         event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyLiveWindowAvailable;
         event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyAutoShapeAvailable;
         event MeTLLibEventHandlers.MoveDeltaAvailableEventHandler MoveDeltaAvailable;
-        event MeTLLibEventHandlers.AutoshapeAvailableEventHandler AutoshapeAvailable;
         event MeTLLibEventHandlers.LiveWindowAvailableEventHandler LiveWindowAvailable;
-        event MeTLLibEventHandlers.BubbleAvailableEventHandler BubbleAvailable;
         event MeTLLibEventHandlers.DiscoAvailableEventHandler DiscoAvailable;
         event MeTLLibEventHandlers.QuizQuestionAvailableEventHandler QuizQuestionAvailable;
         event MeTLLibEventHandlers.QuizAnswerAvailableEventHandler QuizAnswerAvailable;
@@ -145,8 +133,6 @@ namespace MeTLLib
         public ProductionReceiveEvents()
         {
             this.PresenceAvailable += (sender, args) => { } ;
-            this.AutoshapeAvailable += (sender, args) => { };
-            this.BubbleAvailable += (sender, args) => { };
             this.SlideCollectionUpdated += (sender, args) => { };
             this.ChatAvailable += (sender, args) => { };
             this.CommandAvailable += (sender, args) => { };
@@ -169,7 +155,6 @@ namespace MeTLLib
             this.StrokeAvailable += (sender, args) => { };
             this.SubmissionAvailable += (sender, args) => { };
             this.TextBoxAvailable += (sender, args) => { };
-            this.VideoAvailable += (sender, args) => { };
             this.TeacherStatusRequest += (sender, args) => { };
             this.TeacherStatusReceived += (sender, args)=> { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
@@ -230,10 +215,6 @@ namespace MeTLLib
         {
             TextBoxAvailable(this, new TextBoxAvailableEventArgs { textBox = ttb });
         }
-        void IReceiveEvents.receiveVideo(TargettedVideo tv)
-        {
-            VideoAvailable(this, new VideoAvailableEventArgs { video = tv });
-        }
         void IReceiveEvents.receiveDirtyStroke(TargettedDirtyElement tde)
         {
             DirtyStrokeAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
@@ -271,17 +252,9 @@ namespace MeTLLib
         {
             DirtyLiveWindowAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
         }
-        public void receiveAutoShape(TargettedAutoShape tas)
-        {
-            AutoshapeAvailable(this, new AutoshapeAvailableEventArgs { autoshape = tas });
-        }
         public void receiveDirtyAutoShape(TargettedDirtyElement tde)
         {
             DirtyAutoShapeAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
-        }
-        public void receiveBubble(TargettedBubbleContext tbc)
-        {
-            BubbleAvailable(this, new BubbleAvailableEventArgs { bubble = tbc });
         }
         public void receiveConversationDetails(ConversationDetails cd)
         {
@@ -352,16 +325,13 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.PreParserAvailableEventHandler PreParserAvailable;
         public event MeTLLibEventHandlers.StrokeAvailableEventHandler StrokeAvailable;
         public event MeTLLibEventHandlers.ImageAvailableEventHandler ImageAvailable;
-        public event MeTLLibEventHandlers.VideoAvailableEventHandler VideoAvailable;
         public event MeTLLibEventHandlers.TextBoxAvailableEventHandler TextBoxAvailable;
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyTextBoxAvailable;
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyImageAvailable;
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyVideoAvailable;
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyStrokeAvailable;
         public event MeTLLibEventHandlers.MoveDeltaAvailableEventHandler MoveDeltaAvailable;
-        public event MeTLLibEventHandlers.AutoshapeAvailableEventHandler AutoshapeAvailable;
         public event MeTLLibEventHandlers.LiveWindowAvailableEventHandler LiveWindowAvailable;
-        public event MeTLLibEventHandlers.BubbleAvailableEventHandler BubbleAvailable;
         public event MeTLLibEventHandlers.DiscoAvailableEventHandler DiscoAvailable;
         public event MeTLLibEventHandlers.QuizQuestionAvailableEventHandler QuizQuestionAvailable;
         public event MeTLLibEventHandlers.QuizAnswerAvailableEventHandler QuizAnswerAvailable;
@@ -398,16 +368,10 @@ namespace MeTLLib
         { MoveDeltaAvailable(this, e); }
         protected virtual void onImageAvailable(ImageAvailableEventArgs e)
         { ImageAvailable(this, e); }
-        protected virtual void onVideoAvailable(VideoAvailableEventArgs e)
-        { VideoAvailable(this, e); }
         protected virtual void onTextBoxAvailable(TextBoxAvailableEventArgs e)
         { TextBoxAvailable(this, e); }
-        protected virtual void onAutoshapeAvailable(AutoshapeAvailableEventArgs e)
-        { AutoshapeAvailable(this, e); }
         protected virtual void onLiveWindowAvailable(LiveWindowAvailableEventArgs e)
         { LiveWindowAvailable(this, e); }
-        protected virtual void onBubbleAvailable(BubbleAvailableEventArgs e)
-        { BubbleAvailable(this, e); }
         protected virtual void onDiscoAvailable(DiscoAvailableEventArgs e)
         { DiscoAvailable(this, e); }
         protected virtual void onQuizQuestionAvailable(QuizQuestionAvailableEventArgs e)

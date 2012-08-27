@@ -57,8 +57,9 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeTag
     {
-        public StrokeTag(string Author, string Privacy, double StartingSum, bool IsHighlighter)
+        public StrokeTag(string Author, string Privacy, string strokeId, double StartingSum, bool IsHighlighter)
         {
+            id = strokeId;
             author = Author;
             privacy = Privacy;
             startingSum = StartingSum;
@@ -69,10 +70,10 @@ namespace MeTLLib.DataTypes
             if (obj == null || !(obj is StrokeTag)) return false;
             var foreignStrokeTag = ((StrokeTag)obj);
             return ((foreignStrokeTag.author == author)
-                && (foreignStrokeTag.isHighlighter == isHighlighter)
-                && (foreignStrokeTag.privacy == privacy)
-                && (foreignStrokeTag.startingSum == startingSum));
+                && (foreignStrokeTag.id == id)
+                && (foreignStrokeTag.isHighlighter == isHighlighter));
         }
+        public string id; 
         public string author;
         public string privacy;
         public double startingSum;
@@ -230,6 +231,7 @@ namespace MeTLLib.DataTypes
         private static Guid STARTINGCHECKSUM = Guid.NewGuid();
         private static Guid STARTING_COLOR = Guid.NewGuid();
         private static Guid IS_HIGHLIGHTER = Guid.NewGuid();
+        private static Guid STROKE_IDENTITY_GUID = Guid.NewGuid();
         private static readonly string NONPERSISTENT_STROKE = "nonPersistent";
         public static string privacy(this Stroke stroke){
             return stroke.tag().privacy;
@@ -241,6 +243,7 @@ namespace MeTLLib.DataTypes
                        {
                            author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
                            privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
+                           id = (string) stroke.GetPropertyData(STROKE_IDENTITY_GUID),
                            isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER)
                        };
             return stroketag;
@@ -251,6 +254,7 @@ namespace MeTLLib.DataTypes
             var privacy = "private";
             if (!string.IsNullOrEmpty(tag.privacy))
                 privacy = tag.privacy;
+            stroke.AddPropertyData(STROKE_IDENTITY_GUID, tag.id);
             stroke.AddPropertyData(STROKE_PRIVACY_GUID, privacy);
             stroke.AddPropertyData(IS_HIGHLIGHTER, tag.isHighlighter);
             return tag;
@@ -262,6 +266,7 @@ namespace MeTLLib.DataTypes
             var newTag = new StrokeTag(
                 NONPERSISTENT_STROKE,
                 oldTag.privacy,
+                oldTag.id,
                 oldTag.startingSum,
                 oldTag.isHighlighter
                 );

@@ -944,7 +944,7 @@ namespace SandRibbon.Components
         }
         private void dirtyStrokes(InkCanvas canvas, IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
         {
-            var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
+            var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identity);
             // 1. find the strokes in the contentbuffer that have matching checksums 
             // 2. remove those strokes and corresponding checksums in the content buffer
             // 3. for the strokes that also exist in the canvas, remove them and their checksums
@@ -1049,7 +1049,7 @@ namespace SandRibbon.Components
                         doMyStrokeRemovedExceptHistory(stroke);
                     }
                     var newStroke = stroke.Clone();
-                    newStroke.tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
+                    newStroke.tag(new StrokeTag(oldTag.author, newPrivacy, oldTag.id, oldTag.startingSum, oldTag.isHighlighter)); 
                     if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, newStroke.sum().checksum)).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
@@ -1067,7 +1067,7 @@ namespace SandRibbon.Components
                 {
                     var oldTag = stroke.tag();
                     var newStroke = stroke.Clone();
-                    newStroke.tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
+                    newStroke.tag(new StrokeTag(oldTag.author, newPrivacy, oldTag.id, oldTag.startingSum, oldTag.isHighlighter));
 
                     if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, newStroke.sum().checksum)).Count() > 0)
                     {
@@ -1098,7 +1098,7 @@ namespace SandRibbon.Components
                     var privateRoom = string.Format("{0}{1}", Globals.slide, image.tag().author);
                     if(newPrivacy.ToLower() == "private" && Globals.isAuthor && me != image.tag().author)
                         Commands.SneakInto.Execute(privateRoom);
-                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, newPrivacy, image));
+                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, newPrivacy, image.tag().id, image));
                     if(newPrivacy.ToLower() == "private" && Globals.isAuthor && me != image.tag().author)
                         Commands.SneakOutOf.Execute(privateRoom);
                         
@@ -1115,7 +1115,7 @@ namespace SandRibbon.Components
                     var privateRoom = string.Format("{0}{1}", Globals.slide, image.tag().author);
                     if(oldPrivacy.ToLower() == Globals.PRIVATE && Globals.isAuthor && me != image.tag().author)
                         Commands.SneakInto.Execute(privateRoom);
-                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, oldPrivacy, image));
+                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, oldPrivacy, image.tag().id, image));
                     if(oldPrivacy.ToLower() == Globals.PRIVATE && Globals.isAuthor && me != image.tag().author)
                         Commands.SneakOutOf.Execute(privateRoom);
                         
@@ -1207,10 +1207,11 @@ namespace SandRibbon.Components
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
-            e.Stroke.tag(new StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
+            var checksum = e.Stroke.sum().checksum;
+            e.Stroke.tag(new StrokeTag(Globals.me, Globals.privacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter));
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
-            privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
+            privateAwareStroke.startingSum(checksum);
             contentBuffer.AddStroke(privateAwareStroke, (st)=> Work.Strokes.Add(st));
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
@@ -1305,7 +1306,8 @@ namespace SandRibbon.Components
                     strokeChecksums.Add(cs);
             });
 
-            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            var oldTag = stroke.tag();
+            stroke.tag(new StrokeTag(oldTag.author, thisPrivacy, oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
             SendTargettedStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
@@ -1314,7 +1316,7 @@ namespace SandRibbon.Components
             var privateRoom = string.Format("{0}{1}", Globals.slide, stroke.tag().author);
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && me != stroke.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendStroke.Execute(new TargettedStroke(Globals.slide,stroke.tag().author,_target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
+            Commands.SendStroke.Execute(new TargettedStroke(Globals.slide,stroke.tag().author,_target,stroke.tag().privacy, stroke.tag().id, stroke, stroke.tag().startingSum));
             if (thisPrivacy.ToLower() == "private" && Globals.isAuthor && me != stroke.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
@@ -1329,7 +1331,7 @@ namespace SandRibbon.Components
                     var newImage = (Image)element;
                     newImage.UpdateLayout();
 
-                    Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage));
+                    Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage));
                     break;
                
             }
@@ -1349,17 +1351,46 @@ namespace SandRibbon.Components
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta)
         {
+            if (me == Globals.PROJECTOR) return;
+
             if (moveDelta != null && moveDelta.HasSameTarget(_target))
             {
                 var xTrans = moveDelta.xTranslate;
                 var yTrans = moveDelta.yTranslate;
-                foreach (var text in Work.TextChildren().Where((t) => moveDelta.HasSameAuthor(t.tag().author)))
-                {
-                    var left = InkCanvas.GetLeft(text) + xTrans;
-                    var top = InkCanvas.GetTop(text) + yTrans;
 
-                    InkCanvas.SetLeft(text, left);
-                    InkCanvas.SetTop(text, top);
+                var transformMatrix = new Matrix();
+                transformMatrix.Translate(xTrans, yTrans);
+
+                foreach (var inkId in moveDelta.inkIds)
+                {
+                    foreach (var stroke in Work.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                    {
+                        stroke.Transform(transformMatrix, false);
+                    }
+                }
+
+                foreach (var textId in moveDelta.textIds)
+                {
+                    foreach (var textBox in Work.TextChildren().Where((t) => t.tag().id == textId.Identity))
+                    {
+                        var left = InkCanvas.GetLeft(textBox) + xTrans;
+                        var top = InkCanvas.GetTop(textBox) + yTrans;
+
+                        InkCanvas.SetLeft(textBox, left);
+                        InkCanvas.SetTop(textBox, top);
+                    }
+                }
+
+                foreach (var imageId in moveDelta.imageIds)
+                {
+                    foreach (var image in Work.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
+                    {
+                        var left = InkCanvas.GetLeft(image) + xTrans;
+                        var top = InkCanvas.GetTop(image) + yTrans;
+
+                        InkCanvas.SetLeft(image, left);
+                        InkCanvas.SetTop(image, top);
+                    }
                 }
             }
         }
@@ -1398,7 +1429,7 @@ namespace SandRibbon.Components
         {
             if (!(element.target.Equals(_target))) return;
             if (element.slide != Globals.slide) return;
-            Dispatcher.adoptAsync(() => dirtyImage(element.identifier));
+            Dispatcher.adoptAsync(() => dirtyImage(element.identity));
         }
 
         private void dirtyImage(string imageId)
@@ -1706,7 +1737,7 @@ namespace SandRibbon.Components
                  {
                      File.Copy(unMangledFilename, filename);
                      MeTLLib.ClientFactory.Connection().UploadAndSendFile(
-                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString()));
+                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(),Globals.generateId(filename)));
                      File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
@@ -1759,7 +1790,7 @@ namespace SandRibbon.Components
                 }
                 InkCanvas.SetLeft(image, imagePos.X);
                 InkCanvas.SetTop(image, imagePos.Y);
-                image.tag(new ImageTag(Globals.me, privacy, generateId(), false, 0));
+                image.tag(new ImageTag(Globals.me, privacy, Globals.generateId(), false, 0));
                 var myImage = image.clone();
                 var currentSlide = Globals.slide;
                 Action undo = () =>
@@ -1778,7 +1809,7 @@ namespace SandRibbon.Components
                     if (!fileName.StartsWith("http"))
                         MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, privacy, myImage, fileName, false));
                     else
-                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, privacy, myImage));
+                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, privacy, myImage.tag().id, myImage));
 
                     ClearAdorners();
                     InkCanvas.SetLeft(myImage, imagePos.X);
@@ -2214,7 +2245,7 @@ namespace SandRibbon.Components
             var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box));
+            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box.tag().id, box));
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
@@ -2355,9 +2386,9 @@ namespace SandRibbon.Components
             if (element.slide != Globals.slide) return;
             Dispatcher.adoptAsync(delegate
             {
-                if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
+                if (myTextBox != null && element.HasSameIdentity(myTextBox.tag().id)) return;
                 if (element.author == me) return;
-                RemoveTextBoxWithMatchingId(element.identifier);
+                RemoveTextBoxWithMatchingId(element.identity);
             });
         }
 
@@ -2505,7 +2536,7 @@ namespace SandRibbon.Components
                                     {
                                         Source = new BitmapImage(uri)
                                     };
-                    image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
+                    image.tag(new ImageTag(Globals.me, privacy, Globals.generateId(), false, -1));
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
                     images.Add(image);
@@ -2516,7 +2547,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<Image> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image));
+                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image.tag().id, image));
         }
         private void HandleImagePasteUndo(List<Image> selectedImages)
         {
@@ -2712,7 +2743,7 @@ namespace SandRibbon.Components
                 if(!Work.TextChildren().Select(t => ((MeTLTextBox)t).tag().id).Contains(currentTextBox.tag().id))
                 {
                     var box = applyDefaultAttributes(currentTextBox);
-                    box.tag(new TextTag(box.tag().author, box.tag().privacy, generateId()));
+                    box.tag(new TextTag(box.tag().author, box.tag().privacy, Globals.generateId()));
                     Work.Children.Add(box);
 
                 }
@@ -2831,10 +2862,7 @@ namespace SandRibbon.Components
             Height = Double.NaN;
             Width = Double.NaN;
         }
-        public string generateId()
-        {
-            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
-        }
+
         public void SetEditable(bool b)
         {
         }

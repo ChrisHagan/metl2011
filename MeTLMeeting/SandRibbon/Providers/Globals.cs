@@ -6,6 +6,7 @@ using SandRibbon.Components;
 using SandRibbon.Components.Pedagogicometry;
 using System.Drawing;
 using TextInformation = SandRibbon.Components.TextInformation;
+using SandRibbonObjects;
 
 namespace SandRibbon.Providers
 {
@@ -66,7 +67,15 @@ namespace SandRibbon.Providers
         public static readonly string PUBLIC = "public";
         public static readonly string PRIVATE = "private";
         public static readonly string PROJECTOR = "projector";
-
+        
+        public static string generateId()
+        {
+            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
+        }
+        public static string generateId(string seed)
+        {
+            return string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now().Ticks, seed);
+        }
         public static bool isAuthor
         {
             get

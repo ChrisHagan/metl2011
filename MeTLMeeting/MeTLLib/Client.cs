@@ -85,7 +85,6 @@ namespace MeTLLib
         void SendTextBox(TargettedTextBox textbox);
         void SendStroke(TargettedStroke stroke);
         void SendImage(TargettedImage image);
-        void SendVideo(TargettedVideo video);
         void SendDirtyTextBox(TargettedDirtyElement tde);
         void SendDirtyStroke(TargettedDirtyElement tde);
         void SendDirtyImage(TargettedDirtyElement tde);
@@ -99,7 +98,6 @@ namespace MeTLLib
         void SendFile(TargettedFile tf);
         void SendSyncMove(int slide);
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
-        void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         Uri UploadResource(Uri uri, string slideId);
         void AsyncRetrieveHistoryOf(int room);
@@ -263,15 +261,6 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void SendVideo(TargettedVideo video)
-        {
-            Action work = delegate
-            {
-                video.injectDependencies(server, resourceProvider);
-                wire.SendVideo(video);
-            };
-            tryIfConnected(work);
-        }
         public void SendDirtyTextBox(TargettedDirtyElement tde)
         {
             Action work = delegate
@@ -316,7 +305,7 @@ namespace MeTLLib
                 try
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
+                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                     if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
                 }
                 catch (Exception e)
@@ -386,7 +375,7 @@ namespace MeTLLib
                     newImage.Dispatcher.adopt(() => {
                         newImage.tag(lii.image.tag());
                         newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
+                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage));
                     });
                 }
                 catch (Exception e)
@@ -403,27 +392,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.overwrite);
-                wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, newPath, lfi.uploadTime, lfi.size, lfi.name));
-            };
-            tryIfConnected(work);
-        }
-        public void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation)
-        {
-            Action work = delegate
-            {
-                try
-                {
-                    var newPath = new Uri(resourceUploader.uploadResource(videoInformation.slide.ToString(), videoInformation.file, false), UriKind.Absolute);
-                    MeTLLib.DataTypes.Video newVideo = videoInformation.video;
-                    newVideo.VideoSource = newPath;
-                    newVideo.MediaElement = new MediaElement { Source = newPath };
-                    wire.SendVideo(new TargettedVideo(videoInformation.slide, videoInformation.author, videoInformation.target, videoInformation.privacy, newVideo));
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.Message);
-                    UploadAndSendVideo(videoInformation);
-                }
+                wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, lfi.identity, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);
         }

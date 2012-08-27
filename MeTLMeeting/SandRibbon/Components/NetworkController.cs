@@ -97,24 +97,20 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoshape));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
             Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyStroke));
             Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
-            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
             Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(SendFile));
             Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
             Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
-            Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendBubble));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
             Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
-            Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
@@ -152,9 +148,6 @@ namespace SandRibbon.Components
         {
             client.MoveTo(slide);
         }
-        private void SendAutoshape(TargettedAutoShape tas)
-        {
-        }
         private void SendChatMessage(object _obj)
         {
         }
@@ -191,9 +184,6 @@ namespace SandRibbon.Components
         private void SendLiveWindow(LiveWindowSetup lws)
         {
         }
-        private void SendBubble(TargettedBubbleContext tbc)
-        {
-        }
         private void SendQuiz(QuizQuestion qq)
         {
             client.SendQuizQuestion(qq);
@@ -219,10 +209,6 @@ namespace SandRibbon.Components
         {
             client.SendTextBox(ttb);
         }
-        private void SendVideo(TargettedVideo tv)
-        {
-            client.SendVideo(tv);
-        }
         private void SneakInto(string room)
         {
             client.SneakInto(room);
@@ -238,8 +224,6 @@ namespace SandRibbon.Components
         {
             client.events.TeacherStatusReceived += teacherStatusReceived;
             client.events.TeacherStatusRequest += teacherStatusRequest;
-            client.events.AutoshapeAvailable += autoShapeAvailable;
-            client.events.BubbleAvailable += bubbleAvailable;
             client.events.ChatAvailable += chatAvailable;
             client.events.CommandAvailable += commandAvailable;
             client.events.ConversationDetailsAvailable += conversationDetailsAvailable;
@@ -248,7 +232,6 @@ namespace SandRibbon.Components
             client.events.DirtyLiveWindowAvailable += dirtyLiveWindowAvailable;
             client.events.DirtyStrokeAvailable += dirtyStrokeAvailable;
             client.events.DirtyTextBoxAvailable += dirtyTextBoxAvailable;
-            client.events.DirtyVideoAvailable += dirtyVideoAvailable;
             client.events.MoveDeltaAvailable += moveDeltaAvailable;
             client.events.DiscoAvailable += discoAvailable;
             client.events.FileAvailable += fileAvailable;
@@ -261,7 +244,6 @@ namespace SandRibbon.Components
             client.events.SubmissionAvailable += submissionAvailable;
             client.events.PresenceAvailable += presenceAvailable;
             client.events.TextBoxAvailable += textBoxAvailable;
-            client.events.VideoAvailable += videoAvailable;
             client.events.SyncMoveRequested += syncMoveRequested;
             client.events.StatusChanged += statusChanged;
             client.events.SlideCollectionUpdated += slideCollectionChanged;
@@ -271,8 +253,6 @@ namespace SandRibbon.Components
         {
             client.events.TeacherStatusReceived -= teacherStatusReceived;
             client.events.TeacherStatusRequest -= teacherStatusRequest;
-            client.events.AutoshapeAvailable -= autoShapeAvailable;
-            client.events.BubbleAvailable -= bubbleAvailable;
             client.events.ChatAvailable -= chatAvailable;
             client.events.CommandAvailable -= commandAvailable;
             client.events.ConversationDetailsAvailable -= conversationDetailsAvailable;
@@ -281,7 +261,6 @@ namespace SandRibbon.Components
             client.events.DirtyLiveWindowAvailable -= dirtyLiveWindowAvailable;
             client.events.DirtyStrokeAvailable -= dirtyStrokeAvailable;
             client.events.DirtyTextBoxAvailable -= dirtyTextBoxAvailable;
-            client.events.DirtyVideoAvailable -= dirtyVideoAvailable;
             client.events.MoveDeltaAvailable -= moveDeltaAvailable;
             client.events.DiscoAvailable -= discoAvailable;
             client.events.FileAvailable -= fileAvailable;
@@ -294,7 +273,6 @@ namespace SandRibbon.Components
             client.events.SubmissionAvailable -= submissionAvailable;
             client.events.PresenceAvailable -= presenceAvailable;
             client.events.TextBoxAvailable -= textBoxAvailable;
-            client.events.VideoAvailable -= videoAvailable;
             client.events.SyncMoveRequested -= syncMoveRequested;
             client.events.StatusChanged -= statusChanged;
             client.events.SlideCollectionUpdated -= slideCollectionChanged;
@@ -335,13 +313,6 @@ namespace SandRibbon.Components
         {
             Commands.SyncedMoveRequested.Execute(e.where);
         }
-        private void autoShapeAvailable(object sender, AutoshapeAvailableEventArgs e)
-        {
-            Commands.ReceiveAutoShape.ExecuteAsync(e.autoshape);
-        }
-        private void bubbleAvailable(object sender, BubbleAvailableEventArgs e)
-        {
-        }
         private void chatAvailable(object sender, ChatAvailableEventArgs e)
         {
         }
@@ -377,10 +348,6 @@ namespace SandRibbon.Components
         private void dirtyTextBoxAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
             Commands.ReceiveDirtyText.ExecuteAsync(e.dirtyElement);
-        }
-        private void dirtyVideoAvailable(object sender, DirtyElementAvailableEventArgs e)
-        {
-            Commands.ReceiveDirtyVideo.ExecuteAsync(e.dirtyElement);
         }
         private void discoAvailable(object sender, DiscoAvailableEventArgs e)
         {
@@ -426,10 +393,6 @@ namespace SandRibbon.Components
         private void textBoxAvailable(object sender, TextBoxAvailableEventArgs e)
         {
             Commands.ReceiveTextBox.ExecuteAsync(e.textBox);
-        }
-        private void videoAvailable(object sender, VideoAvailableEventArgs e)
-        {
-            Commands.ReceiveVideo.ExecuteAsync(e.video);
         }
         #endregion
     }
