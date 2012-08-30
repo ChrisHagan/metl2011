@@ -1355,14 +1355,31 @@ namespace SandRibbon.Components
 
             if (moveDelta != null && moveDelta.HasSameTarget(_target))
             {
+                if (moveDelta.isDeleted)
+                {
+                    BatchDelete(moveDelta);
+                    return;
+                }
+
+                if (string.Compare(moveDelta.newPrivacy, Globals.PRIVATE, true) == 0 || string.Compare(moveDelta.newPrivacy, Globals.PUBLIC, true) == 0)
+                {
+                    BatchPrivacyUpdate(moveDelta);
+                    return;
+                }
+
+                // define work to be done based on fields
                 var xTrans = moveDelta.xTranslate;
                 var yTrans = moveDelta.yTranslate;
+                var xScale = moveDelta.xScale;
+                var yScale = moveDelta.yScale;
 
                 var transformMatrix = new Matrix();
+                transformMatrix.Scale(xScale, yScale);
                 transformMatrix.Translate(xTrans, yTrans);
 
                 foreach (var inkId in moveDelta.inkIds)
                 {
+                    var deadStrokes = new List<Stroke>();
                     foreach (var stroke in Work.Strokes.Where((s) => s.tag().id == inkId.Identity))
                     {
                         stroke.Transform(transformMatrix, false);
@@ -1373,11 +1390,21 @@ namespace SandRibbon.Components
                 {
                     foreach (var textBox in Work.TextChildren().Where((t) => t.tag().id == textId.Identity))
                     {
+                        // translate
                         var left = InkCanvas.GetLeft(textBox) + xTrans;
                         var top = InkCanvas.GetTop(textBox) + yTrans;
 
                         InkCanvas.SetLeft(textBox, left);
                         InkCanvas.SetTop(textBox, top);
+
+                        // scale
+                        /*if (double.IsNaN(textBox.Width) || double.IsNaN(textBox.Height))
+                        {
+                            textBox.Width = textBox.ActualWidth;
+                            textBox.Height = textBox.ActualHeight;
+                        }*/
+                        textBox.Width *= xScale;
+                        textBox.Height *= yScale;
                     }
                 }
 
@@ -1390,10 +1417,137 @@ namespace SandRibbon.Components
 
                         InkCanvas.SetLeft(image, left);
                         InkCanvas.SetTop(image, top);
+
+                        image.Width *= xScale;
+                        image.Height *= yScale;
                     }
                 }
             }
         }
+
+        private void BatchDelete(TargettedMoveDelta moveDelta) 
+        {
+            var deadStrokes = new List<Stroke>();
+            var deadTextboxes = new List<MeTLTextBox>();
+            var deadImages = new List<Image>();
+
+            foreach (var inkId in moveDelta.inkIds)
+            {
+                foreach (var stroke in Work.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                {
+                    deadStrokes.Add(stroke);
+                }
+            }
+
+            foreach (var textId in moveDelta.textIds)
+            {
+                foreach (var textBox in Work.TextChildren().Where((t) => t.tag().id == textId.Identity))
+                {
+                    deadTextboxes.Add(textBox);
+                }
+            }
+
+            foreach (var imageId in moveDelta.imageIds)
+            {
+                foreach (var image in Work.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
+                {
+                    deadImages.Add(image);
+                }
+            }
+
+            // improve the contentbuffer to remove items either:
+            // - by using list.RemoveAll(predicate)
+            // - iterating backwards and removing the item at the index
+            // - find all the items to be removed then list.Except(listDeletions) on the list
+            foreach (var text in deadTextboxes)
+            {
+                contentBuffer.RemoveTextBox(text, (tb) => Work.Children.Remove(tb));
+            }
+
+            foreach (var image in deadImages)
+            {
+                contentBuffer.RemoveImage(image, (img) => Work.Children.Remove(img));
+            }
+
+            foreach (var stroke in deadStrokes)
+            {
+                contentBuffer.RemoveStroke(stroke, (col) => Work.Strokes.Remove(col));
+                contentBuffer.RemoveStrokeChecksum(stroke, (cs) => strokeChecksums.Remove(cs));
+            }
+        }
+
+        private void BatchPrivacyUpdate(TargettedMoveDelta moveDelta)
+        {
+            var privacyStrokes = new List<Stroke>();
+            var privacyTextboxes = new List<MeTLTextBox>();
+            var privacyImages = new List<Image>();
+
+            Func<Stroke, bool> wherePredicate = (s) => { /* compare tag identity and check if privacy differs*/ return true; };
+
+            foreach (var inkId in moveDelta.inkIds)
+            {
+                foreach (var stroke in Work.Strokes.Where((s) => 
+                    { 
+                        var strokeTag = s.tag(); 
+                        return strokeTag.id == inkId.Identity && string.Compare(strokeTag.privacy, moveDelta.newPrivacy, true) != 0; 
+                    }))
+                {
+                    privacyStrokes.Add(stroke);
+                }
+            }
+
+            foreach (var textId in moveDelta.textIds)
+            {
+                foreach (var textBox in Work.TextChildren().Where((t) => 
+                    { 
+                        var textTag = t.tag(); 
+                        return textTag.id == textId.Identity && string.Compare(textTag.privacy, moveDelta.newPrivacy, true) != 0; 
+                    }))
+                {
+                    privacyTextboxes.Add(textBox);
+                }
+            }
+
+            foreach (var imageId in moveDelta.imageIds)
+            {
+                foreach (var image in Work.ImageChildren().Where((i) => 
+                    {
+                        var imageTag = i.tag();
+                        return i.tag().id == imageId.Identity && string.Compare(imageTag.privacy, moveDelta.newPrivacy, true) != 0;
+                    }))
+                {
+                    privacyImages.Add(image);
+                }
+            }
+
+            foreach (var stroke in privacyStrokes)
+            {
+                var oldTag = stroke.tag();
+                contentBuffer.RemoveStroke(stroke, (col) => Work.Strokes.Remove(col));
+
+                stroke.tag(new StrokeTag(oldTag.author, moveDelta.newPrivacy, oldTag.id, oldTag.startingSum, oldTag.isHighlighter)); 
+                contentBuffer.AddStroke(stroke, (col) => Work.Strokes.Add(col));
+            }
+
+            foreach (var image in privacyImages)
+            {
+                var oldTag = image.tag();
+                oldTag.privacy = moveDelta.newPrivacy;
+
+                image.tag(oldTag);
+                ApplyPrivacyStylingToElement(image, moveDelta.newPrivacy);
+            }
+
+            foreach (var text in privacyTextboxes)
+            {
+                var oldTag = text.tag();
+                oldTag.privacy = moveDelta.newPrivacy;
+
+                text.tag(oldTag);
+                ApplyPrivacyStylingToElement(text, moveDelta.newPrivacy);
+            }
+        }
+
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
             foreach (var image in images)

@@ -50,22 +50,7 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.ImageIdentityStanza();
         }
     }
-    public class WormMove
-    {
-        public WormMove(string Conversation, string Direction)
-        {
-            conversation = Conversation;
-            direction = Direction;
-        }
-        public string conversation;
-        public string direction;
-        public bool ValueEquals(object obj)
-        {
-            if (obj == null || !(obj is WormMove)) return false;
-            var foreignWormMove = (WormMove)obj;
-            return ((foreignWormMove.conversation == conversation) && (foreignWormMove.direction == direction));
-        }
-    }
+
     public class TargettedElement
     {
         public TargettedElement(int Slide, string Author, string Target, string Privacy, string Identity)
@@ -113,7 +98,8 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedMoveDelta : TargettedElement
     {
-        public TargettedMoveDelta(int slide, string author, string target, string privacy, string identity) : base(slide, author, target, privacy, identity)
+        public TargettedMoveDelta(int slide, string author, string target, string privacy, string identity) 
+            : base(slide, author, target, privacy, identity)
         {
         }
 

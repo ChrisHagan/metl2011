@@ -80,7 +80,6 @@ namespace SandRibbon.Components.Utility
 
     public static class InkCanvasExtensions
     {
-        // TODO: replace with Children.OfType<MeTLTextBox>(); etc
         public static IEnumerable<MeTLTextBox> TextChildren(this InkCanvas canvas)
         {
             return canvas.Children.OfType<MeTLTextBox>();
