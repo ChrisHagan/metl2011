@@ -23,7 +23,7 @@ namespace SandRibbon.Components.Utility
             return element.tag().author;
         }
 
-        protected override string PrivacyFromTag(Stroke element)
+        protected override Privacy PrivacyFromTag(Stroke element)
         {
             return element.tag().privacy;
         }

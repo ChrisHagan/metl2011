@@ -11,10 +11,10 @@ namespace MeTLLib.DataTypes
 {
     public struct TextTag
     {
-        public TextTag(string Author, string Privacy, string Id)
+        public TextTag(string Author, Privacy Privacy, string Id)
         {
             author = Author;
-            privacy = Privacy;
+            privacy = Privacy; 
             id = Id;
         }
         public bool ValueEquals(object obj)
@@ -26,15 +26,16 @@ namespace MeTLLib.DataTypes
                 && (foreignTextTag.privacy == privacy));
         }
         public string author;
-        public string privacy;
+        public Privacy privacy;
         public string id;
     }
+
     public struct ImageTag
     {
-        public ImageTag(string Author, string Privacy, string Id, bool IsBackground, int ZIndex)
+        public ImageTag(string Author, Privacy Privacy, string Id, bool IsBackground, int ZIndex = 0)
         {
             author = Author;
-            privacy = Privacy;
+            privacy = Privacy; 
             id = Id;
             isBackground = IsBackground;
             zIndex = ZIndex;
@@ -50,18 +51,18 @@ namespace MeTLLib.DataTypes
                 && (foreignImageTag.zIndex == zIndex));
         }
         public string author;
-        public string privacy;
+        public Privacy privacy;
         public string id;
         public bool isBackground;
         public int zIndex;
     }
     public struct StrokeTag
     {
-        public StrokeTag(string Author, string Privacy, string strokeId, double StartingSum, bool IsHighlighter)
+        public StrokeTag(string Author, Privacy Privacy, string strokeId, double StartingSum, bool IsHighlighter)
         {
             id = strokeId;
             author = Author;
-            privacy = Privacy;
+            privacy = Privacy; 
             startingSum = StartingSum;
             isHighlighter = IsHighlighter;
         }
@@ -75,7 +76,7 @@ namespace MeTLLib.DataTypes
         }
         public string id; 
         public string author;
-        public string privacy;
+        public Privacy privacy;
         public double startingSum;
         public bool isHighlighter;
     }
@@ -158,7 +159,7 @@ namespace MeTLLib.DataTypes
         }
     }
     public static class FrameworkElementExtensions {
-        public static string privacy(this FrameworkElement element) {
+        public static Privacy privacy(this FrameworkElement element) {
             if (element is Video) return (element as Video).tag().privacy;
             if (element is Image) return (element as Image).tag().privacy;
             if (element is TextBox) return (element as TextBox).tag().privacy;
@@ -207,7 +208,7 @@ namespace MeTLLib.DataTypes
                     {
                         author = "unknown",
                         id = "unknown",
-                        privacy = "private",
+                        privacy = Privacy.Private,
                         isBackground = false,
                         zIndex = 1
                     };
@@ -233,7 +234,7 @@ namespace MeTLLib.DataTypes
         private static Guid IS_HIGHLIGHTER = Guid.NewGuid();
         private static Guid STROKE_IDENTITY_GUID = Guid.NewGuid();
         private static readonly string NONPERSISTENT_STROKE = "nonPersistent";
-        public static string privacy(this Stroke stroke){
+        public static Privacy privacy(this Stroke stroke){
             return stroke.tag().privacy;
         }
         public static StrokeTag tag(this Stroke stroke)
@@ -242,7 +243,7 @@ namespace MeTLLib.DataTypes
             stroketag = new StrokeTag
                        {
                            author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
-                           privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
+                           privacy = (Privacy)Enum.Parse(typeof(Privacy), (string)stroke.GetPropertyData(STROKE_PRIVACY_GUID), true),
                            id = (string) stroke.GetPropertyData(STROKE_IDENTITY_GUID),
                            isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER)
                        };
@@ -251,11 +252,11 @@ namespace MeTLLib.DataTypes
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
         {
             stroke.AddPropertyData(STROKE_TAG_GUID, tag.author);
-            var privacy = "private";
-            if (!string.IsNullOrEmpty(tag.privacy))
+            var privacy = Privacy.Private;
+            if (tag.privacy != Privacy.NotSet)
                 privacy = tag.privacy;
             stroke.AddPropertyData(STROKE_IDENTITY_GUID, tag.id);
-            stroke.AddPropertyData(STROKE_PRIVACY_GUID, privacy);
+            stroke.AddPropertyData(STROKE_PRIVACY_GUID, privacy.ToString());
             stroke.AddPropertyData(IS_HIGHLIGHTER, tag.isHighlighter);
             return tag;
         }
@@ -310,8 +311,5 @@ namespace MeTLLib.DataTypes
             return checksum;
         }
         public static int POINT_DECIMAL_PLACE_ROUNDING = 1;
-    }
-    public class Extensions
-    {
     }
 }

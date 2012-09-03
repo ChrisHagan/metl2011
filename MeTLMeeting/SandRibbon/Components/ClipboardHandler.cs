@@ -139,7 +139,7 @@ namespace SandRibbon.Components
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
-                  stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, XmlStroke.Element(metl_ns + privacyTag).Value, XmlStroke.Element(metl_ns + identityTag).Value, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
+                  stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, (Privacy)Enum.Parse(typeof(Privacy), XmlStroke.Element(metl_ns + privacyTag).Value, true), XmlStroke.Element(metl_ns + identityTag).Value, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
                   strokes.Add(stroke);
               }
               return strokes;

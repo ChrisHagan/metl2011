@@ -27,9 +27,9 @@ namespace SandRibbon.Components.Utility
         {
             return string.Empty;
         }
-        protected virtual string PrivacyFromTag(T element)
+        protected virtual Privacy PrivacyFromTag(T element)
         {
-            return string.Empty;
+            return Privacy.NotSet;
         }
 
         public void Add(T element)
@@ -185,9 +185,9 @@ namespace SandRibbon.Components.Utility
 
         #region Helpers
 
-        private List<Func<string, string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
+        private List<Func<string, Privacy, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
         {
-            var comparer = new List<Func<string, string, bool>>();
+            var comparer = new List<Func<string, Privacy, bool>>();
             var conversationAuthor = Globals.conversationDetails.Author;
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
@@ -197,10 +197,10 @@ namespace SandRibbon.Components.Utility
                 comparer.Add((elementAuthor, _unused) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MyPrivateVisible))
-                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy.ToLower() == Globals.PRIVATE);
+                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Private);
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MyPublicVisible))
-                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy.ToLower() == Globals.PUBLIC);
+                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Public);
 
             return comparer;
         }

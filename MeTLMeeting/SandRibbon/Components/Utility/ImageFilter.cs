@@ -30,7 +30,7 @@ namespace SandRibbon.Components.Utility
             return (element as Image).tag().author;
         }
 
-        protected override string PrivacyFromTag(UIElement element)
+        protected override Privacy PrivacyFromTag(UIElement element)
         {
             return (element as Image).tag().privacy;
         }

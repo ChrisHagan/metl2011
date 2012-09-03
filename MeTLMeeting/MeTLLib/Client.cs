@@ -91,6 +91,7 @@ namespace MeTLLib
         void SendDirtyVideo(TargettedDirtyElement tde);
         void SendSubmission(TargettedSubmission ts);
         void SendTeacherStatus(TeacherStatus status);
+        void SendMoveDelta(TargettedMoveDelta tmd);
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
         void SendQuizAnswer(QuizAnswer qa);
@@ -290,6 +291,14 @@ namespace MeTLLib
             Action work = delegate
             {
                 wire.SendDirtyVideo(tde);
+            };
+            tryIfConnected(work);
+        }
+        public void SendMoveDelta(TargettedMoveDelta tmd)
+        {
+            Action work = delegate
+            {
+                wire.SendMoveDelta(tmd);
             };
             tryIfConnected(work);
         }

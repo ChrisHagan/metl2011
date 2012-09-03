@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:components="clr-namespace:SandRibbon.Components"
+             xmlns:metllib="clr-namespace:MeTLLib.DataTypes;assembly=MeTLLib"
              xmlns:core="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <core:String x:Key="defaultPrivacy">private</core:String>
+        <x:Static x:Key="defaultPrivacy" Member="metllib:Privacy.Private" />
         <core:String x:Key="target">notepad</core:String>
     </UserControl.Resources>
     <components:CollapsedCanvasStack x:Name="notepadStack" />

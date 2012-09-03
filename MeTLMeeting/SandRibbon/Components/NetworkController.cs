@@ -111,6 +111,7 @@ namespace SandRibbon.Components
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
             Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
+            Commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
@@ -208,6 +209,10 @@ namespace SandRibbon.Components
         private void SendTextBox(TargettedTextBox ttb)
         {
             client.SendTextBox(ttb);
+        }
+        private void SendMoveDelta(TargettedMoveDelta moveDelta)
+        {
+            client.SendMoveDelta(moveDelta);
         }
         private void SneakInto(string room)
         {

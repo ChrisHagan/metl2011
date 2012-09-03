@@ -10,6 +10,13 @@ using MeTLLib.Providers;
 
 namespace MeTLLib.DataTypes
 {
+    public enum Privacy
+    {
+        NotSet,
+        Private,
+        Public
+    }
+
     public class SearchConversationDetails : ConversationDetails
     {
         public const int DEFAULT_MAX_SEARCH_RESULTS = 50;

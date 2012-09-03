@@ -131,11 +131,11 @@ namespace SandRibbon.Components
 
         private bool isPrivate(MeTLLib.Providers.Connection.PreParser parser)
         {
-            if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
+            if (parser.ink.Where(s => s.privacy == Privacy.Private).Count() > 0)
                 return true;
-            if (parser.text.Where(s => s.Value.privacy == "private").Count() > 0)
+            if (parser.text.Where(s => s.Value.privacy == Privacy.Private).Count() > 0)
                 return true;
-            if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
+            if (parser.images.Where(s => s.Value.privacy == Privacy.Private).Count() > 0)
                 return true;
             return false;
         }

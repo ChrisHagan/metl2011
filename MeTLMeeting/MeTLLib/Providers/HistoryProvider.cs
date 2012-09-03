@@ -93,6 +93,30 @@ namespace MeTLLib.Providers
                 cache[room.ToString()] = jabberWireFactory.preParser(room);
             cache[room.ToString()].ActOnUntypedMessage(message);
         }
+
+        public List<TargettedStroke> GetInks(string room)
+        {
+            if (!cache.ContainsKey(room))
+                return new List<TargettedStroke>();
+
+            return new List<TargettedStroke>(cache[room].ink);
+        }
+
+        public List<TargettedImage> GetImages(string room)
+        {
+            if (!cache.ContainsKey(room))
+                return new List<TargettedImage>();
+
+            return new List<TargettedImage>(cache[room].images.Values);
+        }
+
+        public List<TargettedTextBox> GetTexts(string room)
+        {
+            if (!cache.ContainsKey(room))
+                return new List<TargettedTextBox>();
+
+            return new List<TargettedTextBox>(cache[room].text.Values);
+        }
     }
     public class HttpHistoryProvider : BaseHistoryProvider
     {

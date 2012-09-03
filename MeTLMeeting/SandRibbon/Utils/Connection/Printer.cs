@@ -51,15 +51,15 @@ namespace SandRibbon.Utils.Connection
             var canvas = new MeTLInkCanvas();
             foreach (var stroke in ink)
             {
-                if ((includePublic && stroke.privacy == "public") || stroke.target == target)
+                if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
                     canvas.Strokes.Add(stroke.stroke);
             }
             foreach (var image in images)
             {
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
-                if ((includePublic && image.Value.privacy == "public") || image.Value.target == target)
+                if ((includePublic && image.Value.privacy == Privacy.Public) || image.Value.target == target)
                 {
-                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 1 : 2);
+                    Panel.SetZIndex(imageToAdd, image.Value.privacy == Privacy.Public ? 1 : 2);
                     canvas.Children.Add(imageToAdd);
                 }
             }
@@ -69,7 +69,7 @@ namespace SandRibbon.Utils.Connection
                 textbox.BorderThickness = new Thickness(0);
                 textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
                 textbox.Background = new SolidColorBrush(Colors.Transparent);
-                if ((includePublic && box.Value.privacy == "public") || box.Value.target == target)
+                if ((includePublic && box.Value.privacy == Privacy.Public) || box.Value.target == target)
                 {
                     // positive Z is out of the screen
                     Panel.SetZIndex(textbox, 3);

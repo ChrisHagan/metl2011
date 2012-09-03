@@ -38,7 +38,7 @@ namespace SandRibbon.Utils
             SetTag(MeTLStanzas.yTag, y);
             SetTag(MeTLStanzas.authorTag, tag.author);
             SetTag(MeTLStanzas.targetTag, target);
-            SetTag(MeTLStanzas.privacyTag, tag.privacy);
+            SetTag(MeTLStanzas.privacyTag, tag.privacy.ToString());
             SetTag(MeTLStanzas.slideTag, slide);
             SetTag(MeTLStanzas.identityTag, tag.id);
         }
@@ -62,7 +62,7 @@ namespace SandRibbon.Utils
             this.SetTag(MeTLStanzas.authorTag, tag.author);
             this.SetTag(MeTLStanzas.identityTag, tag.id);
             this.SetTag(MeTLStanzas.targetTag, target);
-            this.SetTag(MeTLStanzas.privacyTag, tag.privacy);
+            this.SetTag(MeTLStanzas.privacyTag, tag.privacy.ToString());
             this.SetTag(MeTLStanzas.slideTag, slide);
             this.SetTag(MeTLStanzas.TextBox.decorationTag, "None");
             this.SetTag(MeTLStanzas.TextBox.weightTag, "Normal");
@@ -446,7 +446,7 @@ namespace SandRibbon.Utils
                 var y = Double.Parse(text.Attribute("y").Value);
                 var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me + shapeCount++;
                 var font = text.Descendants("font").ElementAt(0);
-                var privacy = text.Attribute("privacy").Value.ToString();
+                var privacy = (Privacy)Enum.Parse(typeof(Privacy), text.Attribute("privacy").Value, true);
                 var family = font.Attribute("family").Value;
                 var size = Double.Parse(font.Attribute("size").Value);
                 var color = (font.Attribute("color").Value).ToString();
@@ -476,7 +476,7 @@ namespace SandRibbon.Utils
                 var tag = new ImageTag {
                     id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, shapeCount++),
                     author = me,
-                    privacy = shape.Attribute("privacy").Value,
+                    privacy = (Privacy)Enum.Parse(typeof(Privacy), shape.Attribute("privacy").Value, true),
                     isBackground = isBackgroundImage
                 };
                 var uri = new Uri(shape.Attribute("uri").Value);

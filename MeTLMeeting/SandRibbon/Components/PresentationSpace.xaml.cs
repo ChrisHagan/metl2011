@@ -99,7 +99,7 @@ namespace SandRibbon.Components
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
-            Commands.SetPrivacyOfItems.Execute("private");
+            Commands.SetPrivacyOfItems.Execute(Privacy.Private);
         }
 
         private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
@@ -112,7 +112,7 @@ namespace SandRibbon.Components
                                  var conn = MeTLLib.ClientFactory.Connection();
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1,Globals.me,"bannedcontent",
-                                     "private", hostedFileName, Globals.conversationDetails.Title, blacklisted,Globals.generateId(hostedFileName)));
+                                     Privacy.Private, hostedFileName, Globals.conversationDetails.Title, blacklisted,Globals.generateId(hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -530,7 +530,7 @@ namespace SandRibbon.Components
                 foreach (var child in stack.Work.Children)
                 {
                     var fe = (FrameworkElement)child;
-                    if (fe.privacy() == "public")
+                    if (fe.privacy() == Privacy.Public)
                     {
                         if (child is Image)
                         {

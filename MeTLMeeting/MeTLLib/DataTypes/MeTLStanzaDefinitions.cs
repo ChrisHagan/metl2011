@@ -53,7 +53,7 @@ namespace MeTLLib.DataTypes
 
     public class TargettedElement
     {
-        public TargettedElement(int Slide, string Author, string Target, string Privacy, string Identity)
+        public TargettedElement(int Slide, string Author, string Target, Privacy Privacy, string Identity)
         {
             slide = Slide;
             author = Author;
@@ -73,9 +73,9 @@ namespace MeTLLib.DataTypes
             return String.Compare(identity, theirIdentity, true) == 0;
         }
 
-        public bool HasSamePrivacy(string theirPrivacy)
+        public bool HasSamePrivacy(Privacy theirPrivacy)
         {
-            return String.Compare(privacy, theirPrivacy, true) == 0;
+            return privacy == theirPrivacy; 
         }
 
         public bool HasSameAuthor(string theirAuthor)
@@ -91,24 +91,33 @@ namespace MeTLLib.DataTypes
         public string author { get; set; }
         public string identity { get; protected set; }
         public string target;
-        public string privacy;
+        public Privacy privacy;
         public int slide;
         public long timestamp;
  
     }
     public class TargettedMoveDelta : TargettedElement
     {
-        public TargettedMoveDelta(int slide, string author, string target, string privacy, string identity) 
+        public TargettedMoveDelta(int slide, string author, string target, Privacy privacy, string identity) 
             : base(slide, author, target, privacy, identity)
         {
+            Initialise();
         }
 
         public double xTranslate { get; set; }
         public double yTranslate { get; set; }
         public double xScale { get; set; }
         public double yScale { get; set; }
-        public string newPrivacy { get; set; }
+        public Privacy newPrivacy { get; set; }
         public bool isDeleted { get; set; }
+
+        private void Initialise()
+        {
+            // set defaults
+            xTranslate = yTranslate = 0;
+            xScale = yScale = 1;
+            newPrivacy = Privacy.NotSet; 
+        }
 
         private readonly HashSet<MeTLStanzas.ElementIdentity> _inkIds = new HashSet<MeTLStanzas.ElementIdentity>();
         private ReadOnlyCollection<MeTLStanzas.ElementIdentity> _inkIdsView;
@@ -126,6 +135,10 @@ namespace MeTLLib.DataTypes
         internal void AddInkId(MeTLStanzas.ElementIdentity elemId)
         {
             _inkIds.Add(elemId);
+        }
+        private void AddInkId(string identity)
+        {
+            _inkIds.Add(new MeTLStanzas.ElementIdentity(identity));
         }
 
         private readonly HashSet<MeTLStanzas.ElementIdentity> _textIds = new HashSet<MeTLStanzas.ElementIdentity>();
@@ -145,6 +158,10 @@ namespace MeTLLib.DataTypes
         {
             _textIds.Add(elemId);
         }
+        private void AddTextId(string identity)
+        {
+            _textIds.Add(new MeTLStanzas.ElementIdentity(identity));
+        }
 
         private readonly HashSet<MeTLStanzas.ElementIdentity> _imageIds = new HashSet<MeTLStanzas.ElementIdentity>();
         private ReadOnlyCollection<MeTLStanzas.ElementIdentity> _imageIdsView;
@@ -163,6 +180,10 @@ namespace MeTLLib.DataTypes
         {
             _imageIds.Add(elemId);
         }
+        private void AddImageId(string identity)
+        {
+            _imageIds.Add(new MeTLStanzas.ElementIdentity(identity));
+        }
 
         public new bool ValueEquals(object obj)
         {
@@ -174,7 +195,7 @@ namespace MeTLLib.DataTypes
                 MeTLMath.ApproxEqual(moveDelta.yTranslate, yTranslate) && 
                 MeTLMath.ApproxEqual(moveDelta.xScale, xScale) && 
                 MeTLMath.ApproxEqual(moveDelta.yScale, yScale) && 
-                string.Compare(moveDelta.newPrivacy, newPrivacy, true) == 0 &&
+                moveDelta.newPrivacy == newPrivacy &&
                 IsNullOrEqual(moveDelta._inkIds, _inkIds) &&
                 IsNullOrEqual(moveDelta._textIds, _textIds) &&
                 IsNullOrEqual(moveDelta._imageIds, _imageIds));
@@ -184,10 +205,50 @@ namespace MeTLLib.DataTypes
         {
             return (elemIdsA == null && elemIdsB == null) || elemIdsA.SetEquals(elemIdsB);
         }
+
+        public static TargettedMoveDelta Create(int slide, string author, string target, Privacy privacy, IEnumerable<Stroke> moveStrokes, IEnumerable<TextBox> moveTexts, IEnumerable<Image> moveImages)
+        {
+            // identity is set in the MoveDeltaStanza constructor
+            var targettedMoveDelta = new TargettedMoveDelta(slide, author, target, privacy, string.Empty);
+
+            AddFromCollection<Stroke>(moveStrokes, (s) => targettedMoveDelta.AddInkId(s.tag().id));
+            AddFromCollection<TextBox>(moveTexts, (t) => targettedMoveDelta.AddTextId(t.tag().id));
+            AddFromCollection<Image>(moveImages, (i) => targettedMoveDelta.AddImageId(i.tag().id));
+
+            return targettedMoveDelta;
+        }
+
+        public static TargettedMoveDelta CreateAdjuster(TargettedMoveDelta tmd, Privacy replacementPrivacy, IEnumerable<TargettedStroke> strokes, IEnumerable<TargettedTextBox> texts, IEnumerable<TargettedImage> images)
+        {
+            var targettedMoveDelta = new TargettedMoveDelta(tmd.slide, tmd.author, tmd.target, replacementPrivacy, tmd.identity);
+            targettedMoveDelta.newPrivacy = Privacy.NotSet;
+            
+            AddFromCollection<TargettedStroke>(strokes, (s) => targettedMoveDelta.AddInkId(s.identity));
+            AddFromCollection<TargettedTextBox>(texts, (t) => targettedMoveDelta.AddTextId(t.identity));
+            AddFromCollection<TargettedImage>(images, (i) => targettedMoveDelta.AddImageId(i.identity));
+
+            return targettedMoveDelta;
+        }
+
+        public static TargettedMoveDelta CreateDirtier(TargettedMoveDelta tmd, Privacy replacementPrivacy, IEnumerable<TargettedStroke> strokes, IEnumerable<TargettedTextBox> texts, IEnumerable<TargettedImage> images)
+        {
+            var targettedMoveDelta = CreateAdjuster(tmd, replacementPrivacy, strokes, texts, images);
+            targettedMoveDelta.isDeleted = true;
+
+            return targettedMoveDelta;
+        }
+
+        private static void AddFromCollection<T>(IEnumerable<T> elements, Action<T> addElem)
+        {
+            foreach (var elem in elements)
+            {
+                addElem(elem);
+            }
+        }
     }
     public class TargettedSubmission : TargettedElement
     {
-        public TargettedSubmission(int Slide, string Author, string Target, string Privacy, string Identity, string Url, string Title, long Time, List<MeTLStanzas.BlackListedUser> Blacklisted)
+        public TargettedSubmission(int Slide, string Author, string Target, Privacy Privacy, string Identity, string Url, string Title, long Time, List<MeTLStanzas.BlackListedUser> Blacklisted)
             : base(Slide, Author, Target, Privacy, Identity)
         {
             url = Url;
@@ -210,21 +271,36 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedStroke : TargettedElement
     {
-        /*public TargettedStroke(int Slide, string Author, string Target, string Privacy, Stroke Stroke)
-            : base(Slide, Author, Target, Privacy)
-        {
-            stroke = Stroke;
-        }*/
-        public TargettedStroke(int Slide, string Author, string Target, string Privacy, string Identity, Stroke Stroke, double StartingChecksum): base(Slide, Author, Target, Privacy, Identity)
-            //: this(Slide, Author, Target, Privacy, Stroke)
+        public TargettedStroke(int Slide, string Author, string Target, Privacy Privacy, string Identity, Stroke Stroke, double StartingChecksum): base(Slide, Author, Target, Privacy, Identity)
         {
             stroke = Stroke;
             startingChecksum = StartingChecksum;
         }
-        public TargettedStroke(int Slide, string Author, string Target, string Privacy, string Identity, Stroke Stroke, double StartingChecksum, string strokeStartingColor)
+        public TargettedStroke(int Slide, string Author, string Target, Privacy Privacy, string Identity, Stroke Stroke, double StartingChecksum, string strokeStartingColor)
             : this(Slide, Author, Target, Privacy, Identity, Stroke, StartingChecksum)
         {
             startingColor = strokeStartingColor;
+        }
+
+        public TargettedStroke AlterPrivacy(Privacy newPrivacy)
+        {
+            if (newPrivacy == privacy || newPrivacy == Privacy.NotSet)
+                return this;
+
+            return new TargettedStroke(slide, author, target, newPrivacy, identity, stroke, startingChecksum);
+        }
+
+        public TargettedStroke AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
+        {
+            if (xTranslate == 0.0 && yTranslate == 0.0 && xScale == 1.0 && yScale == 1.0)
+                return this;
+
+            var transformMatrix = new Matrix();
+            transformMatrix.Scale(xScale, yScale);
+            transformMatrix.Translate(xTranslate, yTranslate);
+
+            stroke.Transform(transformMatrix, false);
+            return this;
         }
 
         public new bool ValueEquals(object obj)
@@ -238,8 +314,8 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedFile : TargettedElement
     {
-        public TargettedFile(int Slide, string Author, string Target, string Privacy, string Identity, string Url, string UploadTime, long Size, string Name)
-            : base(Slide, Author, Target, Privacy,Identity)
+        public TargettedFile(int Slide, string Author, string Target, Privacy Privacy, string Identity, string Url, string UploadTime, long Size, string Name)
+            : base(Slide, Author, Target, Privacy, Identity)
         {
             url = Url;
             uploadTime = UploadTime;
@@ -265,16 +341,35 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedImage : TargettedElement
     {
-        public TargettedImage(int Slide, string Author, string Target, string Privacy, string Identity, Image Image)
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, Image Image)
             : base(Slide, Author, Target, Privacy, Identity)
         {
             image = Image;
         }
-        public TargettedImage(int Slide, string Author, string Target, string Privacy, MeTLStanzas.Image ImageSpecification, string Identity)
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, MeTLStanzas.Image ImageSpecification, string Identity)
             : base(Slide, Author, Target, Privacy, Identity)
         {
             imageSpecification = ImageSpecification;
         }
+
+        public TargettedImage AlterPrivacy(Privacy newPrivacy)
+        {
+            if (newPrivacy == privacy || newPrivacy == Privacy.NotSet)
+                return this;
+
+            return new TargettedImage(slide, author, target, newPrivacy, imageSpecification, identity);
+        }
+
+        public TargettedImage AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
+        {
+            imageSpecification.x += xTranslate;
+            imageSpecification.y += yTranslate;
+            imageSpecification.width *= xScale;
+            imageSpecification.height *= yScale;
+
+            return this;
+        }
+
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
@@ -309,7 +404,7 @@ namespace MeTLLib.DataTypes
                         identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
                     }
                 }
-                value.tag(new ImageTag { author = author, id = identity, privacy = privacy, isBackground =  value.tag().isBackground});
+                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground));
                 imageProperty = value;
             }
         }
@@ -317,12 +412,12 @@ namespace MeTLLib.DataTypes
 
     public class TargettedTextBox : TargettedElement
     {
-        public TargettedTextBox(int Slide, string Author, string Target, string Privacy, string Identity, TextBox TextBox)
+        public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, string Identity, TextBox TextBox)
             : base(Slide, Author, Target, Privacy, Identity)
         {
             box = TextBox;
         }
-        public TargettedTextBox(int Slide, string Author, string Target, string Privacy, MeTLStanzas.TextBox BoxSpecification, string Identity)
+        public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, MeTLStanzas.TextBox BoxSpecification, string Identity)
             : base(Slide, Author, Target, Privacy, Identity)
         {
             boxSpecification = BoxSpecification;
@@ -337,6 +432,25 @@ namespace MeTLLib.DataTypes
                 && foreign.boxSpecification == boxSpecification
                 && foreign.box.Equals(box));
         }
+
+        public TargettedTextBox AlterPrivacy(Privacy newPrivacy)
+        {
+            if (newPrivacy == privacy || newPrivacy == Privacy.NotSet)
+                return this;
+
+            return new TargettedTextBox(slide, author, target, newPrivacy, boxSpecification, identity);
+        }
+
+        public TargettedTextBox AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
+        {
+            boxSpecification.x += xTranslate;
+            boxSpecification.y += yTranslate;
+            boxSpecification.width *= xScale;
+            boxSpecification.height *= yScale;
+
+            return this;
+        }
+
         public TextBox boxProperty;
         public MeTLStanzas.TextBox boxSpecification;
         public System.Windows.Controls.TextBox box
@@ -360,7 +474,7 @@ namespace MeTLLib.DataTypes
                 {
                     if (String.IsNullOrEmpty(identity))
                         identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
-                    value.tag(new TextTag { author = author, id = identity, privacy = privacy });
+                    value.tag(new TextTag(author, privacy, identity));
                     internalIdentity = value.tag().id;
                 }
                 identity = internalIdentity;
@@ -370,7 +484,7 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedDirtyElement : TargettedElement
     {
-        public TargettedDirtyElement(int Slide, string Author, string Target, string Privacy, string Identifier)
+        public TargettedDirtyElement(int Slide, string Author, string Target, Privacy Privacy, string Identifier)
             : base(Slide, Author, Target, Privacy, Identifier)
         {
         }
@@ -501,20 +615,13 @@ namespace MeTLLib.DataTypes
                     stroke.AddPropertyData(stroke.sumId(), sum);
                     stroke.AddPropertyData(stroke.startingId(), startingSum);
 
-                    string identity = string.Empty;
-                    if (HasTag(identityTag))
-                    {
-                        identity = GetTag(identityTag);
-                    }
-                    else
-                    {
-                        identity = GetTag(startingSumTag);
-                    }
+                    string identity = HasTag(identityTag) ? GetTag(identityTag) : GetTag(startingSumTag);
+                    Privacy privacy = (Privacy)GetTagEnum(privacyTag, typeof(Privacy));
                     stroke.tag(new StrokeTag(
-                        GetTag(authorTag), GetTag(privacyTag), identity,
+                        GetTag(authorTag), privacy, identity,
                         GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)),
                         Boolean.Parse(GetTag(highlighterTag))));
-                    var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), identity, stroke, startingSum);
+                    var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), privacy, identity, stroke, startingSum);
                     return targettedStroke;
                 }
                 set
@@ -536,7 +643,7 @@ namespace MeTLLib.DataTypes
                     this.SetTag(highlighterTag, value.stroke.DrawingAttributes.IsHighlighter.ToString());
                     this.SetTag(authorTag, value.author);
                     this.SetTag(targetTag, value.target);
-                    this.SetTag(privacyTag, value.privacy);
+                    this.SetTag(privacyTag, value.privacy.ToString());
                     this.SetTag(slideTag, value.slide);
                 }
             }
@@ -634,13 +741,13 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), GetTag(identityTag));
+                    var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag));
 
                     moveDelta.xTranslate = GetTagDouble(XTRANSLATE_TAG);
                     moveDelta.yTranslate = GetTagDouble(YTRANSLATE_TAG);
                     moveDelta.xScale = GetTagDouble(XSCALE_TAG);
                     moveDelta.yScale = GetTagDouble(YSCALE_TAG);
-                    moveDelta.newPrivacy = GetTag(NEWPRIVACY_TAG);
+                    moveDelta.newPrivacy = (Privacy)GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy));
                     moveDelta.isDeleted = GetTagBool(ISDELETED_TAG);
 
                     GetChildren<InkIdentityStanza>(moveDelta, INKIDS_TAG, (elemId) => moveDelta.AddInkId(elemId));
@@ -651,16 +758,17 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
+                    SetTag(identityTag, TAG);
                     SetTag(slideTag, value.slide);
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
-                    SetTag(privacyTag, value.privacy);
+                    SetTag(privacyTag, value.privacy.ToString());
 
                     SetTag(XTRANSLATE_TAG, value.xTranslate);
                     SetTag(YTRANSLATE_TAG, value.yTranslate);
                     SetTag(XSCALE_TAG, value.xScale);
                     SetTag(YSCALE_TAG, value.yScale);
-                    SetTag(NEWPRIVACY_TAG, value.newPrivacy);
+                    SetTag(NEWPRIVACY_TAG, value.newPrivacy.ToString()); 
                     SetTag(ISDELETED_TAG, value.isDeleted);
 
                     SetChildren<InkIdentityStanza>(INKIDS_TAG, value.inkIds, (elemId) => new InkIdentityStanza(elemId));
@@ -669,7 +777,7 @@ namespace MeTLLib.DataTypes
                 }
             }
 
-            void SetChildren<T>(string tagName, IEnumerable<ElementIdentity> elementIds, Func<ElementIdentity, T> creator) where T : ElementIdentityStanza
+            void SetChildren<T>(string tagName, IEnumerable<ElementIdentity> elementIds, Func<ElementIdentity, T> creator) where T : ElementIdentityStanza, new()
             {
                 var childElem = new Element(tagName);
                 foreach (var elemId in elementIds)
@@ -737,7 +845,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), this, GetTag(identityTag));
+                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag));
                     return box;
                 }
                 set
@@ -757,7 +865,7 @@ namespace MeTLLib.DataTypes
                     this.SetTag(authorTag, value.author);
                     this.SetTag(identityTag, value.boxProperty.tag().id);
                     this.SetTag(targetTag, value.target);
-                    this.SetTag(privacyTag, value.privacy);
+                    this.SetTag(privacyTag, value.privacy.ToString());
                     this.SetTag(slideTag, value.slide);
                     this.color = value.boxProperty.Foreground;
                 }
@@ -895,7 +1003,7 @@ namespace MeTLLib.DataTypes
                     var filename = HasTag(NAME) ? GetTag(NAME) : Path.GetFileNameWithoutExtension(GetTag(URL));
                     var slide = HasTag(slideTag) ? GetTag(slideTag) : "0";
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
-                    var privacy = HasTag(privacyTag) ? GetTag(privacyTag) : "public";
+                    var privacy = HasTag(privacyTag) ? (Privacy)GetTagEnum(privacyTag, typeof(Privacy)) : Privacy.Public;
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url+fileuploadTime+filename;
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, identity, url, fileuploadTime, filesize, filename);
@@ -914,7 +1022,7 @@ namespace MeTLLib.DataTypes
         }
         public class LocalFileInformation
         {
-            public LocalFileInformation(int Slide, string Author, string Target, string Privacy, string File, string Name, bool Overwrite, long Size, string UploadTime, string Identity)
+            public LocalFileInformation(int Slide, string Author, string Target, Privacy Privacy, string File, string Name, bool Overwrite, long Size, string UploadTime, string Identity)
             {
                 slide = Slide;
                 author = Author;
@@ -931,7 +1039,7 @@ namespace MeTLLib.DataTypes
             public string file;
             public bool overwrite;
             public string name;
-            public string privacy;
+            public Privacy privacy;
             public long size;
             public int slide;
             public string target;
@@ -944,7 +1052,7 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
-            public LocalImageInformation(int Slide, string Author, string Target, string Privacy, System.Windows.Controls.Image Image, string File, bool Overwrite)
+            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, System.Windows.Controls.Image Image, string File, bool Overwrite)
             {
                 slide = Slide;
                 author = Author;
@@ -958,7 +1066,7 @@ namespace MeTLLib.DataTypes
             public System.Windows.Controls.Image image;
             public string file;
             public bool overwrite;
-            public string privacy;
+            public Privacy privacy;
             public int slide;
             public string target;
 
@@ -1133,7 +1241,7 @@ namespace MeTLLib.DataTypes
 
         public class LocalSubmissionInformation
         {
-            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File, string CurrentConversationName, Dictionary<string, Color> Blacklisted, string Identity)
+            public LocalSubmissionInformation(int Slide, string Author, string Target, Privacy Privacy, string File, string CurrentConversationName, Dictionary<string, Color> Blacklisted, string Identity)
             {
                 slide = Slide;
                 author = Author;
@@ -1151,7 +1259,7 @@ namespace MeTLLib.DataTypes
             }
             public string author;
             public string file;
-            public string privacy;
+            public Privacy privacy;
             public int slide;
             public string identity;
             public string target;
@@ -1219,7 +1327,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
+                    var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
 
                     if (HasTag(BLACKLIST))
                     {
@@ -1634,7 +1742,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var targettedImage = new TargettedImage(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), this, GetTag(identityTag));
+                    var targettedImage = new TargettedImage(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag));
                     return targettedImage;
                 }
                 set
@@ -1664,7 +1772,7 @@ namespace MeTLLib.DataTypes
                     SetTag(yTag, currentY);
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
-                    SetTag(privacyTag, value.privacy);
+                    SetTag(privacyTag, value.privacy.ToString());
                     SetTag(slideTag, value.slide);
                     SetTag(identityTag, value.identity);
                 }
@@ -1720,14 +1828,14 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    return new TargettedDirtyElement(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), GetTag(identityTag));
+                    return new TargettedDirtyElement(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag));
                 }
                 set
                 {
                     SetTag(authorTag, value.author);
                     SetTag(slideTag, value.slide);
                     SetTag(targetTag, value.target);
-                    SetTag(privacyTag, value.privacy);
+                    SetTag(privacyTag, value.privacy.ToString());
                     SetTag(identityTag, value.identity);
                 }
             }

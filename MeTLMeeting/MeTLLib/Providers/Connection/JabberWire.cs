@@ -739,6 +739,111 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
             }
         }
+
+        private void MoveDeltaSeparator(TargettedMoveDelta tmd)
+        {
+            var room = tmd.slide.ToString();
+            var strokes = cachedHistoryProvider.GetInks(room);
+            var images = cachedHistoryProvider.GetImages(room);
+            var texts = cachedHistoryProvider.GetTexts(room);
+
+            var inkIds = tmd.inkIds.Select(elemId => elemId.Identity);
+            var textIds = tmd.textIds.Select(elemId => elemId.Identity);
+            var imageIds = tmd.imageIds.Select(elemId => elemId.Identity);
+
+            var privateInks = strokes.Where(s => inkIds.Contains(s.identity) && s.privacy == Privacy.Private);
+            var privateImages = images.Where(i => imageIds.Contains(i.identity) && i.privacy == Privacy.Private);
+            var privateTexts = texts.Where(t => textIds.Contains(t.identity) && t.privacy == Privacy.Private);
+            var publicInks = strokes.Where(s => inkIds.Contains(s.identity) && s.privacy == Privacy.Public);
+            var publicImages = images.Where(i => imageIds.Contains(i.identity) && i.privacy == Privacy.Public);
+            var publicTexts = texts.Where(t => textIds.Contains(t.identity) && t.privacy == Privacy.Public);
+
+            switch (tmd.newPrivacy)
+            {
+                case Privacy.Public:
+                    {
+                        var notP = Privacy.Private;
+                        TargettedMoveDelta privateDirtier = null;
+                        TargettedMoveDelta publicAdjuster = null;
+
+                        var privateInksToPublicise = privateInks.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+                        var privateTextsToPublicise = privateTexts.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+                        var privateImagesToPublicise = privateImages.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+
+                        if (privateInksToPublicise.Count() > 0 || privateTextsToPublicise.Count() > 0 || privateImagesToPublicise.Count() > 0)
+                        {
+                            privateDirtier = TargettedMoveDelta.CreateDirtier(tmd, notP, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
+                        }
+                        if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
+                        {
+                            publicAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, publicInks, publicTexts, publicImages);
+                        }
+
+                        MoveDeltaProcessor(publicAdjuster, privateDirtier, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
+                    }
+                    break;
+
+                case Privacy.Private:
+                    {
+                        var notP = Privacy.Public;
+                        TargettedMoveDelta publicDirtier = null;
+                        TargettedMoveDelta privateAdjuster = null;
+
+                        var publicInksToPrivatise = publicInks.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+                        var publicTextsToPrivatise = publicTexts.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+                        var publicImagesToPrivatise = publicImages.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+
+                        if (publicInksToPrivatise.Count() > 0 || publicTextsToPrivatise.Count() > 0 || publicImagesToPrivatise.Count() > 0)
+                        {
+                            publicDirtier = TargettedMoveDelta.CreateDirtier(tmd, notP, publicInksToPrivatise, publicTextsToPrivatise, publicImagesToPrivatise);
+                        }
+                        if (privateInks.Count() > 0 || privateTexts.Count() > 0 || privateImages.Count() > 0)
+                        {
+                            privateAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, privateInks, privateTexts, privateImages);
+                        }
+
+                        MoveDeltaProcessor(privateAdjuster, publicDirtier, publicInksToPrivatise, publicTextsToPrivatise, publicImagesToPrivatise);
+                    }
+                    break;
+                default:
+                    {
+                        TargettedMoveDelta privateDelta = null;
+                        TargettedMoveDelta publicDelta = null;
+                        if (privateInks.Count() > 0 || privateTexts.Count() > 0 || privateImages.Count() > 0)
+                        {
+                            privateDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.Private, privateInks, privateTexts, privateImages);
+                        }
+                        if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
+                        {
+                            publicDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.Public, publicInks, publicTexts, publicImages);
+                        }
+                        MoveDeltaProcessor(privateDelta, publicDelta);
+                    }
+                    break;
+            }
+        }
+
+        private void SendCollection<T>(IEnumerable<T> collection, Action<T> sender)
+        {
+            if (collection != null)
+            {
+                foreach (var elem in collection)
+                {
+                    sender(elem);
+                }
+            }
+        }
+        private void MoveDeltaProcessor(TargettedMoveDelta adjuster, TargettedMoveDelta dirtier, IEnumerable<TargettedStroke> strokes = null, IEnumerable<TargettedTextBox> texts = null, IEnumerable<TargettedImage> images = null)
+        {
+            stanza(dirtier.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(dirtier));
+            stanza(adjuster.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(adjuster));
+
+            // run appropriate stanza constructors
+            SendCollection<TargettedStroke>(strokes, s => SendStroke(s));
+            SendCollection<TargettedTextBox>(texts, t => SendTextbox(t));
+            SendCollection<TargettedImage>(images, i => SendImage(i));
+        }
+
         public void SendStroke(TargettedStroke stroke)
         {
             stanza(stroke.slide.ToString(), new MeTLStanzas.Ink(stroke));
@@ -789,6 +894,11 @@ namespace MeTLLib.Providers.Connection
         public void SendTextbox(TargettedTextBox box)
         {
             stanza(box.slide.ToString(), new MeTLStanzas.TextBox(box));
+        }
+        public void SendMoveDelta(TargettedMoveDelta tmd)
+        {
+            // split up the TargettedMoveDelta if content is moving across the privacy boundary
+            MoveDeltaSeparator(tmd);
         }
         public void SendQuiz(QuizQuestion parameters)
         {
@@ -930,8 +1040,7 @@ namespace MeTLLib.Providers.Connection
             }
             try
             {
-                // JJNOTE: temporarily comment out while testing new server-side lib
-                //cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message);
+                cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message);
             }
             catch (Exception e)
             {

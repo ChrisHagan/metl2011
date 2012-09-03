@@ -62,11 +62,11 @@ namespace SandRibbon.Components
 
         private void showContent(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacyOfItems.ExecuteAsync("public");
+            Commands.SetPrivacyOfItems.ExecuteAsync(Privacy.Public);
         }
         private void hideContent(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacyOfItems.ExecuteAsync("private");
+            Commands.SetPrivacyOfItems.ExecuteAsync(Privacy.Private);
         }
         private void deleteContent(object sender, RoutedEventArgs e)
         {

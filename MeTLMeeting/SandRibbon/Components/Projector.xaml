@@ -3,12 +3,13 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:metllib="clr-namespace:MeTLLib.DataTypes;assembly=MeTLLib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     x:Name="parent"
     Background="{StaticResource BackgroundBlueGradient}"
     > 
     <UserControl.Resources>
-        <core:String x:Key="defaultPrivacy">public</core:String>
+        <x:Static x:Key="defaultPrivacy" Member="metllib:Privacy.Public" />
         <core:String x:Key="target">presentationSpace</core:String>
     </UserControl.Resources>
     <Grid>

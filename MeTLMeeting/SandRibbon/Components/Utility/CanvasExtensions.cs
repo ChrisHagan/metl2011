@@ -187,7 +187,7 @@ namespace SandRibbon.Components.Utility
             this.stroke = stroke;
             this.target = target; 
             this.tag(stroke.tag());
-            isPrivate = this.tag().privacy == "private";
+            isPrivate = this.tag().privacy == Privacy.Private;
             shouldShowPrivacy = (this.tag().author == Globals.conversationDetails.Author || Globals.conversationDetails.Permissions.studentCanPublish);
             
             if (!isPrivate) return;
