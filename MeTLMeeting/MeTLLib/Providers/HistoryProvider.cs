@@ -81,6 +81,13 @@ namespace MeTLLib.Providers
                 },
                 room);
         }
+        
+        public void PopulateFromHistory(PreParser preParser)
+        {
+            var room = preParser.location.currentSlide.ToString();
+            cache[room] = preParser;
+        }
+
         private bool isPrivateRoom(string room)
         {
             var validChar = Enumerable.Range(0, 10).Aggregate("", (acc, item) => acc + item);

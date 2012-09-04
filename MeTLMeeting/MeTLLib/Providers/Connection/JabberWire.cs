@@ -726,12 +726,12 @@ namespace MeTLLib.Providers.Connection
                 historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    finishedParser => { receiveEvents.receivePreParser(finishedParser); /*cachedHistoryProvider.PopulateFromHistory(finishedParser);*/ },
                     location.currentSlide.ToString());
                 historyProvider.RetrievePrivateContent<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    finishedParser => { receiveEvents.receivePreParser(finishedParser); /*cachedHistoryProvider.PopulateFromHistory(finishedParser);*/ },
                     credentials.name,
                     location.currentSlide.ToString());
             }
@@ -835,8 +835,10 @@ namespace MeTLLib.Providers.Connection
         }
         private void MoveDeltaProcessor(TargettedMoveDelta adjuster, TargettedMoveDelta dirtier, IEnumerable<TargettedStroke> strokes = null, IEnumerable<TargettedTextBox> texts = null, IEnumerable<TargettedImage> images = null)
         {
-            stanza(dirtier.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(dirtier));
-            stanza(adjuster.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(adjuster));
+            if (dirtier != null) 
+                stanza(dirtier.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(dirtier));
+            if (adjuster != null)
+                stanza(adjuster.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(adjuster));
 
             // run appropriate stanza constructors
             SendCollection<TargettedStroke>(strokes, s => SendStroke(s));

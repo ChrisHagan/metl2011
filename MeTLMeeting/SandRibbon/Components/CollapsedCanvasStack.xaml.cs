@@ -588,10 +588,17 @@ namespace SandRibbon.Components
             _boxesAtTheStart.Clear();
             _boxesAtTheStart = inkCanvas.GetSelectedElements().Where(b=> b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
 
-            if (e.NewRectangle.Width == e.OldRectangle.Width && e.NewRectangle.Height == e.OldRectangle.Height)
-                return;
+            //// debugging
+            var firstText = _boxesAtTheStart.OfType<TextBox>().First();
+            var left = InkCanvas.GetLeft(firstText);
+            var top = InkCanvas.GetTop(firstText);
+            Console.WriteLine(string.Format("Moving from {0} Text '{1}' x[{2}] y[{3}]", me, firstText.Text, left, top));
+            /// debugging
 
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
+
+            if (e.NewRectangle.Width == e.OldRectangle.Width && e.NewRectangle.Height == e.OldRectangle.Height)
+                return;
 
             // following code is image specific
             if (strokesAtTheStart.Count != 0)
@@ -708,13 +715,13 @@ namespace SandRibbon.Components
                   var mySelectedElements = selectedElements.Select(element => ((MeTLTextBox)element).clone());
                   foreach (MeTLTextBox box in mySelectedElements)
                   {
-                      removeBox(box);
+                      removeBox(box, true);
                   }
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
                   {
                       selection.Add(box);
-                      sendBox(applyDefaultAttributes(box));
+                      sendBox(applyDefaultAttributes(box), true);
                   }
               };
             Action redo = () =>
@@ -723,11 +730,11 @@ namespace SandRibbon.Components
                   var mySelectedElements = selectedElements.Select(element => ((MeTLTextBox)element).clone());
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
-                      removeBox(box);
+                      removeBox(box, true);
                   foreach (var box in mySelectedElements)
                   {
                       selection.Add(box);
-                      sendBox(applyDefaultAttributes(box));
+                      sendBox(applyDefaultAttributes(box), true);
                   }
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
@@ -739,9 +746,16 @@ namespace SandRibbon.Components
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
-            //var ink = InkSelectionMovedOrResized(filterOnlyMine(selectedStrokes), undoStrokes);
+            var ink = InkSelectionMovedOrResized(filterOnlyMine(selectedStrokes), undoStrokes);
             var images = ImageSelectionMovedOrResized(filterOnlyMine(selectedElements), startingSelectedImages);
             var text = TextMovedOrResized(filterOnlyMine(selectedElements), _boxesAtTheStart);
+
+            //// debugging
+            var firstText = selectedElements.OfType<TextBox>().First();
+            var left = InkCanvas.GetLeft(firstText);
+            var top = InkCanvas.GetTop(firstText);
+            Console.WriteLine(string.Format("Sending move from {0} Text '{1}' x[{2}] y[{3}] deltaX[{4}] deltaY[{5}]", me, firstText.Text, left, top, moveMetrics.Delta.X, moveMetrics.Delta.Y));
+            /// debugging
             
             var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
 
@@ -755,7 +769,7 @@ namespace SandRibbon.Components
             Action undo = () =>
                 {
                     ClearAdorners();
-                    //ink.undo();
+                    ink.undo();
                     text.undo();
                     images.undo();
                     AddAdorners();
@@ -764,7 +778,7 @@ namespace SandRibbon.Components
             Action redo = () =>
                 {
                     ClearAdorners();
-                    //ink.redo();
+                    ink.redo();
                     text.redo();
                     images.redo();
                     AddAdorners();
@@ -1386,7 +1400,10 @@ namespace SandRibbon.Components
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta)
         {
-            if (me == Globals.PROJECTOR || moveDelta.HasSameAuthor(me)) return;
+            // don't want to duplicate what has already been done locally
+            Console.WriteLine(string.Format("ReceiveMoveDelta: me{0} target{1} moveAuthor[{2}]", me, _target, moveDelta.HasSameAuthor(me)));
+            if (moveDelta.HasSameAuthor(me)) 
+                return;
 
             if (moveDelta != null && moveDelta.HasSameTarget(_target))
             {
@@ -1428,6 +1445,8 @@ namespace SandRibbon.Components
                         // translate
                         var left = InkCanvas.GetLeft(textBox) + xTrans;
                         var top = InkCanvas.GetTop(textBox) + yTrans;
+
+                        Console.WriteLine(String.Format("me[{3}] Moving text {0} to x[{1}] y[{2}]", textBox.Text, left, top, me));
 
                         InkCanvas.SetLeft(textBox, left);
                         InkCanvas.SetTop(textBox, top);
@@ -2406,19 +2425,25 @@ namespace SandRibbon.Components
                            Color = ((SolidColorBrush) box.Foreground).Color
                        };
         }
-        private void removeBox(MeTLTextBox box)
+        private void removeBox(MeTLTextBox box, bool localOnly = false)
         {
             myTextBox = box;
-            dirtyTextBoxWithoutHistory(box);
+            if (!localOnly)
+            {
+                dirtyTextBoxWithoutHistory(box);
+            }
             myTextBox = null;
         }
-        private void sendBox(MeTLTextBox box)
+        private void sendBox(MeTLTextBox box, bool localOnly = false)
         {
             myTextBox = box;
             if(!Work.Children.ToList().Any(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id))
                 AddTextBoxToCanvas(box);
             box.PreviewKeyDown += box_PreviewTextInput;
-            sendTextWithoutHistory(box, box.tag().privacy);
+            if (!localOnly)
+            {
+                sendTextWithoutHistory(box, box.tag().privacy);
+            }
         }
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy)
         {

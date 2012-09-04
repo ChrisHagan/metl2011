@@ -101,6 +101,11 @@ namespace MeTLLib.Providers.Connection
         public override void ReceiveCommand(string message){//Preparsers don't care about commands, they're not a valid part of history.
             return;
         }
+        public override void actOnMoveDelta(MeTLStanzas.MoveDeltaStanza moveDelta) 
+        {
+            // preparsers don't care about move deltas
+            return;
+        }
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
         {
             submissions.Add(submission);

@@ -104,6 +104,21 @@ namespace MeTLLib.DataTypes
             Initialise();
         }
 
+        /// <summary>
+        /// Shallow copy constructor
+        /// </summary>
+        /// <param name="copyTmd"></param>
+        private TargettedMoveDelta(TargettedMoveDelta copyTmd) 
+            : base(copyTmd.slide, copyTmd.author, copyTmd.target, copyTmd.privacy, copyTmd.identity)
+        {
+            xTranslate = copyTmd.xTranslate;
+            yTranslate = copyTmd.yTranslate;
+            xScale = copyTmd.xScale;
+            yScale = copyTmd.yScale;
+            newPrivacy = copyTmd.newPrivacy;
+            isDeleted = copyTmd.isDeleted;
+        }
+
         public double xTranslate { get; set; }
         public double yTranslate { get; set; }
         public double xScale { get; set; }
@@ -220,7 +235,9 @@ namespace MeTLLib.DataTypes
 
         public static TargettedMoveDelta CreateAdjuster(TargettedMoveDelta tmd, Privacy replacementPrivacy, IEnumerable<TargettedStroke> strokes, IEnumerable<TargettedTextBox> texts, IEnumerable<TargettedImage> images)
         {
-            var targettedMoveDelta = new TargettedMoveDelta(tmd.slide, tmd.author, tmd.target, replacementPrivacy, tmd.identity);
+            var targettedMoveDelta = new TargettedMoveDelta(tmd);
+
+            targettedMoveDelta.privacy = replacementPrivacy;
             targettedMoveDelta.newPrivacy = Privacy.NotSet;
             
             AddFromCollection<TargettedStroke>(strokes, (s) => targettedMoveDelta.AddInkId(s.identity));
