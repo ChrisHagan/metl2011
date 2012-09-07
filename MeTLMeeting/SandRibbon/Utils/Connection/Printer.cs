@@ -22,6 +22,7 @@ namespace SandRibbon.Utils.Connection
     public class PrintParser : MeTLLib.Providers.Connection.PreParser
     {
         public List<object> history = new List<object>();
+        private PrinterMoveDeltaProcessor moveDeltaProcessor;
         public PrintParser(
             Credentials credentials,
             int room,
@@ -49,6 +50,7 @@ namespace SandRibbon.Utils.Connection
         private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic)
         {
             var canvas = new MeTLInkCanvas();
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
@@ -76,6 +78,9 @@ namespace SandRibbon.Utils.Connection
                     canvas.Children.Add(textbox);
                 }
             }
+
+            foreach (var moveDelta in moveDeltas)
+                moveDeltaProcessor.ReceiveMoveDelta(moveDelta, SandRibbon.Providers.Globals.me, true);
 
             if (canvas.Children.Count == 0 && canvas.Strokes.Count == 0)
                 return new List<MeTLInkCanvas>();

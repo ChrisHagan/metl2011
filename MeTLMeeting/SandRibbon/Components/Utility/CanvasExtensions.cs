@@ -80,9 +80,9 @@ namespace SandRibbon.Components.Utility
 
     public static class InkCanvasExtensions
     {
-        public static IEnumerable<MeTLTextBox> TextChildren(this InkCanvas canvas)
+        public static IEnumerable<TextBox> TextChildren(this InkCanvas canvas)
         {
-            return canvas.Children.OfType<MeTLTextBox>();
+            return canvas.Children.OfType<TextBox>();
         }
         public static IEnumerable<Image> ImageChildren(this InkCanvas canvas)
         {
@@ -92,9 +92,9 @@ namespace SandRibbon.Components.Utility
         {
             return canvas.GetSelectedElements().OfType<Image>();
         }
-        public static IEnumerable<MeTLTextBox> GetSelectedTextBoxes(this InkCanvas canvas)
+        public static IEnumerable<TextBox> GetSelectedTextBoxes(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().OfType<MeTLTextBox>();
+            return canvas.GetSelectedElements().OfType<TextBox>();
         }
     }
     public static class TextBoxExtensions

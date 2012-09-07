@@ -608,7 +608,6 @@ namespace SandRibbon
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var thisDetails = ClientFactory.Connection().DetailsOf(title);
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
-            UpdateUIFromConversation(thisDetails);
             applyPermissions(thisDetails.Permissions);
             Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
             Commands.RequerySuggested(Commands.SetConversationPermissions);
@@ -698,13 +697,6 @@ namespace SandRibbon
         {
             return Globals.isAuthor;
         }
-        private void UpdateUIFromConversation(ConversationDetails details)
-        {
-       /*     if (Permissions.InferredTypeOf(details.Permissions).ValueEquals(Permissions.TUTORIAL_PERMISSIONS) && Globals.pedagogy != Pedagogicometer.level(PedagogyCode.CollaborativePresentation))
-            {
-                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(PedagogyCode.CollaborativePresentation));
-            }*/
-        }
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
@@ -713,7 +705,6 @@ namespace SandRibbon
                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
                                     {
                                          UpdateTitle(details);
-                                         UpdateUIFromConversation(details);
                                          if (!mustBeInConversation(null))
                                          {
                                              ShowConversationSearchBox(null);

@@ -18,6 +18,7 @@ namespace MeTLLib.Providers.Connection
         public List<QuizQuestion> quizzes = new List<QuizQuestion>();
         public List<TargettedFile> files = new List<TargettedFile>();
         public List<TargettedSubmission> submissions = new List<TargettedSubmission>();
+        public List<TargettedMoveDelta> moveDeltas = new List<TargettedMoveDelta>();
         public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
@@ -28,20 +29,6 @@ namespace MeTLLib.Providers.Connection
                 this.location = new Location("0",1,new List<int>{1});
             this.location.currentSlide = room;
             this.receiveEvents = receiveEvents;
-        }
-        public InkCanvas ToVisual()
-        {
-            var canvas = new InkCanvas();
-            foreach (var image in images)
-                canvas.Children.Add(image.Value.imageSpecification.curryEvaluation(metlServerAddress)());
-            foreach (var textbox in text)
-            {
-                textbox.Value.box.Background = new SolidColorBrush(Colors.Transparent);
-                canvas.Children.Add(textbox.Value.box);
-            }
-            foreach (var stroke in ink)
-                canvas.Strokes.Add(stroke.stroke);
-            return canvas;
         }
         public T merge<T>(T otherParser) where T : PreParser
         {
@@ -67,6 +54,8 @@ namespace MeTLLib.Providers.Connection
                 foreach (var kv in parser.images)
                     if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);
+                foreach (var moveDelta in parser.moveDeltas)
+                        returnParser.moveDeltas.Add(moveDelta);
                 foreach (var kv in parser.liveWindows)
                     if (!returnParser.liveWindows.ContainsKey(kv.Key))
                         returnParser.liveWindows.Add(kv.Key, kv.Value);
@@ -80,6 +69,8 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveImages(images.Values.ToArray());
             foreach (var box in text.Values)
                 receiveEvents.receiveTextBox(box);
+            foreach (var moveDelta in moveDeltas)
+                receiveEvents.receiveMoveDelta(moveDelta);
             foreach (var quiz in quizzes)
                 receiveEvents.receiveQuiz(quiz);
             foreach (var answer in quizAnswers)
@@ -103,8 +94,8 @@ namespace MeTLLib.Providers.Connection
         }
         public override void actOnMoveDelta(MeTLStanzas.MoveDeltaStanza moveDelta) 
         {
-            // preparsers don't care about move deltas
-            return;
+            // preparsers need to apply the move deltas in timestamp order
+            moveDeltas.Add(moveDelta.parameters);
         }
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
         {

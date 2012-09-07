@@ -85,7 +85,16 @@ namespace MeTLLib.Providers
         public void PopulateFromHistory(PreParser preParser)
         {
             var room = preParser.location.currentSlide.ToString();
-            cache[room] = preParser;
+            if (cache.ContainsKey(room))
+                cache[room].merge<PreParser>(preParser);
+            else
+                cache[room] = preParser;
+        }
+
+        public void ClearCache(string room)
+        {
+            if (cache.ContainsKey(room))
+                cache.Remove(room);
         }
 
         private bool isPrivateRoom(string room)
@@ -93,12 +102,12 @@ namespace MeTLLib.Providers
             var validChar = Enumerable.Range(0, 10).Aggregate("", (acc, item) => acc + item);
             return room.Any(c => !validChar.Contains(c));
         }
-        public void HandleMessage(string to, Element message) {
+        public void HandleMessage(string to, Element message, long timestamp) {
             if(isPrivateRoom(to)) return;
             var room = Int32.Parse(to);
             if (!cache.ContainsKey(room.ToString()))
                 cache[room.ToString()] = jabberWireFactory.preParser(room);
-            cache[room.ToString()].ActOnUntypedMessage(message);
+            cache[room.ToString()].ActOnUntypedMessage(message, timestamp);
         }
 
         public List<TargettedStroke> GetInks(string room)
@@ -179,7 +188,7 @@ namespace MeTLLib.Providers
             var parser = new StreamParser();
             parser.OnStreamElement += ((_sender, node) =>
                                            {
-                                               wire.ReceivedMessage(node);
+                                               wire.ReceivedMessage(node, MessageOrigin.History);
                                            });
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);
             parser.Push(closeTag, 0, closeTag.Length);

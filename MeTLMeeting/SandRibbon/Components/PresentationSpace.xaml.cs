@@ -215,21 +215,14 @@ namespace SandRibbon.Components
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             BeginInit();
+
             stack.ReceiveStrokes(parser.ink);
             stack.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
                 stack.DoText(text);
-           /*
-            foreach (var video in parser.videos)
-            {
-                
-                var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
-                srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
-                srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
-                srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
-                srVideo.MediaElement.ScrubbingEnabled = true;
-                stack.images.AddVideo(srVideo);
-            }*/ 
+            foreach (var moveDelta in parser.moveDeltas)
+                stack.ReceiveMoveDelta(moveDelta, processHistory: true);
+
             EndInit();
         }
         private void MirrorPresentationSpace(Window1 parent)

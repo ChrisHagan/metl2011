@@ -124,10 +124,10 @@ namespace SandRibbon.Components
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)
-                    stack.DoText(text);
+                    stack.DoText(text);                foreach (var moveDelta in parser.moveDeltas)
+                    stack.ReceiveMoveDelta(moveDelta, processHistory: true);
             }
         }
-
 
         private bool isPrivate(MeTLLib.Providers.Connection.PreParser parser)
         {

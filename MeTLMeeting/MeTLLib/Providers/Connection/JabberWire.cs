@@ -139,6 +139,13 @@ namespace MeTLLib.Providers.Connection
             return preParser<T>(room);
         }
     }
+
+    public enum MessageOrigin
+    {
+        History,
+        Live
+    }
+
     public partial class JabberWire
     {
         protected const string WORM = "/WORM_MOVES";
@@ -355,7 +362,7 @@ namespace MeTLLib.Providers.Connection
         private void OnMessage(object sender, Message message)
         {
             if (message.To.Resource == jid.Resource)
-                ReceivedMessage(message);
+                ReceivedMessage(message, MessageOrigin.Live);
         }
         private void HandlerError(object sender, Exception ex)
         {
@@ -723,15 +730,23 @@ namespace MeTLLib.Providers.Connection
                 Globals.conversationDetails = currentDetails;
                 Globals.slide = where;
                 joinRooms(fastJoin: true, alreadyInConversation: true);
+                cachedHistoryProvider.ClearCache(where.ToString());
                 historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => { receiveEvents.receivePreParser(finishedParser); /*cachedHistoryProvider.PopulateFromHistory(finishedParser);*/ },
+                    finishedParser => { 
+                        receiveEvents.receivePreParser(finishedParser); 
+                        cachedHistoryProvider.PopulateFromHistory(finishedParser); 
+                    },
                     location.currentSlide.ToString());
                 historyProvider.RetrievePrivateContent<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => { receiveEvents.receivePreParser(finishedParser); /*cachedHistoryProvider.PopulateFromHistory(finishedParser);*/ },
+                    finishedParser => 
+                    { 
+                        receiveEvents.receivePreParser(finishedParser); 
+                        cachedHistoryProvider.PopulateFromHistory(finishedParser); 
+                    },
                     credentials.name,
                     location.currentSlide.ToString());
             }
@@ -779,7 +794,7 @@ namespace MeTLLib.Providers.Connection
                             publicAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, publicInks, publicTexts, publicImages);
                         }
 
-                        MoveDeltaProcessor(publicAdjuster, privateDirtier, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
+                        MoveDeltaDispatcher(publicAdjuster, privateDirtier, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
                     }
                     break;
 
@@ -802,7 +817,7 @@ namespace MeTLLib.Providers.Connection
                             privateAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, privateInks, privateTexts, privateImages);
                         }
 
-                        MoveDeltaProcessor(privateAdjuster, publicDirtier, publicInksToPrivatise, publicTextsToPrivatise, publicImagesToPrivatise);
+                        MoveDeltaDispatcher(privateAdjuster, publicDirtier, publicInksToPrivatise, publicTextsToPrivatise, publicImagesToPrivatise);
                     }
                     break;
                 default:
@@ -817,7 +832,7 @@ namespace MeTLLib.Providers.Connection
                         {
                             publicDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.Public, publicInks, publicTexts, publicImages);
                         }
-                        MoveDeltaProcessor(privateDelta, publicDelta);
+                        MoveDeltaDispatcher(privateDelta, publicDelta);
                     }
                     break;
             }
@@ -833,7 +848,7 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-        private void MoveDeltaProcessor(TargettedMoveDelta adjuster, TargettedMoveDelta dirtier, IEnumerable<TargettedStroke> strokes = null, IEnumerable<TargettedTextBox> texts = null, IEnumerable<TargettedImage> images = null)
+        private void MoveDeltaDispatcher(TargettedMoveDelta adjuster, TargettedMoveDelta dirtier, IEnumerable<TargettedStroke> strokes = null, IEnumerable<TargettedTextBox> texts = null, IEnumerable<TargettedImage> images = null)
         {
             if (dirtier != null) 
                 stanza(dirtier.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(dirtier));
@@ -1027,13 +1042,20 @@ namespace MeTLLib.Providers.Connection
         {
             Commands.ReceiveSleep.Execute(null);
         }
-        public virtual void ReceivedMessage(object obj)
+
+        public virtual void ReceivedMessage(Node node, MessageOrigin messageOrigin)
         {
-            var message = (Element)obj;
+            var timestamp = 0L;
+            var message = node as Element;
+
             if (message.GetAttribute("type") == "error")
             {
                 Trace.TraceError("Wire received error message: {0}", message);
                 return;
+            }
+            if (message.HasAttribute("timestamp"))
+            {
+                timestamp = message.GetAttributeLong("timestamp");
             }
             if (message.SelectSingleElement("body") != null)
             {
@@ -1042,15 +1064,15 @@ namespace MeTLLib.Providers.Connection
             }
             try
             {
-                cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message);
+                cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message, timestamp);
             }
             catch (Exception e)
             {
                 Trace.TraceError("Exception in JabberWire.ReceivedMessage: {0}", e.Message);
             }
-            ActOnUntypedMessage(message);
+            ActOnUntypedMessage(message, timestamp);
         }
-        public void ActOnUntypedMessage(Element message)
+        public void ActOnUntypedMessage(Element message, long timestamp)
         {
             foreach(var status in message.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
                 actOnStatusRecieved(status);
@@ -1075,7 +1097,10 @@ namespace MeTLLib.Providers.Connection
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
                 actOnFileResource(file.injectDependencies(metlServerAddress));
             foreach (var moveDelta in message.SelectElements<MeTLStanzas.MoveDeltaStanza>(true))
+            {
+                moveDelta.parameters.timestamp = timestamp;
                 actOnMoveDelta(moveDelta);
+            }
         }
 
         public virtual void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
