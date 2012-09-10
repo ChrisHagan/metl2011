@@ -59,6 +59,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var image in images)
             {
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
+                imageToAdd.tag(image.Value.image.tag());
                 if ((includePublic && image.Value.privacy == Privacy.Public) || image.Value.target == target)
                 {
                     Panel.SetZIndex(imageToAdd, image.Value.privacy == Privacy.Public ? 1 : 2);

@@ -15,19 +15,24 @@ namespace SandRibbonTests
 
     using NUnit.Framework;
 
-    /// <summary>
-    /// TODO: Update summary.
-    /// </summary>
-    [TestFixture]
+    [TestFixture, RequiresSTA]
     public class MoveDeltaProcessorTest
     {
         [Test]
-        public void ReceiveMoveDelta()
+        public void CreateStackMoveDelta()
         {
             var canvas = new InkCanvas();
             var contentBuffer = new ContentBuffer();
 
             var moveDeltaProcessor = new StackMoveDeltaProcessor(canvas, contentBuffer, "presentationSpace");
+        }
+
+        [Test]
+        public void CreatePrinterMoveDelta()
+        {
+            var canvas = new InkCanvas();
+
+            var moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, "presentationSpace");
         }
     }
 }
