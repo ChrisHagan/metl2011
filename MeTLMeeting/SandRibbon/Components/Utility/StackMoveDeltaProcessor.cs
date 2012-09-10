@@ -61,21 +61,12 @@
                 {
                     foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                     {
-                        // translate
                         var left = InkCanvas.GetLeft(textBox) + xTrans;
                         var top = InkCanvas.GetTop(textBox) + yTrans;
-
-                        Console.WriteLine(String.Format("me[{3}] Moving text {0} to x[{1}] y[{2}]", textBox.Text, left, top, Globals.me));
 
                         InkCanvas.SetLeft(textBox, left);
                         InkCanvas.SetTop(textBox, top);
 
-                        // scale
-                        /*if (double.IsNaN(textBox.Width) || double.IsNaN(textBox.Height))
-                        {
-                            textBox.Width = textBox.ActualWidth;
-                            textBox.Height = textBox.ActualHeight;
-                        }*/
                         textBox.Width *= xScale;
                         textBox.Height *= yScale;
                     }
@@ -209,7 +200,7 @@
                 oldTag.privacy = moveDelta.newPrivacy;
 
                 image.tag(oldTag);
-                //ApplyPrivacyStylingToElement(image, moveDelta.newPrivacy);
+                image.ApplyPrivacyStyling(ContentBuffer, Target, moveDelta.newPrivacy);
             }
 
             foreach (var text in privacyTextboxes)
@@ -218,7 +209,7 @@
                 oldTag.privacy = moveDelta.newPrivacy;
 
                 text.tag(oldTag);
-                //ApplyPrivacyStylingToElement(text, moveDelta.newPrivacy);
+                text.ApplyPrivacyStyling(ContentBuffer, Target, moveDelta.newPrivacy);
             }
         }
     }

@@ -10,16 +10,17 @@
     public abstract class MoveDeltaProcessor
     {
         public InkCanvas Canvas { get; private set; }
+
         public string Target { get; private set; }
 
         protected MoveDeltaProcessor(InkCanvas canvas, string target)
         {
-            Canvas = canvas;
-            Target = target; 
+            this.Canvas = canvas;
+            this.Target = target; 
         }
 
-        abstract public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory);
-        abstract protected void ContentDelete(TargettedMoveDelta moveDelta);
-        abstract protected void ContentPrivacyChange(TargettedMoveDelta moveDelta);
+        public abstract void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory);
+        protected abstract void ContentDelete(TargettedMoveDelta moveDelta);
+        protected abstract void ContentPrivacyChange(TargettedMoveDelta moveDelta);
     }
 }

@@ -48,12 +48,12 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
+    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>295</ApplicationRevision>
-    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
     <ApplicationVersion>1.0.0.295</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -166,6 +166,7 @@
       <DependentUpon>BannedContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Utility\ContentFilter.cs" />
+    <Compile Include="Components\Utility\FrameworkElementExtensions.cs" />
     <Compile Include="Components\Utility\PrinterMoveDeltaProcessor.cs" />
     <Compile Include="Components\Utility\MoveDeltaProcessor.cs" />
     <Compile Include="Components\Utility\StackMoveDeltaProcessor.cs" />
@@ -1184,9 +1185,9 @@
       <AssemblyInfoFiles Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <PropertyGroup>
-        <ProductName>MeTL</ProductName>
-        <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
-        <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
+      <ProductName>MeTL</ProductName>
+      <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
+      <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
     </PropertyGroup>
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Debug' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />

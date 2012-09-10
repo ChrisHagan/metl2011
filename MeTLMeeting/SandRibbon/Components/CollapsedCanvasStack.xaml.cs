@@ -423,6 +423,7 @@ namespace SandRibbon.Components
                         {
                             contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
                         }
+                        // dirty is now handled by movedelta
                         //dirtyThisElement(element);
                     }
                 };
@@ -460,9 +461,10 @@ namespace SandRibbon.Components
                                   myTextBox = null;
                                   foreach(var box in selectedElements)
                                   {
+                                      // dirty is now handled by move delta
                                       //dirtyTextBoxWithoutHistory(box);
                                       box.PreviewKeyDown -= box_PreviewTextInput;
-                                      RemovePrivacyStylingFromElement(box);
+                                      box.RemovePrivacyStyling(contentBuffer); 
                                       RemoveTextBoxWithMatchingId(box.tag().id);
                                   }
                                   // set keyboard focus to the current canvas so the help button does not grey out
@@ -534,23 +536,24 @@ namespace SandRibbon.Components
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync(delegate
                   {
-                      var newStrokes = new StrokeCollection( Work.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
+                      var newStrokes = new StrokeCollection(Work.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
 
                       contentBuffer.ClearStrokes(() => Work.Strokes.Clear());
                       contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
 
                       foreach (Image image in Work.ImageChildren())
-                          ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                          image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy); 
                       foreach (var item in Work.TextChildren())
                       {
-                          MeTLTextBox box;
+                          MeTLTextBox box = null;
                           if (item.GetType() == typeof(TextBox))
                               box = ((TextBox)item).toMeTLTextBox();
                           else
                               box = (MeTLTextBox)item;
-                          ApplyPrivacyStylingToElement(box, box.tag().privacy);
-                          
+
+                          box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy); 
                       }
+
                       if (myTextBox != null)
                       {
                           myTextBox.Focus();
@@ -854,13 +857,6 @@ namespace SandRibbon.Components
             var authorColor = new Dictionary<string, Color>();
             foreach (var author in authorList)
                 authorColor.Add(author, colors.ElementAt(authorList.IndexOf(author)));
-
-            /*foreach (var stroke in Work.GetSelectedStrokes())
-                stroke.DrawingAttributes.Color = authorColor[stroke.tag().author];
-            foreach (var elem in Work.GetSelectedTextBoxes())
-                ApplyHighlight((FrameworkElement)elem, authorColor[((MeTLTextBox)elem).tag().author]);
-            foreach (var elem in Work.GetSelectedImages())
-                ApplyHighlight((FrameworkElement)elem, authorColor[((Image)elem).tag().author]);*/
 
             return authorColor;
         }
@@ -1395,8 +1391,8 @@ namespace SandRibbon.Components
             {
                 case "System.Windows.Controls.Image":
                     var image = (Image)element;
-                    var dirtyElement = new TargettedDirtyElement(Globals.slide, Globals.me, _target,image.tag().privacy, image.tag().id );
-                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                    var dirtyElement = new TargettedDirtyElement(Globals.slide, Globals.me, _target,image.tag().privacy, image.tag().id);
+                    image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy);
                     Commands.SendDirtyImage.Execute(dirtyElement);
                     break;
             }
@@ -1421,13 +1417,12 @@ namespace SandRibbon.Components
                         Dispatcher.adoptAsync(() => 
                         {
                             var receivedImage = image1.image;
-                            AddImage(Work, receivedImage); 
-                            ApplyPrivacyStylingToElement(receivedImage, receivedImage.tag().privacy);
+                            AddImage(Work, receivedImage);
+                            receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy); 
                         });
                     }
                 }
             }
-            //ensureAllImagesHaveCorrectPrivacy();
         }
 
         private void AddImage(InkCanvas canvas, Image image)
@@ -1467,53 +1462,10 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
             {
                 foreach (Image image in Work.Children.OfType<Image>())
-                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                    image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy); 
             });
         }
-        protected void ApplyPrivacyStylingToElement(FrameworkElement element, Privacy privacy)
-        {
-            if ((!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor) || (_target == "notepad"))
-            {
-                RemovePrivacyStylingFromElement(element);
-                return;
-            }
-            if (privacy != Privacy.Private)
-            {
-                RemovePrivacyStylingFromElement(element);
-                return;
-            }
 
-            applyShadowEffectTo(element, Colors.Black);
-        }
-
-        public FrameworkElement ApplyHighlight(FrameworkElement element, Color color)
-        {
-            element.Effect = new DropShadowEffect { BlurRadius = 20, Color = color, ShadowDepth = 0, Opacity = 1 };
-            return element;
-        }
-
-        public FrameworkElement applyShadowEffectTo(FrameworkElement element, Color color)
-        {
-            element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
-            element.Opacity = 0.7;
-            contentBuffer.UpdateChild(element, (elem) =>
-            {
-                elem.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
-                elem.Opacity = 0.7;
-            });
-            return element;
-        }
-        protected void RemovePrivacyStylingFromElement(FrameworkElement element)
-        {
-            element.Effect = null;
-            element.Opacity = 1;
-
-            contentBuffer.UpdateChild(element, (elem) =>
-            {
-                elem.Effect = null;
-                elem.Opacity = 1;
-            });
-        }
         #endregion
         #region imagedrop
         private void addImageFromDisk(object obj)
@@ -1919,16 +1871,12 @@ namespace SandRibbon.Components
                                           if (targettedBox.slide == Globals.slide &&
                                               (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me)))
                                           {
-
-                                              //var box = targettedBox.box.toMeTLTextBox();
                                               var box = UpdateTextBoxWithId(targettedBox);
-                                              //RemoveTextBoxWithMatchingId(targettedBox.identity);
-                                              //AddTextBoxToCanvas(box); 
                                               if (box != null)
                                               {
                                                   if (!(targettedBox.HasSameAuthor(me) && _focusable))
                                                       box.Focusable = false;
-                                                  ApplyPrivacyStylingToElement(box, targettedBox.privacy);
+                                                  box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy); 
                                               }
                                           }
                                       });
@@ -2037,7 +1985,7 @@ namespace SandRibbon.Components
             var box = (MeTLTextBox)sender;
             var undoText = _originalText.Clone().ToString();
             var redoText = box.Text.Clone().ToString();
-            ApplyPrivacyStylingToElement(box, box.tag().privacy);
+            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy); 
             box.Height = Double.NaN;
             var mybox = box.clone();
             Action undo = () =>
@@ -2123,7 +2071,7 @@ namespace SandRibbon.Components
         }
         private void resetText(MeTLTextBox box)
         {
-            RemovePrivacyStylingFromElement(box);
+            box.RemovePrivacyStyling(contentBuffer); 
             _currentColor = Colors.Black;
             box.FontWeight = FontWeights.Normal;
             box.FontStyle = FontStyles.Normal;
@@ -2277,7 +2225,7 @@ namespace SandRibbon.Components
 
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide)
         {
-            RemovePrivacyStylingFromElement(box);
+            box.RemovePrivacyStyling(contentBuffer); 
             RemoveTextBoxWithMatchingId(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
         }
@@ -2315,7 +2263,7 @@ namespace SandRibbon.Components
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Work.Children.Contains(box)) return;
-            ApplyPrivacyStylingToElement(box, privacy);
+            box.ApplyPrivacyStyling(contentBuffer, _target, privacy); 
         }
 
         private static void requeryTextCommands()
@@ -2748,7 +2696,7 @@ namespace SandRibbon.Components
         {
             foreach (var img in selectedImages)
             {
-                ApplyPrivacyStylingToElement(img, img.tag().privacy);
+                img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy); 
                 Work.Children.Remove(img);
                 Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, img.tag().privacy, img.tag().id));
             }
