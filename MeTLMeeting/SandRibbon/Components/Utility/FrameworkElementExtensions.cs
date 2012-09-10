@@ -15,6 +15,11 @@
         private const double PUBLIC_OPACITY = 1.0;
         private const double PRIVATE_OPACITY = 0.7;
 
+        public static void ApplyPrivacyStyling(this FrameworkElement element, string target, Privacy newPrivacy)
+        {
+            element.ApplyPrivacyStyling(null, target, newPrivacy);
+        }
+
         public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy)
         {
             if ((!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor) || (target == "notepad"))
@@ -31,16 +36,24 @@
             ApplyShadowEffect(element, contentBuffer, Colors.Black);
         }
 
-        public static void RemovePrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer)
+        public static void RemovePrivacyStyling(this FrameworkElement element)
         {
             element.Effect = null;
             element.Opacity = PUBLIC_OPACITY;
+        }
 
-            contentBuffer.UpdateChild(element, (elem) =>
+        public static void RemovePrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer)
+        {
+            RemovePrivacyStyling(element);
+            
+            if (contentBuffer != null)
             {
-                elem.Effect = null;
-                elem.Opacity = PUBLIC_OPACITY;
-            });
+                contentBuffer.UpdateChild(element, (elem) =>
+                {
+                    elem.Effect = null;
+                    elem.Opacity = PUBLIC_OPACITY;
+                });
+            }
         }
 
         private static Effect CreateShadowEffect(Color color)
@@ -48,16 +61,24 @@
             return new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
         }
 
-        private static void ApplyShadowEffect(FrameworkElement element, ContentBuffer contentBuffer, Color color)
+        private static void ApplyShadowEffect(FrameworkElement element, Color color)
         {
             element.Effect = CreateShadowEffect(color);
             element.Opacity = PRIVATE_OPACITY;
+        }
 
-            contentBuffer.UpdateChild(element, (elem) =>
+        private static void ApplyShadowEffect(FrameworkElement element, ContentBuffer contentBuffer, Color color)
+        {
+            ApplyShadowEffect(element, color);
+
+            if (contentBuffer != null)
             {
-                elem.Effect = CreateShadowEffect(color); 
-                elem.Opacity = PRIVATE_OPACITY;
-            });
+                contentBuffer.UpdateChild(element, (elem) =>
+                {
+                    elem.Effect = CreateShadowEffect(color); 
+                    elem.Opacity = PRIVATE_OPACITY;
+                });
+            }
         }
     }
 }
