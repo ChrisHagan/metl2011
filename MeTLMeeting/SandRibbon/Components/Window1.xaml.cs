@@ -31,6 +31,8 @@ namespace SandRibbon
 {
     public partial class Window1
     {
+        private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
+        
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
@@ -152,6 +154,7 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
+            displayDispatcherTimer = createExtendedDesktopTimer();
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
@@ -178,14 +181,9 @@ namespace SandRibbon
             app.Run();
         }
 
-        private void AddWndProcHook()
-        {
-            var source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
-            source.AddHook(WndProc);
-        }
-
         private static int checkExtendedInProgress = 0;
-        private void CheckForExtendedDesktop()
+
+        private void dispatcherEventHandler(Object sender, EventArgs args)
         {
             if (1 == Interlocked.Increment(ref checkExtendedInProgress))
             {
@@ -214,14 +212,21 @@ namespace SandRibbon
             }
         }
 
-        private readonly int WM_SETTINGCHANGE = 0x1A;
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        private void CheckForExtendedDesktop()
         {
-            if (msg == WM_SETTINGCHANGE)
+            if (!displayDispatcherTimer.IsEnabled)
             {
-                CheckForExtendedDesktop();
+                //This dispather timer is left running in the background and is never stopped
+                displayDispatcherTimer.Start();
             }
-            return IntPtr.Zero;
+        }
+
+        private System.Windows.Threading.DispatcherTimer createExtendedDesktopTimer(){
+            displayDispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);
+            displayDispatcherTimer.Interval = TimeSpan.FromSeconds(5);
+            displayDispatcherTimer.Tick += new EventHandler( dispatcherEventHandler );
+            displayDispatcherTimer.Start();
+            return displayDispatcherTimer;
         }
 
         private void getDefaultSystemLanguage()
@@ -354,7 +359,6 @@ namespace SandRibbon
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            AddWndProcHook();
         }
 
         private void ShowConversationSearchBox(object _arg)
