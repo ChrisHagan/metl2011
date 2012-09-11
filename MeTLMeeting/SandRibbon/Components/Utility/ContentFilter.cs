@@ -86,7 +86,7 @@ namespace SandRibbon.Components.Utility
             catch (ArgumentException) { }
         }
 
-        private ContentVisibilityEnum CurrentContentVisibility
+        protected ContentVisibilityEnum CurrentContentVisibility
         {
             get
             {
@@ -126,7 +126,6 @@ namespace SandRibbon.Components.Utility
             Clear();
             modifyVisibleContainer();
         }
-
         public void Add(T element, Action<T> modifyVisibleContainer)
         {
             Add(element);
