@@ -431,23 +431,31 @@ namespace SandRibbon.Components
                 slides.SelectedIndex = 0;
             slides.ScrollIntoView(slides.SelectedItem);
         }
+        private bool isWithinTeachersRange(Slide possibleSlide)
+        {
+            return (TeachersCurrentSlideIndex == -1 || possibleSlide.index <= TeachersCurrentSlideIndex);
+        }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var removedItems = e.RemovedItems;
             var addedItems = e.AddedItems;
             if (addedItems.Count > 0)
             {
+                var removedItems = e.RemovedItems;
                 var selected = (Slide)addedItems[0];
-                if (selected.id != currentSlideId)
-                {
-                    currentSlideId = selected.id;
-                    foreach (var slide in removedItems) ((Slide)slide).refresh();
+                if (selected.id != currentSlideId){
+                    if (isWithinTeachersRange(selected)){
+                        currentSlideId = selected.id;
+                        foreach (var slide in removedItems) ((Slide)slide).refresh();
+                        AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
 
-                    AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
-
-                    Commands.MoveTo.ExecuteAsync(currentSlideId);
-                    SendSyncMove(currentSlideId);
-                    slides.ScrollIntoView(selected);
+                        Commands.MoveTo.ExecuteAsync(currentSlideId);
+                        SendSyncMove(currentSlideId);
+                        slides.ScrollIntoView(selected);
+                    } else if (sender is ListBox) {
+                        if (removedItems.Count > 0){
+                            ((ListBox)sender).SelectedItem = removedItems[0];
+                        }
+                    }
                 }
             }
         }
