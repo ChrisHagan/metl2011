@@ -433,7 +433,7 @@ namespace SandRibbon.Components
         }
         private bool isWithinTeachersRange(Slide possibleSlide)
         {
-            return (TeachersCurrentSlideIndex == -1 || possibleSlide.index <= TeachersCurrentSlideIndex);
+            return (!IsNavigationLocked || ( TeachersCurrentSlideIndex == -1 || possibleSlide.index <= TeachersCurrentSlideIndex));
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
