@@ -125,11 +125,15 @@ namespace SandRibbon.Tabs
                 int oldQuizIndex = -1;
                 if (Globals.quiz.activeQuizzes.Any(q => q.Id == quiz.Id))
                 {
-                    QuizQuestion oldQuiz = Globals.quiz.activeQuizzes.Where(q => q.Id == quiz.Id).First();
-                    if (quiz.Created >= oldQuiz.Created || quiz.IsDeleted)
+                    List<QuizQuestion> oldQuizzes = Globals.quiz.activeQuizzes.Where(q => q.Id == quiz.Id).ToList();
+                    QuizQuestion oldQuiz = oldQuizzes.First();
+                    if (quiz.Created >= oldQuiz.Created)
                     {
                         oldQuizIndex = Globals.quiz.activeQuizzes.IndexOf(oldQuiz);
-                        Globals.quiz.activeQuizzes.Remove(oldQuiz);
+                        foreach (var q in oldQuizzes)
+                        {
+                            Globals.quiz.activeQuizzes.Remove(q);
+                        }
                     }
                 }
                 if (!Globals.quiz.answers.ContainsKey(quiz.Id))
