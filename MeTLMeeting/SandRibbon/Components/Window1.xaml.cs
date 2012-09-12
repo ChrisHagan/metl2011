@@ -193,8 +193,10 @@ namespace SandRibbon
                     /// 1. Extended mode activated, there are now 2 screens
                     /// 2. Extended mode deactivated, back to 1 screen
                     /// 3. Extended screen position has changed, so need to reinit the projector window
-
+                    
                     var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
+
+
                     if (Projector.Window == null && screenCount > 1)
                         Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
                     else if (Projector.Window != null && screenCount == 1)

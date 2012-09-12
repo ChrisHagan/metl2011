@@ -63,7 +63,7 @@ namespace SandRibbon.Components
                 if (potentialConversations != null && potentialConversations.Count() > 0)
                 {
                     recentConversations = potentialConversations.Where(c => 
-                        c.IsValid && c.isDeleted);
+                        c.IsValid && !c.isDeleted);
                     conversations.ItemsSource = recentConversations.Take(6);
                 }
             });
