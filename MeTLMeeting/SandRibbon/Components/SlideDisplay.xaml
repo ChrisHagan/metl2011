@@ -86,12 +86,6 @@
                                                 </Image.Source> 
                                             </Image>
                                         </Viewbox>
-                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
-                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
-                                                VerticalAlignment="Bottom" 
-                                                BorderThickness="1">
-                                            <Label Content="{Binding Path=index, Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
-                                        </Border>
                                         <Image Source="/Resources/FogOfWar.png">
                                             <Image.Visibility>
                                                 <MultiBinding Converter="{x:Static my:Converters.FogOfWar}">
@@ -101,6 +95,12 @@
                                                 </MultiBinding>
                                             </Image.Visibility>
                                         </Image>
+                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
+                                                VerticalAlignment="Bottom" 
+                                                BorderThickness="1">
+                                            <Label Content="{Binding Path=index, Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
+                                        </Border>
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>

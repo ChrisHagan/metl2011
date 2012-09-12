@@ -223,7 +223,7 @@ namespace SandRibbon
 
         private System.Windows.Threading.DispatcherTimer createExtendedDesktopTimer(){
             displayDispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);
-            displayDispatcherTimer.Interval = TimeSpan.FromSeconds(5);
+            displayDispatcherTimer.Interval = TimeSpan.FromSeconds(1);
             displayDispatcherTimer.Tick += new EventHandler( dispatcherEventHandler );
             displayDispatcherTimer.Start();
             return displayDispatcherTimer;
