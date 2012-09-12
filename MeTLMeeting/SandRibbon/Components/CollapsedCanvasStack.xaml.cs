@@ -153,6 +153,12 @@ namespace SandRibbon.Components
         }
 
         private bool affectedByPrivacy { get { return _target == "presentationSpace"; } }
+
+        private string canvasAlignedPrivacy(string incomingPrivacy)
+        {
+            return affectedByPrivacy ? incomingPrivacy : _defaultPrivacy;
+        }
+
         public string privacy { get { return affectedByPrivacy ? Globals.privacy: _defaultPrivacy; } }
         private Point pos = new Point(15, 15);
         private void wireInPublicHandlers()
@@ -422,7 +428,8 @@ namespace SandRibbon.Components
                                       if(!alreadyHaveThisTextBox(box))
                                           AddTextBoxToCanvas(box);
                                       box.PreviewKeyDown += box_PreviewTextInput;
-                                      sendTextWithoutHistory(box, box.tag().privacy);
+                                      //sendTextWithoutHistory(box, box.tag().privacy);
+                                      sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
                                   }
                               };
             Action redo = () =>
@@ -498,7 +505,8 @@ namespace SandRibbon.Components
                       contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
 
                       foreach (Image image in Work.ImageChildren())
-                          ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                          //ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                          ApplyPrivacyStylingToElement(image, canvasAlignedPrivacy(image.tag().privacy));
                       foreach (var item in Work.TextChildren())
                       {
                           MeTLTextBox box;
@@ -506,7 +514,8 @@ namespace SandRibbon.Components
                               box = ((TextBox)item).toMeTLTextBox();
                           else
                               box = (MeTLTextBox)item;
-                          ApplyPrivacyStylingToElement(box, box.tag().privacy);
+                          //ApplyPrivacyStylingToElement(box, box.tag().privacy);
+                          ApplyPrivacyStylingToElement(box, canvasAlignedPrivacy(box.tag().privacy));
                           
                       }
                       if (myTextBox != null)
@@ -1012,7 +1021,7 @@ namespace SandRibbon.Components
             var newStrokes = new StrokeCollection(strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
             foreach (var stroke in newStrokes)
             {
-                doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                doMyStrokeAddedExceptHistory(stroke, canvasAlignedPrivacy(stroke.tag().privacy));
             }
         }
         private void removeStrokes(IEnumerable<Stroke> strokes)
@@ -1055,7 +1064,8 @@ namespace SandRibbon.Components
                     {
                         newStrokes.Add(newStroke);
                         contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
-                        doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
+                        //doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
+                        doMyStrokeAddedExceptHistory(newStroke, canvasAlignedPrivacy(newPrivacy));
                     }
                    
                 }
@@ -1079,7 +1089,8 @@ namespace SandRibbon.Components
                     {
                         newStrokes.Add(newStroke);
                         Work.Strokes.Add(stroke);
-                        doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                        //doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                        doMyStrokeAddedExceptHistory(stroke, canvasAlignedPrivacy(stroke.tag().privacy));
                     }
                 }
             };   
@@ -1146,7 +1157,8 @@ namespace SandRibbon.Components
                                   {
                                       if(Work.TextChildren().ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
                                           dirtyTextBoxWithoutHistory((MeTLTextBox)Work.TextChildren().ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().First());
-                                      sendTextWithoutHistory(box, box.tag().privacy);
+                                      //sendTextWithoutHistory(box, box.tag().privacy);
+                                      sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
 
                                   }
                               };
@@ -1218,11 +1230,13 @@ namespace SandRibbon.Components
         }
         public void doMyStrokeAdded(Stroke stroke)
         {
-            doMyStrokeAdded(stroke, privacy);
+            //doMyStrokeAdded(stroke, privacy);
+            doMyStrokeAdded(stroke, canvasAlignedPrivacy(privacy));
         }
         public void doMyStrokeAdded(Stroke stroke, string intendedPrivacy)
         {
-            doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
+            //doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
+            doMyStrokeAddedExceptHistory(stroke, canvasAlignedPrivacy(intendedPrivacy));
             var thisStroke = stroke.Clone();
             UndoHistory.Queue(
                 () =>
@@ -1241,7 +1255,8 @@ namespace SandRibbon.Components
                     if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, thisStroke.sum().checksum)).Count() == 0)
                     {
                         Work.Strokes.Add(thisStroke);
-                        doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
+                        //doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
+                        doMyStrokeAddedExceptHistory(thisStroke, canvasAlignedPrivacy(thisStroke.tag().privacy));
                     }
                     if(Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(new [] {thisStroke}));
@@ -1275,7 +1290,8 @@ namespace SandRibbon.Components
                                      if (canvas.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() == 0)
                                      {
                                          contentBuffer.AddStroke(stroke, (col) => canvas.Strokes.Add(col));
-                                         doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                                         //doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                                         doMyStrokeAddedExceptHistory(stroke, canvasAlignedPrivacy(stroke.tag().privacy));
                                      }
                                  });
             var redo = new Action(() =>
@@ -1406,7 +1422,8 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
             {
                 foreach (Image image in Work.Children.OfType<Image>())
-                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                    //ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                    ApplyPrivacyStylingToElement(image, canvasAlignedPrivacy(image.tag().privacy));
             });
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
@@ -1867,7 +1884,8 @@ namespace SandRibbon.Components
                                               {
                                                   if (!(targettedBox.author == me && _focusable))
                                                       box.Focusable = false;
-                                                  ApplyPrivacyStylingToElement(box, targettedBox.privacy);
+                                                  //ApplyPrivacyStylingToElement(box, targettedBox.privacy);
+                                                  ApplyPrivacyStylingToElement(box, canvasAlignedPrivacy(targettedBox.privacy));
                                               }
                                           }
                                       });
@@ -1976,7 +1994,8 @@ namespace SandRibbon.Components
             var box = (MeTLTextBox)sender;
             var undoText = _originalText.Clone().ToString();
             var redoText = box.Text.Clone().ToString();
-            ApplyPrivacyStylingToElement(box, box.tag().privacy);
+            //ApplyPrivacyStylingToElement(box, box.tag().privacy);
+            ApplyPrivacyStylingToElement(box, canvasAlignedPrivacy(box.tag().privacy));
             box.Height = Double.NaN;
             var mybox = box.clone();
             Action undo = () =>
@@ -1984,14 +2003,16 @@ namespace SandRibbon.Components
                 ClearAdorners();
                 var myText = undoText;
                 var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
-                sendTextWithoutHistory(updatedTextBox, updatedTextBox.tag().privacy);
+                //sendTextWithoutHistory(updatedTextBox, updatedTextBox.tag().privacy);
+                sendTextWithoutHistory(updatedTextBox, canvasAlignedPrivacy(updatedTextBox.tag().privacy));
             };
             Action redo = () =>
             {
                 ClearAdorners();
                 var myText = redoText;
                 var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
-                sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                //sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                sendTextWithoutHistory(mybox, canvasAlignedPrivacy(mybox.tag().privacy));
             }; 
             UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
@@ -2005,7 +2026,8 @@ namespace SandRibbon.Components
                 Dispatcher.adoptAsync(delegate
                 {
                     var senderTextBox = sender as MeTLTextBox;
-                    sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
+                    //sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
+                    sendTextWithoutHistory(senderTextBox, canvasAlignedPrivacy(privacy), currentSlide);
                     TypingTimer = null;
                     GlobalTimers.ExecuteSync();
                 });
@@ -2048,7 +2070,8 @@ namespace SandRibbon.Components
             {
                 ClearAdorners();
                 applyStylingTo(currentTextBox, undoInfo);
-                sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                //sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                sendTextWithoutHistory(currentTextBox, canvasAlignedPrivacy(currentTextBox.tag().privacy));
                 updateTools();
             };
             Action redo = () =>
@@ -2076,7 +2099,8 @@ namespace SandRibbon.Components
                                Size = box.FontSize,
                            };
             Commands.TextboxFocused.ExecuteAsync(info);
-            sendTextWithoutHistory(box, box.tag().privacy);
+            //sendTextWithoutHistory(box, box.tag().privacy);
+            sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
         }
         private void updateStyling(TextInformation info)
         {
@@ -2107,7 +2131,8 @@ namespace SandRibbon.Components
                               applyStylingTo(activeTextbox, activeTextInfo);
                               Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
                               //AddAdorners();
-                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              //sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              sendTextWithoutHistory(activeTextbox, canvasAlignedPrivacy(activeTextbox.tag().privacy));
                               activeTextbox.TextChanged += SendNewText;
                           }
                       };
@@ -2124,7 +2149,8 @@ namespace SandRibbon.Components
                               applyStylingTo(activeTextbox, activeTextInfo);
                               Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
                               //AddAdorners();
-                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              //sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                              sendTextWithoutHistory(activeTextbox, canvasAlignedPrivacy(activeTextbox.tag().privacy));
                               activeTextbox.TextChanged += SendNewText;
                           }
                       };
@@ -2183,11 +2209,13 @@ namespace SandRibbon.Components
             if(!Work.Children.ToList().Any(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id))
                 AddTextBoxToCanvas(box);
             box.PreviewKeyDown += box_PreviewTextInput;
-            sendTextWithoutHistory(box, box.tag().privacy);
+            //sendTextWithoutHistory(box, box.tag().privacy);
+            sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
         }
         public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy)
         {
-            sendTextWithoutHistory(box, thisPrivacy, Globals.slide);
+            //sendTextWithoutHistory(box, thisPrivacy, Globals.slide);
+            sendTextWithoutHistory(box, canvasAlignedPrivacy(thisPrivacy), Globals.slide);
         }
         public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy, int slide)
         {
@@ -2199,7 +2227,7 @@ namespace SandRibbon.Components
             var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box));
+            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, canvasAlignedPrivacy(thisPrivacy), box));
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
@@ -2212,7 +2240,7 @@ namespace SandRibbon.Components
         {
             RemovePrivacyStylingFromElement(box);
             RemoveTextBoxWithMatchingId(box.tag().id);
-            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
+            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id));
         }
 
         private void box_PreviewTextInput(object sender, KeyEventArgs e)
@@ -2248,7 +2276,8 @@ namespace SandRibbon.Components
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Work.Children.Contains(box)) return;
-            ApplyPrivacyStylingToElement(box, privacy);
+            //ApplyPrivacyStylingToElement(box, privacy);
+            ApplyPrivacyStylingToElement(box, canvasAlignedPrivacy(privacy));
         }
 
         private static void requeryTextCommands()
@@ -2465,7 +2494,8 @@ namespace SandRibbon.Components
                 {
                     //stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
                     //selection.Add(stroke);
-                    doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                    //doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                    doMyStrokeAddedExceptHistory(stroke, canvasAlignedPrivacy(stroke.tag().privacy));
                 }
             }
         }
@@ -2490,7 +2520,7 @@ namespace SandRibbon.Components
                                     {
                                         Source = new BitmapImage(uri)
                                     };
-                    image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
+                    image.tag(new ImageTag(Globals.me, canvasAlignedPrivacy(privacy), generateId(), false, -1));
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
                     images.Add(image);
@@ -2501,7 +2531,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<Image> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image));
+                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, canvasAlignedPrivacy(privacy), image));
         }
         private void HandleImagePasteUndo(List<Image> selectedImages)
         {
@@ -2533,16 +2563,16 @@ namespace SandRibbon.Components
                     box.Text = redoText;
                     box.CaretIndex = caret + textBox.Text.Length;
                     box = setWidthOf(box);
-                    sendTextWithoutHistory(box, box.tag().privacy);
+                    sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
                     box.TextChanged += SendNewText;
                     myTextBox = null;
                 }
                 else
                 {
-                    textBox.tag(new TextTag(textBox.tag().author, privacy, textBox.tag().id));
+                    textBox.tag(new TextTag(textBox.tag().author, canvasAlignedPrivacy(privacy), textBox.tag().id));
                     var box = setWidthOf(textBox);
                     AddTextBoxToCanvas(box);
-                    sendTextWithoutHistory(box, box.tag().privacy);
+                    sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
                 }
             }
         }
@@ -2559,7 +2589,7 @@ namespace SandRibbon.Components
                     box.TextChanged -= SendNewText;
                     box.Text = undoText;
                     box.CaretIndex = caret;
-                    sendTextWithoutHistory(box, box.tag().privacy);
+                    sendTextWithoutHistory(box, canvasAlignedPrivacy(box.tag().privacy));
                     box.TextChanged += SendNewText;
                 }
                 else
@@ -2681,9 +2711,9 @@ namespace SandRibbon.Components
         {
             foreach (var img in selectedImages)
             {
-                ApplyPrivacyStylingToElement(img, img.tag().privacy);
+                ApplyPrivacyStylingToElement(img, canvasAlignedPrivacy(img.tag().privacy));
                 Work.Children.Remove(img);
-                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, img.tag().privacy, img.tag().id));
+                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id));
             }
             return selectedImages.Select(i => (BitmapSource)i.Source);
         }
@@ -2697,14 +2727,14 @@ namespace SandRibbon.Components
                 if(!Work.TextChildren().Select(t => ((MeTLTextBox)t).tag().id).Contains(currentTextBox.tag().id))
                 {
                     var box = applyDefaultAttributes(currentTextBox);
-                    box.tag(new TextTag(box.tag().author, box.tag().privacy, generateId()));
+                    box.tag(new TextTag(box.tag().author, canvasAlignedPrivacy(box.tag().privacy), generateId()));
                     Work.Children.Add(box);
 
                 }
                 var activeTextbox = ((MeTLTextBox) Work.TextChildren().ToList().FirstOrDefault(c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id));
                 activeTextbox.Text = text;
                 activeTextbox.CaretIndex = start + length;
-                sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);   
+                sendTextWithoutHistory(currentTextBox, canvasAlignedPrivacy(currentTextBox.tag().privacy));   
               
             }
             else
@@ -2754,12 +2784,13 @@ namespace SandRibbon.Components
             foreach (var s in strokesToCut)
             {
                 Work.Strokes.Add(s);
-                doMyStrokeAddedExceptHistory(s, s.tag().privacy);
+                //doMyStrokeAddedExceptHistory(s, s.tag().privacy);
+                doMyStrokeAddedExceptHistory(s, canvasAlignedPrivacy(s.tag().privacy));
             }
         }
         private List<Stroke> HandleInkCutRedo(IEnumerable<Stroke> selectedStrokes)
         {
-            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.sum().checksum.ToString())).ToList();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
             return selectedStrokes.ToList();

@@ -46,6 +46,11 @@ namespace SandRibbon.Components
                     hideButton.Visibility = Visibility.Visible;
                 }
             }
+            else
+            {
+                showButton.Visibility = Visibility.Collapsed;
+                hideButton.Visibility = Visibility.Collapsed;
+            }
 
             if (Globals.IsBanhammerActive)
             {
