@@ -17,6 +17,13 @@ namespace MeTLLib.DataTypes
             privacy = Privacy; 
             id = Id;
         }
+        public TextTag(TextTag copyTag, Privacy newPrivacy)
+        {
+            // copy everything except for privacy
+            author = copyTag.author;
+            id = copyTag.id;
+            privacy = newPrivacy;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TextTag)) return false;
@@ -39,6 +46,16 @@ namespace MeTLLib.DataTypes
             id = Id;
             isBackground = IsBackground;
             zIndex = ZIndex;
+        }
+        public ImageTag(ImageTag copyTag, Privacy newPrivacy)
+        {
+            // copy everything except privacy
+            author = copyTag.author;
+            id = copyTag.id;
+            isBackground = copyTag.isBackground;
+            zIndex = copyTag.zIndex;
+
+            privacy = newPrivacy;
         }
         public bool ValueEquals(object obj)
         {
@@ -66,6 +83,16 @@ namespace MeTLLib.DataTypes
             startingSum = StartingSum;
             isHighlighter = IsHighlighter;
         }
+        public StrokeTag(StrokeTag copyTag, Privacy newPrivacy)
+        {
+            id = copyTag.id; 
+            author = copyTag.author;
+            startingSum = copyTag.startingSum;
+            isHighlighter = copyTag.isHighlighter;
+
+            privacy = newPrivacy;
+        }
+
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is StrokeTag)) return false;
@@ -179,7 +206,7 @@ namespace MeTLLib.DataTypes
 
             return newImage;
         }
-        public static ImageTag tag(this Image image )
+        public static ImageTag tag(this Image image)
         {
             ImageTag imagetag = new ImageTag();
             image.Dispatcher.adopt(delegate

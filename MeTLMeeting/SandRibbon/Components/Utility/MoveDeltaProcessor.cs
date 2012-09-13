@@ -47,7 +47,7 @@
                     return;
                 }
 
-                if (moveDelta.newPrivacy != Privacy.NotSet)
+                if (moveDelta.privacy != Privacy.NotSet)
                 {
                     ContentPrivacyChange(moveDelta);
                     return;
@@ -167,11 +167,7 @@
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                foreach (var stroke in Canvas.Strokes.Where((s) => 
-                    { 
-                        var strokeTag = s.tag();
-                        return strokeTag.id == inkId.Identity && strokeTag.privacy == moveDelta.newPrivacy; 
-                    }))
+                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
                 {
                     privacyStrokes.Add(stroke);
                 }
@@ -179,11 +175,7 @@
 
             foreach (var textId in moveDelta.textIds)
             {
-                foreach (var textBox in Canvas.TextChildren().Where((t) => 
-                    { 
-                        var textTag = t.tag(); 
-                        return textTag.id == textId.Identity && textTag.privacy == moveDelta.newPrivacy; 
-                    }))
+                foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
                     privacyTextboxes.Add(textBox);
                 }
@@ -191,11 +183,7 @@
 
             foreach (var imageId in moveDelta.imageIds)
             {
-                foreach (var image in Canvas.ImageChildren().Where((i) => 
-                    {
-                        var imageTag = i.tag();
-                        return i.tag().id == imageId.Identity && imageTag.privacy == moveDelta.newPrivacy;
-                    }))
+                foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
                 {
                     privacyImages.Add(image);
                 }
@@ -206,26 +194,24 @@
                 var oldTag = stroke.tag();
                 RemoveStroke(stroke);
 
-                stroke.tag(new StrokeTag(oldTag.author, moveDelta.newPrivacy, oldTag.id, oldTag.startingSum, oldTag.isHighlighter));
+                stroke.tag(new StrokeTag(oldTag, moveDelta.privacy));
                 AddStroke(stroke);
             }
 
             foreach (var image in privacyImages)
             {
                 var oldTag = image.tag();
-                oldTag.privacy = moveDelta.newPrivacy;
 
-                image.tag(oldTag);
-                ChangeImagePrivacy(image, moveDelta.newPrivacy);
+                image.tag(new ImageTag(oldTag, moveDelta.privacy));
+                ChangeImagePrivacy(image, moveDelta.privacy);
             }
 
             foreach (var text in privacyTextboxes)
             {
                 var oldTag = text.tag();
-                oldTag.privacy = moveDelta.newPrivacy;
 
-                text.tag(oldTag);
-                ChangeTextPrivacy(text, moveDelta.newPrivacy);
+                text.tag(new TextTag(oldTag, moveDelta.privacy));
+                ChangeTextPrivacy(text, moveDelta.privacy);
             }
         }
     }

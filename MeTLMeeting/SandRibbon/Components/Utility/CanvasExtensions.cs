@@ -110,6 +110,11 @@ namespace SandRibbon.Components.Utility
         {
             if (box == null) return null;
             var newBox = new MeTLTextBox();
+            newBox.AcceptsReturn = box.AcceptsReturn;
+            newBox.TextWrapping = box.TextWrapping;
+            newBox.BorderThickness = box.BorderThickness;
+            box.BorderBrush = new SolidColorBrush(Colors.Transparent);
+            box.Background = new SolidColorBrush(Colors.Transparent);
             newBox.Text = box.Text;
             newBox.TextAlignment = box.TextAlignment;
             newBox.TextDecorations = box.TextDecorations.Clone();

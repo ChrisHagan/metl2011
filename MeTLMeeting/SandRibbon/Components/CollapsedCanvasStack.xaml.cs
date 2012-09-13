@@ -496,11 +496,6 @@ namespace SandRibbon.Components
             selectedTextBoxes = selectedElements.OfType<TextBox>();
             selectedImages = selectedElements.OfType<Image>();
 
-            var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
-            moveDelta.isDeleted = true;
-
-            Commands.SendMoveDelta.ExecuteAsync(moveDelta);
-            
             var ink = deleteSelectedInk(selectedStrokes);
             var images = deleteSelectedImages(selectedImages); 
             var text = deleteSelectedText(selectedTextBoxes); 
@@ -514,7 +509,12 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
+                    moveDelta.isDeleted = true;
+
+                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
                     Keyboard.Focus(this); // set keyboard focus to the current canvas so the help button does not grey out
+
                     ink.redo();
                     text.redo();
                     images.redo();
@@ -1139,7 +1139,6 @@ namespace SandRibbon.Components
                 var newStrokes = new StrokeCollection();
                 foreach (var stroke in selectedStrokes.Where(i => i != null && i.tag().privacy != newPrivacy))
                 {
-                    var oldTag = stroke.tag();
                     // stroke exists on canvas
                     var strokesToUpdate = Work.Strokes.Where(s => s.tag().id == stroke.tag().id);
                     if (strokesToUpdate.Count() > 0)
@@ -1148,39 +1147,39 @@ namespace SandRibbon.Components
                         // dirty is now handled by move delta
                         //doMyStrokeRemovedExceptHistory(stroke);
                     }
-                    var newStroke = stroke.Clone();
-                    newStroke.tag(new StrokeTag(oldTag.author, newPrivacy, oldTag.id, oldTag.startingSum, oldTag.isHighlighter)); 
+
+                    var tmpStroke = stroke.Clone();
+                    tmpStroke.tag(new StrokeTag(tmpStroke.tag(), newPrivacy));
+                    var newStroke = new PrivateAwareStroke(tmpStroke, _target);
                     if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
                         contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
-                        // add is now handled by move delta
-                        //doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
+                        doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                 }
                 Dispatcher.adopt(() => Work.Select(Work.EditingMode == InkCanvasEditingMode.Select ? newStrokes : new StrokeCollection()));
             };
             Action undo = () =>
             {
-                var newStrokes = new StrokeCollection();
-                foreach (var stroke in selectedStrokes.Where(i => i is Stroke && i.tag().privacy != newPrivacy))
+                foreach (var stroke in selectedStrokes.Where(i => i.tag().privacy != newPrivacy))
                 {
-                    var oldTag = stroke.tag();
-                    var newStroke = stroke.Clone();
-                    newStroke.tag(new StrokeTag(oldTag.author, newPrivacy, oldTag.id, oldTag.startingSum, oldTag.isHighlighter));
-
-                    if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() > 0)
+                    // stroke exists on canvas
+                    var strokesToUpdate = Work.Strokes.Where(s => s.tag().id == stroke.tag().id);
+                    if (strokesToUpdate.Count() > 0)
                     {
-                        Work.Strokes.Remove(Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).First());
-                        // now handled by move delta
-                        //doMyStrokeRemovedExceptHistory(newStroke);
+                        contentBuffer.RemoveStroke(strokesToUpdate.First(), (col) => Work.Strokes.Remove(col));
+                        // dirty is now handled by move delta
+                        //doMyStrokeRemovedExceptHistory(stroke);
                     }
-                    if (Work.Strokes.Where(s => s.tag().id == stroke.tag().id).Count() == 0)
+
+                    var tmpStroke = stroke.Clone();
+                    tmpStroke.tag(new StrokeTag(tmpStroke.tag(), oldPrivacy));
+                    var newStroke = new PrivateAwareStroke(tmpStroke, _target);
+                    if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() == 0)
                     {
-                        newStrokes.Add(newStroke);
-                        Work.Strokes.Add(stroke);
-                        // now handled by move delta
-                        //doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                        contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
+                        doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                 }
             };   
@@ -1190,82 +1189,117 @@ namespace SandRibbon.Components
         {
             Action redo = () =>
             {
-                foreach (Image image in selectedElements.Where(i => i is Image && ((Image)i).tag().privacy != newPrivacy))
+                foreach (var image in selectedElements.Where(i => i.tag().privacy != newPrivacy))
                 {
-                    var oldTag = image.tag();
                     // dirty handled by move delta
                     //Commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (Globals.slide, image.tag().author, _target, image.tag().privacy, image.tag().id));
-                    oldTag.privacy = newPrivacy;
-                    image.tag(oldTag);
 
-                    // sendimage handled by move delta
-                    //var privateRoom = string.Format("{0}{1}", Globals.slide, image.tag().author);
-                    //if (newPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
-                    //    Commands.SneakInto.Execute(privateRoom);
-                    //Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, newPrivacy, image.tag().id, image));
-                    //if (newPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
-                    //    Commands.SneakOutOf.Execute(privateRoom);
+                    var imagesToUpdate = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
+                    if (imagesToUpdate.Count() > 0)
+                    {
+                        contentBuffer.RemoveImage(imagesToUpdate.First(), (img) => Work.Children.Remove(img));
+                    }
+
+                    var tmpImage = image.clone();
+                    tmpImage.tag(new ImageTag(tmpImage.tag(), newPrivacy));
+                    if (Work.ImageChildren().Where(i => i.tag().id == tmpImage.tag().id).Count() == 0)
+                    {
+                        contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
+
+                        var privateRoom = string.Format("{0}{1}", Globals.slide, tmpImage.tag().author);
+                        if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
+                            Commands.SneakInto.Execute(privateRoom);
+                        Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, tmpImage.tag().author, _target, newPrivacy, tmpImage.tag().id, tmpImage));
+                        if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
+                            Commands.SneakOutOf.Execute(privateRoom);
+                    }
+                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy);
                 }
             };
             Action undo = () =>
             {
-                foreach (Image image in selectedElements.Where(i => i is Image && ((Image)i).tag().privacy != oldPrivacy))
+                foreach (var image in selectedElements.Where(i => i.tag().privacy != newPrivacy))
                 {
-                    var oldTag = image.tag();
                     // dirty handled by move delta
                     //Commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (Globals.slide, image.tag().author, _target, image.tag().privacy, image.tag().id));
-                    oldTag.privacy = oldPrivacy;
-                    image.tag(oldTag);
-                    // send image handled by move delta
-                    /*
-                    var privateRoom = string.Format("{0}{1}", Globals.slide, image.tag().author);
-                    if (oldPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
+                    var imagesToUpdate = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
+                    if (imagesToUpdate.Count() > 0)
+                    {
+                        contentBuffer.RemoveImage(imagesToUpdate.First(), (img) => Work.Children.Remove(img));
+                    }
+
+                    var tmpImage = image.clone();
+                    tmpImage.tag(new ImageTag(tmpImage.tag(), oldPrivacy));
+                    if (Work.ImageChildren().Where(i => i.tag().id == tmpImage.tag().id).Count() == 0)
+                    {
+                        contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
+
+                    }
+                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy);
+
+                    var privateRoom = string.Format("{0}{1}", Globals.slide, tmpImage.tag().author);
+                    if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
                         Commands.SneakInto.Execute(privateRoom);
-                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, oldPrivacy, image.tag().id, image));
-                    if (oldPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
+                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, tmpImage.tag().author, _target, newPrivacy, tmpImage.tag().id, tmpImage));
+                    if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
                         Commands.SneakOutOf.Execute(privateRoom);
-                    */   
                 }
             };   
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection privacy changed");
         }
-        private UndoHistory.HistoricalAction changeSelectedTextPrivacy(IEnumerable<TextBox> selectedElements, Privacy newPrivacy)
+        private UndoHistory.HistoricalAction changeSelectedTextPrivacy(IEnumerable<TextBox> selectedElements, Privacy newPrivacy, Privacy oldPrivacy)
         {
-            if (selectedElements == null) throw new ArgumentNullException("selectedElements");
             Action redo = () => 
             {
-                var mySelectedElements = selectedElements.Where(e => e is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
-                foreach (MeTLTextBox textBox in mySelectedElements.Where(i => i.tag().privacy != newPrivacy))
+                foreach (var text in selectedElements.Where(i => i.tag().privacy != newPrivacy).Cast<MeTLTextBox>())
                 {
-                    var oldTag = textBox.tag();
-                    oldTag.privacy = newPrivacy;
                     // let move delta handle the dirty
                     //dirtyTextBoxWithoutHistory(textBox);
-                    textBox.tag(oldTag);
-                    // let move delta handle the update
-                    //sendTextWithoutHistory(textBox, newPrivacy);
+                    var textToUpdate = Work.TextChildren().Where(t => t.tag().id == text.tag().id);
+                    if (textToUpdate.Count() > 0)
+                    {
+                        contentBuffer.RemoveTextBox(textToUpdate.First(), (txt) => Work.Children.Remove(txt));
+                    }
+
+                    var tmpText = text.clone();
+                    tmpText.tag(new TextTag(tmpText.tag(), newPrivacy));
+                    if (Work.TextChildren().Where(t => t.tag().id == tmpText.tag().id).Count() == 0)
+                    {
+                        contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
+                        sendTextWithoutHistory(tmpText, newPrivacy);
+                    }
+                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy);
                 }
             };
             Action undo = () =>
             {
-                var mySelectedElements = selectedElements.Where(t => t is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
-                foreach (MeTLTextBox box in mySelectedElements)
+                foreach (var text in selectedElements.Where(t => t.tag().privacy != newPrivacy).Cast<MeTLTextBox>())
                 {
                     // let move delta handle the dirty
                     /*if(Work.TextChildren().ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
                         dirtyTextBoxWithoutHistory((MeTLTextBox)Work.TextChildren().ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().First());*/
-                    // let move delta handle the update 
-                    //sendTextWithoutHistory(box, box.tag().privacy);
-                    var oldTag = box.tag();
-                    oldTag.privacy = oldTag.privacy.InvertPrivacy();
-                    box.tag(oldTag);
+                    var textToUpdate = Work.TextChildren().Where(t => t.tag().id == text.tag().id);
+                    if (textToUpdate.Count() > 0)
+                    {
+                        contentBuffer.RemoveTextBox(textToUpdate.First(), (txt) => Work.Children.Remove(txt));
+                    }
+
+                    var tmpText = text.clone();
+                    tmpText.tag(new TextTag(tmpText.tag(), oldPrivacy));
+                    if (Work.TextChildren().Where(t => t.tag().id == tmpText.tag().id).Count() == 0)
+                    {
+                        contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
+                        sendTextWithoutHistory(tmpText, tmpText.tag().privacy);
+                    }
+                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy);
                 }
             };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection changed privacy");
         }
         private void changeSelectedItemsPrivacy(Privacy newPrivacy)
         {
-            if (me == Globals.PROJECTOR) return;
+            // can't change content privacy for notepad
+            if (me == Globals.PROJECTOR || _target == "notepad") return;
 
             ClearAdorners();
             List<UIElement> selectedElements = null;
@@ -1281,16 +1315,17 @@ namespace SandRibbon.Components
 
             var selectedTextBoxes = selectedElements.OfType<TextBox>();
             var selectedImages = selectedElements.OfType<Image>();
-            var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
-            moveDelta.newPrivacy = newPrivacy;
-
-            Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
             var ink = changeSelectedInkPrivacy(selectedStrokes, newPrivacy, oldPrivacy);
             var images = changeSelectedImagePrivacy(selectedImages, newPrivacy, oldPrivacy);
-            var text = changeSelectedTextPrivacy(selectedTextBoxes, newPrivacy);
+            var text = changeSelectedTextPrivacy(selectedTextBoxes, newPrivacy, oldPrivacy);
             Action redo = () =>
                               {
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
+                                  moveDelta.newPrivacy = newPrivacy;
+
+                                  Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+
                                   ink.redo();
                                   text.redo();
                                   images.redo();

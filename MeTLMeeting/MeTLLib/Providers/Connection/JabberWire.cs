@@ -762,16 +762,16 @@ namespace MeTLLib.Providers.Connection
             var images = cachedHistoryProvider.GetImages(room);
             var texts = cachedHistoryProvider.GetTexts(room);
 
-            var inkIds = tmd.inkIds.Select(elemId => elemId.Identity);
-            var textIds = tmd.textIds.Select(elemId => elemId.Identity);
-            var imageIds = tmd.imageIds.Select(elemId => elemId.Identity);
+            var inkIds = tmd.inkIds.Select(elemId => elemId.Identity).ToList();
+            var textIds = tmd.textIds.Select(elemId => elemId.Identity).ToList();
+            var imageIds = tmd.imageIds.Select(elemId => elemId.Identity).ToList();
 
-            var privateInks = strokes.Where(s => inkIds.Contains(s.identity) && s.privacy == Privacy.Private);
-            var privateImages = images.Where(i => imageIds.Contains(i.identity) && i.privacy == Privacy.Private);
-            var privateTexts = texts.Where(t => textIds.Contains(t.identity) && t.privacy == Privacy.Private);
-            var publicInks = strokes.Where(s => inkIds.Contains(s.identity) && s.privacy == Privacy.Public);
-            var publicImages = images.Where(i => imageIds.Contains(i.identity) && i.privacy == Privacy.Public);
-            var publicTexts = texts.Where(t => textIds.Contains(t.identity) && t.privacy == Privacy.Public);
+            var privateInks = strokes.Where(s => inkIds.Contains(s.identity) && s.privacy == Privacy.Private).ToList();
+            var privateImages = images.Where(i => imageIds.Contains(i.identity) && i.privacy == Privacy.Private).ToList();
+            var privateTexts = texts.Where(t => textIds.Contains(t.identity) && t.privacy == Privacy.Private).ToList();
+            var publicInks = strokes.Where(s => inkIds.Contains(s.identity) && s.privacy == Privacy.Public).ToList();
+            var publicImages = images.Where(i => imageIds.Contains(i.identity) && i.privacy == Privacy.Public).ToList();
+            var publicTexts = texts.Where(t => textIds.Contains(t.identity) && t.privacy == Privacy.Public).ToList();
 
             switch (tmd.newPrivacy)
             {
@@ -781,9 +781,9 @@ namespace MeTLLib.Providers.Connection
                         TargettedMoveDelta privateDirtier = null;
                         TargettedMoveDelta publicAdjuster = null;
 
-                        var privateInksToPublicise = privateInks.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
-                        var privateTextsToPublicise = privateTexts.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
-                        var privateImagesToPublicise = privateImages.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+                        var privateInksToPublicise = privateInks.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale)).ToList();
+                        var privateTextsToPublicise = privateTexts.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale)).ToList();
+                        var privateImagesToPublicise = privateImages.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale)).ToList();
 
                         if (privateInksToPublicise.Count() > 0 || privateTextsToPublicise.Count() > 0 || privateImagesToPublicise.Count() > 0)
                         {
@@ -804,9 +804,9 @@ namespace MeTLLib.Providers.Connection
                         TargettedMoveDelta publicDirtier = null;
                         TargettedMoveDelta privateAdjuster = null;
 
-                        var publicInksToPrivatise = publicInks.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
-                        var publicTextsToPrivatise = publicTexts.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
-                        var publicImagesToPrivatise = publicImages.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale));
+                        var publicInksToPrivatise = publicInks.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale)).ToList();
+                        var publicTextsToPrivatise = publicTexts.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale)).ToList();
+                        var publicImagesToPrivatise = publicImages.Select(i => i.AlterPrivacy(tmd.newPrivacy).AdjustVisual(tmd.xTranslate, tmd.yTranslate, tmd.xScale, tmd.yScale)).ToList();
 
                         if (publicInksToPrivatise.Count() > 0 || publicTextsToPrivatise.Count() > 0 || publicImagesToPrivatise.Count() > 0)
                         {
