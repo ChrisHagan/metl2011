@@ -18,7 +18,6 @@ namespace SandRibbon.Components.Utility
 
         // used to create a snapshot for undo/redo
         private ImageFilter imageDeltaCollection;
-        private StrokeChecksumFilter strokeChecksumCollection;
         private StrokeFilter strokeDeltaFilter;
 
         public ContentBuffer()
@@ -27,7 +26,6 @@ namespace SandRibbon.Components.Utility
             imageFilter = new ImageFilter();
             textFilter = new TextFilter();
 
-            strokeChecksumCollection = new StrokeChecksumFilter();
             strokeDeltaFilter = new StrokeFilter();
             imageDeltaCollection = new ImageFilter();
         }
@@ -73,7 +71,6 @@ namespace SandRibbon.Components.Utility
 
             imageDeltaCollection.Clear();
             strokeDeltaFilter.Clear();
-            strokeChecksumCollection.Clear();
         }
 
         public void ClearStrokes(Action modifyVisibleContainer)
@@ -153,37 +150,6 @@ namespace SandRibbon.Components.Utility
         {
             Debug.Assert((element as TextBox) != null);
             textFilter.Remove(element, modifyVisibleContainer);
-        }
-
-        public void RemoveStrokesAndMatchingChecksum(IEnumerable<string> checksums, Action<IEnumerable<string>> modifyVisibleContainer)
-        {
-            // 1. find the strokes in the contentbuffer that have matching checksums 
-            // 2. remove those strokes and corresponding checksums in the content buffer
-            // 3. for the strokes that also exist in the canvas, remove them and their checksums
-            var dirtyStrokes = strokeFilter.StrokesWithChecksums(checksums); 
-            foreach (var stroke in dirtyStrokes)
-            {
-                strokeChecksumCollection.Remove(stroke.sum());
-                strokeFilter.Remove(stroke); 
-            }
-
-            modifyVisibleContainer(checksums);
-        }
-
-        public void AddStrokeChecksum(Stroke stroke, Action<StrokeChecksum> modifyVisibleContainer)
-        {
-            var checksum = stroke.sum();
-
-            strokeChecksumCollection.Add(checksum);
-            modifyVisibleContainer(checksum);
-        }
-
-        public void RemoveStrokeChecksum(Stroke stroke, Action<StrokeChecksum> modifyVisibleContainer)
-        {
-            var checksum = stroke.sum();
-
-            strokeChecksumCollection.Remove(checksum);
-            modifyVisibleContainer(checksum);
         }
     }
 }

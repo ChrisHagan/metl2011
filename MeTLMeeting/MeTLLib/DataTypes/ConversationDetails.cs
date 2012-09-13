@@ -17,6 +17,19 @@ namespace MeTLLib.DataTypes
         Public
     }
 
+    public static class PrivacyExtensions
+    {
+        public static Privacy InvertPrivacy(this Privacy privacy)
+        {
+            if (privacy == Privacy.Private)
+                return Privacy.Public;
+            if (privacy == Privacy.Public)
+                return Privacy.Private;
+
+            return Privacy.NotSet;
+        }
+    }
+
     public class SearchConversationDetails : ConversationDetails
     {
         public const int DEFAULT_MAX_SEARCH_RESULTS = 50;

@@ -32,8 +32,12 @@
 
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory)
         {
-            if (!processHistory && moveDelta.HasSameAuthor(recipient)) 
+            if (!processHistory && moveDelta.HasSameAuthor(recipient))
+            {
+                if (!processHistory) Console.WriteLine("ReceiveMoveDelta: processHistory is false, skipping processing");
+                if (moveDelta.HasSameAuthor(recipient)) Console.WriteLine("ReceiveMoveDelta: same author as sender, skipping processing");
                 return;
+            }
 
             if (moveDelta.HasSameTarget(Target))
             {
@@ -136,16 +140,19 @@
             // - find all the items to be removed then list.Except(listDeletions) on the list
             foreach (var text in deadTextboxes)
             {
+                Console.WriteLine(string.Format("   ContentDelete: Deleting Text [{0}]", text.tag().id));
                 RemoveText(text);
             }
 
             foreach (var image in deadImages)
             {
+                Console.WriteLine(string.Format("   ContentDelete: Deleting Image [{0}]", image.tag().id));
                 RemoveImage(image);
             }
 
             foreach (var stroke in deadStrokes)
             {
+                Console.WriteLine(string.Format("   ContentDelete: Deleting Ink [{0}]", stroke.tag().id));
                 RemoveStroke(stroke);
             }
         }

@@ -190,24 +190,19 @@ namespace SandRibbon.Components.Utility
             var comparer = new List<Func<string, Privacy, bool>>();
             var conversationAuthor = Globals.conversationDetails.Author;
 
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
+            if (contentVisibility.HasFlag(ContentVisibilityEnum.OwnerVisible))
                 comparer.Add((elementAuthor, _unused) => elementAuthor == conversationAuthor);
 
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible))
+            if (contentVisibility.HasFlag(ContentVisibilityEnum.TheirsVisible))
                 comparer.Add((elementAuthor, _unused) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
 
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MyPrivateVisible))
+            if (contentVisibility.HasFlag(ContentVisibilityEnum.MyPrivateVisible))
                 comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Private);
 
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MyPublicVisible))
+            if (contentVisibility.HasFlag(ContentVisibilityEnum.MyPublicVisible))
                 comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Public);
 
             return comparer;
-        }
-
-        private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible, ContentVisibilityEnum flag)
-        {
-            return (contentVisible & flag) != ContentVisibilityEnum.NoneVisible;
         }
 
         #endregion

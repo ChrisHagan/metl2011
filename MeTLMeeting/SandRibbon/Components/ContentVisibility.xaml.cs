@@ -21,6 +21,26 @@ namespace SandRibbon.Components
         MyPublicVisible = 1 << 3,
         AllVisible = OwnerVisible | TheirsVisible | MyPrivateVisible | MyPublicVisible
     }
+
+
+    public static class ContentVisibilityExtensions
+    {
+        // .NET 4.0 has this method in the framework
+        public static bool HasFlag(this ContentVisibilityEnum contentVisibility, ContentVisibilityEnum flag)
+        {
+            return (contentVisibility & flag) == flag;
+        }
+
+        public static ContentVisibilityEnum SetFlag(this ContentVisibilityEnum contentVisibility, ContentVisibilityEnum flag)
+        {
+            return contentVisibility | flag;
+        }
+
+        public static ContentVisibilityEnum ClearFlag(this ContentVisibilityEnum contentVisibility, ContentVisibilityEnum flag)
+        {
+            return contentVisibility & ~flag;
+        }
+    }
     
     public partial class ContentVisibility : INotifyPropertyChanged
     {
@@ -114,7 +134,7 @@ namespace SandRibbon.Components
             // if the owner then ignore owner flag and only use mine flag
             if (Globals.isAuthor)
             {
-                flags &= ~ContentVisibilityEnum.OwnerVisible;
+                flags = flags.ClearFlag(ContentVisibilityEnum.OwnerVisible);
             }
 
             return flags;
@@ -127,15 +147,10 @@ namespace SandRibbon.Components
 
         private void UpdateContentVisibility(ContentVisibilityEnum contentVisibility)
         {
-            OwnerVisible = IsVisibilityFlagSet(ContentVisibilityEnum.OwnerVisible, contentVisibility);
-            TheirsVisible = IsVisibilityFlagSet(ContentVisibilityEnum.TheirsVisible, contentVisibility);
-            MyPrivateVisible = IsVisibilityFlagSet(ContentVisibilityEnum.MyPrivateVisible, contentVisibility); 
-            MyPublicVisible = IsVisibilityFlagSet(ContentVisibilityEnum.MyPublicVisible, contentVisibility); 
-        }
-
-        private bool IsVisibilityFlagSet(ContentVisibilityEnum mask, ContentVisibilityEnum flags)
-        {
-            return ((flags & mask) == mask);
+            OwnerVisible = contentVisibility.HasFlag(ContentVisibilityEnum.OwnerVisible);
+            TheirsVisible = contentVisibility.HasFlag(ContentVisibilityEnum.TheirsVisible);
+            MyPrivateVisible = contentVisibility.HasFlag(ContentVisibilityEnum.MyPrivateVisible);
+            MyPublicVisible = contentVisibility.HasFlag(ContentVisibilityEnum.MyPublicVisible); 
         }
 
         public bool IsConversationOwner

@@ -61,6 +61,9 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <ProductName>MeTL</ProductName>
+    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -76,6 +79,9 @@
     <WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <ProductName>MeTL</ProductName>
+    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -166,7 +172,6 @@
     <Compile Include="Components\Utility\PrinterMoveDeltaProcessor.cs" />
     <Compile Include="Components\Utility\MoveDeltaProcessor.cs" />
     <Compile Include="Components\Utility\StackMoveDeltaProcessor.cs" />
-    <Compile Include="Components\Utility\StrokeChecksumFilter.cs" />
     <Compile Include="Components\Utility\TextFilter.cs" />
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />
@@ -1180,11 +1185,6 @@
     <ItemGroup>
       <AssemblyInfoFiles Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
-    <PropertyGroup>
-      <ProductName>MeTL</ProductName>
-      <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
-      <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
-    </PropertyGroup>
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Debug' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>

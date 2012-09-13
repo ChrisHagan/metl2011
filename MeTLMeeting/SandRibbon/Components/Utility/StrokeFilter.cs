@@ -10,12 +10,12 @@ namespace SandRibbon.Components.Utility
     {
         protected override bool Equals(Stroke item1, Stroke item2)
         {
-            return MeTLMath.ApproxEqual(item1.sum().checksum, item2.sum().checksum);
+            return item1.tag().id == item2.tag().id;
         }
 
         protected override bool CollectionContains(Stroke item)
         {
-            return contentCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, item.sum().checksum)).Count() != 0;
+            return contentCollection.Where(s => Equals(s.tag().id, item.tag().id)).Count() != 0;
         }
 
         protected override string AuthorFromTag(Stroke element)
@@ -26,11 +26,6 @@ namespace SandRibbon.Components.Utility
         protected override Privacy PrivacyFromTag(Stroke element)
         {
             return element.tag().privacy;
-        }
-
-        public IEnumerable<Stroke> StrokesWithChecksums(IEnumerable<string> checksums)
-        {
-            return contentCollection.Where(s => checksums.Contains(s.sum().checksum.ToString())).ToList();
         }
 
         public StrokeCollection Strokes

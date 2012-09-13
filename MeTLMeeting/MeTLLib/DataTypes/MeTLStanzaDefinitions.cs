@@ -304,7 +304,9 @@ namespace MeTLLib.DataTypes
             if (newPrivacy == privacy || newPrivacy == Privacy.NotSet)
                 return this;
 
-            return new TargettedStroke(slide, author, target, newPrivacy, identity, stroke, startingChecksum);
+            privacy = newPrivacy;
+
+            return this; 
         }
 
         public TargettedStroke AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
@@ -374,7 +376,9 @@ namespace MeTLLib.DataTypes
             if (newPrivacy == privacy || newPrivacy == Privacy.NotSet)
                 return this;
 
-            return new TargettedImage(slide, author, target, newPrivacy, imageSpecification, identity);
+            privacy = newPrivacy;
+
+            return this; 
         }
 
         public TargettedImage AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
@@ -455,7 +459,9 @@ namespace MeTLLib.DataTypes
             if (newPrivacy == privacy || newPrivacy == Privacy.NotSet)
                 return this;
 
-            return new TargettedTextBox(slide, author, target, newPrivacy, boxSpecification, identity);
+            privacy = newPrivacy;
+
+            return this; 
         }
 
         public TargettedTextBox AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
