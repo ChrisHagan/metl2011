@@ -156,7 +156,7 @@ namespace SandRibbon.Components
 
         private string canvasAlignedPrivacy(string incomingPrivacy)
         {
-            if (Globals.conversationDetails.Permissions.studentCanPublish == false)
+            if (Globals.conversationDetails.Permissions.studentCanPublish == false && Globals.conversationDetails.Author != Globals.me )
             {
                 incomingPrivacy = "private";
             }
