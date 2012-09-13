@@ -156,6 +156,10 @@ namespace SandRibbon.Components
 
         private string canvasAlignedPrivacy(string incomingPrivacy)
         {
+            if (Globals.conversationDetails.Permissions.studentCanPublish == false)
+            {
+                incomingPrivacy = "private";
+            }
             return affectedByPrivacy ? incomingPrivacy : _defaultPrivacy;
         }
 
@@ -1004,6 +1008,16 @@ namespace SandRibbon.Components
             if (canvas.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() != 0)
                 return;
 
+            //clone and change privacy if conversation is private
+            if(canvasAlignedPrivacy(stroke.privacy()) != stroke.privacy())
+            {
+                var oldTag = stroke.tag();
+                var newStroke = stroke.Clone();
+                newStroke.tag(new StrokeTag { author = oldTag.author, privacy = canvasAlignedPrivacy(stroke.privacy()), startingSum = oldTag.startingSum });
+                stroke = new PrivateAwareStroke(newStroke, _target);   
+            }                                 
+
+            //contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
             contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
         }
 
@@ -1220,7 +1234,7 @@ namespace SandRibbon.Components
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
-            e.Stroke.tag(new StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
+            e.Stroke.tag(new StrokeTag { author = Globals.me, privacy = canvasAlignedPrivacy(Globals.privacy), isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
@@ -1316,13 +1330,18 @@ namespace SandRibbon.Components
         }
         private void doMyStrokeAddedExceptHistory(Stroke stroke, string thisPrivacy)
         {
+            //change privacy if conversation is private
+            /*if (Globals.conversationDetails.Permissions.studentCanPublish == false)
+            {
+                thisPrivacy = "private";
+            }*/
+            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             contentBuffer.AddStrokeChecksum(stroke, (cs) => 
             {
                 if (!strokeChecksums.Contains(cs))
                     strokeChecksums.Add(cs);
             });
 
-            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
