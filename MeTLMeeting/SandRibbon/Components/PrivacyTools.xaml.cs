@@ -48,11 +48,12 @@ namespace SandRibbon.Components
 
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
-            if (info.target == "presentationSpace")
+            if (info.Target == "presentationSpace")
             {
                 string setPrivacy = info.IsPrivate ? "private" : "public";
                 Commands.SetPrivacy.ExecuteAsync(setPrivacy);
             }
+           
         }
 
         private void updateConversationDetails(ConversationDetails details)

@@ -70,7 +70,7 @@ namespace SandRibbon.Components
             Bold = copyTextInfo.Bold;
             Italics = copyTextInfo.Italics;
             Strikethrough = copyTextInfo.Strikethrough;
-            target = copyTextInfo.target;                
+            Target = copyTextInfo.Target;                
             Color = copyTextInfo.Color;
         }
 
@@ -80,7 +80,7 @@ namespace SandRibbon.Components
         public bool Bold;
         public bool Italics;
         public bool Strikethrough;
-        public string target;
+        public string Target;
         public Color Color;
     }
     public struct ImageDrop
@@ -2321,7 +2321,7 @@ namespace SandRibbon.Components
                     Bold = myTextBox.FontWeight == FontWeights.Bold,
                     Italics = myTextBox.FontStyle == FontStyles.Italic,
                     Color = ((SolidColorBrush)myTextBox.Foreground).Color,
-                    target = _target
+                    Target = _target
                 };
                 
                 if (myTextBox.TextDecorations.Count > 0)
