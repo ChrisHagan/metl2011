@@ -1179,7 +1179,7 @@ namespace SandRibbon.Components
                     if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() == 0)
                     {
                         contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
-                        doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
+                        doMyStrokeAddedExceptHistory(newStroke, oldPrivacy);
                     }
                 }
             };   
@@ -1205,13 +1205,7 @@ namespace SandRibbon.Components
                     if (Work.ImageChildren().Where(i => i.tag().id == tmpImage.tag().id).Count() == 0)
                     {
                         contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
-
-                        var privateRoom = string.Format("{0}{1}", Globals.slide, tmpImage.tag().author);
-                        if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
-                            Commands.SneakInto.Execute(privateRoom);
-                        Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, tmpImage.tag().author, _target, newPrivacy, tmpImage.tag().id, tmpImage));
-                        if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
-                            Commands.SneakOutOf.Execute(privateRoom);
+                        sendImageWithoutHistory(tmpImage, tmpImage.tag().privacy);
                     }
                     tmpImage.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy);
                 }
@@ -1233,16 +1227,9 @@ namespace SandRibbon.Components
                     if (Work.ImageChildren().Where(i => i.tag().id == tmpImage.tag().id).Count() == 0)
                     {
                         contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
-
+                        sendImageWithoutHistory(tmpImage, tmpImage.tag().privacy);
                     }
                     tmpImage.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy);
-
-                    var privateRoom = string.Format("{0}{1}", Globals.slide, tmpImage.tag().author);
-                    if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
-                        Commands.SneakInto.Execute(privateRoom);
-                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, tmpImage.tag().author, _target, newPrivacy, tmpImage.tag().id, tmpImage));
-                    if (newPrivacy == Privacy.Private && Globals.isAuthor && me != tmpImage.tag().author)
-                        Commands.SneakOutOf.Execute(privateRoom);
                 }
             };   
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection privacy changed");
@@ -1266,7 +1253,7 @@ namespace SandRibbon.Components
                     if (Work.TextChildren().Where(t => t.tag().id == tmpText.tag().id).Count() == 0)
                     {
                         contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
-                        sendTextWithoutHistory(tmpText, newPrivacy);
+                        sendTextWithoutHistory(tmpText, tmpText.tag().privacy);
                     }
                     tmpText.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy);
                 }
@@ -2304,14 +2291,16 @@ namespace SandRibbon.Components
                 sendTextWithoutHistory(box, box.tag().privacy);
             }
         }
+
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy)
         {
             sendTextWithoutHistory(box, thisPrivacy, Globals.slide);
         }
+
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy, int slide)
         {
-            if (box.tag().privacy != privacy)
-                dirtyTextBoxWithoutHistory(box);
+            /*if (box.tag().privacy != privacy)
+                dirtyTextBoxWithoutHistory(box);*/
             var oldTextTag = box.tag();
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id);
             box.tag(newTextTag);
@@ -2322,6 +2311,7 @@ namespace SandRibbon.Components
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
+
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box)
         {
             dirtyTextBoxWithoutHistory(box, Globals.slide);
@@ -2332,6 +2322,21 @@ namespace SandRibbon.Components
             box.RemovePrivacyStyling(contentBuffer); 
             RemoveTextBoxWithMatchingId(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
+        }
+
+        public void sendImageWithoutHistory(Image image, Privacy thisPrivacy)
+        {
+            sendImageWithoutHistory(image, thisPrivacy, Globals.slide);
+        }
+
+        public void sendImageWithoutHistory(Image image, Privacy thisPrivacy, int slide)
+        {
+            var privateRoom = string.Format("{0}{1}", Globals.slide, image.tag().author);
+            if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
+                Commands.SneakInto.Execute(privateRoom);
+            Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, thisPrivacy, image.tag().id, image));
+            if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
+                Commands.SneakOutOf.Execute(privateRoom);
         }
 
         private void box_PreviewTextInput(object sender, KeyEventArgs e)

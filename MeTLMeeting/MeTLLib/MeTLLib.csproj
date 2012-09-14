@@ -93,7 +93,9 @@
     <Compile Include="DataTypes\ConversationDetails.cs" />
     <Compile Include="DataTypes\Extensions.cs" />
     <Compile Include="DataTypes\LiveWindowSetup.cs" />
-    <Compile Include="DataTypes\MeTLStanzaDefinitions.cs" />
+    <Compile Include="..\..\..\..\Users\Joshua\Desktop\MeTLStanzaDefinitions.cs">
+      <Link>DataTypes\MeTLStanzaDefinitions.cs</Link>
+    </Compile>
     <Compile Include="DataTypes\PollParameters.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Commands\DispatcherExtensions.cs" />

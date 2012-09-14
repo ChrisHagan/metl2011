@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Media;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Windows;
 using System.Diagnostics;
 
@@ -138,7 +139,7 @@ namespace MeTLLib.DataTypes
             var texttag = new TextTag();
             box.Dispatcher.adopt(delegate
             {
-                var textInfo = JsonConvert.DeserializeObject<ImageTag>(box.Tag.ToString());
+                var textInfo = JsonConvert.DeserializeObject<ImageTag>(box.Tag.ToString(), new StringEnumConverter());
                 texttag = new TextTag
                 {
                     author = textInfo.author,
@@ -152,9 +153,14 @@ namespace MeTLLib.DataTypes
         {
             box.Dispatcher.adopt(delegate
             {
-                box.Tag = JsonConvert.SerializeObject(tag);
+                box.Tag = JsonConvert.SerializeObject(tag, new StringEnumConverter());
             });
             return tag;
+        }
+
+        public static bool HasValidTag(this TextBox box)
+        {
+            return box.Tag != null && box.Tag is string;
         }
     }
     public static partial class VideoExtensions 
@@ -164,7 +170,7 @@ namespace MeTLLib.DataTypes
             var imagetag = new ImageTag();
             image.Dispatcher.adopt(delegate
             {
-                var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+                var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString(), new StringEnumConverter());
                 imagetag = new ImageTag
                 {
                     author = imageInfo.author,
@@ -180,7 +186,7 @@ namespace MeTLLib.DataTypes
         {
             image.Dispatcher.adopt(delegate
             {
-                image.Tag = JsonConvert.SerializeObject(tag);
+                image.Tag = JsonConvert.SerializeObject(tag, new StringEnumConverter());
             });
             return tag;
         }
@@ -215,9 +221,9 @@ namespace MeTLLib.DataTypes
                 {
                     ImageTag imageInfo = new ImageTag(); 
                     if (image.Tag.ToString().StartsWith("NOT_LOADED"))
-                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
+                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2], new StringEnumConverter());
                     else
-                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString(), new StringEnumConverter());
 
                     imagetag = new ImageTag
                     {
@@ -247,7 +253,7 @@ namespace MeTLLib.DataTypes
         {
             image.Dispatcher.adopt(delegate
             {
-                image.Tag = JsonConvert.SerializeObject(tag);
+                image.Tag = JsonConvert.SerializeObject(tag, new StringEnumConverter());
             });
             return tag;
         }

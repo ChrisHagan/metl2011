@@ -391,7 +391,7 @@ namespace MeTLLib.DataTypes
             return this;
         }
 
-        public System.Windows.Controls.Image imageProperty;
+        //public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
         private IWebClient downloader;
@@ -426,9 +426,46 @@ namespace MeTLLib.DataTypes
                     }
                 }
                 value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground));
-                imageProperty = value;
+                //imageProperty = value;
             }
         }
+    }
+
+    public class TextBoxProperties
+    {
+        public TextBoxProperties()
+        {
+        }
+        public TextBoxProperties(TextBox textbox)
+        {
+            height = textbox.Height;
+            width = textbox.Width;
+            caret = textbox.CaretIndex;
+            x = InkCanvas.GetLeft(textbox);
+            y = InkCanvas.GetTop(textbox);
+            text = textbox.Text;
+            tag = (string)textbox.Tag;
+            style = textbox.FontStyle;
+            family = textbox.FontFamily;
+            weight = textbox.FontWeight;
+            size = textbox.FontSize;
+            decoration = textbox.TextDecorations;
+            color = textbox.Foreground;
+        }
+
+        public double height { get; set; }
+        public double width { get; set; }
+        public int caret { get; set; }
+        public double x { get; set; }
+        public double y { get; set; }
+        public string text { get; set; }
+        public string tag { get; set; }
+        public FontStyle style { get; set; }
+        public FontFamily family { get; set; }
+        public FontWeight weight { get; set; }
+        public double size { get; set; } 
+        public TextDecorationCollection decoration { get; set; }
+        public Brush color { get; set; }
     }
 
     public class TargettedTextBox : TargettedElement
@@ -436,22 +473,23 @@ namespace MeTLLib.DataTypes
         public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, string Identity, TextBox TextBox)
             : base(Slide, Author, Target, Privacy, Identity)
         {
-            box = TextBox;
+            //box = TextBox;
+            textBoxProperties = new TextBoxProperties(TextBox);
         }
-        public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, MeTLStanzas.TextBox BoxSpecification, string Identity)
+
+        public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, string Identity, TextBoxProperties properties)
             : base(Slide, Author, Target, Privacy, Identity)
         {
-            boxSpecification = BoxSpecification;
+            textBoxProperties = properties;
         }
+
         public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedTextBox)) return false;
             var foreign = (TargettedTextBox)obj;
             return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
                 && foreign.identity == identity
-                && foreign.boxProperty.Equals(boxProperty)
-                && foreign.boxSpecification == boxSpecification
-                && foreign.box.Equals(box));
+                && foreign.textBoxProperties.Equals(textBoxProperties));
         }
 
         public TargettedTextBox AlterPrivacy(Privacy newPrivacy)
@@ -466,43 +504,39 @@ namespace MeTLLib.DataTypes
 
         public TargettedTextBox AdjustVisual(double xTranslate, double yTranslate, double xScale, double yScale)
         {
-            boxSpecification.x += xTranslate;
-            boxSpecification.y += yTranslate;
-            boxSpecification.width *= xScale;
-            boxSpecification.height *= yScale;
+            textBoxProperties.x += xTranslate;
+            textBoxProperties.y += yTranslate; 
+            textBoxProperties.width *= xScale;
+            textBoxProperties.height *= yScale;
 
             return this;
         }
 
-        public TextBox boxProperty;
-        public MeTLStanzas.TextBox boxSpecification;
-        public System.Windows.Controls.TextBox box
+        public TextBoxProperties textBoxProperties { get; private set; }
+        //public TextBox box { get; private set; }
+
+        public TextBox GenerateTextBox()
         {
-            get
+            var textBox = new TextBox
             {
-                if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
-                System.Windows.Controls.TextBox reified = null;
-                reified = boxSpecification.forceEvaluation();
-                identity = reified.tag().id;
-                return reified;
-            }
-            set
-            {
-                string internalIdentity;
-                try
-                {
-                    internalIdentity = value.tag().id;
-                }
-                catch (Exception)
-                {
-                    if (String.IsNullOrEmpty(identity))
-                        identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
-                    value.tag(new TextTag(author, privacy, identity));
-                    internalIdentity = value.tag().id;
-                }
-                identity = internalIdentity;
-                boxProperty = value;
-            }
+                FontWeight = textBoxProperties.weight,
+                FontFamily = textBoxProperties.family,
+                FontSize = textBoxProperties.size,
+                FontStyle = textBoxProperties.style,
+                Foreground = textBoxProperties.color,
+                TextDecorations = textBoxProperties.decoration,
+                Tag = textBoxProperties.tag,
+                Text = textBoxProperties.text,
+                Height = textBoxProperties.height,
+                Width = textBoxProperties.width,
+                AcceptsReturn = true,
+                TextWrapping = TextWrapping.WrapWithOverflow
+            };
+
+            InkCanvas.SetLeft(textBox, textBoxProperties.x);
+            InkCanvas.SetTop(textBox, textBoxProperties.y);
+
+            return textBox;
         }
     }
     public class TargettedDirtyElement : TargettedElement
@@ -824,7 +858,6 @@ namespace MeTLLib.DataTypes
             }
         }
 
-
         public class TextBox : Element
         {
             static TextBox()
@@ -842,55 +875,49 @@ namespace MeTLLib.DataTypes
             {
                 Box = textBox;
             }
-            public System.Windows.Controls.TextBox forceEvaluation()
-            {
-                System.Windows.Controls.TextBox textBox = new System.Windows.Controls.TextBox
-                {
-                    FontWeight = weight,
-                    FontFamily = family,
-                    FontSize = size,
-                    FontStyle = style,
-                    Foreground = color,
-                    TextDecorations = decoration,
-                    Tag = tag,
-                    Text = text,
-                    Height = height,
-                    Width = width,
-                    AcceptsReturn = true,
-                    TextWrapping = TextWrapping.WrapWithOverflow
-                };
-
-                InkCanvas.SetLeft(textBox, x);
-                InkCanvas.SetTop(textBox, y);
-                return textBox;
-            }
             public TargettedTextBox Box
             {
                 get
                 {
-                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag));
-                    return box;
+                    var textProperties = new TextBoxProperties
+                    {
+                        height = this.height,
+                        width = this.width,
+                        caret = this.caret,
+                        x = this.x,
+                        y = this.y,
+                        text = this.text,
+                        tag = this.tag,
+                        style = this.style,
+                        family = this.family,
+                        weight = this.weight,
+                        size = this.size,
+                        decoration = this.decoration,
+                        color = this.color
+                    };
+
+                    return new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), textProperties);
                 }
                 set
                 {
-                    this.height = value.boxProperty.Height;
-                    this.width = value.boxProperty.Width;
-                    this.caret = value.boxProperty.CaretIndex;
-                    this.x = InkCanvas.GetLeft(value.boxProperty);
-                    this.y = InkCanvas.GetTop(value.boxProperty);
-                    this.text = value.boxProperty.Text;
-                    this.tag = (string)value.boxProperty.Tag;
-                    this.style = value.boxProperty.FontStyle;
-                    this.family = value.boxProperty.FontFamily;
-                    this.weight = value.boxProperty.FontWeight;
-                    this.size = value.boxProperty.FontSize;
-                    this.decoration = value.boxProperty.TextDecorations;
+                    this.height = value.textBoxProperties.height;
+                    this.width = value.textBoxProperties.width;
+                    this.caret = value.textBoxProperties.caret;
+                    this.x = value.textBoxProperties.x;
+                    this.y = value.textBoxProperties.y;
+                    this.text = value.textBoxProperties.text;
+                    this.tag = value.textBoxProperties.tag;
+                    this.style = value.textBoxProperties.style;
+                    this.family = value.textBoxProperties.family;
+                    this.weight = value.textBoxProperties.weight;
+                    this.size = value.textBoxProperties.size;
+                    this.decoration = value.textBoxProperties.decoration;
                     this.SetTag(authorTag, value.author);
-                    this.SetTag(identityTag, value.boxProperty.tag().id);
+                    this.SetTag(identityTag, value.identity);
                     this.SetTag(targetTag, value.target);
                     this.SetTag(privacyTag, value.privacy.ToString());
                     this.SetTag(slideTag, value.slide);
-                    this.color = value.boxProperty.Foreground;
+                    this.color = value.textBoxProperties.color;
                 }
             }
             public static readonly string widthTag = "width";
@@ -1770,8 +1797,8 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    string newTag = value.imageProperty.Tag.ToString();
-                    var absolutePath = value.imageProperty.Source.ToString();
+                    string newTag = value.image.Tag.ToString();
+                    var absolutePath = value.image.Source.ToString();
                     if (newTag.ToString().StartsWith("NOT_LOADED"))
                     {
                         var parts = newTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1785,12 +1812,12 @@ namespace MeTLLib.DataTypes
                         relativePath = uri.LocalPath;
                     else
                         relativePath = uri.ToString();
-                    SetTag(tagTag, value.imageProperty.Tag.ToString());
+                    SetTag(tagTag, value.image.Tag.ToString());
                     SetTag(sourceTag, relativePath);
-                    SetTag(widthTag, value.imageProperty.Width.ToString());
-                    SetTag(heightTag, value.imageProperty.Height.ToString());
-                    var currentX = (InkCanvas.GetLeft(value.imageProperty) + (Double.IsNaN(value.imageProperty.Margin.Left)?0:value.imageProperty.Margin.Left)).ToString(); 
-                    var currentY = (InkCanvas.GetTop(value.imageProperty) + (Double.IsNaN(value.imageProperty.Margin.Top)?0:value.imageProperty.Margin.Top)).ToString(); 
+                    SetTag(widthTag, value.image.Width.ToString());
+                    SetTag(heightTag, value.image.Height.ToString());
+                    var currentX = (InkCanvas.GetLeft(value.image) + (Double.IsNaN(value.image.Margin.Left)?0:value.image.Margin.Left)).ToString(); 
+                    var currentY = (InkCanvas.GetTop(value.image) + (Double.IsNaN(value.image.Margin.Top)?0:value.image.Margin.Top)).ToString(); 
                     SetTag(xTag, currentX);
                     SetTag(yTag, currentY);
                     SetTag(authorTag, value.author);
