@@ -2275,6 +2275,8 @@ namespace SandRibbon.Components
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Work.Children.Contains(box)) return;
+
+            //Use the privacy of the box to set its appropriate styling
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
         }
 
