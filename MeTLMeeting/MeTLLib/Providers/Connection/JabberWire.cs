@@ -871,8 +871,8 @@ namespace MeTLLib.Providers.Connection
         }
         public void AskForTeacherStatus(string teacher, string where)
         {
-            Console.WriteLine("Jabberwire:AskTeacherForStatus => sending on global");
-            command(TEACHER_IN_CONVERSATION + " "+ where);
+            Console.WriteLine("Jabberwire:AskTeacherForStatus => sending on conversation: " + where);
+            command(where, TEACHER_IN_CONVERSATION + " "+ where);
         }
         public void SendSyncMoveTo(int where)
         {
