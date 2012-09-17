@@ -124,6 +124,7 @@ namespace MeTLLib
         Uri NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
         UserOptions UserOptionsFor(string username);
+        List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
     }
     public class ClientConnection : IClientBehaviour
     {
@@ -147,6 +148,8 @@ namespace MeTLLib
         public UserOptionsProvider userOptionsProvider { private get; set; }
         [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
+        [Inject]
+        public IUserInformationProvider userInformationProvider { private get; set; }
         public MeTLServerAddress server { private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
@@ -597,6 +600,11 @@ namespace MeTLLib
         {
             return tryUntilConnected<ConversationDetails>(() => 
                 conversationDetailsProvider.AppendSlideAfter(slide,Jid,type));
+        }
+        #endregion
+        #region UserCommands
+        public List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames){
+            return userInformationProvider.lookupUsers(usernames);
         }
         #endregion
         #region HelperMethods
