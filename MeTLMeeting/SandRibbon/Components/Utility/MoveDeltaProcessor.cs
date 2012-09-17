@@ -3,12 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using MeTLLib.DataTypes;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-    using System.Windows.Ink;
     using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Ink;
+    using System.Windows.Media;
+    using MeTLLib.DataTypes;
 
     public abstract class MoveDeltaProcessor
     {
@@ -52,13 +51,12 @@
                     return;
                 }
 
-                ContentMoveAndScale(moveDelta);
+                ContentTranslateAndScale(moveDelta);
             }
         }
 
-        protected void ContentMoveAndScale(TargettedMoveDelta moveDelta)
+        protected void ContentTranslateAndScale(TargettedMoveDelta moveDelta)
         {
-            // define work to be done based on fields
             var xTrans = moveDelta.xTranslate;
             var yTrans = moveDelta.yTranslate;
             var xScale = moveDelta.xScale;
@@ -81,16 +79,7 @@
             {
                 foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
-                    var left = InkCanvas.GetLeft(textBox) + xTrans;
-                    var top = InkCanvas.GetTop(textBox) + yTrans;
-
-                    InkCanvas.SetLeft(textBox, left);
-                    InkCanvas.SetTop(textBox, top);
-
-                    CorrectWidthAndHeight(textBox);
-
-                    textBox.Width *= xScale;
-                    textBox.Height *= yScale;
+                    TranslateAndScale(textBox, xTrans, yTrans, xScale, yScale);
                 }
             }
 
@@ -98,18 +87,23 @@
             {
                 foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
                 {
-                    var left = InkCanvas.GetLeft(image) + xTrans;
-                    var top = InkCanvas.GetTop(image) + yTrans;
-
-                    InkCanvas.SetLeft(image, left);
-                    InkCanvas.SetTop(image, top);
-
-                    CorrectWidthAndHeight(image);
-
-                    image.Width *= xScale;
-                    image.Height *= yScale;
+                    TranslateAndScale(image, xTrans, yTrans, xScale, yScale);
                 }
             }
+        }
+
+        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale)
+        {
+            var left = InkCanvas.GetLeft(element) + xTrans;
+            var top = InkCanvas.GetTop(element) + yTrans;
+
+            InkCanvas.SetLeft(element, left);
+            InkCanvas.SetTop(element, top);
+
+            CorrectWidthAndHeight(element);
+
+            element.Width *= xScale;
+            element.Height *= yScale;
         }
 
         private void CorrectWidthAndHeight(FrameworkElement element)
@@ -177,8 +171,6 @@
             var privacyStrokes = new List<Stroke>();
             var privacyTextboxes = new List<TextBox>();
             var privacyImages = new List<Image>();
-
-            Func<Stroke, bool> wherePredicate = (s) => { /* compare tag identity and check if privacy differs*/ return true; };
 
             foreach (var inkId in moveDelta.inkIds)
             {
