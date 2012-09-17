@@ -262,7 +262,6 @@ namespace SandRibbon.Components
                     if (_target == "presentationSpace")
                     {
                         Globals.CurrentCanvasClipboardFocus = _target;
-                        UndoHistory.ShowVisualiser(Window.GetWindow(this));
                     }
 
                     moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target);
