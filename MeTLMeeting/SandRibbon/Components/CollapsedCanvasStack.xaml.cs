@@ -2218,7 +2218,8 @@ namespace SandRibbon.Components
         {
             thisPrivacy = canvasAlignedPrivacy(thisPrivacy);
 
-            if (box.tag().privacy != Globals.privacy)
+            //Dirty the text box if its privacy does not match the canvas aligned privacy
+            if (box.tag().privacy != canvasAlignedPrivacy(Globals.privacy))
                 dirtyTextBoxWithoutHistory(box);
             var oldTextTag = box.tag();
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id);
