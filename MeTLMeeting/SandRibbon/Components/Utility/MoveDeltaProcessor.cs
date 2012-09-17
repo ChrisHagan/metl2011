@@ -8,6 +8,7 @@
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Ink;
+    using System.Windows;
 
     public abstract class MoveDeltaProcessor
     {
@@ -34,8 +35,6 @@
         {
             if (!processHistory && moveDelta.HasSameAuthor(recipient))
             {
-                if (!processHistory) Console.WriteLine("ReceiveMoveDelta: processHistory is false, skipping processing");
-                if (moveDelta.HasSameAuthor(recipient)) Console.WriteLine("ReceiveMoveDelta: same author as sender, skipping processing");
                 return;
             }
 
@@ -47,60 +46,79 @@
                     return;
                 }
 
-                if (moveDelta.privacy != Privacy.NotSet)
+                if (moveDelta.newPrivacy != Privacy.NotSet)
                 {
                     ContentPrivacyChange(moveDelta);
                     return;
                 }
 
-                // define work to be done based on fields
-                var xTrans = moveDelta.xTranslate;
-                var yTrans = moveDelta.yTranslate;
-                var xScale = moveDelta.xScale;
-                var yScale = moveDelta.yScale;
+                ContentMoveAndScale(moveDelta);
+            }
+        }
 
-                var transformMatrix = new Matrix();
-                transformMatrix.Scale(xScale, yScale);
-                transformMatrix.Translate(xTrans, yTrans);
+        protected void ContentMoveAndScale(TargettedMoveDelta moveDelta)
+        {
+            // define work to be done based on fields
+            var xTrans = moveDelta.xTranslate;
+            var yTrans = moveDelta.yTranslate;
+            var xScale = moveDelta.xScale;
+            var yScale = moveDelta.yScale;
 
-                foreach (var inkId in moveDelta.inkIds)
+            var transformMatrix = new Matrix();
+            transformMatrix.Scale(xScale, yScale);
+            transformMatrix.Translate(xTrans, yTrans);
+
+            foreach (var inkId in moveDelta.inkIds)
+            {
+                var deadStrokes = new List<Stroke>();
+                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
                 {
-                    var deadStrokes = new List<Stroke>();
-                    foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
-                    {
-                        stroke.Transform(transformMatrix, false);
-                    }
+                    stroke.Transform(transformMatrix, false);
                 }
+            }
 
-                foreach (var textId in moveDelta.textIds)
+            foreach (var textId in moveDelta.textIds)
+            {
+                foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
-                    foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
-                    {
-                        var left = InkCanvas.GetLeft(textBox) + xTrans;
-                        var top = InkCanvas.GetTop(textBox) + yTrans;
+                    var left = InkCanvas.GetLeft(textBox) + xTrans;
+                    var top = InkCanvas.GetTop(textBox) + yTrans;
 
-                        InkCanvas.SetLeft(textBox, left);
-                        InkCanvas.SetTop(textBox, top);
+                    InkCanvas.SetLeft(textBox, left);
+                    InkCanvas.SetTop(textBox, top);
 
-                        textBox.Width *= xScale;
-                        textBox.Height *= yScale;
-                    }
+                    CorrectWidthAndHeight(textBox);
+
+                    textBox.Width *= xScale;
+                    textBox.Height *= yScale;
                 }
+            }
 
-                foreach (var imageId in moveDelta.imageIds)
+            foreach (var imageId in moveDelta.imageIds)
+            {
+                foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
                 {
-                    foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
-                    {
-                        var left = InkCanvas.GetLeft(image) + xTrans;
-                        var top = InkCanvas.GetTop(image) + yTrans;
+                    var left = InkCanvas.GetLeft(image) + xTrans;
+                    var top = InkCanvas.GetTop(image) + yTrans;
 
-                        InkCanvas.SetLeft(image, left);
-                        InkCanvas.SetTop(image, top);
+                    InkCanvas.SetLeft(image, left);
+                    InkCanvas.SetTop(image, top);
 
-                        image.Width *= xScale;
-                        image.Height *= yScale;
-                    }
+                    CorrectWidthAndHeight(image);
+
+                    image.Width *= xScale;
+                    image.Height *= yScale;
                 }
+            }
+        }
+
+        private void CorrectWidthAndHeight(FrameworkElement element)
+        {
+            if (double.IsNaN(element.Width) || double.IsNaN(element.Height))
+            {
+                // if we're trying to change the element's width and height before a measure pass the actual* aren't going to help
+                element.Height = element.IsMeasureValid == false ? element.Height : element.ActualHeight;
+                element.Width = element.IsMeasureValid == false ? element.Width : element.ActualWidth;
             }
         }
 
@@ -140,19 +158,16 @@
             // - find all the items to be removed then list.Except(listDeletions) on the list
             foreach (var text in deadTextboxes)
             {
-                Console.WriteLine(string.Format("   ContentDelete: Deleting Text [{0}]", text.tag().id));
                 RemoveText(text);
             }
 
             foreach (var image in deadImages)
             {
-                Console.WriteLine(string.Format("   ContentDelete: Deleting Image [{0}]", image.tag().id));
                 RemoveImage(image);
             }
 
             foreach (var stroke in deadStrokes)
             {
-                Console.WriteLine(string.Format("   ContentDelete: Deleting Ink [{0}]", stroke.tag().id));
                 RemoveStroke(stroke);
             }
         }

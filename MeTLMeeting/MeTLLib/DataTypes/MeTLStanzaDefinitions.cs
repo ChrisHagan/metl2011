@@ -236,9 +236,7 @@ namespace MeTLLib.DataTypes
         public static TargettedMoveDelta CreateAdjuster(TargettedMoveDelta tmd, Privacy replacementPrivacy, IEnumerable<TargettedStroke> strokes, IEnumerable<TargettedTextBox> texts, IEnumerable<TargettedImage> images)
         {
             var targettedMoveDelta = new TargettedMoveDelta(tmd);
-
-            targettedMoveDelta.privacy = replacementPrivacy;
-            targettedMoveDelta.newPrivacy = Privacy.NotSet;
+            targettedMoveDelta.newPrivacy = replacementPrivacy;
             
             AddFromCollection<TargettedStroke>(strokes, (s) => targettedMoveDelta.AddInkId(s.identity));
             AddFromCollection<TargettedTextBox>(texts, (t) => targettedMoveDelta.AddTextId(t.identity));

@@ -826,11 +826,11 @@ namespace MeTLLib.Providers.Connection
                         TargettedMoveDelta publicDelta = null;
                         if (privateInks.Count() > 0 || privateTexts.Count() > 0 || privateImages.Count() > 0)
                         {
-                            privateDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.Private, privateInks, privateTexts, privateImages);
+                            privateDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.NotSet, privateInks, privateTexts, privateImages);
                         }
                         if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
                         {
-                            publicDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.Public, publicInks, publicTexts, publicImages);
+                            publicDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.NotSet, publicInks, publicTexts, publicImages);
                         }
                         MoveDeltaDispatcher(privateDelta, publicDelta);
                     }
@@ -1064,7 +1064,12 @@ namespace MeTLLib.Providers.Connection
             }
             try
             {
-                cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message, timestamp);
+                // some messages are toxic
+                var fromAuthor = message.GetAttribute("from");
+                if (!string.IsNullOrEmpty(fromAuthor) && fromAuthor.Contains('@'))
+                {
+                    cachedHistoryProvider.HandleMessage(fromAuthor.Split('@')[0], message, timestamp);
+                }
             }
             catch (Exception e)
             {

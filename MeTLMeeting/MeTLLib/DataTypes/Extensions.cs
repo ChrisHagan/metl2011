@@ -322,7 +322,11 @@ namespace MeTLLib.DataTypes
         {
             try
             {
-                return (double)stroke.GetPropertyData(STARTINGCHECKSUM);
+                if (stroke.ContainsPropertyData(STARTINGCHECKSUM))
+                {
+                    return (double)stroke.GetPropertyData(STARTINGCHECKSUM);
+                }
+                return stroke.sum().checksum;
             }
             catch (Exception)
             {

@@ -607,35 +607,6 @@ namespace SandRibbon.Components
 
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
 
-            //// debugging
-            var movingText = _boxesAtTheStart.OfType<TextBox>();
-            if (movingText != null && movingText.Count() > 0)
-            {
-                var firstText = movingText.First();
-                var left = InkCanvas.GetLeft(firstText);
-                var top = InkCanvas.GetTop(firstText);
-                Console.WriteLine(string.Format("Moving from {0} Text '{1}' x[{2}] y[{3}]", me, firstText.Text, left, top));
-            }
-
-            var movingImage = imagesAtStartOfTheMove.OfType<Image>();
-            if (movingImage != null && movingImage.Count() > 0)
-            {
-                var firstImage = movingImage.First();
-                var left = InkCanvas.GetLeft(firstImage);
-                var top = InkCanvas.GetTop(firstImage);
-                Console.WriteLine(string.Format("Moving from {0} Image x[{1}] y[{2}]", me, left, top));
-            }
-
-            var movingInk = strokesAtTheStart;
-            if (movingInk != null && movingInk.Count() > 0)
-            {
-                var firstInk = movingInk.First();
-                var left = firstInk.StylusPoints.First().X;
-                var top = firstInk.StylusPoints.First().Y; 
-                Console.WriteLine(string.Format("Moving from {0} Ink x[{1}] y[{2}]", me, left, top));
-            }
-            /// debugging
-
             if (e.NewRectangle.Size.Equals(e.OldRectangle.Size))
                 return;
 
@@ -691,35 +662,41 @@ namespace SandRibbon.Components
                         var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
                         if (imagesToRemove.Count() > 0)
                             contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
-                        if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
-                            dirtyThisElement(element);
+                        // local only
+                        /*if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
+                            dirtyThisElement(element);*/
                     }
                     foreach (var element in startingElements)
                     {
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() == 0)
                             contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
-                        if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
-                            sendThisElement(element);
+                        // local only
+                        /*if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
+                            sendThisElement(element);*/
                     }
                 };
             Action redo = () =>
                 {
-                    var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
-                    foreach (var element in startingElements)
+                    foreach (var image in startingElements)
                     {
-                        var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
-                          if (imagesToRemove.Count() > 0)
-                              contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image)); 
-                        dirtyThisElement(element);
+                        // dirty handled by move delta
+                        //dirtyThisElement(element);
+                        var imagesToRemove = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
+                        if (imagesToRemove.Count() > 0)
+                        {
+                            contentBuffer.RemoveImage(imagesToRemove.First(), (img) => Work.Children.Remove(img)); 
+                        }
                     }
-                    foreach (var element in mySelectedImages)
+                    foreach (var element in selectedElements)
                     { 
+                        var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
                            contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
                         }
-                       sendThisElement(element);
+                        //local only
+                       //sendThisElement(element);
                     }
                 };           
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
@@ -728,15 +705,53 @@ namespace SandRibbon.Components
         {
             Action undo = () =>
                 {
-                    removeStrokes(selectedStrokes);
-                    addStrokes(undoStrokes); 
+                    // strokes exist on canvas
+                    foreach (var stroke in selectedStrokes)
+                    {
+                        var strokesToUpdate = Work.Strokes.Where(s => s.tag().id == stroke.tag().id);
+                        if (strokesToUpdate.Count() > 0)
+                        {
+                            contentBuffer.RemoveStroke(strokesToUpdate.First(), (str) => Work.Strokes.Remove(str));
+                        }
+                    }
+
+                    foreach (var stroke in undoStrokes)
+                    {
+                        var tmpStroke = stroke.Clone();
+                        if (Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Count() == 0)
+                        {
+                            contentBuffer.AddStroke(tmpStroke, (str) => Work.Strokes.Add(str));
+                        }
+                    }
+                    // do local only
+                    //removeStrokes(selectedStrokes);
+                    //addStrokes(undoStrokes); 
                     if (Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(undoStrokes));
                 };
             Action redo = () =>
                 {
-                    removeStrokes(undoStrokes); 
-                    addStrokes(selectedStrokes); 
+                    // strokes exist on canvas
+                    foreach (var stroke in undoStrokes)
+                    {
+                        var strokesToUpdate = Work.Strokes.Where(s => s.tag().id == stroke.tag().id);
+                        if (strokesToUpdate.Count() > 0)
+                        {
+                            contentBuffer.RemoveStroke(strokesToUpdate.First(), (str) => Work.Strokes.Remove(str));
+                        }
+                    }
+
+                    foreach (var stroke in selectedStrokes)
+                    {
+                        var tmpStroke = stroke.Clone();
+                        if (Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Count() == 0)
+                        {
+                            contentBuffer.AddStroke(tmpStroke, (str) => Work.Strokes.Add(str));
+                        }
+                    }
+                    // do local only
+                    //removeStrokes(undoStrokes); 
+                    //addStrokes(selectedStrokes); 
                     if(Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(selectedStrokes));
                 };           
@@ -754,13 +769,17 @@ namespace SandRibbon.Components
                   var mySelectedElements = selectedElements.Select(element => ((MeTLTextBox)element).clone());
                   foreach (MeTLTextBox box in mySelectedElements)
                   {
-                      removeBox(box, true);
+                      contentBuffer.RemoveTextBox(box, (txt) => Work.Children.Remove(txt));
+                      // local only
+                      //removeBox(box, true);
                   }
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
                   {
                       selection.Add(box);
-                      sendBox(applyDefaultAttributes(box), true);
+                      // local only
+                      //sendBox(applyDefaultAttributes(box), true);
+                      AddTextBoxToCanvas(applyDefaultAttributes(box));
                   }
               };
             Action redo = () =>
@@ -769,11 +788,17 @@ namespace SandRibbon.Components
                   var mySelectedElements = selectedElements.Select(element => ((MeTLTextBox)element).clone());
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
-                      removeBox(box, true);
+                  {
+                      contentBuffer.RemoveTextBox(box, (txt) => Work.Children.Remove(txt));
+                      // local only
+                      //removeBox(box, true);
+                  }
                   foreach (var box in mySelectedElements)
                   {
                       selection.Add(box);
-                      sendBox(applyDefaultAttributes(box), true);
+                      // local only
+                      //sendBox(applyDefaultAttributes(box), true);
+                      AddTextBoxToCanvas(applyDefaultAttributes(box));
                   }
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
@@ -782,65 +807,49 @@ namespace SandRibbon.Components
         {
             var selectedStrokes = absoluteizeStrokes(filterOnlyMine(Work.GetSelectedStrokes())).Select(s => s.Clone()).ToList();
             var selectedElements = absoluteizeElements(filterOnlyMine(Work.GetSelectedElements()));
+            
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
-            /*var ink = InkSelectionMovedOrResized(filterOnlyMine(selectedStrokes), undoStrokes);
+            // should move _boxesAtTheStart textboxes here to be cloned as well
+
+            var ink = InkSelectionMovedOrResized(filterOnlyMine(selectedStrokes), undoStrokes);
             var images = ImageSelectionMovedOrResized(filterOnlyMine(selectedElements), startingSelectedImages);
-            var text = TextMovedOrResized(filterOnlyMine(selectedElements), _boxesAtTheStart);*/
-
-            // TODO: undo/redo for moved and resized
-            var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
-
-            moveDelta.xTranslate = moveMetrics.Delta.X;
-            moveDelta.yTranslate = moveMetrics.Delta.Y;
-            moveDelta.xScale = moveMetrics.Scale.X;
-            moveDelta.yScale = moveMetrics.Scale.Y;
+            var text = TextMovedOrResized(filterOnlyMine(selectedElements), _boxesAtTheStart);
             
-            //// debugging
-            var movingText = selectedElements.OfType<TextBox>();
-            if (movingText != null && movingText.Count() > 0)
-            {
-                var firstText = movingText.First();
-                var left = InkCanvas.GetLeft(firstText);
-                var top = InkCanvas.GetTop(firstText);
-                Console.WriteLine(string.Format("Sending move from {0} Text '{1}' x[{2}] y[{3}] deltaX[{4}] deltaY[{5}]", me, firstText.Text, left, top, moveMetrics.Delta.X, moveMetrics.Delta.Y));
-            }
-
-            var movingImage = selectedElements.OfType<Image>();
-            if (movingImage != null && movingImage.Count() > 0)
-            {
-                var firstImage = movingImage.First();
-                var left = InkCanvas.GetLeft(firstImage);
-                var top = InkCanvas.GetTop(firstImage);
-                Console.WriteLine(string.Format("Sending move from {0} Image x[{1}] y[{2}] deltaX[{3}] deltaY[{4}]", me, left, top, moveMetrics.Delta.X, moveMetrics.Delta.Y));
-            }
-
-            var movingInk = selectedStrokes;
-            if (movingInk != null && movingInk.Count() > 0)
-            {
-                var firstInk = movingInk.First();
-                var left = firstInk.StylusPoints.First().X;
-                var top = firstInk.StylusPoints.First().Y; 
-                Console.WriteLine(string.Format("Sending move from {0} Ink x[{1}] y[{2}] deltaX[{3}] deltaY[{4}]", me, left, top, moveMetrics.Delta.X, moveMetrics.Delta.Y));
-            }
-            /// debugging
-
-            Commands.SendMoveDelta.ExecuteAsync(moveDelta);
-
-            /*
             Action undo = () =>
                 {
                     ClearAdorners();
+
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
+
+                    moveDelta.xTranslate = -moveMetrics.Delta.X;
+                    moveDelta.yTranslate = -moveMetrics.Delta.Y;
+                    moveDelta.xScale = 1/moveMetrics.Scale.X;
+                    moveDelta.yScale = 1/moveMetrics.Scale.Y;
+
+                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+
                     ink.undo();
                     text.undo();
                     images.undo();
+
                     AddAdorners();
                     Work.Focus();
                 };
             Action redo = () =>
                 {
                     ClearAdorners();
+
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
+
+                    moveDelta.xTranslate = moveMetrics.Delta.X;
+                    moveDelta.yTranslate = moveMetrics.Delta.Y;
+                    moveDelta.xScale = moveMetrics.Scale.X;
+                    moveDelta.yScale = moveMetrics.Scale.Y;
+
+                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+
                     ink.redo();
                     text.redo();
                     images.redo();
@@ -848,7 +857,7 @@ namespace SandRibbon.Components
                     Work.Focus();
                 };
             redo(); 
-            UndoHistory.Queue(undo, redo, "Selection moved or resized");*/
+            UndoHistory.Queue(undo, redo, "Selection moved or resized");
         }
         private IEnumerable<UIElement> GetSelectedClonedImages()
         {
@@ -1321,6 +1330,11 @@ namespace SandRibbon.Components
                               };
             Action undo = () =>
                               {
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
+                                  moveDelta.newPrivacy = oldPrivacy;
+
+                                  Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+
                                   ink.undo();
                                   text.undo();
                                   images.undo();
@@ -1492,7 +1506,6 @@ namespace SandRibbon.Components
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
             // don't want to duplicate what has already been done locally
-            Console.WriteLine(string.Format("ReceiveMoveDelta: me[{0}] target[{1}] moveAuthor[{2}]", me, _target, moveDelta.HasSameAuthor(me)));
             moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
         }
 
@@ -2017,6 +2030,12 @@ namespace SandRibbon.Components
 
         private MeTLTextBox applyDefaultAttributes(MeTLTextBox box)
         {
+            // make sure these aren't doubled up
+            box.GotFocus -= textboxGotFocus;
+            box.LostFocus -= textboxLostFocus;
+            box.PreviewKeyDown -= box_PreviewTextInput;
+            box.PreviewMouseRightButtonUp -= box_PreviewMouseRightButtonUp;
+
             box.TextChanged -= SendNewText;
             box.AcceptsReturn = true;
             box.TextWrapping = TextWrapping.WrapWithOverflow;

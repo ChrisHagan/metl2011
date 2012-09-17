@@ -237,7 +237,6 @@ namespace MeTLLib
         }
         void IReceiveEvents.receivePreParser(PreParser pp)
         {
-            Console.WriteLine("PreParserAvailable");
             PreParserAvailable(this, new PreParserAvailableEventArgs { parser = pp });
         }
         public void receiveChat(TargettedTextBox ttb)
