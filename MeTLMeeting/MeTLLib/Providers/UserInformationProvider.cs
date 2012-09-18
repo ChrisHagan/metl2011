@@ -12,18 +12,12 @@ namespace MeTLLib.Providers
     {
         public string username { private set; get; }
         public string emailAddress { private set; get; }
-        public string displayName { set; get; }
-        public string colorHex { set; get; }
-        public bool isBanned { set; get; }
         public List<KeyValuePair<string, string>> allItems { private set; get; }
         public MeTLUserInformation(string incomingUsername, string incomingEmail, List<KeyValuePair<string,string>> incomingItems)
         {
             username = incomingUsername;
             emailAddress = incomingEmail;
             allItems = incomingItems;
-            isBanned = false;
-            colorHex = "";
-            displayName = "anonymous";
         }
         public static MeTLUserInformation fromXml(XElement input)
         {

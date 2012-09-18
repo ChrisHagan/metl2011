@@ -24,12 +24,51 @@ namespace SandRibbon.Components
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if ((value is bool) && (bool)value)
-                return Colors.Red;
-            else return Colors.Black;
+                return Brushes.Red;
+            else return Brushes.Black;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value;
+        }
+    }
+    public class MeTLUser : DependencyObject
+    {
+
+        public bool isBanned
+        {
+            get { return (bool)GetValue(isBannedProperty); }
+            set { SetValue(isBannedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for isBanned.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty isBannedProperty =
+            DependencyProperty.Register("isBanned", typeof(bool), typeof(MeTLUser), new UIPropertyMetadata(false));
+
+        public string displayName { get; set; }
+        public string username { private set; get; }
+
+
+
+        public string email
+        {
+            get { return (string)GetValue(emailProperty); }
+            set { SetValue(emailProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for email.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty emailProperty =
+            DependencyProperty.Register("email", typeof(string), typeof(MeTLUser), new UIPropertyMetadata(""));
+
+        public MeTLUser(string user)
+        {
+            username = user;
+            isBanned = false;
+            displayName = "anonymous";
+        }
+        public void update(MeTLUserInformation info){
+            if (info.username == username)
+            email = info.emailAddress;
         }
     }
     /// <summary>
@@ -37,14 +76,16 @@ namespace SandRibbon.Components
     /// </summary>
     public partial class Participants : UserControl
     {
-        public ObservableCollection<MeTLUserInformation> people { get; set;} 
-        private List<string> requestedPeople {get;set;}
+        public ObservableCollection<MeTLUser> people { get; set;}
+        private List<string> requestedPeople;
+        private List<string> pendingPeople;
         public static BannedToColorConverter bannedToColorConverter = new BannedToColorConverter();
         public Participants()
         {
             InitializeComponent();
-            people = new ObservableCollection<MeTLUserInformation>();
+            people = new ObservableCollection<MeTLUser>();
             requestedPeople = new List<string>();
+            pendingPeople = new List<string>();
             participantListBox.ItemsSource = people;
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<List<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(ReceiveStroke));
@@ -54,23 +95,7 @@ namespace SandRibbon.Components
             Commands.ReceiveMeTLUserInformations.RegisterCommand(new DelegateCommand<List<MeTLUserInformation>>(ReceiveMeTLUserInformations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
-            //Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-        }
-        private void ReceiveSubmission(TargettedSubmission sub)
-        {
-            if (sub.target == "bannedcontent")
-            {
-                foreach (var bannedUser in sub.blacklisted)
-                    Dispatcher.adoptAsync(delegate
-                    {
-                        var spec = people.First(p => p.username == bannedUser.UserName);
-                        if (spec != null)
-                        {
-                            spec.isBanned = true;
-                            spec.colorHex = bannedUser.Color;
-                        }
-                    });
-            }
+            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
         }
         private void JoinConversation(string newJid)
         {
@@ -79,12 +104,23 @@ namespace SandRibbon.Components
         private void ClearList()
         {
             people.Clear();
+            pendingPeople.Clear();
             requestedPeople.Clear();
+        }
+        private void ReceiveSubmission(TargettedSubmission sub)
+        {
+            if (sub.target == "bannedcontent")
+              foreach (var historicallyBannedUser in sub.blacklisted)
+                  constructPersonFromUsername(historicallyBannedUser.UserName);
         }
         private void ReceiveConversationDetails(ConversationDetails details)
         {
             if (details.Jid == SandRibbon.Providers.Globals.conversationDetails.Jid)
             {
+                foreach (var bannedUsername in details.blacklist)
+                {
+                    constructPersonFromUsername(bannedUsername);
+                }
                 Dispatcher.adoptAsync(delegate
                 {
                     foreach (var u in people)
@@ -95,27 +131,35 @@ namespace SandRibbon.Components
                 });
             }
         }
-        private void ReceiveMeTLUserInformations(List<MeTLUserInformation> infos)
+        private void unbanThisUser(object sender, RoutedEventArgs e)
         {
-            foreach (var info in infos){
-                if (requestedPeople.Any(rp => rp == info.username))
+            if (sender is Button)
+            {
+                var dc = ((Button)sender).DataContext;
+                if (dc is MeTLUser)
                 {
-                    Dispatcher.adoptAsync(delegate
-                    {
-                        if (SandRibbon.Providers.Globals.conversationDetails.UserIsBlackListed(info.username))
-                        {
-                            info.isBanned = true;
-                        }
-                        people.Add(info);
-                        requestedPeople.Remove(info.username);
-                    });
+                    var u = (MeTLUser)dc;
+                    Console.WriteLine("UNBANNING!: " + u.username);
                 }
             }
         }
-        private void manuallyRefreshBox(){
-            participantListBox.Items.Clear();
-            foreach (var p in people)
-                participantListBox.Items.Add(p);
+        private void ReceiveMeTLUserInformations(List<MeTLUserInformation> infos)
+        {
+            foreach (var info in infos){
+                if (pendingPeople.Any(rp => rp == info.username))
+                {
+                    Dispatcher.adoptAsync(delegate
+                    {
+                        var person = people.First(p => p.username == info.username);
+                        person.update(info);
+                        if (SandRibbon.Providers.Globals.conversationDetails.UserIsBlackListed(person.username))
+                        {
+                            person.isBanned = true;
+                        }
+                        pendingPeople.Remove(person.username);
+                    });
+                }
+            }
         }
         private void ReceiveStrokes(List<TargettedStroke> strokes)
         {
@@ -124,22 +168,19 @@ namespace SandRibbon.Components
         }
         private bool isContained(string username)
         {
-            return people.Any(p => p.username.ToLower().Trim() == username.ToLower().Trim());
+            return requestedPeople.Any(p => p.ToLower().Trim() == username.ToLower().Trim());
         }
         private void ReceiveStroke(TargettedStroke s)
         {
-            if (!isContained(s.author))
-                constructPersonFromUsername(s.author);
+            constructPersonFromUsername(s.author);
         }
         private void ReceiveTextbox(TargettedTextBox t)
         {
-            if (!isContained(t.author))
-                constructPersonFromUsername(t.author);
+            constructPersonFromUsername(t.author);
         }
         private void ReceiveImage(TargettedImage i)
         {
-            if (!isContained(i.author))
-                constructPersonFromUsername(i.author);
+            constructPersonFromUsername(i.author);
         }
         private void ReceivePreParser(PreParser p)
         {
@@ -149,11 +190,21 @@ namespace SandRibbon.Components
                 ReceiveTextbox(t);
             foreach (var i in p.images.Values.ToList())
                 ReceiveImage(i);
+            foreach (var s in p.submissions)
+                ReceiveSubmission(s);
         }
         private void constructPersonFromUsername(string username)
         {
-            requestedPeople.Add(username);
-            Commands.RequestMeTLUserInformations.Execute(new List<string> { username });
+            if (!isContained(username))
+            {
+                requestedPeople.Add(username);
+                pendingPeople.Add(username);
+                Dispatcher.adoptAsync(delegate
+                {
+                    people.Add(new MeTLUser(username));
+                });
+                Commands.RequestMeTLUserInformations.Execute(new List<string> { username });
+            }
         }
     }
 }
