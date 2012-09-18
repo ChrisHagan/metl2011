@@ -16,6 +16,7 @@
                         <Label Content="{Binding displayName}" Foreground="{Binding Path=isBanned, Converter={x:Static components:Participants.bannedToColorConverter}}"/>
                         <Label Content="{Binding email}"/>
                         <Button Click="unbanThisUser" Visibility="{Binding Path=isBanned, Converter={x:Static sr:Converters.BoolToVisibilityConverter}}">Unban</Button>
+                        <Button Click="banThisUser" Visibility="{Binding Path=isBanned, Converter={x:Static sr:Converters.ReverseBoolToVisibilityConverter}}">Ban</Button>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

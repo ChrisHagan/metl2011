@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MeTLLib;
 using MeTLLib.Providers;
 using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
@@ -32,6 +33,8 @@ namespace SandRibbon.Components
             return value;
         }
     }
+
+
     public class MeTLUser : DependencyObject
     {
 
@@ -139,10 +142,30 @@ namespace SandRibbon.Components
                 if (dc is MeTLUser)
                 {
                     var u = (MeTLUser)dc;
-                    Console.WriteLine("UNBANNING!: " + u.username);
+                    var details = SandRibbon.Providers.Globals.conversationDetails;
+                    details.blacklist.Remove(u.username);
+                    ClientFactory.Connection().UpdateConversationDetails(details);
                 }
             }
         }
+        private void banThisUser(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button)
+            {
+                var dc = ((Button)sender).DataContext;
+                if (dc is MeTLUser )
+                {
+                    var u = (MeTLUser)dc;
+                    if (u.username != SandRibbon.Providers.Globals.conversationDetails.Author)
+                    {
+                        var details = SandRibbon.Providers.Globals.conversationDetails;
+                        details.blacklist.Add(u.username);
+                        ClientFactory.Connection().UpdateConversationDetails(details);
+                    }
+                }
+            }
+        }
+
         private void ReceiveMeTLUserInformations(List<MeTLUserInformation> infos)
         {
             foreach (var info in infos){

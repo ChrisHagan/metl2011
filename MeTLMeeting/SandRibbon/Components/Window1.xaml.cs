@@ -714,6 +714,12 @@ namespace SandRibbon
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
+            
+            if( details.Author == Globals.me)
+                ParticipantsTabItem.Visibility = Visibility.Visible;
+            else
+                ParticipantsTabItem.Visibility = Visibility.Collapsed;
+
             Dispatcher.adopt(delegate
                                  {
                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))

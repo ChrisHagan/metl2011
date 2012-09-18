@@ -133,7 +133,7 @@
                                 </AdornerDecorator>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Participants">
+                        <TabItem x:Name="ParticipantsTabItem" Header="Participants">
                             <components:Participants/>
                         </TabItem>
                     </TabControl>
