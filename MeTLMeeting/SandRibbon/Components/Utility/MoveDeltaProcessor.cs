@@ -100,10 +100,25 @@
             InkCanvas.SetLeft(element, left);
             InkCanvas.SetTop(element, top);
 
-            CorrectWidthAndHeight(element);
+            // special case for images
+            if (element is Image && !element.IsLoaded)
+            {
+                // don't like this at all... but how else are we going to scale an image that's still being retrieved over the network but we have the move delta now?
+                element.Loaded += (sender, args) =>
+                {
+                    CorrectWidthAndHeight(element);
 
-            element.Width *= xScale;
-            element.Height *= yScale;
+                    element.Width *= xScale;
+                    element.Height *= yScale;
+                };
+            }
+            else
+            {
+                CorrectWidthAndHeight(element);
+
+                element.Width *= xScale;
+                element.Height *= yScale;
+            }
         }
 
         private void CorrectWidthAndHeight(FrameworkElement element)
