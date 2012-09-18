@@ -34,6 +34,29 @@ namespace SandRibbon.Components
         }
     }
 
+    public class BanButtonBannedToVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            //If the user is the conversion author, do not display the ban button
+            if( (string)values[1] == SandRibbon.Providers.Globals.conversationDetails.Author )
+            {
+                return Visibility.Collapsed;
+            }
+
+            //If isBanned, then do not show ban button, else show
+            if ( (bool)values[0] )
+                return Visibility.Collapsed;
+            
+            return Visibility.Visible;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
     public class MeTLUser : DependencyObject
     {
@@ -83,6 +106,8 @@ namespace SandRibbon.Components
         private List<string> requestedPeople;
         private List<string> pendingPeople;
         public static BannedToColorConverter bannedToColorConverter = new BannedToColorConverter();
+        public static BanButtonBannedToVisibilityConverter banButtonBannedToVisibilityConverter = new BanButtonBannedToVisibilityConverter();
+
         public Participants()
         {
             InitializeComponent();

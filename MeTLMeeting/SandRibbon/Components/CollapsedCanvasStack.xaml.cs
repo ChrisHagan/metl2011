@@ -1486,9 +1486,8 @@ namespace SandRibbon.Components
         private void doMyStrokeAddedExceptHistory(Stroke stroke, Privacy thisPrivacy)
         {
             var oldTag = stroke.tag();
-            stroke.tag(new StrokeTag(oldTag.author, thisPrivacy, oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
-            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
-            SendTargettedStroke(stroke, thisPrivacy);
+            stroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(thisPrivacy), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
+            SendTargettedStroke(stroke, canvasAlignedPrivacy(thisPrivacy));
         }
         public void SendTargettedStroke(Stroke stroke, Privacy thisPrivacy)
         {
