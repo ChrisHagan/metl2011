@@ -82,6 +82,15 @@ namespace MeTLLib.Providers
                 room);
         }
         
+        public void HandleMessage(int room, Element message, long timestamp) 
+        {
+            string currentSlide = room.ToString();
+            if (!cache.ContainsKey(currentSlide))
+            {
+                cache[currentSlide] = jabberWireFactory.create<PreParser>(room);
+            }
+            cache[currentSlide].ActOnUntypedMessage(message, timestamp);
+        }
         public void PopulateFromHistory(PreParser preParser)
         {
             var room = preParser.location.currentSlide.ToString();

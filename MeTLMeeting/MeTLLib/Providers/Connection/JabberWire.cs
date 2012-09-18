@@ -1062,6 +1062,11 @@ namespace MeTLLib.Providers.Connection
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
                 return;
             }
+            if (messageOrigin == MessageOrigin.Live)
+            {
+                cachedHistoryProvider.HandleMessage(location.currentSlide, message, timestamp);
+            }
+
             ActOnUntypedMessage(message, timestamp);
         }
         public void ActOnUntypedMessage(Element message, long timestamp)
