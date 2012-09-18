@@ -97,19 +97,6 @@ namespace MeTLLib.Providers
                 cache.Remove(room);
         }
 
-        private bool isPrivateRoom(string room)
-        {
-            var validChar = Enumerable.Range(0, 10).Aggregate("", (acc, item) => acc + item);
-            return room.Any(c => !validChar.Contains(c));
-        }
-        public void HandleMessage(string to, Element message, long timestamp) {
-            if(isPrivateRoom(to)) return;
-            var room = Int32.Parse(to);
-            if (!cache.ContainsKey(room.ToString()))
-                cache[room.ToString()] = jabberWireFactory.preParser(room);
-            cache[room.ToString()].ActOnUntypedMessage(message, timestamp);
-        }
-
         public List<TargettedStroke> GetInks(string room)
         {
             if (!cache.ContainsKey(room))

@@ -1062,19 +1062,6 @@ namespace MeTLLib.Providers.Connection
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
                 return;
             }
-            try
-            {
-                // some messages are toxic
-                var fromAuthor = message.GetAttribute("from");
-                if (!string.IsNullOrEmpty(fromAuthor) && fromAuthor.Contains('@'))
-                {
-                    cachedHistoryProvider.HandleMessage(fromAuthor.Split('@')[0], message, timestamp);
-                }
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError("Exception in JabberWire.ReceivedMessage: {0}", e.Message);
-            }
             ActOnUntypedMessage(message, timestamp);
         }
         public void ActOnUntypedMessage(Element message, long timestamp)
