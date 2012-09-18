@@ -100,25 +100,37 @@
             InkCanvas.SetLeft(element, left);
             InkCanvas.SetTop(element, top);
 
+            /* 
+            // buggy
+
             // special case for images
             if (element is Image && !element.IsLoaded)
             {
                 // don't like this at all... but how else are we going to scale an image that's still being retrieved over the network but we have the move delta now?
-                element.Loaded += (sender, args) =>
-                {
-                    CorrectWidthAndHeight(element);
-
-                    element.Width *= xScale;
-                    element.Height *= yScale;
-                };
+                ScaleImageAfterLoad(element, xScale, yScale);
+                return;
             }
-            else
+            */
+
+            CorrectWidthAndHeight(element);
+
+            element.Width *= xScale;
+            element.Height *= yScale;
+        }
+
+        private void ScaleImageAfterLoad(FrameworkElement image, double xScale, double yScale)
+        {
+            RoutedEventHandler scaler = null; 
+            scaler = (sender, args) =>
             {
-                CorrectWidthAndHeight(element);
+                image.Loaded -= scaler;
+                CorrectWidthAndHeight(image);
 
-                element.Width *= xScale;
-                element.Height *= yScale;
-            }
+                image.Width *= xScale;
+                image.Height *= yScale;
+            };
+
+            image.Loaded += scaler;
         }
 
         private void CorrectWidthAndHeight(FrameworkElement element)
@@ -126,8 +138,11 @@
             if (double.IsNaN(element.Width) || double.IsNaN(element.Height))
             {
                 // if we're trying to change the element's width and height before a measure pass the actual* aren't going to help
-                element.Height = element.IsMeasureValid == false ? element.Height : element.ActualHeight;
-                element.Width = element.IsMeasureValid == false ? element.Width : element.ActualWidth;
+                if (element.IsMeasureValid)
+                {
+                    element.Height = element.ActualHeight;
+                    element.Width = element.ActualWidth;
+                }
             }
         }
 

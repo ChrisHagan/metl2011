@@ -236,7 +236,7 @@ namespace SandRibbon.Components
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
 
-            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
+            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>((image) => ReceiveImages(new[] { image })));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
             Commands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
             Commands.ReceiveMoveDelta.RegisterCommandToDispatcher(new DelegateCommand<TargettedMoveDelta>((moveDelta) => { ReceiveMoveDelta(moveDelta); }));

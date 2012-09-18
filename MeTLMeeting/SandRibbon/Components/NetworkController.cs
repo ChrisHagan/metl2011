@@ -370,7 +370,7 @@ namespace SandRibbon.Components
         }
         private void imageAvailable(object sender, ImageAvailableEventArgs e)
         {
-            Commands.ReceiveImage.ExecuteAsync(new[] { e.image });
+            Commands.ReceiveImage.ExecuteAsync(e.image);
         }
         private void moveDeltaAvailable(object sender, MoveDeltaAvailableEventArgs e)
         {
