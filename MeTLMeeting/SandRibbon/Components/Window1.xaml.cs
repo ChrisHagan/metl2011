@@ -31,6 +31,8 @@ namespace SandRibbon
 {
     public partial class Window1
     {
+        private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
+        
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
@@ -152,6 +154,7 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
+            displayDispatcherTimer = createExtendedDesktopTimer();
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
@@ -178,14 +181,9 @@ namespace SandRibbon
             app.Run();
         }
 
-        private void AddWndProcHook()
-        {
-            var source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
-            source.AddHook(WndProc);
-        }
-
         private static int checkExtendedInProgress = 0;
-        private void CheckForExtendedDesktop()
+
+        private void dispatcherEventHandler(Object sender, EventArgs args)
         {
             if (1 == Interlocked.Increment(ref checkExtendedInProgress))
             {
@@ -195,8 +193,10 @@ namespace SandRibbon
                     /// 1. Extended mode activated, there are now 2 screens
                     /// 2. Extended mode deactivated, back to 1 screen
                     /// 3. Extended screen position has changed, so need to reinit the projector window
-
+                    
                     var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
+
+
                     if (Projector.Window == null && screenCount > 1)
                         Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
                     else if (Projector.Window != null && screenCount == 1)
@@ -214,14 +214,21 @@ namespace SandRibbon
             }
         }
 
-        private readonly int WM_SETTINGCHANGE = 0x1A;
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        private void CheckForExtendedDesktop()
         {
-            if (msg == WM_SETTINGCHANGE)
+            if (!displayDispatcherTimer.IsEnabled)
             {
-                CheckForExtendedDesktop();
+                //This dispather timer is left running in the background and is never stopped
+                displayDispatcherTimer.Start();
             }
-            return IntPtr.Zero;
+        }
+
+        private System.Windows.Threading.DispatcherTimer createExtendedDesktopTimer(){
+            displayDispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);
+            displayDispatcherTimer.Interval = TimeSpan.FromSeconds(1);
+            displayDispatcherTimer.Tick += new EventHandler( dispatcherEventHandler );
+            displayDispatcherTimer.Start();
+            return displayDispatcherTimer;
         }
 
         private void getDefaultSystemLanguage()
@@ -354,7 +361,6 @@ namespace SandRibbon
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            AddWndProcHook();
         }
 
         private void ShowConversationSearchBox(object _arg)
@@ -700,6 +706,12 @@ namespace SandRibbon
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
+            
+            if( details.Author == Globals.me)
+                ParticipantsTabItem.Visibility = Visibility.Visible;
+            else
+                ParticipantsTabItem.Visibility = Visibility.Collapsed;
+
             Dispatcher.adopt(delegate
                                  {
                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))

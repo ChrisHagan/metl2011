@@ -617,7 +617,13 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var stroke = new Stroke(stringToPoints(GetTag(pointsTag)), new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
+                    var points = stringToPoints(GetTag(pointsTag));
+                    if (points.Count == 0) points = new StylusPointCollection( 
+                        new StylusPoint[]{
+                           new StylusPoint(0,0,0f)
+                        }
+                    );
+                    var stroke = new Stroke(points, new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
 
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
                     stroke.DrawingAttributes.Width = Double.Parse(GetTag(thicknessTag));
@@ -688,11 +694,15 @@ namespace MeTLLib.DataTypes
                 }
                 for (int i = 0; i < pointInfo.Count(); )
                 {
+                    var X = Double.Parse(pointInfo[i++]);
+                    var Y = Double.Parse(pointInfo[i++]);
+                    var PressureFactor = (Double.Parse(pointInfo[i++]) / 255.0);
+                    if (!Double.IsNaN(X) && !Double.IsNaN(Y) && !Double.IsNaN(PressureFactor))
                     points.Add(new StylusPoint
                     {
-                        X = Double.Parse(pointInfo[i++]),
-                        Y = Double.Parse(pointInfo[i++]),
-                        PressureFactor = (float)((Double.Parse(pointInfo[i++]) / 255.0))
+                        X = X,
+                        Y = Y,
+                        PressureFactor = (float)PressureFactor
                     });
                 }
                 return points;

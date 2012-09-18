@@ -36,6 +36,7 @@ namespace MeTLLib
         {
             Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
             Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            Bind<IUserInformationProvider>().To<ProductionUserInformationProvider>().InSingletonScope();
             Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             Bind<ClientConnection>().ToSelf().InSingletonScope();
             Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();

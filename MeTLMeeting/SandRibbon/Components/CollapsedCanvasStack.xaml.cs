@@ -97,6 +97,7 @@ namespace SandRibbon.Components
             Bold = copyTextInfo.Bold;
             Italics = copyTextInfo.Italics;
             Strikethrough = copyTextInfo.Strikethrough;
+            Target = copyTextInfo.Target;                
             Color = copyTextInfo.Color;
         }
 
@@ -106,6 +107,7 @@ namespace SandRibbon.Components
         public bool Bold;
         public bool Italics;
         public bool Strikethrough;
+        public string Target;
         public Color Color;
     }
     public struct ImageDrop
@@ -181,7 +183,21 @@ namespace SandRibbon.Components
         }
 
         private bool affectedByPrivacy { get { return _target == "presentationSpace"; } }
-        public Privacy privacy { get { return affectedByPrivacy ? (Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true) : _defaultPrivacy; } }
+
+        private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
+        {
+            if (Globals.conversationDetails.Permissions.studentCanPublish == false && Globals.conversationDetails.Author != Globals.me )
+            {
+                incomingPrivacy = Privacy.Private;
+            }
+            return affectedByPrivacy ? incomingPrivacy : _defaultPrivacy;
+        }
+
+        private Privacy currentPrivacy
+        {
+            get { return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy,true)); }
+        }
+
         private Point pos = new Point(15, 15);
         private void wireInPublicHandlers()
         {
@@ -508,7 +524,7 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, selectedStrokes, selectedTextBoxes, selectedImages);
                     moveDelta.isDeleted = true;
 
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -549,7 +565,6 @@ namespace SandRibbon.Components
                               box = ((TextBox)item).toMeTLTextBox();
                           else
                               box = (MeTLTextBox)item;
-
                           box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy); 
                       }
 
@@ -820,7 +835,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
 
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
 
                     moveDelta.xTranslate = -moveMetrics.Delta.X;
                     moveDelta.yTranslate = -moveMetrics.Delta.Y;
@@ -840,7 +855,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
 
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
 
                     moveDelta.xTranslate = moveMetrics.Delta.X;
                     moveDelta.yTranslate = moveMetrics.Delta.Y;
@@ -1105,6 +1120,16 @@ namespace SandRibbon.Components
             if (canvas.Strokes.Where(s => s.tag().id == stroke.tag().id).Count() != 0)
                 return;
 
+            //change privacy of stroke if it is different from the canvasAlignedPrivacy
+            if(canvasAlignedPrivacy(stroke.privacy()) != stroke.privacy())
+            {
+                var oldTag = stroke.tag();
+                var newStroke = stroke.Clone();
+                newStroke.tag(new StrokeTag { author = oldTag.author, privacy = canvasAlignedPrivacy(stroke.privacy()), startingSum = oldTag.startingSum });
+                stroke = new PrivateAwareStroke(newStroke, _target);   
+            }                                 
+
+            //contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
             contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
         }
 
@@ -1278,7 +1303,6 @@ namespace SandRibbon.Components
                     {
                         contentBuffer.RemoveTextBox(textToUpdate.First(), (txt) => Work.Children.Remove(txt));
                     }
-
                     var tmpText = text.clone();
                     tmpText.tag(new TextTag(tmpText.tag(), oldPrivacy));
                     if (Work.TextChildren().Where(t => t.tag().id == tmpText.tag().id).Count() == 0)
@@ -1316,7 +1340,7 @@ namespace SandRibbon.Components
             var text = changeSelectedTextPrivacy(selectedTextBoxes, newPrivacy, oldPrivacy);
             Action redo = () =>
                               {
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, selectedStrokes, selectedTextBoxes, selectedImages);
                                   moveDelta.newPrivacy = newPrivacy;
 
                                   Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1329,7 +1353,7 @@ namespace SandRibbon.Components
                               };
             Action undo = () =>
                               {
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, privacy, selectedStrokes, selectedTextBoxes, selectedImages);
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, selectedStrokes, selectedTextBoxes, selectedImages);
                                   moveDelta.newPrivacy = oldPrivacy;
 
                                   Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1369,7 +1393,7 @@ namespace SandRibbon.Components
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
             var checksum = e.Stroke.sum().checksum;
-            e.Stroke.tag(new StrokeTag(Globals.me, privacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter));
+            e.Stroke.tag(new StrokeTag(Globals.me, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter));
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
@@ -1379,10 +1403,12 @@ namespace SandRibbon.Components
         }
         public void doMyStrokeAdded(Stroke stroke)
         {
-            doMyStrokeAdded(stroke, privacy);
+            doMyStrokeAdded(stroke, currentPrivacy);
         }
         public void doMyStrokeAdded(Stroke stroke, Privacy intendedPrivacy)
         {
+            intendedPrivacy = canvasAlignedPrivacy(intendedPrivacy);
+
             doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
             var thisStroke = stroke.Clone();
             UndoHistory.Queue(
@@ -1461,6 +1487,7 @@ namespace SandRibbon.Components
         {
             var oldTag = stroke.tag();
             stroke.tag(new StrokeTag(oldTag.author, thisPrivacy, oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
+            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, Privacy thisPrivacy)
@@ -1568,6 +1595,7 @@ namespace SandRibbon.Components
                     image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy); 
             });
         }
+
 
         #endregion
         #region imagedrop
@@ -1860,7 +1888,7 @@ namespace SandRibbon.Components
                 }
                 InkCanvas.SetLeft(image, imagePos.X);
                 InkCanvas.SetTop(image, imagePos.Y);
-                image.tag(new ImageTag(Globals.me, privacy, Globals.generateId(), false, 0));
+                image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, 0));
                 var myImage = image.clone();
                 var currentSlide = Globals.slide;
                 Action undo = () =>
@@ -1877,9 +1905,9 @@ namespace SandRibbon.Components
                 Action redo = () =>
                 {
                     if (!fileName.StartsWith("http"))
-                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, privacy, myImage, fileName, false));
+                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, myImage, fileName, false));
                     else
-                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, privacy, myImage.tag().id, myImage));
+                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, currentPrivacy, myImage.tag().id,myImage));
 
                     ClearAdorners();
                     InkCanvas.SetLeft(myImage, imagePos.X);
@@ -2123,7 +2151,7 @@ namespace SandRibbon.Components
                 Dispatcher.adoptAsync(delegate
                 {
                     var senderTextBox = sender as MeTLTextBox;
-                    sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
+                    sendTextWithoutHistory(senderTextBox, currentPrivacy, currentSlide);
                     TypingTimer = null;
                     GlobalTimers.ExecuteSync();
                 });
@@ -2317,8 +2345,11 @@ namespace SandRibbon.Components
 
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy, int slide)
         {
-            /*if (box.tag().privacy != privacy)
-                dirtyTextBoxWithoutHistory(box);*/
+            thisPrivacy = canvasAlignedPrivacy(thisPrivacy);
+
+            //Dirty the text box if its privacy does not match the canvas aligned privacy
+            if (box.tag().privacy != currentPrivacy)
+                dirtyTextBoxWithoutHistory(box);
             var oldTextTag = box.tag();
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id);
             box.tag(newTextTag);
@@ -2339,7 +2370,7 @@ namespace SandRibbon.Components
         {
             box.RemovePrivacyStyling(contentBuffer); 
             RemoveTextBoxWithMatchingId(box.tag().id);
-            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
+            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id));
         }
 
         public void sendImageWithoutHistory(Image image, Privacy thisPrivacy)
@@ -2390,7 +2421,7 @@ namespace SandRibbon.Components
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Work.Children.Contains(box)) return;
-            box.ApplyPrivacyStyling(contentBuffer, _target, privacy); 
+            box.ApplyPrivacyStyling(contentBuffer, _target, currentPrivacy); 
         }
 
         private static void requeryTextCommands()
@@ -2435,7 +2466,8 @@ namespace SandRibbon.Components
                     Size = myTextBox.FontSize,
                     Bold = myTextBox.FontWeight == FontWeights.Bold,
                     Italics = myTextBox.FontStyle == FontStyles.Italic,
-                    Color = ((SolidColorBrush)myTextBox.Foreground).Color
+                    Color = ((SolidColorBrush)myTextBox.Foreground).Color,
+                    Target = _target
                 };
                 
                 if (myTextBox.TextDecorations.Count > 0)
@@ -2561,7 +2593,7 @@ namespace SandRibbon.Components
             box.tag(new TextTag
                         {
                             author = Globals.me,
-                            privacy = privacy,
+                            privacy = currentPrivacy,
                             id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
                         });
             box.FontFamily = _currentFamily;
@@ -2632,7 +2664,7 @@ namespace SandRibbon.Components
                                     {
                                         Source = new BitmapImage(uri)
                                     };
-                    image.tag(new ImageTag(Globals.me, privacy, Globals.generateId(), false, -1)); // ZIndex was -1
+                    image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1)); // ZIndex was -1
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
                     images.Add(image);
@@ -2643,7 +2675,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<Image> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image.tag().id, image));
+                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image));
         }
         private void HandleImagePasteUndo(List<Image> selectedImages)
         {
@@ -2681,7 +2713,7 @@ namespace SandRibbon.Components
                 }
                 else
                 {
-                    textBox.tag(new TextTag(textBox.tag().author, privacy, textBox.tag().id));
+                    textBox.tag(new TextTag(textBox.tag().author, currentPrivacy, textBox.tag().id));
                     var box = setWidthOf(textBox);
                     AddTextBoxToCanvas(box);
                     sendTextWithoutHistory(box, box.tag().privacy);
@@ -2825,7 +2857,7 @@ namespace SandRibbon.Components
             {
                 img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy); 
                 Work.Children.Remove(img);
-                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, img.tag().privacy, img.tag().id));
+                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id));
             }
             return selectedImages.Select(i => (BitmapSource)i.Source);
         }
@@ -2839,7 +2871,7 @@ namespace SandRibbon.Components
                 if(!Work.TextChildren().Select(t => ((MeTLTextBox)t).tag().id).Contains(currentTextBox.tag().id))
                 {
                     var box = applyDefaultAttributes(currentTextBox);
-                    box.tag(new TextTag(box.tag().author, box.tag().privacy, Globals.generateId()));
+                    box.tag(new TextTag(box.tag().author, canvasAlignedPrivacy(box.tag().privacy), Globals.generateId()));
                     Work.Children.Add(box);
 
                 }
@@ -2901,7 +2933,7 @@ namespace SandRibbon.Components
         }
         private List<Stroke> HandleInkCutRedo(IEnumerable<Stroke> selectedStrokes)
         {
-            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.sum().checksum.ToString())).ToList();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
             return selectedStrokes.ToList();

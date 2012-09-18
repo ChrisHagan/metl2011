@@ -42,5 +42,38 @@ namespace SandRibbon.Components.Utility
                 return contentCollection;
             }
         }
+        private bool compareStringContents(string a, string b){
+            return a.ToLower().Trim() == b.ToLower().Trim();
+        }
+        private void possiblyReEnableMyContent<T>(T element){
+            if (element is UIElement){
+                var boxAuthor = AuthorFromTag(element as UIElement);
+                if (compareStringContents(boxAuthor, Globals.me))
+                {
+                    var boxPrivacy = PrivacyFromTag(element as UIElement);
+                    if (boxPrivacy == Privacy.Private)
+                    {
+                        if (!ContentVisibilityUtils.getMyPrivateVisible(CurrentContentVisibility))
+                        {
+                            Commands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPrivateVisible(CurrentContentVisibility, true));
+                            // turn on visibilty of myPrivate
+                        }
+                    }
+                    else if (boxPrivacy == Privacy.Public)
+                    {
+                        if (!ContentVisibilityUtils.getMyPublicVisible(CurrentContentVisibility))
+                        {
+                            Commands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPublicVisible(CurrentContentVisibility, true));
+                            // turn on visibility of myPublic
+                        }
+                    }
+                }
+            }
+        }
+        public void Add(UIElement element, Action<UIElement> modifyVisibleContainer)
+        {
+            possiblyReEnableMyContent(element);
+            base.Add(element, modifyVisibleContainer);
+        }
     }
 }

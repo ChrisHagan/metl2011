@@ -165,7 +165,6 @@ namespace SandRibbon.Components.Utility
     {
         private Stroke stroke;
         private Pen pen = new Pen();
-        private bool isPrivate;
         private bool shouldShowPrivacy;
         private StreamGeometry geometry;
         private string target;
@@ -174,6 +173,11 @@ namespace SandRibbon.Components.Utility
         {
             get { return stroke.tag(); }
         }
+        private bool isPrivate;
+/*        {
+            get { return tag.privacy.ToLower() == "private"; }
+        }
+ */
         private StrokeChecksum sum
         {
             get { return stroke.sum(); }

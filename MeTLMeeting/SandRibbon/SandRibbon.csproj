@@ -167,6 +167,9 @@
     <Compile Include="Components\BannedContent\BannedContent.xaml.cs">
       <DependentUpon>BannedContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Participants.xaml.cs">
+      <DependentUpon>Participants.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Utility\ContentFilter.cs" />
     <Compile Include="Components\Utility\FrameworkElementExtensions.cs" />
     <Compile Include="Components\Utility\PrinterMoveDeltaProcessor.cs" />
@@ -331,6 +334,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Participants.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\UserOptionsDialog.xaml">
       <SubType>Designer</SubType>

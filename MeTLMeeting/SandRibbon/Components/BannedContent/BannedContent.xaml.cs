@@ -19,6 +19,7 @@ using SandRibbon.Providers;
 using MeTLLib.Providers;
 using System.Text;
 using System.Windows.Media;
+using System.Linq;
 
 namespace SandRibbon.Components.BannedContent
 {
@@ -208,16 +209,34 @@ namespace SandRibbon.Components.BannedContent
             emailReport.IsEnabled = false;
             emailReport.Visibility = Visibility.Collapsed;
             var fileName = SaveImageTemporarilyToFile();
-            var report = BuildReport();
-            ThreadPool.QueueUserWorkItem((state) =>
+            var currentSelection = submissions.SelectedItem as PrivacyWrapper;
+            var theUsers = new List<string>();
+            var iter = currentSelection.PrivateUsers;
+            iter.ForEach(i => theUsers.Add(i.UserName));
+            DelegateCommand<List<MeTLUserInformation>> doWork = null;
+            doWork = new DelegateCommand<List<MeTLUserInformation>>(inputList =>
             {
-                SendEmail(fileName, report);
-                Dispatcher.adopt(() => 
-                { 
-                    emailReport.IsEnabled = true; 
-                    emailReport.Visibility = Visibility.Visible; 
-                });
+                if (doWork == null || !theUsers.All(u => inputList.Any(i => i.username == u)))
+                {
+                    return;
+                }
+                else
+                {
+                    Commands.ReceiveMeTLUserInformations.UnregisterCommand(doWork);
+                    var report = BuildReport(inputList);
+                    ThreadPool.QueueUserWorkItem((state) =>
+                    {
+                        SendEmail(fileName, report);
+                        Dispatcher.adopt(() =>
+                        {
+                            emailReport.IsEnabled = true;
+                            emailReport.Visibility = Visibility.Visible;
+                        });
+                    });
+                }
             });
+            Commands.ReceiveMeTLUserInformations.RegisterCommand(doWork);
+            Commands.RequestMeTLUserInformations.Execute(theUsers);
         }
 
         private void UpdateDisplayNames(PrivacyWrapper sub)
@@ -232,13 +251,26 @@ namespace SandRibbon.Components.BannedContent
                 blackList.Add(user);
             }
         }
-
-        private string BuildReport()
+        private class MergedUserInformation{
+            public string user;
+            public string email;
+            public string display;
+            public Color colorName;
+            public MergedUserInformation(string username, string emailAddress, string displayName, Color color){
+                user = username;
+                email = emailAddress;
+                display = displayName;
+                colorName = color;
+            }
+        }
+        private string BuildReport(List<MeTLUserInformation> users)
         {
             var currentSelection = submissions.SelectedItem as PrivacyWrapper;
 
-            var report = new StringBuilder();
+            var theUsers = users.Join(currentSelection.PrivateUsers, u => u.username, cs => cs.UserName, (user, privateUser) => new MergedUserInformation(privateUser.UserName,user.emailAddress,privateUser.DisplayName,privateUser.DisplayColor));
 
+            var report = new StringBuilder();
+            
             var time = new DateTime(currentSelection.time);
             report.AppendFormat("\nDetails: \nConversation Owner: {0}\nConversation Title: {1}\nSlide Number: {2}\nTime Snapshot Taken: {3} {4}\n\n", 
                 currentSelection.author,
@@ -248,9 +280,9 @@ namespace SandRibbon.Components.BannedContent
 
             report.Append("The following banned users and corresponding authcates were recorded:\n\n");
 
-            foreach (var user in currentSelection.PrivateUsers)
+            foreach (var user in theUsers)
             {
-                report.AppendFormat("{0} => Authcate {1} highlighted in {2}\n", user.DisplayName, user.UserName, ColorLookup.HumanReadableNameOf(user.DisplayColor));
+                report.AppendFormat("{0} => Authcate {1} highlighted in {2}\n", user.email, user.user, ColorLookup.HumanReadableNameOf(user.colorName));
             }
 
             return report.ToString();

@@ -71,6 +71,8 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static DefaultableCompositeCommand RequestMeTLUserInformations = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveMeTLUserInformations = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RequestTeacherStatus = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveTeacherStatus = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetStackVisibility = new DefaultableCompositeCommand();

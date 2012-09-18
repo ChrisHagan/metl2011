@@ -21,6 +21,52 @@ namespace SandRibbon.Components
         MyPublicVisible = 1 << 3,
         AllVisible = OwnerVisible | TheirsVisible | MyPrivateVisible | MyPublicVisible
     }
+    public static class ContentVisibilityUtils
+    {
+        private static ContentVisibilityEnum setFlag(ContentVisibilityEnum input, ContentVisibilityEnum flag, bool value){
+            return input |= value ? flag : ContentVisibilityEnum.NoneVisible;
+        }
+        private static bool getFlag(ContentVisibilityEnum input, ContentVisibilityEnum flag){
+            return (input & flag) == flag; 
+        }
+       public static bool getMyPublicVisible(ContentVisibilityEnum e){
+           return getFlag(e,ContentVisibilityEnum.MyPublicVisible);
+        }
+        public static ContentVisibilityEnum setMyPublicVisible(ContentVisibilityEnum e, bool b){
+            return setFlag(e,ContentVisibilityEnum.MyPublicVisible,b);
+        }
+        public static bool getMyPrivateVisible(ContentVisibilityEnum e){
+            return getFlag(e,ContentVisibilityEnum.MyPrivateVisible);
+        }
+        public static ContentVisibilityEnum setMyPrivateVisible(ContentVisibilityEnum e, bool b){
+            return setFlag(e,ContentVisibilityEnum.MyPrivateVisible,b);
+        }
+        public static bool getPeersVisible(ContentVisibilityEnum e){
+            return getFlag(e,ContentVisibilityEnum.TheirsVisible);
+        }
+        public static ContentVisibilityEnum setPeersVisible(ContentVisibilityEnum e, bool b){
+            return setFlag(e,ContentVisibilityEnum.TheirsVisible,b);
+        }
+        public static bool getOwnerVisible(ContentVisibilityEnum e){
+            return getFlag(e,ContentVisibilityEnum.OwnerVisible);
+        }
+        public static ContentVisibilityEnum setOwnerVisible(ContentVisibilityEnum e, bool b){
+            return setFlag(e,ContentVisibilityEnum.OwnerVisible,b);
+        }
+        public static bool getAllVisible(ContentVisibilityEnum e){
+            return e == ContentVisibilityEnum.AllVisible;
+        }
+        public static bool getNoneVisible(ContentVisibilityEnum e){
+            return e == ContentVisibilityEnum.NoneVisible;
+        }
+        public static ContentVisibilityEnum toContentVisibilityEnum(bool myPrivateVisible,bool myPublicVisible,bool peersVisible,bool ownerVisible){
+            var flags = ownerVisible ? ContentVisibilityEnum.OwnerVisible : ContentVisibilityEnum.NoneVisible;
+            flags |= peersVisible ? ContentVisibilityEnum.TheirsVisible : ContentVisibilityEnum.NoneVisible;
+            flags |= myPrivateVisible ? ContentVisibilityEnum.MyPrivateVisible : ContentVisibilityEnum.NoneVisible;
+            flags |= myPublicVisible ? ContentVisibilityEnum.MyPublicVisible : ContentVisibilityEnum.NoneVisible;
+            return flags;
+        }
+    }
 
 
     public static class ContentVisibilityExtensions

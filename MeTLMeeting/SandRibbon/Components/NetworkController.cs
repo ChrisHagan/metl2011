@@ -5,6 +5,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using Application = System.Windows.Application;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
@@ -93,6 +94,7 @@ namespace SandRibbon.Components
         #region commands
         private void registerCommands()
         {
+            Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
@@ -118,6 +120,11 @@ namespace SandRibbon.Components
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
+        }
+        private void RequestUserInformations(List<string> usernames)
+        {
+            var results = client.getMeTLUserInformations(usernames);
+            Commands.ReceiveMeTLUserInformations.Execute(results);
         }
         private void RequestTeacherStatus(TeacherStatus obj)
         {
