@@ -133,6 +133,9 @@
                                 </AdornerDecorator>
                             </Grid>
                         </TabItem>
+                        <TabItem Header="Participants">
+                            <components:Participants/>
+                        </TabItem>
                     </TabControl>
                 </Grid>
             </Grid>
