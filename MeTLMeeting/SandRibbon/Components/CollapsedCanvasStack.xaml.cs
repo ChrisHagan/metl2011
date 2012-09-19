@@ -182,15 +182,21 @@ namespace SandRibbon.Components
             }
         }
 
-        private bool affectedByPrivacy { get { return _target == "presentationSpace"; } }
-
         private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
         {
-            if (Globals.conversationDetails.Permissions.studentCanPublish == false && Globals.conversationDetails.Author != Globals.me )
+            if (_target == "presentationSpace")
             {
-                incomingPrivacy = Privacy.Private;
+                //if (Globals.conversationDetails.Permissions.studentCanPublish == false)
+                //{
+                //    if (Globals.conversationDetails.Author != Globals.me)
+                //    {
+                //        incomingPrivacy = Privacy.Private;
+                //    }
+                //}
+                return incomingPrivacy;
             }
-            return affectedByPrivacy ? incomingPrivacy : _defaultPrivacy;
+            else
+                return _defaultPrivacy;
         }
 
         private Privacy currentPrivacy
@@ -1125,7 +1131,8 @@ namespace SandRibbon.Components
             {
                 var oldTag = stroke.tag();
                 var newStroke = stroke.Clone();
-                newStroke.tag(new StrokeTag { author = oldTag.author, privacy = canvasAlignedPrivacy(stroke.privacy()), startingSum = oldTag.startingSum });
+                //newStroke.tag(new StrokeTag { author = oldTag.author, privacy = canvasAlignedPrivacy(stroke.privacy()), startingSum = oldTag.startingSum });
+                newStroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(stroke.privacy()), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
                 stroke = new PrivateAwareStroke(newStroke, _target);   
             }                                 
 
