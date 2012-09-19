@@ -10,6 +10,7 @@ using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using System.Windows.Controls;
 using System.Windows.Media;
+using SandRibbonObjects;
 
 namespace SandRibbon.Components
 {
@@ -118,10 +119,9 @@ namespace SandRibbon.Components
         {
           get
           {
-              // TODO: Adds a nice offset but code doesn't handle the stroke with the new checksum. Undo/redo doesn't clear appropriate buffers.
-              //const double pasteOffset = 20.0;
+              const double pasteOffset = 20.0;
               var strokes = new List<Stroke>();
-              //var offsetMatrix = new Matrix { OffsetX = pasteOffset, OffsetY = pasteOffset };
+              var offsetMatrix = new Matrix { OffsetX = pasteOffset, OffsetY = pasteOffset };
               foreach (var xmlStrokeString in _InkAsString)
               {
                   var XmlStroke = XElement.Parse(xmlStrokeString);
@@ -135,11 +135,12 @@ namespace SandRibbon.Components
                                            }
                                    };
                   // offset what we copied so we can paste the same ink stroke to the canvas
-                  //stroke.Transform(offsetMatrix, false);
+                  stroke.Transform(offsetMatrix, false);
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
-                  stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, (Privacy)Enum.Parse(typeof(Privacy), XmlStroke.Element(metl_ns + privacyTag).Value, true), XmlStroke.Element(metl_ns + identityTag).Value, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
+                  var identity = Globals.generateId(Guid.NewGuid().ToString());
+                  stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, (Privacy)Enum.Parse(typeof(Privacy), XmlStroke.Element(metl_ns + privacyTag).Value, true), identity, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
                   strokes.Add(stroke);
               }
               return strokes;

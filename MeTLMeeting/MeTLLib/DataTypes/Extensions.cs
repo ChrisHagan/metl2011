@@ -314,6 +314,10 @@ namespace MeTLLib.DataTypes
         {
             return StrokeExtensions.CHECKSUM;
         }
+        public static Guid id(this Stroke stroke)
+        {
+            return STROKE_IDENTITY_GUID;
+        }
         public static Guid startingId(this Stroke stroke)
         {
             return STARTINGCHECKSUM;

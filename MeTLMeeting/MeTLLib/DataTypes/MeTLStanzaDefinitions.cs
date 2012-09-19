@@ -663,6 +663,7 @@ namespace MeTLLib.DataTypes
                     {
                         startingSum = value.stroke.sum().checksum;
                     }
+                    this.SetTag(identityTag, value.stroke.tag().id);
                     this.SetTag(sumTag, value.stroke.sum().checksum.ToString());
                     this.SetTag(startingSumTag, startingSum);
                     this.SetTag(pointsTag, strokeToPoints(value.stroke));
