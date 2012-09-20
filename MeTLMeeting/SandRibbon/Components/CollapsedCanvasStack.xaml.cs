@@ -557,10 +557,10 @@ namespace SandRibbon.Components
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync(delegate
                   {
-                      var newStrokes = new StrokeCollection(Work.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
+                      /*var newStrokes = new StrokeCollection(Work.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
 
                       contentBuffer.ClearStrokes(() => Work.Strokes.Clear());
-                      contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
+                      contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));*/
 
                       foreach (Image image in Work.ImageChildren())
                           image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy); 
