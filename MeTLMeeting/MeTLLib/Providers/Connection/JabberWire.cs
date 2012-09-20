@@ -611,11 +611,14 @@ namespace MeTLLib.Providers.Connection
         {
             conn.Send(message);
         }
+        private bool compareString(string a, string b){
+            return a.ToLower().Trim() == b.ToLower().Trim();
+        }
         public void stanza(string target, Element stanza)
         {
             var message = new Message();
             string modifiedTarget =
-                stanza.GetTag(MeTLStanzas.privacyTag) == "private" ?
+                compareString(stanza.GetTag(MeTLStanzas.privacyTag),"private") ?
                 string.Format("{0}{1}", target, stanza.GetTag("author")) : target;
             message.To = new Jid(string.Format("{0}@{1}", modifiedTarget, metlServerAddress.muc));
             message.From = jid;
