@@ -119,15 +119,15 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         public void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            if (!isPrivate(parser))
-            {
+            //if (!isPrivate(parser))
+            //{
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)
                     stack.DoText(text);
                 /*foreach (var moveDelta in parser.moveDeltas)
                     stack.ReceiveMoveDelta(moveDelta, processHistory: true);*/
-            }
+           //}
         }
 
         private bool isPrivate(MeTLLib.Providers.Connection.PreParser parser)
