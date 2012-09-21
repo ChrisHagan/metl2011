@@ -117,7 +117,20 @@ namespace SandRibbon.Components
             SearchResults.ItemsSource = searchResultsObserver;
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg=> me = Globals.me));
             refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
+            this.PreviewKeyUp += OnPreviewKeyUp;
             App.mark("Initialized conversation search");
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            Dispatcher.adopt(() =>
+            {
+                if (keyEventArgs.Key == Key.Enter)
+                {
+                    RefreshSortedConversationsList();
+                    FillSearchResultsFromInput();
+                }
+            });
         }
 
         DelegateCommand<ConversationDetails> conversationDetailsCommand = null;
@@ -399,7 +412,8 @@ namespace SandRibbon.Components
             RefreshSortedConversationsList();
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
+        {            
+            
             RestartRefreshTimer();
         }
         private void Button_Click(object sender, RoutedEventArgs e)

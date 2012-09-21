@@ -143,7 +143,7 @@ namespace SandRibbon.Components.Utility
         public void AddTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
             Debug.Assert((element as TextBox) != null);
-            textFilter.Add(element, modifyVisibleContainer);
+            textFilter.Push(element, modifyVisibleContainer);
         }
 
         public void RemoveTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)

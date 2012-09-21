@@ -70,7 +70,7 @@ namespace SandRibbon.Components.Utility
                 }
             }
         }
-        public void Add(UIElement element, Action<UIElement> modifyVisibleContainer)
+        public void Push(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
             possiblyReEnableMyContent(element);
             base.Add(element, modifyVisibleContainer);

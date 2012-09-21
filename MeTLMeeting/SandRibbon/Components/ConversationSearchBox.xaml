@@ -177,8 +177,7 @@
                            Text="{Binding ElementName=SearchResults, Path=Items.Count, Converter={StaticResource SearchResultsCountToStringConverter}}"/>
                 <TextBox x:Name="SearchInput" AcceptsReturn="False" AcceptsTab="True"
                      MinWidth="600"
-                     TextChanged="SearchInput_TextChanged"
-                     TextWrapping="Wrap" 
+                     TextWrapping="Wrap"
                      Width="Auto" HorizontalAlignment="Stretch" />
                 <Button Content="Search all conversations" x:Name="searchConversations" Click="searchConversations_Click"/>
                 <components:ItemsView
