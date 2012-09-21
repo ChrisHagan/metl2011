@@ -2597,8 +2597,22 @@ namespace SandRibbon.Components
                             privacy = currentPrivacy,
                             id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
                         });
+
+            //setting the currentfamily, currentsize, currentcolor, style whenever there is a new box created
+            _currentColor = Globals.currentTextInfo.Color;
+            _currentSize = Globals.currentTextInfo.Size;
+            _currentFamily = Globals.currentTextInfo.Family;
+
+            box.FontStyle = Globals.currentTextInfo.Italics ? FontStyles.Italic : FontStyles.Normal;
+            box.FontWeight = Globals.currentTextInfo.Bold ? FontWeights.Bold : FontWeights.Normal;
+            box.TextDecorations = new TextDecorationCollection();
+            if (Globals.currentTextInfo.Underline)
+                box.TextDecorations = TextDecorations.Underline;
+            else if (Globals.currentTextInfo.Strikethrough)
+                box.TextDecorations = TextDecorations.Strikethrough;
+            
             box.FontFamily = _currentFamily;
-            box.FontSize = _currentSize;
+            box.FontSize = _currentSize;            
             box.Foreground = new SolidColorBrush(_currentColor);
             box.UndoLimit = 0;
             box.LostFocus += (_sender, _args) =>
