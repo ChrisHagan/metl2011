@@ -76,13 +76,15 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeTag
     {
-        public StrokeTag(string Author, Privacy Privacy, string strokeId, double StartingSum, bool IsHighlighter)
+        public StrokeTag(string Author, Privacy Privacy, string strokeId, double StartingSum, bool IsHighlighter, long Timestamp)
         {
             id = strokeId;
             author = Author;
             privacy = Privacy; 
             startingSum = StartingSum;
             isHighlighter = IsHighlighter;
+            timestamp = Timestamp;
+
         }
         public StrokeTag(StrokeTag copyTag, Privacy newPrivacy)
         {
@@ -90,8 +92,18 @@ namespace MeTLLib.DataTypes
             author = copyTag.author;
             startingSum = copyTag.startingSum;
             isHighlighter = copyTag.isHighlighter;
-
+            timestamp = copyTag.timestamp;
             privacy = newPrivacy;
+        }
+
+        public StrokeTag(StrokeTag copyTag, long timestamp)
+        {
+            id = copyTag.id;
+            author = copyTag.author;
+            startingSum = copyTag.startingSum;
+            isHighlighter = copyTag.isHighlighter;
+            this.timestamp = timestamp;
+            privacy = copyTag.privacy;
         }
 
         public bool ValueEquals(object obj)
@@ -107,6 +119,7 @@ namespace MeTLLib.DataTypes
         public Privacy privacy;
         public double startingSum;
         public bool isHighlighter;
+        public long timestamp;
     }
     public struct StrokeChecksum
     {
@@ -265,6 +278,7 @@ namespace MeTLLib.DataTypes
         private static Guid STARTINGCHECKSUM = Guid.NewGuid();
         private static Guid STARTING_COLOR = Guid.NewGuid();
         private static Guid IS_HIGHLIGHTER = Guid.NewGuid();
+        private static Guid STROKE_TIMESTAMP_GUID = Guid.NewGuid();
         private static Guid STROKE_IDENTITY_GUID = Guid.NewGuid();
         private static readonly string NONPERSISTENT_STROKE = "nonPersistent";
         public static Privacy privacy(this Stroke stroke){
@@ -273,13 +287,15 @@ namespace MeTLLib.DataTypes
         public static StrokeTag tag(this Stroke stroke)
         {
             var stroketag = new StrokeTag();
-            stroketag = new StrokeTag
-                       {
-                           author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
-                           privacy = (Privacy)Enum.Parse(typeof(Privacy), (string)stroke.GetPropertyData(STROKE_PRIVACY_GUID), true),
-                           id = (string) stroke.GetPropertyData(STROKE_IDENTITY_GUID),
-                           isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER)
-                       };
+            var author = (string) stroke.GetPropertyData(STROKE_TAG_GUID);
+            var privacy = (Privacy)Enum.Parse(typeof(Privacy), (string)stroke.GetPropertyData(STROKE_PRIVACY_GUID), true);
+            var id = (string) stroke.GetPropertyData(STROKE_IDENTITY_GUID);
+            var startingSum = (Double) stroke.GetPropertyData(STARTINGCHECKSUM);
+            var isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER);
+            var timestamp = (long)stroke.GetPropertyData(STROKE_TIMESTAMP_GUID);
+            stroketag = new StrokeTag(author,privacy,id,startingSum,isHighlighter,timestamp);
+       
+           
             return stroketag;
         }
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
@@ -290,7 +306,9 @@ namespace MeTLLib.DataTypes
                 privacy = tag.privacy;
             stroke.AddPropertyData(STROKE_IDENTITY_GUID, tag.id);
             stroke.AddPropertyData(STROKE_PRIVACY_GUID, privacy.ToString());
+            stroke.AddPropertyData(STARTINGCHECKSUM, tag.startingSum);
             stroke.AddPropertyData(IS_HIGHLIGHTER, tag.isHighlighter);
+            stroke.AddPropertyData(STROKE_TIMESTAMP_GUID, tag.timestamp);
             return tag;
         }
         private static Guid CHECKSUM = Guid.NewGuid();
@@ -302,7 +320,8 @@ namespace MeTLLib.DataTypes
                 oldTag.privacy,
                 oldTag.id,
                 oldTag.startingSum,
-                oldTag.isHighlighter
+                oldTag.isHighlighter,
+                oldTag.timestamp
                 );
             stroke.tag(newTag);
         }

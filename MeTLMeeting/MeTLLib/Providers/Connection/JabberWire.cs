@@ -790,11 +790,11 @@ namespace MeTLLib.Providers.Connection
 
                         if (privateInksToPublicise.Count() > 0 || privateTextsToPublicise.Count() > 0 || privateImagesToPublicise.Count() > 0)
                         {
-                            privateDirtier = TargettedMoveDelta.CreateDirtier(tmd, notP, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
+                            privateDirtier = TargettedMoveDelta.CreateDirtier(tmd, notP, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);                             
                         }
                         if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
                         {
-                            publicAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, publicInks, publicTexts, publicImages);
+                            publicAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, publicInks, publicTexts, publicImages);                            
                         }
 
                         MoveDeltaDispatcher(publicAdjuster, privateDirtier, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
@@ -817,7 +817,7 @@ namespace MeTLLib.Providers.Connection
                         }
                         if (privateInks.Count() > 0 || privateTexts.Count() > 0 || privateImages.Count() > 0)
                         {
-                            privateAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, privateInks, privateTexts, privateImages);
+                            privateAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, privateInks, privateTexts, privateImages);                            
                         }
 
                         MoveDeltaDispatcher(privateAdjuster, publicDirtier, publicInksToPrivatise, publicTextsToPrivatise, publicImagesToPrivatise);
@@ -830,10 +830,12 @@ namespace MeTLLib.Providers.Connection
                         if (privateInks.Count() > 0 || privateTexts.Count() > 0 || privateImages.Count() > 0)
                         {
                             privateDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.NotSet, privateInks, privateTexts, privateImages);
+                            privateDelta.privacy = Privacy.Private;
                         }
                         if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
                         {
                             publicDelta = TargettedMoveDelta.CreateAdjuster(tmd, Privacy.NotSet, publicInks, publicTexts, publicImages);
+                            publicDelta.privacy = Privacy.Public;
                         }
                         MoveDeltaDispatcher(privateDelta, publicDelta);
                     }
@@ -1046,6 +1048,8 @@ namespace MeTLLib.Providers.Connection
             Commands.ReceiveSleep.Execute(null);
         }
 
+        List<Node> unSortedList = new List<Node>();
+
         public virtual void ReceivedMessage(Node node, MessageOrigin messageOrigin)
         {
             var timestamp = 0L;
@@ -1059,6 +1063,37 @@ namespace MeTLLib.Providers.Connection
             if (message.HasAttribute("timestamp"))
             {
                 timestamp = message.GetAttributeLong("timestamp");
+            }
+            else
+            {
+                NodeList subMessage = message.ChildNodes;
+                if(subMessage != null)
+                {
+                    foreach (Node subNode in subMessage)
+                    {
+                        var tempNode = subNode as Element;
+                        if (tempNode != null)
+                        {
+                            if (tempNode.TagName == "metlMetaData")
+                            {
+                                subMessage = (tempNode as Element).ChildNodes;
+                                foreach (Node subsubNode in subMessage)
+                                {
+                                    if ((subsubNode as Element) != null)
+                                    {
+                                        if ((subsubNode as Element).TagName == "timestamp")
+                                        {
+                                            timestamp = long.Parse(subsubNode.Value);
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }  
+                        }                                                         
+                    } 
+                }                
+                //timestamp = message.GetAttributeLong("timestamp");
             }
             if (message.SelectSingleElement("body") != null)
             {
@@ -1077,7 +1112,12 @@ namespace MeTLLib.Providers.Connection
             foreach(var status in message.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
                 actOnStatusRecieved(status);
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
-                actOnStrokeReceived(ink.Stroke);
+            {
+                var targettedStroke = ink.Stroke;
+                var stroke = targettedStroke.stroke;
+                stroke.tag(new StrokeTag(stroke.tag(), timestamp));
+                actOnStrokeReceived(targettedStroke);
+            }
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
                 actOnScreenshotSubmission(submission.injectDependencies(metlServerAddress).parameters);
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))

@@ -36,7 +36,7 @@ namespace SandRibbon.Components.Utility
         {
             if (CollectionContains(element))
                 return;
-
+            
             contentCollection.Add(element);
         }
 

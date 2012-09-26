@@ -29,6 +29,7 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using MeTLLib.Providers;
 
 namespace SandRibbon.Components
 {
@@ -716,6 +717,12 @@ namespace SandRibbon.Components
                 };           
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
         }
+
+        private void SortContentBufferOnTimestamp()
+        {
+            
+        }
+
         private UndoHistory.HistoricalAction InkSelectionMovedOrResized(IEnumerable<Stroke> selectedStrokes, List<Stroke> undoStrokes)
         {
             Action undo = () =>
@@ -752,7 +759,10 @@ namespace SandRibbon.Components
                         var strokesToUpdate = Work.Strokes.Where(s => s.tag().id == stroke.tag().id);
                         if (strokesToUpdate.Count() > 0)
                         {
-                            contentBuffer.RemoveStroke(strokesToUpdate.First(), (str) => Work.Strokes.Remove(str));
+                            contentBuffer.RemoveStroke(strokesToUpdate.First(), (str) =>
+                            {
+                                Work.Strokes.Remove(str);
+                            });
                         }
                     }
 
@@ -761,7 +771,9 @@ namespace SandRibbon.Components
                         var tmpStroke = stroke.Clone();
                         if (Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Count() == 0)
                         {
-                            contentBuffer.AddStroke(tmpStroke, (str) => Work.Strokes.Add(str));
+                            contentBuffer.AddStroke(tmpStroke, (str) => {
+                                Work.Strokes.Add(str);
+                            });
                         }
                     }
                     // do local only
@@ -873,6 +885,8 @@ namespace SandRibbon.Components
                 };
             redo(); 
             UndoHistory.Queue(undo, redo, "Selection moved or resized");
+            
+            //Work.Select(new StrokeCollection(), null);
         }
         private IEnumerable<UIElement> GetSelectedClonedImages()
         {
@@ -1115,6 +1129,7 @@ namespace SandRibbon.Components
                     AddStrokeToCanvas(Work, new PrivateAwareStroke(targettedStroke.stroke, strokeTarget));
             }
         }
+
         public void AddStrokeToCanvas(InkCanvas canvas, PrivateAwareStroke stroke)
         {
             // stroke already exists on the canvas, don't do anything
@@ -1127,7 +1142,7 @@ namespace SandRibbon.Components
                 var oldTag = stroke.tag();
                 var newStroke = stroke.Clone();
                 //newStroke.tag(new StrokeTag { author = oldTag.author, privacy = canvasAlignedPrivacy(stroke.privacy()), startingSum = oldTag.startingSum });
-                newStroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(stroke.privacy()), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
+                newStroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(stroke.privacy()), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter,oldTag.timestamp));
                 stroke = new PrivateAwareStroke(newStroke, _target);   
             }                                 
 
@@ -1190,7 +1205,7 @@ namespace SandRibbon.Components
                     {
                         newStrokes.Add(newStroke);
                         contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
-                        doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
+                        //doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                 }
                 Dispatcher.adopt(() => Work.Select(Work.EditingMode == InkCanvasEditingMode.Select ? newStrokes : new StrokeCollection()));
@@ -1214,7 +1229,7 @@ namespace SandRibbon.Components
                     if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() == 0)
                     {
                         contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
-                        doMyStrokeAddedExceptHistory(newStroke, oldPrivacy);
+                        //doMyStrokeAddedExceptHistory(newStroke, oldPrivacy);
                     }
                 }
             };   
@@ -1340,29 +1355,32 @@ namespace SandRibbon.Components
             var ink = changeSelectedInkPrivacy(selectedStrokes, newPrivacy, oldPrivacy);
             var images = changeSelectedImagePrivacy(selectedImages, newPrivacy, oldPrivacy);
             var text = changeSelectedTextPrivacy(selectedTextBoxes, newPrivacy, oldPrivacy);
+
             Action redo = () =>
                               {
                                   var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, selectedStrokes, selectedTextBoxes, selectedImages);
-                                  moveDelta.newPrivacy = newPrivacy;
+                                  moveDelta.newPrivacy = newPrivacy;                                  
 
                                   Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                                   ink.redo();
                                   text.redo();
                                   images.redo();
+
                                   ClearAdorners();
                                   Work.Focus();
                               };
             Action undo = () =>
                               {
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, selectedStrokes, selectedTextBoxes, selectedImages);
-                                  moveDelta.newPrivacy = oldPrivacy;
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, selectedStrokes, selectedTextBoxes, selectedImages);                                  
+                                  moveDelta.newPrivacy = oldPrivacy;                                  
 
                                   Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                                   ink.undo();
                                   text.undo();
                                   images.undo();
+
                                   ClearAdorners();
                                   Work.Focus();
                               };
@@ -1395,7 +1413,8 @@ namespace SandRibbon.Components
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
             var checksum = e.Stroke.sum().checksum;
-            e.Stroke.tag(new StrokeTag(Globals.me, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter));
+            var timestamp = 0L;            
+            e.Stroke.tag(new StrokeTag(Globals.me, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter,timestamp));
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
@@ -1488,7 +1507,7 @@ namespace SandRibbon.Components
         private void doMyStrokeAddedExceptHistory(Stroke stroke, Privacy thisPrivacy)
         {
             var oldTag = stroke.tag();
-            stroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(thisPrivacy), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter));
+            stroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(thisPrivacy), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));
             SendTargettedStroke(stroke, canvasAlignedPrivacy(thisPrivacy));
         }
         public void SendTargettedStroke(Stroke stroke, Privacy thisPrivacy)
@@ -1530,8 +1549,9 @@ namespace SandRibbon.Components
             }
 
         }
+
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
-        {
+        {            
             // don't want to duplicate what has already been done locally
             moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
         }

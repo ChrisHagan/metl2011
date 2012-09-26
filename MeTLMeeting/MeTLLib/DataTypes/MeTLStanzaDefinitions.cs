@@ -544,6 +544,7 @@ namespace MeTLLib.DataTypes
         public static readonly string targetTag = "target";
         public static readonly string privacyTag = "privacy";
         public static readonly string authorTag = "author";
+        public static readonly string timestampTag = "timestamp";
         public static readonly string slideTag = "slide";
         public static readonly string answererTag = "answerer";
         public static readonly string identityTag = "identity";
@@ -616,7 +617,7 @@ namespace MeTLLib.DataTypes
             public TargettedStroke Stroke
             {
                 get
-                {
+                {                    
                     var points = stringToPoints(GetTag(pointsTag));
                     if (points.Count == 0) points = new StylusPointCollection( 
                         new StylusPoint[]{
@@ -644,11 +645,11 @@ namespace MeTLLib.DataTypes
                     stroke.AddPropertyData(stroke.startingId(), startingSum);
 
                     string identity = HasTag(identityTag) ? GetTag(identityTag) : GetTag(startingSumTag);
-                    Privacy privacy = (Privacy)GetTagEnum(privacyTag, typeof(Privacy));
+                    Privacy privacy = (Privacy)GetTagEnum(privacyTag, typeof(Privacy));                   
                     stroke.tag(new StrokeTag(
                         GetTag(authorTag), privacy, identity,
                         GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)),
-                        Boolean.Parse(GetTag(highlighterTag))));
+                        Boolean.Parse(GetTag(highlighterTag)), long.Parse(GetTag(timestampTag))));
                     var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), privacy, identity, stroke, startingSum);
                     return targettedStroke;
                 }
@@ -671,6 +672,7 @@ namespace MeTLLib.DataTypes
                     this.SetTag(thicknessTag, value.stroke.DrawingAttributes.Width.ToString());
                     this.SetTag(highlighterTag, value.stroke.DrawingAttributes.IsHighlighter.ToString());
                     this.SetTag(authorTag, value.author);
+                    this.SetTag(timestampTag, value.timestamp);
                     this.SetTag(targetTag, value.target);
                     this.SetTag(privacyTag, value.privacy.ToString());
                     this.SetTag(slideTag, value.slide);

@@ -223,7 +223,7 @@ namespace SandRibbon.Components.Utility
                     context.BeginFigure(wideStroke.First(),false , false);
                     for (var i = 0; i < stroke.StylusPoints.Count; i++)
                         context.LineTo(stroke.StylusPoints.ElementAt(i).ToPoint(), true, true);
-                    context.LineTo(wideStroke.Reverse().First(), false, false);
+                    context.LineTo(wideStroke.Reverse().First(), false, false);                    
                 }
                     drawingContext.DrawGeometry(null, pen, geometry);
             }

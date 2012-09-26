@@ -170,6 +170,11 @@ namespace MeTLLib.Providers
                 {
                     try
                     {
+                        sortedMessages = SortOnTimestamp(unSortedMessages);
+                        foreach(Node message in sortedMessages)
+                        {
+                            accumulatingParser.ReceivedMessage(message, MessageOrigin.History);
+                        }
                         retrievalComplete((T)accumulatingParser);
                     }
                     catch (Exception ex) {
@@ -179,15 +184,77 @@ namespace MeTLLib.Providers
             worker.RunWorkerAsync(null);
         }
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
+        List<Node> unSortedMessages = new List<Node>();
+        List<Node> sortedMessages = new List<Node>();
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time
             var parser = new StreamParser();
+
             parser.OnStreamElement += ((_sender, node) =>
                                            {
-                                               wire.ReceivedMessage(node, MessageOrigin.History);
+                                               unSortedMessages.Add(node);
+                                               //wire.ReceivedMessage(node, MessageOrigin.History);
                                            });
+
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);
             parser.Push(closeTag, 0, closeTag.Length);
+        }
+
+        private List<Node> SortOnTimestamp(List<Node> nodeList)
+        {
+            List<Node> newSortedList = new List<Node>();
+            List<long> timestamps = new List<long>();
+
+            foreach(Node message in nodeList)
+            {
+                NodeList subMessage = message.ChildNodes;
+                if (subMessage != null)
+                {
+                    foreach (Node subNode in subMessage)
+                    {
+                        var tempNode = subNode as Element;
+                        if (tempNode != null)
+                        {
+                            if (tempNode.TagName == "metlMetaData")
+                            {
+                                subMessage = (tempNode as Element).ChildNodes;
+                                foreach (Node subsubNode in subMessage)
+                                {
+                                    if ((subsubNode as Element) != null)
+                                    {
+                                        if ((subsubNode as Element).TagName == "timestamp")
+                                        {
+                                            timestamps.Add(long.Parse(subsubNode.Value));
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }  
+            }
+
+            List<long> originalOrderTimestamps = timestamps;    
+            timestamps.Sort();
+
+            int counter = 0;
+            foreach(long timestamp in timestamps)
+            {
+                while(counter < originalOrderTimestamps.Count)
+                {
+                    if (timestamp == originalOrderTimestamps.ElementAt(counter))
+                    {
+                        newSortedList.Add(nodeList.ElementAt(counter));
+                        break;
+                    }
+                    counter++;
+                }
+                counter = 0;
+            }
+
+            return newSortedList;
         }
     }
 }

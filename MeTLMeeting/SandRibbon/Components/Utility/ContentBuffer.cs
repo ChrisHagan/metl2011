@@ -89,7 +89,7 @@ namespace SandRibbon.Components.Utility
         {
             imageDeltaCollection.Clear();
             modifyUndoContainer();
-        }
+        }        
 
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
