@@ -136,6 +136,8 @@ namespace MeTLLib.Providers
         {
             var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));
             if (retrievalBeginning != null) retrievalBeginning();
+            unSortedMessages.Clear();
+            sortedMessages.Clear();
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {

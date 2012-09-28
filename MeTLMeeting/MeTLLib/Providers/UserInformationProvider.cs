@@ -35,7 +35,11 @@ namespace MeTLLib.Providers
             var emailAddress = "not found";
             try
             {
-                emailAddress = trimInput(input.Descendants("{metl.monash}information").Where(d => d.Attribute("type").Value == "mail").First().Value);
+                var email = input.Descendants("{metl.monash}information").Where(d => d.Attribute("type").Value == "mail").FirstOrDefault();
+                if (email != null)
+                {
+                    emailAddress = trimInput(email.Value);
+                }
             }
             catch { }
 

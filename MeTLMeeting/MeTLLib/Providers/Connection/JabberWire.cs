@@ -612,6 +612,8 @@ namespace MeTLLib.Providers.Connection
             conn.Send(message);
         }
         private bool compareString(string a, string b){
+            if (String.IsNullOrEmpty(a) || String.IsNullOrEmpty(b))
+                return false;
             return a.ToLower().Trim() == b.ToLower().Trim();
         }
         public void stanza(string target, Element stanza)
