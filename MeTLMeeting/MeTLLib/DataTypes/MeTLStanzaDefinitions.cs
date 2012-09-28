@@ -645,11 +645,13 @@ namespace MeTLLib.DataTypes
                     stroke.AddPropertyData(stroke.startingId(), startingSum);
 
                     string identity = HasTag(identityTag) ? GetTag(identityTag) : GetTag(startingSumTag);
+                    long timestamp = HasTag(timestampTag) ? long.Parse(GetTag(timestampTag)) : 0L;
+
                     Privacy privacy = (Privacy)GetTagEnum(privacyTag, typeof(Privacy));                   
                     stroke.tag(new StrokeTag(
                         GetTag(authorTag), privacy, identity,
                         GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)),
-                        Boolean.Parse(GetTag(highlighterTag)), long.Parse(GetTag(timestampTag))));
+                        Boolean.Parse(GetTag(highlighterTag)), timestamp));
                     var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), privacy, identity, stroke, startingSum);
                     return targettedStroke;
                 }

@@ -193,7 +193,7 @@ namespace MeTLLib.Providers
             parser.OnStreamElement += ((_sender, node) =>
                                            {
                                                unSortedMessages.Add(node);
-                                               //wire.ReceivedMessage(node, MessageOrigin.History);
+                                               wire.ReceivedMessage(node, MessageOrigin.History);
                                            });
 
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);
