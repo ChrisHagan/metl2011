@@ -684,8 +684,12 @@ namespace SandRibbon.Components
                     foreach (var element in startingElements)
                     {
                         selection.Add(element);
-                        if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() == 0)
+                        if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
+                        {
                             contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
+                            element.ApplyPrivacyStyling(contentBuffer, _target, element.tag().privacy);
+                        }
+
                     }
                 };
             Action redo = () =>
@@ -705,6 +709,7 @@ namespace SandRibbon.Components
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
                            contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
+                           element.ApplyPrivacyStyling(contentBuffer, _target, element.tag().privacy); 
                         }
                     }
                 };
@@ -782,16 +787,13 @@ namespace SandRibbon.Components
                   foreach (MeTLTextBox box in mySelectedElements)
                   {
                       contentBuffer.RemoveTextBox(box, (txt) => Work.Children.Remove(txt));
-                      // local only
-                      //removeBox(box, true);
                   }
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
                   {
                       selection.Add(box);
-                      // local only
-                      //sendBox(applyDefaultAttributes(box), true);
                       AddTextBoxToCanvas(applyDefaultAttributes(box));
+                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy); 
                   }
               };
             Action redo = () =>
@@ -802,15 +804,12 @@ namespace SandRibbon.Components
                   foreach (var box in startingText)
                   {
                       contentBuffer.RemoveTextBox(box, (txt) => Work.Children.Remove(txt));
-                      // local only
-                      //removeBox(box, true);
                   }
                   foreach (var box in mySelectedElements)
                   {
                       selection.Add(box);
-                      // local only
-                      //sendBox(applyDefaultAttributes(box), true);
                       AddTextBoxToCanvas(applyDefaultAttributes(box));
+                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy); 
                   }
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
@@ -935,9 +934,9 @@ namespace SandRibbon.Components
 
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
-                    ink.redo();
-                    text.redo();
-                    images.redo();
+                     ink.redo();
+                     text.redo();
+                     images.redo();
 
                     refreshWorkSelect(selectedStrokeIds, selectedImagesIds, selectedTextBoxes );
                    
