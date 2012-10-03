@@ -665,7 +665,9 @@ namespace SandRibbon.Components
 
             e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
+         
         }
+
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<UIElement> elements, List<Image> startingElements)
         {
             var selectedElements = elements.Where(i => i is Image).Select(i => ((Image) i).clone()); 
@@ -678,32 +680,25 @@ namespace SandRibbon.Components
                         var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
                         if (imagesToRemove.Count() > 0)
                             contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
-                        // local only
-                        /*if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
-                            dirtyThisElement(element);*/
                     }
                     foreach (var element in startingElements)
                     {
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() == 0)
                             contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
-                        // local only
-                        /*if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
-                            sendThisElement(element);*/
                     }
                 };
             Action redo = () =>
                 {
                     foreach (var image in startingElements)
                     {
-                        // dirty handled by move delta
-                        //dirtyThisElement(element);
                         var imagesToRemove = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
                         if (imagesToRemove.Count() > 0)
                         {
                             contentBuffer.RemoveImage(imagesToRemove.First(), (img) => Work.Children.Remove(img)); 
                         }
                     }
+
                     foreach (var element in selectedElements)
                     { 
                         var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
@@ -711,10 +706,9 @@ namespace SandRibbon.Components
                         {
                            contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
                         }
-                        //local only
-                       //sendThisElement(element);
                     }
-                };           
+                };
+
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
         }
 
@@ -745,11 +739,6 @@ namespace SandRibbon.Components
                             contentBuffer.AddStroke(tmpStroke, (str) => Work.Strokes.Add(str));
                         }
                     }
-                    // do local only
-                    //removeStrokes(selectedStrokes);
-                    //addStrokes(undoStrokes); 
-                    if (Work.EditingMode == InkCanvasEditingMode.Select)
-                        Work.Select(new StrokeCollection(undoStrokes));
                 };
             Action redo = () =>
                 {
@@ -769,6 +758,7 @@ namespace SandRibbon.Components
                     foreach (var stroke in selectedStrokes)
                     {
                         var tmpStroke = stroke.Clone();
+
                         if (Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Count() == 0)
                         {
                             contentBuffer.AddStroke(tmpStroke, (str) => {
@@ -776,11 +766,6 @@ namespace SandRibbon.Components
                             });
                         }
                     }
-                    // do local only
-                    //removeStrokes(undoStrokes); 
-                    //addStrokes(selectedStrokes); 
-                    if(Work.EditingMode == InkCanvasEditingMode.Select)
-                        Work.Select(new StrokeCollection(selectedStrokes));
                 };           
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Ink selection moved or resized");
         }
@@ -830,6 +815,68 @@ namespace SandRibbon.Components
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
         }
+
+        
+        private void refreshWorkSelect(IEnumerable<string> selectedStrokeIds, IEnumerable<string> selectedImageIds, IEnumerable<string> selectedTextBoxIds )
+        {
+            //This method is responisble for refreshing the selected items for Work
+            var selectedStrokCollection = new StrokeCollection();
+
+            if (selectedStrokeIds.Count() > 0)
+            {
+                foreach (var strokeId in selectedStrokeIds)
+                {
+                    foreach (var stroke in Work.Strokes)
+                    {
+                        if (stroke.tag().id == strokeId)
+                            selectedStrokCollection.Add(stroke);
+                    }
+                }
+            }
+
+            List<UIElement> selectedElementCollection = new List<UIElement>();
+
+            if (selectedImageIds.Count() > 0)
+            {
+                foreach (var imageId in selectedImageIds)
+                {
+                    foreach (var imageChild in Work.ImageChildren())
+                    {
+                        if (imageChild.tag().id == imageId)
+                            selectedElementCollection.Add(imageChild);
+                    }
+                }
+            }
+
+            if (selectedTextBoxIds.Count() > 0)
+            {
+                foreach (var textBoxId in selectedTextBoxIds)
+                {
+                    foreach (var textChild in Work.TextChildren())
+                    {
+                        if (textChild.tag().id == textBoxId)
+                            selectedElementCollection.Add(textChild);
+                    }
+                }
+            }
+
+            if (selectedStrokeIds.Count() > 0 && (selectedTextBoxIds.Count() > 0 || selectedImageIds.Count() > 0))
+            {
+                Work.Select(selectedStrokCollection, selectedElementCollection);
+                AddAdorners();
+            }
+            else if (selectedStrokeIds.Count() > 0)
+            {
+                Work.Select(selectedStrokCollection);
+                AddAdorners();
+            }
+            else if (selectedTextBoxIds.Count() > 0 || selectedImageIds.Count() > 0)
+            {
+                Work.Select(selectedElementCollection);
+                AddAdorners();
+            }
+        }
+
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
             var selectedStrokes = absoluteizeStrokes(filterOnlyMine(Work.GetSelectedStrokes())).Select(s => s.Clone()).ToList();
@@ -846,6 +893,10 @@ namespace SandRibbon.Components
             
             Action undo = () =>
                 {
+                    var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
+                    var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
+                    var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
+
                     ClearAdorners();
 
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
@@ -861,11 +912,18 @@ namespace SandRibbon.Components
                     text.undo();
                     images.undo();
 
+                    refreshWorkSelect(selectedStrokeIds, selectedImagesIds, selectedTextBoxes);
+
                     AddAdorners();
                     Work.Focus();
                 };
             Action redo = () =>
                 {
+
+                    var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
+                    var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
+                    var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
+
                     ClearAdorners();
 
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
@@ -880,13 +938,14 @@ namespace SandRibbon.Components
                     ink.redo();
                     text.redo();
                     images.redo();
+
+                    refreshWorkSelect(selectedStrokeIds, selectedImagesIds, selectedTextBoxes );
+                   
                     AddAdorners();
                     Work.Focus();
                 };
             redo(); 
-            UndoHistory.Queue(undo, redo, "Selection moved or resized");
-            
-            //Work.Select(new StrokeCollection(), null);
+           UndoHistory.Queue(undo, redo, "Selection moved or resized");
         }
         private IEnumerable<UIElement> GetSelectedClonedImages()
         {
@@ -1034,7 +1093,8 @@ namespace SandRibbon.Components
         }
         private void ClearAdorners()
         {
-            Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
+            if (me != Globals.PROJECTOR)
+                Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
         }
 #endregion
         #region ink
@@ -1108,14 +1168,22 @@ namespace SandRibbon.Components
             Commands.UpdateContentVisibility.Execute(contentVisibility);
 
             ClearAdorners();
+
+            var selectedStrokes = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
+            var selectedImages = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
+            var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
             
             Work.Strokes.Clear();
             Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
             Work.Children.Clear();
+
             foreach (var child in contentBuffer.FilteredTextBoxes(contentVisibility))
                 Work.Children.Add(child);
             foreach (var child in contentBuffer.FilteredImages(contentVisibility))
                 Work.Children.Add(child);
+
+            if (me != Globals.PROJECTOR)
+                refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
         }
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
