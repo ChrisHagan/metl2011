@@ -195,6 +195,10 @@ namespace SandRibbon.Components
             loginErrors.Visibility = Visibility.Visible;
             password.SelectAll();
             password.Focus();
+
+            //On Login failed, we hide the loggingIn page and show the Login page
+            loggingIn.Visibility = Visibility.Collapsed;
+            usernameAndPassword.Visibility = Visibility.Visible;
             
         }
         private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
