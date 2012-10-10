@@ -317,7 +317,7 @@ namespace MeTLLib
                 try
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
+                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                     if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
                 }
                 catch (Exception e)
@@ -387,7 +387,7 @@ namespace MeTLLib
                     newImage.Dispatcher.adopt(() => {
                         newImage.tag(lii.image.tag());
                         newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage));
+                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, lii.image.tag().timestamp));
                     });
                 }
                 catch (Exception e)
@@ -404,7 +404,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.overwrite);
-                wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, lfi.identity, newPath, lfi.uploadTime, lfi.size, lfi.name));
+                wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, lfi.identity, lfi.timestamp, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);
         }

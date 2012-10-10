@@ -112,7 +112,7 @@ namespace SandRibbon.Components
                                  var conn = MeTLLib.ClientFactory.Connection();
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1,Globals.me,"bannedcontent",
-                                     Privacy.Private, hostedFileName, Globals.conversationDetails.Title, blacklisted,Globals.generateId(hostedFileName)));
+                                     Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted,Globals.generateId(hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails

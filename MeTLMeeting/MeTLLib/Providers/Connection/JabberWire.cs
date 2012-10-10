@@ -731,10 +731,12 @@ namespace MeTLLib.Providers.Connection
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
                 var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
                 location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
+                var oldLocation = location.currentSlide.ToString();
                 location.currentSlide = where;
                 Globals.conversationDetails = currentDetails;
                 Globals.slide = where;
                 joinRooms(fastJoin: true, alreadyInConversation: true);
+                cachedHistoryProvider.ClearCache(oldLocation);
                 cachedHistoryProvider.ClearCache(where.ToString());
                 historyProvider.Retrieve<PreParser>(
                     onStart,
@@ -754,6 +756,8 @@ namespace MeTLLib.Providers.Connection
                     },
                     credentials.name,
                     location.currentSlide.ToString());
+                
+
             }
             catch (Exception e) {
                 Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
@@ -782,7 +786,7 @@ namespace MeTLLib.Providers.Connection
             {
                 case Privacy.Public:
                     {
-                        var notP = Privacy.Private;
+                        var notP = Privacy.Public;
                         TargettedMoveDelta privateDirtier = null;
                         TargettedMoveDelta publicAdjuster = null;
 
@@ -796,7 +800,8 @@ namespace MeTLLib.Providers.Connection
                         }
                         if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
                         {
-                            publicAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, publicInks, publicTexts, publicImages);                            
+                            publicAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, publicInks, publicTexts, publicImages);
+                            publicAdjuster.privacy = notP;
                         }
 
                         MoveDeltaDispatcher(publicAdjuster, privateDirtier, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
@@ -805,7 +810,7 @@ namespace MeTLLib.Providers.Connection
 
                 case Privacy.Private:
                     {
-                        var notP = Privacy.Public;
+                        var notP = Privacy.Private;
                         TargettedMoveDelta publicDirtier = null;
                         TargettedMoveDelta privateAdjuster = null;
 
@@ -819,7 +824,8 @@ namespace MeTLLib.Providers.Connection
                         }
                         if (privateInks.Count() > 0 || privateTexts.Count() > 0 || privateImages.Count() > 0)
                         {
-                            privateAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, privateInks, privateTexts, privateImages);                            
+                            privateAdjuster = TargettedMoveDelta.CreateAdjuster(tmd, notP, privateInks, privateTexts, privateImages);
+                            privateAdjuster.privacy = notP;
                         }
 
                         MoveDeltaDispatcher(privateAdjuster, publicDirtier, publicInksToPrivatise, publicTextsToPrivatise, publicImagesToPrivatise);
@@ -1050,52 +1056,61 @@ namespace MeTLLib.Providers.Connection
             Commands.ReceiveSleep.Execute(null);
         }
 
-        List<Node> unSortedList = new List<Node>();
-
-        public virtual void ReceivedMessage(Node node, MessageOrigin messageOrigin)
+        private List<MeTLStanzas.TimestampedMeTLElement> SortOnTimestamp(List<MeTLStanzas.TimestampedMeTLElement> nodeList)
         {
-            var timestamp = 0L;
-            var message = node as Element;
+            return nodeList.OrderBy(k => k.timestamp).ToList();
+        }
+
+        public MeTLStanzas.TimestampedMeTLElement ContructElement(Node node)
+        {
+            return new MeTLStanzas.TimestampedMeTLElement(node as Element);
+        }
+
+        public List<MeTLStanzas.TimestampedMeTLElement> unOrderedMessages = new List<MeTLStanzas.TimestampedMeTLElement>();
+        List<MeTLStanzas.TimestampedMeTLElement> orderedMessages = new List<MeTLStanzas.TimestampedMeTLElement>();
+
+        public void ReceiveAndSortMessages()
+        {
+            orderedMessages = SortOnTimestamp(unOrderedMessages);
+            foreach ( MeTLStanzas.TimestampedMeTLElement message in orderedMessages)
+            {
+                HistoryReceivedMessage(message);
+                //ReceivedMessage(message, MessageOrigin.History);
+            }
+        }
+
+        public virtual void HistoryReceivedMessage(MeTLStanzas.TimestampedMeTLElement element)
+        {
+            var message = element.element;
+            var timestamp = element.timestamp;
+            //var element = new MeTLStanzas.TimestampedMeTLElement(message);
 
             if (message.GetAttribute("type") == "error")
             {
                 Trace.TraceError("Wire received error message: {0}", message);
                 return;
             }
-            if (message.HasAttribute("timestamp"))
+            if (message.SelectSingleElement("body") != null)
             {
-                timestamp = message.GetAttributeLong("timestamp");
-            }
-            else
+                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                return;
+            }           
+
+            //ActOnUntypedMessage(message, timestamp);
+            ActOnUntypedMessage(element);
+        }
+
+        public virtual void ReceivedMessage(Node node, MessageOrigin messageOrigin)
+        {
+            var message = node as Element;
+            var timestamp = TimeStampedMessage.getTimestamp(message);
+
+            var element = new MeTLStanzas.TimestampedMeTLElement(message);
+
+            if (message.GetAttribute("type") == "error")
             {
-                NodeList subMessage = message.ChildNodes;
-                if(subMessage != null)
-                {
-                    foreach (Node subNode in subMessage)
-                    {
-                        var tempNode = subNode as Element;
-                        if (tempNode != null)
-                        {
-                            if (tempNode.TagName == "metlMetaData")
-                            {
-                                subMessage = (tempNode as Element).ChildNodes;
-                                foreach (Node subsubNode in subMessage)
-                                {
-                                    if ((subsubNode as Element) != null)
-                                    {
-                                        if ((subsubNode as Element).TagName == "timestamp")
-                                        {
-                                            timestamp = long.Parse(subsubNode.Value);
-                                            break;
-                                        }
-                                    }
-                                }
-                                break;
-                            }  
-                        }                                                         
-                    } 
-                }                
-                //timestamp = message.GetAttributeLong("timestamp");
+                Trace.TraceError("Wire received error message: {0}", message);
+                return;
             }
             if (message.SelectSingleElement("body") != null)
             {
@@ -1104,45 +1119,69 @@ namespace MeTLLib.Providers.Connection
             }
             if (messageOrigin == MessageOrigin.Live)
             {
-                cachedHistoryProvider.HandleMessage(location.currentSlide, message, timestamp);
+                //cachedHistoryProvider.HandleMessage(location.currentSlide, message, timestamp);
+                cachedHistoryProvider.HandleMessage(location.currentSlide, element);
             }
 
-            ActOnUntypedMessage(message, timestamp);
+
+            ActOnUntypedMessage(element);
+            //ActOnUntypedMessage(message, timestamp);
         }
-        public void ActOnUntypedMessage(Element message, long timestamp)
+
+        //public void ActOnUntypedMessage(Element message, long timestamp)
+        public void ActOnUntypedMessage(MeTLStanzas.TimestampedMeTLElement timestampedElement)
         {
-            foreach(var status in message.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
+            foreach (var status in timestampedElement.element.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
                 actOnStatusRecieved(status);
-            foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
+
+            foreach (var moveDelta in timestampedElement.element.SelectElements<MeTLStanzas.MoveDeltaStanza>(true))
             {
-                var targettedStroke = ink.Stroke;
-                var stroke = targettedStroke.stroke;
-                stroke.tag(new StrokeTag(stroke.tag(), timestamp));
-                actOnStrokeReceived(targettedStroke);
-            }
-            foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
-                actOnScreenshotSubmission(submission.injectDependencies(metlServerAddress).parameters);
-            foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
-                actOnTextReceived(box.Box);
-            foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client(), resourceProvider).Img);
-            foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
-                actOnQuizReceived(quiz.injectDependencies(metlServerAddress).parameters);
-            foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
-                actOnQuizAnswerReceived(quizAnswer.parameters);
-            foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
-                actOnDirtyTextReceived(dirtyText);
-            foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
-                actOnDirtyStrokeReceived(dirtyInk);
-            foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
-                actOnDirtyImageReceived(dirtyImage);
-            foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
-                actOnFileResource(file.injectDependencies(metlServerAddress));
-            foreach (var moveDelta in message.SelectElements<MeTLStanzas.MoveDeltaStanza>(true))
-            {
-                moveDelta.parameters.timestamp = timestamp;
+                var parameters = moveDelta.parameters;
+                parameters.timestamp = timestampedElement.timestamp;
+                moveDelta.parameters = parameters;
                 actOnMoveDelta(moveDelta);
             }
+            foreach (var dirtyText in timestampedElement.element.SelectElements<MeTLStanzas.DirtyText>(true))
+                actOnDirtyTextReceived(dirtyText);
+            foreach (var dirtyInk in timestampedElement.element.SelectElements<MeTLStanzas.DirtyInk>(true))
+                actOnDirtyStrokeReceived(dirtyInk);
+            foreach (var dirtyImage in timestampedElement.element.SelectElements<MeTLStanzas.DirtyImage>(true))
+                actOnDirtyImageReceived(dirtyImage);
+
+            foreach (var ink in timestampedElement.element.SelectElements<MeTLStanzas.Ink>(true))
+            {
+                var targettedStroke = ink.Stroke;                
+                targettedStroke.timestamp = timestampedElement.timestamp;
+                var stroke = targettedStroke.stroke;
+                stroke.tag(new StrokeTag(stroke.tag(), timestampedElement.timestamp));
+                actOnStrokeReceived(targettedStroke);
+            }
+            foreach (var submission in timestampedElement.element.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
+                actOnScreenshotSubmission(submission.injectDependencies(metlServerAddress).parameters);
+            foreach (var box in timestampedElement.element.SelectElements<MeTLStanzas.TextBox>(true))
+            {
+                var targettedBox = box.Box;
+                targettedBox.timestamp = timestampedElement.timestamp;
+                //var textBox = targettedBox.box;
+                //textBox.tag(new TextTag(textBox.tag(), timestampedElement.timestamp));
+                actOnTextReceived(targettedBox);
+            }
+            foreach (var image in timestampedElement.element.SelectElements<MeTLStanzas.Image>(true))
+            {
+                var targettedImage = image.Img;
+                targettedImage.timestamp = timestampedElement.timestamp;
+                //var imageTemp = targettedImage.image;
+                //imageTemp.tag(new ImageTag(imageTemp.tag(), timestampedElement.timestamp));
+                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client(), resourceProvider).Img);
+            }
+            foreach (var quiz in timestampedElement.element.SelectElements<MeTLStanzas.Quiz>(true))
+                actOnQuizReceived(quiz.injectDependencies(metlServerAddress).parameters);
+            foreach (var quizAnswer in timestampedElement.element.SelectElements<MeTLStanzas.QuizResponse>(true))
+                actOnQuizAnswerReceived(quizAnswer.parameters);
+            
+            foreach (var file in timestampedElement.element.SelectElements<MeTLStanzas.FileResource>(true))
+                actOnFileResource(file.injectDependencies(metlServerAddress));
+            
         }
 
         public virtual void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)

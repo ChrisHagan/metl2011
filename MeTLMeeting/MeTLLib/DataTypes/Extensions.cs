@@ -12,19 +12,31 @@ namespace MeTLLib.DataTypes
 {
     public struct TextTag
     {
-        public TextTag(string Author, Privacy Privacy, string Id)
+        public TextTag(string Author, Privacy Privacy, string Id, long Timestamp)
         {
             author = Author;
             privacy = Privacy; 
             id = Id;
+            timestamp = Timestamp;
         }
         public TextTag(TextTag copyTag, Privacy newPrivacy)
         {
             // copy everything except for privacy
             author = copyTag.author;
             id = copyTag.id;
+            timestamp = copyTag.timestamp;
             privacy = newPrivacy;
         }
+
+        public TextTag(TextTag copyTag, long Timestamp)
+        {
+            //copy everything except timestamp
+            author = copyTag.author;
+            id = copyTag.id;
+            privacy = copyTag.privacy;
+            timestamp = Timestamp;
+        }
+       
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TextTag)) return false;
@@ -36,17 +48,19 @@ namespace MeTLLib.DataTypes
         public string author;
         public Privacy privacy;
         public string id;
+        public long timestamp;
     }
 
     public struct ImageTag
     {
-        public ImageTag(string Author, Privacy Privacy, string Id, bool IsBackground, int ZIndex = 0)
+        public ImageTag(string Author, Privacy Privacy, string Id, bool IsBackground, long Timestamp, int ZIndex = 0)
         {
             author = Author;
             privacy = Privacy; 
             id = Id;
             isBackground = IsBackground;
             zIndex = ZIndex;
+            timestamp = Timestamp;
         }
         public ImageTag(ImageTag copyTag, Privacy newPrivacy)
         {
@@ -55,8 +69,18 @@ namespace MeTLLib.DataTypes
             id = copyTag.id;
             isBackground = copyTag.isBackground;
             zIndex = copyTag.zIndex;
-
+            timestamp = copyTag.timestamp;
             privacy = newPrivacy;
+        }
+        public ImageTag(ImageTag copyTag, long Timestamp)
+        {
+            //copy everything except timestamp
+            author = copyTag.author;
+            id = copyTag.id;
+            isBackground = copyTag.isBackground;
+            zIndex = copyTag.zIndex;
+            privacy = copyTag.privacy;
+            timestamp = Timestamp;
         }
         public bool ValueEquals(object obj)
         {
@@ -73,6 +97,7 @@ namespace MeTLLib.DataTypes
         public string id;
         public bool isBackground;
         public int zIndex;
+        public long timestamp;
     }
     public struct StrokeTag
     {
@@ -157,7 +182,8 @@ namespace MeTLLib.DataTypes
                 {
                     author = textInfo.author,
                     id = textInfo.id,
-                    privacy = textInfo.privacy
+                    privacy = textInfo.privacy,
+                    timestamp = textInfo.timestamp
                 };
             });
             return texttag;
@@ -190,7 +216,8 @@ namespace MeTLLib.DataTypes
                     id = imageInfo.id,
                     privacy = imageInfo.privacy,
                     isBackground = imageInfo.isBackground,
-                    zIndex = imageInfo.zIndex
+                    zIndex = imageInfo.zIndex,
+                    timestamp = imageInfo.timestamp
                 };
             });
             return imagetag;

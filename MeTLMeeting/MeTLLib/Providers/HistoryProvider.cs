@@ -82,20 +82,22 @@ namespace MeTLLib.Providers
                 room);
         }
         
-        public void HandleMessage(int room, Element message, long timestamp) 
+        //public void HandleMessage(int room, Element message, long timestamp) 
+        public void HandleMessage(int room, MeTLStanzas.TimestampedMeTLElement element) 
         {
             string currentSlide = room.ToString();
             if (!cache.ContainsKey(currentSlide))
-            {
+            { 
                 cache[currentSlide] = jabberWireFactory.create<PreParser>(room);
             }
-            cache[currentSlide].ActOnUntypedMessage(message, timestamp);
+            //cache[currentSlide].ActOnUntypedMessage(message, timestamp);
+            cache[currentSlide].ActOnUntypedMessage(element );
         }
         public void PopulateFromHistory(PreParser preParser)
         {
             var room = preParser.location.currentSlide.ToString();
             if (cache.ContainsKey(room))
-                cache[room].merge<PreParser>(preParser);
+                cache[room] =  cache[room].merge<PreParser>(preParser);
             else
                 cache[room] = preParser;
         }
@@ -132,12 +134,11 @@ namespace MeTLLib.Providers
     }
     public class HttpHistoryProvider : BaseHistoryProvider
     {
-        public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
+        public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));
             if (retrievalBeginning != null) retrievalBeginning();
-            unSortedMessages.Clear();
-            sortedMessages.Clear();
+            accumulatingParser.unOrderedMessages.Clear();
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
@@ -153,7 +154,7 @@ namespace MeTLLib.Providers
                                          var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
                                          for (int i = 0; i < days.Count(); i++)
                                          {
-                                             using(var stream = new MemoryStream())
+                                             using (var stream = new MemoryStream())
                                              {
                                                  days[i].Extract(stream);
                                                  parseHistoryItem(stream, accumulatingParser);
@@ -172,91 +173,36 @@ namespace MeTLLib.Providers
                 {
                     try
                     {
-                        sortedMessages = SortOnTimestamp(unSortedMessages);
+
+                        accumulatingParser.ReceiveAndSortMessages();
+                        /*sortedMessages = SortOnTimestamp(unSortedMessages);
                         foreach(Node message in sortedMessages)
                         {
                             accumulatingParser.ReceivedMessage(message, MessageOrigin.History);
-                        }
+                        }*/
                         retrievalComplete((T)accumulatingParser);
                     }
-                    catch (Exception ex) {
-                        Trace.TraceError("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Exception on the retrievalComplete section: " + ex.Message.ToString());
                     }
                 };
             worker.RunWorkerAsync(null);
         }
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
-        List<Node> unSortedMessages = new List<Node>();
-        List<Node> sortedMessages = new List<Node>();
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time
             var parser = new StreamParser();
 
             parser.OnStreamElement += ((_sender, node) =>
                                            {
-                                               unSortedMessages.Add(node);
-                                               wire.ReceivedMessage(node, MessageOrigin.History);
+                                               wire.unOrderedMessages.Add(wire.ContructElement(node));
+                                               //unSortedMessages.Add(node);
+                                               //wire.ReceivedMessage(node, MessageOrigin.History);
                                            });
 
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);
             parser.Push(closeTag, 0, closeTag.Length);
         }
-
-        private List<Node> SortOnTimestamp(List<Node> nodeList)
-        {
-            List<Node> newSortedList = new List<Node>();
-            List<long> timestamps = new List<long>();
-
-            foreach(Node message in nodeList)
-            {
-                NodeList subMessage = message.ChildNodes;
-                if (subMessage != null)
-                {
-                    foreach (Node subNode in subMessage)
-                    {
-                        var tempNode = subNode as Element;
-                        if (tempNode != null)
-                        {
-                            if (tempNode.TagName == "metlMetaData")
-                            {
-                                subMessage = (tempNode as Element).ChildNodes;
-                                foreach (Node subsubNode in subMessage)
-                                {
-                                    if ((subsubNode as Element) != null)
-                                    {
-                                        if ((subsubNode as Element).TagName == "timestamp")
-                                        {
-                                            timestamps.Add(long.Parse(subsubNode.Value));
-                                            break;
-                                        }
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }  
-            }
-
-            List<long> originalOrderTimestamps = timestamps;    
-            timestamps.Sort();
-
-            int counter = 0;
-            foreach(long timestamp in timestamps)
-            {
-                while(counter < originalOrderTimestamps.Count)
-                {
-                    if (timestamp == originalOrderTimestamps.ElementAt(counter))
-                    {
-                        newSortedList.Add(nodeList.ElementAt(counter));
-                        break;
-                    }
-                    counter++;
-                }
-                counter = 0;
-            }
-
-            return newSortedList;
-        }
-    }
+    }   
 }

@@ -71,7 +71,10 @@
                 var deadStrokes = new List<Stroke>();
                 foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
                 {
-                    stroke.Transform(transformMatrix, false);
+                    if (dirtiesThis(moveDelta, stroke))
+                    {
+                        stroke.Transform(transformMatrix, false);
+                    }
                 }
             }
 
@@ -79,7 +82,10 @@
             {
                 foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
-                    TranslateAndScale(textBox, xTrans, yTrans, xScale, yScale);
+                    if (dirtiesThis(moveDelta, textBox))
+                    {   
+                        TranslateAndScale(textBox, xTrans, yTrans, xScale, yScale);
+                    }
                 }
             }
 
@@ -87,7 +93,10 @@
             {
                 foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
                 {
-                    TranslateAndScale(image, xTrans, yTrans, xScale, yScale);
+                    if (dirtiesThis(moveDelta, image))
+                    {
+                        TranslateAndScale(image, xTrans, yTrans, xScale, yScale);
+                    }
                 }
             }
         }
@@ -146,6 +155,21 @@
             }
         }
 
+        private bool dirtiesThis(TargettedMoveDelta moveDelta, Stroke elem)
+        {
+            return moveDelta.inkIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
+        }
+
+        private bool dirtiesThis(TargettedMoveDelta moveDelta, Image elem)
+        {
+            return moveDelta.imageIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
+        }
+
+        private bool dirtiesThis(TargettedMoveDelta moveDelta, TextBox elem)
+        {
+            return moveDelta.textIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
+        }
+
         protected void ContentDelete(TargettedMoveDelta moveDelta)
         {
             var deadStrokes = new List<Stroke>();
@@ -154,9 +178,12 @@
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))                
                 {
-                    deadStrokes.Add(stroke);
+                    if(dirtiesThis(moveDelta,stroke))
+                    {
+                        deadStrokes.Add(stroke);        
+                    }                    
                 }
             }
 
@@ -164,7 +191,10 @@
             {
                 foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
-                    deadTextboxes.Add(textBox);
+                    if(dirtiesThis(moveDelta,textBox))
+                    {
+                        deadTextboxes.Add(textBox);
+                    }
                 }
             }
 
@@ -172,7 +202,11 @@
             {
                 foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
                 {
-                    deadImages.Add(image);
+                    if(dirtiesThis(moveDelta,image))
+                    {
+                        deadImages.Add(image);
+                    }
+
                 }
             }
 
@@ -206,7 +240,10 @@
             {
                 foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
                 {
-                    privacyStrokes.Add(stroke);
+                    if (dirtiesThis(moveDelta, stroke))
+                    {
+                        privacyStrokes.Add(stroke);
+                    }
                 }
             }
 
@@ -214,7 +251,10 @@
             {
                 foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
-                    privacyTextboxes.Add(textBox);
+                    if (dirtiesThis(moveDelta, textBox))
+                    {
+                        privacyTextboxes.Add(textBox);
+                    }
                 }
             }
 
@@ -222,7 +262,10 @@
             {
                 foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
                 {
-                    privacyImages.Add(image);
+                    if (dirtiesThis(moveDelta, image))
+                    {
+                        privacyImages.Add(image);
+                    }
                 }
             }
 
