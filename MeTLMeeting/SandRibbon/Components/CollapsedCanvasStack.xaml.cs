@@ -1195,7 +1195,7 @@ namespace SandRibbon.Components
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    AddStrokeToCanvas(Work, new PrivateAwareStroke(targettedStroke.stroke, strokeTarget));
+                    AddStrokeToCanvas(Work, new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
             }
         }
 

@@ -1168,11 +1168,13 @@ namespace MeTLLib.Providers.Connection
             }
             foreach (var image in timestampedElement.element.SelectElements<MeTLStanzas.Image>(true))
             {
-                var targettedImage = image.Img;
+                //var targettedImage = image.Img;
+                var targettedImage = image.injectDependencies(metlServerAddress, webClientFactory.client(), resourceProvider).Img;
                 targettedImage.timestamp = timestampedElement.timestamp;
                 //var imageTemp = targettedImage.image;
                 //imageTemp.tag(new ImageTag(imageTemp.tag(), timestampedElement.timestamp));
-                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client(), resourceProvider).Img);
+                //actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client(), resourceProvider).Img);
+                actOnImageReceived(targettedImage);
             }
             foreach (var quiz in timestampedElement.element.SelectElements<MeTLStanzas.Quiz>(true))
                 actOnQuizReceived(quiz.injectDependencies(metlServerAddress).parameters);

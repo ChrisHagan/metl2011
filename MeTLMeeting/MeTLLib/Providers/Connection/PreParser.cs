@@ -120,47 +120,59 @@ namespace MeTLLib.Providers.Connection
         {
             var mdp = moveDelta.parameters;
             var inksToRemove = new List<TargettedStroke>();
+            var inksToAdd = new List<TargettedStroke>();
             var textToRemove = new Dictionary<string, TargettedTextBox>();
+            var textToAdd = new Dictionary<string, TargettedTextBox>();
             var imagesToRemove = new Dictionary<string, TargettedImage>();
+            var imagesToAdd = new Dictionary<string, TargettedImage>();
+
             foreach (var aInk in ink.Where(i => dirtiesThis(moveDelta, i)))
             {
-                if (mdp.isDeleted && mdp.privacy == aInk.privacy && mdp.timestamp > aInk.timestamp)
+                if (mdp.privacy == aInk.privacy && mdp.timestamp > aInk.timestamp)
                 {
                     inksToRemove.Add(aInk);
-                }
-                else
-                {
-                    aInk.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                    if (!mdp.isDeleted)
+                    {
+                        inksToAdd.Add(aInk.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy));
+                    }
                 }
             }
             foreach (var aText in text.Values.Where(t => dirtiesThis(moveDelta, t)))
             {
-                if (mdp.isDeleted && mdp.privacy == aText.privacy && mdp.timestamp > aText.timestamp)
+                if (mdp.privacy == aText.privacy && mdp.timestamp > aText.timestamp)
                 {                  
                     textToRemove.Add(aText.identity,aText);
-                }
-                else
-                {
-                    aText.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                    if(!mdp.isDeleted)
+                    {
+                        var targettedText = aText.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                        textToAdd.Add(targettedText.identity,targettedText);
+                    }
                 }
             }
             foreach (var aImage in images.Values.Where(i => dirtiesThis(moveDelta, i)))
             {
-                if (mdp.isDeleted && mdp.privacy == aImage.privacy && mdp.timestamp > aImage.timestamp)
+                if (mdp.privacy == aImage.privacy && mdp.timestamp > aImage.timestamp)
                 {
                     imagesToRemove.Add(aImage.identity,aImage);
-                }
-                else
-                {
-                    aImage.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                    if(!mdp.isDeleted)
+                    {
+                        var tImage = aImage.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                        imagesToAdd.Add(tImage.identity, tImage);
+                    }
                 }
             }
             foreach (var i in inksToRemove)
                 ink.Remove(i);
+            foreach (var i in inksToAdd)
+                ink.Add(i);
             foreach (var i in textToRemove)
                 text.Remove(i.Key);
+            foreach (var i in textToAdd)
+                text.Add(i.Key,i.Value);
             foreach (var i in imagesToRemove)
                 images.Remove(i.Key);
+            foreach (var i in imagesToAdd)
+                images.Add(i.Key, i.Value);
             // preparsers need to apply the move deltas in timestamp order
             moveDeltas.Add(moveDelta.parameters);
 

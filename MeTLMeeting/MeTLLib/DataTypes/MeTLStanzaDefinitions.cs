@@ -364,13 +364,14 @@ namespace MeTLLib.DataTypes
         {
             var newStroke = (TargettedStroke)this.MemberwiseClone();
             if (xTranslate == 0.0 && yTranslate == 0.0 && xScale == 1.0 && yScale == 1.0)
-                return this;
+                return newStroke;
 
             var transformMatrix = new Matrix();
             transformMatrix.Scale(xScale, yScale);
             transformMatrix.Translate(xTranslate, yTranslate);
             var newS = newStroke.stroke.Clone();
             newS.Transform(transformMatrix, false);
+            newStroke.stroke = newS;
             return newStroke;
         }
 
