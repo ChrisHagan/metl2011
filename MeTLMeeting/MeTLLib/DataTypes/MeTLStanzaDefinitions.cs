@@ -782,6 +782,7 @@ namespace MeTLLib.DataTypes
                     long timestamp = HasTag(timestampTag) ? long.Parse(GetTag(timestampTag)) : 0L;
 
                     Privacy privacy = (Privacy)GetTagEnum(privacyTag, typeof(Privacy));
+                    //Privacy privacy = (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(privacyTag, typeof(Privacy)).ToString(), true);
                     stroke.tag(new StrokeTag(
                         GetTag(authorTag), privacy, identity,
                         GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)),
@@ -910,18 +911,29 @@ namespace MeTLLib.DataTypes
                 this.parameters = moveDelta;
             }
 
+            //MoveDeltas from METLX has the privacy as NOT_SET
+            //Hence the helper method
+            public Privacy GetPrivacyFromEnum(string tagName)
+            {
+                return (Privacy)Enum.Parse(typeof(Privacy), GetTag(tagName).ToString().Replace("_", ""), true);
+            }
+
             public TargettedMoveDelta parameters
             {
                 get
                 {
-                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1L";
-                    var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
+                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
+                    //var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
+                    //var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(privacyTag, typeof(Privacy)).ToString(), true), GetTag(identityTag), long.Parse(timestamp));
+                    var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetPrivacyFromEnum(privacyTag), GetTag(identityTag), long.Parse(timestamp));
 
                     moveDelta.xTranslate = GetTagDouble(XTRANSLATE_TAG);
                     moveDelta.yTranslate = GetTagDouble(YTRANSLATE_TAG);
                     moveDelta.xScale = GetTagDouble(XSCALE_TAG);
                     moveDelta.yScale = GetTagDouble(YSCALE_TAG);
-                    moveDelta.newPrivacy = (Privacy)GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy));
+                    //moveDelta.newPrivacy = (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy)).ToString(), true);
+                    moveDelta.newPrivacy = GetPrivacyFromEnum(NEWPRIVACY_TAG);
+                    //moveDelta.newPrivacy = (Privacy)GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy));
                     moveDelta.isDeleted = GetTagBool(ISDELETED_TAG);
 
                     GetChildren<InkIdentityStanza>(moveDelta, INKIDS_TAG, (elemId) => moveDelta.AddInkId(elemId));
@@ -932,7 +944,8 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    SetTag(identityTag, TAG);
+                    //SetTag(identityTag, TAG);
+                    SetTag(identityTag, value.identity);
                     SetTag(slideTag, value.slide);
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
@@ -1214,7 +1227,7 @@ namespace MeTLLib.DataTypes
                     var slide = HasTag(slideTag) ? GetTag(slideTag) : "0";
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? (Privacy)GetTagEnum(privacyTag, typeof(Privacy)) : Privacy.Public;
-                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1L";
+                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
@@ -1549,7 +1562,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1L";
+                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
 
                     if (HasTag(BLACKLIST))
@@ -1970,7 +1983,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1L";
+                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var targettedImage = new TargettedImage(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(timestamp));
                     return targettedImage;
                 }
@@ -2084,7 +2097,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1L";
+                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     return new TargettedDirtyElement(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
                 }
                 set
