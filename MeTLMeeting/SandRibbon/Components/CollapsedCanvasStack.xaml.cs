@@ -1624,8 +1624,10 @@ namespace SandRibbon.Components
 
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {            
-            // don't want to duplicate what has already been done locally
-            moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
+            if (_target == "presentationSpace"){
+                // don't want to duplicate what has already been done locally
+                moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
+            }
         }
 
         public void ReceiveImages(IEnumerable<TargettedImage> images)
@@ -1639,7 +1641,8 @@ namespace SandRibbon.Components
                     {
                         Dispatcher.adoptAsync(() => 
                         {
-                            var receivedImage = image1.image;
+                            var receivedImage = image1.imageSpecification.forceEvaluation();
+                            //image.clone();
                             AddImage(Work, receivedImage);
                             receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy); 
                         });
@@ -2029,12 +2032,15 @@ namespace SandRibbon.Components
             bitmapImage.UriSource = uri;
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
             bitmapImage.EndInit();
-
+            //var newImageHeight = bitmapImage.DecodePixelHeight;
+            var newImageHeight = bitmapImage.PixelHeight;
+            //var newImageWidth = bitmapImage.DecodePixelWidth;
+            var newImageWidth = bitmapImage.PixelWidth;
             image.Source = bitmapImage;
             // images with a high dpi eg 300 were being drawn relatively small compared to images of similar size with dpi ~100
             // which is correct but not what people expect.
             // image size is determined from dpi
-
+            
             // next two lines were used
             //image.Height = bitmapImage.Height;
             //image.Width = bitmapImage.Width;
@@ -2044,6 +2050,8 @@ namespace SandRibbon.Components
             //image.Width = jpgFrame.PixelWidth;
             image.Stretch = Stretch.Uniform;
             image.StretchDirection = StretchDirection.Both;
+            image.Height = newImageHeight;
+            image.Width = newImageWidth;
             if (useDefaultMargin)
             {
                 image.Margin = new Thickness(5);
@@ -2630,6 +2638,7 @@ namespace SandRibbon.Components
 
             if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
+            
             //targettedBox.box.tag(new TextTag(targettedBox.box.tag(), targettedBox.timestamp));
             if (targettedBox.HasSameAuthor(me) && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
             {

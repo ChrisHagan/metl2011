@@ -220,9 +220,9 @@ namespace SandRibbon.Components
             stack.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
                 stack.DoText(text);
-            foreach (var moveDelta in parser.moveDeltas)
+            /*foreach (var moveDelta in parser.moveDeltas)
                 stack.ReceiveMoveDelta(moveDelta, processHistory: true);
-
+            */
             EndInit();
         }
         private void MirrorPresentationSpace(Window1 parent)
