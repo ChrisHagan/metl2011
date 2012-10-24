@@ -1082,6 +1082,8 @@ namespace MeTLLib.Providers.Connection
         public virtual void HistoryReceivedMessage(MeTLStanzas.TimestampedMeTLElement element)
         {
             var message = element.element;
+            message = HandleRelativePaths(message);
+
             var timestamp = element.timestamp;
             //var element = new MeTLStanzas.TimestampedMeTLElement(message);
 
@@ -1100,9 +1102,31 @@ namespace MeTLLib.Providers.Connection
             ActOnUntypedMessage(element);
         }
 
+        public Element HandleRelativePaths(Element message)
+        {
+            if (message.HasTag("image"))
+            {
+                var imageTag = message.SelectSingleElement("image") as Element;
+                if (imageTag.HasTag("source"))
+                {
+                    var sourceValue = imageTag.GetTag("source");
+                    if(System.Uri.IsWellFormedUriString(sourceValue,System.UriKind.Absolute)) {
+                        System.Uri sourceUri = new System.Uri(sourceValue);
+                        //sourceValue = sourceValue.Replace("https://madam.adm.monash.edu.au:1188/", "/");                    
+                        sourceValue = sourceUri.AbsolutePath;
+                        imageTag.SetTag("source", sourceValue);
+                    }
+                }
+                message.ReplaceChild(imageTag);
+            }
+            return message;
+        }
+
         public virtual void ReceivedMessage(Node node, MessageOrigin messageOrigin)
         {
             var message = node as Element;
+            message = HandleRelativePaths(message);
+
             var timestamp = TimeStampedMessage.getTimestamp(message);
 
             var element = new MeTLStanzas.TimestampedMeTLElement(message);

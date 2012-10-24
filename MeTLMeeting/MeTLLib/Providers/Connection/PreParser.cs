@@ -175,8 +175,8 @@ namespace MeTLLib.Providers.Connection
                 images.Add(i.Key, i.Value);
             // preparsers need to apply the move deltas in timestamp order
             moveDeltas.Add(moveDelta.parameters);
-
         }
+
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
         {   
             submissions.Add(submission);

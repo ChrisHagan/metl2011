@@ -1033,7 +1033,8 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(GetTag(timestampTag)));
+                    var tstamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
+                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(tstamp));
                     return box;
                 }
                 set
