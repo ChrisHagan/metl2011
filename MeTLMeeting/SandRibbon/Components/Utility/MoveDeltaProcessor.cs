@@ -61,10 +61,10 @@
             var yTrans = moveDelta.yTranslate;
             var xScale = moveDelta.xScale;
             var yScale = moveDelta.yScale;
-
-            var transformMatrix = new Matrix();
+            
+            /*var transformMatrix = new Matrix();
             transformMatrix.Scale(xScale, yScale);
-            transformMatrix.Translate(xTrans, yTrans);
+            transformMatrix.Translate(xTrans, yTrans);*/
 
             foreach (var inkId in moveDelta.inkIds)
             {
@@ -73,6 +73,33 @@
                 {
                     if (dirtiesThis(moveDelta, stroke))
                     {
+
+                        //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
+                        Rect myRect = new Rect();
+                        myRect = stroke.Clone().GetBounds();
+
+                        var transformMatrix = new Matrix();
+                        if (xScale != 1.0 || yScale != 1.0)
+                        {
+                            transformMatrix.Translate(-myRect.X, -myRect.Y);
+                            stroke.Transform(transformMatrix, false);
+
+                            transformMatrix = new Matrix();
+                            transformMatrix.Scale(xScale, yScale);
+                            if (double.IsNaN(xTrans))
+                            {
+                                xTrans = 0;
+                            }
+                            if (double.IsNaN(yTrans))
+                            {
+                                yTrans = 0;
+                            }
+
+                            xTrans = xTrans + myRect.X;
+                            yTrans = yTrans + myRect.Y;
+                        }
+
+                        transformMatrix.Translate(xTrans, yTrans);
                         stroke.Transform(transformMatrix, false);
                     }
                 }

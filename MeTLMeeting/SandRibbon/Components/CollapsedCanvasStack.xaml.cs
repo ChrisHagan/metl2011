@@ -1478,7 +1478,7 @@ namespace SandRibbon.Components
                     foreach(var point in stroke.StylusPoints.Clone())
                         strokeCollection.Add(new StylusPoint(point.X + left, point.Y));
                     stroke.StylusPoints = strokeCollection;
-                }
+                }                
             }
             return selectedElements;
         }

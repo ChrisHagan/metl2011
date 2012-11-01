@@ -1102,6 +1102,8 @@ namespace MeTLLib.Providers.Connection
             ActOnUntypedMessage(element);
         }
 
+
+        //Converting source tag's path if absolute to relative
         public Element HandleRelativePaths(Element message)
         {
             if (message.HasTag("image"))

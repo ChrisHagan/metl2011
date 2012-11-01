@@ -366,12 +366,38 @@ namespace MeTLLib.DataTypes
             if (xTranslate == 0.0 && yTranslate == 0.0 && xScale == 1.0 && yScale == 1.0)
                 return newStroke;
 
+            //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
+            Rect myRect = new Rect();
+            myRect = newStroke.stroke.Clone().GetBounds();
+
             var transformMatrix = new Matrix();
-            transformMatrix.Scale(xScale, yScale);
+            if (xScale != 1.0 || yScale != 1.0)
+            {   
+                transformMatrix.Translate(-myRect.X, -myRect.Y);
+
+                var newS1 = newStroke.stroke.Clone();
+                newS1.Transform(transformMatrix, false);
+                newStroke.stroke = newS1;
+
+                transformMatrix = new Matrix();
+                transformMatrix.Scale(xScale,yScale);
+                
+                if(double.IsNaN(xTranslate))
+                {
+                    xTranslate = 0;
+                }
+                if (double.IsNaN(yTranslate))
+                {
+                    yTranslate = 0;
+                }
+                xTranslate = xTranslate + myRect.X;
+                yTranslate = yTranslate + myRect.Y;
+            }
+            
             transformMatrix.Translate(xTranslate, yTranslate);
-            var newS = newStroke.stroke.Clone();
-            newS.Transform(transformMatrix, false);
-            newStroke.stroke = newS;
+            var newS3 = newStroke.stroke.Clone();
+            newS3.Transform(transformMatrix, false);
+            newStroke.stroke = newS3;
             return newStroke;
         }
 
