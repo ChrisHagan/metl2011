@@ -1168,12 +1168,26 @@ namespace MeTLLib.Providers.Connection
                 actOnMoveDelta(moveDelta);
             }
             foreach (var dirtyText in timestampedElement.element.SelectElements<MeTLStanzas.DirtyText>(true))
+            {
+                var targettedDirtyText = dirtyText.element;
+                targettedDirtyText.timestamp = timestampedElement.timestamp;
+                dirtyText.element = targettedDirtyText;
                 actOnDirtyTextReceived(dirtyText);
+            }
             foreach (var dirtyInk in timestampedElement.element.SelectElements<MeTLStanzas.DirtyInk>(true))
+            {
+                var targettedDirtyInk = dirtyInk.element;
+                targettedDirtyInk.timestamp = timestampedElement.timestamp;
+                dirtyInk.element = targettedDirtyInk;
                 actOnDirtyStrokeReceived(dirtyInk);
+            }
             foreach (var dirtyImage in timestampedElement.element.SelectElements<MeTLStanzas.DirtyImage>(true))
+            {
+                var targettedDirtyImage = dirtyImage.element;
+                targettedDirtyImage.timestamp = timestampedElement.timestamp;
+                dirtyImage.element = targettedDirtyImage;
                 actOnDirtyImageReceived(dirtyImage);
-
+            }
             foreach (var ink in timestampedElement.element.SelectElements<MeTLStanzas.Ink>(true))
             {
                 var targettedStroke = ink.Stroke;                

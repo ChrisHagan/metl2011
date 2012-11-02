@@ -1538,13 +1538,14 @@ namespace SandRibbon.Components
                     return;
                 }
                 Trace.TraceInformation("ErasingStroke {0}", e.Stroke.tag().id);
-                doMyStrokeRemoved(e.Stroke);
+                doMyStrokeRemoved(e.Stroke);                                                
             }
             catch
             {
                 //Tag can be malformed if app state isn't fully logged in
             }
         }
+        
         private void doMyStrokeRemoved(Stroke stroke)
         {
             ClearAdorners();
