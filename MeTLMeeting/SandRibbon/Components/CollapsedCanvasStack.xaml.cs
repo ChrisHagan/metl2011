@@ -2577,7 +2577,8 @@ namespace SandRibbon.Components
                     info.Underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
                 }
                 info.IsPrivate = myTextBox.tag().privacy == Privacy.Private ? true : false; 
-                Commands.TextboxFocused.ExecuteAsync(info);
+                //Commands.TextboxFocused.ExecuteAsync(info);
+                Commands.TextboxSelected.ExecuteAsync(info);                
             }
 
         }

@@ -52,8 +52,7 @@ namespace SandRibbon.Components
             {
                 string setPrivacy = info.IsPrivate ? "private" : "public";
                 Commands.SetPrivacy.ExecuteAsync(setPrivacy);
-            }
-           
+            }           
         }
 
         private void updateConversationDetails(ConversationDetails details)
