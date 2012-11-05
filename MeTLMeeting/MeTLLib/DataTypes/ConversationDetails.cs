@@ -232,10 +232,10 @@ namespace MeTLLib.DataTypes
 
         public bool UserHasPermission(Credentials credentials)
         {
-            if (!(credentials.authorizedGroups.Select(g => g.groupKey).Contains(Subject))
-                && Subject != "Unrestricted"
+            if (!(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
+                && Subject.ToLower() != "Unrestricted".ToLower()
                 && !(String.IsNullOrEmpty(Subject))
-                && !(credentials.authorizedGroups.Select(su => su.groupKey).Contains("Superuser"))) return false;
+                && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower()))) return false;
             return true;
         }
         public override bool Equals(object obj)
