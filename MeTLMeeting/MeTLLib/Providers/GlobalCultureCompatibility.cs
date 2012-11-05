@@ -28,13 +28,23 @@ namespace MeTLLib.Providers
         public static System.DateTime TryParse(string s)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            
             var parsedDateTime = new DateTime();
             if (System.DateTime.TryParse(s, out parsedDateTime))
             {
                 return parsedDateTime;
             }
-
-            return Now();
+            else
+            {
+                string[] format = { "ddd MMM dd HH:mm:ss EST yyyy"};
+                System.Globalization.DateTimeStyles styles = System.Globalization.DateTimeStyles.None;
+                DateTime convertedDate = System.DateTime.ParseExact(s, format, currentCulture, styles);
+                if (System.DateTime.TryParse(convertedDate.ToString(), out parsedDateTime))
+                {
+                    return parsedDateTime;
+                }
+                return Now();
+            }
         }
 
         public static System.DateTime ParseFromTicks(string s)
