@@ -1581,7 +1581,7 @@ namespace SandRibbon.Components
         {
             var oldTag = stroke.tag();
             stroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(thisPrivacy), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));
-            SendTargettedStroke(stroke, canvasAlignedPrivacy(thisPrivacy));
+            SendTargettedStroke(stroke, canvasAlignedPrivacy(thisPrivacy));            
         }
         public void SendTargettedStroke(Stroke stroke, Privacy thisPrivacy)
         {
@@ -2749,15 +2749,19 @@ namespace SandRibbon.Components
         }
         public void HandleInkPasteRedo(List<Stroke> newStrokes)
         {
-            //var selection = new StrokeCollection();
-            ClearAdorners();
+            //var selection = new StrokeCollection();              
+            ClearAdorners();            
             foreach (var stroke in newStrokes)
             {
                 if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() == 0)
                 {
                     //stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
                     //selection.Add(stroke);
-                    doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                    var clonedStroke = stroke.Clone();
+                    var oldTag = clonedStroke.tag();
+                    var identity = Globals.generateId(Guid.NewGuid().ToString());
+                    clonedStroke.tag(new StrokeTag(oldTag.author, oldTag.privacy, identity, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));                                                            
+                    doMyStrokeAddedExceptHistory(clonedStroke, clonedStroke.tag().privacy); 
                 }
             }
         }
