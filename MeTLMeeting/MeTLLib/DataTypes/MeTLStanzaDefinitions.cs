@@ -1806,6 +1806,25 @@ namespace MeTLLib.DataTypes
                     {
                         if (node.GetType() == typeof(QuizOption))
                             quiz.Options.Add(((QuizOption)node).parameters);
+                        if ((node as Element) != null)
+                        {
+                            if ((node as Element).TagName == "options")
+                            {
+                                NodeList subMessage = (node as Element).ChildNodes;
+                                if (subMessage != null)
+                                {
+                                    foreach (Node subNode in subMessage)
+                                    {
+                                        if ((subNode as Element) != null)
+                                        {
+                                            if (subNode.GetType() == typeof(QuizOption))
+                                                quiz.Options.Add(((QuizOption)subNode).parameters);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
                     }
                     return quiz;
                 }
