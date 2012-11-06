@@ -36,6 +36,7 @@ namespace MeTLLib.Providers
             }
             else
             {
+                //MeTLX sends this format of date and hence the workaround
                 string[] format = { "ddd MMM dd HH:mm:ss EST yyyy"};
                 System.Globalization.DateTimeStyles styles = System.Globalization.DateTimeStyles.None;
                 DateTime convertedDate = System.DateTime.ParseExact(s, format, currentCulture, styles);

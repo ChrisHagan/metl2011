@@ -693,10 +693,10 @@ namespace SandRibbon
         {
             var details = Globals.conversationDetails;
             if(!details.IsValid)
-            if(Globals.credentials.authorizedGroups.Select(su => su.groupKey).Contains("Superuser")) return true;
-            var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey).ToList();
-            validGroups.Add("Unrestricted");
-            if (!details.isDeleted  && validGroups.Contains(details.Subject)) return true;
+            if(Globals.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower())) return true;
+            var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
+            validGroups.Add("unrestricted");
+            if (!details.isDeleted  && validGroups.Contains(details.Subject.ToLower())) return true;
             return false;
         }
         private bool mustBeAuthor(object _arg)

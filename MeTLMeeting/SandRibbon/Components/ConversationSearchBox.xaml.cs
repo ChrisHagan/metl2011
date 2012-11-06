@@ -351,7 +351,7 @@ namespace SandRibbon.Components
            // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
            if (details.IsJidEqual(Globals.location.activeConversation))
            {
-               if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject) && !details.isDeleted))
+               if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
                {
                    currentConversation.Visibility = Visibility.Collapsed;
                    // really don't like the following line, but it stops the backstagemode changing if already switched to it

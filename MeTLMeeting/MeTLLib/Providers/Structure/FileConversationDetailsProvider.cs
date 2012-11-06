@@ -55,9 +55,9 @@ namespace MeTLLib.Providers.Structure
         private readonly string DETAILS = "details.xml";
         public bool isAccessibleToMe(string jid)
         {
-            var myGroups = Globals.authorizedGroups.Select(g => g.groupKey);
+            var myGroups = Globals.authorizedGroups.Select(g => g.groupKey.ToLower());
             var details = DetailsOf(jid);
-            return myGroups.Contains(details.Subject);
+            return myGroups.Contains(details.Subject.ToLower());
         }
         public ConversationDetails DetailsOf(string conversationJid)
         {

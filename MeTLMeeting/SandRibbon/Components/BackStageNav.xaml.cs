@@ -38,7 +38,7 @@ namespace SandRibbon.Components
             // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
             if (details.IsJidEqual(Globals.location.activeConversation))
             {
-                if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject) && !details.isDeleted))
+                if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;

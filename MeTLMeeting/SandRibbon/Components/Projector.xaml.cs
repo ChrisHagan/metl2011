@@ -71,7 +71,7 @@ namespace SandRibbon.Components
             if (details.IsEmpty) return;
             conversationLabel.Text = generateTitle(details);
             
-            if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey == details.Subject).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
+            if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
             {
                 shutdown(null);
             }
