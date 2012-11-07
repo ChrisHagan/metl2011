@@ -1200,14 +1200,14 @@ namespace SandRibbon.Components
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    AddStrokeToCanvas(Work, new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
+                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
             }
         }
 
-        public void AddStrokeToCanvas(InkCanvas canvas, PrivateAwareStroke stroke)
+        public void AddStrokeToCanvas(PrivateAwareStroke stroke)
         {
             // stroke already exists on the canvas, don't do anything
-            if (canvas.Strokes.Where(s => s.tag().id == stroke.tag().id).Count() != 0)
+            if (Work.Strokes.Where(s => s.tag().id == stroke.tag().id).Count() != 0)
                 return;
 
             //change privacy of stroke if it is different from the canvasAlignedPrivacy
@@ -1215,13 +1215,12 @@ namespace SandRibbon.Components
             {
                 var oldTag = stroke.tag();
                 var newStroke = stroke.Clone();
-                //newStroke.tag(new StrokeTag { author = oldTag.author, privacy = canvasAlignedPrivacy(stroke.privacy()), startingSum = oldTag.startingSum });
                 newStroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(stroke.privacy()), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));
                 stroke = new PrivateAwareStroke(newStroke, _target);
             }
 
-            //contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
-            NegativeCartesianStrokeTranslate(canvas, stroke);
+            var translatedStroke = NegativeCartesianStrokeTranslate(stroke);
+            contentBuffer.AddStroke(translatedStroke, (st) => Work.Strokes.Add(st));   
         }
 
 
@@ -1253,43 +1252,27 @@ namespace SandRibbon.Components
         //This stores the logical value of 0,0 co-ordinates.  These are the canvas's left and top logical values  (-n > c > n)
         private double logicalX;
         private double logicalY;
-
-        private void NegativeCartesianStrokeTranslate(InkCanvas canvas, Stroke stroke)
+        
+        private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
         {
+            var stroke = incomingStroke.Clone();
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
-            //This stores the x and y coordinates of the new stroke that needs to be added to the canvas
-            //This is the amount by which the new stroke needs to be translated
             double translateX = 0.0;
             double translateY = 0.0;
-
             var transformMatrix = new Matrix();
-
-            //Get bounds of the stroke
             var myIncomingRect = stroke.GetBounds();
-
-            //localX and localY are the x and y coordinates of the stroke in its original coordinate space (-n > s > n)
             var localX = myIncomingRect.X;
             var localY = myIncomingRect.Y;
-
             if (PossiblyExtendTheNegativeBoundsOfTheCanvas(localX,localY))                
             {
-                translateX = ReturnPositiveValue(logicalX);
-                translateY = ReturnPositiveValue(logicalY);
-
-                transformMatrix.Translate(translateX, translateY);
-                stroke.Transform(transformMatrix, false);
-                contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
-
-                var CanvasXDelta = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
-                var CanvasYDelta = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
-                translateX = CanvasXDelta;
-                translateY = CanvasYDelta;
+                translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
+                translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
                 transformMatrix = new Matrix();
                 transformMatrix.Translate(translateX, translateY);
 
-                foreach (var tStroke in canvas.Strokes)
+                foreach (var tStroke in Work.Strokes)
                 {
                     if (stroke.tag().id != tStroke.tag().id)
                     {
@@ -1298,16 +1281,21 @@ namespace SandRibbon.Components
                     }
                 }
             }
-            else
-            {   //Not affected by bounds but there can still be negative co-ordinates
-                translateX = ReturnPositiveValue(logicalX);
-                translateY = ReturnPositiveValue(logicalY);
-                transformMatrix.Translate(translateX, translateY);
-                stroke.Transform(transformMatrix, false);
-                contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
-            }
+            translateX = ReturnPositiveValue(logicalX);
+            translateY = ReturnPositiveValue(logicalY);
+            transformMatrix.Translate(translateX, translateY);                
+            stroke.Transform(transformMatrix, false);
+            return stroke;
         }
 
+        private Stroke OffsetNegativeCartesianStrokeTranslate(Stroke stroke)
+        {
+            var newStroke = stroke.Clone();
+            var transformMatrix = new Matrix();
+            transformMatrix.Translate(logicalX, logicalY);
+            newStroke.Transform(transformMatrix, false);
+            return newStroke;
+        }
 
         private void RemoveExistingStrokeFromCanvas(InkCanvas canvas, Stroke stroke)
         {
@@ -1581,7 +1569,7 @@ namespace SandRibbon.Components
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
-            contentBuffer.AddStroke(privateAwareStroke, (st) => Work.Strokes.Add(st));
+            contentBuffer.AddStroke(privateAwareStroke, (st) => Work.Strokes.Add(st));                        
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
@@ -1592,11 +1580,8 @@ namespace SandRibbon.Components
         public void doMyStrokeAdded(Stroke stroke, Privacy intendedPrivacy)
         {
             intendedPrivacy = canvasAlignedPrivacy(intendedPrivacy);
-
-            doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
             var thisStroke = stroke.Clone();
-            UndoHistory.Queue(
-                () =>
+            Action undo = () =>
                 {
                     ClearAdorners();
                     var existingStroke = Work.Strokes.Where(s => s.tag().id == thisStroke.tag().id).FirstOrDefault();
@@ -1605,8 +1590,8 @@ namespace SandRibbon.Components
                         Work.Strokes.Remove(existingStroke);
                         doMyStrokeRemovedExceptHistory(existingStroke);
                     }
-                },
-                () =>
+                };
+            Action redo = () =>
                 {
                     ClearAdorners();
                     if (Work.Strokes.Where(s => s.tag().id == thisStroke.tag().id).Count() == 0)
@@ -1617,7 +1602,10 @@ namespace SandRibbon.Components
                     if (Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(new[] { thisStroke }));
                     AddAdorners();
-                }, String.Format("Added stroke [{0}]", thisStroke.tag().id));
+                };
+            UndoHistory.Queue(undo, redo, String.Format("Added stroke [{0}]", thisStroke.tag().id));
+            //redo();
+            doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
         }
         private void erasingStrokes(object sender, InkCanvasStrokeErasingEventArgs e)
         {
@@ -1674,13 +1662,16 @@ namespace SandRibbon.Components
             stroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(thisPrivacy), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));
             SendTargettedStroke(stroke, canvasAlignedPrivacy(thisPrivacy));
         }
+
         public void SendTargettedStroke(Stroke stroke, Privacy thisPrivacy)
         {
             if (!stroke.shouldPersist()) return;
-            var privateRoom = string.Format("{0}{1}", Globals.slide, stroke.tag().author);
-            if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != stroke.tag().author)
+            //Offset the negative co-ordinates before sending the stroke off the wire
+            var translatedStroke = OffsetNegativeCartesianStrokeTranslate(stroke);
+            var privateRoom = string.Format("{0}{1}", Globals.slide, translatedStroke.tag().author);
+            if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedStroke.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendStroke.Execute(new TargettedStroke(Globals.slide, stroke.tag().author, _target, stroke.tag().privacy, stroke.tag().id, stroke.tag().timestamp, stroke, stroke.tag().startingSum));
+            Commands.SendStroke.Execute(new TargettedStroke(Globals.slide, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != stroke.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
