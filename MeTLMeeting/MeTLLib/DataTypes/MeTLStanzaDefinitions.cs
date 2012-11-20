@@ -272,10 +272,10 @@ namespace MeTLLib.DataTypes
             return (elemIdsA == null && elemIdsB == null) || elemIdsA.SetEquals(elemIdsB);
         }
 
-        public static TargettedMoveDelta Create(int slide, string author, string target, Privacy privacy, long timestamp, IEnumerable<Stroke> moveStrokes, IEnumerable<TextBox> moveTexts, IEnumerable<Image> moveImages)
+        public static TargettedMoveDelta Create(int slide, string author, string target, Privacy privacy, string identity, long timestamp, IEnumerable<Stroke> moveStrokes, IEnumerable<TextBox> moveTexts, IEnumerable<Image> moveImages)
         {
             // identity is set in the MoveDeltaStanza constructor
-            var targettedMoveDelta = new TargettedMoveDelta(slide, author, target, privacy, string.Empty, timestamp);
+            var targettedMoveDelta = new TargettedMoveDelta(slide, author, target, privacy, identity, timestamp);
 
             AddFromCollection<Stroke>(moveStrokes, (s) => targettedMoveDelta.AddInkId(s.tag().id));
             AddFromCollection<TextBox>(moveTexts, (t) => targettedMoveDelta.AddTextId(t.tag().id));

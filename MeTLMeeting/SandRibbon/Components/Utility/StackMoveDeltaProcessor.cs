@@ -14,7 +14,7 @@
     {
         private ContentBuffer ContentBuffer { get; set; }
 
-        public StackMoveDeltaProcessor(InkCanvas canvas, ContentBuffer contentBuffer, string target) : base(canvas, target)
+        public StackMoveDeltaProcessor(InkCanvas canvas, ContentBuffer contentBuffer, string target) : base(canvas, target, contentBuffer)
         {
             ContentBuffer = contentBuffer;
         }

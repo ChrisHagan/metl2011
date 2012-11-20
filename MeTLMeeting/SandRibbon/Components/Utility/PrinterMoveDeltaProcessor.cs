@@ -12,7 +12,7 @@
 
     public class PrinterMoveDeltaProcessor : MoveDeltaProcessor
     {
-        public PrinterMoveDeltaProcessor(InkCanvas canvas, string target) : base(canvas, target)
+        public PrinterMoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer) : base(canvas, target, contentBuffer)
         {
         }
 

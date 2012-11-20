@@ -15,10 +15,13 @@
 
         public string Target { get; private set; }
 
-        protected MoveDeltaProcessor(InkCanvas canvas, string target)
+        public ContentBuffer contentBuffer { get; private set; }
+
+        protected MoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer)
         {
             this.Canvas = canvas;
-            this.Target = target; 
+            this.Target = target;
+            this.contentBuffer = contentBuffer;
         }
 
         protected abstract void AddStroke(Stroke stroke);
@@ -61,28 +64,30 @@
             var yTrans = moveDelta.yTranslate;
             var xScale = moveDelta.xScale;
             var yScale = moveDelta.yScale;
-            
+
             /*var transformMatrix = new Matrix();
             transformMatrix.Scale(xScale, yScale);
             transformMatrix.Translate(xTrans, yTrans);*/
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                var deadStrokes = new List<Stroke>();
-                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                contentBuffer.adjustStrokeForMoveDelta(inkId, (s) =>
                 {
-                    if (dirtiesThis(moveDelta, stroke))
+                    //var deadStrokes = new List<Stroke>();
+                    //var stroke = strokeFilter.Strokes.Where(s => s.tag().id == strokeIdentity).First();
+                    //foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                    //{
+                    if (dirtiesThis(moveDelta, s))
                     {
-
                         //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
                         Rect myRect = new Rect();
-                        myRect = stroke.Clone().GetBounds();
+                        myRect = s.Clone().GetBounds();
 
                         var transformMatrix = new Matrix();
                         if (xScale != 1.0 || yScale != 1.0)
                         {
                             transformMatrix.Translate(-myRect.X, -myRect.Y);
-                            stroke.Transform(transformMatrix, false);
+                            s.Transform(transformMatrix, false);
 
                             transformMatrix = new Matrix();
                             transformMatrix.Scale(xScale, yScale);
@@ -100,9 +105,11 @@
                         }
 
                         transformMatrix.Translate(xTrans, yTrans);
-                        stroke.Transform(transformMatrix, false);
+                        s.Transform(transformMatrix, false);
                     }
-                }
+                    return s;
+                    //}
+                });
             }
 
             foreach (var textId in moveDelta.textIds)
@@ -110,7 +117,7 @@
                 foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
                 {
                     if (dirtiesThis(moveDelta, textBox))
-                    {   
+                    {
                         TranslateAndScale(textBox, xTrans, yTrans, xScale, yScale);
                     }
                 }

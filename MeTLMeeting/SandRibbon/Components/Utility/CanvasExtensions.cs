@@ -203,14 +203,13 @@ namespace SandRibbon.Components.Utility
 
             pen.Freeze();
         }
+        
         protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)
         {
             if (isPrivate && shouldShowPrivacy && target != "notepad")
             {
-            
                 if (!stroke.DrawingAttributes.IsHighlighter)
                 {
-
                     whiteStroke = stroke.Clone();
                     whiteStroke.DrawingAttributes.Color = Colors.White;
                 }
@@ -225,10 +224,11 @@ namespace SandRibbon.Components.Utility
                         context.LineTo(stroke.StylusPoints.ElementAt(i).ToPoint(), true, true);
                     context.LineTo(wideStroke.Reverse().First(), false, false);                    
                 }
-                    drawingContext.DrawGeometry(null, pen, geometry);
+               if (geometry != null && pen != null)
+                   drawingContext.DrawGeometry(null, pen, geometry);
+               if (whiteStroke != null)
+                   base.DrawCore(drawingContext, whiteStroke.DrawingAttributes);
             }
-            if(whiteStroke != null && isPrivate)
-               whiteStroke.Draw(drawingContext);
             else
                base.DrawCore(drawingContext, drawingAttributes);
         }

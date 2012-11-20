@@ -31,8 +31,8 @@ namespace SandRibbonTests
         public void CreatePrinterMoveDelta()
         {
             var canvas = new InkCanvas();
-
-            var moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, "presentationSpace");
+            var contentBuffer = new ContentBuffer();
+            var moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, "presentationSpace", contentBuffer);
         }
     }
 }

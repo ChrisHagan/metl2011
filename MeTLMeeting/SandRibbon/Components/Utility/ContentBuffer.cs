@@ -89,7 +89,55 @@ namespace SandRibbon.Components.Utility
         {
             imageDeltaCollection.Clear();
             modifyUndoContainer();
-        }        
+        }
+
+        public double logicalX;
+        public double logicalY;
+        private double moveDeltaX;
+        private double moveDeltaY;
+
+        private double ReturnPositiveValue(double x)
+        {
+            if (x < 0.0)
+            {
+                return (-1 * x);
+            }
+            return x;
+        }
+
+        private bool PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(double elementLeft, double elementTop)
+        {
+            var isExtending = false;
+            if (elementLeft < 0.0)
+            {
+                logicalX = elementLeft + logicalX;
+                moveDeltaX = elementLeft;
+                isExtending = true;
+            }
+            if (elementTop < 0.0)
+            {
+                logicalY = elementTop + logicalY;
+                moveDeltaY = elementTop;
+                isExtending = true;
+            }
+            return isExtending;
+        }
+
+        private bool PossiblyExtendTheNegativeBoundsOfTheCanvas(double elementLeft, double elementTop)
+        {
+            var isExtending = false;
+            if (elementLeft < logicalX)
+            {
+                logicalX = elementLeft;
+                isExtending = true;
+            }
+            if (elementTop < logicalY)
+            {
+                logicalY = elementTop;
+                isExtending = true;
+            }
+            return isExtending;
+        }
 
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
@@ -109,6 +157,78 @@ namespace SandRibbon.Components.Utility
         public void RemoveStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
             strokeFilter.Remove(strokes, modifyVisibleContainer);
+        }
+
+        public void adjustStroke(Stroke stroke, Func<Stroke,Stroke> adjustment)
+        {
+            //var stroke = incomingStroke.Clone();
+            var oldCanvasOffsetX = logicalX;
+            var oldCanvasOffsetY = logicalY;
+            double translateX = 0.0;
+            double translateY = 0.0;
+            var transformMatrix = new System.Windows.Media.Matrix();
+            var myIncomingRect = stroke.GetBounds();
+            var localX = myIncomingRect.X;
+            var localY = myIncomingRect.Y;
+            if (PossiblyExtendTheNegativeBoundsOfTheCanvas(stroke.GetBounds().X, stroke.GetBounds().Y))
+            {
+                translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
+                translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
+
+                transformMatrix = new System.Windows.Media.Matrix();
+                transformMatrix.Translate(translateX, translateY);
+
+                foreach (var tStroke in strokeFilter.Strokes)
+                {
+                    if (stroke.tag().id != tStroke.tag().id)
+                    {
+                        var myRect = tStroke.GetBounds();
+                        tStroke.Transform(transformMatrix, false);
+                    }
+                }
+            }
+            doAdjustStroke(stroke, adjustment);
+        }
+
+        public void adjustStrokesForMoveDelta(List<String> strokeIdentities, Func<Stroke, Stroke> adjustment)
+        {
+            var strokes = strokeFilter.Strokes.Where(s => strokeIdentities.Contains(s.tag().id));
+            foreach(var stroke in strokes)
+            {
+                if (PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(stroke.GetBounds().X, stroke.GetBounds().Y))
+                {
+                    var translateX = ReturnPositiveValue(moveDeltaX);
+                    var translateY = ReturnPositiveValue(moveDeltaY);
+                    foreach (var tStroke in strokeFilter.Strokes)
+                    {
+                        var transformMatrix = new System.Windows.Media.Matrix();
+                        transformMatrix.Translate(translateX, translateY);
+                        tStroke.Transform(transformMatrix, false);
+                    }
+                }
+                doAdjustStroke(stroke, adjustment);
+            }
+        }
+
+        public void adjustStrokeForMoveDelta(String strokeIdentity, Func<Stroke, Stroke> adjustment)
+        {
+            var stroke = strokeFilter.Strokes.Where(s => s.tag().id == strokeIdentity).First();
+            if (PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(stroke.GetBounds().X, stroke.GetBounds().Y))
+            {
+                var translateX = ReturnPositiveValue(moveDeltaX);
+                var translateY = ReturnPositiveValue(moveDeltaY);
+                foreach (var tStroke in strokeFilter.Strokes)
+                {
+                    var transformMatrix = new System.Windows.Media.Matrix();
+                    transformMatrix.Translate(translateX, translateY);
+                    tStroke.Transform(transformMatrix, false);
+                }
+            }
+            doAdjustStroke(stroke,adjustment);
+        }
+        private void doAdjustStroke(Stroke stroke, Func<Stroke, Stroke> adjustment)
+        {
+            stroke = adjustment(stroke);
         }
 
         public void AddDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)
@@ -151,5 +271,6 @@ namespace SandRibbon.Components.Utility
             Debug.Assert((element as TextBox) != null);
             textFilter.Remove(element, modifyVisibleContainer);
         }
+
     }
 }

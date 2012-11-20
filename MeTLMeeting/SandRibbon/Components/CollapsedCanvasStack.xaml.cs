@@ -532,7 +532,8 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, -1L, selectedStrokes, selectedTextBoxes, selectedImages);
+                    var identity = Globals.generateId(Guid.NewGuid().ToString());
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, identity, -1L, selectedStrokes, selectedTextBoxes, selectedImages);
                     moveDelta.isDeleted = true;
 
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -900,7 +901,8 @@ namespace SandRibbon.Components
 
                     ClearAdorners();
 
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, -1L, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
+                    var identity = Globals.generateId(Guid.NewGuid().ToString());
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
                     //moveDelta.newPrivacy = Privacy.NotSet;
 
                     moveDelta.xTranslate = -moveMetrics.Delta.X;
@@ -928,7 +930,8 @@ namespace SandRibbon.Components
 
                     ClearAdorners();
 
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, -1L, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
+                    var identity = Globals.generateId(Guid.NewGuid().ToString());
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L, selectedStrokes, selectedElements.OfType<TextBox>(), selectedElements.OfType<Image>());
                     //moveDelta.newPrivacy = Privacy.NotSet;
 
                     moveDelta.xTranslate = moveMetrics.Delta.X;
@@ -1200,45 +1203,45 @@ namespace SandRibbon.Components
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
+                    AddStrokeToCanvas(targettedStroke.stroke.Clone());
             }
         }
 
-        public void AddStrokeToCanvas(PrivateAwareStroke stroke)
+        public void AddStrokeToCanvas(Stroke stroke)
         {
             // stroke already exists on the canvas, don't do anything
             if (Work.Strokes.Where(s => s.tag().id == stroke.tag().id).Count() != 0)
                 return;
-
             //change privacy of stroke if it is different from the canvasAlignedPrivacy
             if (canvasAlignedPrivacy(stroke.privacy()) != stroke.privacy())
             {
                 var oldTag = stroke.tag();
                 var newStroke = stroke.Clone();
                 newStroke.tag(new StrokeTag(oldTag.author, canvasAlignedPrivacy(stroke.privacy()), oldTag.id, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));
-                stroke = new PrivateAwareStroke(newStroke, _target);
+                stroke = newStroke;
             }
 
-            var translatedStroke = NegativeCartesianStrokeTranslate(stroke);
-            contentBuffer.AddStroke(translatedStroke, (st) => Work.Strokes.Add(st));   
+            NegativeCartesianStrokeTranslate(stroke);
+            //var translatedStroke = NegativeCartesianStrokeTranslate(stroke);
+            contentBuffer.AddStroke(new PrivateAwareStroke(stroke,_target), (st) => Work.Strokes.Add(st));   
         }
 
 
-        private bool PossiblyExtendTheNegativeBoundsOfTheCanvas(double elementLeft, double elementTop)
+        /*private bool PossiblyExtendTheNegativeBoundsOfTheCanvas(double elementLeft, double elementTop)
         {
             var isExtending = false;
-            if (elementLeft < logicalX)
+            if (elementLeft < contentBuffer.logicalX)
             {
-                logicalX = elementLeft;
+                contentBuffer.logicalX = elementLeft;
                 isExtending = true;
             }
-            if (elementTop < logicalY)
+            if (elementTop < contentBuffer.logicalY)
             {
-                logicalY = elementTop;
+                contentBuffer.logicalY = elementTop;
                 isExtending = true;
             }
             return isExtending;
-        }
+        }*/
 
         private double ReturnPositiveValue(double x)
         {
@@ -1250,14 +1253,27 @@ namespace SandRibbon.Components
         }
 
         //This stores the logical value of 0,0 co-ordinates.  These are the canvas's left and top logical values  (-n > c > n)
-        private double logicalX;
-        private double logicalY;
-        
-        private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
+        //private double logicalX;
+        //private double logicalY;
+
+        private void NegativeCartesianStrokeTranslate(Stroke incomingStroke)
+        {
+            contentBuffer.adjustStroke(incomingStroke, (s) =>
+            {
+                var translateX = ReturnPositiveValue(contentBuffer.logicalX);
+                var translateY = ReturnPositiveValue(contentBuffer.logicalY);
+                var transformMatrix = new Matrix();
+                transformMatrix.Translate(translateX, translateY);
+                s.Transform(transformMatrix, false);
+                return s;
+            });
+        }
+
+        /*private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
         {
             var stroke = incomingStroke.Clone();
-            var oldCanvasOffsetX = logicalX;
-            var oldCanvasOffsetY = logicalY;
+            var oldCanvasOffsetX = contentBuffer.logicalX;
+            var oldCanvasOffsetY = contentBuffer.logicalY;
             double translateX = 0.0;
             double translateY = 0.0;
             var transformMatrix = new Matrix();
@@ -1266,8 +1282,8 @@ namespace SandRibbon.Components
             var localY = myIncomingRect.Y;
             if (PossiblyExtendTheNegativeBoundsOfTheCanvas(localX,localY))                
             {
-                translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
-                translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
+                translateX = ReturnPositiveValue(ReturnPositiveValue(contentBuffer.logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
+                translateY = ReturnPositiveValue(ReturnPositiveValue(contentBuffer.logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
                 transformMatrix = new Matrix();
                 transformMatrix.Translate(translateX, translateY);
@@ -1281,18 +1297,19 @@ namespace SandRibbon.Components
                     }
                 }
             }
-            translateX = ReturnPositiveValue(logicalX);
-            translateY = ReturnPositiveValue(logicalY);
+            translateX = ReturnPositiveValue(contentBuffer.logicalX);
+            translateY = ReturnPositiveValue(contentBuffer.logicalY);
+            transformMatrix = new Matrix();
             transformMatrix.Translate(translateX, translateY);                
             stroke.Transform(transformMatrix, false);
             return stroke;
-        }
+        }*/
 
         private Stroke OffsetNegativeCartesianStrokeTranslate(Stroke stroke)
         {
             var newStroke = stroke.Clone();
             var transformMatrix = new Matrix();
-            transformMatrix.Translate(logicalX, logicalY);
+            transformMatrix.Translate(contentBuffer.logicalX, contentBuffer.logicalY);
             newStroke.Transform(transformMatrix, false);
             return newStroke;
         }
@@ -1507,8 +1524,9 @@ namespace SandRibbon.Components
 
             Action redo = () =>
                               {
+                                  var identity = Globals.generateId(Guid.NewGuid().ToString());
                                   //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
                                   moveDelta.newPrivacy = newPrivacy;
 
                                   Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1522,8 +1540,9 @@ namespace SandRibbon.Components
                               };
             Action undo = () =>
                               {
+                                  var identity = Globals.generateId(Guid.NewGuid().ToString());
                                   //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);                                  
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
+                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
                                   moveDelta.newPrivacy = oldPrivacy;
 
                                   Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1705,12 +1724,63 @@ namespace SandRibbon.Components
 
         }
 
+        private double moveDeltaX;
+        private double moveDeltaY;
+
+        /*private bool PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(double elementLeft, double elementTop)
+        {
+            var isExtending = false;
+            if (elementLeft < 0.0)
+            {
+                logicalX = elementLeft + logicalX;
+                moveDeltaX = elementLeft;
+                isExtending = true;
+            }
+            if (elementTop < 0.0)
+            {
+                logicalY = elementTop + logicalY;
+                moveDeltaY = elementTop;
+                isExtending = true;
+            }
+            return isExtending;
+        }*/
+
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
             if (_target == "presentationSpace")
-            {
+            {   
                 // don't want to duplicate what has already been done locally
                 moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
+
+                var inkIds = moveDelta.inkIds.Select(elemId => elemId.Identity).ToList();
+                contentBuffer.adjustStrokesForMoveDelta(inkIds, (s) =>
+                {
+                    var translateX = ReturnPositiveValue(moveDeltaX);
+                    var translateY = ReturnPositiveValue(moveDeltaY);
+                    var transformMatrix = new Matrix();
+                    transformMatrix.Translate(translateX, translateY);
+                    s.Transform(transformMatrix, false);
+                    return s;
+                });
+                
+                /*foreach(var stroke in Work.Strokes.Where(s => inkIds.Contains(s.tag().id)))
+                {
+                    if (PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(stroke.GetBounds().X,stroke.GetBounds().Y))
+                    {
+                        foreach (var tStroke in Work.Strokes)
+                        {
+                            var translateX = ReturnPositiveValue(moveDeltaX);
+                            var translateY = ReturnPositiveValue(moveDeltaY);
+
+                            var transformMatrix = new Matrix();
+                            transformMatrix.Translate(translateX, translateY);
+                            tStroke.Transform(transformMatrix, false);
+
+                            contentBuffer.RemoveStroke(tStroke, s => Work.Strokes.Remove(s));
+                            contentBuffer.AddStroke(tStroke, s => Work.Strokes.Add(s));
+                        }
+                    }
+                }*/                
             }
         }
 
@@ -3195,8 +3265,8 @@ namespace SandRibbon.Components
             Height = Double.NaN;
             Width = Double.NaN;
             //Negative Cartesian Resolution - Changing the co-ordinates to 0,0
-            logicalX = 0.0;
-            logicalY = 0.0;
+            contentBuffer.logicalX = 0.0;
+            contentBuffer.logicalY = 0.0;
         }
 
         public void SetEditable(bool b)

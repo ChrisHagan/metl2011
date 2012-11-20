@@ -50,7 +50,8 @@ namespace SandRibbon.Utils.Connection
         private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic)
         {
             var canvas = new MeTLInkCanvas();
-            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target);
+            var contentBuffer = new ContentBuffer();
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
