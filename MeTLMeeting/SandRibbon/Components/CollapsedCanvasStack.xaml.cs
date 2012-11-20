@@ -1222,26 +1222,8 @@ namespace SandRibbon.Components
             }
 
             NegativeCartesianStrokeTranslate(stroke);
-            //var translatedStroke = NegativeCartesianStrokeTranslate(stroke);
             contentBuffer.AddStroke(new PrivateAwareStroke(stroke,_target), (st) => Work.Strokes.Add(st));   
         }
-
-
-        /*private bool PossiblyExtendTheNegativeBoundsOfTheCanvas(double elementLeft, double elementTop)
-        {
-            var isExtending = false;
-            if (elementLeft < contentBuffer.logicalX)
-            {
-                contentBuffer.logicalX = elementLeft;
-                isExtending = true;
-            }
-            if (elementTop < contentBuffer.logicalY)
-            {
-                contentBuffer.logicalY = elementTop;
-                isExtending = true;
-            }
-            return isExtending;
-        }*/
 
         private double ReturnPositiveValue(double x)
         {
@@ -1251,10 +1233,6 @@ namespace SandRibbon.Components
             }
             return x;
         }
-
-        //This stores the logical value of 0,0 co-ordinates.  These are the canvas's left and top logical values  (-n > c > n)
-        //private double logicalX;
-        //private double logicalY;
 
         private void NegativeCartesianStrokeTranslate(Stroke incomingStroke)
         {
@@ -1268,42 +1246,6 @@ namespace SandRibbon.Components
                 return s;
             });
         }
-
-        /*private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
-        {
-            var stroke = incomingStroke.Clone();
-            var oldCanvasOffsetX = contentBuffer.logicalX;
-            var oldCanvasOffsetY = contentBuffer.logicalY;
-            double translateX = 0.0;
-            double translateY = 0.0;
-            var transformMatrix = new Matrix();
-            var myIncomingRect = stroke.GetBounds();
-            var localX = myIncomingRect.X;
-            var localY = myIncomingRect.Y;
-            if (PossiblyExtendTheNegativeBoundsOfTheCanvas(localX,localY))                
-            {
-                translateX = ReturnPositiveValue(ReturnPositiveValue(contentBuffer.logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
-                translateY = ReturnPositiveValue(ReturnPositiveValue(contentBuffer.logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
-
-                transformMatrix = new Matrix();
-                transformMatrix.Translate(translateX, translateY);
-
-                foreach (var tStroke in Work.Strokes)
-                {
-                    if (stroke.tag().id != tStroke.tag().id)
-                    {
-                        var myRect = tStroke.GetBounds();                
-                        tStroke.Transform(transformMatrix, false);                        
-                    }
-                }
-            }
-            translateX = ReturnPositiveValue(contentBuffer.logicalX);
-            translateY = ReturnPositiveValue(contentBuffer.logicalY);
-            transformMatrix = new Matrix();
-            transformMatrix.Translate(translateX, translateY);                
-            stroke.Transform(transformMatrix, false);
-            return stroke;
-        }*/
 
         private Stroke OffsetNegativeCartesianStrokeTranslate(Stroke stroke)
         {
@@ -1762,25 +1704,6 @@ namespace SandRibbon.Components
                     s.Transform(transformMatrix, false);
                     return s;
                 });
-                
-                /*foreach(var stroke in Work.Strokes.Where(s => inkIds.Contains(s.tag().id)))
-                {
-                    if (PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(stroke.GetBounds().X,stroke.GetBounds().Y))
-                    {
-                        foreach (var tStroke in Work.Strokes)
-                        {
-                            var translateX = ReturnPositiveValue(moveDeltaX);
-                            var translateY = ReturnPositiveValue(moveDeltaY);
-
-                            var transformMatrix = new Matrix();
-                            transformMatrix.Translate(translateX, translateY);
-                            tStroke.Transform(transformMatrix, false);
-
-                            contentBuffer.RemoveStroke(tStroke, s => Work.Strokes.Remove(s));
-                            contentBuffer.AddStroke(tStroke, s => Work.Strokes.Add(s));
-                        }
-                    }
-                }*/                
             }
         }
 
