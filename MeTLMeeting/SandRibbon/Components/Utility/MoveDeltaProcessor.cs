@@ -125,13 +125,14 @@
 
             foreach (var imageId in moveDelta.imageIds)
             {
-                foreach (var image in Canvas.ImageChildren().Where((i) => i.tag().id == imageId.Identity))
+                contentBuffer.adjustImageForMoveDelta(imageId, (i) =>
                 {
-                    if (dirtiesThis(moveDelta, image))
+                    if (dirtiesThis(moveDelta, i))
                     {
-                        TranslateAndScale(image, xTrans, yTrans, xScale, yScale);
+                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale);
                     }
-                }
+                    return i;
+                });
             }
         }
 

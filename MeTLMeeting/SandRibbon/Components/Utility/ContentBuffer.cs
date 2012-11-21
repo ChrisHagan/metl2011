@@ -93,8 +93,8 @@ namespace SandRibbon.Components.Utility
 
         public double logicalX;
         public double logicalY;
-        private double moveDeltaX;
-        private double moveDeltaY;
+        public double moveDeltaX;
+        public double moveDeltaY;
 
         private double ReturnPositiveValue(double x)
         {
@@ -196,7 +196,7 @@ namespace SandRibbon.Components.Utility
             doAdjustStroke(stroke, adjustment);
         }
 
-        public void adjustStrokesForMoveDelta(List<String> strokeIdentities, Func<Stroke, Stroke> adjustment)
+        public void adjustStrokesForMoveDelta(List<String> strokeIdentities)
         {
             var strokes = strokeFilter.Strokes.Where(s => strokeIdentities.Contains(s.tag().id));
             foreach(var stroke in strokes)
@@ -211,8 +211,13 @@ namespace SandRibbon.Components.Utility
                         transformMatrix.Translate(translateX, translateY);
                         tStroke.Transform(transformMatrix, false);
                     }
+                    foreach (var tImage in imageFilter.Images)
+                    {
+                        InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
+                        InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
+                    }
                 }
-                doAdjustStroke(stroke, adjustment);
+                //doAdjustStroke(stroke, adjustment);
             }
         }
 
@@ -228,6 +233,11 @@ namespace SandRibbon.Components.Utility
                     var transformMatrix = new System.Windows.Media.Matrix();
                     transformMatrix.Translate(translateX, translateY);
                     tStroke.Transform(transformMatrix, false);
+                }
+                foreach (var tImage in imageFilter.Images)
+                {
+                    InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
+                    InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
                 }
             }
             doAdjustStroke(stroke,adjustment);
@@ -287,6 +297,54 @@ namespace SandRibbon.Components.Utility
             }
             doAdjustImage(image, adjustment);
         }
+
+        public void adjustImageForMoveDelta(String imageIdentity, Func<Image, Image> adjustment)
+        {
+            var image = imageFilter.Images.Where(i => (i as Image).tag().id == imageIdentity).First();            
+            if (PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(InkCanvas.GetLeft(image),InkCanvas.GetTop(image)))
+            {
+                var translateX = ReturnPositiveValue(moveDeltaX);
+                var translateY = ReturnPositiveValue(moveDeltaY);
+                foreach (var tImage in imageFilter.Images)
+                {
+                    InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
+                    InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
+                }
+                foreach (var tStroke in strokeFilter.Strokes)
+                {
+                    var transformMatrix = new System.Windows.Media.Matrix();
+                    transformMatrix.Translate(translateX, translateY);
+                    tStroke.Transform(transformMatrix, false);
+                }
+            }
+            doAdjustImage(image as Image, adjustment);
+        }
+
+        public void adjustImagesForMoveDelta(List<String> imageIdentities)
+        {
+            var images = imageFilter.Images.Where(i => imageIdentities.Contains((i as Image).tag().id));
+            foreach(var image in images)            
+            {
+                if (PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(InkCanvas.GetLeft(image), InkCanvas.GetTop(image)))
+                {
+                    var translateX = ReturnPositiveValue(moveDeltaX);
+                    var translateY = ReturnPositiveValue(moveDeltaY);
+                    foreach (var tImage in imageFilter.Images)
+                    {
+                        InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
+                        InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
+                    }
+                    foreach (var tStroke in strokeFilter.Strokes)
+                    {
+                        var transformMatrix = new System.Windows.Media.Matrix();
+                        transformMatrix.Translate(translateX, translateY);
+                        tStroke.Transform(transformMatrix, false);
+                    }
+                }
+                //doAdjustImage(image as Image, adjustment);
+            }
+        }
+
         private void doAdjustImage(Image image, Func<Image, Image> adjustment)
         {
             image = adjustment(image);

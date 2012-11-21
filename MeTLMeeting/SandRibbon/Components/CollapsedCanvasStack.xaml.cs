@@ -1666,9 +1666,6 @@ namespace SandRibbon.Components
 
         }
 
-        private double moveDeltaX;
-        private double moveDeltaY;
-
         /*private bool PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(double elementLeft, double elementTop)
         {
             var isExtending = false;
@@ -1695,15 +1692,10 @@ namespace SandRibbon.Components
                 moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
 
                 var inkIds = moveDelta.inkIds.Select(elemId => elemId.Identity).ToList();
-                contentBuffer.adjustStrokesForMoveDelta(inkIds, (s) =>
-                {
-                    var translateX = ReturnPositiveValue(moveDeltaX);
-                    var translateY = ReturnPositiveValue(moveDeltaY);
-                    var transformMatrix = new Matrix();
-                    transformMatrix.Translate(translateX, translateY);
-                    s.Transform(transformMatrix, false);
-                    return s;
-                });
+                contentBuffer.adjustStrokesForMoveDelta(inkIds);
+
+                var imageIds = moveDelta.imageIds.Select(elemId => elemId.Identity).ToList();
+                contentBuffer.adjustImagesForMoveDelta(imageIds);
             }
         }
 
