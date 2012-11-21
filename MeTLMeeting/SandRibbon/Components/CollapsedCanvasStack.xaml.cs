@@ -1465,37 +1465,37 @@ namespace SandRibbon.Components
             var text = changeSelectedTextPrivacy(selectedTextBoxes, newPrivacy, oldPrivacy);
 
             Action redo = () =>
-                              {
-                                  var identity = Globals.generateId(Guid.NewGuid().ToString());
-                                  //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
-                                  moveDelta.newPrivacy = newPrivacy;
+                {
+                    var identity = Globals.generateId(Guid.NewGuid().ToString());
+                    //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
+                    moveDelta.newPrivacy = newPrivacy;
 
-                                  Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
-                                  ink.redo();
-                                  text.redo();
-                                  images.redo();
+                    ink.redo();
+                    text.redo();
+                    images.redo();
 
-                                  ClearAdorners();
-                                  Work.Focus();
-                              };
+                    ClearAdorners();
+                    Work.Focus();
+                };
             Action undo = () =>
-                              {
-                                  var identity = Globals.generateId(Guid.NewGuid().ToString());
-                                  //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);                                  
-                                  var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
-                                  moveDelta.newPrivacy = oldPrivacy;
+                {
+                    var identity = Globals.generateId(Guid.NewGuid().ToString());
+                    //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);                                  
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
+                    moveDelta.newPrivacy = oldPrivacy;
 
-                                  Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
-                                  ink.undo();
-                                  text.undo();
-                                  images.undo();
+                    ink.undo();
+                    text.undo();
+                    images.undo();
 
-                                  ClearAdorners();
-                                  Work.Focus();
-                              };
+                    ClearAdorners();
+                    Work.Focus();
+                };
             redo();
             UndoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
@@ -1731,13 +1731,34 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, Image image)
         {
             if (canvas.ImageChildren().Any(i => ((Image)i).tag().id == image.tag().id)) return;
-
+            NegativeCartesianImageTranslate(image);
             contentBuffer.AddImage(image, (img) =>
             {
                 Panel.SetZIndex(img, 2);
                 canvas.Children.Add(img);
             });
         }
+
+        private void NegativeCartesianImageTranslate(Image incomingImage)
+        {
+            contentBuffer.adjustImage(incomingImage, (i) =>
+            {
+                var translateX = ReturnPositiveValue(contentBuffer.logicalX);
+                var translateY = ReturnPositiveValue(contentBuffer.logicalY);
+                InkCanvas.SetLeft(i, (InkCanvas.GetLeft(i) + translateX));
+                InkCanvas.SetTop(i, (InkCanvas.GetTop(i) + translateY));
+                return i;
+            });
+        }
+
+        private Image OffsetNegativeCartesianImageTranslate(Image image)
+        {
+            var newImage = image.clone();
+            InkCanvas.SetLeft(newImage, (InkCanvas.GetLeft(newImage) + contentBuffer.logicalX));
+            InkCanvas.SetTop(newImage, (InkCanvas.GetTop(newImage) + contentBuffer.logicalY));
+            return newImage;
+        }
+
         public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(_target))) return;
@@ -2078,22 +2099,24 @@ namespace SandRibbon.Components
                                   };
                 Action redo = () =>
                 {
+                    var translatedImage = OffsetNegativeCartesianImageTranslate(myImage);
+                    
                     if (!fileName.StartsWith("http"))
-                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, myImage, fileName, false));
+                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
                     else
-                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, currentPrivacy, myImage.tag().id, myImage, myImage.tag().timestamp));
-
+                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, currentPrivacy, translatedImage.tag().id, translatedImage, translatedImage.tag().timestamp));
                     ClearAdorners();
-                    InkCanvas.SetLeft(myImage, imagePos.X);
-                    InkCanvas.SetTop(myImage, imagePos.Y);
-                    contentBuffer.AddImage(myImage, (img) =>
+                    
+                    NegativeCartesianImageTranslate(translatedImage);
+                    
+                    contentBuffer.AddImage(translatedImage, (img) =>
                     {
                         if (!Work.Children.Contains(img))
                             Work.Children.Add(img);
                     });
                     //sendThisElement(myImage);
 
-                    Work.Select(new[] { myImage });
+                    Work.Select(new[] { translatedImage });
                     AddAdorners();
                 };
                 redo();

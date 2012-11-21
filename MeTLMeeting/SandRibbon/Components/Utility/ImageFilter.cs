@@ -35,7 +35,7 @@ namespace SandRibbon.Components.Utility
             return (element as Image).tag().privacy;
         }
 
-        List<UIElement> Images
+        public List<UIElement> Images
         {
             get
             {
