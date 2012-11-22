@@ -474,7 +474,7 @@ namespace SandRibbon.Components
                                   foreach (var box in selectedElements)
                                   {
                                       if (!alreadyHaveThisTextBox(box))
-                                          AddTextBoxToCanvas(box);
+                                          AddTextBoxToCanvas(box, false);
                                       box.PreviewKeyDown += box_PreviewTextInput;
                                       sendTextWithoutHistory(box, box.tag().privacy);
                                   }
@@ -497,8 +497,12 @@ namespace SandRibbon.Components
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected text");
         }
 
-        private void AddTextBoxToCanvas(MeTLTextBox box)
+        private void AddTextBoxToCanvas(MeTLTextBox box,Boolean isAdjustedForNegativeCartesian)
         {
+            if(isAdjustedForNegativeCartesian)
+            {
+                NegativeCartesianTextTranslate(box);
+            }
             Panel.SetZIndex(box, 3);
             AddTextboxToMyCanvas(box);
         }
@@ -795,7 +799,7 @@ namespace SandRibbon.Components
                   foreach (var box in startingText)
                   {
                       selection.Add(box);
-                      AddTextBoxToCanvas(applyDefaultAttributes(box));
+                      AddTextBoxToCanvas(applyDefaultAttributes(box),false);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -811,7 +815,7 @@ namespace SandRibbon.Components
                   foreach (var box in mySelectedElements)
                   {
                       selection.Add(box);
-                      AddTextBoxToCanvas(applyDefaultAttributes(box));
+                      AddTextBoxToCanvas(applyDefaultAttributes(box),false);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -1696,6 +1700,9 @@ namespace SandRibbon.Components
 
                 var imageIds = moveDelta.imageIds.Select(elemId => elemId.Identity).ToList();
                 contentBuffer.adjustImagesForMoveDelta(imageIds);
+
+                var textIds = moveDelta.textIds.Select(elemId => elemId.Identity).ToList();
+                contentBuffer.adjustTextsForMoveDelta(textIds);
             }
         }
 
@@ -2178,7 +2185,7 @@ namespace SandRibbon.Components
             if (me == Globals.PROJECTOR) return;
             var pos = e.GetPosition(this);
             MeTLTextBox box = createNewTextbox();
-            AddTextBoxToCanvas(box);
+            AddTextBoxToCanvas(box, true);
             InkCanvas.SetLeft(box, pos.X);
             InkCanvas.SetTop(box, pos.Y);
             myTextBox = box;
@@ -2240,11 +2247,11 @@ namespace SandRibbon.Components
             box.TextChanged += SendNewText;
             box.Width = oldBox.Width;
             //box.Height = OldBox.Height;
-            InkCanvas.SetLeft(box, InkCanvas.GetLeft(oldBox));
-            InkCanvas.SetTop(box, InkCanvas.GetTop(oldBox));
+            /*InkCanvas.SetLeft(box, InkCanvas.GetLeft(oldBox));
+            InkCanvas.SetTop(box, InkCanvas.GetTop(oldBox));*/
 
             if (createdNew)
-                AddTextBoxToCanvas(box);
+                AddTextBoxToCanvas(box, true);                
 
             return box;
         }
@@ -2288,7 +2295,7 @@ namespace SandRibbon.Components
             if (box == null)
             {
                 box = textbox.clone();
-                AddTextBoxToCanvas(box);
+                AddTextBoxToCanvas(box, true);
             }
 
             InkCanvas.SetLeft(box, InkCanvas.GetLeft(textbox));
@@ -2523,12 +2530,33 @@ namespace SandRibbon.Components
         {
             myTextBox = box;
             if (!Work.Children.ToList().Any(c => c is MeTLTextBox && ((MeTLTextBox)c).tag().id == box.tag().id))
-                AddTextBoxToCanvas(box);
+                AddTextBoxToCanvas(box, true);
             box.PreviewKeyDown += box_PreviewTextInput;
             if (!localOnly)
             {
                 sendTextWithoutHistory(box, box.tag().privacy);
             }
+        }
+
+        private void NegativeCartesianTextTranslate(TextBox incomingBox)
+        {
+            contentBuffer.adjustText(incomingBox, (t) =>
+            {
+                var translateX = ReturnPositiveValue(contentBuffer.logicalX);
+                var translateY = ReturnPositiveValue(contentBuffer.logicalY);
+                InkCanvas.SetLeft(t, (InkCanvas.GetLeft(t) + translateX));
+                InkCanvas.SetTop(t, (InkCanvas.GetTop(t) + translateY));
+                return t;
+            });
+        }
+
+        private TextBox OffsetNegativeCartesianTextTranslate(TextBox box)
+        {
+            //var newBox = (box as MeTLTextBox).clone();
+            var newBox = box;
+            InkCanvas.SetLeft(newBox, (InkCanvas.GetLeft(newBox) + contentBuffer.logicalX));
+            InkCanvas.SetTop(newBox, (InkCanvas.GetTop(newBox) + contentBuffer.logicalY));
+            return newBox;
         }
 
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy)
@@ -2546,12 +2574,20 @@ namespace SandRibbon.Components
             var oldTextTag = box.tag();
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id, oldTextTag.timestamp);
             box.tag(newTextTag);
-            var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
+            var translatedTextBox = OffsetNegativeCartesianTextTranslate(box);
+            var privateRoom = string.Format("{0}{1}", Globals.slide, translatedTextBox.tag().author);
+            if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
+                Commands.SneakInto.Execute(privateRoom);
+            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, translatedTextBox.tag().author, _target, thisPrivacy, translatedTextBox.tag().id, translatedTextBox, translatedTextBox.tag().timestamp));
+            if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
+                Commands.SneakOutOf.Execute(privateRoom);
+            NegativeCartesianTextTranslate(translatedTextBox);
+            /*var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
             Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box.tag().id, box, box.tag().timestamp));
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
-                Commands.SneakOutOf.Execute(privateRoom);
+                Commands.SneakOutOf.Execute(privateRoom);*/
         }
 
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box)
@@ -2727,23 +2763,18 @@ namespace SandRibbon.Components
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != _target) return;
-            //if (targettedBox.box.Text.Length == 0) return;
-
+            
             if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
 
-            //targettedBox.box.tag(new TextTag(targettedBox.box.tag(), targettedBox.timestamp));
-            if (targettedBox.HasSameAuthor(me) && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
+            /*if (targettedBox.HasSameAuthor(me) && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
             {
-                /*var box = textBoxFromId(targettedBox.identity);
-                if (box != null)
-                    ApplyPrivacyStylingToElement(box, box.tag().privacy);*/
                 DoText(targettedBox);
                 return;
-            }//I never want my live text to collide with me.
+            }*///I never want my live text to collide with me.
             if (targettedBox.slide == Globals.slide && (targettedBox.HasSamePrivacy(Privacy.Private) || me == Globals.PROJECTOR))
                 RemoveTextBoxWithMatchingId(targettedBox.identity);
-            if (targettedBox.slide == Globals.slide && (targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me) && me != Globals.PROJECTOR)))
+            if (targettedBox.slide == Globals.slide && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != Globals.PROJECTOR)))
                 DoText(targettedBox);
         }
 
@@ -2913,7 +2944,7 @@ namespace SandRibbon.Components
                     var box = textBoxFromId(currentBox.tag().id);
                     if (box == null)
                     {
-                        AddTextBoxToCanvas(currentBox);
+                        AddTextBoxToCanvas(currentBox, true);
                         box = currentBox;
                     }
                     box.TextChanged -= SendNewText;
@@ -2928,7 +2959,7 @@ namespace SandRibbon.Components
                 {
                     textBox.tag(new TextTag(textBox.tag().author, currentPrivacy, textBox.tag().id, textBox.tag().timestamp));
                     var box = setWidthOf(textBox);
-                    AddTextBoxToCanvas(box);
+                    AddTextBoxToCanvas(box, true);
                     sendTextWithoutHistory(box, box.tag().privacy);
                 }
             }

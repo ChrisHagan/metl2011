@@ -35,7 +35,7 @@ namespace SandRibbon.Components.Utility
             return (element as TextBox).tag().privacy;
         }
 
-        List<UIElement> TextBoxes
+        public List<UIElement> TextBoxes
         {
             get
             {

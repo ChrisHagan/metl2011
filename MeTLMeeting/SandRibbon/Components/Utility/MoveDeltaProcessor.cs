@@ -114,13 +114,14 @@
 
             foreach (var textId in moveDelta.textIds)
             {
-                foreach (var textBox in Canvas.TextChildren().Where((t) => t.tag().id == textId.Identity))
+                contentBuffer.adjustTextForMoveDelta(textId, (t) =>
                 {
-                    if (dirtiesThis(moveDelta, textBox))
+                    if (dirtiesThis(moveDelta, t))
                     {
-                        TranslateAndScale(textBox, xTrans, yTrans, xScale, yScale);
+                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale);
                     }
-                }
+                    return t;
+                });                
             }
 
             foreach (var imageId in moveDelta.imageIds)
