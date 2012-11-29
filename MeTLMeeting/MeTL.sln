@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonObjects", "SandRi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLib", "MeTLLib\MeTLLib.csproj", "{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLibTests", "MeTLLibTests\MeTLLibTests.csproj", "{FE0598CD-05CE-4EE9-9F93-D2260F504071}"
+Project("{00000000-0000-0000-0000-000000000000}") = "MeTLLibTests", "MeTLLibTests\MeTLLibTests.csproj", "{FE0598CD-05CE-4EE9-9F93-D2260F504071}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartboardController", "SmartboardController\SmartboardController.csproj", "{BB7E9E3D-B005-4F2B-9BA9-BC7B5EE0D7BD}"
 EndProject
@@ -23,8 +23,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\LectureMeTL.csproj", "{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalTests", "FunctionalTests\FunctionalTests.csproj", "{2FED8C4C-2184-41D8-A920-4307F963805D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonTests", "SandRibbonTests\SandRibbonTests\SandRibbonTests.csproj", "{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -128,16 +126,6 @@ Global
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|x86.ActiveCfg = Release|Any CPU
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Debug|x86.ActiveCfg = Debug|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Debug|x86.Build.0 = Debug|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Release|Any CPU.ActiveCfg = Release|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Release|Mixed Platforms.Build.0 = Release|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Release|x86.ActiveCfg = Release|x86
-		{D0EB33E6-ED35-4790-A8D3-FBB5E6D74DEA}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
