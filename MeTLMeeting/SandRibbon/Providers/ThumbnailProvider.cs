@@ -23,7 +23,7 @@ namespace SandRibbon.Providers
                     using (var client = new WebClient())
                     {
                         BitmapImage bitmap = null;
-                        var url = string.Format("http://metl.web.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, internalSlideId, 320, 240);
+                        var url = string.Format(MeTLConfiguration.Config.Thumbnail.Host + "{0}&slide={1}&width={2}&height={3}", host, internalSlideId, 320, 240);
                         using (var stream = new MemoryStream(client.DownloadData(url)))
                         {
                             bitmap = new BitmapImage();

@@ -77,15 +77,28 @@
         }
 
         [ConfigurationProperty("logging")]
-        public LoggingServerElement Logging
+        public ServerElement Logging
         {
             get
             {
-                return (LoggingServerElement)this["logging"];
+                return (ServerElement)this["logging"];
             }
             set
             {
                 this["logging"] = value; 
+            }
+        }
+
+        [ConfigurationProperty("thumbnail")]
+        public ServerElement Thumbnail
+        {
+            get
+            {
+                return (ServerElement)this["thumbnail"];
+            }
+            set
+            {
+                this["thumbnail"] = value; 
             }
         }
     }
@@ -255,9 +268,9 @@
         }
     }
 
-    public class LoggingServerElement : ConfigurationElement
+    public class ServerElement : ConfigurationElement
     {
-        [ConfigurationProperty("host", DefaultValue="https://madam.adm.monash.edu.au:1188/log_message.yaws", IsRequired=true)]
+        [ConfigurationProperty("host", IsRequired=true)]
         public String Host
         {
             get
