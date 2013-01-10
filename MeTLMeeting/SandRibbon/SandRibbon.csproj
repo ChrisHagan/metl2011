@@ -60,8 +60,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.295</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
