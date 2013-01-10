@@ -60,7 +60,6 @@ namespace MeTLLibTests
             string username = "eecrole";
             string password = "m0nash2008";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
@@ -129,7 +128,6 @@ namespace MeTLLibTests
         public void AuthorisationProviderConstructorTest()
         {
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             Assert.IsInstanceOfType(target, typeof(AuthorisationProvider));
@@ -141,7 +139,6 @@ namespace MeTLLibTests
             string username = null;
             string password = "m0nash2008";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             Credentials expected = new Credentials("","", new List<AuthorizedGroup>(), ""); 
@@ -156,7 +153,6 @@ namespace MeTLLibTests
             string username = "eecrole";
             string password = null;
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             Credentials expected = new Credentials("","",new List<AuthorizedGroup>(), "");
@@ -171,7 +167,6 @@ namespace MeTLLibTests
             string username = null;
             string password = null;
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             Credentials expected = new Credentials("","",new List<AuthorizedGroup>(), "");

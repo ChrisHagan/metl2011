@@ -60,7 +60,6 @@ namespace MeTLLibTests
             string file = "C:\\Users\\Dave\\Videos\\giant_trailer.wmv";
             string expected = "https://madam.adm.monash.edu.au:1188/Resource/101/giant_trailer.wmv";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
@@ -77,7 +76,6 @@ namespace MeTLLibTests
             string name = "test.test";
             string expected = "https://madam.adm.monash.edu.au:1188/Resource/101/test.test";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
@@ -134,7 +132,6 @@ namespace MeTLLibTests
         public void ResourceUploaderConstructorTest()
         {
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -147,7 +144,6 @@ namespace MeTLLibTests
             string file = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -162,7 +158,6 @@ namespace MeTLLibTests
             string file = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -177,7 +172,6 @@ namespace MeTLLibTests
             string file = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -192,7 +186,6 @@ namespace MeTLLibTests
             string file = String.Empty;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -207,7 +200,6 @@ namespace MeTLLibTests
             string file = null;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -222,7 +214,6 @@ namespace MeTLLibTests
             string file = String.Empty;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -237,7 +228,6 @@ namespace MeTLLibTests
             string file = null;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -252,7 +242,6 @@ namespace MeTLLibTests
             string file = String.Empty;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -267,7 +256,6 @@ namespace MeTLLibTests
             string file = null;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -283,7 +271,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -299,7 +286,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -315,7 +301,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -331,7 +316,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -347,7 +331,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -364,7 +347,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -380,7 +362,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -396,7 +377,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -412,7 +392,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -428,7 +407,6 @@ namespace MeTLLibTests
             string name = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -444,7 +422,6 @@ namespace MeTLLibTests
             string name = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -460,7 +437,6 @@ namespace MeTLLibTests
             string name = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -476,7 +452,6 @@ namespace MeTLLibTests
             string name = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -492,7 +467,6 @@ namespace MeTLLibTests
             string name = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -508,7 +482,6 @@ namespace MeTLLibTests
             string name = String.Empty;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -524,7 +497,6 @@ namespace MeTLLibTests
             string name = String.Empty;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -540,7 +512,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -557,7 +528,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -574,7 +544,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -591,7 +560,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -608,7 +576,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -625,7 +592,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -642,7 +608,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -657,7 +622,6 @@ namespace MeTLLibTests
             string name = "whatever.ext";
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
@@ -673,7 +637,6 @@ namespace MeTLLibTests
             bool overwrite = false;
             string expected = "https://nowhere.adm.monash.edu.au/Resource/101/whatever.ext";
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();

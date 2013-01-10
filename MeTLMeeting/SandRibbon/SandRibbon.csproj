@@ -60,8 +60,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.295</ApplicationVersion>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -124,6 +124,7 @@
       <HintPath>lib\SmartThreadPool.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -878,7 +879,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\HgId.pre" />
     <None Include="LectureMeTL_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />

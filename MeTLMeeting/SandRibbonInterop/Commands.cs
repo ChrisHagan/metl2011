@@ -78,7 +78,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetStackVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendNewSlideOrder = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ChangeLanguage = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand ListenToAudio = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PresentVideo= new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReorderDragDone = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ConnectToSmartboard = new DefaultableCompositeCommand();

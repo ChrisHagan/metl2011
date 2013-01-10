@@ -1,19 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using MeTLLib;
-using SandRibbon.Utils;
+using System.Security;
 using System.Security.Permissions;
-using SandRibbon.Providers;
-using SandRibbon.Quizzing;
+using System.Windows;
+using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
-using System.Security;
-using System.Diagnostics;
-using System.Windows.Threading;
-using System.Threading;
 using SandRibbon.Components.Utility;
+using SandRibbon.Providers;
+using SandRibbon.Utils;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -148,7 +144,9 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
-            Logger.Instantiate();
+            MeTLConfiguration.Load();
+
+            Logger.Instantiate(MeTLConfiguration.Config.Logging.Host);
             //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
@@ -159,6 +157,7 @@ namespace SandRibbon
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
             // mark("App.onStartup finished");
         }
+
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             doCrash((Exception)e.ExceptionObject);

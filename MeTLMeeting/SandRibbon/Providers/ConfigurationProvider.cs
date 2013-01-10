@@ -31,45 +31,9 @@ namespace SandRibbon.Providers
             executableNames.Add(Assembly.GetExecutingAssembly().Location);
 
             return Path.GetFileNameWithoutExtension(executableNames.Find((location) => { return !String.IsNullOrEmpty(location); }));
-            /*var files = Directory.GetFiles(".", "*.exe");
-            var docs = new List<string>();
-            foreach (string filename in files)
-            {
-                if (!filename.Contains("vshost"))
-                    docs.Add(filename.Substring(2));
-            }
-            if (docs.Contains("MeTL.exe"))
-            {
-                docs.Remove("MeTL.exe");
-                docs.Add("MeTL.exe");
-            }
-            return docs.First().Substring(0,docs.First().Length - 4);
-            */
         }
         public PedagogyLevel getMeTLPedagogyLevel()
         {
-            /*PedagogyCode level;
-            var type = getMeTLType();
-            switch (type)
-            {
-                case Globals.METL:
-                    level = PedagogyCode.ResponsivePresentation;
-                    break;
-                case Globals.METLPRESENTER:
-                    level = PedagogyCode.ResponsivePresentation;
-                    break;
-                case Globals.METLCOLLABORATOR:
-                    level = PedagogyCode.CollaborativePresentation;
-                    break;
-                case Globals.METLDEMONSTRATOR:
-                    level = PedagogyCode.CollaborativePresentation;
-                    break;
-                default:
-                    level = PedagogyCode.ResponsivePresentation;
-                    break;
-            }*/
-            // MeTLType command is only used to set the icon which is now hardcoded to "MeTL Presenter"
-            //Commands.MeTLType.ExecuteAsync(type);
             return Pedagogicometer.level(PedagogyCode.CollaborativePresentation);
         }
         private string metlVersion = "Unknown";

@@ -1,7 +1,42 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SandRibbon.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="LicenceUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://metl.adm.monash.edu.au/MeTL/docs/license.html</Value>
+    </Setting>
+    <Setting Name="PrivacyUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://monash.edu/legals/privacy.html</Value>
+    </Setting>
+    <Setting Name="LegalsUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://monash.edu/legals/</Value>
+    </Setting>
+    <Setting Name="CompanyUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://monash.edu/</Value>
+    </Setting>
+    <Setting Name="ContactUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://www.monash.edu/eeducation</Value>
+    </Setting>
+    <Setting Name="DescriptionUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://www.monash.edu/eeducation/metl/what-is-metl.html</Value>
+    </Setting>
+    <Setting Name="StudentUsagePolicyUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://www.policy.monash.edu/policy-bank/management/its/acceptable-use-of-information-technology-facilities-by-students-policy.html</Value>
+    </Setting>
+    <Setting Name="StaffUsagePolicyUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://www.policy.monash.edu/policy-bank/management/its/it-use-policy-staff-and-authorised.html</Value>
+    </Setting>
+    <Setting Name="ReleaseNotesUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt</Value>
+    </Setting>
+    <Setting Name="UserAgreementUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_UserAgreement.html</Value>
+    </Setting>
+    <Setting Name="BugReportUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://metl.adm.monash.edu.au/MeTL/docs/report_a_bug.html</Value>
+    </Setting>
+    <Setting Name="TutorialUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_Tutorials.html</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

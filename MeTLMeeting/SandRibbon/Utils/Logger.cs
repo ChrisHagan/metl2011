@@ -13,16 +13,19 @@ namespace SandRibbon.Utils
 {
     class LogQueue
     {
-        public static readonly Uri LoggingServer = new Uri("https://madam.adm.monash.edu.au:1188/log_message.yaws");
-        public static readonly string LoggingServerString = LoggingServer.ToString();
+        public static Uri LoggingServer { get; private set; }
+        public static string LoggingServerString { get; private set; }
 
         readonly object lockObj = new object();
         Thread[] workers;
         WebClient server; 
         Queue<LogMessage> logMessages = new Queue<LogMessage>();
 
-        public LogQueue(int workerCount)
+        public LogQueue(string loggingServer, int workerCount)
         {
+            LoggingServer = new Uri(loggingServer);
+            LoggingServerString = loggingServer;
+            
             server = new WebClient();
             workers = new Thread[workerCount];
 
@@ -139,7 +142,7 @@ namespace SandRibbon.Utils
         {
         }
 
-        public static void Instantiate()
+        public static void Instantiate(string loggingServer)
         {
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((where) => slide = where));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>((who) => privacy = who));
@@ -147,7 +150,7 @@ namespace SandRibbon.Utils
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
 
-            logQueue = new LogQueue(workerCount: 1);
+            logQueue = new LogQueue(loggingServer, workerCount: 1);
         }
 
         public static void CleanupLogQueue()

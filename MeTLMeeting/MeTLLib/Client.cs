@@ -69,14 +69,7 @@ namespace MeTLLib
             }
         }
     }
-    public class MadamServerAddress : MeTLServerAddress
-    {
-        public MadamServerAddress()
-        {
-            stagingUri = new Uri("http://madam.adm.monash.edu.au", UriKind.Absolute);
-            productionUri = new Uri("http://madam.adm.monash.edu.au", UriKind.Absolute);
-        }
-    }
+
     public interface IClientBehaviour
     {
         void AskForTeachersStatus(string teacher, string where);

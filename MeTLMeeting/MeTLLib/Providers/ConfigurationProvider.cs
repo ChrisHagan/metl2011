@@ -12,28 +12,7 @@ namespace MeTLLib.Providers
     public class ConfigurationProvider : HttpResourceProvider
     {
         public ConfigurationProvider(IWebClientFactory factory) : base(factory) {}
-        private static string server;
-        private static string stagingServer;
-        private static object instanceLock = new object();
-        public bool isStaging = false;
-        public string SERVER
-        {
-            get 
-            {
-                if (isStaging)
-                {
-                    if (stagingServer == null)
-                        stagingServer = XElement.Parse(insecureGetString(new System.Uri(string.Format("http://metl.adm.monash.edu.au/stagingServer.xml")))).Value;
-                    server = stagingServer;
-                }
-                else
-                {
-                    if (server == null || server == stagingServer)
-                        server = XElement.Parse(insecureGetString(new System.Uri("http://metl.adm.monash.edu.au/server.xml"))).Value;
-                }
-                return server;
-            }
-        }
+
         public string getMeTLType()
         {
             var files = Directory.GetFiles(".", "*.exe");

@@ -101,7 +101,6 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
@@ -117,7 +116,6 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
@@ -133,7 +131,6 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
@@ -168,7 +165,6 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
@@ -184,7 +180,6 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
@@ -200,7 +195,6 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();

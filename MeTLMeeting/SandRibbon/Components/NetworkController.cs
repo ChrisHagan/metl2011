@@ -9,12 +9,14 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
-    public class CivicServerAddress : MeTLServerAddress
+    public class ExternalServerAddress : MeTLServerAddress
     {
-        public CivicServerAddress()
+        public ExternalServerAddress()
         {
-            stagingUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
-            productionUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
+            var conf = MeTLConfiguration.Config;
+
+            stagingUri = new Uri(conf.External.Host, UriKind.Absolute);
+            productionUri = new Uri(conf.External.Host, UriKind.Absolute);
         }
     }
 
@@ -22,7 +24,7 @@ namespace SandRibbon.Components
     {
         public StagingSearchAddress()
         {
-            Uri = new Uri("http://meggle-staging.adm.monash.edu:8080/search?query=", UriKind.Absolute);
+            Uri = new Uri(MeTLConfiguration.Config.Staging.MeggleUrl, UriKind.Absolute);
         }
     }
 
@@ -30,7 +32,7 @@ namespace SandRibbon.Components
     {
         public ProductionSearchAddress()
         {
-            Uri = new Uri("http://meggle-prod.adm.monash.edu:8080/search?query=", UriKind.Absolute);
+            Uri = new Uri(MeTLConfiguration.Config.Production.MeggleUrl, UriKind.Absolute);
         }
     }
 
@@ -38,7 +40,7 @@ namespace SandRibbon.Components
     {
         public ExternalSearchAddress()
         {
-            Uri = new Uri("http://meggle-ext.adm.monash.edu:8080/search?query=", UriKind.Absolute);
+            Uri = new Uri(MeTLConfiguration.Config.External.MeggleUrl, UriKind.Absolute);
         }
     }
 
@@ -80,7 +82,7 @@ namespace SandRibbon.Components
         {
             ClientConnection result;
             if (App.isExternal)
-                result = MeTLLib.ClientFactory.Connection(new CivicServerAddress(), new ExternalSearchAddress());
+                result = MeTLLib.ClientFactory.Connection(new ExternalServerAddress(), new ExternalSearchAddress());
             else
             {
                 if (App.isStaging)

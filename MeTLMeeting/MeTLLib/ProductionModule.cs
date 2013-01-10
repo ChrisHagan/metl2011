@@ -6,30 +6,51 @@ using Ninject.Modules;
 using MeTLLib.Providers.Connection;
 using System.Net;
 using MeTLLib.Providers;
+using System.Xml.Linq;
 
 namespace MeTLLib
 {
     public class TriedToStartMeTLWithNoInternetException : Exception {
         public TriedToStartMeTLWithNoInternetException(Exception inner) : base("Couldn't connect to MeTL servers", inner) {}
     }
+
     public class ProductionServerAddress : MeTLServerAddress
     {
-        public ProductionServerAddress()
+        private Uri BootstrapUrl(string bootstrapUrl)
         {
             try
             {
                 //This is pre-dependency injection.  That means I can't inject a more specific webclient, and I hope that this cheap standard webclient doesn't have side-effects that will hurt us later.
-                var prodServer = System.Xml.Linq.XElement.Parse(new System.Net.WebClient().DownloadString("http://metl.adm.monash.edu.au/server.xml")).Value;
-                productionUri = new Uri("http://" + prodServer, UriKind.Absolute);
-                var stagingServer = System.Xml.Linq.XElement.Parse(new System.Net.WebClient().DownloadString("http://metl.adm.monash.edu.au/stagingServer.xml")).Value;
-                stagingUri = new Uri("http://" + stagingServer, UriKind.Absolute);
-                externalUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
+                var serverString = XElement.Parse(new WebClient().DownloadString(bootstrapUrl)).Value;
+                return new Uri("http://" + serverString, UriKind.Absolute);
             }
             catch (WebException e) {
                 throw new TriedToStartMeTLWithNoInternetException(e);
             }
         }
+        
+        private Uri LoadServerAddress(bool useBootstrapUrl, string url)
+        {
+            if (useBootstrapUrl)
+            {
+                return BootstrapUrl(url);
+            }
+            else
+            {
+                return new Uri(url, UriKind.Absolute);               
+            }
+        }
+
+        public ProductionServerAddress()
+        {
+            var conf = MeTLConfiguration.Config;
+
+            productionUri = LoadServerAddress(conf.Production.IsBootstrapUrl, conf.Production.Host);
+            stagingUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
+            externalUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
+        }
     }
+
     public class ProductionModule : NinjectModule
     {
         public override void Load()

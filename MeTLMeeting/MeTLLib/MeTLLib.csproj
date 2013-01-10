@@ -65,6 +65,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Web" />
@@ -78,6 +79,7 @@
     <Compile Include="BaseModule.cs" />
     <Compile Include="DataTypes\QuizData.cs" />
     <Compile Include="DataTypes\UserOptions.cs" />
+    <Compile Include="MeTLConfiguration.cs" />
     <Compile Include="ObservableWithPropertiesCollection.cs" />
     <Compile Include="Providers\AlphabetProvider.cs" />
     <Compile Include="Providers\FileSizeFormatProvider.cs" />

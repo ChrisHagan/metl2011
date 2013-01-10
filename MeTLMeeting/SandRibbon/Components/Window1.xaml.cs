@@ -139,7 +139,6 @@ namespace SandRibbon
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
 
-            Commands.ListenToAudio.RegisterCommand(new DelegateCommand<int>(ListenToAudio));
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
@@ -245,19 +244,19 @@ namespace SandRibbon
         #region helpLinks
         private void OpenEULABrowser(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_UserAgreement.html");
+            System.Diagnostics.Process.Start(Properties.Settings.Default.UserAgreementUrl);
         }
         private void OpenTutorialBrowser(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_Tutorials.html");
+            System.Diagnostics.Process.Start(Properties.Settings.Default.TutorialUrl);
         }
         private void OpenReportBugBrowser(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/report_a_bug.html");
+            System.Diagnostics.Process.Start(Properties.Settings.Default.BugReportUrl);
         }
         private void OpenAboutMeTLBrowser(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.monash.edu/eeducation/metl/what-is-metl.html");
+            System.Diagnostics.Process.Start(Properties.Settings.Default.DescriptionUrl);
         }
         #endregion
         private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
@@ -290,9 +289,6 @@ namespace SandRibbon
                 userOptions.ShowDialog();
             }
             else MeTLMessage.Warning("You must be logged in to edit your options");
-        }
-        private void ListenToAudio(int jid) {
-            player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
         }
         private void ImportPowerpoint(object obj)
         {

@@ -59,7 +59,6 @@ namespace MeTLLibTests
         {
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             Assert.IsInstanceOfType(providerMonitor, typeof(ProductionProviderMonitor));
@@ -69,7 +68,6 @@ namespace MeTLLibTests
         {
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             bool hasPassed = false;
@@ -85,7 +83,6 @@ namespace MeTLLibTests
         {
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<ProductionTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             bool hasPassed = false;
@@ -112,7 +109,6 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             //Don't bind to the testProviderMonitor here - this is the class for testing the real one.
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             providerMonitor.HealthCheck(null);
