@@ -101,6 +101,19 @@
                 this["thumbnail"] = value; 
             }
         }
+
+        [ConfigurationProperty("resourceCredential")]
+        public CredentialElement ResourceCredential
+        {
+            get
+            {
+                return (CredentialElement)this["resourceCredential"];
+            }
+            set
+            {
+                this["resourceCredential"] = value;
+            }
+        }
     }
 
     public class ProductionServerElement : ConfigurationElement
@@ -280,6 +293,35 @@
             set
             {
                 this["host"] = value;
+            }
+        }
+    }
+
+    public class CredentialElement : ConfigurationElement
+    {
+        [ConfigurationProperty("username", IsRequired=true)]
+        public String Username
+        {
+            get
+            {
+                return (String)this["username"];
+            }
+            set
+            {
+                this["username"] = value;
+            }
+        }
+
+        [ConfigurationProperty("password", IsRequired=true)]
+        public String Password
+        {
+            get
+            {
+                return (String)this["password"];
+            }
+            set
+            {
+                this["password"] = value;
             }
         }
     }

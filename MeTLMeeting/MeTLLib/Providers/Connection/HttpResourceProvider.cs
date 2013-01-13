@@ -106,8 +106,8 @@ namespace MeTLLib.Providers.Connection
     }
     public class MeTLCredentials : NetworkCredential
     {
-        private readonly static String USERNAME = "exampleUsername";
-        private readonly static String PASSWORD = "examplePassword";
+        private readonly static String USERNAME = MeTLConfiguration.Config.ResourceCredential.Username;
+        private readonly static String PASSWORD = MeTLConfiguration.Config.ResourceCredential.Password;
         public MeTLCredentials() : base(USERNAME, PASSWORD) { }
     }
     public class HttpFileUploadResultArgs

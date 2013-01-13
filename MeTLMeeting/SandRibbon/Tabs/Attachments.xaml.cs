@@ -17,6 +17,7 @@ using SandRibbon.Components.Utility;
 using System.Collections.Generic;
 using MeTLLib.Providers;
 using SandRibbon.Utils;
+using MeTLLib;
 
 namespace SandRibbon.Tabs
 {
@@ -99,7 +100,8 @@ namespace SandRibbon.Tabs
                 backgroundWorker.DoWork += (s, a) =>
                                                {
                                                    var stream = saveFile.OpenFile();
-                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(file.url);
+                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential(MeTLConfiguration.Config.ResourceCredential.Username, 
+                                                       MeTLConfiguration.Config.ResourceCredential.Password) }.DownloadData(file.url);
                                                    stream.Write(sourceBytes, 0, sourceBytes.Count());
                                                    stream.Close();
                                                };
