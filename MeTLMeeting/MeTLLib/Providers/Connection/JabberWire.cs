@@ -345,7 +345,7 @@ namespace MeTLLib.Providers.Connection
                 usernameToBeRegistered = null;
             }
             StartConnectionTimeoutTimer();
-            conn.Open(jid.User, "examplePassword", resource, 1);
+            conn.Open(jid.User, MeTLConfiguration.Config.XmppCredential.Password, resource, 1);
         }
        
         private void OnLogin(object o)

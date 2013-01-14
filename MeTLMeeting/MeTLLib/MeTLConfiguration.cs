@@ -114,6 +114,19 @@
                 this["resourceCredential"] = value;
             }
         }
+
+        [ConfigurationProperty("xmppCredential")]
+        public CredentialElement XmppCredential
+        {
+            get
+            {
+                return (CredentialElement)this["xmppCredential"];
+            }
+            set
+            {
+                this["xmppCredential"] = value;
+            }
+        }
     }
 
     public class ProductionServerElement : ConfigurationElement
