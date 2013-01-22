@@ -148,7 +148,8 @@ namespace SandRibbon
 
             Logger.Instantiate(MeTLConfiguration.Config.Logging.Host);
             //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
-            Trace.Listeners.Add(new CouchTraceListener());
+            // JJ: Disabled logging for the MeTL Resiliency Project
+            //Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));

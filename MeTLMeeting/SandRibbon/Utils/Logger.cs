@@ -185,10 +185,11 @@ namespace SandRibbon.Utils
 
         public static void Log(string appendThis)
         {
-            if (!App.isStaging)
+            // JJ: Disabled logging for the MeTL Resiliency Project
+            /*if (!App.isStaging)
             {
                 logMessage(appendThis);
-            }
+            }*/
         }
 
         private static void logMessage(string message)
