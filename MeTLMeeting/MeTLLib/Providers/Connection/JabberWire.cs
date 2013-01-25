@@ -283,6 +283,7 @@ namespace MeTLLib.Providers.Connection
     #endif
             }
             this.conn = new XmppClientConnection(jid.Server);
+            conn.ConnectServer = metlServerAddress.host;
             conn.UseSSL = false;
             conn.AutoAgents = false;
             conn.OnAuthError += OnAuthError;
@@ -307,7 +308,7 @@ namespace MeTLLib.Providers.Connection
         }
         private Jid createJid(string username)
         {
-            return new Jid(username + "@" + metlServerAddress.host);
+            return new Jid(username + "@" + metlServerAddress.xmppServiceName);
         }
         public void SendLiveWindow(LiveWindowSetup window)
         {
@@ -642,7 +643,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void directCommand(string target, string message)
         {
-            send(new Message(new Jid(target + "@" + metlServerAddress.host), jid, MessageType.chat, message));
+            send(new Message(new Jid(target + "@" + metlServerAddress.xmppServiceName), jid, MessageType.chat, message));
         }
         private void onStart()
         {

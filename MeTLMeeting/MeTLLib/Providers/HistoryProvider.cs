@@ -142,10 +142,14 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var zipUri = string.Format("https://{0}:1749/{1}/{2}/all.zip", serverAddress.host, INodeFix.Stem(room), room);
+                                     var directoryUri = string.Format("https://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room);
+                                     var directoryExists = resourceProvider.exists(new Uri(directoryUri));
+                                     if (!directoryExists)
+                                         return;
+
                                      try
                                      {
-                                         var zipData = resourceProvider.secureGetData(new System.Uri(zipUri));
+                                         var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
                                          if (zipData.Count() == 0)
                                          {
                                              return;

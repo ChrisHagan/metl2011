@@ -26,6 +26,7 @@ namespace MeTLLib
 
     public abstract class MeTLServerAddress
     {
+        public string Name { get; set; }
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
         public Uri externalUri { get; set; }
@@ -54,11 +55,12 @@ namespace MeTLLib
         }
         public Uri secureUri { get { return new Uri("https://" + host); } }
         public string host { get { return uri.Host; } }
+        public string xmppServiceName { get; set; }
         public string muc
         {
             get
             {
-                return "conference." + host;
+                return "conference." + xmppServiceName;
             }
         }
         public agsXMPP.Jid global

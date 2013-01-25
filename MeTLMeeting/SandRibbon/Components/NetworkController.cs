@@ -15,6 +15,7 @@ namespace SandRibbon.Components
         {
             var conf = MeTLConfiguration.Config;
 
+            Name = conf.External.Name;
             stagingUri = new Uri(conf.External.Host, UriKind.Absolute);
             productionUri = new Uri(conf.External.Host, UriKind.Absolute);
         }
@@ -90,7 +91,7 @@ namespace SandRibbon.Components
                 else
                     result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
             }
-            Constants.JabberWire.SERVER = result.server.host;
+            //Constants.JabberWire.SERVER = result.server.host;
             return result;
         }
         #region commands

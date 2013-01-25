@@ -17,7 +17,7 @@ namespace SandRibbon.Providers
             var internalSlideId = slideId;
             WebThreadPool.QueueUserWorkItem(delegate
             {
-                var host = ClientFactory.Connection().server.host.Split('.').First();
+                var host = ClientFactory.Connection().server.Name;
                 try
                 {
                     using (var client = new WebClient())

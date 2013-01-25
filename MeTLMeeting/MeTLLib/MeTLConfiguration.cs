@@ -182,6 +182,19 @@
                 this["host"] = value;
             }
         }
+
+        [ConfigurationProperty("xmppServiceName", IsRequired=true)]
+        public String xmppServiceName
+        {
+            get
+            {
+                return (String)this["xmppServiceName"];
+            }
+            set
+            {
+                this["xmppServiceName"] = value;
+            }
+        }
     }
 
     public class StagingServerElement : ConfigurationElement
@@ -237,6 +250,19 @@
                 this["host"] = value;
             }
         }
+
+        [ConfigurationProperty("xmppServiceName", IsRequired=true)]
+        public String xmppServiceName
+        {
+            get
+            {
+                return (String)this["xmppServiceName"];
+            }
+            set
+            {
+                this["xmppServiceName"] = value;
+            }
+        }
     }
 
     public class ExternalServerElement : ConfigurationElement
@@ -290,6 +316,19 @@
             set
             {
                 this["meggleUrl"] = value;
+            }
+        }
+
+        [ConfigurationProperty("xmppServiceName", IsRequired=true)]
+        public String xmppServiceName
+        {
+            get
+            {
+                return (String)this["xmppServiceName"];
+            }
+            set
+            {
+                this["xmppServiceName"] = value;
             }
         }
     }

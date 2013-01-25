@@ -6,7 +6,7 @@ using agsXMPP;
 
 namespace Constants
 {
-    public partial class JabberWire
+    /*public partial class JabberWire
     {
         private static string server_property;//This is a property so that we can point automation tests at different DBs
         public static string MUC = "conference." + SERVER;
@@ -26,4 +26,5 @@ namespace Constants
             }
         }
     }
+    */
 }

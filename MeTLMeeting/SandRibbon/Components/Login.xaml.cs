@@ -235,11 +235,11 @@ namespace SandRibbon.Components
         }
         public void SetValue(string value)
         {
-            Constants.JabberWire.SERVER = value;
+            //Constants.JabberWire.SERVER = value;
         }
         public string Value
         {
-            get { return Constants.JabberWire.SERVER; }
+            get { return ""; } //Constants.JabberWire.SERVER; }
         }
     }
 }

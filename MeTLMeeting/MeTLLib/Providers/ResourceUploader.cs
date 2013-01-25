@@ -6,6 +6,7 @@ using MeTLLib.Providers;
 using System.Diagnostics;
 using Ninject;
 using System;
+using System.IO;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -52,7 +53,7 @@ namespace MeTLLib.Providers.Connection
             if (string.IsNullOrEmpty(file)) throw new ArgumentNullException("file", "Argument cannot be null");
             try
             {
-                var fullPath = string.Format("{0}?path=Resource/{1}/{2}&overwrite={3}", RESOURCE_SERVER_UPLOAD, INodeFix.Stem(path), path, overwrite);
+                var fullPath = string.Format("{0}?path=Resource/{1}/{2}&overwrite={3}&filename={4}", RESOURCE_SERVER_UPLOAD, INodeFix.Stem(path), path, overwrite, Uri.EscapeUriString(Path.GetFileName(file)));
                 var res = _httpResourceProvider.securePutFile(new System.Uri(fullPath), file);
                 var url = XElement.Parse(res).Attribute("url").Value;
                 return "https://" + url.Split(new[] { "://" }, System.StringSplitOptions.None)[1];

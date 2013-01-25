@@ -45,9 +45,11 @@ namespace MeTLLib
         {
             var conf = MeTLConfiguration.Config;
 
+            Name = conf.Production.Name;
             productionUri = LoadServerAddress(conf.Production.IsBootstrapUrl, conf.Production.Host);
             stagingUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
             externalUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
+            xmppServiceName = conf.Production.xmppServiceName;
         }
     }
 
