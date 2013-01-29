@@ -159,7 +159,7 @@ namespace SandRibbon.Components.Utility
             strokeFilter.Remove(strokes, modifyVisibleContainer);
         }
 
-        public void adjustStroke(Stroke stroke, Func<Stroke,Stroke> adjustment)
+        public Stroke adjustStroke(Stroke stroke, Func<Stroke,Stroke> adjustment)
         {
             //var stroke = incomingStroke.Clone();
             var oldCanvasOffsetX = logicalX;
@@ -199,7 +199,7 @@ namespace SandRibbon.Components.Utility
                     InkCanvas.SetTop(tText, (InkCanvas.GetTop(tText) + translateY));
                 }                
             }
-            doAdjustStroke(stroke, adjustment);            
+            return doAdjustStroke(stroke, adjustment);            
         }
 
         public void adjustStrokesForMoveDelta(List<String> strokeIdentities)
@@ -262,9 +262,9 @@ namespace SandRibbon.Components.Utility
                 doAdjustStroke(stroke, adjustment);
             }
         }
-        private void doAdjustStroke(Stroke stroke, Func<Stroke, Stroke> adjustment)
+        private Stroke doAdjustStroke(Stroke stroke, Func<Stroke, Stroke> adjustment)
         {
-            stroke = adjustment(stroke);
+            return adjustment(stroke);
         }
 
         public void AddDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)

@@ -770,20 +770,7 @@ namespace SandRibbon
                     Commands.JoinConversation.ExecuteAsync(details.Jid);
             }
         }
-        private void debugTrue(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-            Console.WriteLine(sender.GetType());
-        }
-        private void closeApplication(object sender, ExecutedRoutedEventArgs e)
-        {
-            Close();
-        }
-        private static void SetVisibilityOf(UIElement target, Visibility visibility)
-        {
-            target.Visibility = visibility;
-        }
-        private void setSync(object _obj)
+       private void setSync(object _obj)
         {
             Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }

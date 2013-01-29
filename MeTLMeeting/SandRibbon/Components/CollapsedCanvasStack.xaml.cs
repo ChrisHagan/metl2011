@@ -1215,8 +1215,10 @@ namespace SandRibbon.Components
                 stroke = newStroke;
             }
 
-            NegativeCartesianStrokeTranslate(stroke);
-            contentBuffer.AddStroke(new PrivateAwareStroke(stroke,_target), (st) => Work.Strokes.Add(st));   
+            contentBuffer.AddStroke(new PrivateAwareStroke(NegativeCartesianStrokeTranslate(stroke),_target), (st) =>
+                                                                                {
+                                                                                    Work.Strokes.Add(st);
+                                                                                });   
         }
 
         private double ReturnPositiveValue(double x)
@@ -1228,9 +1230,9 @@ namespace SandRibbon.Components
             return x;
         }
 
-        private void NegativeCartesianStrokeTranslate(Stroke incomingStroke)
+        private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
         {
-            contentBuffer.adjustStroke(incomingStroke, (s) =>
+            return contentBuffer.adjustStroke(incomingStroke, (s) =>
             {
                 var translateX = ReturnPositiveValue(contentBuffer.logicalX);
                 var translateY = ReturnPositiveValue(contentBuffer.logicalY);
@@ -1524,7 +1526,7 @@ namespace SandRibbon.Components
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
-            contentBuffer.AddStroke(privateAwareStroke, (st) => Work.Strokes.Add(st));                        
+            contentBuffer.AddStroke(NegativeCartesianStrokeTranslate(privateAwareStroke), (st) => Work.Strokes.Add(st));                        
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
