@@ -52,7 +52,11 @@ namespace SandRibbon.Components.Utility
             if (childToFind is Image) 
                 imageFilter.UpdateChild(childToFind, updateChild);
         }
-
+        public void UpdateAllStrokes(Action<Stroke> updateChild)
+        {
+            foreach (var stroke in strokeFilter.Strokes)
+                updateChild(stroke);
+        }
         public void UpdateAllTextBoxes(Action<TextBox> updateChild)
         {
             textFilter.UpdateChildren(updateChild);
@@ -123,20 +127,19 @@ namespace SandRibbon.Components.Utility
             return isExtending;
         }
 
-        private bool PossiblyExtendTheNegativeBoundsOfTheCanvas(double elementLeft, double elementTop)
+        private bool checkIfLogicalBoundsUpdates(double x, double y)
         {
-            var isExtending = false;
+            if (x < logicalX || y < logicalY) return true;
+            return false;
+        }
+        private Point generateLogicalBounds(double elementLeft, double elementTop)
+        {
+            var point = new Point(logicalX, logicalY);
             if (elementLeft < logicalX)
-            {
-                logicalX = elementLeft;
-                isExtending = true;
-            }
+                point.X = elementLeft;
             if (elementTop < logicalY)
-            {
-                logicalY = elementTop;
-                isExtending = true;
-            }
-            return isExtending;
+                point.Y = elementTop;
+            return point;
         }
 
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
@@ -168,10 +171,13 @@ namespace SandRibbon.Components.Utility
             double translateY = 0.0;
             var transformMatrix = new System.Windows.Media.Matrix();
             var myIncomingRect = stroke.GetBounds();
-            var localX = myIncomingRect.X;
-            var localY = myIncomingRect.Y;
-            if (PossiblyExtendTheNegativeBoundsOfTheCanvas(localX, localY))
+            var localX = myIncomingRect.X + logicalX;
+            var localY = myIncomingRect.Y + logicalY;
+            if (checkIfLogicalBoundsUpdates(localX, localY))
             {
+                var newBounds = generateLogicalBounds(localX, localY);
+                logicalX = newBounds.X;
+                logicalY = newBounds.Y;
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
@@ -179,13 +185,8 @@ namespace SandRibbon.Components.Utility
                 transformMatrix.Translate(translateX, translateY);
 
                 foreach (var tStroke in strokeFilter.Strokes)
-                {
                     if (stroke.tag().id != tStroke.tag().id)
-                    {
-                        var myRect = tStroke.GetBounds();
                         tStroke.Transform(transformMatrix, false);
-                    }
-                }
 
                 foreach (var tImage in imageFilter.Images)
                 {
@@ -290,10 +291,13 @@ namespace SandRibbon.Components.Utility
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
             double translateY = 0.0;
-            var localX = InkCanvas.GetLeft(image);
-            var localY = InkCanvas.GetTop(image);           
-            if (PossiblyExtendTheNegativeBoundsOfTheCanvas(localX, localY))
+            var localX = InkCanvas.GetLeft(image) + logicalX;
+            var localY = InkCanvas.GetTop(image) + logicalY;           
+            if (checkIfLogicalBoundsUpdates(localX, localY))
             {
+                var newBounds = generateLogicalBounds(localX, localY);
+                logicalX = newBounds.X;
+                logicalY = newBounds.Y;
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
@@ -406,10 +410,13 @@ namespace SandRibbon.Components.Utility
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
             double translateY = 0.0;
-            var localX = InkCanvas.GetLeft(box);
-            var localY = InkCanvas.GetTop(box);
-            if (PossiblyExtendTheNegativeBoundsOfTheCanvas(localX, localY))
+            var localX = InkCanvas.GetLeft(box) + logicalX;
+            var localY = InkCanvas.GetTop(box) + logicalY;
+            if (checkIfLogicalBoundsUpdates(localX, localY))
             {
+                var newBounds = generateLogicalBounds(localX, localY);
+                logicalX = newBounds.X;
+                logicalY = newBounds.Y;
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 

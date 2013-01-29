@@ -1234,24 +1234,25 @@ namespace SandRibbon.Components
 
         private double ReturnPositiveValue(double x)
         {
-            if (x < 0.0)
-            {
-                return (-1 * x);
-            }
-            return x;
+            return Math.Abs(x);
         }
 
         private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
         {
             return contentBuffer.adjustStroke(incomingStroke, (s) =>
-            {
-                var translateX = ReturnPositiveValue(contentBuffer.logicalX);
-                var translateY = ReturnPositiveValue(contentBuffer.logicalY);
-                var transformMatrix = new Matrix();
-                transformMatrix.Translate(translateX, translateY);
-                s.Transform(transformMatrix, false);
-                return s;
-            });
+                                                                  {
+                                                                      var bounds = s.GetBounds();
+                                                                      var translateX = 0.0;
+                                                                      if (bounds.X < 0)
+                                                                          translateX = Math.Abs(bounds.X);
+                                                                      var translateY = 0.0;
+                                                                      if (bounds.Y < 0)
+                                                                          translateY = Math.Abs(bounds.Y);
+                                                                      var transformMatrix = new Matrix();
+                                                                      transformMatrix.Translate(translateX, translateY);
+                                                                      s.Transform(transformMatrix, false);
+                                                                      return s;
+                                                                  });
         }
 
         private Stroke OffsetNegativeCartesianStrokeTranslate(Stroke stroke)
@@ -1529,6 +1530,14 @@ namespace SandRibbon.Components
             }
             return selectedElements;
         }
+        private void refreshCanvas()
+        {
+            Work.Children.Clear();
+            contentBuffer.UpdateAllImages(i => Work.Children.Add(i));
+            contentBuffer.UpdateAllTextBoxes(t => Work.Children.Add(t));
+            Work.Strokes.Clear();
+            contentBuffer.UpdateAllStrokes(s => Work.Strokes.Add(s));
+        }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
             var checksum = e.Stroke.sum().checksum;
@@ -1537,7 +1546,11 @@ namespace SandRibbon.Components
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
-            contentBuffer.AddStroke(NegativeCartesianStrokeTranslate(privateAwareStroke), (st) => Work.Strokes.Add(st));                        
+            var bounds = privateAwareStroke.GetBounds();
+            if(bounds.X < 0 || bounds.Y < 0)
+              contentBuffer.AddStroke(NegativeCartesianStrokeTranslate(privateAwareStroke), _ => refreshCanvas());                        
+            else
+              contentBuffer.AddStroke(privateAwareStroke, (st) => Work.Strokes.Add(st));                        
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
