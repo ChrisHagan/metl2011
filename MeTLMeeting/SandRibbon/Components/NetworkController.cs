@@ -82,14 +82,23 @@ namespace SandRibbon.Components
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
             ClientConnection result;
-            if (App.isExternal)
-                result = MeTLLib.ClientFactory.Connection(new ExternalServerAddress(), new ExternalSearchAddress());
-            else
+            switch (MeTLConfiguration.Config.ActiveStackEnum)
             {
-                if (App.isStaging)
-                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING, new StagingSearchAddress());
-                else
-                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
+                case MeTLServerAddress.serverMode.EXTERNAL:
+                    {
+                        result = MeTLLib.ClientFactory.Connection(new ExternalServerAddress(), new ExternalSearchAddress());
+                    }
+                    break;
+                case MeTLServerAddress.serverMode.STAGING:
+                    {
+                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING, new StagingSearchAddress());
+                    }
+                    break;
+                default:
+                    {
+                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
+                    }
+                    break;
             }
             //Constants.JabberWire.SERVER = result.server.host;
             return result;

@@ -37,12 +37,45 @@
 
     public class MeTLConfigurationSection : ConfigurationSection 
     {
-        [ConfigurationProperty("production")]
-        public ProductionServerElement Production
+        public MeTLServerAddress.serverMode ActiveStackEnum
         {
             get
             {
-                return (ProductionServerElement)this["production"];
+                return (MeTLServerAddress.serverMode)Enum.Parse(typeof(MeTLServerAddress.serverMode), ActiveStackConfig.Name, true);
+            }
+        }
+
+        public StackServerElement ActiveStack
+        {
+            get
+            {
+                var active = ActiveStackConfig.Name;
+                if (Properties.Contains(active))
+                    return (StackServerElement)this[active];
+                else
+                    throw new ArgumentException(String.Format("Active Stack Server {0} specified not found", active));
+            }
+        }
+
+        [ConfigurationProperty("activeStackConfig")]
+        public ActiveStackElement ActiveStackConfig
+        {
+            get
+            {
+                return (ActiveStackElement)this["activeStackConfig"];
+            }
+            set
+            {
+                this["activeStackConfig"] = value;
+            }
+        }
+    
+        [ConfigurationProperty("production")]
+        public StackServerElement Production
+        {
+            get
+            {
+                return (StackServerElement)this["production"];
             }
             set
             {
@@ -51,11 +84,11 @@
         }
 
         [ConfigurationProperty("staging")]
-        public StagingServerElement Staging
+        public StackServerElement Staging
         {
             get
             {
-                return (StagingServerElement)this["staging"];
+                return (StackServerElement)this["staging"];
             }
             set
             {
@@ -64,11 +97,11 @@
         }
 
         [ConfigurationProperty("external")]
-        public ExternalServerElement External
+        public StackServerElement External
         {
             get
             {
-                return (ExternalServerElement)this["external"];
+                return (StackServerElement)this["external"];
             }
             set
             {
@@ -129,7 +162,7 @@
         }
     }
 
-    public class ProductionServerElement : ConfigurationElement
+    public class StackServerElement : ConfigurationElement
     {
         [ConfigurationProperty("name", IsRequired=false)]
         public String Name
@@ -144,7 +177,7 @@
             }
         }
 
-        [ConfigurationProperty("isBootstrapUrl", DefaultValue=true, IsRequired=false)]
+        [ConfigurationProperty("isBootstrapUrl", IsRequired=true)]
         public Boolean IsBootstrapUrl
         {
             get
@@ -157,7 +190,7 @@
             }
         }
 
-        [ConfigurationProperty("meggleUrl", DefaultValue="http://meggle-prod.adm.monash.edu:8080/search?query=", IsRequired=true)]
+        [ConfigurationProperty("meggleUrl", IsRequired=true)]
         public String MeggleUrl
         {
             get
@@ -170,7 +203,7 @@
             }
         }
 
-        [ConfigurationProperty("host", DefaultValue="http://metl.adm.monash.edu.au/server.xml", IsRequired=true)]
+        [ConfigurationProperty("host", IsRequired=true)]
         public String Host
         {
             get
@@ -180,142 +213,6 @@
             set
             {
                 this["host"] = value;
-            }
-        }
-
-        [ConfigurationProperty("xmppServiceName", IsRequired=true)]
-        public String xmppServiceName
-        {
-            get
-            {
-                return (String)this["xmppServiceName"];
-            }
-            set
-            {
-                this["xmppServiceName"] = value;
-            }
-        }
-    }
-
-    public class StagingServerElement : ConfigurationElement
-    {
-        [ConfigurationProperty("name", IsRequired=false)]
-        public String Name
-        {
-            get
-            {
-                return (String)this["name"];
-            }
-            set
-            {
-                this["name"] = value;
-            }
-        }
-
-        [ConfigurationProperty("isBootstrapUrl", DefaultValue=true, IsRequired=false)]
-        public Boolean IsBootstrapUrl
-        {
-            get
-            {
-                return (Boolean)this["isBootstrapUrl"];
-            }
-            set
-            {
-                this["isBootstrapUrl"] = value;
-            }
-        }
-
-        [ConfigurationProperty("meggleUrl", DefaultValue="http://meggle-staging.adm.monash.edu:8080/search?query=", IsRequired=true)]
-        public String MeggleUrl
-        {
-            get
-            {
-                return (String)this["meggleUrl"];
-            }
-            set
-            {
-                this["meggleUrl"] = value;
-            }
-        }
-
-        [ConfigurationProperty("host", DefaultValue="http://metl.adm.monash.edu.au/stagingServer.xml", IsRequired=true)]
-        public String Host
-        {
-            get
-            {
-                return (String)this["host"];
-            }
-            set
-            {
-                this["host"] = value;
-            }
-        }
-
-        [ConfigurationProperty("xmppServiceName", IsRequired=true)]
-        public String xmppServiceName
-        {
-            get
-            {
-                return (String)this["xmppServiceName"];
-            }
-            set
-            {
-                this["xmppServiceName"] = value;
-            }
-        }
-    }
-
-    public class ExternalServerElement : ConfigurationElement
-    {
-        [ConfigurationProperty("name", IsRequired=false)]
-        public String Name
-        {
-            get
-            {
-                return (String)this["name"];
-            }
-            set
-            {
-                this["name"] = value;
-            }
-        }
-
-        [ConfigurationProperty("isBootstrapUrl", DefaultValue=false, IsRequired=false)]
-        public Boolean IsBootstrapUrl
-        {
-            get
-            {
-                return (Boolean)this["isBootstrapUrl"];
-            }
-            set
-            {
-                this["isBootstrapUrl"] = value;
-            }
-        }
-
-        [ConfigurationProperty("host", DefaultValue="http://civic.adm.monash.edu.au", IsRequired=true)]
-        public String Host
-        {
-            get
-            {
-                return (String)this["host"];
-            }
-            set
-            {
-                this["host"] = value;
-            }
-        }
-
-        [ConfigurationProperty("meggleUrl", DefaultValue="http://meggle-ext.adm.monash.edu:8080/search?query=", IsRequired=true)]
-        public String MeggleUrl
-        {
-            get
-            {
-                return (String)this["meggleUrl"];
-            }
-            set
-            {
-                this["meggleUrl"] = value;
             }
         }
 
@@ -374,6 +271,22 @@
             set
             {
                 this["password"] = value;
+            }
+        }
+    }
+
+    public class ActiveStackElement : ConfigurationElement
+    {
+       [ConfigurationProperty("name", IsRequired=true)]
+        public String Name
+        {
+            get
+            {
+                return (String)this["name"];
+            }
+           set
+            {
+                this["name"] = value;
             }
         }
     }

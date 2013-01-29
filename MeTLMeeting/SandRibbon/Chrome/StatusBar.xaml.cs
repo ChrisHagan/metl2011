@@ -3,6 +3,7 @@ using SandRibbon.Properties;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System;
+using MeTLLib;
 
 namespace SandRibbon.Chrome
 {
@@ -64,8 +65,9 @@ namespace SandRibbon.Chrome
                              details.Subject, Globals.me);
                     }
 #if DEBUG
-                    status += String.Format(" | Connected to {1}{2} server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
-                        App.isExternal ? "external " : "", App.isStaging && !App.isExternal ? "staging" : "");
+                    var activeStack = MeTLConfiguration.Config.ActiveStack;
+                    status += String.Format(" | ({0}) Connected to [{1}] {2}", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
+                        activeStack.Name, activeStack.Host);
 #endif
                     StatusLabel.Text = status;
                 });
