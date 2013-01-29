@@ -701,7 +701,10 @@ namespace SandRibbon.Components
                         var imagesToRemove = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
                         if (imagesToRemove.Count() > 0)
                         {
-                            contentBuffer.RemoveImage(imagesToRemove.First(), (img) => Work.Children.Remove(img));
+                            contentBuffer.RemoveImage(imagesToRemove.First(), (img) => {
+                                //Console.WriteLine("Image moved REMOVED @ X[{0}] Y[{1}]", InkCanvas.GetLeft(img), InkCanvas.GetTop(img));
+                                Work.Children.Remove(img);
+                            });
                         }
                     }
 
@@ -709,7 +712,11 @@ namespace SandRibbon.Components
                     {
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
-                            contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
+                            contentBuffer.AddImage(element, (image) =>
+                            {
+                                Work.Children.Add(image);
+                                //Console.WriteLine("Image moved ADDED @ X[{0}] Y[{1}]", InkCanvas.GetLeft(image), InkCanvas.GetTop(image));
+                            });
                             element.ApplyPrivacyStyling(contentBuffer, _target, element.tag().privacy);
                         }
                     }
@@ -751,6 +758,8 @@ namespace SandRibbon.Components
                         {
                             contentBuffer.RemoveStroke(strokesToUpdate.First(), (str) =>
                             {
+                                var bounds = str.GetBounds();
+                                //Console.WriteLine("Stroke moved REMOVED @ X[{0}] Y[{1}]", bounds.Left, bounds.Top);
                                 Work.Strokes.Remove(str);
                             });
                         }
@@ -765,6 +774,8 @@ namespace SandRibbon.Components
                             contentBuffer.AddStroke(tmpStroke, (str) =>
                             {
                                 Work.Strokes.Add(str);
+                                var bounds = str.GetBounds();
+                                //Console.WriteLine("Stroke moved ADDED @ X[{0}] Y[{1}]", bounds.Left, bounds.Top);
                             });
                         }
                     }
@@ -776,7 +787,7 @@ namespace SandRibbon.Components
             Trace.TraceInformation("MovedTextbox");
             var startingText = boxesAtTheStart.Where(b => b is MeTLTextBox).Select(b => ((MeTLTextBox)b).clone()).ToList();
             List<UIElement> selectedElements = elements.Where(b => b is MeTLTextBox).ToList();
-            absoluteizeElements(selectedElements);
+            //absoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
@@ -875,8 +886,8 @@ namespace SandRibbon.Components
 
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
-            var selectedStrokes = absoluteizeStrokes(filterOnlyMine(Work.GetSelectedStrokes())).Select(s => s.Clone()).ToList();
-            var selectedElements = absoluteizeElements(filterOnlyMine(Work.GetSelectedElements()));
+            var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes()).Select(s => s.Clone()).ToList();
+            var selectedElements = filterOnlyMine(Work.GetSelectedElements());
 
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
