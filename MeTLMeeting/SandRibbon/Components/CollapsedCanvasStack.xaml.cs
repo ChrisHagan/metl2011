@@ -655,9 +655,6 @@ namespace SandRibbon.Components
             else
                 resizeHeight = e.NewRectangle.Height;
 
-            imageX = MeTLMath.Clamp(e.NewRectangle.X, 0, e.NewRectangle.X);
-            imageY = MeTLMath.Clamp(e.NewRectangle.Y, 0, e.NewRectangle.Y);
-
             // ensure image is being resized uniformly maintaining aspect ratio
             var aspectRatio = e.OldRectangle.Width / e.OldRectangle.Height;
             if (e.NewRectangle.Width != e.OldRectangle.Width)
@@ -669,9 +666,8 @@ namespace SandRibbon.Components
             else
                 resizeWidth = resizeHeight * aspectRatio;
 
-            e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
+            e.NewRectangle = new Rect(e.NewRectangle.X, e.NewRectangle.Y, resizeWidth, resizeHeight);
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
-
         }
 
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<UIElement> elements, List<Image> startingElements)
@@ -711,7 +707,6 @@ namespace SandRibbon.Components
 
                     foreach (var element in selectedElements)
                     {
-                        var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
                             contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
@@ -721,11 +716,6 @@ namespace SandRibbon.Components
                 };
 
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
-        }
-
-        private void SortContentBufferOnTimestamp()
-        {
-
         }
 
         private UndoHistory.HistoricalAction InkSelectionMovedOrResized(IEnumerable<Stroke> selectedStrokes, List<Stroke> undoStrokes)
