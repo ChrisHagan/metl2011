@@ -1672,25 +1672,6 @@ namespace SandRibbon.Components
             }
 
         }
-
-        /*private bool PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(double elementLeft, double elementTop)
-        {
-            var isExtending = false;
-            if (elementLeft < 0.0)
-            {
-                logicalX = elementLeft + logicalX;
-                moveDeltaX = elementLeft;
-                isExtending = true;
-            }
-            if (elementTop < 0.0)
-            {
-                logicalY = elementTop + logicalY;
-                moveDeltaY = elementTop;
-                isExtending = true;
-            }
-            return isExtending;
-        }*/
-
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
             if (_target == "presentationSpace")
@@ -1699,13 +1680,16 @@ namespace SandRibbon.Components
                 moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
 
                 var inkIds = moveDelta.inkIds.Select(elemId => elemId.Identity).ToList();
-                contentBuffer.adjustStrokesForMoveDelta(inkIds);
+                if(inkIds.Count > 0)
+                  contentBuffer.adjustStrokesForMoveDelta(inkIds);
 
                 var imageIds = moveDelta.imageIds.Select(elemId => elemId.Identity).ToList();
-                contentBuffer.adjustImagesForMoveDelta(imageIds);
+                if(imageIds.Count > 0)
+                  contentBuffer.adjustImagesForMoveDelta(imageIds);
 
                 var textIds = moveDelta.textIds.Select(elemId => elemId.Identity).ToList();
-                contentBuffer.adjustTextsForMoveDelta(textIds);
+                if(textIds.Count > 0)
+                  contentBuffer.adjustTextsForMoveDelta(textIds);
             }
         }
 
@@ -1729,7 +1713,6 @@ namespace SandRibbon.Components
                 }
             }
         }
-
         private void AddImage(InkCanvas canvas, Image image)
         {
             if (canvas.ImageChildren().Any(i => ((Image)i).tag().id == image.tag().id)) return;
