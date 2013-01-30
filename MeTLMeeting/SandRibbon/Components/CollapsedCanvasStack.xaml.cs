@@ -777,7 +777,6 @@ namespace SandRibbon.Components
             Trace.TraceInformation("MovedTextbox");
             var startingText = boxesAtTheStart.Where(b => b is MeTLTextBox).Select(b => ((MeTLTextBox)b).clone()).ToList();
             List<UIElement> selectedElements = elements.Where(b => b is MeTLTextBox).ToList();
-            absoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
@@ -876,8 +875,8 @@ namespace SandRibbon.Components
 
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
-            var selectedStrokes = absoluteizeStrokes(filterOnlyMine(Work.GetSelectedStrokes())).Select(s => s.Clone()).ToList();
-            var selectedElements = absoluteizeElements(filterOnlyMine(Work.GetSelectedElements()));
+            var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes()).Select(s => s.Clone()).ToList();
+            var selectedElements = filterOnlyMine(Work.GetSelectedElements());
 
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
@@ -1504,29 +1503,7 @@ namespace SandRibbon.Components
             redo();
             UndoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
-        protected static IEnumerable<Stroke> absoluteizeStrokes(IEnumerable<Stroke> selectedElements)
-        {
-            foreach (var stroke in selectedElements)
-            {
-                if (stroke.GetBounds().Top < 0)
-                {
-                    var top = Math.Abs(stroke.GetBounds().Top);
-                    var strokeCollection = new StylusPointCollection();
-                    foreach (var point in stroke.StylusPoints.Clone())
-                        strokeCollection.Add(new StylusPoint(point.X, point.Y + top));
-                    stroke.StylusPoints = strokeCollection;
-                }
-                if (stroke.GetBounds().Left < 0)
-                {
-                    var left = Math.Abs(stroke.GetBounds().Left);
-                    var strokeCollection = new StylusPointCollection();
-                    foreach (var point in stroke.StylusPoints.Clone())
-                        strokeCollection.Add(new StylusPoint(point.X + left, point.Y));
-                    stroke.StylusPoints = strokeCollection;
-                }
-            }
-            return selectedElements;
-        }
+        
         public void RefreshCanvas()
         {
             Work.Children.Clear();
@@ -2393,18 +2370,6 @@ namespace SandRibbon.Components
                 GlobalTimers.ResetSyncTimer();
                 TypingTimer.ResetTimer();
             }
-        }
-        protected static IEnumerable<UIElement> absoluteizeElements(IEnumerable<UIElement> selectedElements)
-        {
-            foreach (FrameworkElement element in selectedElements)
-            {
-                if (InkCanvas.GetLeft(element) < 0)
-                    InkCanvas.SetLeft(element, 0);
-                if (InkCanvas.GetTop(element) < 0)
-                    InkCanvas.SetTop(element, 0);
-
-            }
-            return selectedElements;
         }
         private void resetTextbox(object obj)
         {

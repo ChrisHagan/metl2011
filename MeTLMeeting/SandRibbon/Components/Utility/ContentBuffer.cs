@@ -102,11 +102,7 @@ namespace SandRibbon.Components.Utility
 
         private double ReturnPositiveValue(double x)
         {
-            if (x < 0.0)
-            {
-                return (-1 * x);
-            }
-            return x;
+            return Math.Abs(x);
         }
 
         private bool PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(double elementLeft, double elementTop)
@@ -292,8 +288,8 @@ namespace SandRibbon.Components.Utility
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
             double translateY = 0.0;
-            var localX = InkCanvas.GetLeft(image) + logicalX;
-            var localY = InkCanvas.GetTop(image) + logicalY;           
+            var localX = InkCanvas.GetLeft(image);
+            var localY = InkCanvas.GetTop(image);           
             if (checkIfLogicalBoundsUpdates(localX, localY))
             {
                 var newBounds = generateLogicalBounds(localX, localY);
@@ -411,8 +407,8 @@ namespace SandRibbon.Components.Utility
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
             double translateY = 0.0;
-            var localX = InkCanvas.GetLeft(box) + logicalX;
-            var localY = InkCanvas.GetTop(box) + logicalY;
+            var localX = InkCanvas.GetLeft(box);
+            var localY = InkCanvas.GetTop(box);
             if (checkIfLogicalBoundsUpdates(localX, localY))
             {
                 var newBounds = generateLogicalBounds(localX, localY);
