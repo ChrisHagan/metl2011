@@ -215,7 +215,6 @@ namespace SandRibbon.Components
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             BeginInit();
-
             stack.ReceiveStrokes(parser.ink);
             stack.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
@@ -223,6 +222,7 @@ namespace SandRibbon.Components
             /*foreach (var moveDelta in parser.moveDeltas)
                 stack.ReceiveMoveDelta(moveDelta, processHistory: true);
             */
+            stack.RefreshCanvas();
             EndInit();
         }
         private void MirrorPresentationSpace(Window1 parent)

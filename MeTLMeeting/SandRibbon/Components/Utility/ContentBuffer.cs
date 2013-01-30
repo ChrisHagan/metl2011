@@ -111,6 +111,7 @@ namespace SandRibbon.Components.Utility
 
         private bool PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta(double elementLeft, double elementTop)
         {
+            Console.WriteLine("ContentBuffer::PossiblyExtendTheNegativeBoundsOfTheCanvasForMoveDelta::Called");
             var isExtending = false;
             if (elementLeft < 0.0)
             {
@@ -129,7 +130,7 @@ namespace SandRibbon.Components.Utility
 
         private bool checkIfLogicalBoundsUpdates(double x, double y)
         {
-            if (x < logicalX || y < logicalY) return true;
+            if ((x - logicalX) < -1 || (y - logicalY) < -1) return true;
             return false;
         }
         private Point generateLogicalBounds(double elementLeft, double elementTop)
@@ -171,8 +172,8 @@ namespace SandRibbon.Components.Utility
             double translateY = 0.0;
             var transformMatrix = new System.Windows.Media.Matrix();
             var myIncomingRect = stroke.GetBounds();
-            var localX = myIncomingRect.X + logicalX;
-            var localY = myIncomingRect.Y + logicalY;
+            var localX = myIncomingRect.X;
+            var localY = myIncomingRect.Y;
             if (checkIfLogicalBoundsUpdates(localX, localY))
             {
                 var newBounds = generateLogicalBounds(localX, localY);
