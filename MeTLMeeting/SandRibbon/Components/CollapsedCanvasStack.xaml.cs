@@ -1766,16 +1766,6 @@ namespace SandRibbon.Components
             }
         }
 
-        private void ensureAllImagesHaveCorrectPrivacy()
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                foreach (Image image in Work.Children.OfType<Image>())
-                    image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy);
-            });
-        }
-
-
         #endregion
         #region imagedrop
         private void addImageFromDisk(object obj)
@@ -1788,16 +1778,7 @@ namespace SandRibbon.Components
                     handleDrop(file, origin, true, i++, (source, offset, count) => { return offset; });
             });
         }
-        private void uploadFile(object _obj)
-        {
-            addResourceFromDisk("All files (*.*)|*.*", (files) =>
-                                    {
-                                        foreach (var file in files)
-                                        {
-                                            uploadFileForUse(file);
-                                        }
-                                    });
-        }
+
         private void imagesDropped(List<ImageDrop> images)
         {
             foreach (var image in images)
@@ -1975,6 +1956,7 @@ namespace SandRibbon.Components
         public void handleDrop(string fileName, Point origin, bool overridePoint, int count, Func<Image, Point, int, Point> positionUpdate)
         {
             FileType type = GetFileType(fileName);
+            origin = new Point(origin.X + contentBuffer.logicalX, origin.Y + contentBuffer.logicalY);
             switch (type)
             {
                 case FileType.Image:

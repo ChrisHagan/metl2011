@@ -251,7 +251,6 @@ namespace SandRibbon.Components.Utility
             textFilter.Clear();
             modifyVisibleContainer();
         }
-
         public void adjustImage(Image image, Func<Image, Image> adjustment)
         {
             var oldCanvasOffsetX = logicalX;
