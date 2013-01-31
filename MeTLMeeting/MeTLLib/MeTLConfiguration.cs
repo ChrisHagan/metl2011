@@ -160,6 +160,19 @@
                 this["xmppCredential"] = value;
             }
         }
+
+        [ConfigurationProperty("crypto")]
+        public CryptoElement Crypto
+        {
+            get
+            {
+                return (CryptoElement)this["crypto"];
+            }
+            set
+            {
+                this["crypto"] = value;
+            }
+        }
     }
 
     public class StackServerElement : ConfigurationElement
@@ -287,6 +300,35 @@
            set
             {
                 this["name"] = value;
+            }
+        }
+    }
+
+    public class CryptoElement : ConfigurationElement
+    {
+        [ConfigurationProperty("key", IsRequired=true)]
+        public String Key
+        {
+            get
+            {
+                return (String)this["key"];
+            }
+            set
+            {
+                this["key"] = value;
+            }
+        }
+
+        [ConfigurationProperty("iv", IsRequired=true)]
+        public String IV
+        {
+            get
+            {
+                return (String)this["iv"];
+            }
+            set
+            {
+                this["iv"] = value;
             }
         }
     }

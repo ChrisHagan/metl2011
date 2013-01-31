@@ -131,9 +131,12 @@ namespace SandRibbon.Components
         }
         private void ClearList()
         {
-            people.Clear();
-            pendingPeople.Clear();
-            requestedPeople.Clear();
+            Dispatcher.adopt(() =>
+            {
+                people.Clear();
+                pendingPeople.Clear();
+                requestedPeople.Clear();
+            });
         }
         private void ReceiveSubmission(TargettedSubmission sub)
         {

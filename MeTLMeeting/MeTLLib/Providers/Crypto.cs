@@ -8,8 +8,8 @@ namespace MeTLLib.Providers
 {
     class Crypto
     {
-        private static readonly byte[] Key = Encoding.UTF8.GetBytes("01234567");
-        private static readonly byte[] IV = Encoding.UTF8.GetBytes("01234567");
+        private static readonly byte[] Key = Encoding.UTF8.GetBytes(MeTLConfiguration.Config.Crypto.Key);
+        private static readonly byte[] IV = Encoding.UTF8.GetBytes(MeTLConfiguration.Config.Crypto.IV);
         private static Encoding encoding = Encoding.UTF8;
             
         public static string decrypt(string input)
