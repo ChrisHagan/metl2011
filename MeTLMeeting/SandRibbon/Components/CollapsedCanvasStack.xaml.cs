@@ -643,8 +643,6 @@ namespace SandRibbon.Components
 
             double resizeWidth;
             double resizeHeight;
-            double imageX;
-            double imageY;
 
             if (e.NewRectangle.Right > imageCanvasRect.Right)
                 resizeWidth = MeTLMath.Clamp(imageCanvasRect.Width - e.NewRectangle.X, 0, imageCanvasRect.Width);
@@ -2862,7 +2860,9 @@ namespace SandRibbon.Components
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new Image
                                     {
-                                        Source = new BitmapImage(uri)
+                                        Source = new BitmapImage(uri),
+                                        Width = imageSource.Width,
+                                        Height = imageSource.Height
                                     };
                     image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, -1)); // ZIndex was -1, timestamp is -1L
                     InkCanvas.SetLeft(image, 15);

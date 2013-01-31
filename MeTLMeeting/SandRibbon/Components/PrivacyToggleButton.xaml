@@ -9,8 +9,6 @@
             <dict:Button DockPanel.Dock="Bottom"  x:Name="visualiseButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon ="\Resources\visualize.png" Text="Visualize" Click="visualizeContent" InternalButtonSize="Small"/>-->
             <dict:Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource BanSelectedToolTip}" Icon ="\Resources\banhammer.jpg" 
                          Text="Ban" Click="banhammerContent" InternalButtonSize="LargeIcon"/>
-            <TextBlock DockPanel.Dock="Bottom" x:Name="debugLocalPos"/>
-            <TextBlock DockPanel.Dock="Bottom" x:Name="debugWorldPos"/>
             <StackPanel DockPanel.Dock="Top" Orientation="Vertical" >
                 <dict:Button x:Name="deleteButton" ToolTip="{DynamicResource DeleteContentToolTip}" Icon="\Resources\sexyDelete.png" Text="Delete" Click="deleteContent" InternalButtonSize="LargeIcon"/>
                 <dict:Button x:Name="hideButton" ToolTip="{DynamicResource HideContentToolTip}" Icon="\Resources\Hide.png" Text="Hide" Click="hideContent" InternalButtonSize="LargeIcon"/>

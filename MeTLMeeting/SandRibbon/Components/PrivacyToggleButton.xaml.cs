@@ -17,13 +17,6 @@ namespace SandRibbon.Components
             System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
             // no longer clip the bottom of the adorner buttons to the bottom of the element it is bound to
             //privacyButtons.Height = bounds.Height;
-#if DEBUG
-            debugLocalPos.Text = String.Format("LocalPos X[{0}] Y[{1}]", mode.ElementBounds.Left, mode.ElementBounds.Top);
-            debugWorldPos.Text = String.Format("WorldPos X[{0}] Y[{1}]", mode.ElementBounds.Left, mode.ElementBounds.Top);
-#else
-            debugLocalPos.Visibility = Visibility.Collapsed;
-            debugWorldPos.Visibility = Visibility.Collapsed;
-#endif
 
             if (mode.showDelete)
                 deleteButton.Visibility = Visibility.Visible;
