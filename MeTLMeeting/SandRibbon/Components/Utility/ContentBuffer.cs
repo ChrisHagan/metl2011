@@ -158,36 +158,7 @@ namespace SandRibbon.Components.Utility
         {
             strokeFilter.Remove(strokes, modifyVisibleContainer);
         }
-        public void AddParser(PreParser parser)
-        {
-            Console.WriteLine("Adding Strokes");
-            foreach (var stroke in parser.ink)
-            {
-                var point = generateLogicalBounds(stroke.stroke.GetBounds().X, stroke.stroke.GetBounds().Y);
-                AddStroke(stroke.stroke, _=>{});
-                logicalX = point.X;
-                logicalY = point.Y;
-            }
-            Console.WriteLine("Adding Text");
-            foreach (var box in parser.text)
-            {
-                var point = generateLogicalBounds(InkCanvas.GetLeft(box.Value.box), InkCanvas.GetTop(box.Value.box));
-                logicalX = point.X;
-                logicalY = point.Y;
-                AddTextBox(box.Value.box, _=> { });
- 
-            }
-            Console.WriteLine("Adding images");
-            foreach (var image in parser.images)
-            {
-                var point = generateLogicalBounds(InkCanvas.GetLeft(image.Value.image), InkCanvas.GetTop(image.Value.image));
-                logicalX = point.X;
-                logicalY = point.Y;
-                AddImage(image.Value.image, _=> { });
- 
-            }
-            updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(logicalX), Math.Abs(logicalY));
-        }
+        
         private void updateCanvasPositioning(IEnumerable<Stroke> strokes, IEnumerable<UIElement> textboxes, IEnumerable<UIElement> images, double translateX, double translateY)
         {
             Console.WriteLine("updating positioning");

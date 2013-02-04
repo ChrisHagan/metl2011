@@ -212,14 +212,9 @@ namespace SandRibbon.Components.Utility
                     context.LineTo(wideStroke.Reverse().First(), false, false);                    
                 }
                if (geometry != null && pen != null)
-               {
                    drawingContext.DrawGeometry(null, pen, geometry);
-               }
                if (whiteStroke != null)
-               {
-
                    base.DrawCore(drawingContext, whiteStroke.DrawingAttributes);
-               }
             }
             else
                base.DrawCore(drawingContext, drawingAttributes);

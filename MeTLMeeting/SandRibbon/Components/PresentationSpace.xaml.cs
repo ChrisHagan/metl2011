@@ -215,8 +215,6 @@ namespace SandRibbon.Components
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             BeginInit();
-            stack.ReceiveParser(parser);
-            /*
             stack.ReceiveStrokes(parser.ink);
             stack.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)

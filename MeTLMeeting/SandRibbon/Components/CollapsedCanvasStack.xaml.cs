@@ -3198,11 +3198,5 @@ namespace SandRibbon.Components
         {
             return new CollapsedCanvasStackAutomationPeer(this);
         }
-
-        public void ReceiveParser(PreParser parser)
-        {
-            contentBuffer.AddParser(parser);
-            RefreshCanvas();
-        }
     }
 }
