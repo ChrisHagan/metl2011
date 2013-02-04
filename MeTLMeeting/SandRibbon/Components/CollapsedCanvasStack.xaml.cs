@@ -2277,6 +2277,7 @@ namespace SandRibbon.Components
 
             box.TextChanged -= SendNewText;
             box.Text = newText;
+            box.CaretIndex = textbox.CaretIndex;
             box.TextChanged += SendNewText;
 
             return box;
@@ -2302,8 +2303,6 @@ namespace SandRibbon.Components
             Action redo = () =>
             {
                 ClearAdorners();
-                var myText = redoText;
-                var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
             };
             UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
