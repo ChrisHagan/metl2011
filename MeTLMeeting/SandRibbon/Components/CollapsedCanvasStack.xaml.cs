@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MeTLLib.DataTypes;
@@ -1525,7 +1524,8 @@ namespace SandRibbon.Components
             var checksum = e.Stroke.sum().checksum;
             var timestamp = 0L;
             e.Stroke.tag(new StrokeTag(Globals.me, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter, timestamp));
-            var privateAwareStroke = NegativeCartesianStrokeTranslate(shiftForCartesian(new PrivateAwareStroke(e.Stroke, _target)));
+            var stroke = NegativeCartesianStrokeTranslate(shiftForCartesian(e.Stroke));
+            var privateAwareStroke = new PrivateAwareStroke(stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
             var bounds = privateAwareStroke.GetBounds();
@@ -3194,14 +3194,15 @@ namespace SandRibbon.Components
             contentBuffer.logicalY = 0.0;
         }
 
-        public void SetEditable(bool b)
-        {
-        }
-
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new CollapsedCanvasStackAutomationPeer(this);
         }
 
+        public void ReceiveParser(PreParser parser)
+        {
+            contentBuffer.AddParser(parser);
+            RefreshCanvas();
+        }
     }
 }

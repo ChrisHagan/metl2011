@@ -163,26 +163,14 @@ namespace SandRibbon.Components.Utility
     }
     public class PrivateAwareStroke: Stroke
     {
-        private Stroke stroke;
+        //public Stroke stroke;
         private Pen pen = new Pen();
         private bool shouldShowPrivacy;
         private StreamGeometry geometry;
         private string target;
         private Stroke whiteStroke;
-        private StrokeTag tag
-        {
-            get { return stroke.tag(); }
-        }
-        private bool isPrivate;
-/*        {
-            get { return tag.privacy.ToLower() == "private"; }
-        }
- */
-        private StrokeChecksum sum
-        {
-            get { return stroke.sum(); }
 
-        }
+        private bool isPrivate;
         public PrivateAwareStroke(Stroke stroke, string target) : base(stroke.StylusPoints, stroke.DrawingAttributes)
         {
             var cs = new[] {55, 0, 0, 0}.Select(i => (byte) i).ToList();
@@ -193,7 +181,6 @@ namespace SandRibbon.Components.Utility
                        G=stroke.DrawingAttributes.Color.G,
                        B=stroke.DrawingAttributes.Color.B
                     }), stroke.DrawingAttributes.Width * 4);
-            this.stroke = stroke;
             this.target = target; 
             this.tag(stroke.tag());
             isPrivate = this.tag().privacy == Privacy.Private;
@@ -208,26 +195,31 @@ namespace SandRibbon.Components.Utility
         {
             if (isPrivate && shouldShowPrivacy && target != "notepad")
             {
-                if (!stroke.DrawingAttributes.IsHighlighter)
+                if (!base.DrawingAttributes.IsHighlighter)
                 {
-                    whiteStroke = stroke.Clone();
+                    whiteStroke = base.Clone();
                     whiteStroke.DrawingAttributes.Color = Colors.White;
                 }
-                var wideStroke = this.stroke.GetGeometry().GetWidenedPathGeometry(pen).GetFlattenedPathGeometry()
+                var wideStroke = this.GetGeometry().GetWidenedPathGeometry(pen).GetFlattenedPathGeometry()
                     .Figures
                     .SelectMany(f => f.Segments.Where(s => s is PolyLineSegment).SelectMany(s=> ((PolyLineSegment)s).Points));
                 geometry = new StreamGeometry();
                 using(var context = geometry.Open())
                 {
                     context.BeginFigure(wideStroke.First(),false , false);
-                    for (var i = 0; i < stroke.StylusPoints.Count; i++)
-                        context.LineTo(stroke.StylusPoints.ElementAt(i).ToPoint(), true, true);
+                    for (var i = 0; i < base.StylusPoints.Count; i++)
+                        context.LineTo(base.StylusPoints.ElementAt(i).ToPoint(), true, true);
                     context.LineTo(wideStroke.Reverse().First(), false, false);                    
                 }
                if (geometry != null && pen != null)
+               {
                    drawingContext.DrawGeometry(null, pen, geometry);
+               }
                if (whiteStroke != null)
+               {
+
                    base.DrawCore(drawingContext, whiteStroke.DrawingAttributes);
+               }
             }
             else
                base.DrawCore(drawingContext, drawingAttributes);

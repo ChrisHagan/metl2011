@@ -50,7 +50,6 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Loaded += Projector_Loaded;
-            stack.SetEditable(false);
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
