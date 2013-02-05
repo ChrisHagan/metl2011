@@ -21,11 +21,14 @@
              Grid.Row="0"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
-             ScrollViewer.CanContentScroll="False"
+             ScrollViewer.CanContentScroll="True"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
-             HorizontalAlignment="Stretch" Width="Auto" >
+             HorizontalAlignment="Stretch" Width="Auto"
+             VirtualizingStackPanel.IsVirtualizing="True"
+             VirtualizingStackPanel.VirtualizationMode="Recycling"
+            >
             <ListBox.InputBindings>
                 <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
                 <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
@@ -41,81 +44,59 @@
             </ListBox.InputBindings>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel/>
+                    <VirtualizingStackPanel IsItemsHost="True"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Height">
-                        <Setter.Value>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Name="Border" Margin="1" 
+                            Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+                            SnapsToDevicePixels="true" CornerRadius="2"
+                            Width="Auto" HorizontalAlignment="Stretch" >
+                        <Border.Height>
                             <MultiBinding Converter="{x:Static my:Converters.multiply}">
                                 <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
                                 <Binding Source="{StaticResource thumbAspect}"/>
                             </MultiBinding>
-                        </Setter.Value>
-                    </Setter>
-                    
-                    <Setter Property="Focusable">
-                        <Setter.Value>
-                             <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
+                        </Border.Height>
+                        <Border.Focusable>
+                            <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
                                 <Binding Path="index"/>
                                 <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
                                 <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
                             </MultiBinding>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Width" Value="Auto"/>
-                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <Border
-                                    Name="Border" Margin="1" 
-                                    Padding="5" Background="{StaticResource BackgroundBlueGradient}"
-                                    SnapsToDevicePixels="true" CornerRadius="2">
-                                    <Grid>
-                                        <Viewbox IsHitTestVisible="False">
-                                            <Image Height="200" Width="320" x:Name="thumbnailImage">
-                                                <Image.Source><!-- This is ugly as stink.  You'll find that this value converter
-                                                    actually returns null, but schedules the image to have its source updated
-                                                    when the data comes asynchronously down from the web-->
-                                                    <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
-                                                        <Binding RelativeSource="{RelativeSource Self}" />
-                                                        <Binding Path="id" />
-                                                    </MultiBinding>
-                                                </Image.Source> 
-                                            </Image>
-                                        </Viewbox>
-                                        <Image Source="/Resources/FogOfWar.png">
-                                            <Image.Visibility>
-                                                <MultiBinding Converter="{x:Static my:Converters.FogOfWar}">
-                                                    <Binding Path="index"/>
-                                                    <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
-                                                    <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
-                                                </MultiBinding>
-                                            </Image.Visibility>
-                                        </Image>
-                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                        </Border.Focusable>
+                        <Grid>
+                            <Viewbox IsHitTestVisible="False">
+                                <Image Height="200" Width="320" x:Name="thumbnailImage">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
+                                            <Binding RelativeSource="{RelativeSource Self}" />
+                                            <Binding Path="id" />
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Border}}"/>
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
+                            </Viewbox>
+                            <Image Source="/Resources/FogOfWar.png">
+                                <Image.Visibility>
+                                    <MultiBinding Converter="{x:Static my:Converters.FogOfWar}">
+                                        <Binding Path="index"/>
+                                        <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
+                                        <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
+                                    </MultiBinding>
+                                </Image.Visibility>
+                            </Image>
+                            <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
-                                            <Label Content="{Binding Path=index, Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsSelected" Value="true">
-                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsMouseOver" Value="true">
-                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
+                                <Label Content="{Binding Path=index, Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
     </Grid>
 </UserControl>

@@ -45,13 +45,17 @@
             Width="790"
             Height="100"
             Margin="10,0,10,0"
+            ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             x:Name="activeSlides"
-            local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
+            local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}"
+            VirtualizingStackPanel.IsVirtualizing="True"
+            VirtualizingStackPanel.VirtualizationMode="Recycling"       
+                     >
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
+                        <VirtualizingStackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle>
@@ -70,6 +74,7 @@
                                                     <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
                                                         <Binding Path="id" />
+                                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Border}}"/>
                                                     </MultiBinding>
                                                 </Image.Source> 
                                             </Image>

@@ -828,6 +828,10 @@ namespace SandRibbon
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            if (values[0] == DependencyProperty.UnsetValue)
+            {
+                return false;
+            }
             var currentIndex = (int) values[0];
             var locked = (bool) values[1];
             var maxIndex = (int) values[2];

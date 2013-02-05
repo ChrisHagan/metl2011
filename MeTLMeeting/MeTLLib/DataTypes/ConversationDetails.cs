@@ -498,9 +498,11 @@ namespace MeTLLib.DataTypes
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void refresh() {
+            if (PropertyChanged != null)
             PropertyChanged(this,new PropertyChangedEventArgs("id"));
         }
         public void refreshIndex() {
+            if (PropertyChanged != null)
             PropertyChanged(this,new PropertyChangedEventArgs("index"));
         }
         public static Slide Empty
