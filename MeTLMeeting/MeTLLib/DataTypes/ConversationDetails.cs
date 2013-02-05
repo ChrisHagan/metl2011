@@ -192,7 +192,23 @@ namespace MeTLLib.DataTypes
         public System.DateTime Created;
         public long CreatedAsTicks;
         public System.DateTime LastAccessed;
-        public string Tag { get; set; }
+
+        // I want this to be an always valid string because we're comparing this with other conversation detail tags 
+        private string internalTag = string.Empty;
+        public string Tag 
+        {
+            get
+            {
+                return internalTag;
+            }
+            set
+            {
+                if (value != null)
+                    internalTag = value;
+                else
+                    internalTag = string.Empty;
+            }
+        }
         public string Subject { get; set; }
         public List<Slide> Slides = new List<Slide>();
         public List<string> blacklist = new List<string>();
@@ -297,9 +313,9 @@ namespace MeTLLib.DataTypes
             if (doc.Element(TAG_TAG) != null)
                 Tag = doc.Element(TAG_TAG).Value;
             DateTime LastAccessed = new DateTime();
-            /*if (doc.Element(LAST_ACCESSED_TAG) != null)
-                LastAccessed = DateTimeFactory.ParseFromTicks(doc.Element(LAST_ACCESSED_TAG).Value);
-             */
+            if (doc.Element(LAST_ACCESSED_TAG) != null)
+                LastAccessed = DateTimeFactory.TryParse(doc.Element(LAST_ACCESSED_TAG).Value);
+            
             var Subject = "";
             if (doc.Element(SUBJECT_TAG) != null)
                 Subject = doc.Element(SUBJECT_TAG).Value;
