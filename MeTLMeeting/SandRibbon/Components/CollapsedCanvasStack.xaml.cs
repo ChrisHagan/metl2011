@@ -733,7 +733,7 @@ namespace SandRibbon.Components
                     foreach (var stroke in undoStrokes)
                     {
                         var tmpStroke = stroke.Clone();
-                        if (Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Count() == 0)
+                        if (!Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Any())
                         {
                             contentBuffer.AddStroke(tmpStroke, (str) => Work.Strokes.Add(str));
                         }
@@ -872,9 +872,9 @@ namespace SandRibbon.Components
 
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
+            var originalBounds = new Point(contentBuffer.logicalX, contentBuffer.logicalY);
             var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes()).Select(s => s.Clone()).ToList();
             var selectedElements = filterOnlyMine(Work.GetSelectedElements());
-
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
@@ -907,6 +907,8 @@ namespace SandRibbon.Components
                     text.undo();
                     images.undo();
 
+                    contentBuffer.logicalX = originalBounds.X;
+                    contentBuffer.logicalY = originalBounds.Y;
                     refreshWorkSelect(selectedStrokeIds, selectedImagesIds, selectedTextBoxes);
 
                     AddAdorners();
@@ -2269,12 +2271,10 @@ namespace SandRibbon.Components
 
             return box;
         }
-
         private MeTLTextBox UpdateTextBoxWithId(MeTLTextBox textbox, string newText)
         {
             // find textbox if it exists, otherwise create it
             var box = FindOrCreateTextBoxFromId(textbox);
-
             box.TextChanged -= SendNewText;
             box.Text = newText;
             box.CaretIndex = textbox.CaretIndex;
@@ -2282,7 +2282,6 @@ namespace SandRibbon.Components
 
             return box;
         }
-
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
             if (_originalText == null) return;
