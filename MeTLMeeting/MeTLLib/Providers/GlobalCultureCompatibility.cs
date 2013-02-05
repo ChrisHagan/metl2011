@@ -2,22 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Globalization;
 
 namespace MeTLLib.Providers
 {
     class DateTimeFactory
     {
-        private static System.Globalization.CultureInfo currentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-AU");
-        public static System.DateTime DateTime()
-        {
-            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
-            return new System.DateTime();
-        }
+        private static CultureInfo enAUCulture = CultureInfo.GetCultureInfo("en-AU");
 
-        public static System.DateTime Parse(string s)
+        public static DateTime Parse(string s)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
-            return System.DateTime.Parse(s);
+            Thread.CurrentThread.CurrentCulture = enAUCulture;
+            return DateTime.Parse(s);
         }
 
         /// <summary>
@@ -25,22 +22,20 @@ namespace MeTLLib.Providers
         /// </summary>
         /// <param name="s">String containing a date and time to convert</param>
         /// <returns>The successfully parsed s as a DateTime, otherwise DateTimeFactory.Now()</returns>
-        public static System.DateTime TryParse(string s)
+        public static DateTime TryParse(string s)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            Thread.CurrentThread.CurrentCulture = enAUCulture;
             
             var parsedDateTime = new DateTime();
-            if (System.DateTime.TryParse(s, out parsedDateTime))
+            if (DateTime.TryParse(s, out parsedDateTime))
             {
                 return parsedDateTime;
             }
             else
             {
                 //MeTLX sends this format of date and hence the workaround
-                string[] format = { "ddd MMM dd HH:mm:ss EST yyyy"};
-                System.Globalization.DateTimeStyles styles = System.Globalization.DateTimeStyles.None;
-                DateTime convertedDate = System.DateTime.ParseExact(s, format, currentCulture, styles);
-                if (System.DateTime.TryParse(convertedDate.ToString(), out parsedDateTime))
+                const string dateFormat = "ddd MMM dd HH:mm:ss EST yyyy";
+                if (DateTime.TryParseExact(s, dateFormat, enAUCulture, DateTimeStyles.None, out parsedDateTime))
                 {
                     return parsedDateTime;
                 }
@@ -48,26 +43,26 @@ namespace MeTLLib.Providers
             }
         }
 
-        public static System.DateTime ParseFromTicks(string s)
+        public static DateTime ParseFromTicks(string s)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            Thread.CurrentThread.CurrentCulture = enAUCulture;
             return new DateTime(Convert.ToInt64(s));
         }
-        public static System.DateTime Now()
+        public static DateTime Now()
         {
             try
             {
-                System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+                Thread.CurrentThread.CurrentCulture = enAUCulture;
                 // I got a security permissions here once.  MSCorLib of course.
             }
             catch(Exception)
             {
             }
-            return System.DateTime.Now;
+            return DateTime.Now;
         }
         public override string ToString()
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            Thread.CurrentThread.CurrentCulture = enAUCulture;
             return base.ToString();
         }
     }

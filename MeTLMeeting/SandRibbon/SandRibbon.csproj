@@ -188,6 +188,7 @@
     <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
       <DependentUpon>UndoHistoryVisualiserWindow.xaml</DependentUpon>
