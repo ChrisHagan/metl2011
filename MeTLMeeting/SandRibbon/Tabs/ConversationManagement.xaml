@@ -15,7 +15,7 @@
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
         <dict:Button Text="Page Reorder" ToolTip="{DynamicResource PageReorderToolTip}" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
-        <StackPanel Orientation="Horizontal">
+        <!--StackPanel Orientation="Horizontal">
             <ToggleButton Margin="5" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}">
                 <StackPanel>
                     <Image Source="/Resources/Banhammer.jpg" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Height="30"/>
@@ -23,6 +23,6 @@
                 </StackPanel>
             </ToggleButton>
             <Button x:Name="bannedContentManagement" Margin="5" Height="25" Command="{x:Static api:Commands.ViewBannedContent}" Content="Manage Banned Content" ToolTip="{DynamicResource BanContentToolTip}"/>
-        </StackPanel>
+        </StackPanel-->
     </sr:RibbonGroup>
 </sr:RibbonTab>

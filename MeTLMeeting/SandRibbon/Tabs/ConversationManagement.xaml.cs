@@ -53,9 +53,9 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
+            /*editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
             banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
-            bannedContentManagement.Visibility = banContent.Visibility;
+            bannedContentManagement.Visibility = banContent.Visibility;*/
         }
 
         private void JoinConversation(string jid)
@@ -84,13 +84,13 @@ namespace SandRibbon.Tabs
 
         private void OnBanContentchanged(object sender, ExecutedRoutedEventArgs e)
         {
-            var banMode = banContent.IsChecked ?? false;
+            /*var banMode = banContent.IsChecked ?? false;
             Commands.BanhammerActive.Execute(banMode);
 
             if (banMode)
             {
                 Commands.SetInkCanvasMode.Execute("Select");
-            }
+            }*/
         }
     }
 }
