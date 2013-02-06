@@ -54,7 +54,7 @@ namespace SandRibbon.Components
                     ThumbnailProvider.thumbnail(source, id);
                 }
             }
-            return null;
+            return ThumbnailProvider.emptyImage;
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {

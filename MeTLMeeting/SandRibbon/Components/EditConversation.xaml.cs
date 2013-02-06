@@ -37,9 +37,7 @@ namespace SandRibbon.Components
             activeSlideList.Clear();
             foreach (var slide in slides.OrderBy(s => s.index))
             {
-                var image = new Image();
                 activeSlideList.Add(slide);
-                ThumbnailProvider.thumbnail(image, slide.id);
             }
         }
 

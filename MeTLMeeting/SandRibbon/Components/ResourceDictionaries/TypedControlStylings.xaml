@@ -207,7 +207,8 @@
             Background="Transparent">
                         <Grid>
                             <Rectangle Fill="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Name="content"/>
+                            <ContentPresenter Name="content"/>
+                            <!--"<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Name="content"/>-->
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

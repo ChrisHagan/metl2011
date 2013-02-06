@@ -14,7 +14,8 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Label">
                         <Border>
-                            <ContentPresenter
+                            <!--<ContentPresenter RecognizesAccessKey="False" />-->
+                           <ContentPresenter
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                               RecognizesAccessKey="False" />

@@ -9,6 +9,7 @@ using SandRibbon.Utils;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace SandRibbon.Providers
 {
@@ -24,6 +25,7 @@ namespace SandRibbon.Providers
     }
     public class ThumbnailProvider
     {
+        public static ImageSource emptyImage = new ImageSourceConverter().ConvertFromString("Resources/Slide_Not_Loaded.png") as ImageSource;
         private static Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
         //acceptableStaleTime is measured in ticks
         public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 30;
@@ -39,19 +41,28 @@ namespace SandRibbon.Providers
             Console.WriteLine(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
             cache[slideId] = ct;
         }
+        private static void paintThumb(Image image)
+        {
+          image.Dispatcher.adopt(delegate
+          {
+              var internalSlide = (Slide)image.DataContext;
+              Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
+              if (cache.ContainsKey(internalSlide.id))
+                  image.Source = cache[internalSlide.id].image;
+              else
+                  image.Source = emptyImage;
+          });
+        }
         public static void thumbnail(Image image, int slideId)
         {
-            var internalImage = image;
-            var internalSlideId = slideId;
+            var slide = (Slide)image.DataContext;
+            var internalSlideId = slide.id;
             if (cache.ContainsKey(slideId) && cache[slideId].created > DateTime.Now.Ticks - acceptableStaleTime) {
-                Console.WriteLine(String.Format("Fetching thumbnail: {0}", internalSlideId));
-                internalImage.Dispatcher.adopt(delegate
-                {
-                    internalImage.Source = cache[slideId].image;
-                });
+                paintThumb(image);
             } else {
                 var host = ClientFactory.Connection().server.Name;
-                var url = string.Format(MeTLConfiguration.Config.Thumbnail.Host + "{0}&slide={1}&width={2}&height={3}", host, internalSlideId, 320, 240);
+                var url = string.Format(MeTLConfiguration.Config.Thumbnail.Host + "{0}/{1}",host,internalSlideId);
+                //var url = string.Format(MeTLConfiguration.Config.Thumbnail.Host + "{0}&slide={1}&width={2}&height={3}", host, internalSlideId, 320, 240);
                 Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
@@ -72,10 +83,7 @@ namespace SandRibbon.Providers
                                 addToCache(slideId, new CachedThumbnail(bitmap));
 
                             }
-                            internalImage.Dispatcher.adopt(delegate
-                            {
-                                internalImage.Source = cache[slideId].image;
-                            });
+                            paintThumb(image);
                         }
                     }
                     catch (Exception e)
