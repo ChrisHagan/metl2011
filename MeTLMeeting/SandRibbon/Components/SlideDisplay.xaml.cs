@@ -395,14 +395,22 @@ namespace SandRibbon.Components
                     {
                         try
                         {
+
                             var currentSlide = 0;
                             if (proposedSlideId != -1 && proposedSlideId > 0)
                                 currentSlide = proposedSlideId;
                             else currentSlide = Globals.location.currentSlide;
                             var currentIndex = indexOf(currentSlide);
+                            bool moveRequired = false;
+                            if (moveTo)
+                            {
+                                currentIndex++;
+                                moveTo = false;
+                                moveRequired = true;
+                            }
                             if (isSlideInSlideDisplay(currentSlide))
                             {
-                                if (forceRefresh || slides.SelectedItem == null || slides.SelectedIndex == -1 || (slides.SelectedItem != null && ((Slide)slides.SelectedItem).id != Globals.location.currentSlide))
+                                if (forceRefresh || slides.SelectedItem == null || slides.SelectedIndex == -1 || (slides.SelectedItem != null && ((Slide)slides.SelectedItem).id != Globals.location.currentSlide) || moveRequired)
                                 {
                                     slides.SelectedIndex = currentIndex;
                                     if (slides.SelectedIndex == -1)
@@ -473,11 +481,7 @@ namespace SandRibbon.Components
                 }
             }
             var currentSlideIndex = indexOf(currentSlideId);
-            if (moveTo)
-            {
-                currentSlideIndex++;
-                moveTo = false;
-            }
+        
             if (firstSlide != null)
                 refreshSelectedIndex(firstSlide.id, false);
             else
