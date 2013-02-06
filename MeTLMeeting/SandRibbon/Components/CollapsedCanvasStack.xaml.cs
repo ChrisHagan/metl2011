@@ -686,7 +686,7 @@ namespace SandRibbon.Components
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
-                            contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
+                            contentBuffer.AddImage(NegativeCartesianImageTranslate((Image)element), (image) => Work.Children.Add(image));
                             element.ApplyPrivacyStyling(contentBuffer, _target, element.tag().privacy);
                         }
 
@@ -735,7 +735,7 @@ namespace SandRibbon.Components
                         var tmpStroke = stroke.Clone();
                         if (!Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Any())
                         {
-                            contentBuffer.AddStroke(tmpStroke, (str) => Work.Strokes.Add(str));
+                            contentBuffer.AddStroke(NegativeCartesianStrokeTranslate(tmpStroke), (str) => Work.Strokes.Add(str));
                         }
                     }
                 };
@@ -786,7 +786,7 @@ namespace SandRibbon.Components
                   foreach (var box in startingText)
                   {
                       selection.Add(box);
-                      AddTextBoxToCanvas(applyDefaultAttributes(box),false);                      
+                      AddTextBoxToCanvas(applyDefaultAttributes(box),true);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -886,6 +886,12 @@ namespace SandRibbon.Components
 
             Action undo = () =>
                 {
+
+                    if (contentBuffer.logicalX > originalBounds.X || contentBuffer.logicalY > originalBounds.Y)
+                    {
+                        contentBuffer.logicalX = originalBounds.X;
+                        contentBuffer.logicalY = originalBounds.Y;
+                    }
                     var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
                     var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
                     var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
@@ -906,9 +912,7 @@ namespace SandRibbon.Components
                     ink.undo();
                     text.undo();
                     images.undo();
-
-                    contentBuffer.logicalX = originalBounds.X;
-                    contentBuffer.logicalY = originalBounds.Y;
+                    RefreshCanvas();
                     refreshWorkSelect(selectedStrokeIds, selectedImagesIds, selectedTextBoxes);
 
                     AddAdorners();
@@ -1228,26 +1232,26 @@ namespace SandRibbon.Components
         private Stroke NegativeCartesianStrokeTranslate(Stroke incomingStroke)
         {
             return contentBuffer.adjustStroke(incomingStroke, (s) =>
-                                                                  {
+                                              {
 
-                                                                      //shift the stroke into the canvas coordinates
-                                                                      var transformMatrix = new Matrix();
-                                                                      transformMatrix.Translate(Math.Abs(contentBuffer.logicalX), Math.Abs(contentBuffer.logicalY));
-                                                                      s.Transform(transformMatrix, false);
- 
-                                                                      var bounds = s.GetBounds();
-                                                                      double translateX = 0.0;
-                                                                      if (bounds.X < 0)
-                                                                          translateX = Math.Abs(bounds.X);
-                                                                      var translateY = 0.0;
-                                                                      if (bounds.Y < 0)
-                                                                          translateY = Math.Abs(bounds.Y);
-                                                                      
-                                                                      transformMatrix = new Matrix();
-                                                                      transformMatrix.Translate(translateX, translateY);
-                                                                      s.Transform(transformMatrix, false);
-                                                                      return s;
-                                                                  });
+                                                  //shift the stroke into the canvas coordinates
+                                                  var transformMatrix = new Matrix();
+                                                  transformMatrix.Translate(Math.Abs(contentBuffer.logicalX), Math.Abs(contentBuffer.logicalY));
+                                                  s.Transform(transformMatrix, false);
+
+                                                  var bounds = s.GetBounds();
+                                                  double translateX = 0.0;
+                                                  if (bounds.X < 0)
+                                                      translateX = Math.Abs(bounds.X);
+                                                  var translateY = 0.0;
+                                                  if (bounds.Y < 0)
+                                                      translateY = Math.Abs(bounds.Y);
+                                                  
+                                                  transformMatrix = new Matrix();
+                                                  transformMatrix.Translate(translateX, translateY);
+                                                  s.Transform(transformMatrix, false);
+                                                  return s;
+                                              });
         }
 
         private Stroke OffsetNegativeCartesianStrokeTranslate(Stroke stroke)
@@ -1724,9 +1728,9 @@ namespace SandRibbon.Components
             });
         }
 
-        private void NegativeCartesianImageTranslate(Image incomingImage)
+        private Image NegativeCartesianImageTranslate(Image incomingImage)
         {
-            contentBuffer.adjustImage(incomingImage, (i) =>
+            return contentBuffer.adjustImage(incomingImage, (i) =>
             {
                 var translateX = ReturnPositiveValue(contentBuffer.logicalX);
                 var translateY = ReturnPositiveValue(contentBuffer.logicalY);
@@ -2311,16 +2315,13 @@ namespace SandRibbon.Components
             UpdateTextBoxWithId(mybox, redoText);
 
             var currentSlide = Globals.slide;
-            Action typingTimedAction = () =>
-            {
-                Dispatcher.adoptAsync(delegate
-                {
-                    var senderTextBox = sender as MeTLTextBox;
-                    sendTextWithoutHistory(senderTextBox, currentPrivacy, currentSlide);
-                    TypingTimer = null;
-                    GlobalTimers.ExecuteSync();
-                });
-            };
+            Action typingTimedAction = () => Dispatcher.adoptAsync(delegate
+                                                                       {
+                                                                           var senderTextBox = sender as MeTLTextBox;
+                                                                           sendTextWithoutHistory(senderTextBox, currentPrivacy, currentSlide);
+                                                                           TypingTimer = null;
+                                                                           GlobalTimers.ExecuteSync();
+                                                                       });
             if (TypingTimer == null)
             {
                 TypingTimer = new TypingTimedAction();
@@ -2469,15 +2470,7 @@ namespace SandRibbon.Components
                            Color = ((SolidColorBrush)box.Foreground).Color
                        };
         }
-        private void removeBox(MeTLTextBox box, bool localOnly = false)
-        {
-            myTextBox = box;
-            if (!localOnly)
-            {
-                dirtyTextBoxWithoutHistory(box);
-            }
-            myTextBox = null;
-        }
+
         private void sendBox(MeTLTextBox box, bool localOnly = false)
         {
             myTextBox = box;
@@ -2578,22 +2571,13 @@ namespace SandRibbon.Components
         private void textboxLostFocus(object sender, RoutedEventArgs e)
         {
             var box = (MeTLTextBox)sender;
-            var currentTag = box.tag();
             ClearAdorners();
-            /*if (currentTag.privacy != Globals.privacy)
-            {
-                Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(Globals.slide, Globals.me, _target, currentTag.privacy, currentTag.id));
-                currentTag.privacy = privacy;
-                box.tag(currentTag);
-                Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(Globals.slide, Globals.me, _target, currentTag.privacy, box));
-            }*/
             myTextBox = null;
             requeryTextCommands();
             if (box.Text.Length == 0)
             {
                 if (TextBoxExistsOnCanvas(box, true))
                     dirtyTextBoxWithoutHistory(box);
-                //Work.Children.Remove(box);
             }
             else
                 setAppropriatePrivacyHalo(box);

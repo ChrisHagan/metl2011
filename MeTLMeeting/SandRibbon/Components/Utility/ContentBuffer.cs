@@ -158,7 +158,6 @@ namespace SandRibbon.Components.Utility
         {
             strokeFilter.Remove(strokes, modifyVisibleContainer);
         }
-        
         private void updateCanvasPositioning(IEnumerable<Stroke> strokes, IEnumerable<UIElement> textboxes, IEnumerable<UIElement> images, double translateX, double translateY)
         {
             Console.WriteLine("updating positioning");
@@ -252,7 +251,7 @@ namespace SandRibbon.Components.Utility
             textFilter.Clear();
             modifyVisibleContainer();
         }
-        public void adjustImage(Image image, Func<Image, Image> adjustment)
+        public Image adjustImage(Image image, Func<Image, Image> adjustment)
         {
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
@@ -271,7 +270,7 @@ namespace SandRibbon.Components.Utility
                 updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, 
                     imageFilter.Images.Where(i => ((Image)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY );
            }
-            doAdjustImage(image, adjustment);
+            return doAdjustImage(image, adjustment);
         }
 
         public void adjustImageForMoveDelta(String imageIdentity, Func<Image, Image> adjustment)
@@ -302,9 +301,9 @@ namespace SandRibbon.Components.Utility
                 //doAdjustImage(image as Image, adjustment);
             }
         }
-        private void doAdjustImage(Image image, Func<Image, Image> adjustment)
+        private Image doAdjustImage(Image image, Func<Image, Image> adjustment)
         {
-            adjustment(image);
+            return adjustment(image);
         }
         public void AddImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
