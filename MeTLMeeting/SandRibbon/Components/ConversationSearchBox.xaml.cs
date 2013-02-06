@@ -426,12 +426,20 @@ namespace SandRibbon.Components
                         ((ConversationDetails)result).Title = originalContext.Title;
                 originalContext = null;
             }
-            var jid = ((FrameworkElement)sender).Tag;
-            if(jid.Equals(Globals.location.activeConversation) && !Globals.conversationDetails.IsEmpty)
+            var requestedJid = ((FrameworkElement)sender).Tag as string;
+            if (requestedJid.Equals(Globals.location.activeConversation) && !Globals.conversationDetails.IsEmpty)
                 Commands.HideConversationSearchBox.Execute(null);
             else
-                Commands.JoinConversation.ExecuteAsync(jid);
+            {
+                // Check that the permissions have not changed since user searched for the conversation
+                var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(requestedJid);
+                if (conversation.UserHasPermission(Globals.credentials))
+                    Commands.JoinConversation.ExecuteAsync(requestedJid);
+                else
+                    MeTLMessage.Information("You no longer have permission to view this conversation.");
+            }
         }
+
         private void deleteConversation(object sender, ExecutedRoutedEventArgs e)
         {
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
