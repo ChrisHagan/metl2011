@@ -46,9 +46,11 @@ namespace SandRibbon.Providers
           image.Dispatcher.adopt(delegate
           {
               var internalSlide = (Slide)image.DataContext;
-              Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
-              if (cache.ContainsKey(internalSlide.id))
+              if (internalSlide != null && cache.ContainsKey(internalSlide.id))
+              {
+                  Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
                   image.Source = cache[internalSlide.id].image;
+              }
               else
                   image.Source = emptyImage;
           });

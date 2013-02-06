@@ -1996,11 +1996,24 @@ namespace MeTLLib.DataTypes
                     }, null);
                 };
                 image.Loaded += handler;
-                image.tag(new ImageTag(Img.author,Img.privacy,Img.identity,false,Img.timestamp));
+                image.tag(BuildImageTagFromXml(tag));
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
+
+            private ImageTag BuildImageTagFromXml(string tag)
+            {
+                var imageTag = ImageExtensions.DeserialiseTag(tag);
+                // to maintain compatibility, we'll set the fields from the xml elements like before
+                imageTag.author = Img.author;
+                imageTag.privacy = Img.privacy;
+                imageTag.id = Img.identity;
+                imageTag.timestamp = Img.timestamp;
+
+                return imageTag;
+            }
+
             public ImageSource asynchronouslyLoadImageData()
             {
                 var image = new BitmapImage();

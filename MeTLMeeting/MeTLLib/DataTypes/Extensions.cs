@@ -241,6 +241,21 @@ namespace MeTLLib.DataTypes
     }
     public static class ImageExtensions
     {
+        public static ImageTag DeserialiseTag(object imageTag)
+        {
+            var tagString = imageTag as string;
+
+            if (!string.IsNullOrEmpty(tagString))
+            {
+                if (tagString.StartsWith("NOT_LOADED"))
+                    tagString = tagString.Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+
+                return JsonConvert.DeserializeObject<ImageTag>(tagString, new StringEnumConverter());
+            }
+
+            throw new ArgumentException(string.Format("Unable to create an ImageTag from the argument '{0}'.", imageTag.ToString()));
+        }
+
         public static Image clone(this Image image)
         {
             var newImage = new Image {Height = image.Height, Width = image.Width};
@@ -259,11 +274,7 @@ namespace MeTLLib.DataTypes
             {
                 try
                 {
-                    ImageTag imageInfo = new ImageTag(); 
-                    if (image.Tag.ToString().StartsWith("NOT_LOADED"))
-                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2], new StringEnumConverter());
-                    else
-                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString(), new StringEnumConverter());
+                    ImageTag imageInfo = DeserialiseTag(image.Tag);
 
                     imagetag = new ImageTag
                     {

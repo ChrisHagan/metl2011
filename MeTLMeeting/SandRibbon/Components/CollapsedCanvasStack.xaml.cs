@@ -1723,7 +1723,8 @@ namespace SandRibbon.Components
             NegativeCartesianImageTranslate(image);
             contentBuffer.AddImage(image, (img) =>
             {
-                Panel.SetZIndex(img, 2);
+                var zIndex = (img as Image).tag().isBackground ? -5 : 2;
+                Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });
         }
