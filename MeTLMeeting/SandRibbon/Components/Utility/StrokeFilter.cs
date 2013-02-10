@@ -6,29 +6,29 @@ using MeTLLib.Utilities;
 
 namespace SandRibbon.Components.Utility
 {
-    public class StrokeFilter : ContentFilter<StrokeCollection, Stroke>
+    public class StrokeFilter : ContentFilter<List<PrivateAwareStroke>, PrivateAwareStroke>
     {
-        protected override bool Equals(Stroke item1, Stroke item2)
+        protected override bool Equals(PrivateAwareStroke item1, PrivateAwareStroke item2)
         {
             return item1.tag().id == item2.tag().id;
         }
 
-        protected override bool CollectionContains(Stroke item)
+        protected override bool CollectionContains(PrivateAwareStroke item)
         {
             return contentCollection.Where(s => Equals(s.tag().id, item.tag().id)).Count() != 0;
         }
 
-        protected override string AuthorFromTag(Stroke element)
+        protected override string AuthorFromTag(PrivateAwareStroke element)
         {
             return element.tag().author;
         }
 
-        protected override Privacy PrivacyFromTag(Stroke element)
+        protected override Privacy PrivacyFromTag(PrivateAwareStroke element)
         {
             return element.tag().privacy;
         }
 
-        public StrokeCollection Strokes
+        public List<PrivateAwareStroke> Strokes
         {
             get
             {

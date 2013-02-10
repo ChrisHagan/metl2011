@@ -19,6 +19,8 @@ namespace SandRibbon.Components.Utility
 {
     public class MeTLTextBox : TextBox
     {
+        public double offsetX = 0;
+        public double offsetY = 0;
         CommandBinding undoBinding;
         CommandBinding redoBinding;
 
@@ -80,21 +82,21 @@ namespace SandRibbon.Components.Utility
 
     public static class InkCanvasExtensions
     {
-        public static IEnumerable<TextBox> TextChildren(this InkCanvas canvas)
+        public static IEnumerable<MeTLTextBox> TextChildren(this InkCanvas canvas)
         {
-            return canvas.Children.OfType<TextBox>();
+            return canvas.Children.OfType<MeTLTextBox>();
         }
-        public static IEnumerable<Image> ImageChildren(this InkCanvas canvas)
+        public static IEnumerable<MeTLImage> ImageChildren(this InkCanvas canvas)
         {
-            return canvas.Children.OfType<Image>();
+            return canvas.Children.OfType<MeTLImage>();
         }
-        public static IEnumerable<Image> GetSelectedImages(this InkCanvas canvas)
+        public static IEnumerable<MeTLImage> GetSelectedImages(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().OfType<Image>();
+            return canvas.GetSelectedElements().OfType<MeTLImage>();
         }
-        public static IEnumerable<TextBox> GetSelectedTextBoxes(this InkCanvas canvas)
+        public static IEnumerable<MeTLTextBox> GetSelectedTextBoxes(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().OfType<TextBox>();
+            return canvas.GetSelectedElements().OfType<MeTLTextBox>();
         }
     }
     public static class TextBoxExtensions
@@ -134,7 +136,8 @@ namespace SandRibbon.Components.Utility
             newBox.SelectionStart = box.SelectionStart;
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
-
+            newBox.offsetX = box.offsetX;
+            newBox.offsetY = box.offsetY;
             return newBox;
         }
         public static MeTLTextBox toMeTLTextBox(this TextBox OldBox)
@@ -169,8 +172,13 @@ namespace SandRibbon.Components.Utility
         private StreamGeometry geometry;
         private string target;
         private Stroke whiteStroke;
-
         private bool isPrivate;
+        public double offsetX = 0;
+        public double offsetY = 0;
+        public PrivateAwareStroke Clone()
+        {
+            return new PrivateAwareStroke(base.Clone(), target);
+        }
         public PrivateAwareStroke(Stroke stroke, string target) : base(stroke.StylusPoints, stroke.DrawingAttributes)
         {
             var cs = new[] {55, 0, 0, 0}.Select(i => (byte) i).ToList();
@@ -190,7 +198,7 @@ namespace SandRibbon.Components.Utility
 
             pen.Freeze();
         }
-        
+
         protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)
         {
             if (isPrivate && shouldShowPrivacy && target != "notepad")

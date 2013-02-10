@@ -31,7 +31,7 @@ namespace SandRibbon.Components.Utility
             strokeDeltaFilter = new StrokeFilter();
             imageDeltaCollection = new ImageFilter();
         }
-        public StrokeCollection FilteredStrokes(ContentVisibilityEnum contentVisibility)
+        public List<PrivateAwareStroke> FilteredStrokes(ContentVisibilityEnum contentVisibility)
         {
             return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility); 
         }
@@ -47,21 +47,22 @@ namespace SandRibbon.Components.Utility
         }
         public void UpdateChild(UIElement childToFind, Action<UIElement> updateChild)
         {
-            if (childToFind is TextBox)
+            if (childToFind is MeTLTextBox)
                 textFilter.UpdateChild(childToFind, updateChild);
-            if (childToFind is Image) 
+            if (childToFind is MeTLImage) 
                 imageFilter.UpdateChild(childToFind, updateChild);
         }
-        public void UpdateAllStrokes(Action<Stroke> updateChild)
+        public void UpdateAllStrokes(Action<PrivateAwareStroke> updateChild)
         {
             foreach (var stroke in strokeFilter.Strokes)
-                updateChild(stroke);
+                if (stroke is PrivateAwareStroke)
+                    updateChild(stroke as PrivateAwareStroke);
         }
-        public void UpdateAllTextBoxes(Action<TextBox> updateChild)
+        public void UpdateAllTextBoxes(Action<MeTLTextBox> updateChild)
         {
             textFilter.UpdateChildren(updateChild);
         }
-        public void UpdateAllImages(Action<Image> updateChild)
+        public void UpdateAllImages(Action<MeTLImage> updateChild)
         {
             imageFilter.UpdateChildren(updateChild);
         }
@@ -139,45 +140,58 @@ namespace SandRibbon.Components.Utility
                 point.Y = elementTop;
             return point;
         }
-        public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
+        public void AddStrokes(List<PrivateAwareStroke> strokes, Action<List<PrivateAwareStroke>> modifyVisibleContainer)
         {
+            strokes.ForEach(s => reassociateStrokeToCanvas(s));
             strokeFilter.Add(strokes, modifyVisibleContainer);
         }
 
-        public void AddStroke(Stroke stroke, Action<Stroke> modifyVisibleContainer)
+        public void AddStroke(PrivateAwareStroke stroke, Action<PrivateAwareStroke> modifyVisibleContainer)
         {
+            reassociateStrokeToCanvas(stroke);
             strokeFilter.Add(stroke, modifyVisibleContainer);
         }
 
-        public void RemoveStroke(Stroke stroke, Action<Stroke> modifyVisibleContainer)
+        public void RemoveStroke(PrivateAwareStroke stroke, Action<PrivateAwareStroke> modifyVisibleContainer)
         {
             strokeFilter.Remove(stroke, modifyVisibleContainer);
         }
 
-        public void RemoveStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
+        public void RemoveStrokes(List<PrivateAwareStroke> strokes, Action<List<PrivateAwareStroke>> modifyVisibleContainer)
         {
             strokeFilter.Remove(strokes, modifyVisibleContainer);
         }
-        private void updateCanvasPositioning(IEnumerable<Stroke> strokes, IEnumerable<UIElement> textboxes, IEnumerable<UIElement> images, double translateX, double translateY)
+        private void updateCanvasPositioning(IEnumerable<PrivateAwareStroke> strokes, IEnumerable<UIElement> textboxes, IEnumerable<UIElement> images, double translateX, double translateY)
         {
             Console.WriteLine("updating positioning");
             Matrix transformMatrix;
             transformMatrix = new System.Windows.Media.Matrix();
             transformMatrix.Translate(translateX, translateY);
             foreach (var tStroke in strokes)
-                    tStroke.Transform(transformMatrix, false);
+            {
+                reassociateStrokeToCanvas(tStroke);
+                tStroke.Transform(transformMatrix, false);
+                tStroke.offsetX = logicalX;
+                tStroke.offsetY = logicalY;
+            }
             foreach (var tImage in images)
             {
+                reassociateImageToCanvas((MeTLImage)tImage);
                 InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
                 InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
+                ((MeTLImage)tImage).offsetX = logicalX;
+                ((MeTLImage)tImage).offsetY = logicalY;
             }
             foreach (var tText in textboxes)
             {
+                reassociateTextboxToCanvas((MeTLTextBox)tText);
                 InkCanvas.SetLeft(tText, (InkCanvas.GetLeft(tText) + translateX));
                 InkCanvas.SetTop(tText, (InkCanvas.GetTop(tText) + translateY));
+                ((MeTLTextBox)tText).offsetX = logicalX;
+                ((MeTLTextBox)tText).offsetY = logicalY;
             }
         }
-        public Stroke adjustStroke(Stroke stroke, Func<Stroke,Stroke> adjustment)
+        public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke,PrivateAwareStroke> adjustment)
         {
             //var stroke = incomingStroke.Clone();
             var oldCanvasOffsetX = logicalX;
@@ -195,12 +209,13 @@ namespace SandRibbon.Components.Utility
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
-                updateCanvasPositioning(strokeFilter.Strokes.Where(s => s.tag().id != stroke.tag().id),
+                updateCanvasPositioning(strokeFilter.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id != stroke.tag().id).Select(s => s as PrivateAwareStroke),
                     textFilter.TextBoxes,
                     imageFilter.Images
                     , translateX, 
                     translateY);
             }
+            reassociateStrokeToCanvas(stroke);
             return doAdjustStroke(stroke, adjustment);            
         }
         public void adjustStrokesForMoveDelta(List<String> strokeIdentities)
@@ -212,31 +227,31 @@ namespace SandRibbon.Components.Utility
                 if (checkIfMoveDeltaBoundsUpdates(stroke.GetBounds().X, stroke.GetBounds().Y))
                 {
                     updateMoveDeltaBounds(stroke.GetBounds().X, stroke.GetBounds().Y);
-                    updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
+                    updateCanvasPositioning( strokeFilter.Strokes.Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke), textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
                 //doAdjustStroke(stroke, adjustment);
             }
         }
-        public void adjustStrokeForMoveDelta(String strokeIdentity, Func<Stroke, Stroke> adjustment)
+        public void adjustStrokeForMoveDelta(String strokeIdentity, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
-            var strokes = strokeFilter.Strokes.Where(s => s.tag().id == strokeIdentity);
+            var strokes = strokeFilter.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id == strokeIdentity).Select(s => s as PrivateAwareStroke);
             if (strokes.Count() > 0)
             {
                 var stroke = strokes.First();
                 if (checkIfMoveDeltaBoundsUpdates(stroke.GetBounds().X, stroke.GetBounds().Y))
                 {
                     updateMoveDeltaBounds(stroke.GetBounds().X, stroke.GetBounds().Y);
-                    updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
+                    updateCanvasPositioning( strokeFilter.Strokes.Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke), textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
                 doAdjustStroke(stroke, adjustment);
             }
         }
-        private Stroke doAdjustStroke(Stroke stroke, Func<Stroke, Stroke> adjustment)
+        private PrivateAwareStroke doAdjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
             return adjustment(stroke);
         }
 
-        public void AddDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)
+        public void AddDeltaStrokes(List<PrivateAwareStroke> strokes, Action<List<PrivateAwareStroke>> modifyUndoContainer)
         {
             strokeDeltaFilter.Add(strokes, modifyUndoContainer); 
         }
@@ -251,7 +266,7 @@ namespace SandRibbon.Components.Utility
             textFilter.Clear();
             modifyVisibleContainer();
         }
-        public Image adjustImage(Image image, Func<Image, Image> adjustment)
+        public MeTLImage adjustImage(MeTLImage image, Func<MeTLImage, MeTLImage> adjustment)
         {
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
@@ -268,14 +283,15 @@ namespace SandRibbon.Components.Utility
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
                 updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, 
-                    imageFilter.Images.Where(i => ((Image)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY );
+                    imageFilter.Images.Where(i => ((MeTLImage)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY );
            }
+            reassociateImageToCanvas(image);
             return doAdjustImage(image, adjustment);
         }
 
-        public void adjustImageForMoveDelta(String imageIdentity, Func<Image, Image> adjustment)
+        public void adjustImageForMoveDelta(String imageIdentity, Func<MeTLImage, MeTLImage> adjustment)
         {
-            var images = imageFilter.Images.Where(i => (i as Image).tag().id == imageIdentity);
+            var images = imageFilter.Images.Where(i => (i as MeTLImage).tag().id == imageIdentity);
             if (images.Count() > 0)
             {
                 var image = images.First();
@@ -285,12 +301,12 @@ namespace SandRibbon.Components.Utility
                     updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images,
                                             Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
-                doAdjustImage(image as Image, adjustment);
+                doAdjustImage(image as MeTLImage, adjustment);
             }
         }
         public void adjustImagesForMoveDelta(List<String> imageIdentities)
         {
-            var images = imageFilter.Images.Where(i => imageIdentities.Contains((i as Image).tag().id));
+            var images = imageFilter.Images.Where(i => imageIdentities.Contains((i as MeTLImage).tag().id));
             foreach(var image in images)            
             {
                 if (checkIfMoveDeltaBoundsUpdates(InkCanvas.GetLeft(image), InkCanvas.GetTop(image)))
@@ -301,23 +317,24 @@ namespace SandRibbon.Components.Utility
                 //doAdjustImage(image as Image, adjustment);
             }
         }
-        private Image doAdjustImage(Image image, Func<Image, Image> adjustment)
+        private MeTLImage doAdjustImage(MeTLImage image, Func<MeTLImage, MeTLImage> adjustment)
         {
             return adjustment(image);
         }
         public void AddImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as Image) != null);
+            Debug.Assert((element as MeTLImage) != null);
+            reassociateImageToCanvas((MeTLImage)element);
             imageFilter.Add(element, modifyVisibleContainer);
         }
 
         public void RemoveImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as Image) != null);
+            Debug.Assert((element as MeTLImage) != null);
             imageFilter.Remove(element, modifyVisibleContainer);
         }
 
-        public void adjustText(TextBox box, Func<TextBox, TextBox> adjustment)
+        public void adjustText(MeTLTextBox box, Func<MeTLTextBox, MeTLTextBox> adjustment)
         {
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
@@ -333,30 +350,33 @@ namespace SandRibbon.Components.Utility
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
-                updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes.Where(t => ((TextBox)t).tag().id != box.tag().id), imageFilter.Images,
+                updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes.Where(t => ((MeTLTextBox)t).tag().id != box.tag().id), imageFilter.Images,
                                         translateX, translateY);
             }
-            doAdjustText(box as TextBox, adjustment);
+            reassociateTextboxToCanvas(box);
+            doAdjustText(box, adjustment);
         }
 
-        public void adjustTextForMoveDelta(String textIdentity, Func<TextBox, TextBox> adjustment)
+ 
+
+        public void adjustTextForMoveDelta(String textIdentity, Func<MeTLTextBox, MeTLTextBox> adjustment)
         {
-            var boxes = textFilter.TextBoxes.Where(t => (t as TextBox).tag().id == textIdentity);
+            var boxes = textFilter.TextBoxes.Where(t => (t as MeTLTextBox).tag().id == textIdentity);
             if (boxes.Count() > 0)
             {
-                var box = boxes.First();
+                var box = boxes.First() as MeTLTextBox;
                 if (checkIfMoveDeltaBoundsUpdates(InkCanvas.GetLeft(box), InkCanvas.GetTop(box)))
                 {
                     updateMoveDeltaBounds(InkCanvas.GetLeft(box), InkCanvas.GetTop(box));
                     updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
-                doAdjustText(box as TextBox, adjustment);
+                doAdjustText(box, adjustment);
             }
         }
 
         public void adjustTextsForMoveDelta(List<String> textIdentities)
         {
-            var boxes = textFilter.TextBoxes.Where(t => textIdentities.Contains((t as TextBox).tag().id));            
+            var boxes = textFilter.TextBoxes.Where(t => textIdentities.Contains((t as MeTLTextBox).tag().id));            
             foreach (var box in boxes)
             {
                 if (checkIfMoveDeltaBoundsUpdates(InkCanvas.GetLeft(box), InkCanvas.GetTop(box)))
@@ -368,22 +388,63 @@ namespace SandRibbon.Components.Utility
             }
         }
 
-        private void doAdjustText(TextBox box, Func<TextBox, TextBox> adjustment)
+        private void doAdjustText(MeTLTextBox box, Func<MeTLTextBox, MeTLTextBox> adjustment)
         {
             adjustment(box);
         }
 
         public void AddTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as TextBox) != null);
+            Debug.Assert((element as MeTLTextBox) != null);
+            reassociateTextboxToCanvas((MeTLTextBox)element);
             textFilter.Push(element, modifyVisibleContainer);
         }
 
         public void RemoveTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as TextBox) != null);
+            Debug.Assert((element as MeTLTextBox) != null);
             textFilter.Remove(element, modifyVisibleContainer);
         }
 
+        private PrivateAwareStroke reassociateStrokeToCanvas(PrivateAwareStroke stroke)
+        {
+            var diffX = logicalX - stroke.offsetX;
+            var diffY = logicalY - stroke.offsetY;
+            if (diffX != 0 || diffY != 0)
+            {
+                var m = new Matrix();
+                m.Translate(-diffX, -diffY);
+                stroke.Transform(m, false);
+                stroke.offsetX = logicalX;
+                stroke.offsetY = logicalY;
+            }
+            return stroke;
+        }
+        private MeTLTextBox reassociateTextboxToCanvas(MeTLTextBox text)
+        {
+            var diffX = logicalX - text.offsetX;
+            var diffY = logicalY - text.offsetY;
+            if (diffX != 0 || diffY != 0)
+            {
+                InkCanvas.SetLeft(text, InkCanvas.GetLeft(text) - diffX);
+                InkCanvas.SetTop(text, InkCanvas.GetTop(text) - diffY);
+                text.offsetX = logicalX;
+                text.offsetY = logicalY;
+            }
+            return text;
+        }
+        private MeTLImage reassociateImageToCanvas(MeTLImage image)
+        {
+            var diffX = logicalX - image.offsetX;
+            var diffY = logicalY - image.offsetY;
+            if (diffX != 0 || diffY != 0)
+            {
+                InkCanvas.SetLeft(image, InkCanvas.GetLeft(image) - diffX);
+                InkCanvas.SetTop(image, InkCanvas.GetTop(image) - diffY);
+                image.offsetX = logicalX;
+                image.offsetY = logicalY;
+            }
+            return image;
+        }
     }
 }

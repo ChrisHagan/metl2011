@@ -16,17 +16,17 @@
         {
         }
 
-        protected override void AddStroke(Stroke stroke)
+        protected override void AddStroke(PrivateAwareStroke stroke)
         {
             Canvas.Strokes.Add(stroke);
         }
 
-        protected override void RemoveStroke(Stroke stroke)
+        protected override void RemoveStroke(PrivateAwareStroke stroke)
         {
             Canvas.Strokes.Remove(stroke);
         }
 
-        protected override void RemoveImage(Image image)
+        protected override void RemoveImage(MeTLImage image)
         {
             Canvas.Children.Remove(image);
         }
@@ -36,7 +36,7 @@
             Canvas.Children.Remove(text);
         }
 
-        protected override void ChangeImagePrivacy(Image image, Privacy newPrivacy)
+        protected override void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy)
         {
             image.ApplyPrivacyStyling(Target, newPrivacy);
         }
