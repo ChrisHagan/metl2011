@@ -1243,8 +1243,10 @@ namespace SandRibbon.Components
         {
             var newStroke = stroke.Clone();
             var transformMatrix = new Matrix();
-            transformMatrix.Translate(stroke.offsetX,stroke.offsetY);//contentBuffer.logicalX, contentBuffer.logicalY);
+            transformMatrix.Translate(stroke.offsetX,stroke.offsetY);
             newStroke.Transform(transformMatrix, false);
+            newStroke.offsetX = 0;
+            newStroke.offsetY = 0;
             return newStroke;
         }
 
@@ -1709,7 +1711,7 @@ namespace SandRibbon.Components
                 canvas.Children.Add(img);
             });
         }
-
+/*
         private MeTLImage NegativeCartesianImageTranslate(MeTLImage incomingImage)
         {
             return contentBuffer.adjustImage(incomingImage, (i) =>
@@ -1723,12 +1725,14 @@ namespace SandRibbon.Components
                 return i;
             });
         }
-
+        */
         private MeTLImage OffsetNegativeCartesianImageTranslate(MeTLImage image)
         {
             var newImage = image.Clone();
-            InkCanvas.SetLeft(newImage, (InkCanvas.GetLeft(newImage) + contentBuffer.logicalX));
-            InkCanvas.SetTop(newImage, (InkCanvas.GetTop(newImage) + contentBuffer.logicalY));
+            InkCanvas.SetLeft(newImage, (InkCanvas.GetLeft(newImage) + newImage.offsetX));//contentBuffer.logicalX));
+            InkCanvas.SetTop(newImage, (InkCanvas.GetTop(newImage) + newImage.offsetY));//contentBuffer.logicalY));
+            newImage.offsetX = 0;
+            newImage.offsetY = 0;
             return newImage;
         }
 
@@ -2179,6 +2183,8 @@ namespace SandRibbon.Components
             if (box == null)
             {
                 box = textbox.box.toMeTLTextBox();
+                box.offsetX = contentBuffer.logicalX;
+                box.offsetY = contentBuffer.logicalY;
                 createdNew = true;
             }
 
@@ -2207,8 +2213,9 @@ namespace SandRibbon.Components
             InkCanvas.SetTop(box, InkCanvas.GetTop(oldBox));*/
 
             if (createdNew)
-                AddTextBoxToCanvas(box, true);                
-
+                AddTextBoxToCanvas(box, true);
+            else
+                contentBuffer.adjustText(box, t => t);
             return box;
         }
 
@@ -2254,8 +2261,10 @@ namespace SandRibbon.Components
                 AddTextBoxToCanvas(box, true);
             }
 
+           /* 
             InkCanvas.SetLeft(box, InkCanvas.GetLeft(textbox));
             InkCanvas.SetTop(box, InkCanvas.GetTop(textbox));
+            */
 
             return box;
         }
@@ -2485,9 +2494,11 @@ namespace SandRibbon.Components
         private MeTLTextBox OffsetNegativeCartesianTextTranslate(MeTLTextBox box)
         {
             //var newBox = (box as MeTLTextBox).clone();
-            var newBox = box;
-            InkCanvas.SetLeft(newBox, (InkCanvas.GetLeft(newBox) + contentBuffer.logicalX));
-            InkCanvas.SetTop(newBox, (InkCanvas.GetTop(newBox) + contentBuffer.logicalY));
+            var newBox = box.clone();
+            InkCanvas.SetLeft(newBox, (InkCanvas.GetLeft(newBox) + newBox.offsetX));
+            InkCanvas.SetTop(newBox, (InkCanvas.GetTop(newBox) + newBox.offsetY));
+            newBox.offsetX = 0;
+            newBox.offsetY = 0;
             return newBox;
         }
 
@@ -2508,11 +2519,15 @@ namespace SandRibbon.Components
             box.tag(newTextTag);
             var translatedTextBox = OffsetNegativeCartesianTextTranslate(box);
             var privateRoom = string.Format("{0}{1}", Globals.slide, translatedTextBox.tag().author);
+            /*
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
+             */
             Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, translatedTextBox.tag().author, _target, thisPrivacy, translatedTextBox.tag().id, translatedTextBox, translatedTextBox.tag().timestamp));
+            /*
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
+             */
             //NegativeCartesianTextTranslate(translatedTextBox);
             /*var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
