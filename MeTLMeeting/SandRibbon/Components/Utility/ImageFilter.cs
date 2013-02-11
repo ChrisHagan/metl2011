@@ -21,18 +21,30 @@ namespace SandRibbon.Components.Utility
 
         protected override bool CollectionContains(UIElement item)
         {
-            var imageTagId = (item as MeTLImage).tag().id;
-            return contentCollection.Where(img => (img as MeTLImage).tag().id == imageTagId).Count() > 0;
+            if (item is MeTLImage)
+            {
+                var imageTagId = (item as MeTLImage).tag().id;
+                return contentCollection.Where(img => (img as MeTLImage).tag().id == imageTagId).Count() > 0;
+            }
+            else return false;
         }
 
         protected override string AuthorFromTag(UIElement element)
         {
-            return (element as MeTLImage).tag().author;
+            if (element is MeTLImage)
+            {
+                return (element as MeTLImage).tag().author;
+            }
+            else return String.Empty;
         }
 
         protected override Privacy PrivacyFromTag(UIElement element)
         {
-            return (element as MeTLImage).tag().privacy;
+            if (element is MeTLImage)
+            {
+                return (element as MeTLImage).tag().privacy;
+            }
+            else return Privacy.NotSet;
         }
 
         public List<UIElement> Images

@@ -309,15 +309,22 @@ namespace SandRibbon.Components.Utility
         }
         public void AddImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as MeTLImage) != null);
-            adjustImage((MeTLImage)element, i => i);
-            imageFilter.Add(element, modifyVisibleContainer);
+            if (element is MeTLImage)
+            {
+                var elem = element as MeTLImage;
+                //Debug.Assert((element as MeTLImage) != null);
+                adjustImage(elem, i => i);
+                imageFilter.Add(elem, modifyVisibleContainer);
+            }
         }
 
         public void RemoveImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as MeTLImage) != null);
-            imageFilter.Remove(element, modifyVisibleContainer);
+            if (element is MeTLImage)
+            {
+               // Debug.Assert((element as MeTLImage) != null);
+                imageFilter.Remove(element as MeTLImage, modifyVisibleContainer);
+            }
         }
 
         public void adjustText(MeTLTextBox box, Func<MeTLTextBox, MeTLTextBox> adjustment)
@@ -381,15 +388,22 @@ namespace SandRibbon.Components.Utility
 
         public void AddTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as MeTLTextBox) != null);
-            adjustText((MeTLTextBox)element, t => t);
-            textFilter.Push(element, modifyVisibleContainer);
+            if (element is MeTLTextBox)
+            {
+                //Debug.Assert((element as MeTLTextBox) != null);
+                var elem = element as MeTLTextBox;
+                adjustText(elem, t => t);
+                textFilter.Push(elem, modifyVisibleContainer);
+            }
         }
 
         public void RemoveTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            Debug.Assert((element as MeTLTextBox) != null);
-            textFilter.Remove(element, modifyVisibleContainer);
+            if (element is MeTLTextBox)
+            {
+             //   Debug.Assert((element as MeTLTextBox) != null);
+                textFilter.Remove(element as MeTLTextBox, modifyVisibleContainer);
+            }
         }
         private PrivateAwareStroke reassociateStrokeToCanvas(PrivateAwareStroke stroke)
         {

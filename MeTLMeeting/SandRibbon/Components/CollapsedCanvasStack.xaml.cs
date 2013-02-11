@@ -672,9 +672,9 @@ namespace SandRibbon.Components
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
         }
 
-        private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<UIElement> elements, List<Image> startingElements)
+        private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<UIElement> elements, List<MeTLImage> startingElements)
         {
-            var selectedElements = elements.Where(i => i is Image).Select(i => ((Image)i).clone());
+            var selectedElements = elements.Where(i => i is MeTLImage).Select(i => ((MeTLImage)i).Clone());
             Action undo = () =>
                 {
                     var selection = new List<UIElement>();
@@ -880,7 +880,7 @@ namespace SandRibbon.Components
             //var originalBounds = new Point(contentBuffer.logicalX, contentBuffer.logicalY);
             var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()));
             var selectedElements = filterOnlyMine(Work.GetSelectedElements());
-            var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
+            var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => ((MeTLImage)i).Clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Where(s => s is PrivateAwareStroke).Select(stroke => (stroke as PrivateAwareStroke).Clone()).ToList();
             // should move _boxesAtTheStart textboxes here to be cloned as well
@@ -1350,7 +1350,7 @@ namespace SandRibbon.Components
                         contentBuffer.RemoveImage(imagesToUpdate.First(), (img) => Work.Children.Remove(img));
                     }
 
-                    var tmpImage = image.clone();
+                    var tmpImage = image.Clone();
                     tmpImage.tag(new ImageTag(tmpImage.tag(), newPrivacy));
                     if (Work.ImageChildren().Where(i => i.tag().id == tmpImage.tag().id).Count() == 0)
                     {
@@ -1372,7 +1372,7 @@ namespace SandRibbon.Components
                         contentBuffer.RemoveImage(imagesToUpdate.First(), (img) => Work.Children.Remove(img));
                     }
 
-                    var tmpImage = image.clone();
+                    var tmpImage = image.Clone();
                     tmpImage.tag(new ImageTag(tmpImage.tag(), oldPrivacy));
                     if (Work.ImageChildren().Where(i => i.tag().id == tmpImage.tag().id).Count() == 0)
                     {
@@ -2785,7 +2785,7 @@ namespace SandRibbon.Components
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() > 0)
+                if (Work.Strokes.Where(s => s.tag().id == stroke.tag().id).Count() > 0) /* MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() > 0)*/
                 {
                     //selection = new StrokeCollection(selection.Where(s => !MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
                     doMyStrokeRemovedExceptHistory(stroke);
@@ -2798,7 +2798,7 @@ namespace SandRibbon.Components
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() == 0)
+                if (Work.Strokes.Where(s => s.tag().id == stroke.tag().id)/*MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum))*/.Count() == 0)
                 {
                     //stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
                     //selection.Add(stroke);
