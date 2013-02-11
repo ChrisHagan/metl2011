@@ -48,22 +48,33 @@ namespace SandRibbon.Components.Utility
         public void UpdateChild(UIElement childToFind, Action<UIElement> updateChild)
         {
             if (childToFind is MeTLTextBox)
+            {
+                adjustText((MeTLTextBox)childToFind, i => i);
                 textFilter.UpdateChild(childToFind, updateChild);
-            if (childToFind is MeTLImage) 
+            }
+            if (childToFind is MeTLImage)
+            {
+                adjustImage((MeTLImage)childToFind, i => i);
                 imageFilter.UpdateChild(childToFind, updateChild);
+            }
         }
         public void UpdateAllStrokes(Action<PrivateAwareStroke> updateChild)
         {
             foreach (var stroke in strokeFilter.Strokes)
                 if (stroke is PrivateAwareStroke)
+                {
+                    adjustStroke(stroke, s => s);
                     updateChild(stroke as PrivateAwareStroke);
+                }
         }
         public void UpdateAllTextBoxes(Action<MeTLTextBox> updateChild)
         {
+            textFilter.TextBoxes.ForEach(t => adjustText((MeTLTextBox)t, tb => tb));
             textFilter.UpdateChildren(updateChild);
         }
         public void UpdateAllImages(Action<MeTLImage> updateChild)
         {
+            imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));
             imageFilter.UpdateChildren(updateChild);
         }
         public void Clear()
@@ -142,13 +153,13 @@ namespace SandRibbon.Components.Utility
         }
         public void AddStrokes(List<PrivateAwareStroke> strokes, Action<List<PrivateAwareStroke>> modifyVisibleContainer)
         {
-            strokes.ForEach(s => reassociateStrokeToCanvas(s));
+            strokes.ForEach(s => adjustStroke(s, st => st));
             strokeFilter.Add(strokes, modifyVisibleContainer);
         }
 
         public void AddStroke(PrivateAwareStroke stroke, Action<PrivateAwareStroke> modifyVisibleContainer)
         {
-            reassociateStrokeToCanvas(stroke);
+            adjustStroke(stroke, s => s);
             strokeFilter.Add(stroke, modifyVisibleContainer);
         }
 
@@ -164,36 +175,44 @@ namespace SandRibbon.Components.Utility
         private void updateCanvasPositioning(IEnumerable<PrivateAwareStroke> strokes, IEnumerable<UIElement> textboxes, IEnumerable<UIElement> images, double translateX, double translateY)
         {
             Console.WriteLine("updating positioning");
+            /*
             Matrix transformMatrix;
             transformMatrix = new System.Windows.Media.Matrix();
             transformMatrix.Translate(translateX, translateY);
+             */
             foreach (var tStroke in strokes)
             {
                 reassociateStrokeToCanvas(tStroke);
-                tStroke.Transform(transformMatrix, false);
+                /*tStroke.Transform(transformMatrix, false);
                 tStroke.offsetX = logicalX;
                 tStroke.offsetY = logicalY;
+                 */
             }
             foreach (var tImage in images)
             {
                 reassociateImageToCanvas((MeTLImage)tImage);
+                /*
                 InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
                 InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
                 ((MeTLImage)tImage).offsetX = logicalX;
                 ((MeTLImage)tImage).offsetY = logicalY;
+                 */
             }
             foreach (var tText in textboxes)
             {
                 reassociateTextboxToCanvas((MeTLTextBox)tText);
+                /*
                 InkCanvas.SetLeft(tText, (InkCanvas.GetLeft(tText) + translateX));
                 InkCanvas.SetTop(tText, (InkCanvas.GetTop(tText) + translateY));
                 ((MeTLTextBox)tText).offsetX = logicalX;
                 ((MeTLTextBox)tText).offsetY = logicalY;
+                 */
             }
         }
         public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke,PrivateAwareStroke> adjustment)
         {
             //var stroke = incomingStroke.Clone();
+            reassociateStrokeToCanvas(stroke);
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
@@ -215,7 +234,6 @@ namespace SandRibbon.Components.Utility
                     , translateX, 
                     translateY);
             }
-            reassociateStrokeToCanvas(stroke);
             return doAdjustStroke(stroke, adjustment);            
         }
         public void adjustStrokesForMoveDelta(List<String> strokeIdentities)
@@ -324,7 +342,7 @@ namespace SandRibbon.Components.Utility
         public void AddImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
             Debug.Assert((element as MeTLImage) != null);
-            reassociateImageToCanvas((MeTLImage)element);
+            adjustImage((MeTLImage)element, i => i);
             imageFilter.Add(element, modifyVisibleContainer);
         }
 
@@ -396,7 +414,7 @@ namespace SandRibbon.Components.Utility
         public void AddTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
             Debug.Assert((element as MeTLTextBox) != null);
-            reassociateTextboxToCanvas((MeTLTextBox)element);
+            adjustText((MeTLTextBox)element, t => t);
             textFilter.Push(element, modifyVisibleContainer);
         }
 
@@ -405,7 +423,6 @@ namespace SandRibbon.Components.Utility
             Debug.Assert((element as MeTLTextBox) != null);
             textFilter.Remove(element, modifyVisibleContainer);
         }
-
         private PrivateAwareStroke reassociateStrokeToCanvas(PrivateAwareStroke stroke)
         {
             var diffX = logicalX - stroke.offsetX;

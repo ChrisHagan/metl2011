@@ -177,7 +177,10 @@ namespace SandRibbon.Components.Utility
         public double offsetY = 0;
         public PrivateAwareStroke Clone()
         {
-            return new PrivateAwareStroke(base.Clone(), target);
+            var pas = new PrivateAwareStroke(base.Clone(), target);
+            pas.offsetX = offsetX;
+            pas.offsetY = offsetY;
+            return pas;
         }
         public PrivateAwareStroke(Stroke stroke, string target) : base(stroke.StylusPoints, stroke.DrawingAttributes)
         {
