@@ -499,10 +499,12 @@ namespace SandRibbon.Components
 
         private void AddTextBoxToCanvas(MeTLTextBox box,Boolean isAdjustedForNegativeCartesian)
         {
+            /*
             if(isAdjustedForNegativeCartesian)
             {
                 NegativeCartesianTextTranslate(box);
             }
+             */
             Panel.SetZIndex(box, 3);
             AddTextboxToMyCanvas(box);
         }
@@ -569,10 +571,7 @@ namespace SandRibbon.Components
                       foreach (var item in Work.TextChildren())
                       {
                           MeTLTextBox box = null;
-                          if (item.GetType() == typeof(MeTLTextBox))
-                              box = ((MeTLTextBox)item).toMeTLTextBox();
-                          else
-                              box = (MeTLTextBox)item;
+                          box = (MeTLTextBox)item;
                           box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                       }
 
@@ -690,7 +689,7 @@ namespace SandRibbon.Components
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is MeTLImage && ((MeTLImage)i).tag().id == element.tag().id).Count() == 0)
                         {
-                            contentBuffer.AddImage(NegativeCartesianImageTranslate((MeTLImage)element), (image) => Work.Children.Add(image));
+                            contentBuffer.AddImage(/*NegativeCartesianImageTranslate(*/(MeTLImage)element, (image) => Work.Children.Add(image));
                             element.ApplyPrivacyStyling(contentBuffer, _target, element.tag().privacy);
                         }
 
@@ -961,9 +960,9 @@ namespace SandRibbon.Components
             var selectedElements = new List<UIElement>();
             foreach (var element in Work.GetSelectedElements())
             {
-                if (element is Image)
+                if (element is MeTLImage)
                 {
-                    selectedElements.Add(((Image)element).clone());
+                    selectedElements.Add(((MeTLImage)element).Clone());
                     InkCanvas.SetLeft(selectedElements.Last(), InkCanvas.GetLeft(element));
                     InkCanvas.SetTop(selectedElements.Last(), InkCanvas.GetTop(element));
                 }
@@ -1703,7 +1702,7 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, MeTLImage image)
         {
             if (canvas.ImageChildren().Any(i => ((MeTLImage)i).tag().id == image.tag().id)) return;
-            NegativeCartesianImageTranslate(image);
+            //NegativeCartesianImageTranslate(image);
             contentBuffer.AddImage(image, (img) =>
             {
                 Panel.SetZIndex(img, 2);
@@ -2063,7 +2062,7 @@ namespace SandRibbon.Components
                         MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, currentPrivacy, translatedImage.tag().id, translatedImage, translatedImage.tag().timestamp));
                     ClearAdorners();
                     
-                    NegativeCartesianImageTranslate(translatedImage);
+                    //NegativeCartesianImageTranslate(translatedImage);
                     
                     contentBuffer.AddImage(translatedImage, (img) =>
                     {
@@ -2468,7 +2467,7 @@ namespace SandRibbon.Components
             }
         }
 
-        private void NegativeCartesianTextTranslate(MeTLTextBox incomingBox)
+        /*private void NegativeCartesianTextTranslate(MeTLTextBox incomingBox)
         {
             contentBuffer.adjustText(incomingBox, (t) =>
             {
@@ -2481,6 +2480,7 @@ namespace SandRibbon.Components
                 return t;
             });
         }
+         */
 
         private MeTLTextBox OffsetNegativeCartesianTextTranslate(MeTLTextBox box)
         {
@@ -2513,7 +2513,7 @@ namespace SandRibbon.Components
             Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, translatedTextBox.tag().author, _target, thisPrivacy, translatedTextBox.tag().id, translatedTextBox, translatedTextBox.tag().timestamp));
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
-            NegativeCartesianTextTranslate(translatedTextBox);
+            //NegativeCartesianTextTranslate(translatedTextBox);
             /*var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
@@ -2739,6 +2739,8 @@ namespace SandRibbon.Components
         public MeTLTextBox createNewTextbox()
         {
             var box = new MeTLTextBox();
+            box.offsetX = contentBuffer.logicalX;
+            box.offsetY = contentBuffer.logicalY;
             box.tag(new TextTag
                         {
                             author = Globals.me,
@@ -3054,7 +3056,7 @@ namespace SandRibbon.Components
             {
                 var mySelectedElements = selectedElements.Where(t => t is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
                 foreach (var box in mySelectedElements)
-                    sendBox(box.toMeTLTextBox());
+                    sendBox(box);
             }
         }
         protected List<string> HandleTextCutRedo(List<MeTLTextBox> elements, MeTLTextBox currentTextBox)
