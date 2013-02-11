@@ -115,8 +115,7 @@ namespace SandRibbon.Components.Utility
         }
         private bool checkIfMoveDeltaBoundsUpdates(double x, double y)
         {
-            if (x < 0 || y < 0) return true;
-            return false;
+            return x < 0 || y < 0;
         }
         private Point generateMoveDeltaBounds(double elementLeft, double elementTop)
         {
@@ -139,16 +138,15 @@ namespace SandRibbon.Components.Utility
         }
         private bool checkIfLogicalBoundsUpdates(double x, double y)
         {
-            if ((x - logicalX) < -1 || (y - logicalY) < -1) return true;
-            return false;
+            return x < 0 || y < 0;
         }
         private Point generateLogicalBounds(double elementLeft, double elementTop)
         {
             var point = new Point(logicalX, logicalY);
-            if (elementLeft < logicalX)
-                point.X = elementLeft;
-            if (elementTop < logicalY)
-                point.Y = elementTop;
+            if (elementLeft < 0)
+                point.X += elementLeft;
+            if (elementTop < 0)
+                point.Y += elementTop;
             return point;
         }
         public void AddStrokes(List<PrivateAwareStroke> strokes, Action<List<PrivateAwareStroke>> modifyVisibleContainer)
@@ -174,44 +172,15 @@ namespace SandRibbon.Components.Utility
         }
         private void updateCanvasPositioning(IEnumerable<PrivateAwareStroke> strokes, IEnumerable<UIElement> textboxes, IEnumerable<UIElement> images, double translateX, double translateY)
         {
-            Console.WriteLine("updating positioning");
-            /*
-            Matrix transformMatrix;
-            transformMatrix = new System.Windows.Media.Matrix();
-            transformMatrix.Translate(translateX, translateY);
-             */
             foreach (var tStroke in strokes)
-            {
                 reassociateStrokeToCanvas(tStroke);
-                /*tStroke.Transform(transformMatrix, false);
-                tStroke.offsetX = logicalX;
-                tStroke.offsetY = logicalY;
-                 */
-            }
             foreach (var tImage in images)
-            {
                 reassociateImageToCanvas((MeTLImage)tImage);
-                /*
-                InkCanvas.SetLeft(tImage, (InkCanvas.GetLeft(tImage) + translateX));
-                InkCanvas.SetTop(tImage, (InkCanvas.GetTop(tImage) + translateY));
-                ((MeTLImage)tImage).offsetX = logicalX;
-                ((MeTLImage)tImage).offsetY = logicalY;
-                 */
-            }
             foreach (var tText in textboxes)
-            {
                 reassociateTextboxToCanvas((MeTLTextBox)tText);
-                /*
-                InkCanvas.SetLeft(tText, (InkCanvas.GetLeft(tText) + translateX));
-                InkCanvas.SetTop(tText, (InkCanvas.GetTop(tText) + translateY));
-                ((MeTLTextBox)tText).offsetX = logicalX;
-                ((MeTLTextBox)tText).offsetY = logicalY;
-                 */
-            }
         }
         public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke,PrivateAwareStroke> adjustment)
         {
-            //var stroke = incomingStroke.Clone();
             reassociateStrokeToCanvas(stroke);
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
@@ -247,7 +216,6 @@ namespace SandRibbon.Components.Utility
                     updateMoveDeltaBounds(stroke.GetBounds().X, stroke.GetBounds().Y);
                     updateCanvasPositioning( strokeFilter.Strokes.Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke), textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
-                //doAdjustStroke(stroke, adjustment);
             }
         }
         public void adjustStrokeForMoveDelta(String strokeIdentity, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
@@ -286,6 +254,7 @@ namespace SandRibbon.Components.Utility
         }
         public MeTLImage adjustImage(MeTLImage image, Func<MeTLImage, MeTLImage> adjustment)
         {
+            reassociateImageToCanvas(image);
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
@@ -303,7 +272,6 @@ namespace SandRibbon.Components.Utility
                 updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, 
                     imageFilter.Images.Where(i => ((MeTLImage)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY );
            }
-            reassociateImageToCanvas(image);
             return doAdjustImage(image, adjustment);
         }
 
@@ -354,6 +322,7 @@ namespace SandRibbon.Components.Utility
 
         public void adjustText(MeTLTextBox box, Func<MeTLTextBox, MeTLTextBox> adjustment)
         {
+            reassociateTextboxToCanvas(box);
             var oldCanvasOffsetX = logicalX;
             var oldCanvasOffsetY = logicalY;
             double translateX = 0.0;
@@ -371,7 +340,6 @@ namespace SandRibbon.Components.Utility
                 updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes.Where(t => ((MeTLTextBox)t).tag().id != box.tag().id), imageFilter.Images,
                                         translateX, translateY);
             }
-            reassociateTextboxToCanvas(box);
             doAdjustText(box, adjustment);
         }
 
