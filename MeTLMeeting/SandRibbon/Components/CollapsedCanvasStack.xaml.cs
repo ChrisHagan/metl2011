@@ -2497,6 +2497,8 @@ namespace SandRibbon.Components
             var newBox = box.clone();
             InkCanvas.SetLeft(newBox, (InkCanvas.GetLeft(newBox) + newBox.offsetX));
             InkCanvas.SetTop(newBox, (InkCanvas.GetTop(newBox) + newBox.offsetY));
+            newBox.Height = (Double.IsNaN(box.Height) || box.Height <= 0) ? box.ActualHeight : box.Height;
+            newBox.Width = (Double.IsNaN(box.Width) || box.Width <= 0) ? box.ActualWidth : box.Width;
             newBox.offsetX = 0;
             newBox.offsetY = 0;
             return newBox;
