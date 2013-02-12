@@ -1978,7 +1978,8 @@ namespace SandRibbon.Components
         private int fileSizeLimit = 50;
         private void uploadFileForUse(string unMangledFilename)
         {
-            string filename = unMangledFilename + ".MeTLFileUpload";
+            string filePart = Path.GetFileName(unMangledFilename);
+            string filename = LocalFileProvider.getUserFile(new string[]{},filePart + ".MeTLFileUpload");
             if (filename.Length > 260)
             {
                 MeTLMessage.Warning("Sorry, your filename is too long, must be less than 260 characters");
@@ -2838,7 +2839,7 @@ namespace SandRibbon.Components
             var images = new List<MeTLImage>();
             foreach (var imageSource in selectedImages)
             {
-                var tmpFile = "tmpImage.png";
+                var tmpFile = LocalFileProvider.getUserFile(new string[]{"pastedImages"},"tmpImage.png");
                 using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
                 {
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
