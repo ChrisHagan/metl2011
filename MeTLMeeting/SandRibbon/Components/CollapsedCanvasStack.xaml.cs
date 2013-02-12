@@ -2281,17 +2281,21 @@ namespace SandRibbon.Components
             box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
             box.Height = Double.NaN;
             var mybox = box.clone();
+            var undoBox = box.clone();
+            var redoBox = box.clone();
             Action undo = () =>
             {
                 ClearAdorners();
                 var myText = undoText;
-                var updatedTextBox = UpdateTextBoxWithId(mybox, myText);
-                sendTextWithoutHistory(updatedTextBox, updatedTextBox.tag().privacy);
+                var updatedBox = UpdateTextBoxWithId(mybox, myText);
+                sendTextWithoutHistory(updatedBox, updatedBox.tag().privacy);
             };
             Action redo = () =>
             {
                 ClearAdorners();
-                sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                var myText = redoText;
+                var updatedBox = UpdateTextBoxWithId(redoBox, myText);
+                sendTextWithoutHistory(updatedBox, updatedBox.tag().privacy);
             };
             UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
