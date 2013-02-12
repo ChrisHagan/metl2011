@@ -172,7 +172,9 @@ namespace SandRibbon.Components.Utility
         private StreamGeometry geometry;
         private string target;
         private Stroke whiteStroke;
-        private bool isPrivate;
+        private bool isPrivate{
+            get {return this.tag().privacy == Privacy.Private; }
+        }
         public double offsetX = 0;
         public double offsetY = 0;
         public PrivateAwareStroke Clone()
@@ -194,7 +196,6 @@ namespace SandRibbon.Components.Utility
                     }), stroke.DrawingAttributes.Width * 4);
             this.target = target; 
             this.tag(stroke.tag());
-            isPrivate = this.tag().privacy == Privacy.Private;
             shouldShowPrivacy = (this.tag().author == Globals.conversationDetails.Author || Globals.conversationDetails.Permissions.studentCanPublish);
             
             if (!isPrivate) return;

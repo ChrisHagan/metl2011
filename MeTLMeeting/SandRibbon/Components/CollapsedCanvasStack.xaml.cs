@@ -499,12 +499,6 @@ namespace SandRibbon.Components
 
         private void AddTextBoxToCanvas(MeTLTextBox box,Boolean isAdjustedForNegativeCartesian)
         {
-            /*
-            if(isAdjustedForNegativeCartesian)
-            {
-                NegativeCartesianTextTranslate(box);
-            }
-             */
             Panel.SetZIndex(box, 3);
             AddTextboxToMyCanvas(box);
         }
@@ -689,7 +683,7 @@ namespace SandRibbon.Components
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is MeTLImage && ((MeTLImage)i).tag().id == element.tag().id).Count() == 0)
                         {
-                            contentBuffer.AddImage(/*NegativeCartesianImageTranslate(*/(MeTLImage)element, (image) => Work.Children.Add(image));
+                            contentBuffer.AddImage((MeTLImage)element, (image) => Work.Children.Add(image));
                             element.ApplyPrivacyStyling(contentBuffer, _target, element.tag().privacy);
                         }
 
