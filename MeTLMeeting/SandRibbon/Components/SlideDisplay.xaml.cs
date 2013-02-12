@@ -425,7 +425,7 @@ namespace SandRibbon.Components
                           //      refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
                             }
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
                         }
