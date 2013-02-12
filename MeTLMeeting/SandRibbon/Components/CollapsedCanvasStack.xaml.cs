@@ -2183,8 +2183,6 @@ namespace SandRibbon.Components
             if (box == null)
             {
                 box = textbox.box.toMeTLTextBox();
-                box.offsetX = contentBuffer.logicalX;
-                box.offsetY = contentBuffer.logicalY;
                 createdNew = true;
             }
 
