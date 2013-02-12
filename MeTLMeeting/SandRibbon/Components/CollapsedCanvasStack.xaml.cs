@@ -160,6 +160,14 @@ namespace SandRibbon.Components
         private Privacy _defaultPrivacy;
         private readonly ClipboardManager clipboardManager = new ClipboardManager();
         private string _me = String.Empty;
+        public double offsetX
+        {
+            get { return contentBuffer.logicalX; }
+        }
+        public double offsetY
+        {
+            get { return contentBuffer.logicalY; }
+        }
         public string me
         {
             get

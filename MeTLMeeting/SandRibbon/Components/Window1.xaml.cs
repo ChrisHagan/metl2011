@@ -781,8 +781,16 @@ namespace SandRibbon
             if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
-            scroll.ScrollToLeftEnd();
-            scroll.ScrollToTop();
+            if (canvas != null && canvas.stack != null)
+            {
+                scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth,Math.Max(0,-canvas.stack.offsetX)));
+                scroll.ScrollToVerticalOffset(Math.Min(scroll.ExtentHeight,Math.Max(0,-canvas.stack.offsetY)));
+            }
+            else
+            {
+                scroll.ScrollToLeftEnd();
+                scroll.ScrollToTop();
+            }
         }
         private void FitToView(object _unused)
         {
