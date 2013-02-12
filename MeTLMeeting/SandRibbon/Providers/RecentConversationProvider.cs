@@ -14,7 +14,7 @@ namespace SandRibbon.Providers
     public class RecentConversationProvider
     {
         public static MeTLLib.ClientConnection ConversationProvider = MeTLLib.ClientFactory.Connection();
-        public static readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
+        public static readonly string RECENT_DOCUMENTS = SandRibbon.Utils.LocalFileProvider.getUserFile(new string[]{},"recentDocuments.xml");
         
         public static IEnumerable<ConversationDetails> loadRecentConversations()
         {

@@ -366,12 +366,11 @@ namespace SandRibbon.Utils
         {
             var thumbsDirectory = LocalFileProvider.getUserFolder("thumbs");
             var myThumbsDirectory = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me });
-            var myConversationThumbsDirectory = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
-            if (!Directory.Exists(thumbsDirectory))//string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory())))
-                Directory.CreateDirectory(thumbsDirectory);//string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory()));
-            if(!Directory.Exists(myThumbsDirectory))//string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me)))
-                Directory.CreateDirectory(myThumbsDirectory);//string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me));
-            var fullPath = string.Format(myConversationThumbsDirectory);//"{0}\\thumbs\\{1}\\{2}\\", Directory.GetCurrentDirectory(), Globals.me, jid);
+            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
+            if (!Directory.Exists(thumbsDirectory))
+                Directory.CreateDirectory(thumbsDirectory);
+            if(!Directory.Exists(myThumbsDirectory))
+                Directory.CreateDirectory(myThumbsDirectory);
             if(!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             return fullPath;
@@ -521,7 +520,7 @@ namespace SandRibbon.Utils
         {
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
-            var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");//getAppropriateFolder("tmp");
+            var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
             var exportFormat = PpShapeFormat.ppShapeFormatPNG;
@@ -537,13 +536,12 @@ namespace SandRibbon.Utils
                     backgroundHeight = Convert.ToInt32(slide.Master.Height);
                 if (backgroundWidth != Convert.ToInt32(slide.Master.Width))
                     backgroundWidth = Convert.ToInt32(slide.Master.Width);
-                var Backgroundfile = currentWorkingDirectory + "background" + (++resource) + ".jpg";
-                //var Backgroundfile = currentWorkingDirectory + "\\background" + (++resource) + ".jpg";
+                var BackgroundFile = currentWorkingDirectory + "background" + (++resource) + ".jpg";
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
                     shape.Visible = MsoTriState.msoFalse;
                 }
-                slide.Export(Backgroundfile, "PNG", backgroundWidth, backgroundHeight);
+                slide.Export(BackgroundFile, "PNG", backgroundWidth, backgroundHeight);
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
                     if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
@@ -556,7 +554,7 @@ namespace SandRibbon.Utils
                     new XAttribute("height", backgroundHeight * Magnification),
                     new XAttribute("width", backgroundWidth * Magnification),
                     new XAttribute("privacy", "public"),
-                    new XAttribute("snapshot", Backgroundfile),
+                    new XAttribute("snapshot", BackgroundFile),
                     new XAttribute("background", true)));
             }
             catch (Exception ex)
@@ -593,7 +591,6 @@ namespace SandRibbon.Utils
         {
             var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
             var file = currentWorkingDirectory + "background" + (++resource).ToString() + ".jpg";
-            //var file = currentWorkingDirectory + "\\background" + (++resource).ToString() + ".jpg";
             string tags;
             if (shape.Type == MsoShapeType.msoInkComment)
                 tags = shape.Tags.ToString();

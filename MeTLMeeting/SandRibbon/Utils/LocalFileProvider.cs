@@ -13,13 +13,17 @@ namespace SandRibbon.Utils
         }
         public static string getUserFolder(string[] suffix)
         {
+            return getUserFile(suffix, "");
+        }
+        public static string getUserFile(string[] path, string filename)
+        {
             var tmp = "\\";
-            foreach (string s in suffix.ToList())
+            foreach (string s in path.ToList())
             {
                 tmp += s;
                 tmp += "\\";
             }
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MonashMeTL" + tmp;
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MonashMeTL" + tmp + filename;
         }
     }
 }
