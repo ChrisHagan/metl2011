@@ -16,23 +16,31 @@ namespace SandRibbon.Components.Utility
     {
         protected override bool Equals(UIElement item1, UIElement item2)
         {
-            return (item1 as TextBox).tag().id == (item2 as TextBox).tag().id; 
+            return item1 is MeTLTextBox && item2 is MeTLTextBox && (item1 as MeTLTextBox).tag().id == (item2 as MeTLTextBox).tag().id; 
         }
 
         protected override bool CollectionContains(UIElement item)
         {
-            var textTagId = (item as TextBox).tag().id;
-            return contentCollection.Where(txt => (txt as TextBox).tag().id == textTagId).Count() > 0;
+            var textTagId = (item as MeTLTextBox).tag().id;
+            return contentCollection.Any(txt => txt is MeTLTextBox && (txt as MeTLTextBox).tag().id == textTagId);
         }
 
         protected override string AuthorFromTag(UIElement element)
         {
-            return (element as TextBox).tag().author;
+            if (element is MeTLTextBox)
+            {
+                return (element as MeTLTextBox).tag().author;
+            }
+            else return String.Empty;
         }
 
         protected override Privacy PrivacyFromTag(UIElement element)
         {
-            return (element as TextBox).tag().privacy;
+            if (element is MeTLTextBox)
+            {
+                return (element as MeTLTextBox).tag().privacy;
+            }
+            else return Privacy.NotSet;
         }
 
         public List<UIElement> TextBoxes
