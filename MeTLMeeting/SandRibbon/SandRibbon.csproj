@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.295</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -188,6 +188,7 @@
     <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
@@ -939,6 +940,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Workspace\state.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\WarningIconMine.png" />
     <Resource Include="Resources\visualize.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
