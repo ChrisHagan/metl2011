@@ -2943,6 +2943,8 @@ namespace SandRibbon.Components
                 MeTLTextBox box = createNewTextbox();
                 InkCanvas.SetLeft(box, pos.X);
                 InkCanvas.SetTop(box, pos.Y);
+                box.Width = 200;
+                box.Height = Double.NaN;
                 pos = new Point(15, 15);
                 box.TextChanged -= SendNewText;
                 box.Text = text;
