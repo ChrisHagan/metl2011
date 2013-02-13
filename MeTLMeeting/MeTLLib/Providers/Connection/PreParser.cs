@@ -126,37 +126,116 @@ namespace MeTLLib.Providers.Connection
             var imagesToRemove = new Dictionary<string, TargettedImage>();
             var imagesToAdd = new Dictionary<string, TargettedImage>();
 
-            foreach (var aInk in ink.Where(i => dirtiesThis(moveDelta, i)))
+            var relevantStrokes = ink.Where(i => dirtiesThis(moveDelta, i));
+            var relevantImages = images.Values.Where(i => dirtiesThis(moveDelta, i));
+            var relevantTexts = text.Values.Where(i => dirtiesThis(moveDelta, i));
+
+            double top = 0.0; 
+            double bottom = 0.0;
+            double left = 0.0;
+            double right = 0.0;
+            bool firstItem = true;
+            Func<double, double, double, double, bool> updateRect = (l, t, w, h) =>
+            {
+                var b = t + h;
+                var r = l + w;
+                bool changed = false;
+                if (firstItem)
+                {
+                    top = t;
+                    bottom = b;
+                    left = l;
+                    right = r;
+                    firstItem = false;
+                    changed = true;
+                }
+                else
+                {
+                    if (t < top)
+                    {
+                        top = t;
+                        changed = true;
+                    }
+                    if (b > bottom)
+                    {
+                        bottom = b;
+                        changed = true;
+                    }
+                    if (l < left)
+                    {
+                        left = l;
+                        changed = true;
+                    }
+                    if (r > right)
+                    {
+                        right = r;
+                        changed = true;
+                    }
+                }
+                return changed;
+            };
+
+            foreach (var s in relevantStrokes)
+            {
+                var strokeBounds = s.stroke.GetBounds();
+                updateRect(strokeBounds.Left, strokeBounds.Top, strokeBounds.Width, strokeBounds.Height);
+            }
+            foreach (var t in relevantTexts)
+            {
+                var tSpec = t.boxSpecification;
+                updateRect(tSpec.x, tSpec.y, tSpec.width, tSpec.height);
+            }
+            foreach (var i in relevantImages)
+            {
+                var iSpec = i.imageSpecification;
+                updateRect(iSpec.x, iSpec.y, iSpec.width, iSpec.height);
+            }
+            foreach (var aInk in relevantStrokes)
             {
                 if (mdp.privacy == aInk.privacy && mdp.timestamp > aInk.timestamp)
                 {
                     inksToRemove.Add(aInk);
                     if (!mdp.isDeleted)
                     {
-                        inksToAdd.Add(aInk.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy));
+                        var sBounds = aInk.stroke.GetBounds();
+                        var internalX = sBounds.Left - left;
+                        var internalY = sBounds.Top - top;
+                        var offsetX = -(internalX - (internalX * mdp.xScale));
+                        var offsetY = -(internalY - (internalY * mdp.yScale));
+                        inksToAdd.Add(aInk.AdjustVisual(mdp.xTranslate + offsetX, mdp.yTranslate + offsetY, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy));
                     }
                 }
             }
-            foreach (var aText in text.Values.Where(t => dirtiesThis(moveDelta, t)))
+            foreach (var aText in relevantTexts)
             {
                 if (mdp.privacy == aText.privacy && mdp.timestamp > aText.timestamp)
                 {                  
                     textToRemove.Add(aText.identity,aText);
                     if(!mdp.isDeleted)
                     {
-                        var targettedText = aText.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                        var tSpec = aText.boxSpecification;
+                        var internalX = tSpec.x - left;
+                        var internalY = tSpec.y - top;
+                        var offsetX = -(internalX - (internalX * mdp.xScale));
+                        var offsetY = -(internalY - (internalY * mdp.yScale));
+                        var targettedText = aText.AdjustVisual(mdp.xTranslate + offsetX, mdp.yTranslate + offsetY, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
                         textToAdd.Add(targettedText.identity,targettedText);
                     }
                 }
             }
-            foreach (var aImage in images.Values.Where(i => dirtiesThis(moveDelta, i)))
+            foreach (var aImage in relevantImages)
             {
                 if (mdp.privacy == aImage.privacy && mdp.timestamp > aImage.timestamp)
                 {
                     imagesToRemove.Add(aImage.identity,aImage);
                     if(!mdp.isDeleted)
                     {
-                        var tImage = aImage.AdjustVisual(mdp.xTranslate, mdp.yTranslate, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
+                        var iSpec = aImage.imageSpecification;
+                        var internalX = iSpec.x - left;
+                        var internalY = iSpec.y - top;
+                        var offsetX = -(internalX - (internalX * mdp.xScale));
+                        var offsetY = -(internalY - (internalY * mdp.yScale));
+                        var tImage = aImage.AdjustVisual(mdp.xTranslate + offsetX, mdp.yTranslate + offsetY, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
                         imagesToAdd.Add(tImage.identity, tImage);
                     }
                 }
@@ -168,7 +247,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var i in textToRemove)
                 text.Remove(i.Key);
             foreach (var i in textToAdd)
-                text.Add(i.Key,i.Value);
+                text.Add(i.Key, i.Value);
             foreach (var i in imagesToRemove)
                 images.Remove(i.Key);
             foreach (var i in imagesToAdd)

@@ -74,65 +74,29 @@
             var xScale = moveDelta.xScale;
             var yScale = moveDelta.yScale;
 
-            /*var transformMatrix = new Matrix();
-            transformMatrix.Scale(xScale, yScale);
-            transformMatrix.Translate(xTrans, yTrans);*/
+            var totalBounds = contentBuffer.getBoundsOfMoveDelta(moveDelta);
 
             foreach (var inkId in moveDelta.inkIds)
             {
                 contentBuffer.adjustStrokeForMoveDelta(inkId, (s) =>
                 {
                     if (dirtiesThis(moveDelta,s)){
+                        var sBounds = s.GetBounds();
+                        var myLeft = sBounds.Left + s.offsetX;
+                        var myTop = sBounds.Top + s.offsetY;
+                        myLeft -= totalBounds.Left;
+                        myTop -= totalBounds.Top;
+                        var leftCorrection = -(myLeft - (myLeft * xScale));
+                        var topCorrection = -(myTop - (myTop * yScale));
+
                       var scaleMatrix = new Matrix();
                       var translateMatrix = new Matrix();
                       scaleMatrix.Scale(xScale, yScale);
-                      translateMatrix.Translate(xTrans, yTrans);
+                      translateMatrix.Translate(xTrans + leftCorrection, yTrans + topCorrection);
                       s.Transform(scaleMatrix,false);
                       s.Transform(translateMatrix,false);
                     }
                     return s;
-                    //InkCanvas.SetLeft(s, InkCanvas.GetLeft(s) + xTrans);
-                    //s.Width = s.Width * xScale;
-                    //s.Height = s.Height * yScale;
-
-                    //var deadStrokes = new List<Stroke>();
-                    //var stroke = strokeFilter.Strokes.Where(s => s.tag().id == strokeIdentity).First();
-                    //foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
-                    //{
-                    /*
-                    if (dirtiesThis(moveDelta, s))
-                    {
-                        //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
-                        Rect myRect = new Rect();
-                        myRect = s.Clone().GetBounds();
-
-                        var transformMatrix = new Matrix();
-                        if (xScale != 1.0 || yScale != 1.0)
-                        {
-                            transformMatrix.Translate(-myRect.X, -myRect.Y);
-                            s.Transform(transformMatrix, false);
-
-                            transformMatrix = new Matrix();
-                            transformMatrix.Scale(xScale, yScale);
-                            if (double.IsNaN(xTrans))
-                            {
-                                xTrans = 0;
-                            }
-                            if (double.IsNaN(yTrans))
-                            {
-                                yTrans = 0;
-                            }
-
-                            xTrans = xTrans + myRect.X;
-                            yTrans = yTrans + myRect.Y;
-                        }
-
-                        transformMatrix.Translate(xTrans, yTrans);
-                        s.Transform(transformMatrix, false);
-                    }
-                    return s;
-                    //}
-                     */
                 });
             }
 
@@ -142,7 +106,7 @@
                 {
                     if (dirtiesThis(moveDelta, t))
                     {
-                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale);
+                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale, totalBounds);
                     }
                     return t;
                 });                
@@ -154,20 +118,38 @@
                 {
                     if (dirtiesThis(moveDelta, i))
                     {
-                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale);
+                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale, totalBounds);
                     }
                     return i;
                 });
             }
         }
 
-        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale)
+        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale, Rect totalBounds)
         {
+            var myLeft = 0.0;
+            if (element is MeTLTextBox){
+                myLeft = InkCanvas.GetLeft(element) + (element as MeTLTextBox).offsetX;
+            } else if (element is MeTLImage){
+                myLeft = InkCanvas.GetLeft(element) + (element as MeTLImage).offsetX;
+            }
+            var myTop = 0.0;
+            if (element is MeTLTextBox){
+                myTop = InkCanvas.GetTop(element) + (element as MeTLTextBox).offsetY;
+            } else if (element is MeTLImage){
+                myTop = InkCanvas.GetTop(element) + (element as MeTLImage).offsetY;
+            }
+            myTop -= totalBounds.Top;
+            myLeft -= totalBounds.Left;
+
             var left = InkCanvas.GetLeft(element) + xTrans;
             var top = InkCanvas.GetTop(element) + yTrans;
 
-            InkCanvas.SetLeft(element, left);
-            InkCanvas.SetTop(element, top);
+            var topCorrection = -(myTop - (myTop * yScale));
+            var leftCorrection = -(myLeft - (myLeft * xScale));
+
+            InkCanvas.SetLeft(element, left + leftCorrection);
+            InkCanvas.SetTop(element, top + topCorrection);
 
             /* 
             // buggy

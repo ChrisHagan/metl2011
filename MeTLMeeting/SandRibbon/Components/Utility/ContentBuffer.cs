@@ -262,7 +262,66 @@ namespace SandRibbon.Components.Utility
         {
             strokeDeltaFilter.Add(strokes, modifyUndoContainer); 
         }
+        public Rect getBoundsOfMoveDelta(TargettedMoveDelta moveDelta)
+        {
+            var relevantImages = imageFilter.Images.Where(i => i is MeTLImage && moveDelta.imageIds.Select(id => id.Identity).Contains(((MeTLImage)i).tag().id)).Select(i => i as MeTLImage).ToList();
+            var relevantTexts = textFilter.TextBoxes.Where(t => t is MeTLTextBox && moveDelta.textIds.Select(id => id.Identity).Contains(((MeTLTextBox)t).tag().id)).Select(t => t as MeTLTextBox).ToList();
+            var relevantStrokes = strokeFilter.Strokes.Where(s => moveDelta.inkIds.Select(id => id.Identity).Contains((s).tag().id)).ToList();
+            return getBoundsOfMoveDelta(moveDelta, relevantImages, relevantTexts, relevantStrokes);
+        }
+        public static Rect getBoundsOfMoveDelta(TargettedMoveDelta moveDelta, List<MeTLImage> images, List<MeTLTextBox> texts, List<PrivateAwareStroke> strokes)
+        {
 
+            var top = 0.0;
+            var bottom = 0.0;
+            var left = 0.0;
+            var right = 0.0;
+            bool firstItem = true;
+            Func<double,double,double,double,bool> updateRect = (t,l,h,w) => {
+                var b = t + h;
+                var r = l + w;
+                bool changed = false;
+                 if (firstItem){
+                    top = t;
+                    bottom = b; 
+                    left = l;
+                    right = r;
+                    firstItem = false;
+                    changed = true;
+                } else {
+                    if (t < top)
+                    {
+                        top = t;
+                        changed = true;
+                    }
+                    if (b > bottom)
+                    {
+                        bottom = b;
+                        changed = true;
+                    }
+                    if (l < left)
+                    {
+                        left = l;
+                        changed = true;
+                    }
+                    if (r > right)
+                    {
+                        right = r;
+                        changed = true;
+                    }
+                }
+                return changed;
+            };
+            foreach (var i in images)
+                updateRect(InkCanvas.GetTop(i) + i.offsetY,InkCanvas.GetLeft(i) + i.offsetX,i.Height,i.Width);
+            foreach (var t in texts)
+                updateRect(InkCanvas.GetTop(t) + t.offsetY, InkCanvas.GetLeft(t) + t.offsetX, t.Height, t.Width);
+            foreach (var s in strokes){
+                var sBounds = s.GetBounds();
+                updateRect(sBounds.Top + s.offsetY, sBounds.Left + s.offsetX, sBounds.Height, sBounds.Width);
+            }
+            return new Rect(new Point(left,top),new Size(right - left, bottom - top));
+        }
         public void AddDeltaImages(List<UIElement> images, Action<List<UIElement>> modifyUndoContainer)
         {
             imageDeltaCollection.Add(images, modifyUndoContainer);
