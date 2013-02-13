@@ -244,6 +244,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             wireInPublicHandlers();
             contentBuffer = new ContentBuffer();
+            contentBuffer.ElementsRepositioned += (sender, args) => { AddAdorners(); };
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -1502,10 +1503,7 @@ namespace SandRibbon.Components
             contentBuffer.UpdateAllImages(i => Work.Children.Add(i));
             contentBuffer.UpdateAllTextBoxes(t => Work.Children.Add(t));
             Work.Strokes.Clear();
-            contentBuffer.UpdateAllStrokes(s =>
-                                               {
-                                                   Work.Strokes.Add(s);
-                                               });
+            contentBuffer.UpdateAllStrokes(s => Work.Strokes.Add(s));
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
