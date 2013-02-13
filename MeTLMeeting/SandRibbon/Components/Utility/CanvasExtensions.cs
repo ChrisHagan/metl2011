@@ -128,8 +128,8 @@ namespace SandRibbon.Components.Utility
             newBox.Background = box.Background;
             newBox.tag(box.tag());
             newBox.CaretIndex = box.CaretIndex;
-            newBox.Width = box.Width;
-            newBox.Height = box.Height;
+            newBox.Width = Double.IsNaN(box.Width) || box.Width <= 0 ? box.ActualWidth : box.Width;
+            newBox.Height = Double.IsNaN(box.Height) || box.Height <= 0 ? box.ActualHeight : box.Height;
             newBox.MaxHeight = box.MaxHeight;
             //newBox.SelectedText = box.SelectedText;
             newBox.SelectionLength = box.SelectionLength;
