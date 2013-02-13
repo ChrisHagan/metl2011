@@ -705,12 +705,12 @@ namespace SandRibbon
             
             Dispatcher.adopt(delegate
                                  {
-
+/*
                                      if (details.Author == Globals.me)
                                          ParticipantsTabItem.Visibility = Visibility.Visible;
                                      else
                                          ParticipantsTabItem.Visibility = Visibility.Collapsed;
-
+                                     */
                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
                                     {
                                          UpdateTitle(details);
