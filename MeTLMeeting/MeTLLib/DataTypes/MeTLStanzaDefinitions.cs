@@ -439,7 +439,7 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedImage : TargettedElement
     {
-        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, Image Image, long Timestamp)
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, MeTLImage Image, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
             image = Image;
@@ -473,7 +473,7 @@ namespace MeTLLib.DataTypes
             //return this;
         }
 
-        public System.Windows.Controls.Image imageProperty;
+        public MeTLImage imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
         private IWebClient downloader;
@@ -486,7 +486,7 @@ namespace MeTLLib.DataTypes
             this.provider = provider;
             imageSpecification.injectDependencies(server, downloader, provider);
         }
-        public System.Windows.Controls.Image image
+        public MeTLImage image
         {
             get
             {
@@ -1102,9 +1102,9 @@ namespace MeTLLib.DataTypes
                 var textCtrl = targettedTextBox.boxProperty;
 
                 var width = textCtrl.Width;
-                this.width = Double.IsNaN(width) ? textCtrl.ActualWidth : width;
+                this.width = (Double.IsNaN(width) || width <= 0) ? textCtrl.ActualWidth : width;
                 var height = textCtrl.Height;
-                this.height = Double.IsNaN(height) ? textCtrl.ActualHeight : height;
+                this.height = (Double.IsNaN(height) || height <= 0) ? textCtrl.ActualHeight : height;
                 //this.height = textCtrl.Height;
                 //this.width = textCtrl.Width;
                 this.caret = textCtrl.CaretIndex;
@@ -1305,7 +1305,7 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
-            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, System.Windows.Controls.Image Image, string File, bool Overwrite)
+            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, MeTLImage Image, string File, bool Overwrite)
             {
                 slide = Slide;
                 author = Author;
@@ -1316,7 +1316,7 @@ namespace MeTLLib.DataTypes
                 overwrite = Overwrite;
             }
             public string author;
-            public System.Windows.Controls.Image image;
+            public MeTLImage image;
             public string file;
             public bool overwrite;
             public Privacy privacy;
@@ -1940,13 +1940,13 @@ namespace MeTLLib.DataTypes
                 }
             }
 
-            public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server)
+            public Func<MeTLImage> curryEvaluation(MeTLServerAddress server)
             {
                 return () => forceEvaluation();
             }
-            public System.Windows.Controls.Image forceEvaluationForPrinting()
+            public MeTLImage forceEvaluationForPrinting()
             {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image
+                MeTLImage image = new MeTLImage
                 {
                     Tag = "FOR_PRINTING_ONLY::::" + this.tag,
                     Height = this.height,
@@ -1957,11 +1957,11 @@ namespace MeTLLib.DataTypes
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public System.Windows.Controls.Image forceEvaluation()
+            public MeTLImage forceEvaluation()
             {
                 var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image
+                MeTLImage image = new MeTLImage
                     {
                         Tag = dynamicTag,
                         Height = this.height,

@@ -241,7 +241,7 @@ namespace SandRibbon.Utils
         public void LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, ConversationDetails conversation, int MagnificationRating)
         {
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
-            var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
+            var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
 
@@ -359,16 +359,18 @@ namespace SandRibbon.Utils
         public static string getThumbnailPath(string jid, int id)
         {
             string fullPath = createThumbnailFileStructure(jid);
-            var path = string.Format("{0}\\{1}.png", fullPath, id);
+            var path = string.Format("{0}{1}.png", fullPath, id);
             return path;
         }
         private static string createThumbnailFileStructure(string jid)
         {
-            if (!Directory.Exists(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory())))
-                Directory.CreateDirectory(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory()));
-            if(!Directory.Exists(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me)))
-                Directory.CreateDirectory(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me));
-            var fullPath = string.Format("{0}\\thumbs\\{1}\\{2}\\", Directory.GetCurrentDirectory(), Globals.me, jid);
+            var thumbsDirectory = LocalFileProvider.getUserFolder("thumbs");
+            var myThumbsDirectory = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me });
+            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
+            if (!Directory.Exists(thumbsDirectory))
+                Directory.CreateDirectory(thumbsDirectory);
+            if(!Directory.Exists(myThumbsDirectory))
+                Directory.CreateDirectory(myThumbsDirectory);
             if(!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             return fullPath;
@@ -518,7 +520,7 @@ namespace SandRibbon.Utils
         {
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
-            var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
+            var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
             var exportFormat = PpShapeFormat.ppShapeFormatPNG;
@@ -534,12 +536,12 @@ namespace SandRibbon.Utils
                     backgroundHeight = Convert.ToInt32(slide.Master.Height);
                 if (backgroundWidth != Convert.ToInt32(slide.Master.Width))
                     backgroundWidth = Convert.ToInt32(slide.Master.Width);
-                var Backgroundfile = currentWorkingDirectory + "\\background" + (++resource) + ".jpg";
+                var BackgroundFile = currentWorkingDirectory + "background" + (++resource) + ".jpg";
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
                     shape.Visible = MsoTriState.msoFalse;
                 }
-                slide.Export(Backgroundfile, "PNG", backgroundWidth, backgroundHeight);
+                slide.Export(BackgroundFile, "PNG", backgroundWidth, backgroundHeight);
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
                     if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
@@ -552,7 +554,7 @@ namespace SandRibbon.Utils
                     new XAttribute("height", backgroundHeight * Magnification),
                     new XAttribute("width", backgroundWidth * Magnification),
                     new XAttribute("privacy", "public"),
-                    new XAttribute("snapshot", Backgroundfile),
+                    new XAttribute("snapshot", BackgroundFile),
                     new XAttribute("background", true)));
             }
             catch (Exception ex)
@@ -588,7 +590,7 @@ namespace SandRibbon.Utils
             double Magnification)
         {
             var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
-            var file = currentWorkingDirectory + "\\background" + (++resource).ToString() + ".jpg";
+            var file = currentWorkingDirectory + "background" + (++resource).ToString() + ".jpg";
             string tags;
             if (shape.Type == MsoShapeType.msoInkComment)
                 tags = shape.Tags.ToString();

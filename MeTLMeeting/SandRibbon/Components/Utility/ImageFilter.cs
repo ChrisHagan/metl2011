@@ -16,23 +16,35 @@ namespace SandRibbon.Components.Utility
     {
         protected override bool Equals(UIElement item1, UIElement item2)
         {
-            return (item1 as Image).tag().id == (item2 as Image).tag().id; 
+            return (item1 as MeTLImage).tag().id == (item2 as MeTLImage).tag().id; 
         }
 
         protected override bool CollectionContains(UIElement item)
         {
-            var imageTagId = (item as Image).tag().id;
-            return contentCollection.Where(img => (img as Image).tag().id == imageTagId).Count() > 0;
+            if (item is MeTLImage)
+            {
+                var imageTagId = (item as MeTLImage).tag().id;
+                return contentCollection.Where(img => (img as MeTLImage).tag().id == imageTagId).Count() > 0;
+            }
+            else return false;
         }
 
         protected override string AuthorFromTag(UIElement element)
         {
-            return (element as Image).tag().author;
+            if (element is MeTLImage)
+            {
+                return (element as MeTLImage).tag().author;
+            }
+            else return String.Empty;
         }
 
         protected override Privacy PrivacyFromTag(UIElement element)
         {
-            return (element as Image).tag().privacy;
+            if (element is MeTLImage)
+            {
+                return (element as MeTLImage).tag().privacy;
+            }
+            else return Privacy.NotSet;
         }
 
         public List<UIElement> Images

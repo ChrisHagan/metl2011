@@ -19,19 +19,19 @@
             ContentBuffer = contentBuffer;
         }
 
-        protected override void AddStroke(Stroke stroke)
+        protected override void AddStroke(PrivateAwareStroke stroke)
         {
             ContentBuffer.AddStroke(stroke, (col) => Canvas.Strokes.Add(col));
         }
 
-        protected override void RemoveStroke(Stroke stroke)
+        protected override void RemoveStroke(PrivateAwareStroke stroke)
         {
             ContentBuffer.RemoveStroke(stroke, (col) => Canvas.Strokes.Remove(col));
             // hopefully don't need to keep track of checksums anymore and can just use the stroke's identity
             //contentBuffer.RemoveStrokeChecksum(stroke, (cs) => strokeChecksums.Remove(cs));
         }
 
-        protected override void RemoveImage(Image image) 
+        protected override void RemoveImage(MeTLImage image) 
         { 
             ContentBuffer.RemoveImage(image, (img) => Canvas.Children.Remove(img));
         }
@@ -41,7 +41,7 @@
             ContentBuffer.RemoveTextBox(text, (tb) => Canvas.Children.Remove(tb));
         }
 
-        protected override void ChangeImagePrivacy(Image image, Privacy newPrivacy)
+        protected override void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy)
         {
             image.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy);
         }

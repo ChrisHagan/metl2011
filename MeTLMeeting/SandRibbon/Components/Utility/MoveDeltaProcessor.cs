@@ -24,13 +24,13 @@
             this.contentBuffer = contentBuffer;
         }
 
-        protected abstract void AddStroke(Stroke stroke);
+        protected abstract void AddStroke(PrivateAwareStroke stroke);
 
-        protected abstract void RemoveStroke(Stroke stroke);
-        protected abstract void RemoveImage(Image image);
+        protected abstract void RemoveStroke(PrivateAwareStroke stroke);
+        protected abstract void RemoveImage(MeTLImage image);
         protected abstract void RemoveText(TextBox textbox);
 
-        protected abstract void ChangeImagePrivacy(Image image, Privacy newPrivacy);
+        protected abstract void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy);
         protected abstract void ChangeTextPrivacy(TextBox textbox, Privacy newPrivacy);
 
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory)
@@ -196,7 +196,7 @@
             return moveDelta.inkIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
         }
 
-        private bool dirtiesThis(TargettedMoveDelta moveDelta, Image elem)
+        private bool dirtiesThis(TargettedMoveDelta moveDelta, MeTLImage elem)
         {
             return moveDelta.imageIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
         }
@@ -208,13 +208,13 @@
 
         protected void ContentDelete(TargettedMoveDelta moveDelta)
         {
-            var deadStrokes = new List<Stroke>();
+            var deadStrokes = new List<PrivateAwareStroke>();
             var deadTextboxes = new List<TextBox>();
-            var deadImages = new List<Image>();
+            var deadImages = new List<MeTLImage>();
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))                
+                foreach (var stroke in Canvas.Strokes.Where((s) => s is PrivateAwareStroke && s.tag().id == inkId.Identity).Select(s => s as PrivateAwareStroke))                
                 {
                     if(dirtiesThis(moveDelta,stroke))
                     {
@@ -268,13 +268,13 @@
 
         protected void ContentPrivacyChange(TargettedMoveDelta moveDelta)
         {
-            var privacyStrokes = new List<Stroke>();
+            var privacyStrokes = new List<PrivateAwareStroke>();
             var privacyTextboxes = new List<TextBox>();
-            var privacyImages = new List<Image>();
+            var privacyImages = new List<MeTLImage>();
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                foreach (var stroke in Canvas.Strokes.Where((s) => s is PrivateAwareStroke && s.tag().id == inkId.Identity).Select(s => s as PrivateAwareStroke))
                 {
                     if (dirtiesThis(moveDelta, stroke))
                     {

@@ -10,8 +10,8 @@ namespace SandRibbon.Providers
 {
     public class WorkspaceStateProvider
     {
-        private static readonly string WORKSPACE_DIRECTORY = "Workspace";
-        private static readonly string WORKSPACE_SAVE_FILE = string.Format(@"{0}\state.xml",WORKSPACE_DIRECTORY);
+        private static readonly string WORKSPACE_DIRECTORY = LocalFileProvider.getUserFolder("Workspace");
+        private static readonly string WORKSPACE_SAVE_FILE = LocalFileProvider.getUserFile(new string[]{"Workspace"},"state.xml");
         private static readonly string WORKSPACE_ROOT_ELEMENT = "workspace";
         private static readonly string WORKSPACE_PREFERENCE_ELEMENT = "preference";
         public static readonly string WORKSPACE_COMMAND_ATTRIBUTE = "command";

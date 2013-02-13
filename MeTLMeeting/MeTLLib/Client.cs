@@ -378,7 +378,7 @@ namespace MeTLLib
                 try
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    Image newImage = lii.image;
+                    MeTLImage newImage = lii.image;
                     newImage.Dispatcher.adopt(() => {
                         newImage.tag(lii.image.tag());
                         newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
