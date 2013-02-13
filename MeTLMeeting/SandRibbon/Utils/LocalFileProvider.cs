@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace SandRibbon.Utils
 {
@@ -15,15 +16,23 @@ namespace SandRibbon.Utils
         {
             return getUserFile(suffix, "");
         }
+        private static string ensureDirectories(string basePath,string[] path){
+            return path.Aggregate(basePath, (acc, item) =>
+            {
+                var currentItem = acc + "\\" + item;
+                if (!Directory.Exists(currentItem))
+                {
+                    Directory.CreateDirectory(currentItem);
+                }
+                return currentItem;
+            });
+        }
         public static string getUserFile(string[] path, string filename)
         {
-            var tmp = "\\";
-            foreach (string s in path.ToList())
-            {
-                tmp += s;
-                tmp += "\\";
-            }
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MonashMeTL" + tmp + filename;
+            var basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var autoAdd = new string[]{"MonashMeTL"};
+            var finalPath = ensureDirectories(basePath,autoAdd.Concat(path).ToArray()) + "\\" + filename;
+            return finalPath;
         }
     }
 }

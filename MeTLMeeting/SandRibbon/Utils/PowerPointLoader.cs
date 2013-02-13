@@ -242,9 +242,6 @@ namespace SandRibbon.Utils
         {
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
-            if (!Directory.Exists(currentWorkingDirectory))
-                Directory.CreateDirectory(currentWorkingDirectory);
-
             var convDescriptor = new ConversationDescriptor(conversation, new XElement("presentation"));
 
             convDescriptor.Xml.Add(new XAttribute("name", conversation.Title));
@@ -364,15 +361,7 @@ namespace SandRibbon.Utils
         }
         private static string createThumbnailFileStructure(string jid)
         {
-            var thumbsDirectory = LocalFileProvider.getUserFolder("thumbs");
-            var myThumbsDirectory = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me });
             var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
-            if (!Directory.Exists(thumbsDirectory))
-                Directory.CreateDirectory(thumbsDirectory);
-            if(!Directory.Exists(myThumbsDirectory))
-                Directory.CreateDirectory(myThumbsDirectory);
-            if(!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
             return fullPath;
         }
         private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
@@ -521,8 +510,6 @@ namespace SandRibbon.Utils
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
-            if (!Directory.Exists(currentWorkingDirectory))
-                Directory.CreateDirectory(currentWorkingDirectory);
             var exportFormat = PpShapeFormat.ppShapeFormatPNG;
             var exportMode = PpExportMode.ppRelativeToSlide;
             var backgroundHeight = 540;

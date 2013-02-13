@@ -2840,7 +2840,7 @@ namespace SandRibbon.Components
             var images = new List<MeTLImage>();
             foreach (var imageSource in selectedImages)
             {
-                var tmpFile = LocalFileProvider.getUserFile(new string[]{"pastedImages"},"tmpImage.png");
+                var tmpFile = LocalFileProvider.getUserFile(new string[]{},"tmpImage.png");
                 using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
                 {
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
