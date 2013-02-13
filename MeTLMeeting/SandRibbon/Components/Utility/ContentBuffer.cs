@@ -235,6 +235,12 @@ namespace SandRibbon.Components.Utility
         public void adjustStrokeForMoveDelta(String strokeIdentity, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
             var strokes = strokeFilter.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id == strokeIdentity).Select(s => s as PrivateAwareStroke);
+            if (strokes.Count() > 0 && strokes.First() != null)
+            {
+                adjustStroke(strokes.First(), adjustment);
+            }
+            /*
+            var strokes = strokeFilter.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id == strokeIdentity).Select(s => s as PrivateAwareStroke);
             if (strokes.Count() > 0)
             {
                 var stroke = strokes.First();
@@ -245,6 +251,7 @@ namespace SandRibbon.Components.Utility
                 }
                 doAdjustStroke(stroke, adjustment);
             }
+             */
         }
         private PrivateAwareStroke doAdjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
@@ -291,7 +298,12 @@ namespace SandRibbon.Components.Utility
 
         public void adjustImageForMoveDelta(String imageIdentity, Func<MeTLImage, MeTLImage> adjustment)
         {
-            var images = imageFilter.Images.Where(i => (i as MeTLImage).tag().id == imageIdentity);
+            var images = imageFilter.Images.Where(i => (i as MeTLImage).tag().id == imageIdentity).Select(i => i as MeTLImage);
+            if (images.Count() > 0 && images.First() != null)
+            {
+                adjustImage(images.First(), adjustment);
+            }
+            /*
             if (images.Count() > 0)
             {
                 var image = images.First();
@@ -303,6 +315,7 @@ namespace SandRibbon.Components.Utility
                 }
                 doAdjustImage(image as MeTLImage, adjustment);
             }
+             */
         }
         public void adjustImagesForMoveDelta(List<String> imageIdentities)
         {
@@ -368,7 +381,12 @@ namespace SandRibbon.Components.Utility
 
         public void adjustTextForMoveDelta(String textIdentity, Func<MeTLTextBox, MeTLTextBox> adjustment)
         {
-            var boxes = textFilter.TextBoxes.Where(t => (t as MeTLTextBox).tag().id == textIdentity);
+            var boxes = textFilter.TextBoxes.Where(t => (t as MeTLTextBox).tag().id == textIdentity).Select(t => t as MeTLTextBox);
+            if (boxes.Count() > 0 && boxes.First() != null)
+            {
+                adjustText(boxes.First(), adjustment);
+            }
+            /*
             if (boxes.Count() > 0)
             {
                 var box = boxes.First() as MeTLTextBox;
@@ -379,6 +397,7 @@ namespace SandRibbon.Components.Utility
                 }
                 doAdjustText(box, adjustment);
             }
+             */
         }
 
         public void adjustTextsForMoveDelta(List<String> textIdentities)

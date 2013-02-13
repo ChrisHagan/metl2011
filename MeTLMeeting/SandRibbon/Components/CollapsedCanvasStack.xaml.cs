@@ -620,24 +620,30 @@ namespace SandRibbon.Components
             var inkCanvas = sender as InkCanvas;
             inkCanvas.Select(new StrokeCollection(filterOnlyMine(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)), filterOnlyMine(inkCanvas.GetSelectedElements()));
 
-            contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
-            contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
-                strokesAtTheStart.AddRange(st.Select(s => {
-                    return s.Clone();
-                }));
-            });
+            //contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
+            //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
+                //strokesAtTheStart.AddRange(st.Select(s => {
+            //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
+            strokesAtTheStart.Clear();
+            strokesAtTheStart.AddRange(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()).ToList());
+           //     strokesAtTheStart.AddRange(st.Select(s => {
+            //        return s.Clone();
+             //   }));
+            //});
 
-            contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
-            contentBuffer.AddDeltaImages(GetSelectedClonedImages().ToList(), (img) => imagesAtStartOfTheMove.AddRange(img));
+            //contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
+            //contentBuffer.AddDeltaImages(GetSelectedClonedImages().ToList(), (img) => imagesAtStartOfTheMove.AddRange(img));
+            imagesAtStartOfTheMove.Clear();
+            imagesAtStartOfTheMove.AddRange(GetSelectedClonedImages().ToList());
 
             _boxesAtTheStart.Clear();
             _boxesAtTheStart = inkCanvas.GetSelectedElements().Where(b => b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
 
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
+/*
 
             if (e.NewRectangle.Size.Equals(e.OldRectangle.Size))
                 return;
-
             // following code is image specific
             if (strokesAtTheStart.Count != 0)
                 return;
@@ -672,6 +678,7 @@ namespace SandRibbon.Components
 
             e.NewRectangle = new Rect(e.NewRectangle.X, e.NewRectangle.Y, resizeWidth, resizeHeight);
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
+             */
         }
 
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<UIElement> elements, List<MeTLImage> startingElements)
@@ -883,7 +890,7 @@ namespace SandRibbon.Components
             var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()));
             var selectedElements = filterOnlyMine(Work.GetSelectedElements());
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => ((MeTLImage)i).Clone()).ToList();
-            Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
+            //Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Where(s => s is PrivateAwareStroke).Select(stroke => (stroke as PrivateAwareStroke).Clone()).ToList();
             // should move _boxesAtTheStart textboxes here to be cloned as well
 
@@ -915,6 +922,7 @@ namespace SandRibbon.Components
                     moveDelta.xScale = 1 / moveMetrics.Scale.X;
                     moveDelta.yScale = 1 / moveMetrics.Scale.Y;
 
+                    moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.undo();
@@ -944,6 +952,7 @@ namespace SandRibbon.Components
                     moveDelta.xScale = moveMetrics.Scale.X;
                     moveDelta.yScale = moveMetrics.Scale.Y;
 
+                    moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.redo();
@@ -1666,7 +1675,7 @@ namespace SandRibbon.Components
             {   
                 // don't want to duplicate what has already been done locally
                 moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
-
+                /*
                 var inkIds = moveDelta.inkIds.Select(elemId => elemId.Identity).ToList();
                 if(inkIds.Count > 0)
                   contentBuffer.adjustStrokesForMoveDelta(inkIds);
@@ -1678,6 +1687,7 @@ namespace SandRibbon.Components
                 var textIds = moveDelta.textIds.Select(elemId => elemId.Identity).ToList();
                 if(textIds.Count > 0)
                   contentBuffer.adjustTextsForMoveDelta(textIds);
+                 */
             }
         }
 

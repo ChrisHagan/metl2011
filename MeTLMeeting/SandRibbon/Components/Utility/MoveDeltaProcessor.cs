@@ -33,10 +33,19 @@
         protected abstract void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy);
         protected abstract void ChangeTextPrivacy(TextBox textbox, Privacy newPrivacy);
 
+        private List<String> sentDeltas = new List<String>();
+
+        public void rememberSentMoveDelta(TargettedMoveDelta moveDelta)
+        {
+            sentDeltas.Add(moveDelta.identity);
+        }
+
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory)
         {
-            if (!processHistory && moveDelta.HasSameAuthor(recipient))
-            {
+            if (!processHistory && sentDeltas.Contains(moveDelta.identity)){
+            //if (!processHistory && moveDelta.HasSameAuthor(recipient))
+            //{
+                sentDeltas.Remove(moveDelta.identity);
                 return;
             }
 
@@ -73,10 +82,24 @@
             {
                 contentBuffer.adjustStrokeForMoveDelta(inkId, (s) =>
                 {
+                    if (dirtiesThis(moveDelta,s)){
+                      var scaleMatrix = new Matrix();
+                      var translateMatrix = new Matrix();
+                      scaleMatrix.Scale(xScale, yScale);
+                      translateMatrix.Translate(xTrans, yTrans);
+                      s.Transform(scaleMatrix,false);
+                      s.Transform(translateMatrix,false);
+                    }
+                    return s;
+                    //InkCanvas.SetLeft(s, InkCanvas.GetLeft(s) + xTrans);
+                    //s.Width = s.Width * xScale;
+                    //s.Height = s.Height * yScale;
+
                     //var deadStrokes = new List<Stroke>();
                     //var stroke = strokeFilter.Strokes.Where(s => s.tag().id == strokeIdentity).First();
                     //foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
                     //{
+                    /*
                     if (dirtiesThis(moveDelta, s))
                     {
                         //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
@@ -109,6 +132,7 @@
                     }
                     return s;
                     //}
+                     */
                 });
             }
 
@@ -308,10 +332,9 @@
             foreach (var stroke in privacyStrokes)
             {
                 var oldTag = stroke.tag();
-                RemoveStroke(stroke);
-
+//                RemoveStroke(stroke);
                 stroke.tag(new StrokeTag(oldTag, moveDelta.privacy));
-                AddStroke(stroke);
+//                AddStroke(stroke);
             }
 
             foreach (var image in privacyImages)
