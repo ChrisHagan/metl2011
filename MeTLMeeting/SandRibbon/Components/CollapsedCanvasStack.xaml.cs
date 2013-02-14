@@ -1196,17 +1196,22 @@ namespace SandRibbon.Components
             var selectedImages = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
             var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
 
+            ReAddFilteredContent(contentVisibility);
+
+            if (me != Globals.PROJECTOR)
+                refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
+        }
+
+        private void ReAddFilteredContent(ContentVisibilityEnum contentVisibility)
+        {
             Work.Strokes.Clear();
             Work.Strokes.Add(new StrokeCollection(contentBuffer.FilteredStrokes(contentVisibility).Select(s => s as Stroke)));
-            Work.Children.Clear();
 
+            Work.Children.Clear();
             foreach (var child in contentBuffer.FilteredTextBoxes(contentVisibility))
                 Work.Children.Add(child);
             foreach (var child in contentBuffer.FilteredImages(contentVisibility))
                 Work.Children.Add(child);
-
-            if (me != Globals.PROJECTOR)
-                refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
         }
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
@@ -1509,10 +1514,10 @@ namespace SandRibbon.Components
         public void RefreshCanvas()
         {
             Work.Children.Clear();
-            contentBuffer.UpdateAllImages(i => Work.Children.Add(i));
-            contentBuffer.UpdateAllTextBoxes(t => Work.Children.Add(t));
             Work.Strokes.Clear();
-            contentBuffer.UpdateAllStrokes(s => Work.Strokes.Add(s));
+
+            contentBuffer.AdjustContent();
+            ReAddFilteredContent(contentBuffer.CurrentContentVisibility);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {

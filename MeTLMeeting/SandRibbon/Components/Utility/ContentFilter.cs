@@ -12,6 +12,17 @@ using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Utility
 {
+    public static class ContentFilterVisibility
+    {
+        public static ContentVisibilityEnum CurrentContentVisibility
+        {
+            get
+            {
+                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+            }
+        }
+    }
+
     public abstract class ContentFilter<C, T> where C : class, ICollection<T>, new() 
     {
         protected C contentCollection;
@@ -90,7 +101,7 @@ namespace SandRibbon.Components.Utility
         {
             get
             {
-                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+                return ContentFilterVisibility.CurrentContentVisibility;
             }
         }
 

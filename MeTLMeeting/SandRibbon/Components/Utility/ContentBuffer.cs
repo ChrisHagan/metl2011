@@ -43,6 +43,14 @@ namespace SandRibbon.Components.Utility
             }
         }
 
+        public ContentVisibilityEnum CurrentContentVisibility
+        {
+            get
+            {
+                return ContentFilterVisibility.CurrentContentVisibility;
+            }
+        }
+
         public List<PrivateAwareStroke> FilteredStrokes(ContentVisibilityEnum contentVisibility)
         {
             return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility); 
@@ -89,6 +97,14 @@ namespace SandRibbon.Components.Utility
             imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));
             imageFilter.UpdateChildren(updateChild);
         }
+
+        public void AdjustContent()
+        {
+            textFilter.TextBoxes.ForEach(t => adjustText((MeTLTextBox)t, tb => tb));
+            strokeFilter.Strokes.ForEach(s => adjustStroke(s, st => st));
+            imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));
+        }
+
         public void Clear()
         {
             strokeFilter.Clear();
@@ -131,7 +147,6 @@ namespace SandRibbon.Components.Utility
         }
         private Point generateMoveDeltaBounds(double elementLeft, double elementTop)
         {
-            Console.WriteLine("ContentBuffer::generateMoveDeltaBounds::Called");
             var point = new Point(moveDeltaX, moveDeltaY);
             if (elementLeft < 0.0)
                 point.X = elementLeft;
