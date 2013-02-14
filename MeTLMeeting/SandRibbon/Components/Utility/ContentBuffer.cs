@@ -219,19 +219,6 @@ namespace SandRibbon.Components.Utility
             }
             return doAdjustStroke(stroke, adjustment);            
         }
-        public void adjustStrokesForMoveDelta(List<String> strokeIdentities)
-        {
-
-            var strokes = strokeFilter.Strokes.Where(s => strokeIdentities.Contains(s.tag().id));
-            foreach(var stroke in strokes)
-            {
-                if (checkIfMoveDeltaBoundsUpdates(stroke.GetBounds().X, stroke.GetBounds().Y))
-                {
-                    updateMoveDeltaBounds(stroke.GetBounds().X, stroke.GetBounds().Y);
-                    updateCanvasPositioning( strokeFilter.Strokes.Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke), textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
-                }
-            }
-        }
         public void adjustStrokeForMoveDelta(String strokeIdentity, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
             var strokes = strokeFilter.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id == strokeIdentity).Select(s => s as PrivateAwareStroke);

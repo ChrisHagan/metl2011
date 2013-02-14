@@ -8,6 +8,7 @@
     using System.Windows.Ink;
     using System.Windows.Media;
     using MeTLLib.DataTypes;
+    using System.Collections.ObjectModel;
 
     public abstract class MoveDeltaProcessor
     {
@@ -45,6 +46,7 @@
             if (!processHistory && sentDeltas.Contains(moveDelta.identity)){
             //if (!processHistory && moveDelta.HasSameAuthor(recipient))
             //{
+                Console.WriteLine(string.Format("Skipping MoveDelta for {0}", recipient));
                 sentDeltas.Remove(moveDelta.identity);
                 return;
             }
@@ -67,6 +69,43 @@
             }
         }
 
+        private PrivateAwareStroke AdjustVisual(PrivateAwareStroke stroke, double xTranslate, double yTranslate, double xScale, double yScale)
+        {
+            var newStroke = stroke.Clone(); 
+            if (xTranslate == 0.0 && yTranslate == 0.0 && xScale == 1.0 && yScale == 1.0)
+                return newStroke;
+
+            //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
+            Rect myRect = new Rect();
+            myRect = newStroke.GetBounds();
+
+            var transformMatrix = new Matrix();
+            if (xScale != 1.0 || yScale != 1.0)
+            {   
+                transformMatrix.Translate(-myRect.X, -myRect.Y);
+
+                newStroke.Transform(transformMatrix, false);
+
+                transformMatrix = new Matrix();
+                transformMatrix.Scale(xScale,yScale);
+                
+                if(double.IsNaN(xTranslate))
+                {
+                    xTranslate = 0;
+                }
+                if (double.IsNaN(yTranslate))
+                {
+                    yTranslate = 0;
+                }
+                xTranslate = xTranslate + myRect.X;
+                yTranslate = yTranslate + myRect.Y;
+            }
+            
+            transformMatrix.Translate(xTranslate, yTranslate);
+            newStroke.Transform(transformMatrix, false);
+            return newStroke;
+        }
+
         protected void ContentTranslateAndScale(TargettedMoveDelta moveDelta)
         {
             var xTrans = moveDelta.xTranslate;
@@ -81,20 +120,18 @@
                 contentBuffer.adjustStrokeForMoveDelta(inkId, (s) =>
                 {
                     if (dirtiesThis(moveDelta,s)){
-                        var sBounds = s.GetBounds();
-                        var myLeft = sBounds.Left + s.offsetX;
-                        var myTop = sBounds.Top + s.offsetY;
-                        myLeft -= totalBounds.Left;
-                        myTop -= totalBounds.Top;
-                        var leftCorrection = -(myLeft - (myLeft * xScale));
-                        var topCorrection = -(myTop - (myTop * yScale));
 
-                      var scaleMatrix = new Matrix();
-                      var translateMatrix = new Matrix();
-                      scaleMatrix.Scale(xScale, yScale);
-                      translateMatrix.Translate(xTrans + leftCorrection, yTrans + topCorrection);
-                      s.Transform(scaleMatrix,false);
-                      s.Transform(translateMatrix,false);
+                        var sBounds = s.GetBounds();
+                        var internalX = sBounds.Left - totalBounds.Left;
+                        var internalY = sBounds.Top - totalBounds.Top;
+                        var offsetX = -(internalX - (internalX * xScale));
+                        var offsetY = -(internalY - (internalY * yScale));
+
+                        var adjustedStroke = AdjustVisual(s, xTrans + offsetX, yTrans + offsetY, xScale, yScale);
+                        RemoveStroke(s);
+                        AddStroke(adjustedStroke);
+
+                        return adjustedStroke;
                     }
                     return s;
                 });
