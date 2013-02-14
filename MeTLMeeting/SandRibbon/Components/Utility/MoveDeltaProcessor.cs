@@ -43,10 +43,8 @@
 
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory)
         {
-            if (!processHistory && sentDeltas.Contains(moveDelta.identity)){
-            //if (!processHistory && moveDelta.HasSameAuthor(recipient))
-            //{
-                Console.WriteLine(string.Format("Skipping MoveDelta for {0}", recipient));
+            if (!processHistory && sentDeltas.Contains(moveDelta.identity))
+            {
                 sentDeltas.Remove(moveDelta.identity);
                 return;
             }
