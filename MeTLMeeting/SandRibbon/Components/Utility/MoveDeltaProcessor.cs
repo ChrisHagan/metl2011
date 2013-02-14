@@ -111,7 +111,9 @@
             var xScale = moveDelta.xScale;
             var yScale = moveDelta.yScale;
 
-            var totalBounds = contentBuffer.getBoundsOfMoveDelta(moveDelta);
+            var totalBounds = Double.IsNaN(moveDelta.yOrigin) || Double.IsNaN(moveDelta.xOrigin) ? contentBuffer.getBoundsOfMoveDelta(moveDelta) : new Rect(moveDelta.xOrigin, moveDelta.yOrigin, 0.0, 0.0);
+
+            //var totalBounds = contentBuffer.getBoundsOfMoveDelta(moveDelta);
 
             foreach (var inkId in moveDelta.inkIds)
             {

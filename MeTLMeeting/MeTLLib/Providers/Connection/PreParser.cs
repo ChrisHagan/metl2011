@@ -131,64 +131,56 @@ namespace MeTLLib.Providers.Connection
             var relevantTexts = text.Values.Where(i => dirtiesThis(moveDelta, i));
 
             double top = 0.0; 
-            double bottom = 0.0;
             double left = 0.0;
-            double right = 0.0;
             bool firstItem = true;
-            Func<double, double, double, double, bool> updateRect = (l, t, w, h) =>
+            if (Double.IsNaN(mdp.xOrigin) || Double.IsNaN(mdp.yOrigin))
             {
-                var b = t + h;
-                var r = l + w;
-                bool changed = false;
-                if (firstItem)
+                Func<double, double, bool> updateRect = (l, t) =>
                 {
-                    top = t;
-                    bottom = b;
-                    left = l;
-                    right = r;
-                    firstItem = false;
-                    changed = true;
-                }
-                else
-                {
-                    if (t < top)
+                    bool changed = false;
+                    if (firstItem)
                     {
                         top = t;
-                        changed = true;
-                    }
-                    if (b > bottom)
-                    {
-                        bottom = b;
-                        changed = true;
-                    }
-                    if (l < left)
-                    {
                         left = l;
+                        firstItem = false;
                         changed = true;
                     }
-                    if (r > right)
+                    else
                     {
-                        right = r;
-                        changed = true;
+                        if (t < top)
+                        {
+                            top = t;
+                            changed = true;
+                        }
+                        if (l < left)
+                        {
+                            left = l;
+                            changed = true;
+                        }
                     }
-                }
-                return changed;
-            };
+                    return changed;
+                };
 
-            foreach (var s in relevantStrokes)
-            {
-                var strokeBounds = s.stroke.GetBounds();
-                updateRect(strokeBounds.Left, strokeBounds.Top, strokeBounds.Width, strokeBounds.Height);
+                foreach (var s in relevantStrokes)
+                {
+                    var strokeBounds = s.stroke.GetBounds();
+                    updateRect(strokeBounds.Left, strokeBounds.Top);
+                }
+                foreach (var t in relevantTexts)
+                {
+                    var tSpec = t.boxSpecification;
+                    updateRect(tSpec.x, tSpec.y);
+                }
+                foreach (var i in relevantImages)
+                {
+                    var iSpec = i.imageSpecification;
+                    updateRect(iSpec.x, iSpec.y);
+                }
             }
-            foreach (var t in relevantTexts)
+            else
             {
-                var tSpec = t.boxSpecification;
-                updateRect(tSpec.x, tSpec.y, tSpec.width, tSpec.height);
-            }
-            foreach (var i in relevantImages)
-            {
-                var iSpec = i.imageSpecification;
-                updateRect(iSpec.x, iSpec.y, iSpec.width, iSpec.height);
+                left = mdp.xOrigin;
+                top = mdp.yOrigin;
             }
             foreach (var aInk in relevantStrokes)
             {

@@ -544,7 +544,7 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.isDeleted = true;
-
+                    moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
                     Keyboard.Focus(this); // set keyboard focus to the current canvas so the help button does not grey out
 
@@ -921,6 +921,10 @@ namespace SandRibbon.Components
                     moveDelta.yTranslate = -moveMetrics.Delta.Y;
                     moveDelta.xScale = 1 / moveMetrics.Scale.X;
                     moveDelta.yScale = 1 / moveMetrics.Scale.Y;
+                    
+                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
+                    moveDelta.xOrigin = mdb.Left;
+                    moveDelta.yOrigin = mdb.Top;
 
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -951,6 +955,10 @@ namespace SandRibbon.Components
                     moveDelta.yTranslate = moveMetrics.Delta.Y;
                     moveDelta.xScale = moveMetrics.Scale.X;
                     moveDelta.yScale = moveMetrics.Scale.Y;
+
+                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
+                    moveDelta.xOrigin = mdb.Left;
+                    moveDelta.yOrigin = mdb.Top;
 
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1482,7 +1490,9 @@ namespace SandRibbon.Components
                     //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = newPrivacy;
-
+                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
+                    moveDelta.xOrigin = mdb.Left;
+                    moveDelta.yOrigin = mdb.Top;
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.redo();
@@ -1497,7 +1507,10 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = oldPrivacy;
-
+                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
+                    moveDelta.xOrigin = mdb.Left;
+                    moveDelta.yOrigin = mdb.Top;
+                    moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.undo();
