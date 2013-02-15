@@ -112,7 +112,8 @@
             var yScale = moveDelta.yScale;
 
             var totalBounds = Double.IsNaN(moveDelta.yOrigin) || Double.IsNaN(moveDelta.xOrigin) ? contentBuffer.getBoundsOfMoveDelta(moveDelta) : new Rect(moveDelta.xOrigin, moveDelta.yOrigin, 0.0, 0.0);
-
+            var tbX = totalBounds.Left - contentBuffer.logicalX;
+            var tbY = totalBounds.Top - contentBuffer.logicalY;
             //var totalBounds = contentBuffer.getBoundsOfMoveDelta(moveDelta);
 
             foreach (var inkId in moveDelta.inkIds)
@@ -122,8 +123,8 @@
                     if (dirtiesThis(moveDelta,s)){
 
                         var sBounds = s.GetBounds();
-                        var internalX = sBounds.Left - totalBounds.Left;
-                        var internalY = sBounds.Top - totalBounds.Top;
+                        var internalX = sBounds.Left - tbX;
+                        var internalY = sBounds.Top - tbY;
                         var offsetX = -(internalX - (internalX * xScale));
                         var offsetY = -(internalY - (internalY * yScale));
 
@@ -143,7 +144,7 @@
                 {
                     if (dirtiesThis(moveDelta, t))
                     {
-                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale, totalBounds);
+                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale, tbX,tbY);
                     }
                     return t;
                 });                
@@ -155,14 +156,14 @@
                 {
                     if (dirtiesThis(moveDelta, i))
                     {
-                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale, totalBounds);
+                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale, tbX,tbY);
                     }
                     return i;
                 });
             }
         }
 
-        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale, Rect totalBounds)
+        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale, double tbX, double tbY)
         {
             var myLeft = 0.0;
             if (element is MeTLTextBox){
@@ -176,8 +177,8 @@
             } else if (element is MeTLImage){
                 myTop = InkCanvas.GetTop(element) + (element as MeTLImage).offsetY;
             }
-            myTop -= totalBounds.Top;
-            myLeft -= totalBounds.Left;
+            myTop -= tbX;
+            myLeft -= tbY;
 
             var left = InkCanvas.GetLeft(element) + xTrans;
             var top = InkCanvas.GetTop(element) + yTrans;
