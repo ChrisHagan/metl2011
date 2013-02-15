@@ -16,6 +16,7 @@ using MeTLLib;
 using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
 using HttpResourceProvider = MeTLLib.Providers.Connection.HttpResourceProvider;
+using System.Windows.Ink;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -47,6 +48,25 @@ namespace SandRibbon.Utils.Connection
             var canvases = createVisual("presentationSpace", true);
             return new[] { canvases.FirstOrDefault() };
         }
+        
+        private void ResizeCanvas(MeTLInkCanvas canvas, ContentBuffer contentBuffer)
+        {
+            contentBuffer.AdjustContent();
+            ReAddFilteredContent(canvas, contentBuffer, ContentVisibilityEnum.AllVisible);
+        }
+
+        private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, ContentVisibilityEnum contentVisibility)
+        {
+            canvas.Strokes.Clear();
+            canvas.Strokes.Add(new StrokeCollection(contentBuffer.FilteredStrokes(contentVisibility).Select(s => s as Stroke)));
+
+            canvas.Children.Clear();
+            foreach (var child in contentBuffer.FilteredTextBoxes(contentVisibility))
+                canvas.Children.Add(child);
+            foreach (var child in contentBuffer.FilteredImages(contentVisibility))
+                canvas.Children.Add(child);
+        }
+
         private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic)
         {
             var canvas = new MeTLInkCanvas();
@@ -55,7 +75,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
-                    canvas.Strokes.Add(stroke.stroke);
+                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target), s => canvas.Strokes.Add(s));
             }
             foreach (var image in images)
             {
@@ -64,7 +84,7 @@ namespace SandRibbon.Utils.Connection
                 if ((includePublic && image.Value.privacy == Privacy.Public) || image.Value.target == target)
                 {
                     Panel.SetZIndex(imageToAdd, image.Value.privacy == Privacy.Public ? 1 : 2);
-                    canvas.Children.Add(imageToAdd);
+                    contentBuffer.AddImage(imageToAdd, i => canvas.Children.Add(i));
                 }
             }
             foreach (var box in text)
@@ -77,12 +97,13 @@ namespace SandRibbon.Utils.Connection
                 {
                     // positive Z is out of the screen
                     Panel.SetZIndex(textbox, 3);
-                    canvas.Children.Add(textbox);
+                    contentBuffer.AddTextBox(textbox.toMeTLTextBox(), t => canvas.Children.Add(t));
                 }
             }
 
-            foreach (var moveDelta in moveDeltas)
-                moveDeltaProcessor.ReceiveMoveDelta(moveDelta, SandRibbon.Providers.Globals.me, true);
+            ResizeCanvas(canvas, contentBuffer);
+            //foreach (var moveDelta in moveDeltas)
+            //    moveDeltaProcessor.ReceiveMoveDelta(moveDelta, SandRibbon.Providers.Globals.me, true);
 
             if (canvas.Children.Count == 0 && canvas.Strokes.Count == 0)
                 return new List<MeTLInkCanvas>();
