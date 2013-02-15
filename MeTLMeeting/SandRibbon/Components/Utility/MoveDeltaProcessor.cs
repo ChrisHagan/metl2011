@@ -144,7 +144,7 @@
                 {
                     if (dirtiesThis(moveDelta, t))
                     {
-                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale, tbX,tbY);
+                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale, totalBounds.Left,totalBounds.Top);//tbX,tbY);
                     }
                     return t;
                 });                
@@ -156,7 +156,7 @@
                 {
                     if (dirtiesThis(moveDelta, i))
                     {
-                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale, tbX,tbY);
+                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale, totalBounds.Left,totalBounds.Top);//tbX,tbY);
                     }
                     return i;
                 });
@@ -177,14 +177,14 @@
             } else if (element is MeTLImage){
                 myTop = InkCanvas.GetTop(element) + (element as MeTLImage).offsetY;
             }
-            myTop -= tbX;
-            myLeft -= tbY;
+            myLeft -= tbX;
+            myTop -= tbY;
 
             var left = InkCanvas.GetLeft(element) + xTrans;
             var top = InkCanvas.GetTop(element) + yTrans;
 
-            var topCorrection = -(myTop - (myTop * yScale));
             var leftCorrection = -(myLeft - (myLeft * xScale));
+            var topCorrection = -(myTop - (myTop * yScale));
 
             InkCanvas.SetLeft(element, left + leftCorrection);
             InkCanvas.SetTop(element, top + topCorrection);

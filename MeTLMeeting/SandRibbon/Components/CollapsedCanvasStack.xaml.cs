@@ -1720,10 +1720,14 @@ namespace SandRibbon.Components
                     {
                         Dispatcher.adoptAsync(() =>
                         {
-                            var receivedImage = image1.imageSpecification.forceEvaluation();
-                            //image.clone();
-                            AddImage(Work, receivedImage);
-                            receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                            try
+                            {
+                                var receivedImage = image1.imageSpecification.forceEvaluation();
+                                //image.clone();
+                                AddImage(Work, receivedImage);
+                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                            } catch (Exception) {
+                            }
                         });
                     }
                 }
