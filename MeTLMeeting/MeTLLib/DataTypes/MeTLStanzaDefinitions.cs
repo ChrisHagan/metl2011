@@ -1983,7 +1983,8 @@ namespace MeTLLib.DataTypes
                         Tag = dynamicTag,
                         Height = this.height,
                         Width = this.width,
-                        Source = BackupSource
+                        Source = BackupSource,
+                        Stretch = Stretch.Fill
                     };
                 RoutedEventHandler handler = null;
                 handler = delegate

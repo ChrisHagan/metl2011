@@ -2142,7 +2142,8 @@ namespace SandRibbon.Components
             // image size will match reported size
             //image.Height = jpgFrame.PixelHeight;
             //image.Width = jpgFrame.PixelWidth;
-            image.Stretch = Stretch.Uniform;
+            //image.Stretch = Stretch.Uniform;
+            image.Stretch = Stretch.Fill;
             image.StretchDirection = StretchDirection.Both;
             image.Height = newImageHeight;
             image.Width = newImageWidth;
@@ -2886,7 +2887,8 @@ namespace SandRibbon.Components
                                     {
                                         Source = new BitmapImage(uri),
                                         Width = imageSource.Width,
-                                        Height = imageSource.Height
+                                        Height = imageSource.Height,
+                                        Stretch = Stretch.Fill
                                     };
                     image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, -1)); // ZIndex was -1, timestamp is -1L
                     InkCanvas.SetLeft(image, 15);
