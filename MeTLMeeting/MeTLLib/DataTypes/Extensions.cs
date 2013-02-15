@@ -92,6 +92,21 @@ namespace MeTLLib.DataTypes
                 && (foreignImageTag.isBackground == isBackground)
                 && (foreignImageTag.zIndex == zIndex));
         }
+        public static ImageTag Empty
+        {
+            get
+            {
+                return new ImageTag
+                {
+                    author = "unknown",
+                    id = "unknown",
+                    privacy = Privacy.Private,
+                    isBackground = false,
+                    zIndex = 1
+                };
+            }
+        }
+
         public string author;
         public Privacy privacy;
         public string id;
@@ -250,7 +265,16 @@ namespace MeTLLib.DataTypes
                 if (tagString.StartsWith("NOT_LOADED"))
                     tagString = tagString.Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
 
-                return JsonConvert.DeserializeObject<ImageTag>(tagString, new StringEnumConverter());
+                ImageTag createdTag; 
+                try
+                {
+                    createdTag = JsonConvert.DeserializeObject<ImageTag>(tagString, new StringEnumConverter());
+                }
+                catch (JsonReaderException)
+                {
+                    createdTag = ImageTag.Empty;
+                }
+                return createdTag;
             }
 
             throw new ArgumentException(string.Format("Unable to create an ImageTag from the argument '{0}'.", imageTag.ToString()));
