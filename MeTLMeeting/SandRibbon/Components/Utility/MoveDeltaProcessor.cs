@@ -40,12 +40,15 @@
         {
             sentDeltas.Add(moveDelta.identity);
         }
-
+        public void clearRememberedSentMoveDeltas()
+        {
+            sentDeltas.Clear();
+        }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory)
         {
             if (!processHistory && sentDeltas.Contains(moveDelta.identity))
             {
-                sentDeltas.Remove(moveDelta.identity);
+                //sentDeltas.Remove(moveDelta.identity);
                 return;
             }
 

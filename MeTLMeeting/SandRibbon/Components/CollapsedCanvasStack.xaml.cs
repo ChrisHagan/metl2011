@@ -1359,7 +1359,7 @@ namespace SandRibbon.Components
                     if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
-                        contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
+                        contentBuffer.AddStroke(newStroke, (str) => Work.Strokes.Add(str));
                         //doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                 }
@@ -1384,7 +1384,7 @@ namespace SandRibbon.Components
                     //var newStroke = new PrivateAwareStroke(tmpStroke, _target);
                     if (Work.Strokes.Where(s => s.tag().id == newStroke.tag().id).Count() == 0)
                     {
-                        contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
+                        contentBuffer.AddStroke(newStroke, (str) => Work.Strokes.Add(str));
                         //doMyStrokeAddedExceptHistory(newStroke, oldPrivacy);
                     }
                 }
@@ -3232,6 +3232,10 @@ namespace SandRibbon.Components
             if (contentBuffer != null)
             {
                 contentBuffer.Clear();
+            }
+            if (moveDeltaProcessor != null)
+            {
+                moveDeltaProcessor.clearRememberedSentMoveDeltas();
             }
             if (myTextBox != null)
             {
