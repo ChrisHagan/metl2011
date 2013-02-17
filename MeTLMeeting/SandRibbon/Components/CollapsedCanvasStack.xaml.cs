@@ -49,8 +49,15 @@ namespace SandRibbon.Components
 
     public struct MoveDeltaMetrics
     {
-        public Rect OldRectangle { get; set; }
-        public Rect NewRectangle { get; set; }
+        public Rect OldRectangle { get; private set; }
+        public Rect NewRectangle { get; private set; }
+
+        public Rect OriginalContentBounds { get; private set; }
+
+        public void SetContentBounds(Rect contentBounds)
+        {
+            OriginalContentBounds = contentBounds;
+        }
 
         public void Update(Rect oldRect, Rect newRect)
         {
@@ -624,8 +631,13 @@ namespace SandRibbon.Components
             //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
                 //strokesAtTheStart.AddRange(st.Select(s => {
             //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
+            bool shouldUpdateContentBounds = false;
+            var newStrokes = inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
+            var strokeEqualityCount = strokesAtTheStart.Select(s => s.tag().id).Union(newStrokes.Select(s => s.tag().id)).Count();
+            if (strokeEqualityCount != newStrokes.Count || strokeEqualityCount != strokesAtTheStart.Count)
+                shouldUpdateContentBounds = true;
             strokesAtTheStart.Clear();
-            strokesAtTheStart.AddRange(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()).ToList());
+            strokesAtTheStart.AddRange(newStrokes.Select(s => s.Clone()));
            //     strokesAtTheStart.AddRange(st.Select(s => {
             //        return s.Clone();
              //   }));
@@ -633,12 +645,24 @@ namespace SandRibbon.Components
 
             //contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
             //contentBuffer.AddDeltaImages(GetSelectedClonedImages().ToList(), (img) => imagesAtStartOfTheMove.AddRange(img));
+            var newImages = GetSelectedClonedImages().Where(i => i is MeTLImage).Select(i => i as MeTLImage).ToList();
+            var imageEqualityCount = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => (i as MeTLImage).tag().id).Union(newImages.Where(i => i is MeTLImage).Select(i => (i as MeTLImage).tag().id)).Count();
+            if (imageEqualityCount != newImages.Count || imageEqualityCount != imagesAtStartOfTheMove.Count)
+                shouldUpdateContentBounds = true;
             imagesAtStartOfTheMove.Clear();
-            imagesAtStartOfTheMove.AddRange(GetSelectedClonedImages().ToList());
+            imagesAtStartOfTheMove.AddRange(newImages.Select(i => i as UIElement));
 
+            var newBoxes = inkCanvas.GetSelectedElements().Where(b => b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
+            var boxEqualityCount = _boxesAtTheStart.Where(i => i is MeTLTextBox).Select(i => (i as MeTLTextBox).tag().id).Union(newBoxes.Where(i => i is MeTLTextBox).Select(i => (i as MeTLTextBox).tag().id)).Count();
+            if (boxEqualityCount != newBoxes.Count || boxEqualityCount != _boxesAtTheStart.Count)
+                shouldUpdateContentBounds = true;
             _boxesAtTheStart.Clear();
-            _boxesAtTheStart = inkCanvas.GetSelectedElements().Where(b => b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
+            _boxesAtTheStart = newBoxes;
 
+            if (shouldUpdateContentBounds)
+            {
+                moveMetrics.SetContentBounds(ContentBuffer.getLogicalBoundsOfContent(newImages, newBoxes, newStrokes));
+            }
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
 /*
 
@@ -772,6 +796,7 @@ namespace SandRibbon.Components
                         var tmpStroke = stroke.Clone();
                         if (Work.Strokes.Where(s => s.tag().id == tmpStroke.tag().id).Count() == 0)
                         {
+                            var bounds = tmpStroke.GetBounds();
                             contentBuffer.AddStroke(tmpStroke, (str) =>
                             {
                                 Work.Strokes.Add(str);
@@ -921,8 +946,8 @@ namespace SandRibbon.Components
                     moveDelta.yTranslate = -moveMetrics.Delta.Y;
                     moveDelta.xScale = 1 / moveMetrics.Scale.X;
                     moveDelta.yScale = 1 / moveMetrics.Scale.Y;
-                    
-                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
+
+                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
 
@@ -956,16 +981,21 @@ namespace SandRibbon.Components
                     moveDelta.xScale = moveMetrics.Scale.X;
                     moveDelta.yScale = moveMetrics.Scale.Y;
 
+                    moveDelta.xOrigin = moveMetrics.OriginalContentBounds.Left;
+                    moveDelta.yOrigin = moveMetrics.OriginalContentBounds.Top;
+/*
                     var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
-
+                    */
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.redo();
                     text.redo();
                     images.redo();
+
+                    RefreshCanvas();
 
                     refreshWorkSelect(selectedStrokeIds, selectedImagesIds, selectedTextBoxes);
 
@@ -1490,7 +1520,7 @@ namespace SandRibbon.Components
                     //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = newPrivacy;
-                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
+                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1507,7 +1537,7 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = oldPrivacy;
-                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
+                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);

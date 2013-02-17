@@ -226,11 +226,12 @@ namespace SandRibbon.Components.Utility
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
-                updateCanvasPositioning(strokeFilter.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id != stroke.tag().id).Select(s => s as PrivateAwareStroke),
+                updateCanvasPositioning(strokeFilter.Strokes.Where(s => s.tag().id != stroke.tag().id),
                     textFilter.TextBoxes,
                     imageFilter.Images
                     , translateX, 
                     translateY);
+                reassociateStrokeToCanvas(stroke);
             }
             return doAdjustStroke(stroke, adjustment);            
         }
@@ -269,11 +270,67 @@ namespace SandRibbon.Components.Utility
             var relevantImages = imageFilter.Images.Where(i => i is MeTLImage && moveDelta.imageIds.Select(id => id.Identity).Contains(((MeTLImage)i).tag().id)).Select(i => i as MeTLImage).ToList();
             var relevantTexts = textFilter.TextBoxes.Where(t => t is MeTLTextBox && moveDelta.textIds.Select(id => id.Identity).Contains(((MeTLTextBox)t).tag().id)).Select(t => t as MeTLTextBox).ToList();
             var relevantStrokes = strokeFilter.Strokes.Where(s => moveDelta.inkIds.Select(id => id.Identity).Contains((s).tag().id)).ToList();
-            return getBoundsOfMoveDelta(moveDelta, relevantImages, relevantTexts, relevantStrokes);
+            return getLogicalBoundsOfContent(relevantImages, relevantTexts, relevantStrokes);
         }
-        public static Rect getBoundsOfMoveDelta(TargettedMoveDelta moveDelta, List<MeTLImage> images, List<MeTLTextBox> texts, List<PrivateAwareStroke> strokes)
+        public static Rect getBoundsOfContent(List<MeTLImage> images, List<MeTLTextBox> texts, List<PrivateAwareStroke> strokes)
         {
-
+            var top = 0.0;
+            var bottom = 0.0;
+            var left = 0.0;
+            var right = 0.0;
+            bool firstItem = true;
+            Func<double, double, double, double, bool> updateRect = (t, l, h, w) =>
+            {
+                var b = t + h;
+                var r = l + w;
+                bool changed = false;
+                if (firstItem)
+                {
+                    top = t;
+                    bottom = b;
+                    left = l;
+                    right = r;
+                    firstItem = false;
+                    changed = true;
+                }
+                else
+                {
+                    if (t < top)
+                    {
+                        top = t;
+                        changed = true;
+                    }
+                    if (b > bottom)
+                    {
+                        bottom = b;
+                        changed = true;
+                    }
+                    if (l < left)
+                    {
+                        left = l;
+                        changed = true;
+                    }
+                    if (r > right)
+                    {
+                        right = r;
+                        changed = true;
+                    }
+                }
+                return changed;
+            };
+            foreach (var i in images)
+                updateRect(InkCanvas.GetTop(i), InkCanvas.GetLeft(i), i.Height, i.Width);
+            foreach (var t in texts)
+                updateRect(InkCanvas.GetTop(t), InkCanvas.GetLeft(t), t.Height, t.Width);
+            foreach (var s in strokes)
+            {
+                var sBounds = s.GetBounds();
+                updateRect(sBounds.Top, sBounds.Left, sBounds.Height, sBounds.Width);
+            }
+            return new Rect(new Point(left, top), new Size(right - left, bottom - top));
+        }
+        public static Rect getLogicalBoundsOfContent(List<MeTLImage> images, List<MeTLTextBox> texts, List<PrivateAwareStroke> strokes)
+        {
             var top = 0.0;
             var bottom = 0.0;
             var left = 0.0;
@@ -353,6 +410,7 @@ namespace SandRibbon.Components.Utility
 
                 updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, 
                     imageFilter.Images.Where(i => ((MeTLImage)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY );
+                reassociateImageToCanvas(image);
            }
             return doAdjustImage(image, adjustment);
         }
@@ -434,6 +492,7 @@ namespace SandRibbon.Components.Utility
 
                 updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes.Where(t => ((MeTLTextBox)t).tag().id != box.tag().id), imageFilter.Images,
                                         translateX, translateY);
+                reassociateTextboxToCanvas(box);
             }
             doAdjustText(box, adjustment);
         }
