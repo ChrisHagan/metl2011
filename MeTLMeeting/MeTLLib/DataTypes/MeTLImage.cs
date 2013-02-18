@@ -27,6 +27,7 @@ namespace MeTLLib.DataTypes
             img.Source = Source;
             InkCanvas.SetLeft(img, InkCanvas.GetLeft(this));
             InkCanvas.SetTop(img, InkCanvas.GetTop(this));
+            img.Stretch = Stretch.Fill;
             img.tag(this.tag());
             img.offsetX = offsetX;
             img.offsetY = offsetY;
