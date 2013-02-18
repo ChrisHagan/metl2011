@@ -46,7 +46,9 @@ namespace SandRibbon.Components.Utility
         public void Add(T element)
         {
             if (CollectionContains(element))
-                return;
+            {
+                Remove(element);
+            }
             
             contentCollection.Add(element);
         }
@@ -72,13 +74,32 @@ namespace SandRibbon.Components.Utility
             return default(T);
         }
 
+        private List<T> FindAll(T element)
+        {
+            var foundElements = new List<T>();
+            foreach (T elem in contentCollection)
+            {
+                if (Equals(elem, element)) 
+                {
+                    foundElements.Add(elem);
+                }
+            }
+
+            return foundElements;
+        }
+
         public void Remove(T element)
         {
             try
             {
-                contentCollection.Remove(Find(element));
+                RemoveAll(FindAll(element));
             }
             catch (ArgumentException) { }
+        }
+
+        private void RemoveAll(List<T> element)
+        {
+            element.ForEach(e => contentCollection.Remove(e));
         }
 
         private void Remove(C elements)

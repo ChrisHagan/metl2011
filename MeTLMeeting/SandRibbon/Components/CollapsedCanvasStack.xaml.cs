@@ -639,9 +639,11 @@ namespace SandRibbon.Components
             var newStrokes = inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
             var strokeEqualityCount = strokesAtTheStart.Select(s => s.tag().id).Union(newStrokes.Select(s => s.tag().id)).Count();
             if (strokeEqualityCount != newStrokes.Count || strokeEqualityCount != strokesAtTheStart.Count)
+            {
                 shouldUpdateContentBounds = true;
-            strokesAtTheStart.Clear();
-            strokesAtTheStart.AddRange(newStrokes.Select(s => s.Clone()));
+                strokesAtTheStart.Clear();
+                strokesAtTheStart.AddRange(newStrokes.Select(s => s.Clone()));
+            }
            //     strokesAtTheStart.AddRange(st.Select(s => {
             //        return s.Clone();
              //   }));
@@ -652,16 +654,20 @@ namespace SandRibbon.Components
             var newImages = GetSelectedClonedImages().Where(i => i is MeTLImage).Select(i => i as MeTLImage).ToList();
             var imageEqualityCount = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => (i as MeTLImage).tag().id).Union(newImages.Where(i => i is MeTLImage).Select(i => (i as MeTLImage).tag().id)).Count();
             if (imageEqualityCount != newImages.Count || imageEqualityCount != imagesAtStartOfTheMove.Count)
+            {
                 shouldUpdateContentBounds = true;
-            imagesAtStartOfTheMove.Clear();
-            imagesAtStartOfTheMove.AddRange(newImages.Select(i => i as UIElement));
+                imagesAtStartOfTheMove.Clear();
+                imagesAtStartOfTheMove.AddRange(newImages.Select(i => i as UIElement));
+            }
 
             var newBoxes = inkCanvas.GetSelectedElements().Where(b => b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
             var boxEqualityCount = _boxesAtTheStart.Where(i => i is MeTLTextBox).Select(i => (i as MeTLTextBox).tag().id).Union(newBoxes.Where(i => i is MeTLTextBox).Select(i => (i as MeTLTextBox).tag().id)).Count();
             if (boxEqualityCount != newBoxes.Count || boxEqualityCount != _boxesAtTheStart.Count)
+            {
                 shouldUpdateContentBounds = true;
-            _boxesAtTheStart.Clear();
-            _boxesAtTheStart = newBoxes;
+                _boxesAtTheStart.Clear();
+                _boxesAtTheStart = newBoxes;
+            }
 
             if (shouldUpdateContentBounds)
             {
@@ -812,13 +818,13 @@ namespace SandRibbon.Components
         }
 
 
-        private UndoHistory.HistoricalAction TextMovedOrResized(IEnumerable<UIElement> elements, List<MeTLTextBox> boxesAtTheStart)
+        private UndoHistory.HistoricalAction TextMovedOrResized(IEnumerable<UIElement> finalBoxes, List<MeTLTextBox> startBoxes)
         {
             Trace.TraceInformation("MovedTextbox");
-            var undoBoxesToAdd = boxesAtTheStart.Select(t => t.clone());
-            var redoBoxesToAdd = elements.OfType<MeTLTextBox>().Select(b => b.clone());
-            var undoBoxesToRemove = elements.OfType<MeTLTextBox>().Select(b => b.clone());
-            var redoBoxesToRemove = boxesAtTheStart.Select(t => t.clone());
+            var undoBoxesToAdd = startBoxes.Select(t => t.clone());
+            var redoBoxesToAdd = finalBoxes.OfType<MeTLTextBox>().Select(b => b.clone());
+            var undoBoxesToRemove = finalBoxes.OfType<MeTLTextBox>().Select(b => b.clone());
+            var redoBoxesToRemove = startBoxes.Select(t => t.clone());
             Action undo = () =>
               {
                   ClearAdorners();
@@ -828,7 +834,7 @@ namespace SandRibbon.Components
                   }
                   foreach (var box in undoBoxesToAdd)
                   {
-                      AddTextBoxToCanvas(applyDefaultAttributes(box),true);                      
+                      AddTextBoxToCanvas(box,true);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -841,7 +847,7 @@ namespace SandRibbon.Components
                   }
                   foreach (var box in redoBoxesToAdd)
                   {
-                      AddTextBoxToCanvas(applyDefaultAttributes(box),false);                      
+                      AddTextBoxToCanvas(box,false);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -911,17 +917,25 @@ namespace SandRibbon.Components
 
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
-            //var originalBounds = new Point(contentBuffer.logicalX, contentBuffer.logicalY);
+
+            var startingImages = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => ((MeTLImage)i).Clone()).ToList();
+            var startingStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
+            var startingBoxes = _boxesAtTheStart.Select(t => t.clone()).ToList();
+
+            imagesAtStartOfTheMove.Clear();
+            strokesAtTheStart.Clear();
+            _boxesAtTheStart.Clear();
+
             var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()));
             var selectedElements = filterOnlyMine(Work.GetSelectedElements());
-            var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => ((MeTLImage)i).Clone()).ToList();
-            //Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
-            var undoStrokes = strokesAtTheStart.Where(s => s is PrivateAwareStroke).Select(stroke => (stroke as PrivateAwareStroke).Clone()).ToList();
-            // should move _boxesAtTheStart textboxes here to be cloned as well
 
-            var ink = InkSelectionMovedOrResized(filterOnlyMine(selectedStrokes), undoStrokes);
-            var images = ImageSelectionMovedOrResized(filterOnlyMine(selectedElements), startingSelectedImages);
-            var text = TextMovedOrResized(filterOnlyMine(selectedElements), _boxesAtTheStart);
+            var endingStrokes = filterOnlyMine(selectedStrokes);
+            var endingImages = filterOnlyMine(selectedElements.Where(el => el is MeTLImage), img => (img as MeTLImage).tag().author);
+            var endingTexts = filterOnlyMine(selectedElements.Where(el => el is MeTLTextBox), el => (el as MeTLTextBox).tag().author);
+
+            var ink = InkSelectionMovedOrResized(endingStrokes, startingStrokes);
+            var images = ImageSelectionMovedOrResized(endingImages, startingImages);
+            var text = TextMovedOrResized(endingTexts, startingBoxes);
 
             var thisXTrans = moveMetrics.Delta.X;
             var thisYTrans = moveMetrics.Delta.Y;
@@ -931,17 +945,24 @@ namespace SandRibbon.Components
             var thisOriginalBoundsX = moveMetrics.OriginalContentBounds.Left;
             var thisOriginalBoundsY = moveMetrics.OriginalContentBounds.Top;
 
-            var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
-            var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
-            var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
-            var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
+            var selectedStrokeIds = startingStrokes.Select(stroke => stroke.tag().id);
+            var selectedImagesIds = startingImages.Select(image => image.tag().id);
+            var selectedTextBoxes = startingBoxes.Select(textBox => textBox.tag().id);
+
+            //var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
+            var mdb = ContentBuffer.getLogicalBoundsOfContent(startingImages,startingBoxes,startingStrokes);
 
             Action undo = () =>
                 {
                     ClearAdorners();
 
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedElements.OfType<MeTLTextBox>().Select(s => s as TextBox), selectedElements.OfType<MeTLImage>().Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L,
+                        new StrokeCollection(endingStrokes.Select(s => (s as Stroke).Clone())),
+                        endingTexts.Select(et => et as TextBox), 
+                        endingImages.Select(et => et as Image));
+                       
+                        //new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedElements.OfType<MeTLTextBox>().Select(s => s as TextBox), selectedElements.OfType<MeTLImage>().Select(s => s as Image));
 
                     moveDelta.xTranslate = -thisXTrans;
                     moveDelta.yTranslate = -thisYTrans;
@@ -968,7 +989,11 @@ namespace SandRibbon.Components
                     ClearAdorners();
 
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedElements.OfType<MeTLTextBox>().Select(s => s as TextBox), selectedElements.OfType<MeTLImage>().Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L,
+                        new StrokeCollection(startingStrokes.Select(s => (s as Stroke).Clone())),
+                        startingBoxes.Select(et => et as TextBox), 
+                        startingImages.Select(et => et as Image));
+                        //new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedElements.OfType<MeTLTextBox>().Select(s => s as TextBox), selectedElements.OfType<MeTLImage>().Select(s => s as Image));
 
                     moveDelta.xTranslate = thisXTrans;
                     moveDelta.yTranslate = thisYTrans;
@@ -992,8 +1017,8 @@ namespace SandRibbon.Components
                     AddAdorners();
                     Work.Focus();
                 };
-            redo();
             UndoHistory.Queue(undo, redo, "Selection moved or resized");
+            redo();
         }
         private IEnumerable<UIElement> GetSelectedClonedImages()
         {
@@ -1093,7 +1118,17 @@ namespace SandRibbon.Components
             myElements.AddRange(myImages);
             return myElements;
         }
-
+        private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements,Func<T,string> authorExtractor)
+        {
+            return elements.Where(e => authorExtractor(e).Trim().ToLower() == Globals.me.Trim().ToLower());
+            /*var myText = elements.Where(e => e is MeTLTextBox && ((MeTLTextBox)e).tag().author == Globals.me);
+            var myImages = elements.Where(e => e is Image && ((Image)e).tag().author == Globals.me);
+            var myElements = new List<UIElement>();
+            myElements.AddRange(myText);
+            myElements.AddRange(myImages);
+            return myElements;
+             */
+        }
         private T filterOnlyMine<T>(UIElement element) where T : UIElement
         {
             UIElement filteredElement = null;
@@ -2756,12 +2791,12 @@ namespace SandRibbon.Components
         {
             return myTextBox != null && myTextBox.tag().id == targettedBox.identity;
 
-            var focusedTextBox = Keyboard.FocusedElement as MeTLTextBox;
+            /*var focusedTextBox = Keyboard.FocusedElement as MeTLTextBox;
             if (focusedTextBox != null && focusedTextBox.tag().id == targettedBox.identity)
             {
                 return true;
             }
-            return false;
+            return false;*/
         }
 
         public void ReceiveTextBox(TargettedTextBox targettedBox)

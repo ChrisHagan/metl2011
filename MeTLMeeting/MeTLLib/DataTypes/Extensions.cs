@@ -184,6 +184,8 @@ namespace MeTLLib.DataTypes
         public Color color;
         public string user;
     }
+
+
     public static class TextExtensions
     {
         //Image and TextTags are identical, reusing imagetag
