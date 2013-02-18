@@ -317,7 +317,8 @@ namespace SandRibbon.Components
             Globals.CanvasClipboardFocusChanged += CanvasClipboardFocusChanged;
 
             //For development
-            //UndoHistory.ShowVisualiser(Window.GetWindow(this));
+            if (_target == "presentationSpace" && me != Globals.PROJECTOR)
+                UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -922,31 +923,31 @@ namespace SandRibbon.Components
             var images = ImageSelectionMovedOrResized(filterOnlyMine(selectedElements), startingSelectedImages);
             var text = TextMovedOrResized(filterOnlyMine(selectedElements), _boxesAtTheStart);
 
+            var thisXTrans = moveMetrics.Delta.X;
+            var thisYTrans = moveMetrics.Delta.Y;
+            var thisXScale = moveMetrics.Scale.X;
+            var thisYScale = moveMetrics.Scale.Y;
+
+            var thisOriginalBoundsX = moveMetrics.OriginalContentBounds.Left;
+            var thisOriginalBoundsY = moveMetrics.OriginalContentBounds.Top;
+
+            var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
+            var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
+            var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
+            var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
+
             Action undo = () =>
                 {
-/*
-                    if (contentBuffer.logicalX > originalBounds.X || contentBuffer.logicalY > originalBounds.Y)
-                    {
-                        contentBuffer.logicalX = originalBounds.X;
-                        contentBuffer.logicalY = originalBounds.Y;
-                    }
- */
-                    var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
-                    var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
-                    var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
-
                     ClearAdorners();
 
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedElements.OfType<MeTLTextBox>().Select(s => s as TextBox), selectedElements.OfType<MeTLImage>().Select(s => s as Image));
-                    //moveDelta.newPrivacy = Privacy.NotSet;
 
-                    moveDelta.xTranslate = -moveMetrics.Delta.X;
-                    moveDelta.yTranslate = -moveMetrics.Delta.Y;
-                    moveDelta.xScale = 1 / moveMetrics.Scale.X;
-                    moveDelta.yScale = 1 / moveMetrics.Scale.Y;
+                    moveDelta.xTranslate = -thisXTrans;
+                    moveDelta.yTranslate = -thisYTrans;
+                    moveDelta.xScale = 1 / thisXScale;
+                    moveDelta.yScale = 1 / thisYScale;
 
-                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
 
@@ -964,29 +965,19 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-
-                    var selectedStrokeIds = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
-                    var selectedImagesIds = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
-                    var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
-
                     ClearAdorners();
 
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedElements.OfType<MeTLTextBox>().Select(s => s as TextBox), selectedElements.OfType<MeTLImage>().Select(s => s as Image));
-                    //moveDelta.newPrivacy = Privacy.NotSet;
 
-                    moveDelta.xTranslate = moveMetrics.Delta.X;
-                    moveDelta.yTranslate = moveMetrics.Delta.Y;
-                    moveDelta.xScale = moveMetrics.Scale.X;
-                    moveDelta.yScale = moveMetrics.Scale.Y;
+                    moveDelta.xTranslate = thisXTrans;
+                    moveDelta.yTranslate = thisYTrans;
+                    moveDelta.xScale = thisXScale;
+                    moveDelta.yScale = thisYScale;
 
-                    moveDelta.xOrigin = moveMetrics.OriginalContentBounds.Left;
-                    moveDelta.yOrigin = moveMetrics.OriginalContentBounds.Top;
-/*
-                    var mdb = ContentBuffer.getBoundsOfMoveDelta(moveDelta,selectedElements.OfType<MeTLImage>().ToList(),selectedElements.OfType<MeTLTextBox>().ToList(),selectedStrokes);
-                    moveDelta.xOrigin = mdb.Left;
-                    moveDelta.yOrigin = mdb.Top;
-                    */
+                    moveDelta.xOrigin = thisOriginalBoundsX;
+                    moveDelta.yOrigin = thisOriginalBoundsY;
+
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
