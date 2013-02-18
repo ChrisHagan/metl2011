@@ -317,7 +317,7 @@ namespace SandRibbon.Components
             Globals.CanvasClipboardFocusChanged += CanvasClipboardFocusChanged;
 
             //For development
-            UndoHistory.ShowVisualiser(Window.GetWindow(this));
+            //UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
