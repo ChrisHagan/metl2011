@@ -45,6 +45,7 @@ namespace SandRibbon.Utils
         }
         public static void Queue(Action undo, Action redo, String description)
         {
+            ReenableMyContent();
             foreach(var queue in new[]{undoQueue, redoQueue})
                 if(!queue.ContainsKey(currentSlide)) 
                     queue.Add(currentSlide, new Stack<HistoricalAction>());
@@ -54,7 +55,6 @@ namespace SandRibbon.Utils
             visualiser.UpdateUndoView(undoQueue[currentSlide]);
 
             RaiseQueryHistoryChanged();
-            ReenableMyContent();
         }
         private static void RaiseQueryHistoryChanged()
         {
@@ -83,6 +83,7 @@ namespace SandRibbon.Utils
         {
             if (CanUndo(param))
             {
+                ReenableMyContent();
                 var head = undoQueue[currentSlide].Pop();
                 visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 head.undo.Invoke();
@@ -90,7 +91,6 @@ namespace SandRibbon.Utils
                 visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
 
-                ReenableMyContent();
             }
         }
         private static bool CanRedo(object _param)
@@ -101,6 +101,7 @@ namespace SandRibbon.Utils
         {
             if (CanRedo(param))
             {
+                ReenableMyContent();
                 var head = redoQueue[currentSlide].Pop();
                 visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 head.redo.Invoke();
@@ -108,7 +109,6 @@ namespace SandRibbon.Utils
                 visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
 
-                ReenableMyContent();
             }
         }
 

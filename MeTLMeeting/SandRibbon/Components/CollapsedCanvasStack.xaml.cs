@@ -315,6 +315,9 @@ namespace SandRibbon.Components
             Work.StylusMove += stylusMove;
             Work.IsKeyboardFocusWithinChanged += Work_IsKeyboardFocusWithinChanged;
             Globals.CanvasClipboardFocusChanged += CanvasClipboardFocusChanged;
+
+            //For development
+            UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -1572,17 +1575,6 @@ namespace SandRibbon.Components
             privateAwareStroke.offsetY = contentBuffer.logicalY;
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(checksum);
-            var bounds = privateAwareStroke.GetBounds();
-            if(bounds.X < 0 || bounds.Y < 0)
-            {
-                contentBuffer.AddStroke(privateAwareStroke, (st) => {
-                    Work.Strokes.Add(st);
-                    RefreshCanvas();
-                });
-            }                        
-            else
-              contentBuffer.AddStroke(privateAwareStroke, (st) => Work.Strokes.Add(st)); 
-                       
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
@@ -1597,11 +1589,16 @@ namespace SandRibbon.Components
             Action undo = () =>
                 {
                     ClearAdorners();
-                    var existingStroke = Work.Strokes.Where(s => s.tag().id == thisStroke.tag().id).FirstOrDefault();
-                    if (existingStroke != null)
+                    var existingStrokes = Work.Strokes.Where(s => s is PrivateAwareStroke && s.tag().id == thisStroke.tag().id).Select(s => (s as PrivateAwareStroke).Clone());
+                    foreach (var existingStroke in existingStrokes)
                     {
-                        Work.Strokes.Remove(existingStroke);
-                        doMyStrokeRemovedExceptHistory(existingStroke);
+                        if (existingStroke != null)
+                        {
+                            contentBuffer.RemoveStroke(existingStroke, (str) => {
+                                Work.Strokes.Remove(str);
+                            });
+                            doMyStrokeRemovedExceptHistory(existingStroke);
+                        }
                     }
                 };
             Action redo = () =>
@@ -1609,7 +1606,17 @@ namespace SandRibbon.Components
                     ClearAdorners();
                     if (Work.Strokes.Where(s => s.tag().id == thisStroke.tag().id).Count() == 0)
                     {
-                        Work.Strokes.Add(thisStroke);
+                        var bounds = thisStroke.GetBounds();
+                        if (bounds.X < 0 || bounds.Y < 0)
+                        {
+                            contentBuffer.AddStroke(thisStroke, (st) =>
+                            {
+                                Work.Strokes.Add(st);
+                                RefreshCanvas();
+                            });
+                        }
+                        else
+                            contentBuffer.AddStroke(thisStroke, (st) => Work.Strokes.Add(st)); 
                         doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
                     }
                     if (Work.EditingMode == InkCanvasEditingMode.Select)
