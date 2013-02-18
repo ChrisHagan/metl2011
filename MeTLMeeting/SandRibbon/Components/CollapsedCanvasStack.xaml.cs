@@ -814,20 +814,19 @@ namespace SandRibbon.Components
         private UndoHistory.HistoricalAction TextMovedOrResized(IEnumerable<UIElement> elements, List<MeTLTextBox> boxesAtTheStart)
         {
             Trace.TraceInformation("MovedTextbox");
-            var startingText = boxesAtTheStart.Where(b => b is MeTLTextBox).Select(b => ((MeTLTextBox)b).clone()).ToList();
-            List<UIElement> selectedElements = elements.Where(b => b is MeTLTextBox).ToList();
+            var undoBoxesToAdd = boxesAtTheStart.Select(t => t.clone());
+            var redoBoxesToAdd = elements.OfType<MeTLTextBox>().Select(b => b.clone());
+            var undoBoxesToRemove = elements.OfType<MeTLTextBox>().Select(b => b.clone());
+            var redoBoxesToRemove = boxesAtTheStart.Select(t => t.clone());
             Action undo = () =>
               {
                   ClearAdorners();
-                  var mySelectedElements = selectedElements.Select(element => ((MeTLTextBox)element).clone());
-                  foreach (MeTLTextBox box in mySelectedElements)
+                  foreach (MeTLTextBox box in undoBoxesToRemove)
                   {
                       contentBuffer.RemoveTextBox(box, (txt) => Work.Children.Remove(txt));
                   }
-                  var selection = new List<UIElement>();
-                  foreach (var box in startingText)
+                  foreach (var box in undoBoxesToAdd)
                   {
-                      selection.Add(box);
                       AddTextBoxToCanvas(applyDefaultAttributes(box),true);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
@@ -835,15 +834,12 @@ namespace SandRibbon.Components
             Action redo = () =>
               {
                   ClearAdorners();
-                  var mySelectedElements = selectedElements.Select(element => ((MeTLTextBox)element).clone());
-                  var selection = new List<UIElement>();
-                  foreach (var box in startingText)
+                  foreach (var box in redoBoxesToRemove)
                   {
                       contentBuffer.RemoveTextBox(box, (txt) => Work.Children.Remove(txt));
                   }
-                  foreach (var box in mySelectedElements)
+                  foreach (var box in redoBoxesToAdd)
                   {
-                      selection.Add(box);
                       AddTextBoxToCanvas(applyDefaultAttributes(box),false);                      
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
