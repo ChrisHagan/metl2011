@@ -453,7 +453,7 @@ namespace SandRibbon.Components
                        {
                            contentBuffer.AddImage(element, (child) => Work.Children.Add(child));
                        }
-                       sendThisElement(element);
+                       sendImage(element);
                    }
                    Work.Select(selectedElements.Select(i => (UIElement)i));
                };
@@ -1696,31 +1696,15 @@ namespace SandRibbon.Components
         #endregion
         #region Images
 
-        private void sendThisElement(UIElement element)
+        private void sendImage(MeTLImage newImage)
         {
-            switch (element.GetType().ToString())
-            {
-                case "System.Windows.Controls.Image":
-                    var newImage = (MeTLImage)element;
-                    newImage.UpdateLayout();
-
-                    Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().timestamp));
-                    break;
-
-            }
+            newImage.UpdateLayout();
+            Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().timestamp));
         }
-        private void dirtyThisElement(UIElement element)
+        private void dirtyImage(MeTLImage imageToDirty)
         {
-            switch (element.GetType().ToString())
-            {
-                case "System.Windows.Controls.Image":
-                    var image = (Image)element;
-                    var dirtyElement = new TargettedDirtyElement(Globals.slide, Globals.me, _target, image.tag().privacy, image.tag().id, image.tag().timestamp);
-                    image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy);
-                    Commands.SendDirtyImage.Execute(dirtyElement);
-                    break;
-            }
-
+            imageToDirty.ApplyPrivacyStyling(contentBuffer, _target, imageToDirty.tag().privacy);
+            Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, imageToDirty.tag().privacy, imageToDirty.tag().id, imageToDirty.tag().timestamp));
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
@@ -2112,38 +2096,28 @@ namespace SandRibbon.Components
                 InkCanvas.SetLeft(image, imagePos.X);
                 InkCanvas.SetTop(image, imagePos.Y);
                 image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
-                var myImage = image.Clone();
                 var currentSlide = Globals.slide;
+                var translatedImage = OffsetNegativeCartesianImageTranslate(image);
+
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      contentBuffer.RemoveImage(myImage, (img) => Work.Children.Remove(myImage));
-                                      /*if (Work.ImageChildren().Any(i => ((Image)i).tag().id == myImage.tag().id))
-                                      {
-                                          var imageToRemove = Work.ImageChildren().First(i => ((Image) (i)).tag().id == myImage.tag().id);
-                                          Work.Children.Remove(imageToRemove);
-                                      }*/
-                                      dirtyThisElement(myImage);
+                                      contentBuffer.RemoveImage(translatedImage, (img) => Work.Children.Remove(img));
+                                      dirtyImage(translatedImage);
                                   };
                 Action redo = () =>
                 {
-                    var translatedImage = OffsetNegativeCartesianImageTranslate(myImage);
-                    
+                    ClearAdorners();
                     if (!fileName.StartsWith("http"))
                         MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
                     else
-                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, currentPrivacy, translatedImage.tag().id, translatedImage, translatedImage.tag().timestamp));
-                    ClearAdorners();
-                    
-                    //NegativeCartesianImageTranslate(translatedImage);
-                    
+                        sendImage(translatedImage);
+
                     contentBuffer.AddImage(translatedImage, (img) =>
                     {
                         if (!Work.Children.Contains(img))
                             Work.Children.Add(img);
                     });
-                    //sendThisElement(myImage);
-
                     Work.Select(new[] { translatedImage });
                     AddAdorners();
                 };
@@ -2944,7 +2918,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteUndo(List<MeTLImage> selectedImages)
         {
             foreach (var image in selectedImages)
-                dirtyThisElement(image);
+                dirtyImage(image);
         }
         private MeTLTextBox setWidthOf(MeTLTextBox box)
         {
@@ -3112,7 +3086,7 @@ namespace SandRibbon.Components
             {
                 if (!Work.ImageChildren().Contains(element))
                     Work.Children.Add(element);
-                sendThisElement(element);
+                sendImage(element);
                 selection.Add(element);
             }
             Work.Select(selection);
