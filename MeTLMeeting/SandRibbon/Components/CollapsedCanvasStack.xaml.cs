@@ -2589,7 +2589,7 @@ namespace SandRibbon.Components
 
             //Dirty the text box if its privacy does not match the canvas aligned privacy
             if (box.tag().privacy != currentPrivacy)
-                dirtyTextBoxWithoutHistory(box);
+                dirtyTextBoxWithoutHistory(box,false);
             var oldTextTag = box.tag();
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id, oldTextTag.timestamp);
             box.tag(newTextTag);
@@ -2613,15 +2613,16 @@ namespace SandRibbon.Components
                 Commands.SneakOutOf.Execute(privateRoom);*/
         }
 
-        private void dirtyTextBoxWithoutHistory(MeTLTextBox box)
+        private void dirtyTextBoxWithoutHistory(MeTLTextBox box,bool removeLocal = true)
         {
-            dirtyTextBoxWithoutHistory(box, Globals.slide);
+            dirtyTextBoxWithoutHistory(box, Globals.slide,removeLocal);
         }
 
-        private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide)
+        private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide,bool removeLocal = true)
         {
             box.RemovePrivacyStyling(contentBuffer);
-            RemoveTextBoxWithMatchingId(box.tag().id);
+            if (removeLocal)
+                RemoveTextBoxWithMatchingId(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id, box.tag().timestamp));
         }
 
@@ -2766,6 +2767,8 @@ namespace SandRibbon.Components
 
         private bool TargettedTextBoxIsFocused(TargettedTextBox targettedBox)
         {
+            return myTextBox != null && myTextBox.tag().id == targettedBox.identity;
+
             var focusedTextBox = Keyboard.FocusedElement as MeTLTextBox;
             if (focusedTextBox != null && focusedTextBox.tag().id == targettedBox.identity)
             {
@@ -2786,7 +2789,7 @@ namespace SandRibbon.Components
                 DoText(targettedBox);
                 return;
             }*///I never want my live text to collide with me.
-            if (targettedBox.slide == Globals.slide && (targettedBox.HasSamePrivacy(Privacy.Private) || me == Globals.PROJECTOR))
+            if (targettedBox.slide == Globals.slide && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == Globals.PROJECTOR))
                 RemoveTextBoxWithMatchingId(targettedBox.identity);
             if (targettedBox.slide == Globals.slide && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != Globals.PROJECTOR)))
                 DoText(targettedBox);
