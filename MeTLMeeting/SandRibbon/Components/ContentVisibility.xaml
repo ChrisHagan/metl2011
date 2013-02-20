@@ -23,7 +23,7 @@
                 <Binding ElementName="contentVisibility" Path="MyPrivateVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
             </CheckBox.IsChecked>
         </CheckBox>
-        <CheckBox x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner's" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
+        <CheckBox x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner's" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
             <CheckBox.IsChecked>
                 <Binding ElementName="contentVisibility" Path="OwnerVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
             </CheckBox.IsChecked>
