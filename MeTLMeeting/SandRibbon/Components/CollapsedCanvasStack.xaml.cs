@@ -1758,7 +1758,9 @@ namespace SandRibbon.Components
             //NegativeCartesianImageTranslate(image);
             contentBuffer.AddImage(image, (img) =>
             {
-                var zIndex = (img as Image).tag().isBackground ? -5 : 2;
+                var imageToAdd = img as MeTLImage;
+                var zIndex = imageToAdd.tag().isBackground ? -5 : 2;
+
                 Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });

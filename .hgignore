@@ -6,6 +6,9 @@ syntax: glob
 #backup files
 *~
 
+# remote debugging configuration
+*.idc
+
 #swap files
 .*.swp
 
