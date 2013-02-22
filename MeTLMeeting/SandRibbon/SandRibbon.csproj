@@ -73,7 +73,7 @@
     <!-- Configuration specific settings -->
     <ProductName>MeTL Staging</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
-    <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
+    <UpdateUrl>http://adm-web25-v02.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -89,7 +89,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL</ProductName>
-    <InstallUrl>http://adm-web25-v02.adm.monash.edu.au/MeTL2011/</InstallUrl>
+    <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
     <UpdateUrl>http://adm-web25-v02.adm.monash.edu.au/MeTL2011/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
   </PropertyGroup>
