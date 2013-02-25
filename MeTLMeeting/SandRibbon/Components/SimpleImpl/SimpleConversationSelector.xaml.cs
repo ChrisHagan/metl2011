@@ -50,7 +50,10 @@ namespace SandRibbon.Components
             if (ConversationDetails.Empty.Equals(details)) return;
             if (recentConversations.Where(c => c.IsJidEqual(details.Jid)).Count() == 0) return;
             if (details.isDeleted)
+            {
                 recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
+                RecentConversationProvider.removeRecentConversation(details.Jid);
+            }
             else
                 recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
             conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);

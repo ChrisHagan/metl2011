@@ -41,6 +41,23 @@ namespace SandRibbon.Providers
             }
             return new List<ConversationDetails>();
         }
+
+        public static void removeRecentConversation(string jid)
+        {
+            try
+            {
+                if (!File.Exists(RECENT_DOCUMENTS) || String.IsNullOrEmpty(jid))
+                    return;
+
+                var recentDocs = XDocument.Load(RECENT_DOCUMENTS);
+                recentDocs.Descendants("conversation").Where(c => c.Attribute("jid").Value == jid).Remove();
+                recentDocs.Save(RECENT_DOCUMENTS);
+            }
+            catch (IOException)
+            {
+            }
+        }
+
         public static void addRecentConversation(ConversationDetails document, String me)
         {
             try
