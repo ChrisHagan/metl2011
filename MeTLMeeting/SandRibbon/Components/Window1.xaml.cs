@@ -727,7 +727,7 @@ namespace SandRibbon
             if (Globals.conversationDetails != null && mustBeInConversation(null))
             {
                 #if DEBUG
-                    Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), SandRibbon.Properties.HgID.Version); 
+                    Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
                 #else
                     Title = messageFor(Globals.conversationDetails);
                 #endif 

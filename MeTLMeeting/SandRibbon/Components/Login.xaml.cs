@@ -67,7 +67,7 @@ namespace SandRibbon.Components
             RetrieveReleaseNotes();
             Commands.AddWindowEffect.ExecuteAsync(null);
 #if DEBUG
-            Version = String.Format("{0} Build: {1}", ConfigurationProvider.instance.getMetlVersion(), SandRibbon.Properties.HgID.Version); 
+            Version = String.Format("{0} Build: {1}", ConfigurationProvider.instance.getMetlVersion(), "not merc"); //SandRibbon.Properties.HgID.Version); 
 #else
             Version = ConfigurationProvider.instance.getMetlVersion();
 #endif
