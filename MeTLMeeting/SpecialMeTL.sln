@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLib", "MeTLLib\MeTLLib.csproj", "{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTester", "LibTester\LibTester.csproj", "{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLibTests", "MeTLLibTests\MeTLLibTests.csproj", "{FE0598CD-05CE-4EE9-9F93-D2260F504071}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartboardController", "SmartboardController\SmartboardController.csproj", "{BB7E9E3D-B005-4F2B-9BA9-BC7B5EE0D7BD}"
@@ -105,18 +103,6 @@ Global
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Release|Win32.ActiveCfg = Release|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Release|x86.ActiveCfg = Release|Any CPU
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Debug|Win32.ActiveCfg = Debug|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Debug|x86.ActiveCfg = Debug|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Debug|x86.Build.0 = Debug|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Release|Any CPU.ActiveCfg = Release|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Release|Mixed Platforms.Build.0 = Release|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Release|Win32.ActiveCfg = Release|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Release|x86.ActiveCfg = Release|x86
-		{F17FD0F8-DE0A-496B-8D71-2B5B15AFF3BE}.Release|x86.Build.0 = Release|x86
 		{FE0598CD-05CE-4EE9-9F93-D2260F504071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE0598CD-05CE-4EE9-9F93-D2260F504071}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE0598CD-05CE-4EE9-9F93-D2260F504071}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
