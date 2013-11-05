@@ -59,7 +59,9 @@ namespace MeTLLib.Providers
         {
             var token = new AuthToken(AuthcateName);
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = insecureGetString(new Uri(String.Format("https://{2}:1188/authentication.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host),UriKind.RelativeOrAbsolute));
+            Console.WriteLine("AuthorisationProvider::login: {0}, {1}", server.host, server.port);
+            var sUri = String.Format("https://{2}:{3}/{4}?username={0}&password={1}", AuthcateName, encryptedPassword, server.host, server.port, server.authenticationEndpoint);
+            string sXML = insecureGetString(new Uri(sUri, UriKind.RelativeOrAbsolute));
             var doc = new XmlDocument();
             if (String.IsNullOrEmpty(sXML))
             {

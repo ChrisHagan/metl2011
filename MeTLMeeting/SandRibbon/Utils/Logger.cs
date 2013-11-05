@@ -18,14 +18,14 @@ namespace SandRibbon.Utils
 
         readonly object lockObj = new object();
         Thread[] workers;
-        WebClient server; 
+        WebClient server;
         Queue<LogMessage> logMessages = new Queue<LogMessage>();
 
         public LogQueue(string loggingServer, int workerCount)
         {
             LoggingServer = new Uri(loggingServer);
             LoggingServerString = loggingServer;
-            
+
             server = new WebClient();
             workers = new Thread[workerCount];
 
@@ -58,7 +58,7 @@ namespace SandRibbon.Utils
         {
             lock (lockObj)
             {
-                logMessages.Enqueue(log);   
+                logMessages.Enqueue(log);
                 Monitor.Pulse(lockObj);     // pulsing because we're changing a blocking condition
             }
         }
@@ -93,7 +93,7 @@ namespace SandRibbon.Utils
         }
     }
 
-    class LogMessage 
+    class LogMessage
     {
         public string content;
         public string user;

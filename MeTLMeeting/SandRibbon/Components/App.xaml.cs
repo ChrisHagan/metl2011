@@ -71,6 +71,7 @@ namespace SandRibbon
                         case "staging":
                             isStaging = true;
                             break;
+
                     }
                 }
             }
@@ -79,7 +80,7 @@ namespace SandRibbon
             try
             {
                 App.mark("start network controller and log in");
-                if(controller != null)
+                if (controller != null)
                     controller.Deregister();
                 controller = new NetworkController();
                 if (!MeTLLib.ClientFactory.Connection().Connect(finalUsername, password))
@@ -107,7 +108,8 @@ namespace SandRibbon
             Trace.TraceInformation(s);
             return s;
         }
-        public static void mark(string msg) {
+        public static void mark(string msg)
+        {
             //Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
             //MessageBox.Show(String.Format("{0} : {1}", msg, DateTime.Now - AccidentallyClosing));
         }
@@ -146,7 +148,6 @@ namespace SandRibbon
 #endif
             MeTLConfiguration.Load();
 
-            Logger.Instantiate(MeTLConfiguration.Config.Logging.Host);
             //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
             // JJ: Disabled logging for the MeTL Resiliency Project
             //Trace.Listeners.Add(new CouchTraceListener());

@@ -41,10 +41,9 @@ namespace MeTLLib.Providers.Structure
         {
             resourceUploader = uploader;
         }
-        private readonly int HTTP_PORT = 1188;
         private string ROOT_ADDRESS
         {
-            get { return string.Format("https://{0}:{1}", server.host, HTTP_PORT); }
+            get { return string.Format("https://{0}:{1}", server.host, server.port); }
         }
         private readonly string STRUCTURE = "Structure";
         private readonly string UPLOAD = "upload_nested.yaws";
@@ -70,6 +69,7 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
+                Console.WriteLine("Details of: {0}", url);
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
             catch (UriFormatException e)
@@ -168,6 +168,7 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
+                Console.WriteLine("ConversationsFor: {0}", uri);
                 var data = secureGetBytesAsString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
                 var deletedConversationJids = results.Where(c => c.isDeleted).Select(c => c.Jid);

@@ -62,9 +62,9 @@ namespace SandRibbon.Providers
             if (cache.ContainsKey(slideId) && cache[slideId].created > DateTime.Now.Ticks - acceptableStaleTime) {
                 paintThumb(image);
             } else {
-                var host = ClientFactory.Connection().server.Name;
-                var url = string.Format(MeTLConfiguration.Config.Thumbnail.Host + "{0}/{1}",host,internalSlideId);
-                //var url = string.Format(MeTLConfiguration.Config.Thumbnail.Host + "{0}&slide={1}&width={2}&height={3}", host, internalSlideId, 320, 240);
+                var server = ClientFactory.Connection().server;
+                var host = server.Name;
+                var url = string.Format(server.thumbnail + "{0}/{1}",host,internalSlideId);
                 Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));
                 WebThreadPool.QueueUserWorkItem(delegate
                 {

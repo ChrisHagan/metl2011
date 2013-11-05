@@ -30,7 +30,7 @@ namespace MeTLLib
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
         public Uri externalUri { get; set; }
-        public enum serverMode { PRODUCTION, STAGING, EXTERNAL};
+        public enum serverMode { PRODUCTION, STAGING, EXTERNAL };
         private serverMode mode;
         public void setMode(serverMode mode)
         {
@@ -55,6 +55,13 @@ namespace MeTLLib
         }
         public Uri secureUri { get { return new Uri("https://" + host); } }
         public string host { get { return uri.Host; } }
+        public String port
+        {
+            get;
+            set;
+        }
+        public String authenticationEndpoint { get; set; }
+        public String thumbnail { get; set; }
         public string xmppServiceName { get; set; }
         public string muc
         {
@@ -183,22 +190,22 @@ namespace MeTLLib
         #region connection
         public void LeaveLocation()
         {
-            LeaveConversation(location.activeConversation);    
+            LeaveConversation(location.activeConversation);
             wire.location = Location.Empty;
         }
 
         public void LoadQuiz(int conversationJid, long quizId)
         {
-            tryIfConnected( ()=> wire.LoadQuiz(conversationJid, quizId) );
+            tryIfConnected(() => wire.LoadQuiz(conversationJid, quizId));
         }
 
         public void LoadQuizzes(string conversationJid)
         {
-            tryIfConnected( ()=> wire.LoadQuizzes(conversationJid) );
+            tryIfConnected(() => wire.LoadQuizzes(conversationJid));
         }
         public void LoadAttachments(string conversationJid)
         {
-            tryIfConnected( ()=> wire.LoadAttachments(conversationJid) );
+            tryIfConnected(() => wire.LoadAttachments(conversationJid));
         }
         public void AskForTeachersStatus(string teacher, string jid)
         {
@@ -214,14 +221,15 @@ namespace MeTLLib
                 wire = jabberWireFactory.wire();
                 return true;
             }
-            else {
-                events.statusChanged(false,credentials);
+            else
+            {
+                events.statusChanged(false, credentials);
                 return false;
             }
         }
         public bool Disconnect()
         {
-            if (wire != null) 
+            if (wire != null)
                 wire.Logout();
             return true;
         }
@@ -300,8 +308,10 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void SendStanza(string where, Element stanza) {
-            tryIfConnected(delegate {
+        public void SendStanza(string where, Element stanza)
+        {
+            tryIfConnected(delegate
+            {
                 wire.SendStanza(where, stanza);
             });
         }
@@ -317,7 +327,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}",e.Message);
+                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
                     UploadAndSendSubmission(lii);
                 }
             };
@@ -379,7 +389,8 @@ namespace MeTLLib
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
                     Image newImage = lii.image;
-                    newImage.Dispatcher.adopt(() => {
+                    newImage.Dispatcher.adopt(() =>
+                    {
                         newImage.tag(lii.image.tag());
                         newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
                         wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, lii.image.tag().timestamp));
@@ -387,7 +398,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendImage: {0}",e.Message);
+                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendImage: {0}", e.Message);
                     // rethrow the exeception so the action will be requeued
                     throw e;
                 }
@@ -413,7 +424,7 @@ namespace MeTLLib
             tryIfConnected(work);
             return returnValue;
         }
-        
+
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
             System.Uri returnValue = server.uri;
@@ -469,7 +480,7 @@ namespace MeTLLib
                 var cd = conversationDetailsProvider.DetailsOf(conversation);
                 location.activeConversation = cd.Jid;
                 location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                if(location.availableSlides.Count > 0)
+                if (location.availableSlides.Count > 0)
                     location.currentSlide = location.availableSlides[0];
                 else
                 {
@@ -530,7 +541,8 @@ namespace MeTLLib
         }
         public void UpdateSlideCollection(Int32 conversationJid)
         {
-            tryIfConnected(() => {
+            tryIfConnected(() =>
+            {
                 wire.sendSlideCollectionUpdatedCommand(conversationJid);
             });
         }
@@ -546,13 +558,13 @@ namespace MeTLLib
         }
         public ConversationDetails CreateConversation(ConversationDetails details)
         {
-            return tryUntilConnected<ConversationDetails>(()=>
+            return tryUntilConnected<ConversationDetails>(() =>
                 conversationDetailsProvider.Create(details));
         }
         public ConversationDetails DeleteConversation(ConversationDetails details)
         {
             if (details != null)
-            { 
+            {
                 details.Subject = "Deleted";
                 return UpdateConversationDetails(details);
             }
@@ -561,22 +573,23 @@ namespace MeTLLib
         }
         public ConversationDetails AppendSlide(string Jid)
         {
-            return tryUntilConnected<ConversationDetails>(() => 
+            return tryUntilConnected<ConversationDetails>(() =>
                 conversationDetailsProvider.AppendSlide(Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
-            return tryUntilConnected<ConversationDetails>(() => 
-                conversationDetailsProvider.AppendSlideAfter(slide,Jid));
+            return tryUntilConnected<ConversationDetails>(() =>
+                conversationDetailsProvider.AppendSlideAfter(slide, Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
-            return tryUntilConnected<ConversationDetails>(() => 
-                conversationDetailsProvider.AppendSlideAfter(slide,Jid,type));
+            return tryUntilConnected<ConversationDetails>(() =>
+                conversationDetailsProvider.AppendSlideAfter(slide, Jid, type));
         }
         #endregion
         #region UserCommands
-        public List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames){
+        public List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames)
+        {
             return userInformationProvider.lookupUsers(usernames);
         }
         #endregion
@@ -594,7 +607,8 @@ namespace MeTLLib
             {
                 action();
             }
-            catch (WebException) {
+            catch (WebException)
+            {
                 requeue(action);
             }
             catch (Exception e)
@@ -602,7 +616,8 @@ namespace MeTLLib
                 throw e;
             }
         }
-        private T tryUntilConnected<T>(Func<T> function) {
+        private T tryUntilConnected<T>(Func<T> function)
+        {
             var wait = new ManualResetEvent(false);
             T result = default(T);
             bool complete = false;
@@ -622,7 +637,7 @@ namespace MeTLLib
             }
 
             //TODO: Find out who would release this WaitHandle. If function causes an exception, wait is set in the catch block but complete is still false.
-                if(!complete)
+            if (!complete)
                 wait.WaitOne();
             return result;
         }

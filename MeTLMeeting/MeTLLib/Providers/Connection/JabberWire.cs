@@ -1115,7 +1115,6 @@ namespace MeTLLib.Providers.Connection
                     var sourceValue = imageTag.GetTag("source");
                     if(System.Uri.IsWellFormedUriString(sourceValue,System.UriKind.Absolute)) {
                         System.Uri sourceUri = new System.Uri(sourceValue);
-                        //sourceValue = sourceValue.Replace("https://madam.adm.monash.edu.au:1188/", "/");                    
                         sourceValue = sourceUri.AbsolutePath;
                         imageTag.SetTag("source", sourceValue);
                     }

@@ -1255,7 +1255,7 @@ namespace MeTLLib.DataTypes
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? (Privacy)GetTagEnum(privacyTag, typeof(Privacy)) : Privacy.Public;
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = "https://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
                     return file;
@@ -1588,7 +1588,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = "https://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
 
@@ -1781,7 +1781,7 @@ namespace MeTLLib.DataTypes
                 string url = HasTag(URL) ? GetTag(URL) : "none";
                 if (url.ToLower() != "none")
                 {
-                    url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
+                    url = "https://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
                 }
                 return url;
             }
@@ -1959,7 +1959,7 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.Image forceEvaluation()
             {
-                var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
+                var sourceString = string.Format("https://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
                 System.Windows.Controls.Image image = new System.Windows.Controls.Image
                     {
@@ -2021,7 +2021,7 @@ namespace MeTLLib.DataTypes
                 {
                     var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
                     var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                    var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
+                    var path = string.Format("https://{0}:{1}{2}", server.host, server.port, stemmedRelativePath);
                     var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);

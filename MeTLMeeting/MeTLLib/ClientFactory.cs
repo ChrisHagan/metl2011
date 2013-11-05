@@ -22,6 +22,7 @@ namespace MeTLLib
         public static ClientConnection Connection(MeTLServerAddress.serverMode serverMode, MeTLGenericAddress searchAddress)
         {
             kernel.Get<MeTLServerAddress>().setMode(serverMode);
+            Console.WriteLine("ClientFactory::Connection {0}", serverMode);
 
             kernel.Unbind<MeTLGenericAddress>();
             kernel.Bind<MeTLGenericAddress>().To(searchAddress.GetType()).InSingletonScope();

@@ -7,18 +7,22 @@
     public static class MeTLConfiguration
     {
         private static MeTLConfigurationSection conf = null;
-        public static MeTLConfigurationSection Config 
-        { 
+        public static MeTLConfigurationSection Config
+        {
             get
             {
                 if (conf == null)
+                {
                     throw new InvalidOperationException("MeTLConfiguration.Load must be called before using Config");
+                }
                 else
+                {
                     return conf;
+                }
             }
             private set
             {
-                conf = value; 
+                conf = value;
             }
         }
 
@@ -35,7 +39,7 @@
         }
     }
 
-    public class MeTLConfigurationSection : ConfigurationSection 
+    public class MeTLConfigurationSection : ConfigurationSection
     {
         public MeTLServerAddress.serverMode ActiveStackEnum
         {
@@ -69,7 +73,7 @@
                 this["activeStackConfig"] = value;
             }
         }
-    
+
         [ConfigurationProperty("production")]
         public StackServerElement Production
         {
@@ -109,31 +113,7 @@
             }
         }
 
-        [ConfigurationProperty("logging")]
-        public ServerElement Logging
-        {
-            get
-            {
-                return (ServerElement)this["logging"];
-            }
-            set
-            {
-                this["logging"] = value; 
-            }
-        }
 
-        [ConfigurationProperty("thumbnail")]
-        public ServerElement Thumbnail
-        {
-            get
-            {
-                return (ServerElement)this["thumbnail"];
-            }
-            set
-            {
-                this["thumbnail"] = value; 
-            }
-        }
 
         [ConfigurationProperty("resourceCredential")]
         public CredentialElement ResourceCredential
@@ -177,7 +157,7 @@
 
     public class StackServerElement : ConfigurationElement
     {
-        [ConfigurationProperty("name", IsRequired=false)]
+        [ConfigurationProperty("name", IsRequired = false)]
         public String Name
         {
             get
@@ -190,7 +170,7 @@
             }
         }
 
-        [ConfigurationProperty("isBootstrapUrl", IsRequired=true)]
+        [ConfigurationProperty("isBootstrapUrl", IsRequired = true)]
         public Boolean IsBootstrapUrl
         {
             get
@@ -203,7 +183,7 @@
             }
         }
 
-        [ConfigurationProperty("meggleUrl", IsRequired=true)]
+        [ConfigurationProperty("meggleUrl", IsRequired = true)]
         public String MeggleUrl
         {
             get
@@ -215,8 +195,19 @@
                 this["meggleUrl"] = value;
             }
         }
-
-        [ConfigurationProperty("host", IsRequired=true)]
+        [ConfigurationProperty("thumbnail")]
+        public String Thumbnail
+        {
+            get
+            {
+                return (String)this["thumbnail"];
+            }
+            set
+            {
+                this["thumbnail"] = value;
+            }
+        }
+        [ConfigurationProperty("host", IsRequired = true)]
         public String Host
         {
             get
@@ -229,7 +220,20 @@
             }
         }
 
-        [ConfigurationProperty("xmppServiceName", IsRequired=true)]
+        [ConfigurationProperty("port", IsRequired = true)]
+        public String Port
+        {
+            get
+            {
+                return (String)this["port"];
+            }
+            set
+            {
+                this["port"] = value;
+            }
+        }
+
+        [ConfigurationProperty("xmppServiceName", IsRequired = true)]
         public String xmppServiceName
         {
             get
@@ -241,11 +245,24 @@
                 this["xmppServiceName"] = value;
             }
         }
+
+        [ConfigurationProperty("authenticationEndpoint", IsRequired = true)]
+        public string AuthenticationEndpoint
+        {
+            get
+            {
+                return (String)this["authenticationEndpoint"];
+            }
+            set
+            {
+                this["authenticationEndpoint"] = value;
+            }
+        }
     }
 
     public class ServerElement : ConfigurationElement
     {
-        [ConfigurationProperty("host", IsRequired=true)]
+        [ConfigurationProperty("host", IsRequired = true)]
         public String Host
         {
             get
@@ -261,7 +278,7 @@
 
     public class CredentialElement : ConfigurationElement
     {
-        [ConfigurationProperty("username", IsRequired=true)]
+        [ConfigurationProperty("username", IsRequired = true)]
         public String Username
         {
             get
@@ -274,7 +291,7 @@
             }
         }
 
-        [ConfigurationProperty("password", IsRequired=true)]
+        [ConfigurationProperty("password", IsRequired = true)]
         public String Password
         {
             get
@@ -290,14 +307,14 @@
 
     public class ActiveStackElement : ConfigurationElement
     {
-       [ConfigurationProperty("name", IsRequired=true)]
+        [ConfigurationProperty("name", IsRequired = true)]
         public String Name
         {
             get
             {
                 return (String)this["name"];
             }
-           set
+            set
             {
                 this["name"] = value;
             }
@@ -306,7 +323,7 @@
 
     public class CryptoElement : ConfigurationElement
     {
-        [ConfigurationProperty("key", IsRequired=true)]
+        [ConfigurationProperty("key", IsRequired = true)]
         public String Key
         {
             get
@@ -319,7 +336,7 @@
             }
         }
 
-        [ConfigurationProperty("iv", IsRequired=true)]
+        [ConfigurationProperty("iv", IsRequired = true)]
         public String IV
         {
             get

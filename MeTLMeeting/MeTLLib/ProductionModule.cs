@@ -45,11 +45,16 @@ namespace MeTLLib
         {
             var conf = MeTLConfiguration.Config;
 
+            authenticationEndpoint = conf.Production.AuthenticationEndpoint;
+            thumbnail = conf.Production.Thumbnail;
+            port = conf.Production.Port;
             Name = conf.Production.Name;
             productionUri = LoadServerAddress(conf.Production.IsBootstrapUrl, conf.Production.Host);
             stagingUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
             externalUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
             xmppServiceName = conf.Production.xmppServiceName;
+
+            Console.WriteLine("Setting Production server address: {0}, {1}", productionUri, xmppServiceName);
         }
     }
 
