@@ -21,6 +21,7 @@ namespace MeTLLib
         {
             var conf = MeTLConfiguration.Config;
 
+            uploadEndpoint = conf.Production.UploadEndpoint;
             authenticationEndpoint = conf.Production.AuthenticationEndpoint;
             thumbnail = conf.Production.Thumbnail;
             port = conf.Production.Port;
@@ -41,6 +42,7 @@ namespace MeTLLib
         {
             var conf = MeTLConfiguration.Config;
 
+            uploadEndpoint = conf.Staging.UploadEndpoint;
             authenticationEndpoint = conf.Staging.AuthenticationEndpoint;
             thumbnail = conf.Staging.Thumbnail;
             port = conf.Staging.Port;
@@ -61,6 +63,7 @@ namespace MeTLLib
         {
             var conf = MeTLConfiguration.Config;
 
+            uploadEndpoint = conf.External.UploadEndpoint;
             authenticationEndpoint = conf.External.AuthenticationEndpoint;
             thumbnail = conf.External.Thumbnail;
             port = conf.External.Port;
@@ -69,7 +72,7 @@ namespace MeTLLib
             productionUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
             stagingUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
             externalUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
-            xmppServiceName = conf.Staging.xmppServiceName;
+            xmppServiceName = conf.External.xmppServiceName;
 
             Console.WriteLine("Setting External server address: {0}, {1}", externalUri, xmppServiceName);
         }

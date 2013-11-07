@@ -258,7 +258,18 @@
                 this["xmppServiceName"] = value;
             }
         }
-
+        [ConfigurationProperty("uploadEndpoint", IsRequired = true)]
+        public string UploadEndpoint
+        {
+            get
+            {
+                return (String)this["uploadEndpoint"];
+            }
+            set
+            {
+                this["uploadEndpoint"] = value;
+            }
+        }
         [ConfigurationProperty("authenticationEndpoint", IsRequired = true)]
         public string AuthenticationEndpoint
         {

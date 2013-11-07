@@ -96,6 +96,7 @@ namespace MeTLLib
             get;
             set;
         }
+        public String uploadEndpoint { get; set; }
         public String authenticationEndpoint { get; set; }
         public String thumbnail { get; set; }
         public string xmppServiceName { get; set; }
