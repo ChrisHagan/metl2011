@@ -86,7 +86,7 @@ namespace SandRibbon.Components
             {
                 case MeTLServerAddress.serverMode.EXTERNAL:
                     {
-                        result = MeTLLib.ClientFactory.Connection(new ExternalServerAddress(), new ExternalSearchAddress());
+                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.EXTERNAL, new ExternalSearchAddress());
                     }
                     break;
                 case MeTLServerAddress.serverMode.STAGING:

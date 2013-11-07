@@ -60,7 +60,7 @@ namespace MeTLLib.Providers
             var token = new AuthToken(AuthcateName);
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
             Console.WriteLine("AuthorisationProvider::login: {0}, {1}", server.host, server.port);
-            var sUri = String.Format("https://{2}:{3}/{4}?username={0}&password={1}", AuthcateName, encryptedPassword, server.host, server.port, server.authenticationEndpoint);
+            var sUri = String.Format("{5}://{2}:{3}/{4}?username={0}&password={1}", AuthcateName, encryptedPassword, server.host, server.port, server.authenticationEndpoint,server.protocol);
             string sXML = insecureGetString(new Uri(sUri, UriKind.RelativeOrAbsolute));
             var doc = new XmlDocument();
             if (String.IsNullOrEmpty(sXML))

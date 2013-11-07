@@ -10,37 +10,13 @@ using System.Xml.Linq;
 
 namespace MeTLLib
 {
-    public class TriedToStartMeTLWithNoInternetException : Exception {
-        public TriedToStartMeTLWithNoInternetException(Exception inner) : base("Couldn't connect to MeTL servers", inner) {}
+    public class TriedToStartMeTLWithNoInternetException : Exception
+    {
+        public TriedToStartMeTLWithNoInternetException(Exception inner) : base("Couldn't connect to MeTL servers", inner) { }
     }
 
     public class ProductionServerAddress : MeTLServerAddress
     {
-        private Uri BootstrapUrl(string bootstrapUrl)
-        {
-            try
-            {
-                //This is pre-dependency injection.  That means I can't inject a more specific webclient, and I hope that this cheap standard webclient doesn't have side-effects that will hurt us later.
-                var serverString = XElement.Parse(new WebClient().DownloadString(bootstrapUrl)).Value;
-                return new Uri("http://" + serverString, UriKind.Absolute);
-            }
-            catch (WebException e) {
-                throw new TriedToStartMeTLWithNoInternetException(e);
-            }
-        }
-        
-        private Uri LoadServerAddress(bool useBootstrapUrl, string url)
-        {
-            if (useBootstrapUrl)
-            {
-                return BootstrapUrl(url);
-            }
-            else
-            {
-                return new Uri(url, UriKind.Absolute);               
-            }
-        }
-
         public ProductionServerAddress()
         {
             var conf = MeTLConfiguration.Config;
@@ -49,6 +25,7 @@ namespace MeTLLib
             thumbnail = conf.Production.Thumbnail;
             port = conf.Production.Port;
             Name = conf.Production.Name;
+            protocol = conf.Production.Protocol;
             productionUri = LoadServerAddress(conf.Production.IsBootstrapUrl, conf.Production.Host);
             stagingUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
             externalUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
@@ -58,6 +35,45 @@ namespace MeTLLib
         }
     }
 
+    public class StagingServerAddress : MeTLServerAddress
+    {
+        public StagingServerAddress()
+        {
+            var conf = MeTLConfiguration.Config;
+
+            authenticationEndpoint = conf.Staging.AuthenticationEndpoint;
+            thumbnail = conf.Staging.Thumbnail;
+            port = conf.Staging.Port;
+            Name = conf.Staging.Name;
+            protocol = conf.Staging.Protocol;
+            productionUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
+            stagingUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
+            externalUri = LoadServerAddress(conf.Staging.IsBootstrapUrl, conf.Staging.Host);
+            xmppServiceName = conf.Staging.xmppServiceName;
+
+            Console.WriteLine("Setting Staging server address: {0}, {1}", stagingUri, xmppServiceName);
+        }
+    }
+
+    public class ExternalServerAddress : MeTLServerAddress
+    {
+        public ExternalServerAddress()
+        {
+            var conf = MeTLConfiguration.Config;
+
+            authenticationEndpoint = conf.External.AuthenticationEndpoint;
+            thumbnail = conf.External.Thumbnail;
+            port = conf.External.Port;
+            protocol = conf.External.Protocol;
+            Name = conf.External.Name;
+            productionUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
+            stagingUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
+            externalUri = LoadServerAddress(conf.External.IsBootstrapUrl, conf.External.Host);
+            xmppServiceName = conf.Staging.xmppServiceName;
+
+            Console.WriteLine("Setting External server address: {0}, {1}", externalUri, xmppServiceName);
+        }
+    }
     public class ProductionModule : NinjectModule
     {
         public override void Load()
@@ -74,6 +90,14 @@ namespace MeTLLib
             Bind<ITimerFactory>().To<ProductionTimerFactory>().InSingletonScope();
             Bind<IReceiveEvents>().To<ProductionReceiveEvents>().InSingletonScope();
             Bind<UserOptionsProvider>().To<UserOptionsProvider>().InSingletonScope();
+        }
+    }
+    public class StagingModule : ProductionModule
+    {
+        public override void Load()
+        {
+            Unbind<MeTLServerAddress>();
+            Bind<MeTLServerAddress>().To<StagingServerAddress>().InSingletonScope();
         }
     }
 }

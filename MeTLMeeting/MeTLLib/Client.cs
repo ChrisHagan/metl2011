@@ -16,6 +16,7 @@ using System.Diagnostics;
 using Ninject;
 using agsXMPP.Xml.Dom;
 using System.Net;
+using System.Xml.Linq;
 
 namespace MeTLLib
 {
@@ -53,8 +54,43 @@ namespace MeTLLib
                 }
             }
         }
-        public Uri secureUri { get { return new Uri("https://" + host); } }
-        public string host { get { return uri.Host; } }
+        protected Uri BootstrapUrl(string bootstrapUrl)
+        {
+            try
+            {
+                //This is pre-dependency injection.  That means I can't inject a more specific webclient, and I hope that this cheap standard webclient doesn't have side-effects that will hurt us later.
+                var serverString = XElement.Parse(new WebClient().DownloadString(bootstrapUrl)).Value;
+                return new Uri("http://" + serverString, UriKind.Absolute);
+            }
+            catch (WebException e)
+            {
+                throw new TriedToStartMeTLWithNoInternetException(e);
+            }
+        }
+
+        protected Uri LoadServerAddress(bool useBootstrapUrl, string url)
+        {
+            if (useBootstrapUrl)
+            {
+                return BootstrapUrl(url);
+            }
+            else
+            {
+                return new Uri(url, UriKind.Absolute);
+            }
+        }
+        public string protocol
+        {
+            get;
+            set;
+        }
+        public string host
+        {
+            get
+            {
+                return uri.Host;
+            }
+        }
         public String port
         {
             get;

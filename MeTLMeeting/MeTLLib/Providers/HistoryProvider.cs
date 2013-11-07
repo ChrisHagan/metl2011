@@ -33,11 +33,16 @@ namespace MeTLLib.Providers
             string room
         ) where T : PreParser;
     }
-    public abstract class BaseHistoryProvider : IHistoryProvider {
-        [Inject]public HttpHistoryProvider historyProvider{protected get;set;}
-        [Inject]public HttpResourceProvider resourceProvider{protected get;set;}
-        [Inject]public JabberWireFactory jabberWireFactory{protected get;set;}
-        [Inject]public MeTLServerAddress serverAddress{protected get;set;}
+    public abstract class BaseHistoryProvider : IHistoryProvider
+    {
+        [Inject]
+        public HttpHistoryProvider historyProvider { protected get; set; }
+        [Inject]
+        public HttpResourceProvider resourceProvider { protected get; set; }
+        [Inject]
+        public JabberWireFactory jabberWireFactory { protected get; set; }
+        [Inject]
+        public MeTLServerAddress serverAddress { protected get; set; }
         public abstract void Retrieve<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
@@ -50,23 +55,27 @@ namespace MeTLLib.Providers
             Action<T> retrievalComplete,
             string author,
             string room
-        ) where T : PreParser {
-            this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
+        ) where T : PreParser
+        {
+            this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{0}/{1}", author, room));
         }
     }
-    public class CachedHistoryProvider : BaseHistoryProvider {
-        private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
-        private int measure<T>(int acc, T item){
+    public class CachedHistoryProvider : BaseHistoryProvider
+    {
+        private Dictionary<string, PreParser> cache = new Dictionary<string, PreParser>();
+        private int measure<T>(int acc, T item)
+        {
             return acc + item.ToString().Length;
         }
-        private long cacheTotalSize{
+        private long cacheTotalSize
+        {
             get
             {
-                return cache.Values.Aggregate(0, (acc, parser) => 
-                    acc + 
-                        parser.ink.Aggregate(0,measure<TargettedStroke>)+
-                        parser.images.Values.Aggregate(0,measure<TargettedImage>)+
-                        parser.text.Values.Aggregate(0,measure<TargettedTextBox>));
+                return cache.Values.Aggregate(0, (acc, parser) =>
+                    acc +
+                        parser.ink.Aggregate(0, measure<TargettedStroke>) +
+                        parser.images.Values.Aggregate(0, measure<TargettedImage>) +
+                        parser.text.Values.Aggregate(0, measure<TargettedTextBox>));
             }
         }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
@@ -81,23 +90,23 @@ namespace MeTLLib.Providers
                 },
                 room);
         }
-        
+
         //public void HandleMessage(int room, Element message, long timestamp) 
-        public void HandleMessage(int room, MeTLStanzas.TimestampedMeTLElement element) 
+        public void HandleMessage(int room, MeTLStanzas.TimestampedMeTLElement element)
         {
             string currentSlide = room.ToString();
             if (!cache.ContainsKey(currentSlide))
-            { 
+            {
                 cache[currentSlide] = jabberWireFactory.create<PreParser>(room);
             }
             //cache[currentSlide].ActOnUntypedMessage(message, timestamp);
-            cache[currentSlide].ActOnUntypedMessage(element );
+            cache[currentSlide].ActOnUntypedMessage(element);
         }
         public void PopulateFromHistory(PreParser preParser)
         {
             var room = preParser.location.currentSlide.ToString();
             if (cache.ContainsKey(room))
-                cache[room] =  cache[room].merge<PreParser>(preParser);
+                cache[room] = cache[room].merge<PreParser>(preParser);
             else
                 cache[room] = preParser;
         }
@@ -142,7 +151,7 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var directoryUri = string.Format("https://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room);
+                                     var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
                                      var directoryExists = resourceProvider.exists(new Uri(directoryUri));
                                      if (!directoryExists)
                                          return;
@@ -208,5 +217,5 @@ namespace MeTLLib.Providers
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);
             parser.Push(closeTag, 0, closeTag.Length);
         }
-    }   
+    }
 }

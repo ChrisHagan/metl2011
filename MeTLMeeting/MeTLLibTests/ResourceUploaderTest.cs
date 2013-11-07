@@ -38,13 +38,13 @@ namespace MeTLLibTests
         //public static void MyClassCleanup()
         //{
         //}
-        //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
+        // Use TestInitialize to run code before running each test
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            MeTLConfiguration.Load();
+        }
+        
         //Use TestCleanup to run code after each test has run
         //[TestCleanup()]
         //public void MyTestCleanup()
@@ -357,6 +357,7 @@ namespace MeTLLibTests
         [ExpectedException(typeof(ArgumentNullException))]
         public void uploadResourceTestSpecifyingOverwriteFailsWhenPassedNullPathAndNullFile()
         {
+            MeTLConfiguration.Load();
             string path = null;
             string file = null;
             bool overwrite = false;
@@ -364,6 +365,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
             IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);

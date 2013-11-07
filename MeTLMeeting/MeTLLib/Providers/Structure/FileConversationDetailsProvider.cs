@@ -43,7 +43,7 @@ namespace MeTLLib.Providers.Structure
         }
         private string ROOT_ADDRESS
         {
-            get { return string.Format("https://{0}:{1}", server.host, server.port); }
+            get { return string.Format("{2}://{0}:{1}", server.host, server.port, server.protocol); }
         }
         private readonly string STRUCTURE = "Structure";
         private readonly string UPLOAD = "upload_nested.yaws";

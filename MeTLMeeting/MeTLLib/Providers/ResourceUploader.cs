@@ -42,7 +42,7 @@ namespace MeTLLib.Providers.Connection
         {
             _httpResourceProvider = provider;
         }
-        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("https://{0}:{1}/upload_nested.yaws", metlServerAddress.host, metlServerAddress.port); } }
+        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{2}://{0}:{1}/upload_nested.yaws", metlServerAddress.host, metlServerAddress.port, metlServerAddress.protocol); } }
         public string uploadResource(string path, string file)
         {
             return uploadResource(path, file, false);
@@ -79,7 +79,7 @@ namespace MeTLLib.Providers.Connection
         }
         public string getStemmedPathForResource(string path, string name)
         {
-            return string.Format("https://{0}:{1}/{2}/{3}/{3}", metlServerAddress.host, metlServerAddress.port, INodeFix.Stem(path), path, name);
+            return string.Format("{5}://{0}:{1}/{2}/{3}/{4}", metlServerAddress.host, metlServerAddress.port, INodeFix.Stem(path), path, name, metlServerAddress.protocol);
         }
 
         public string uploadResourceToPath(string localFile, string remotePath, string name)

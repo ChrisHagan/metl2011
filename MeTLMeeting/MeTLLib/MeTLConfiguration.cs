@@ -35,6 +35,7 @@
             catch (ConfigurationErrorsException e)
             {
                 Trace.TraceError("Unable to load MeTL Configuration from app.config. Reason: " + e.Message);
+                throw e;
             }
         }
     }
@@ -205,6 +206,18 @@
             set
             {
                 this["thumbnail"] = value;
+            }
+        }
+        [ConfigurationProperty("protocol", IsRequired = true)]
+        public String Protocol
+        {
+            get
+            {
+                return (String)this["protocol"];
+            }
+            set
+            {
+                this["protocol"] = value;
             }
         }
         [ConfigurationProperty("host", IsRequired = true)]
