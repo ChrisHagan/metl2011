@@ -58,7 +58,7 @@ namespace MeTLLib.Providers.Structure
             var details = DetailsOf(jid);
             return myGroups.Contains(details.Subject.ToLower());
         }
-        public ConversationDetails DetailsOf(string conversationJid)
+        public virtual ConversationDetails DetailsOf(string conversationJid)
         {
             ConversationDetails result = ConversationDetails.Empty;
             if (String.IsNullOrEmpty(conversationJid))

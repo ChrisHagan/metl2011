@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="AuthorisationProviderTest.cs" />
     <Compile Include="CryptoTest.cs" />
+    <Compile Include="DummyGenericAddress.cs" />
     <Compile Include="FileConversationDetailsProviderTest.cs" />
     <Compile Include="HttpResourceProviderTest.cs" />
     <Compile Include="INodeFix.cs" />
@@ -102,6 +103,11 @@
   </ItemGroup>
   <ItemGroup>
     <Shadow Include="Test References\MeTLLib.accessor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SandRibbon\app.config">
+      <Link>app.config</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

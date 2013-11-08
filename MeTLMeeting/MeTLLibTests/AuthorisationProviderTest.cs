@@ -30,10 +30,11 @@ namespace MeTLLibTests
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
+        [ClassInitialize()]
+        public static void MyClassInitialize(TestContext testContext)
+        {
+            MeTLConfiguration.Load();
+        }
         //
         //Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup()]
@@ -42,10 +43,10 @@ namespace MeTLLibTests
         //}
         //
         //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+        }
         //
         //Use TestCleanup to run code after each test has run
         //[TestCleanup()]
@@ -58,14 +59,15 @@ namespace MeTLLibTests
         public void attemptAuthenticationIntegrationTest()
         {
             string username = "eecrole";
-            string password = "m0nash2008";
+            string password = "clear2four";
             IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             Credentials expected = new Credentials(
                 "eecrole",
-                "m0nash2008",
+                "clear2four",
                 new List<AuthorizedGroup> { 
                     new AuthorizedGroup("Unrestricted",""),
                     new AuthorizedGroup("Office of the Deputy Vice-Chancellor (Education)","ou"), 
@@ -79,7 +81,7 @@ namespace MeTLLibTests
             Assert.AreEqual(expected.password, actual.password);
         }
     }
-    
+
     [TestClass()]
     public class AuthorisationProviderTest
     {
@@ -100,10 +102,11 @@ namespace MeTLLibTests
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
+        [ClassInitialize()]
+        public static void MyClassInitialize(TestContext testContext)
+        {
+            MeTLConfiguration.Load();
+        }
         //
         //Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup()]
@@ -112,10 +115,13 @@ namespace MeTLLibTests
         //}
         //
         //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope(); ;
+        }
         //
         //Use TestCleanup to run code after each test has run
         //[TestCleanup()]
@@ -124,55 +130,45 @@ namespace MeTLLibTests
         //}
         //
         #endregion
+
+        IKernel kernel;
+
         [TestMethod()]
         public void AuthorisationProviderConstructorTest()
         {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             Assert.IsInstanceOfType(target, typeof(AuthorisationProvider));
         }
+        private bool isEmpty(Credentials credentials) {
+            var empty = Credentials.Empty;
+            return credentials.name == empty.name &&
+                credentials.password == empty.password &&
+                credentials.isValid == empty.isValid &&
+                credentials.authorizedGroups.Count == empty.authorizedGroups.Count;
+        }
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void attemptAuthenticationTestFailsWhenPassedNullUsername()
         {
             string username = null;
             string password = "m0nash2008";
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials("","", new List<AuthorizedGroup>(), ""); 
-            Credentials actual;
-            actual = target.attemptAuthentication(username, password);
-            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(isEmpty(target.attemptAuthentication(username, password)));
         }
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void attemptAuthenticationTestFailsWhenPassedNullPassword()
         {
             string username = "eecrole";
             string password = null;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials("","",new List<AuthorizedGroup>(), "");
-            Credentials actual;
-            actual = target.attemptAuthentication(username, password);
-            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(isEmpty(target.attemptAuthentication(username, password)));
         }
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void attemptAuthenticationTestFailsWhenPassedNullUsernameAndNullPassword()
+        public void attemptAuthenticationTestReturnsEmptyCredentialsOnNullUsernameAndPassword()
         {
             string username = null;
             string password = null;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials("","",new List<AuthorizedGroup>(), "");
-            Credentials actual;
-            actual = target.attemptAuthentication(username, password);
-            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(isEmpty(target.attemptAuthentication(username, password)));
         }
         class AuthorizationProviderWebClientFactory : IWebClientFactory
         {

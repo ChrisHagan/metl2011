@@ -7,6 +7,7 @@ using Ninject;
 using MeTLLib;
 using MeTLLib.Providers.Connection;
 using System.Net;
+using System.Linq;
 
 namespace MeTLLibTests
 {
@@ -30,10 +31,11 @@ namespace MeTLLibTests
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
+        [ClassInitialize()]
+        public static void MyClassInitialize(TestContext testContext)
+        {
+            MeTLConfiguration.Load();
+        }
         //
         //Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup()]
@@ -41,11 +43,23 @@ namespace MeTLLibTests
         //{
         //}
         //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
+            kernel.Bind<MeTLGenericAddress>().To<DummyGenericAddress>().InSingletonScope();
+            kernel.Bind<IReceiveEvents>().To<DummyReceiveEvents>().InSingletonScope();
+            kernel.Bind<JabberWireFactory>().To<JabberWireFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
+            //This is doubled here to override an internal call.  Only DetailsOf is overridden, the rest of the functionality is under test.
+            kernel.Bind<FileConversationDetailsProvider>().To<StubFileConversationDetailsProvider>().InSingletonScope();
+            kernel.Get<JabberWireFactory>().credentials = new Credentials("", "", new List<AuthorizedGroup>(), "");
+        }
         //
         //Use TestCleanup to run code after each test has run
         //[TestCleanup()]
@@ -54,6 +68,8 @@ namespace MeTLLibTests
         //}
         //
         #endregion
+
+        IKernel kernel;
         [TestMethod()]
         public void UpdateTest()
         {
@@ -92,17 +108,11 @@ namespace MeTLLibTests
                     new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
                     new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
-                new Permissions(null, true,true,false),
+                new Permissions(null, true, true, false),
                 "Unrestricted",
                 new DateTime(2010, 05, 18, 15, 00, 53),
                 new DateTime(0001, 01, 1, 0, 0, 0)
             );
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Update(proposedDetails);
             Assert.AreEqual(actual, expectedDetails);
@@ -110,32 +120,16 @@ namespace MeTLLibTests
         [TestMethod()]
         public void appendSlideTest()
         {
-            String proposedTitle = String.Empty;
-            ConversationDetails expectedDetails = null;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.AppendSlide(proposedTitle);
-            Assert.AreEqual(actual, expectedDetails);
+            ConversationDetails actual = provider.AppendSlide("title");
+            Assert.AreEqual("1,2,3", String.Join(",",actual.Slides.Select(s=>s.id)));
         }
         [TestMethod()]
         public void appendSlideAfterTest()
         {
-            String proposedTitle = String.Empty;
-            ConversationDetails expectedDetails = null;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.AppendSlide(proposedTitle);
-            Assert.AreEqual(actual, expectedDetails);
+            ConversationDetails actual = provider.AppendSlideAfter(1,"title");
+            Assert.AreEqual("1,3,2", String.Join(",",actual.Slides.Select(s=>s.id)));
         }
         [TestMethod()]
         public void detailsOfTest()
@@ -156,17 +150,11 @@ namespace MeTLLibTests
                     new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
                     new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
-                new Permissions(null, true,true,false),
+                new Permissions(null, true, true, false),
                 "Unrestricted",
                 new DateTime(2010, 05, 18, 15, 00, 53),
                 new DateTime(0001, 01, 1, 0, 0, 0)
             );
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.DetailsOf(conversationJid);
             Assert.IsTrue(TestExtensions.valueEquals(actual, expectedDetails));
@@ -176,12 +164,6 @@ namespace MeTLLibTests
         {
             ConversationDetails proposedConversationDetails = null;
             ConversationDetails expectedDetails = null;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Create(proposedConversationDetails);
             Assert.AreEqual(actual, expectedDetails);
@@ -191,12 +173,6 @@ namespace MeTLLibTests
         {
             //Don't know what ApplicationLevelInformation to expect yet.
             //ApplicationLevelInformation expected = new ApplicationLevelInformation { };
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ApplicationLevelInformation actual = provider.GetApplicationLevelInformation();
             Assert.IsInstanceOfType(actual, typeof(ApplicationLevelInformation));
@@ -224,10 +200,11 @@ namespace MeTLLibTests
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
+        [ClassInitialize()]
+        public static void MyClassInitialize(TestContext testContext)
+        {
+            MeTLConfiguration.Load();
+        }
         //
         //Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup()]
@@ -236,10 +213,14 @@ namespace MeTLLibTests
         //}
         //
         //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
+        }
         //
         //Use TestCleanup to run code after each test has run
         //[TestCleanup()]
@@ -248,12 +229,11 @@ namespace MeTLLibTests
         //}
         //
         #endregion
+
+        IKernel kernel;
         [TestMethod()]
         public void FileConversationDetailsProviderConstructorTest()
         {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             Assert.IsInstanceOfType(provider, typeof(FileConversationDetailsProvider));
         }
@@ -263,9 +243,6 @@ namespace MeTLLibTests
         {
             string title = string.Empty; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlide(title);
             Assert.AreEqual(expected, actual);
@@ -277,9 +254,6 @@ namespace MeTLLibTests
             int currentSlide = 0; // TODO: Initialize to an appropriate value
             string title = string.Empty; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlideAfter(currentSlide, title);
             Assert.AreEqual(expected, actual);
@@ -292,9 +266,6 @@ namespace MeTLLibTests
             string title = string.Empty; // TODO: Initialize to an appropriate value
             Slide.TYPE type = new Slide.TYPE(); // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlideAfter(currentSlide, title, type);
             Assert.AreEqual(expected, actual);
@@ -305,9 +276,6 @@ namespace MeTLLibTests
         {
             ConversationDetails proposedDetails = null; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Create(proposedDetails);
             Assert.AreEqual(expected, actual);
@@ -319,9 +287,6 @@ namespace MeTLLibTests
         {
             String conversationJid = String.Empty; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.DetailsOf(conversationJid);
             Assert.AreEqual(expected, actual);
@@ -331,9 +296,6 @@ namespace MeTLLibTests
         public void GetApplicationLevelInformationTest()
         {
             ApplicationLevelInformation expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ApplicationLevelInformation actual = provider.GetApplicationLevelInformation();
             Assert.AreEqual(expected, actual);
@@ -361,9 +323,6 @@ namespace MeTLLibTests
         {
             ConversationDetails details = null; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Update(details);
             Assert.AreEqual(expected, actual);
@@ -461,6 +420,84 @@ namespace MeTLLibTests
         public void uploadFileAsync(Uri resource, string filename)
         {
             throw new NotImplementedException();
+        }
+    }
+    public class DummyReceiveEvents : IReceiveEvents
+    {
+        public void receivePresence(MeTLPresence presence) { }
+        public void receiveSubmission(TargettedSubmission ts) { }
+        public void receivesubmissions(PreParser parser) { }
+        public void receiveQuiz(QuizQuestion qq) { }
+        public void receiveUpdatedSlideCollection(int conversationJid) { }
+        public void receiveQuizAnswer(QuizAnswer qa) { }
+        public void receiveFileResource(TargettedFile tf) { }
+        public void receiveStroke(TargettedStroke ts) { }
+        public void receiveStrokes(TargettedStroke[] tsa) { }
+        public void receiveImages(TargettedImage[] tia) { }
+        public void receiveImage(TargettedImage ti) { }
+        public void receiveTextBox(TargettedTextBox ttb) { }
+        public void receiveDirtyStroke(TargettedDirtyElement tde) { }
+        public void receiveDirtyTextBox(TargettedDirtyElement tde) { }
+        public void receiveDirtyVideo(TargettedDirtyElement tde) { }
+        public void receiveDirtyImage(TargettedDirtyElement tde) { }
+        public void receiveMoveDelta(TargettedMoveDelta moveDelta) { }
+        public void receiveChat(TargettedTextBox ttb) { }
+        public void receivePreParser(PreParser pp) { }
+        public void receiveLiveWindow(LiveWindowSetup lws) { }
+        public void receiveDirtyLiveWindow(TargettedDirtyElement tde) { }
+        public void receiveDirtyAutoShape(TargettedDirtyElement tde) { }
+        public void receiveConversationDetails(ConversationDetails cd) { }
+        public void statusChanged(bool isConnected, Credentials credentials) { }
+        public void syncMoveRequested(int where) { }
+        public void teacherStatusRequest(string where, string who) { }
+        public void teacherStatusRecieved(TeacherStatus status) { }
+        public void receieveQuizzes(PreParser finishedParser) { }
+        public void receieveAttachments(PreParser finishedParser) { }
+        public void receieveQuiz(PreParser finishedParser, long id) { }
+        public event MeTLLibEventHandlers.AttachmentsAvailableRequestEventHandler AttachmentsAvailable;
+        public event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
+        public event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
+        public event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
+        public event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
+        public event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
+        public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        public event MeTLLibEventHandlers.SubmissionsAvailableEventHandler SubmissionsAvailable;
+        public event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
+        public event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
+        public event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
+        public event MeTLLibEventHandlers.PreParserAvailableEventHandler PreParserAvailable;
+        public event MeTLLibEventHandlers.StrokeAvailableEventHandler StrokeAvailable;
+        public event MeTLLibEventHandlers.ImageAvailableEventHandler ImageAvailable;
+        public event MeTLLibEventHandlers.TextBoxAvailableEventHandler TextBoxAvailable;
+        public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyTextBoxAvailable;
+        public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyImageAvailable;
+        public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyVideoAvailable;
+        public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyStrokeAvailable;
+        public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyAutoShapeAvailable;
+        public event MeTLLibEventHandlers.MoveDeltaAvailableEventHandler MoveDeltaAvailable;
+        public event MeTLLibEventHandlers.LiveWindowAvailableEventHandler LiveWindowAvailable;
+        public event MeTLLibEventHandlers.DiscoAvailableEventHandler DiscoAvailable;
+        public event MeTLLibEventHandlers.QuizQuestionAvailableEventHandler QuizQuestionAvailable;
+        public event MeTLLibEventHandlers.QuizAnswerAvailableEventHandler QuizAnswerAvailable;
+        public event MeTLLibEventHandlers.ChatAvailableEventHandler ChatAvailable;
+        public event MeTLLibEventHandlers.ConversationDetailsAvailableEventHandler ConversationDetailsAvailable;
+        public event MeTLLibEventHandlers.CommandAvailableEventHandler CommandAvailable;
+        public event MeTLLibEventHandlers.SyncMoveRequestedEventHandler SyncMoveRequested;
+        public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyLiveWindowAvailable;
+    }
+    public class DummyGenericAddress : MeTLGenericAddress
+    {
+    }
+    class StubFileConversationDetailsProvider : FileConversationDetailsProvider
+    {
+        public StubFileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader) : base(factory, uploader) {
+        }
+        public override ConversationDetails DetailsOf(string id)
+        {
+            return new ConversationDetails("title", "10", "author", new List<Slide>{
+                new Slide(1,"author",Slide.TYPE.SLIDE,0,600f,800f),
+                new Slide(2,"author",Slide.TYPE.SLIDE,1,600f,800f),
+            }, Permissions.LECTURE_PERMISSIONS, "subject");
         }
     }
     public class FileConversationDetailsResourceUploader : IResourceUploader

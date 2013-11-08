@@ -30,10 +30,11 @@ namespace MeTLLibTests
         }
         //These guys are useful for setting up fixtures.  Kind of akin to that globals situation we talked about though so avoid it unless you're starting to rock data driven testing.
         #region Additional test attributes
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
+        [ClassInitialize()]
+        public static void MyClassInitialize(TestContext testContext)
+        {
+            MeTLConfiguration.Load();
+        }
         //[ClassCleanup()]
         //public static void MyClassCleanup()
         //{
@@ -48,32 +49,11 @@ namespace MeTLLibTests
         //{
         //}
         #endregion
-        //Don't test constructors, this is retarded.
         [TestMethod()]
         public void HttpResourceProviderConstructorTest()
         {
         }
-        //This _Accessor it's come up with is pretty cool too.  No idea how it works.  It looks static, so how can it shadow instance members?  Of which instance?
-        //Oh.  Everything in ResourceProvider is static.  Did I do that?  There's an incorrect singleton in client() which is not threadsafe by the way :D
-        //So, the _Accessor is exactly the proxy object we talked about, which turns the class inside out.
-        //Ps these all aren't static anymore
-        //[TestMethod()]
-        //[DeploymentItem("MeTLLib.dll")]
-        //public void NotifyStatusTest()
-        //{
-            /*
-            string status = string.Empty; // TODO: Initialize to an appropriate value
-            string type = string.Empty; // TODO: Initialize to an appropriate value
-            string uri = string.Empty; // TODO: Initialize to an appropriate value
-            string filename = string.Empty; // TODO: Initialize to an appropriate value
-            HttpResourceProvider_Accessor.NotifyStatus(status, type, uri, filename);
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
-             */
-        //}
-        /*
-         * Ok, let's try for this one.  It pretty much involves all the hard bits of anything, so if we can get this we can do the rest.
-         * it's got the remote file system, it's got asynchronous bullshit going on, there's plenty of action here.
-         */
+        
         [TestMethod()]
         public void providerCallsClientUploadFileWithCorrectlyFormattedUrl()
         {
@@ -148,6 +128,9 @@ namespace MeTLLibTests
     }
     #region Stubs
     public class StubWebClientFactory : MeTLLib.Providers.Connection.IWebClientFactory {
+        public StubWebClientFactory() {
+            Console.WriteLine("StubWebClientFactory");
+        }
         public IWebClient client()
         {
             return new StubWebClient();

@@ -22,6 +22,9 @@
             }
             private set
             {
+                if (value == null) {
+                    throw new InvalidOperationException("MeTLConfiguration cannot be set to a null value");
+                }
                 conf = value;
             }
         }
@@ -32,7 +35,7 @@
             {
                 Config = ConfigurationManager.GetSection("metlConfigurationGroup/metlConfiguration") as MeTLConfigurationSection;
             }
-            catch (ConfigurationErrorsException e)
+            catch (Exception e)
             {
                 Trace.TraceError("Unable to load MeTL Configuration from app.config. Reason: " + e.Message);
                 throw e;
