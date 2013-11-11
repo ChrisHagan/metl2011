@@ -17,6 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartboardController", "Sma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05BF3D07-1896-4EBC-9963-DEE8F000B1B7}"
 	ProjectSection(SolutionItems) = preProject
+		Deploy.testsettings = Deploy.testsettings
 		Local.testsettings = Local.testsettings
 		SandRibbon.vsmdi = SandRibbon.vsmdi
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings

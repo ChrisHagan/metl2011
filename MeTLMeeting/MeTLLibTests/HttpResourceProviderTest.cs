@@ -60,7 +60,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            Assert.AreEqual( "http://nowhere.adm.monash.edu/resources/something.ext", provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
+            Assert.AreEqual( StubWebClient.xml, provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
         }
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -86,7 +86,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            Assert.AreEqual("http://nowhere.adm.monash.edu/resources/something.ext", provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
+            Assert.AreEqual(StubWebClient.xml,provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
         }
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -162,11 +162,12 @@ namespace MeTLLibTests
             if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
             return new byte[] {60,116,121,112,101,62,100,97,116,97,60,47,116,121,112,101,62};
         }
+        public readonly static string xml = "<file url='http://nowhere.adm.monash.edu/resources/something.ext' />";
         public string uploadData(Uri resource, byte[] data)
         {
             if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
             if (data == null) throw new ArgumentNullException("data", "Value cannot be null.");
-            return "http://nowhere.adm.monash.edu/resources/something.ext";
+            return xml;
         }
         public void uploadDataAsync(Uri resource, byte[] data)
         {
@@ -176,7 +177,7 @@ namespace MeTLLibTests
         {
             if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
             if (filename == null) throw new ArgumentNullException("filename", "Value cannot be null.");
-            return Encoding.UTF8.GetBytes("http://nowhere.adm.monash.edu/resources/something.ext");
+            return Encoding.UTF8.GetBytes(xml);
         }
         public void uploadFileAsync(Uri resource, string filename)
         {

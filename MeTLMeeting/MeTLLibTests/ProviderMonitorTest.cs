@@ -43,10 +43,14 @@ namespace MeTLLibTests
         //}
         //
         //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
+        }
         //
         //Use TestCleanup to run code after each test has run
         //[TestCleanup()]
@@ -55,21 +59,18 @@ namespace MeTLLibTests
         //}
         //
         #endregion
+        IKernel kernel;
+
         [TestMethod()]
         public void ProviderMonitorConstructorTest()
         {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
+
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             Assert.IsInstanceOfType(providerMonitor, typeof(ProductionProviderMonitor));
         }
         [TestMethod()]
         public void TestHealthCheckReturnsInLessThanOneSecond()
         {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             bool hasPassed = false;
             providerMonitor.HealthCheck(() =>
@@ -82,9 +83,6 @@ namespace MeTLLibTests
         [TestMethod()]
         public void ProductionHealthCheckReturnsInLessThanThreeSeconds()
         {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<ProductionTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             bool hasPassed = false;
             providerMonitor.HealthCheck(() =>
@@ -92,37 +90,7 @@ namespace MeTLLibTests
                 hasPassed = true;
             });
             var TimeTaken = TestExtensions.ConditionallyDelayFor(6000, hasPassed);
-            Assert.IsTrue(hasPassed && TimeTaken < new TimeSpan(0, 0, 1));        }
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestHealthCheckTestActionFailsWhenPassedNullAction()
-        {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            //Don't bind to the testProviderMonitor here - this is the class for testing the real one.
-            kernel.Bind<IProviderMonitor>().To<TestProviderMonitor>().InSingletonScope();
-            IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
-            providerMonitor.HealthCheck(null);
-        }
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ProductionHealthCheckTestActionFailsWhenPassedNullAction()
-        {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            //Don't bind to the testProviderMonitor here - this is the class for testing the real one.
-            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
-            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
-            IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
-            providerMonitor.HealthCheck(null);
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void checkServersTest()
-        {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            //Don't bind to the testProviderMonitor here - this is the class for testing the real one.
-            kernel.Bind<IProviderMonitor>().To<TestProviderMonitor>().InSingletonScope();
-            IProviderMonitor target = kernel.Get<IProviderMonitor>();
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
+            Assert.IsTrue(hasPassed && TimeTaken < new TimeSpan(0, 0, 1));
         }
     }
     public class TestProviderMonitor : IProviderMonitor

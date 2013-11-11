@@ -155,18 +155,22 @@ namespace MeTLLibTests
                 new DateTime(2010, 05, 18, 15, 00, 53),
                 new DateTime(0001, 01, 1, 0, 0, 0)
             );
+            kernel.Unbind<FileConversationDetailsProvider>();
+            kernel.Bind<FileConversationDetailsProvider>().To<FileConversationDetailsProvider>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.DetailsOf(conversationJid);
-            Assert.IsTrue(TestExtensions.valueEquals(actual, expectedDetails));
+            Assert.AreEqual(expectedDetails.Title, actual.Title);
+            Assert.AreEqual(expectedDetails.Jid, actual.Jid);
+            Assert.AreEqual(expectedDetails.Slides.Count, actual.Slides.Count);
         }
         [TestMethod()]
         public void CreateTest()
         {
-            ConversationDetails proposedConversationDetails = null;
+            ConversationDetails proposedConversationDetails = new ConversationDetails();
             ConversationDetails expectedDetails = null;
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Create(proposedConversationDetails);
-            Assert.AreEqual(actual, expectedDetails);
+            Assert.AreEqual(1, actual.Slides.Count);
         }
         [TestMethod()]
         public void getApplicationInformationTest()
@@ -178,59 +182,7 @@ namespace MeTLLibTests
             Assert.IsInstanceOfType(actual, typeof(ApplicationLevelInformation));
             //Assert.AreEqual(actual, expected);
         }
-    }
-
-    [TestClass()]
-    public class FileConversationDetailsProviderTest
-    {
-        private TestContext testContextInstance;
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-        #region Additional test attributes
-        // 
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        [ClassInitialize()]
-        public static void MyClassInitialize(TestContext testContext)
-        {
-            MeTLConfiguration.Load();
-        }
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //Use TestInitialize to run code before running each test
-        [TestInitialize()]
-        public void MyTestInitialize()
-        {
-            kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
-        }
-        //
-        //Use TestCleanup to run code after each test has run
-        //[TestCleanup()]
-        //public void MyTestCleanup()
-        //{
-        //}
-        //
-        #endregion
-
-        IKernel kernel;
+    
         [TestMethod()]
         public void FileConversationDetailsProviderConstructorTest()
         {
@@ -241,132 +193,11 @@ namespace MeTLLibTests
         [TestMethod()]
         public void AppendSlideTest()
         {
-            string title = string.Empty; // TODO: Initialize to an appropriate value
-            ConversationDetails expected = null; // TODO: Initialize to an appropriate value
+            var title = "title";
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlide(title);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            Assert.AreEqual(title, actual.Title);
         }
-        [TestMethod()]
-        public void AppendSlideAfterTest()
-        {
-            int currentSlide = 0; // TODO: Initialize to an appropriate value
-            string title = string.Empty; // TODO: Initialize to an appropriate value
-            ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.AppendSlideAfter(currentSlide, title);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        [TestMethod()]
-        public void AppendSlideAfterTestSpecifyingType()
-        {
-            int currentSlide = 0; // TODO: Initialize to an appropriate value
-            string title = string.Empty; // TODO: Initialize to an appropriate value
-            Slide.TYPE type = new Slide.TYPE(); // TODO: Initialize to an appropriate value
-            ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.AppendSlideAfter(currentSlide, title, type);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        [TestMethod()]
-        public void CreateTest()
-        {
-            ConversationDetails proposedDetails = null; // TODO: Initialize to an appropriate value
-            ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.Create(proposedDetails);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        [TestMethod()]
-        public void DetailsOfTest()
-        {
-            String conversationJid = String.Empty; // TODO: Initialize to an appropriate value
-            ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.DetailsOf(conversationJid);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        [TestMethod()]
-        public void GetApplicationLevelInformationTest()
-        {
-            ApplicationLevelInformation expected = null; // TODO: Initialize to an appropriate value
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ApplicationLevelInformation actual = provider.GetApplicationLevelInformation();
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        /*
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void RestrictToAccessibleTest()
-        {
-            IEnumerable<ConversationDetails> summary = null; // TODO: Initialize to an appropriate value
-            IEnumerable<string> myGroups = null; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            List<ConversationDetails> expected = null; // TODO: Initialize to an appropriate value
-            List<ConversationDetails> actual = provider.RestrictToAccessible(summary, myGroups);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        */
-        [TestMethod()]
-        public void UpdateTest()
-        {
-            ConversationDetails details = null; // TODO: Initialize to an appropriate value
-            ConversationDetails expected = null; // TODO: Initialize to an appropriate value
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            ConversationDetails actual = provider.Update(details);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        /*
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void getPositionTest()
-        {
-            int slide = 0; // TODO: Initialize to an appropriate value
-            List<Slide> slides = null; // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            int actual = provider.getPosition(slide, slides);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void NEXT_AVAILABLE_IDTest()
-        {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            string actual = provider.NEXT_AVAILABLE_ID;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void ROOT_ADDRESSTest()
-        {
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            string actual = provider.ROOT_ADDRESS;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-         */
     }
     public class FileConversationDetailsProviderWebClientFactory : IWebClientFactory
     {
