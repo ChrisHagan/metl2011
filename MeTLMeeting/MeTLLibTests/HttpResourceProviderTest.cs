@@ -14,9 +14,7 @@ namespace MeTLLibTests
     [TestClass()]
     public class HttpResourceProviderTest
     {
-        //Screw this guy
         private TestContext testContextInstance;
-        //This guy too 
         public TestContext TestContext
         {
             get
@@ -53,14 +51,23 @@ namespace MeTLLibTests
         public void HttpResourceProviderConstructorTest()
         {
         }
-        
+
+        [TestMethod()]
+        public void clientIsConfiguredAgainstWorkingEndpoint()
+        {
+            var client = new WebClientFactory(new MeTLCredentials()).client();
+            var config = MeTLConfiguration.Config.Staging;
+            var uri = new Uri(String.Format("{0}:{1}/{2}", config.Host, config.Port, config.AuthenticationEndpoint));
+            var result = client.downloadString(uri);
+            Assert.IsTrue(result.Contains("metl.monash") && result.Contains("Query string malformed"));
+        }
         [TestMethod()]
         public void providerCallsClientUploadFileWithCorrectlyFormattedUrl()
         {
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            Assert.AreEqual( StubWebClient.xml, provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
+            Assert.AreEqual(StubWebClient.xml, provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
         }
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -86,7 +93,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            Assert.AreEqual(StubWebClient.xml,provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
+            Assert.AreEqual(StubWebClient.xml, provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
         }
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -95,7 +102,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            provider.securePutData(null, new byte[]{});
+            provider.securePutData(null, new byte[] { });
         }
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -127,8 +134,10 @@ namespace MeTLLibTests
 
     }
     #region Stubs
-    public class StubWebClientFactory : MeTLLib.Providers.Connection.IWebClientFactory {
-        public StubWebClientFactory() {
+    public class StubWebClientFactory : MeTLLib.Providers.Connection.IWebClientFactory
+    {
+        public StubWebClientFactory()
+        {
             Console.WriteLine("StubWebClientFactory");
         }
         public IWebClient client()
@@ -136,7 +145,8 @@ namespace MeTLLibTests
             return new StubWebClient();
         }
     }
-    public class StubWebClient : IWebClient {
+    public class StubWebClient : IWebClient
+    {
         //Normal rules about encapsulation don't apply to testing utilities.  We WANT to be able to look inside them all the time.
         public long getSize(Uri resource)
         {
@@ -160,7 +170,7 @@ namespace MeTLLibTests
         public byte[] downloadData(Uri resource)
         {
             if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
-            return new byte[] {60,116,121,112,101,62,100,97,116,97,60,47,116,121,112,101,62};
+            return new byte[] { 60, 116, 121, 112, 101, 62, 100, 97, 116, 97, 60, 47, 116, 121, 112, 101, 62 };
         }
         public readonly static string xml = "<file url='http://nowhere.adm.monash.edu/resources/something.ext' />";
         public string uploadData(Uri resource, byte[] data)
@@ -191,5 +201,5 @@ namespace MeTLLibTests
             return new NetworkCredential();
         }
     }
-#endregion
+    #endregion
 }
