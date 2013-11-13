@@ -167,9 +167,9 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
+                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.RelativeOrAbsolute);
                 Console.WriteLine("ConversationsFor: {0}", uri);
-                var data = secureGetBytesAsString(uri);
+                var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
                 var deletedConversationJids = results.Where(c => c.isDeleted).Select(c => c.Jid);
                 var conversations = results.OrderByDescending(c => c.relevance)
@@ -179,8 +179,9 @@ namespace MeTLLib.Providers.Structure
                 var filtered = jids.Where(jid => !deletedConversationJids.Contains(jid)).Select(jid => conversations.First(c => c.Jid == jid)).Take(maxResults).ToList();
                 return filtered;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(String.Format("FileConversationDetailsProvider:ConversationsFor {0}",e.Message));
                 return new List<SearchConversationDetails>();
             }
         }

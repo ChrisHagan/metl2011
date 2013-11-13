@@ -148,6 +148,7 @@ namespace MeTLLib.Providers.Connection
         {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
             this.credentials = credentials;
         }
         public IWebClient client()

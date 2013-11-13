@@ -251,7 +251,10 @@ namespace MeTLLib.Providers.Connection
                 case XmppConnectionState.Authenticating:
                     return;
             }
-            if (!e.isConnected && !this.IsConnected()) Reset("Jabberwire::listenToStatusChangedForReset");
+            if (!e.isConnected && !this.IsConnected())
+            {
+                Reset("Jabberwire::listenToStatusChangedForReset");
+            }
         }
 
         private void networkAvailabilityChanged(object sender, EventArgs e)
@@ -272,7 +275,7 @@ namespace MeTLLib.Providers.Connection
                 conn.OnLogin -= OnLogin;
                 conn.OnMessage -= OnMessage;
                 conn.OnSocketError -= HandlerError;
-                conn.OnSocketError -= Disconnect;
+                //conn.OnSocketError -= Disconnect;
                 conn.OnError -= HandlerError;
                 conn.OnRegisterError -= ElementError;
                 conn.OnStreamError -= ElementError;
@@ -291,7 +294,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnMessage += OnMessage;
             conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
-            conn.OnSocketError += Disconnect;
+            //conn.OnSocketError += Disconnect;
             conn.OnError += HandlerError;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
@@ -576,7 +579,7 @@ namespace MeTLLib.Providers.Connection
                 var rooms = new List<Jid>();
                 rooms.AddRange(new[]
                 {
-                    new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
+                    //new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
                     new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
                 });
@@ -682,16 +685,20 @@ namespace MeTLLib.Providers.Connection
                     var healthy = false;
                     var uri = metlServerAddress.uri;
                     var ping = new System.Net.NetworkInformation.Ping();
-                    var reply = ping.Send(uri.Host, 2000);
+                    var reply = ping.Send(uri.Host, 5000);
                     if (reply != null && reply.Status == IPStatus.Success)
                     {
                         healthy = true;
+                    }
+                    else {
+                        Console.WriteLine(reply.Status);
                     }
                     return healthy;
                 };
                 return conn.Authenticated && checkPing();
             }
-            catch (Exception) {
+            catch (Exception e) {
+                Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
                 return false;
             }
         }
@@ -885,8 +892,10 @@ namespace MeTLLib.Providers.Connection
         }
         public void AskForTeacherStatus(string teacher, string where)
         {
+            /*
             Console.WriteLine("Jabberwire:AskTeacherForStatus => sending on conversation: " + where);
             command(where, TEACHER_IN_CONVERSATION + " "+ where);
+             */
         }
         public void SendSyncMoveTo(int where)
         {

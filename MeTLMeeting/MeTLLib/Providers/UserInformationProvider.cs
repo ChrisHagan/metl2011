@@ -74,7 +74,7 @@ namespace MeTLLib.Providers
 
         public List<MeTLUserInformation> lookupUsers(List<string> usernames)
         {
-            string url = String.Format("{2}://{0}:{1}/mldapquery.yaws?usernames={1}",server.host,server.port,usernames.Aggregate("",(acc,item) => acc + "," + item),server.protocol);
+            string url = String.Format("{0}://{1}:{2}/mldapquery.yaws?usernames={3}",server.protocol,server.host,server.port,usernames.Aggregate("",(acc,item) => acc + "," + item));
             var webClient = webClientFactory.client();
             string xmlString = webClient.downloadString(new System.Uri(url));
             XElement doc = XElement.Parse(xmlString);
