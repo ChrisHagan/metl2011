@@ -161,7 +161,10 @@ namespace SandRibbon.Components
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
-            Display(Globals.conversationDetails);
+            Dispatcher.adopt(delegate
+            {
+                Display(Globals.conversationDetails);
+            });
             var paste = new CompositeCommand();
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
             slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
@@ -375,64 +378,70 @@ namespace SandRibbon.Components
             thumbnailList.Clear();
             foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
             {
+           //     thumbnailList.First(s => s.id == slide.id).refreshIndex();
                 thumbnailList.Add(slide);
             }
             refreshSelectedIndex(-1,false);    
+            //thumbnailList = thumbnailList.OrderBy(s => s.index) as ObservableCollection<Slide>;
         }
         private Timer refreshSelectedIndexTimer;
+        private object timerLockObject = new Object();
         public void refreshSelectedIndex(int proposedSlideId, bool forceRefresh){
-            if (refreshSelectedIndexTimer != null)
-            {
-                refreshSelectedIndexTimer.Change(Timeout.Infinite, Timeout.Infinite);
-                refreshSelectedIndexTimer.Dispose();
-                refreshSelectedIndexTimer = null;
-            }
-            if (refreshSelectedIndexTimer == null)
-            {
-                refreshSelectedIndexTimer = new System.Threading.Timer(s =>
-                {
-                    Dispatcher.adopt((Action)delegate
-                    {
-                        try
-                        {
+            lock (timerLockObject) {
+              if (refreshSelectedIndexTimer != null)
+              {
+                  refreshSelectedIndexTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                  refreshSelectedIndexTimer.Dispose();
+                  refreshSelectedIndexTimer = null;
+              }
+              if (refreshSelectedIndexTimer == null)
+              {
+                  refreshSelectedIndexTimer = new System.Threading.Timer(s =>
+                  {
+                      Dispatcher.adopt((Action)delegate
+                      {
+                          try
+                          {
 
-                            var currentSlide = 0;
-                            if (proposedSlideId != -1 && proposedSlideId > 0)
-                                currentSlide = proposedSlideId;
-                            else currentSlide = Globals.location.currentSlide;
-                            var currentIndex = indexOf(currentSlide);
-                            bool moveRequired = false;
-                            if (moveTo)
-                            {
-                                currentIndex++;
-                                moveTo = false;
-                                moveRequired = true;
-                            }
-                            if (isSlideInSlideDisplay(currentSlide))
-                            {
-                                if (forceRefresh || slides.SelectedItem == null || slides.SelectedIndex == -1 || (slides.SelectedItem != null && ((Slide)slides.SelectedItem).id != Globals.location.currentSlide) || moveRequired)
-                                {
-                                    slides.SelectedIndex = currentIndex;
-                                    if (slides.SelectedIndex == -1)
-                                        slides.SelectedIndex = 0;
-                                    slides.ScrollIntoView(slides.SelectedItem);
-                                }
-                              Commands.RequerySuggested(Commands.MoveToNext);
-                              Commands.RequerySuggested(Commands.MoveToPrevious);
-                            }
-                            else
-                            {
-                          //      refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
-                        }
-                    });
-                }, null, Timeout.Infinite, Timeout.Infinite);
-            }
-            refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
+                              var currentSlide = 0;
+                              if (proposedSlideId != -1 && proposedSlideId > 0)
+                                  currentSlide = proposedSlideId;
+                              else currentSlide = Globals.location.currentSlide;
+                              var currentIndex = indexOf(currentSlide);
+                              bool moveRequired = false;
+                              if (moveTo)
+                              {
+                                  currentIndex++;
+                                  moveTo = false;
+                                  moveRequired = true;
+                              }
+                              if (isSlideInSlideDisplay(currentSlide))
+                              {
+                                  if (forceRefresh || slides.SelectedItem == null || slides.SelectedIndex == -1 || (slides.SelectedItem != null && ((Slide)slides.SelectedItem).id != Globals.location.currentSlide) || moveRequired)
+                                  {
+                                      slides.SelectedIndex = currentIndex;
+                                      if (slides.SelectedIndex == -1)
+                                          slides.SelectedIndex = 0;
+                                      slides.ScrollIntoView(slides.SelectedItem);
+                                  }
+                                Commands.RequerySuggested(Commands.MoveToNext);
+                                Commands.RequerySuggested(Commands.MoveToPrevious);
+                              }
+                              else
+                              {
+                                  Console.WriteLine("Slide isn't in display");
+                            //      refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
+                              }
+                          }
+                          catch (Exception)
+                          {
+                              refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
+                          }
+                      });
+                  }, null, Timeout.Infinite, Timeout.Infinite);
+              }
+              refreshSelectedIndexTimer.Change(50, Timeout.Infinite);
+           }
         }
         public void EditConversation(object _obj)
         {
@@ -506,7 +515,8 @@ namespace SandRibbon.Components
 
                         Commands.MoveTo.ExecuteAsync(currentSlideId);
                         SendSyncMove(currentSlideId);
-                        slides.ScrollIntoView(selected);
+                        refreshSelectedIndex(currentSlideId, false);
+                        //slides.ScrollIntoView(selected);
                     } else if (sender is ListBox) {
                         if (removedItems.Count > 0){
                             ((ListBox)sender).SelectedItem = removedItems[0];

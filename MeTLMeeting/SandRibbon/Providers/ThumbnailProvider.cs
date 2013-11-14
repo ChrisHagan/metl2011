@@ -27,29 +27,39 @@ namespace SandRibbon.Providers
     {
         public static ImageSource emptyImage = new ImageSourceConverter().ConvertFromString("Resources/Slide_Not_Loaded.png") as ImageSource;
         private static Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
+        private static object cacheLock = new object();
         //acceptableStaleTime is measured in ticks
         public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 30;
         private static int maximumCachedBitmaps = 200;
         private static void addToCache(int slideId, CachedThumbnail ct)
         {
-            if (cache.Keys.Count >= maximumCachedBitmaps)
+            lock (cacheLock)
             {
-                var toRemove = cache.OrderBy(kvp => kvp.Value.created).First();
-                Console.WriteLine(String.Format("removing item from cache: {0} ({1})",toRemove.Key,toRemove.Value.created));
-                cache.Remove(toRemove.Key);
+                if (cache.Keys.Count >= maximumCachedBitmaps)
+                {
+                    var toRemove = cache.OrderBy(kvp => kvp.Value.created).First();
+                    Console.WriteLine(String.Format("removing item from cache: {0} ({1})",toRemove.Key,toRemove.Value.created));
+                    cache.Remove(toRemove.Key);
+                }
+                Console.WriteLine(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
+                cache[slideId] = ct;
             }
-            Console.WriteLine(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
-            cache[slideId] = ct;
         }
         private static void paintThumb(Image image)
         {
           image.Dispatcher.adopt(delegate
           {
               var internalSlide = (Slide)image.DataContext;
-              if (internalSlide != null && cache.ContainsKey(internalSlide.id))
+              if (internalSlide != null)
               {
-                  Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
-                  image.Source = cache[internalSlide.id].image;
+                  lock (cacheLock)
+                  {
+                      if (cache.ContainsKey(internalSlide.id))
+                      {
+                          Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
+                          image.Source = cache[internalSlide.id].image;
+                      }
+                  }
               }
               else
                   image.Source = emptyImage;
@@ -59,7 +69,15 @@ namespace SandRibbon.Providers
         {
             var slide = (Slide)image.DataContext;
             var internalSlideId = slide.id;
-            if (cache.ContainsKey(slideId) && cache[slideId].created > DateTime.Now.Ticks - acceptableStaleTime) {
+            bool shouldPaintThumb = false;
+            lock (cacheLock)
+            {
+                if (cache.ContainsKey(slideId) && cache[slideId].created > DateTime.Now.Ticks - acceptableStaleTime)
+                {
+                    shouldPaintThumb = true;
+                }
+            }
+            if (shouldPaintThumb) {
                 paintThumb(image);
             } else {
                 var server = ClientFactory.Connection().server;

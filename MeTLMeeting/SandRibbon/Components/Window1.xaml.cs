@@ -705,12 +705,12 @@ namespace SandRibbon
             
             Dispatcher.adopt(delegate
                                  {
-
+/*
                                      if (details.Author == Globals.me)
                                          ParticipantsTabItem.Visibility = Visibility.Visible;
                                      else
                                          ParticipantsTabItem.Visibility = Visibility.Collapsed;
-
+                                     */
                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
                                     {
                                          UpdateTitle(details);
@@ -781,8 +781,16 @@ namespace SandRibbon
             if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
-            scroll.ScrollToLeftEnd();
-            scroll.ScrollToTop();
+            if (canvas != null && canvas.stack != null && !Double.IsNaN(canvas.stack.offsetX) && !Double.IsNaN(canvas.stack.offsetY))
+            {
+                scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth,Math.Max(0,-canvas.stack.offsetX)));
+                scroll.ScrollToVerticalOffset(Math.Min(scroll.ExtentHeight,Math.Max(0,-canvas.stack.offsetY)));
+            }
+            else
+            {
+                scroll.ScrollToLeftEnd();
+                scroll.ScrollToTop();
+            }
         }
         private void FitToView(object _unused)
         {

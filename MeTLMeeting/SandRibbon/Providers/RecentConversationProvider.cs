@@ -14,7 +14,7 @@ namespace SandRibbon.Providers
     public class RecentConversationProvider
     {
         public static MeTLLib.ClientConnection ConversationProvider = MeTLLib.ClientFactory.Connection();
-        public static readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
+        public static readonly string RECENT_DOCUMENTS = SandRibbon.Utils.LocalFileProvider.getUserFile(new string[]{},"recentDocuments.xml");
         
         public static IEnumerable<ConversationDetails> loadRecentConversations()
         {
@@ -41,6 +41,23 @@ namespace SandRibbon.Providers
             }
             return new List<ConversationDetails>();
         }
+
+        public static void removeRecentConversation(string jid)
+        {
+            try
+            {
+                if (!File.Exists(RECENT_DOCUMENTS) || String.IsNullOrEmpty(jid))
+                    return;
+
+                var recentDocs = XDocument.Load(RECENT_DOCUMENTS);
+                recentDocs.Descendants("conversation").Where(c => c.Attribute("jid").Value == jid).Remove();
+                recentDocs.Save(RECENT_DOCUMENTS);
+            }
+            catch (IOException)
+            {
+            }
+        }
+
         public static void addRecentConversation(ConversationDetails document, String me)
         {
             try

@@ -202,7 +202,11 @@ namespace SandRibbon.Components
         public bool IsConversationOwner
         {
             get { return (bool)GetValue(IsConversationOwnerProperty); }
-            set { SetValue(IsConversationOwnerProperty, value); }
+            set 
+            { 
+                SetValue(IsConversationOwnerProperty, value); 
+                NotifyPropertyChanged("IsConversationOwner");
+            }
         }
 
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)

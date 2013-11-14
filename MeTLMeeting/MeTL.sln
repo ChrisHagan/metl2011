@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalTests", "FunctionalTests\FunctionalTests.csproj", "{2FED8C4C-2184-41D8-A920-4307F963805D}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup1", "Setup1\Setup1.vdproj", "{381205E5-10A6-49ED-9F04-95043D5CACED}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MeTL.vsmdi
@@ -125,6 +127,12 @@ Global
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|x86.ActiveCfg = Release|Any CPU
+		{381205E5-10A6-49ED-9F04-95043D5CACED}.Debug|Any CPU.ActiveCfg = Debug
+		{381205E5-10A6-49ED-9F04-95043D5CACED}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{381205E5-10A6-49ED-9F04-95043D5CACED}.Debug|x86.ActiveCfg = Debug
+		{381205E5-10A6-49ED-9F04-95043D5CACED}.Release|Any CPU.ActiveCfg = Release
+		{381205E5-10A6-49ED-9F04-95043D5CACED}.Release|Mixed Platforms.ActiveCfg = Release
+		{381205E5-10A6-49ED-9F04-95043D5CACED}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

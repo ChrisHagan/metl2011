@@ -120,12 +120,15 @@ namespace SandRibbon.Components
         {
             //if (!isPrivate(parser))
             //{
+                BeginInit();
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)
                     stack.DoText(text);
+                stack.RefreshCanvas();
                 /*foreach (var moveDelta in parser.moveDeltas)
                     stack.ReceiveMoveDelta(moveDelta, processHistory: true);*/
+                EndInit();
            //}
         }
 

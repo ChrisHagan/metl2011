@@ -425,9 +425,9 @@ namespace MeTLLib
                 try
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    Image newImage = lii.image;
-                    newImage.Dispatcher.adopt(() =>
-                    {
+
+                    MeTLImage newImage = lii.image;
+                    newImage.Dispatcher.adopt(() => {
                         newImage.tag(lii.image.tag());
                         newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
                         wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, lii.image.tag().timestamp));

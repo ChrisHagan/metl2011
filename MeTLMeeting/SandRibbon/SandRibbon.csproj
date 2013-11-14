@@ -72,8 +72,8 @@
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL Staging</ProductName>
-    <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
-    <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
+    <InstallUrl>http://adm-web25-v02.adm.monash.edu.au/MeTLStaging/</InstallUrl>
+    <UpdateUrl>http://adm-web25-v02.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -89,8 +89,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL</ProductName>
-    <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
-    <UpdateUrl>http://metl.adm.monash.edu.au/MeTL2011/</UpdateUrl>
+    <InstallUrl>http://adm-web25-v02.adm.monash.edu.au/MeTL2011/</InstallUrl>
+    <UpdateUrl>http://adm-web25-v02.adm.monash.edu.au/MeTL2011/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup>
@@ -183,6 +183,7 @@
     <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">

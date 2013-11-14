@@ -163,13 +163,16 @@ namespace MeTLLib.DataTypes
         {
             xTranslate = copyTmd.xTranslate;
             yTranslate = copyTmd.yTranslate;
+            xOrigin = copyTmd.xOrigin;
+            yOrigin = copyTmd.yOrigin;
             xScale = copyTmd.xScale;
             yScale = copyTmd.yScale;
             newPrivacy = copyTmd.newPrivacy;
             isDeleted = copyTmd.isDeleted;
             timestamp = copyTmd.timestamp;
         }
-
+        public double xOrigin { get; set; }
+        public double yOrigin { get; set; }
         public double xTranslate { get; set; }
         public double yTranslate { get; set; }
         public double xScale { get; set; }
@@ -181,6 +184,7 @@ namespace MeTLLib.DataTypes
         {
             // set defaults
             xTranslate = yTranslate = 0;
+            xOrigin = yOrigin = 0;
             xScale = yScale = 1;
             newPrivacy = Privacy.NotSet;
         }
@@ -261,6 +265,8 @@ namespace MeTLLib.DataTypes
                 MeTLMath.ApproxEqual(moveDelta.yTranslate, yTranslate) &&
                 MeTLMath.ApproxEqual(moveDelta.xScale, xScale) &&
                 MeTLMath.ApproxEqual(moveDelta.yScale, yScale) &&
+                MeTLMath.ApproxEqual(moveDelta.xOrigin, xOrigin) &&
+                MeTLMath.ApproxEqual(moveDelta.yOrigin, yOrigin) &&
                 moveDelta.newPrivacy == newPrivacy &&
                 IsNullOrEqual(moveDelta._inkIds, _inkIds) &&
                 IsNullOrEqual(moveDelta._textIds, _textIds) &&
@@ -289,6 +295,9 @@ namespace MeTLLib.DataTypes
             var targettedMoveDelta = new TargettedMoveDelta(tmd);
             targettedMoveDelta.newPrivacy = replacementPrivacy;
 
+            targettedMoveDelta.xOrigin = tmd.xOrigin;
+            targettedMoveDelta.yOrigin = tmd.yOrigin;
+            
             AddFromCollection<TargettedStroke>(strokes, (s) => targettedMoveDelta.AddInkId(s.identity));
             AddFromCollection<TargettedTextBox>(texts, (t) => targettedMoveDelta.AddTextId(t.identity));
             AddFromCollection<TargettedImage>(images, (i) => targettedMoveDelta.AddImageId(i.identity));
@@ -439,7 +448,7 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedImage : TargettedElement
     {
-        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, Image Image, long Timestamp)
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, MeTLImage Image, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
             image = Image;
@@ -473,7 +482,7 @@ namespace MeTLLib.DataTypes
             //return this;
         }
 
-        public System.Windows.Controls.Image imageProperty;
+        public MeTLImage imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
         private IWebClient downloader;
@@ -486,7 +495,7 @@ namespace MeTLLib.DataTypes
             this.provider = provider;
             imageSpecification.injectDependencies(server, downloader, provider);
         }
-        public System.Windows.Controls.Image image
+        public MeTLImage image
         {
             get
             {
@@ -918,6 +927,8 @@ namespace MeTLLib.DataTypes
             static readonly string INKIDS_TAG = "inkIds";
             static readonly string TEXTIDS_TAG = "textIds";
             static readonly string IMAGEIDS_TAG = "imageIds";
+            static readonly string X_ORIGIN = "xOrigin";
+            static readonly string Y_ORIGIN = "yOrigin";
             #endregion
 
             static MoveDeltaStanza()
@@ -962,6 +973,9 @@ namespace MeTLLib.DataTypes
                     //moveDelta.newPrivacy = (Privacy)GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy));
                     moveDelta.isDeleted = GetTagBool(ISDELETED_TAG);
 
+                    moveDelta.xOrigin = GetTagDouble(X_ORIGIN);
+                    moveDelta.yOrigin = GetTagDouble(Y_ORIGIN);
+
                     GetChildren<InkIdentityStanza>(moveDelta, INKIDS_TAG, (elemId) => moveDelta.AddInkId(elemId));
                     GetChildren<TextBoxIdentityStanza>(moveDelta, TEXTIDS_TAG, (elemId) => moveDelta.AddTextId(elemId));
                     GetChildren<ImageIdentityStanza>(moveDelta, IMAGEIDS_TAG, (elemId) => moveDelta.AddImageId(elemId));
@@ -984,6 +998,9 @@ namespace MeTLLib.DataTypes
                     SetTag(YSCALE_TAG, value.yScale);
                     SetTag(NEWPRIVACY_TAG, value.newPrivacy.ToString());
                     SetTag(ISDELETED_TAG, value.isDeleted);
+
+                    SetTag(X_ORIGIN, value.xOrigin);
+                    SetTag(Y_ORIGIN, value.yOrigin);
 
                     SetChildren<InkIdentityStanza>(INKIDS_TAG, value.inkIds, (elemId) => new InkIdentityStanza(elemId));
                     SetChildren<TextBoxIdentityStanza>(TEXTIDS_TAG, value.textIds, (elemId) => new TextBoxIdentityStanza(elemId));
@@ -1102,9 +1119,9 @@ namespace MeTLLib.DataTypes
                 var textCtrl = targettedTextBox.boxProperty;
 
                 var width = textCtrl.Width;
-                this.width = Double.IsNaN(width) ? textCtrl.ActualWidth : width;
+                this.width = (Double.IsNaN(width) || width <= 0) ? textCtrl.ActualWidth : width;
                 var height = textCtrl.Height;
-                this.height = Double.IsNaN(height) ? textCtrl.ActualHeight : height;
+                this.height = (Double.IsNaN(height) || height <= 0) ? textCtrl.ActualHeight : height;
                 //this.height = textCtrl.Height;
                 //this.width = textCtrl.Width;
                 this.caret = textCtrl.CaretIndex;
@@ -1305,7 +1322,7 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
-            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, System.Windows.Controls.Image Image, string File, bool Overwrite)
+            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, MeTLImage Image, string File, bool Overwrite)
             {
                 slide = Slide;
                 author = Author;
@@ -1316,7 +1333,7 @@ namespace MeTLLib.DataTypes
                 overwrite = Overwrite;
             }
             public string author;
-            public System.Windows.Controls.Image image;
+            public MeTLImage image;
             public string file;
             public bool overwrite;
             public Privacy privacy;
@@ -1940,13 +1957,13 @@ namespace MeTLLib.DataTypes
                 }
             }
 
-            public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server)
+            public Func<MeTLImage> curryEvaluation(MeTLServerAddress server)
             {
                 return () => forceEvaluation();
             }
-            public System.Windows.Controls.Image forceEvaluationForPrinting()
+            public MeTLImage forceEvaluationForPrinting()
             {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image
+                MeTLImage image = new MeTLImage
                 {
                     Tag = "FOR_PRINTING_ONLY::::" + this.tag,
                     Height = this.height,
@@ -1957,16 +1974,17 @@ namespace MeTLLib.DataTypes
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public System.Windows.Controls.Image forceEvaluation()
+            public MeTLImage forceEvaluation()
             {
                 var sourceString = string.Format("{3}://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)), server.protocol);
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image
+                MeTLImage image = new MeTLImage
                     {
                         Tag = dynamicTag,
                         Height = this.height,
                         Width = this.width,
-                        Source = BackupSource
+                        Source = BackupSource,
+                        Stretch = Stretch.Fill
                     };
                 RoutedEventHandler handler = null;
                 handler = delegate

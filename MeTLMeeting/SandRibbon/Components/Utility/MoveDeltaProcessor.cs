@@ -8,6 +8,7 @@
     using System.Windows.Ink;
     using System.Windows.Media;
     using MeTLLib.DataTypes;
+    using System.Collections.ObjectModel;
 
     public abstract class MoveDeltaProcessor
     {
@@ -24,19 +25,30 @@
             this.contentBuffer = contentBuffer;
         }
 
-        protected abstract void AddStroke(Stroke stroke);
+        protected abstract void AddStroke(PrivateAwareStroke stroke);
 
-        protected abstract void RemoveStroke(Stroke stroke);
-        protected abstract void RemoveImage(Image image);
+        protected abstract void RemoveStroke(PrivateAwareStroke stroke);
+        protected abstract void RemoveImage(MeTLImage image);
         protected abstract void RemoveText(TextBox textbox);
 
-        protected abstract void ChangeImagePrivacy(Image image, Privacy newPrivacy);
+        protected abstract void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy);
         protected abstract void ChangeTextPrivacy(TextBox textbox, Privacy newPrivacy);
 
+        private List<String> sentDeltas = new List<String>();
+
+        public void rememberSentMoveDelta(TargettedMoveDelta moveDelta)
+        {
+            sentDeltas.Add(moveDelta.identity);
+        }
+        public void clearRememberedSentMoveDeltas()
+        {
+            sentDeltas.Clear();
+        }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, string recipient, bool processHistory)
         {
-            if (!processHistory && moveDelta.HasSameAuthor(recipient))
+            if (!processHistory && sentDeltas.Contains(moveDelta.identity))
             {
+                //sentDeltas.Remove(moveDelta.identity);
                 return;
             }
 
@@ -58,6 +70,43 @@
             }
         }
 
+        private PrivateAwareStroke AdjustVisual(PrivateAwareStroke stroke, double xTranslate, double yTranslate, double xScale, double yScale)
+        {
+            var newStroke = stroke.Clone(); 
+            if (xTranslate == 0.0 && yTranslate == 0.0 && xScale == 1.0 && yScale == 1.0)
+                return newStroke;
+
+            //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
+            Rect myRect = new Rect();
+            myRect = newStroke.GetBounds();
+
+            var transformMatrix = new Matrix();
+            if (xScale != 1.0 || yScale != 1.0)
+            {   
+                transformMatrix.Translate(-myRect.X, -myRect.Y);
+
+                newStroke.Transform(transformMatrix, false);
+
+                transformMatrix = new Matrix();
+                transformMatrix.Scale(xScale,yScale);
+                
+                if(double.IsNaN(xTranslate))
+                {
+                    xTranslate = 0;
+                }
+                if (double.IsNaN(yTranslate))
+                {
+                    yTranslate = 0;
+                }
+                xTranslate = xTranslate + myRect.X;
+                yTranslate = yTranslate + myRect.Y;
+            }
+            
+            transformMatrix.Translate(xTranslate, yTranslate);
+            newStroke.Transform(transformMatrix, false);
+            return newStroke;
+        }
+
         protected void ContentTranslateAndScale(TargettedMoveDelta moveDelta)
         {
             var xTrans = moveDelta.xTranslate;
@@ -65,50 +114,30 @@
             var xScale = moveDelta.xScale;
             var yScale = moveDelta.yScale;
 
-            /*var transformMatrix = new Matrix();
-            transformMatrix.Scale(xScale, yScale);
-            transformMatrix.Translate(xTrans, yTrans);*/
+            var totalBounds = Double.IsNaN(moveDelta.yOrigin) || Double.IsNaN(moveDelta.xOrigin) ? contentBuffer.getBoundsOfMoveDelta(moveDelta) : new Rect(moveDelta.xOrigin, moveDelta.yOrigin, 0.0, 0.0);
+            var tbX = totalBounds.Left - contentBuffer.logicalX;
+            var tbY = totalBounds.Top - contentBuffer.logicalY;
+            //var totalBounds = contentBuffer.getBoundsOfMoveDelta(moveDelta);
 
             foreach (var inkId in moveDelta.inkIds)
             {
                 contentBuffer.adjustStrokeForMoveDelta(inkId, (s) =>
                 {
-                    //var deadStrokes = new List<Stroke>();
-                    //var stroke = strokeFilter.Strokes.Where(s => s.tag().id == strokeIdentity).First();
-                    //foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
-                    //{
-                    if (dirtiesThis(moveDelta, s))
-                    {
-                        //Get bounds of the stroke, translate it to 0, scale it, add the move delta translate to the bounds and tranlate them back
-                        Rect myRect = new Rect();
-                        myRect = s.Clone().GetBounds();
+                    if (dirtiesThis(moveDelta,s)){
 
-                        var transformMatrix = new Matrix();
-                        if (xScale != 1.0 || yScale != 1.0)
-                        {
-                            transformMatrix.Translate(-myRect.X, -myRect.Y);
-                            s.Transform(transformMatrix, false);
+                        var sBounds = s.GetBounds();
+                        var internalX = sBounds.Left - tbX;
+                        var internalY = sBounds.Top - tbY;
+                        var offsetX = -(internalX - (internalX * xScale));
+                        var offsetY = -(internalY - (internalY * yScale));
 
-                            transformMatrix = new Matrix();
-                            transformMatrix.Scale(xScale, yScale);
-                            if (double.IsNaN(xTrans))
-                            {
-                                xTrans = 0;
-                            }
-                            if (double.IsNaN(yTrans))
-                            {
-                                yTrans = 0;
-                            }
+                        var adjustedStroke = AdjustVisual(s, xTrans + offsetX, yTrans + offsetY, xScale, yScale);
+                        RemoveStroke(s);
+                        AddStroke(adjustedStroke);
 
-                            xTrans = xTrans + myRect.X;
-                            yTrans = yTrans + myRect.Y;
-                        }
-
-                        transformMatrix.Translate(xTrans, yTrans);
-                        s.Transform(transformMatrix, false);
+                        return adjustedStroke;
                     }
                     return s;
-                    //}
                 });
             }
 
@@ -118,7 +147,7 @@
                 {
                     if (dirtiesThis(moveDelta, t))
                     {
-                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale);
+                        TranslateAndScale(t, xTrans, yTrans, xScale, yScale, totalBounds.Left,totalBounds.Top);//tbX,tbY);
                     }
                     return t;
                 });                
@@ -130,20 +159,38 @@
                 {
                     if (dirtiesThis(moveDelta, i))
                     {
-                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale);
+                        TranslateAndScale(i, xTrans, yTrans, xScale, yScale, totalBounds.Left,totalBounds.Top);//tbX,tbY);
                     }
                     return i;
                 });
             }
         }
 
-        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale)
+        private void TranslateAndScale(FrameworkElement element, double xTrans, double yTrans, double xScale, double yScale, double tbX, double tbY)
         {
+            var myLeft = 0.0;
+            if (element is MeTLTextBox){
+                myLeft = InkCanvas.GetLeft(element) + (element as MeTLTextBox).offsetX;
+            } else if (element is MeTLImage){
+                myLeft = InkCanvas.GetLeft(element) + (element as MeTLImage).offsetX;
+            }
+            var myTop = 0.0;
+            if (element is MeTLTextBox){
+                myTop = InkCanvas.GetTop(element) + (element as MeTLTextBox).offsetY;
+            } else if (element is MeTLImage){
+                myTop = InkCanvas.GetTop(element) + (element as MeTLImage).offsetY;
+            }
+            myLeft -= tbX;
+            myTop -= tbY;
+
             var left = InkCanvas.GetLeft(element) + xTrans;
             var top = InkCanvas.GetTop(element) + yTrans;
 
-            InkCanvas.SetLeft(element, left);
-            InkCanvas.SetTop(element, top);
+            var leftCorrection = -(myLeft - (myLeft * xScale));
+            var topCorrection = -(myTop - (myTop * yScale));
+
+            InkCanvas.SetLeft(element, left + leftCorrection);
+            InkCanvas.SetTop(element, top + topCorrection);
 
             /* 
             // buggy
@@ -196,7 +243,7 @@
             return moveDelta.inkIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
         }
 
-        private bool dirtiesThis(TargettedMoveDelta moveDelta, Image elem)
+        private bool dirtiesThis(TargettedMoveDelta moveDelta, MeTLImage elem)
         {
             return moveDelta.imageIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
         }
@@ -208,13 +255,13 @@
 
         protected void ContentDelete(TargettedMoveDelta moveDelta)
         {
-            var deadStrokes = new List<Stroke>();
+            var deadStrokes = new List<PrivateAwareStroke>();
             var deadTextboxes = new List<TextBox>();
-            var deadImages = new List<Image>();
+            var deadImages = new List<MeTLImage>();
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))                
+                foreach (var stroke in Canvas.Strokes.Where((s) => s is PrivateAwareStroke && s.tag().id == inkId.Identity).Select(s => s as PrivateAwareStroke))                
                 {
                     if(dirtiesThis(moveDelta,stroke))
                     {
@@ -268,13 +315,13 @@
 
         protected void ContentPrivacyChange(TargettedMoveDelta moveDelta)
         {
-            var privacyStrokes = new List<Stroke>();
+            var privacyStrokes = new List<PrivateAwareStroke>();
             var privacyTextboxes = new List<TextBox>();
-            var privacyImages = new List<Image>();
+            var privacyImages = new List<MeTLImage>();
 
             foreach (var inkId in moveDelta.inkIds)
             {
-                foreach (var stroke in Canvas.Strokes.Where((s) => s.tag().id == inkId.Identity))
+                foreach (var stroke in Canvas.Strokes.Where((s) => s is PrivateAwareStroke && s.tag().id == inkId.Identity).Select(s => s as PrivateAwareStroke))
                 {
                     if (dirtiesThis(moveDelta, stroke))
                     {
@@ -308,10 +355,9 @@
             foreach (var stroke in privacyStrokes)
             {
                 var oldTag = stroke.tag();
-                RemoveStroke(stroke);
-
+//                RemoveStroke(stroke);
                 stroke.tag(new StrokeTag(oldTag, moveDelta.privacy));
-                AddStroke(stroke);
+//                AddStroke(stroke);
             }
 
             foreach (var image in privacyImages)

@@ -19,6 +19,8 @@ namespace SandRibbon.Components.Utility
 {
     public class MeTLTextBox : TextBox
     {
+        public double offsetX = 0;
+        public double offsetY = 0;
         CommandBinding undoBinding;
         CommandBinding redoBinding;
 
@@ -80,21 +82,21 @@ namespace SandRibbon.Components.Utility
 
     public static class InkCanvasExtensions
     {
-        public static IEnumerable<TextBox> TextChildren(this InkCanvas canvas)
+        public static IEnumerable<MeTLTextBox> TextChildren(this InkCanvas canvas)
         {
-            return canvas.Children.OfType<TextBox>();
+            return canvas.Children.OfType<MeTLTextBox>();
         }
-        public static IEnumerable<Image> ImageChildren(this InkCanvas canvas)
+        public static IEnumerable<MeTLImage> ImageChildren(this InkCanvas canvas)
         {
-            return canvas.Children.OfType<Image>();
+            return canvas.Children.OfType<MeTLImage>();
         }
-        public static IEnumerable<Image> GetSelectedImages(this InkCanvas canvas)
+        public static IEnumerable<MeTLImage> GetSelectedImages(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().OfType<Image>();
+            return canvas.GetSelectedElements().OfType<MeTLImage>();
         }
-        public static IEnumerable<TextBox> GetSelectedTextBoxes(this InkCanvas canvas)
+        public static IEnumerable<MeTLTextBox> GetSelectedTextBoxes(this InkCanvas canvas)
         {
-            return canvas.GetSelectedElements().OfType<TextBox>();
+            return canvas.GetSelectedElements().OfType<MeTLTextBox>();
         }
     }
     public static class TextBoxExtensions
@@ -126,15 +128,16 @@ namespace SandRibbon.Components.Utility
             newBox.Background = box.Background;
             newBox.tag(box.tag());
             newBox.CaretIndex = box.CaretIndex;
-            newBox.Width = box.Width;
-            newBox.Height = box.Height;
+            newBox.Width = Double.IsNaN(box.Width) || box.Width <= 0 ? box.ActualWidth : box.Width;
+            newBox.Height = Double.IsNaN(box.Height) || box.Height <= 0 ? box.ActualHeight : box.Height;
             newBox.MaxHeight = box.MaxHeight;
             //newBox.SelectedText = box.SelectedText;
             newBox.SelectionLength = box.SelectionLength;
             newBox.SelectionStart = box.SelectionStart;
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
-
+            newBox.offsetX = box.offsetX;
+            newBox.offsetY = box.offsetY;
             return newBox;
         }
         public static MeTLTextBox toMeTLTextBox(this TextBox OldBox)
@@ -169,8 +172,18 @@ namespace SandRibbon.Components.Utility
         private StreamGeometry geometry;
         private string target;
         private Stroke whiteStroke;
-
-        private bool isPrivate;
+        private bool isPrivate{
+            get {return this.tag().privacy == Privacy.Private; }
+        }
+        public double offsetX = 0;
+        public double offsetY = 0;
+        public PrivateAwareStroke Clone()
+        {
+            var pas = new PrivateAwareStroke(base.Clone(), target);
+            pas.offsetX = offsetX;
+            pas.offsetY = offsetY;
+            return pas;
+        }
         public PrivateAwareStroke(Stroke stroke, string target) : base(stroke.StylusPoints, stroke.DrawingAttributes)
         {
             var cs = new[] {55, 0, 0, 0}.Select(i => (byte) i).ToList();
@@ -183,14 +196,13 @@ namespace SandRibbon.Components.Utility
                     }), stroke.DrawingAttributes.Width * 4);
             this.target = target; 
             this.tag(stroke.tag());
-            isPrivate = this.tag().privacy == Privacy.Private;
             shouldShowPrivacy = (this.tag().author == Globals.conversationDetails.Author || Globals.conversationDetails.Permissions.studentCanPublish);
             
             if (!isPrivate) return;
 
             pen.Freeze();
         }
-        
+
         protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)
         {
             if (isPrivate && shouldShowPrivacy && target != "notepad")
