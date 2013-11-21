@@ -31,6 +31,7 @@ namespace MeTLLib
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
         public Uri externalUri { get; set; }
+        public Uri webAuthenticationEndpoint { get; set; }
         public enum serverMode { PRODUCTION, STAGING, EXTERNAL };
         private serverMode mode;
         public void setMode(serverMode mode)
@@ -97,7 +98,6 @@ namespace MeTLLib
             set;
         }
         public String uploadEndpoint { get; set; }
-        public String authenticationEndpoint { get; set; }
         public String thumbnail { get; set; }
         public string xmppServiceName { get; set; }
         public string muc

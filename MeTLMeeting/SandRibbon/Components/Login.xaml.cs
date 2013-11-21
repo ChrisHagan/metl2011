@@ -64,11 +64,13 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
+            var failingCredentials = new Credentials("forbidden", "", null, "");
+            App.Login(failingCredentials);
             logonBrowser.ContextMenu = new ContextMenu();
             logonBrowser.Navigated += (sender, args) => {
                 checkWhetherWebBrowserAuthenticationSucceeded(args.Uri);
             };
-            logonBrowser.Navigate(new Uri("http://localhost:8080/authenticationState"));
+            logonBrowser.Navigate(ClientFactory.Connection().server.webAuthenticationEndpoint);
 
             SandRibbon.App.CloseSplashScreen();
 
@@ -93,8 +95,13 @@ namespace SandRibbon.Components
             }
             return root;
         }
-        private void checkWhetherWebBrowserAuthenticationSucceeded(Uri uri){
-            if (uri.AbsoluteUri == "http://localhost:8080/authenticationState")
+        protected Boolean checkUri(Uri uri)
+        {
+            var authenticationUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
+            return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
+        }
+        protected void checkWhetherWebBrowserAuthenticationSucceeded(Uri uri){
+            if (checkUri(uri))
             {
                 try
                 {

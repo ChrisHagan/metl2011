@@ -51,7 +51,7 @@ namespace MeTLLibTests
         public void HttpResourceProviderConstructorTest()
         {
         }
-
+/*
         [TestMethod()]
         public void clientIsConfiguredAgainstWorkingEndpoint()
         {
@@ -61,6 +61,7 @@ namespace MeTLLibTests
             var result = client.downloadString(uri);
             Assert.IsTrue(result.Contains("metl.monash") && result.Contains("Query string malformed"));
         }
+ */
         [TestMethod()]
         public void providerCallsClientUploadFileWithCorrectlyFormattedUrl()
         {

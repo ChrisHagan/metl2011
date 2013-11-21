@@ -58,6 +58,7 @@ namespace MeTLLib.Providers
         public AuthToken login(string AuthcateName, string AuthcatePassword)
         {
             var token = new AuthToken(AuthcateName);
+            /*
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
             Console.WriteLine("AuthorisationProvider::login: {0}, {1}", server.host, server.port);
             var sUri = String.Format("{5}://{2}:{3}/{4}?username={0}&password={1}", AuthcateName, encryptedPassword, server.host, server.port, server.authenticationEndpoint,server.protocol);
@@ -106,6 +107,8 @@ namespace MeTLLib.Providers
                     if (!String.IsNullOrEmpty(error.OuterXml)) token.errors.Add(error.OuterXml);
                 }
             }
+             */
+            token.authenticated = false;
             return token;
         }
     }

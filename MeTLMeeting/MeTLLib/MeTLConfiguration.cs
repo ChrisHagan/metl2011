@@ -64,7 +64,7 @@
                     throw new ArgumentException(String.Format("Active Stack Server {0} specified not found", active));
             }
         }
-
+        
         [ConfigurationProperty("activeStackConfig")]
         public ActiveStackElement ActiveStackConfig
         {
@@ -174,6 +174,18 @@
             }
         }
 
+        [ConfigurationProperty("webAuthenticationEndpoint", IsRequired = true)]
+        public String WebAuthenticationEndpoint
+        {
+            get
+            {
+                return (String)this["webAuthenticationEndpoint"];
+            }
+            set
+            {
+                this["webAuthenticationEndpoint"] = value;
+            }
+        }
         [ConfigurationProperty("isBootstrapUrl", IsRequired = true)]
         public Boolean IsBootstrapUrl
         {
@@ -271,18 +283,6 @@
             set
             {
                 this["uploadEndpoint"] = value;
-            }
-        }
-        [ConfigurationProperty("authenticationEndpoint", IsRequired = true)]
-        public string AuthenticationEndpoint
-        {
-            get
-            {
-                return (String)this["authenticationEndpoint"];
-            }
-            set
-            {
-                this["authenticationEndpoint"] = value;
             }
         }
     }

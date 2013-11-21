@@ -22,7 +22,7 @@ namespace MeTLLib
             var conf = MeTLConfiguration.Config;
 
             uploadEndpoint = conf.Production.UploadEndpoint;
-            authenticationEndpoint = conf.Production.AuthenticationEndpoint;
+            webAuthenticationEndpoint = new Uri(conf.Production.WebAuthenticationEndpoint);
             thumbnail = conf.Production.Thumbnail;
             port = conf.Production.Port;
             Name = conf.Production.Name;
@@ -43,7 +43,7 @@ namespace MeTLLib
             var conf = MeTLConfiguration.Config;
 
             uploadEndpoint = conf.Staging.UploadEndpoint;
-            authenticationEndpoint = conf.Staging.AuthenticationEndpoint;
+            webAuthenticationEndpoint = new Uri(conf.Staging.WebAuthenticationEndpoint);
             thumbnail = conf.Staging.Thumbnail;
             port = conf.Staging.Port;
             Name = conf.Staging.Name;
@@ -64,7 +64,7 @@ namespace MeTLLib
             var conf = MeTLConfiguration.Config;
 
             uploadEndpoint = conf.External.UploadEndpoint;
-            authenticationEndpoint = conf.External.AuthenticationEndpoint;
+            webAuthenticationEndpoint = new Uri(conf.External.WebAuthenticationEndpoint);
             thumbnail = conf.External.Thumbnail;
             port = conf.External.Port;
             protocol = conf.External.Protocol;
