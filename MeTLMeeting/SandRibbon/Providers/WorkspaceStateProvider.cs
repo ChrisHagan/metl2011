@@ -63,10 +63,6 @@ namespace SandRibbon.Providers
                         var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
                         Commands.SetPedagogyLevel.DefaultValue = level;
                     break;
-                    case "SetIdentity":
-                        var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
-                        App.Login(values[0], values[1]);
-                    break;
                     case "RegisterPowerpointSourceDirectoryPreference":
                         Commands.RegisterPowerpointSourceDirectoryPreference.Execute(param.Value);
                     break;

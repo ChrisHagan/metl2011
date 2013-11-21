@@ -126,7 +126,7 @@ namespace SandRibbon.Components
                         var credentials = new Credentials(username, "", authGroups, emailAddress);
                         if (authenticated)
                         {
-                            SetIdentity(credentials);
+                            App.Login(credentials);
                         }
                     }
                 }

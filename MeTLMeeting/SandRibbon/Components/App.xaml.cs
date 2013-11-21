@@ -10,6 +10,7 @@ using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
+using MeTLLib.DataTypes;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -50,40 +51,15 @@ namespace SandRibbon
             splashScreen.Close(TimeSpan.Zero);
         }
 
-        public static void Login(String username, String password)
+        public static void Login(Credentials credentials)
         {
-            string finalUsername = username;
-            if (username.Contains("_"))
-            {
-                var parts = username.Split('_');
-                finalUsername = parts[0];
-                parts[0] = "";
-                foreach (String part in parts)
-                {
-                    switch (part)
-                    {
-                        case "prod":
-                            isStaging = false;
-                            break;
-                        case "production":
-                            isStaging = false;
-                            break;
-                        case "staging":
-                            isStaging = true;
-                            break;
-
-                    }
-                }
-            }
-            if (username.ToLower().StartsWith("ext-"))
-                isExternal = true;
             try
             {
                 App.mark("start network controller and log in");
                 if (controller != null)
                     controller.Deregister();
                 controller = new NetworkController();
-                if (!MeTLLib.ClientFactory.Connection().Connect(finalUsername, password))
+                if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
                 {
                     Commands.LoginFailed.Execute(null);
                 }

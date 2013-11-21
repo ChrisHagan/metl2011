@@ -119,7 +119,7 @@ namespace MeTLLib
     public interface IClientBehaviour
     {
         void AskForTeachersStatus(string teacher, string where);
-        bool Connect(string username, string password);
+        bool Connect(Credentials credentials);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
         void SendStroke(TargettedStroke stroke);
@@ -249,9 +249,8 @@ namespace MeTLLib
             Action work = () => wire.AskForTeacherStatus(teacher, jid);
             tryIfConnected(work);
         }
-        public bool Connect(string username, string password)
+        public bool Connect(Credentials credentials)
         {
-            var credentials = authorisationProvider.attemptAuthentication(username, password);
             if (credentials != null && credentials.isValid)
             {
                 jabberWireFactory.credentials = credentials;
