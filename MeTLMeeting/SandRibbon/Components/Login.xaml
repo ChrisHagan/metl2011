@@ -5,36 +5,6 @@
     xmlns:utility="clr-namespace:SandRibbon.Components.Utility"
     xmlns:p="clr-namespace:SandRibbon.Properties"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <UserControl.Resources>
-        <sr:ErrorContentConverter x:Key="errorConverter"/>
-        <Style x:Key="ErrorStyle">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="Validation.ErrorTemplate">
-                        <Setter.Value>
-                            <ControlTemplate>
-                                <DockPanel LastChildFill="True">
-                                    <Border Background="Red" DockPanel.Dock="Right" Margin="5,0,0,0" Width="20" Height="20" CornerRadius="10">
-                                        <TextBlock Text="!" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                                    </Border>
-                                    <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center">
-                                        <Border BorderBrush="Red" BorderThickness="1" />
-                                    </AdornedElementPlaceholder>
-                                </DockPanel>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>            
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
-    <UserControl.CommandBindings>
-        <CommandBinding Command="{x:Static components:Login.CheckAuthentication}"  CanExecute="checkAuthenticationAttemptIsPlausible" Executed="attemptAuthentication"/>
-        <CommandBinding Command="{x:Static components:Login.LoginPending}" CanExecute="checkLoginPending"/>
-    </UserControl.CommandBindings>
-    <UserControl.InputBindings>
-        <KeyBinding Command="{x:Static components:Login.CheckAuthentication}" Key="Enter" />
-    </UserControl.InputBindings>
     <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray">
             <Grid>
@@ -64,101 +34,7 @@
             </Grid>
         </Border>
         <Grid x:Name="commandEscape">
-            <Border Padding="10" CornerRadius="4" BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel x:Name="controls" >
-                    <StackPanel Orientation="Horizontal" >
-                        <Image Margin="10" Source="\Resources\CrudeMeTLMockup.png"/>
-                        <StackPanel VerticalAlignment="Center">
-                            <Border x:Name="loggingIn" Padding="5" Visibility="Collapsed" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label x:Name="LoggingInLabel" FontSize="20" Content="MeTL is logging you in"/>
-                                </StackPanel>
-                            </Border>
-                            <Border x:Name="usernameAndPassword" Padding="5" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
-                                <StackPanel>
-                                    <Grid Name="credentialsGrid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="150"/>
-                                            <ColumnDefinition MinWidth="150"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static components:Login.LoginPending}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-                                        <Label Target="{Binding ElementName=username}" Content="_Username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <Label Target="{Binding ElementName=password}" Content="_Password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
-
-                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="True" 
-                                                 Validation.Error="ValidationErrorHandler"
-                                                 Style="{StaticResource ErrorStyle}"
-                                                 Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Username,
-                                                        ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
-                                                 TextChanged="hideLoginErrors">
-                                        </TextBox>
-                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="True"
-                                                     Validation.Error="ValidationErrorHandler"
-                                                     Style="{StaticResource ErrorStyle}"
-                                                     utility:PasswordBoxBinder.BindPassword="true" utility:PasswordBoxBinder.BoundPassword="{Binding Path=Password, 
-                                                     Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
-                                                     PasswordChanged="hideLoginErrors"/>
-                                        <Label x:Name="loginErrors" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,5,0,5" Background="PapayaWhip"
-                                                Content="Your log on attempt failed. Please try again." BorderBrush="Red" BorderThickness="1" Foreground="Red" 
-                                                Visibility="Collapsed" HorizontalAlignment="Right"/>
-                                    </Grid>
-                                    <Grid>
-                                        <Grid.Resources>
-                                            <sr:BoolToVisibilityWithHidden x:Key="boolToVisibility" Collapse="False" Negate="True" />
-                                        </Grid.Resources>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <components:CircularProgressBar x:Name="progressBar" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Margin="20,0" 
-                                                                        Grid.Column="0" Grid.Row="0" Visibility="{Binding ElementName=submit, Path=IsEnabled, Converter={StaticResource boolToVisibility}}"/>
-                                        <TextBlock x:Name="loggingInMessage" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic" Grid.Column="1" Margin="0,0,10,0" Grid.Row="0" Text="Logging you in..." 
-                                                   Visibility="{Binding ElementName=submit, Path=IsEnabled, Converter={StaticResource boolToVisibility}}"/>
-                                        <CheckBox VerticalAlignment="Center" x:Name="rememberMe" Grid.Column="2" Grid.Row="0" Margin="0,0,10,0">Keep logged in</CheckBox>
-                                        <Button x:Name="submit" HorizontalAlignment="Right" VerticalAlignment="Center" Command="{x:Static components:Login.CheckAuthentication}" Grid.Column="3" Grid.Row="0">Login</Button>
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-                            <Border Padding="2" >
-                                <StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="Version" FontWeight="bold"/>
-                                        <Label x:Name="VersionLabel" Content="{Binding Path=Version}"/>
-                                    </StackPanel>
-                                    <ScrollViewer x:Name="releaseNotesViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxWidth="400" MaxHeight="200">
-                                        <StackPanel>
-                                            <Label Content="Announcements" FontWeight="bold"/>
-                                            <TextBlock x:Name="ReleaseNotes" TextWrapping="Wrap" Text="Retrieving release notes..."/>
-                                        </StackPanel>
-                                    </ScrollViewer>
-                                    <StackPanel Orientation="Horizontal">
-                                        <ItemsControl x:Name="servers">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" Visibility="{Binding Path=ok, Converter={x:Static sr:Converters.serverStatusToVisibility}}">
-                                                        <Label Content="{Binding Path=label}" />
-                                                        <Label Content="{Binding Path=ok, Converter={x:Static sr:Converters.serverStatusString}}" Foreground="{Binding Path=ok, Converter={x:Static sr:Converters.serverStatusHealthColour}}" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
+            <WebBrowser x:Name="logonBrowser" AllowDrop="False" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></WebBrowser>
         </Grid>
     </DockPanel>
 </UserControl>

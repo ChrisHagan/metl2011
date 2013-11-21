@@ -15,6 +15,10 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Providers;
 using SandRibbon.Components.Utility;
+using System.Xml.Linq;
+using System.Linq;
+using System.Collections.Generic;
+using mshtml;
 
 namespace SandRibbon.Components
 {
@@ -60,11 +64,14 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
-            credentialsGrid.DataContext = credentials;
+            logonBrowser.ContextMenu = new ContextMenu();
+            logonBrowser.Navigated += (sender, args) => {
+                checkWhetherWebBrowserAuthenticationSucceeded(args.Uri);
+            };
+            logonBrowser.Navigate(new Uri("http://localhost:8080/authenticationState"));
 
             SandRibbon.App.CloseSplashScreen();
 
-            RetrieveReleaseNotes();
             Commands.AddWindowEffect.ExecuteAsync(null);
 #if DEBUG
             Version = String.Format("{0} Build: {1}", ConfigurationProvider.instance.getMetlVersion(), "not merc"); //SandRibbon.Properties.HgID.Version); 
@@ -72,114 +79,68 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
 #endif
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
-            Commands.LoginFailed.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { LoginFailed(); }));
-            if (WorkspaceStateProvider.savedStateExists())
+        }
+        protected List<XElement> getElementsByTag(List<XElement> x, String tagName){ 
+            // it's not recursive!
+            var children = x.Select(xel => { return getElementsByTag(xel.Elements().ToList(), tagName); });
+            var root = x.FindAll((xel) =>
             {
-                rememberMe.IsChecked = true;
-                loggingIn.Visibility = Visibility.Visible;
-                usernameAndPassword.Visibility = Visibility.Collapsed;
+                return xel.Name.ToString().Trim().ToLower() == tagName.Trim().ToLower();
+            });
+            foreach (List<XElement> child in children)
+            {
+                root.AddRange(child);
             }
-            Loaded += loaded;
+            return root;
         }
-        
-        private void ValidationErrorHandler(object sender, ValidationErrorEventArgs e)
-        {
-            if (e.Action == ValidationErrorEventAction.Added)
-                numErrorsOfCredentials++;
-            else
-                numErrorsOfCredentials--;
-        }
-
-        private void RetrieveReleaseNotes()
-        {
-            var retriever = new BackgroundWorker();
-            retriever.DoWork += (object sender, DoWorkEventArgs e) => 
-            { 
-                var bw = sender as BackgroundWorker;
+        private void checkWhetherWebBrowserAuthenticationSucceeded(Uri uri){
+            if (uri.AbsoluteUri == "http://localhost:8080/authenticationState")
+            {
                 try
                 {
-                    e.Result = new WebClient().DownloadString( Properties.Settings.Default.ReleaseNotesUrl);
-                    if (bw.CancellationPending)
-                        e.Cancel = true;
-                }
-                catch(WebException)
-                {
-
-                }
-            };
-
-            retriever.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
-            {
-                if (e.Error == null)
-                {
-                    var notes = e.Result as string;
-                    if (!string.IsNullOrEmpty(notes))
+                    var document = logonBrowser.Document;
+                    HTMLDocument doc = new mshtml.HTMLDocumentClass();
+                    doc = (HTMLDocument)document;
+                    if (!(doc.readyState == "complete" || doc.readyState == "interactive"))
                     {
-                        ReleaseNotes.Text = notes;
-                        releaseNotesViewer.Visibility = Visibility.Visible;
-                        return;
+                        var timer = new Timer((s) => {
+                            Dispatcher.adoptAsync(() => { 
+                                checkWhetherWebBrowserAuthenticationSucceeded(uri); 
+                            });
+                        }, null, 1000, Timeout.Infinite);
+                    }
+                    else
+                    {
+                        var authDataContainer = doc.getElementById("authData");
+                        var html = authDataContainer.innerHTML;
+
+                        var xml = XDocument.Parse(html).Elements().ToList();
+                        var authData = getElementsByTag(xml,"authdata");
+                        var authenticated = getElementsByTag(authData,"authenticated").First().Value.ToString().Trim().ToLower() == "true";
+                        var usernameNode = getElementsByTag(authData,"username").First();
+                        var authGroupsNodes = getElementsByTag(authData,"authGroup");
+                        var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
+                        var username = usernameNode.Value.ToString();
+                        var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
+                        var emailAddress = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress").Attribute("name").Value.ToString(); ;
+                        var credentials = new Credentials(username, "", authGroups, emailAddress);
+                        if (authenticated)
+                        {
+                            SetIdentity(credentials);
+                        }
                     }
                 }
-                releaseNotesViewer.Visibility = Visibility.Collapsed;
-            };
+                catch (Exception e)
+                {
 
-            retriever.RunWorkerAsync();
-        }
-
-        private void hideLoginErrors(object sender, RoutedEventArgs e)
-        {
-            loginErrors.Visibility = Visibility.Collapsed;
-        }
-        
-        private void loaded(object sender, RoutedEventArgs e)
-        {
-            username.Focus();
-#if DEBUG
-            if (!string.IsNullOrEmpty(App.OverrideUsername) && !string.IsNullOrEmpty(App.OverridePassword))
-            {
-                username.Text = App.OverrideUsername;
-                password.Password = App.OverridePassword;
-                attemptAuthentication(null, null);
-            }
-#endif
-        }
-        private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = /*numErrorsOfCredentials == 0 &&*/ canLoginAgain;
-        }
-        private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
-        {
-            canLoginAgain = false;
-            loginErrors.Visibility = Visibility.Collapsed;
-
-            var worker = new BackgroundWorker();
-            var usernameText = username.Text.ToLower();
-            var passwordText = password.Password;
-            worker.DoWork += (_unused1, _unused2) => App.Login(usernameText, passwordText);
-            worker.RunWorkerCompleted += LoginWorkerCompleted;
-            worker.RunWorkerAsync();
-        }
-
-        private void LoginWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
-        {
-            if (args.Error != null)
-            {
-                Trace.TraceInformation("Login Exception: " + args.Error.Message);
-                Commands.LoginFailed.Execute(null);
+                }
             }
         }
-
         private void SetIdentity(Credentials identity)
         {
-            //Commands.ShowConversationSearchBox.Execute(null);
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             Dispatcher.adoptAsync(() =>
             {
-                if (rememberMe.IsChecked == true)
-                {
-                    Commands.RememberMe.Execute(true);
-                    WorkspaceStateProvider.SaveCurrentSettings();
-                }
                 var options = ClientFactory.Connection().UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
@@ -187,23 +148,6 @@ namespace SandRibbon.Components
             });
             App.mark("Login knows identity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
-        }
-        private void LoginFailed()
-        {
-            canLoginAgain = true;
-            CommandManager.InvalidateRequerySuggested();
-            loginErrors.Visibility = Visibility.Visible;
-            password.SelectAll();
-            password.Focus();
-
-            //On Login failed, we hide the loggingIn page and show the Login page
-            loggingIn.Visibility = Visibility.Collapsed;
-            usernameAndPassword.Visibility = Visibility.Visible;
-            
-        }
-        private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = canLoginAgain;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -213,11 +157,6 @@ namespace SandRibbon.Components
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new LoginAutomationPeer(this);
-        }
-        private void clearAndClose(object sender, RoutedEventArgs e)
-        {
-            WorkspaceStateProvider.ClearSettings();
-            Commands.CloseApplication.Execute(null);
         }
     }
     class LoginAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
