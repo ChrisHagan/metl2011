@@ -54,24 +54,29 @@ namespace SandRibbon.Components
 
     public partial class Login : UserControl
     {
-        private bool canLoginAgain = true;
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
         public string Version { get; private set; }
-        private UserCredentials credentials = new UserCredentials();
-        private int numErrorsOfCredentials = 0;
+        protected HTMLDocument doc;
         public Login()
         {
             InitializeComponent();
             this.DataContext = this;
             var failingCredentials = new Credentials("forbidden", "", null, "");
             App.Login(failingCredentials);
-            logonBrowser.ContextMenu = new ContextMenu();
-            logonBrowser.Navigated += (sender, args) => {
-                checkWhetherWebBrowserAuthenticationSucceeded(args.Uri);
+            logonBrowser.Navigating += (sender, args) =>
+            {
+                loadingImage.Visibility = Visibility.Visible;
+                logonBrowser.IsHitTestVisible = false;
             };
-            logonBrowser.Navigate(ClientFactory.Connection().server.webAuthenticationEndpoint);
-
+            logonBrowser.LoadCompleted += (sender, args) => {
+                doc = (HTMLDocument)logonBrowser.Document;
+                checkWhetherWebBrowserAuthenticationSucceeded();
+                loadingImage.Visibility = Visibility.Collapsed;
+                logonBrowser.IsHitTestVisible = true;
+                //attachDocumentHandlers(doc);
+            };
+            ResetWebBrowser(null);
             SandRibbon.App.CloseSplashScreen();
 
             Commands.AddWindowEffect.ExecuteAsync(null);
@@ -80,7 +85,12 @@ namespace SandRibbon.Components
 #else
             Version = ConfigurationProvider.instance.getMetlVersion();
 #endif
+            Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
+        }
+        protected void ResetWebBrowser(object _unused)
+        {
+            logonBrowser.Navigate(ClientFactory.Connection().server.webAuthenticationEndpoint);
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName){ 
             // it's not recursive!
@@ -95,37 +105,108 @@ namespace SandRibbon.Components
             }
             return root;
         }
-        protected Boolean checkUri(Uri uri)
+        protected Boolean checkUri(String url)
         {
-            var authenticationUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
-            return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
-        }
-        protected void checkWhetherWebBrowserAuthenticationSucceeded(Uri uri){
-            if (checkUri(uri))
+            try
             {
-                try
-                {
-                    var document = logonBrowser.Document;
-                    HTMLDocument doc = new mshtml.HTMLDocumentClass();
-                    doc = (HTMLDocument)document;
-                    if (!(doc.readyState == "complete" || doc.readyState == "interactive"))
-                    {
-                        var timer = new Timer((s) => {
-                            Dispatcher.adoptAsync(() => { 
-                                checkWhetherWebBrowserAuthenticationSucceeded(uri); 
-                            });
-                        }, null, 1000, Timeout.Infinite);
-                    }
-                    else
-                    {
-                        var authDataContainer = doc.getElementById("authData");
-                        var html = authDataContainer.innerHTML;
+                var uri = new Uri(url);
+                var authenticationUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
+                return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
+            }
+            catch (Exception e)
+            {
+              System.Console.WriteLine("exception in checking uri: " + e.Message);
+                return false;
+            }
+        }
+        /*
+        protected void attachDocumentHandlers(HTMLDocument doc)
+        {
+            if (doc != null)
+            {
+                Console.WriteLine("attaching");
+                HTMLDocumentEvents2_Event docEvent = (HTMLDocumentEvents2_Event)doc;
+                docEvent.onreadystatechange += docEvent_onreadystatechange;
+                docEvent.oncontextmenu += docEvent_oncontextmenu;
+                docEvent.onmouseover += docEvent_onmouseover;
+                docEvent.onmousedown += docEvent_onmousedown;
+                docEvent.onmouseup += docEvent_onmouseup;
+                docEvent.onclick += docEvent_onclick;
+                doc.focus();
+            }
+        }
+        protected void detachDocumentHandlers(HTMLDocument doc)
+        { 
+            if (doc != null)
+            {
+                Console.WriteLine("detaching");
+                HTMLDocumentEvents2_Event docEvent = (HTMLDocumentEvents2_Event)doc;
+                docEvent.onreadystatechange -= docEvent_onreadystatechange;
+                docEvent.oncontextmenu -= docEvent_oncontextmenu;
+                docEvent.onmouseover -= docEvent_onmouseover;
+                docEvent.onmousedown -= docEvent_onmousedown;
+                docEvent.onmouseup -= docEvent_onmouseup;
+                docEvent.onclick -= docEvent_onclick;
+            }
+        }
 
+        protected void docEvent_onmouseover(mshtml.IHTMLEventObj e)
+        {
+            //Console.WriteLine(String.Format("mouseover: {0}",e.fromElement.toString()));
+        }
+        protected bool docEvent_oncontextmenu(mshtml.IHTMLEventObj e)
+        {
+            e.cancelBubble = true;
+            e.returnValue = false;
+            return false;
+        }
+        protected bool docEvent_onclick(mshtml.IHTMLEventObj e)
+        {
+            Console.WriteLine("click");
+            e.cancelBubble = false;
+            e.returnValue = true;
+            if (e.srcElement != null)
+            {
+                e.srcElement.click();
+            }
+            return true;
+        }
+        protected void docEvent_onmousedown(mshtml.IHTMLEventObj e)
+        {
+            Console.WriteLine("mouse down");
+            e.cancelBubble = false;
+            e.returnValue = true;
+        }
+        protected void docEvent_onmouseup(mshtml.IHTMLEventObj e)
+        {
+            Console.WriteLine("mouse up");
+            e.cancelBubble = false;
+            e.returnValue = true;
+        }
+        protected void docEvent_onreadystatechange(mshtml.IHTMLEventObj e)
+        {
+            Console.WriteLine("onreadystatechanged!");
+            checkWhetherWebBrowserAuthenticationSucceeded();
+            e.cancelBubble = false;
+            e.returnValue = true;
+        }
+         */
+        protected void checkWhetherWebBrowserAuthenticationSucceeded(){
+            if (doc != null && checkUri(doc.url))
+            {
+                    if (doc.readyState != null && (doc.readyState == "complete" || doc.readyState == "interactive"))
+                    {
+                      try
+                        {
+                        var authDataContainer = doc.getElementById("authData");
+                        if (authDataContainer == null) return;
+                        var html = authDataContainer.innerHTML;
+                        if (html == null) return;
                         var xml = XDocument.Parse(html).Elements().ToList();
-                        var authData = getElementsByTag(xml,"authdata");
-                        var authenticated = getElementsByTag(authData,"authenticated").First().Value.ToString().Trim().ToLower() == "true";
-                        var usernameNode = getElementsByTag(authData,"username").First();
-                        var authGroupsNodes = getElementsByTag(authData,"authGroup");
+                        var authData = getElementsByTag(xml, "authdata");
+                        var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
+                        var usernameNode = getElementsByTag(authData, "username").First();
+                        var authGroupsNodes = getElementsByTag(authData, "authGroup");
                         var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
                         var username = usernameNode.Value.ToString();
                         var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
@@ -133,15 +214,16 @@ namespace SandRibbon.Components
                         var credentials = new Credentials(username, "", authGroups, emailAddress);
                         if (authenticated)
                         {
+                            Commands.AddWindowEffect.ExecuteAsync(null);
                             App.Login(credentials);
                         }
+                    } catch (Exception e)
+                    {
+                      System.Console.WriteLine("exception in checking auth response data: " + e.Message);
                     }
                 }
-                catch (Exception e)
-                {
-
-                }
             }
+            //detachDocumentHandlers(doc);
         }
         private void SetIdentity(Credentials identity)
         {

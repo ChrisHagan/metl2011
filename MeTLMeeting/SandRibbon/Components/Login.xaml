@@ -34,7 +34,10 @@
             </Grid>
         </Border>
         <Grid x:Name="commandEscape">
-            <WebBrowser x:Name="logonBrowser" AllowDrop="False" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></WebBrowser>
+            <WebBrowser x:Name="logonBrowser" AllowDrop="False" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10"></WebBrowser>
+            <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Opacity="0.5" Background="Red">
+                <Label HorizontalAlignment="Center" VerticalAlignment="Center">Loading...</Label>
+            </Grid>
         </Grid>
     </DockPanel>
 </UserControl>
