@@ -66,14 +66,19 @@ namespace SandRibbon.Components
             App.Login(failingCredentials);
             logonBrowser.Navigating += (sender, args) =>
             {
-                loadingImage.Visibility = Visibility.Visible;
-                logonBrowser.IsHitTestVisible = false;
+                hideBrowser();
             };
             logonBrowser.LoadCompleted += (sender, args) => {
                 doc = (HTMLDocument)logonBrowser.Document;
-                checkWhetherWebBrowserAuthenticationSucceeded();
-                loadingImage.Visibility = Visibility.Collapsed;
-                logonBrowser.IsHitTestVisible = true;
+                var authResult = checkWhetherWebBrowserAuthenticationSucceeded();
+                if (authResult)
+                {
+                    hideBrowser();
+                }
+                else
+                {
+                    showBrowser();
+                }
                 //attachDocumentHandlers(doc);
             };
             ResetWebBrowser(null);
@@ -88,8 +93,21 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
         }
+        protected void hideBrowser()
+        {
+            logonBrowser.Visibility = Visibility.Collapsed;
+            loadingImage.Visibility = Visibility.Visible;
+            logonBrowser.IsHitTestVisible = true;
+        }
+        protected void showBrowser()
+        {
+            logonBrowser.Visibility = Visibility.Visible;
+            loadingImage.Visibility = Visibility.Collapsed;
+            logonBrowser.IsHitTestVisible = true;
+        }
         protected void ResetWebBrowser(object _unused)
         {
+            hideBrowser();
             logonBrowser.Navigate(ClientFactory.Connection().server.webAuthenticationEndpoint);
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName){ 
@@ -191,17 +209,17 @@ namespace SandRibbon.Components
             e.returnValue = true;
         }
          */
-        protected void checkWhetherWebBrowserAuthenticationSucceeded(){
+        protected bool checkWhetherWebBrowserAuthenticationSucceeded(){
             if (doc != null && checkUri(doc.url))
             {
-                    if (doc.readyState != null && (doc.readyState == "complete" || doc.readyState == "interactive"))
+                if (doc.readyState != null && (doc.readyState == "complete" || doc.readyState == "interactive"))
+                {
+                    try
                     {
-                      try
-                        {
                         var authDataContainer = doc.getElementById("authData");
-                        if (authDataContainer == null) return;
+                        if (authDataContainer == null) return false;
                         var html = authDataContainer.innerHTML;
-                        if (html == null) return;
+                        if (html == null) return false;
                         var xml = XDocument.Parse(html).Elements().ToList();
                         var authData = getElementsByTag(xml, "authdata");
                         var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
@@ -217,11 +235,22 @@ namespace SandRibbon.Components
                             Commands.AddWindowEffect.ExecuteAsync(null);
                             App.Login(credentials);
                         }
-                    } catch (Exception e)
+                        return authenticated;
+                    }
+                    catch (Exception e)
                     {
-                      System.Console.WriteLine("exception in checking auth response data: " + e.Message);
+                        System.Console.WriteLine("exception in checking auth response data: " + e.Message);
+                        return false;
                     }
                 }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
             //detachDocumentHandlers(doc);
         }
