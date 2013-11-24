@@ -57,33 +57,16 @@ namespace SandRibbon.Components
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
         public string Version { get; private set; }
-        protected HTMLDocument doc;
+        protected WebBrowser logonBrowser;
+        protected List<Uri> browseHistory = new List<Uri>();
         public Login()
         {
             InitializeComponent();
             this.DataContext = this;
             var failingCredentials = new Credentials("forbidden", "", null, "");
             App.Login(failingCredentials);
-            logonBrowser.Navigating += (sender, args) =>
-            {
-                hideBrowser();
-            };
-            logonBrowser.LoadCompleted += (sender, args) => {
-                doc = (HTMLDocument)logonBrowser.Document;
-                var authResult = checkWhetherWebBrowserAuthenticationSucceeded();
-                if (authResult)
-                {
-                    hideBrowser();
-                }
-                else
-                {
-                    showBrowser();
-                }
-                //attachDocumentHandlers(doc);
-            };
             ResetWebBrowser(null);
             SandRibbon.App.CloseSplashScreen();
-
             Commands.AddWindowEffect.ExecuteAsync(null);
 #if DEBUG
             Version = String.Format("{0} Build: {1}", ConfigurationProvider.instance.getMetlVersion(), "not merc"); //SandRibbon.Properties.HgID.Version); 
@@ -93,22 +76,96 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
         }
+        protected Timer showTimeoutButton;
+        protected int loginTimeout = 5 * 1000;
+        protected void restartLoginProcess(object sender, RoutedEventArgs e)
+        {
+            ResetWebBrowser(null);
+        }
         protected void hideBrowser()
         {
-            logonBrowser.Visibility = Visibility.Collapsed;
+            logonBrowserContainer.Visibility = Visibility.Collapsed;
             loadingImage.Visibility = Visibility.Visible;
-            logonBrowser.IsHitTestVisible = true;
+            logonBrowserContainer.IsHitTestVisible = true;
+            restartLoginProcessContainer.Visibility = Visibility.Collapsed;
+            showTimeoutButton.Change(loginTimeout,Timeout.Infinite);
         }
         protected void showBrowser()
         {
-            logonBrowser.Visibility = Visibility.Visible;
+            hideResetButton();
+            logonBrowserContainer.Visibility = Visibility.Visible;
             loadingImage.Visibility = Visibility.Collapsed;
-            logonBrowser.IsHitTestVisible = true;
+            logonBrowserContainer.IsHitTestVisible = true;
+        }
+        protected void showResetButton()
+        {
+            restartLoginProcessContainer.Visibility = Visibility.Visible;
+            showTimeoutButton.Change(Timeout.Infinite,Timeout.Infinite);
+        }
+        protected void hideResetButton()
+        {
+            restartLoginProcessContainer.Visibility = Visibility.Collapsed;
+            showTimeoutButton.Change(Timeout.Infinite,Timeout.Infinite);
+        }
+        protected void DeleteCookieForUrl(Uri uri)
+        {
+            DateTime expiration = DateTime.UtcNow - TimeSpan.FromDays(1);
+            var newCookie = Application.GetCookie(uri);
+            var cookieNameGroup = newCookie.Split(';')[0];
+            if (cookieNameGroup != null)
+            {
+                var cookieName = cookieNameGroup.Split('=')[0];
+                if (cookieName != null)
+                {
+                    newCookie = String.Format("{0}=; expires={1}; path=/; domani={2}", cookieName, expiration.ToString("R"), uri.ToString());
+                    Application.SetCookie(uri, newCookie);
+                }
+            }
         }
         protected void ResetWebBrowser(object _unused)
         {
+            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
+            if (logonBrowser != null)
+            {
+                logonBrowserContainer.Children.Clear();
+                logonBrowser.Dispose();
+                logonBrowser = null;
+                browseHistory.ForEach((uri) => DeleteCookieForUrl(uri));
+                browseHistory.Clear();
+            }
+            logonBrowser = new WebBrowser();
+            logonBrowserContainer.Children.Add(logonBrowser);
+            logonBrowser.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            logonBrowser.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+            logonBrowser.Width = Double.NaN;
+            logonBrowser.Height = Double.NaN;
+            logonBrowser.Navigating += (sender, args) =>
+            {
+                hideBrowser();
+            };
+            logonBrowser.LoadCompleted += (sender, args) => {
+                var doc = ((sender as WebBrowser).Document as HTMLDocument);
+                var authResult = checkWhetherWebBrowserAuthenticationSucceeded(doc);
+                if (!authResult)
+                {
+                    showBrowser();
+                }
+            };
+            if (showTimeoutButton != null)
+            {
+                showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
+                showTimeoutButton.Dispose();
+                showTimeoutButton = null;
+            }
+            showTimeoutButton = new System.Threading.Timer((s) =>
+            {
+                Dispatcher.adoptAsync(delegate
+                {
+                    showResetButton();
+                });
+            }, null, Timeout.Infinite, Timeout.Infinite);
             hideBrowser();
-            logonBrowser.Navigate(ClientFactory.Connection().server.webAuthenticationEndpoint);
+            logonBrowser.Navigate(loginUri);
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName){ 
             // it's not recursive!
@@ -128,6 +185,7 @@ namespace SandRibbon.Components
             try
             {
                 var uri = new Uri(url);
+                browseHistory.Add(uri);
                 var authenticationUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
                 return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
             }
@@ -137,79 +195,7 @@ namespace SandRibbon.Components
                 return false;
             }
         }
-        /*
-        protected void attachDocumentHandlers(HTMLDocument doc)
-        {
-            if (doc != null)
-            {
-                Console.WriteLine("attaching");
-                HTMLDocumentEvents2_Event docEvent = (HTMLDocumentEvents2_Event)doc;
-                docEvent.onreadystatechange += docEvent_onreadystatechange;
-                docEvent.oncontextmenu += docEvent_oncontextmenu;
-                docEvent.onmouseover += docEvent_onmouseover;
-                docEvent.onmousedown += docEvent_onmousedown;
-                docEvent.onmouseup += docEvent_onmouseup;
-                docEvent.onclick += docEvent_onclick;
-                doc.focus();
-            }
-        }
-        protected void detachDocumentHandlers(HTMLDocument doc)
-        { 
-            if (doc != null)
-            {
-                Console.WriteLine("detaching");
-                HTMLDocumentEvents2_Event docEvent = (HTMLDocumentEvents2_Event)doc;
-                docEvent.onreadystatechange -= docEvent_onreadystatechange;
-                docEvent.oncontextmenu -= docEvent_oncontextmenu;
-                docEvent.onmouseover -= docEvent_onmouseover;
-                docEvent.onmousedown -= docEvent_onmousedown;
-                docEvent.onmouseup -= docEvent_onmouseup;
-                docEvent.onclick -= docEvent_onclick;
-            }
-        }
-
-        protected void docEvent_onmouseover(mshtml.IHTMLEventObj e)
-        {
-            //Console.WriteLine(String.Format("mouseover: {0}",e.fromElement.toString()));
-        }
-        protected bool docEvent_oncontextmenu(mshtml.IHTMLEventObj e)
-        {
-            e.cancelBubble = true;
-            e.returnValue = false;
-            return false;
-        }
-        protected bool docEvent_onclick(mshtml.IHTMLEventObj e)
-        {
-            Console.WriteLine("click");
-            e.cancelBubble = false;
-            e.returnValue = true;
-            if (e.srcElement != null)
-            {
-                e.srcElement.click();
-            }
-            return true;
-        }
-        protected void docEvent_onmousedown(mshtml.IHTMLEventObj e)
-        {
-            Console.WriteLine("mouse down");
-            e.cancelBubble = false;
-            e.returnValue = true;
-        }
-        protected void docEvent_onmouseup(mshtml.IHTMLEventObj e)
-        {
-            Console.WriteLine("mouse up");
-            e.cancelBubble = false;
-            e.returnValue = true;
-        }
-        protected void docEvent_onreadystatechange(mshtml.IHTMLEventObj e)
-        {
-            Console.WriteLine("onreadystatechanged!");
-            checkWhetherWebBrowserAuthenticationSucceeded();
-            e.cancelBubble = false;
-            e.returnValue = true;
-        }
-         */
-        protected bool checkWhetherWebBrowserAuthenticationSucceeded(){
+        protected bool checkWhetherWebBrowserAuthenticationSucceeded(HTMLDocument doc){
             if (doc != null && checkUri(doc.url))
             {
                 if (doc.readyState != null && (doc.readyState == "complete" || doc.readyState == "interactive"))
@@ -228,7 +214,12 @@ namespace SandRibbon.Components
                         var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
                         var username = usernameNode.Value.ToString();
                         var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
-                        var emailAddress = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress").Attribute("name").Value.ToString(); ;
+                        var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
+                        var emailAddress = "";
+                        if (emailAddressNode != null)
+                        {
+                            emailAddress = emailAddressNode.Attribute("name").Value.ToString();
+                        }
                         var credentials = new Credentials(username, "", authGroups, emailAddress);
                         if (authenticated)
                         {
@@ -252,7 +243,6 @@ namespace SandRibbon.Components
             {
                 return false;
             }
-            //detachDocumentHandlers(doc);
         }
         private void SetIdentity(Credentials identity)
         {

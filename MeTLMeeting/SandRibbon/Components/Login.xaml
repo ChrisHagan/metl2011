@@ -34,9 +34,16 @@
             </Grid>
         </Border>
         <Grid x:Name="commandEscape">
-            <WebBrowser x:Name="logonBrowser" AllowDrop="False" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10"></WebBrowser>
+            <Grid x:Name="logonBrowserContainer" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/> 
             <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Opacity="0.5" Background="Red">
-                <Label HorizontalAlignment="Center" VerticalAlignment="Center">Loading...</Label>
+                <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <Label>Loading...</Label>
+                  <StackPanel x:Name="restartLoginProcessContainer" Visibility="Collapsed">
+                      <Label>Logging in has been taking a long time.</Label>
+                      <Label>This is often normal, but if you'd like to restart the process:</Label>
+                      <Button Click="restartLoginProcess">Restart login process</Button>
+                  </StackPanel>
+                </StackPanel>
             </Grid>
         </Grid>
     </DockPanel>
