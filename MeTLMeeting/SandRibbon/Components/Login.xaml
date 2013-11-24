@@ -35,13 +35,16 @@
         </Border>
         <Grid x:Name="commandEscape">
             <Grid x:Name="logonBrowserContainer" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/> 
-            <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Opacity="0.5" Background="Red">
+            <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto">
                 <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
-                  <Label>Loading...</Label>
+                  <StackPanel Orientation="Horizontal">
+                    <Label>Loading...</Label>
+                    <components:CircularProgressBar DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Margin="20,0,20,0"/>
+                  </StackPanel>
                   <StackPanel x:Name="restartLoginProcessContainer" Visibility="Collapsed">
-                      <Label>Logging in has been taking a long time.</Label>
-                      <Label>This is often normal, but if you'd like to restart the process:</Label>
-                      <Button Click="restartLoginProcess">Restart login process</Button>
+                    <Label>Logging in has been taking a long time.</Label>
+                    <Label>This is often normal, but if you'd like to restart the process:</Label>
+                    <Button Click="restartLoginProcess">Restart login process</Button>
                   </StackPanel>
                 </StackPanel>
             </Grid>

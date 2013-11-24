@@ -122,9 +122,8 @@ namespace SandRibbon.Components
                 }
             }
         }
-        protected void ResetWebBrowser(object _unused)
+        protected void DestroyWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
             if (logonBrowser != null)
             {
                 logonBrowserContainer.Children.Clear();
@@ -133,6 +132,11 @@ namespace SandRibbon.Components
                 browseHistory.ForEach((uri) => DeleteCookieForUrl(uri));
                 browseHistory.Clear();
             }
+        }
+        protected void ResetWebBrowser(object _unused)
+        {
+            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
+            DestroyWebBrowser(null); 
             logonBrowser = new WebBrowser();
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
@@ -252,6 +256,7 @@ namespace SandRibbon.Components
                 var options = ClientFactory.Connection().UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
+                DestroyWebBrowser(null); 
                 this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");
