@@ -109,17 +109,24 @@ namespace SandRibbon.Components
         }
         protected void DeleteCookieForUrl(Uri uri)
         {
-            DateTime expiration = DateTime.UtcNow - TimeSpan.FromDays(1);
-            var newCookie = Application.GetCookie(uri);
-            var cookieNameGroup = newCookie.Split(';')[0];
-            if (cookieNameGroup != null)
+            try
             {
-                var cookieName = cookieNameGroup.Split('=')[0];
-                if (cookieName != null)
+                DateTime expiration = DateTime.UtcNow - TimeSpan.FromDays(1);
+                var newCookie = Application.GetCookie(uri);
+                var cookieNameGroup = newCookie.Split(';')[0];
+                if (cookieNameGroup != null)
                 {
-                    newCookie = String.Format("{0}=; expires={1}; path=/; domani={2}", cookieName, expiration.ToString("R"), uri.ToString());
-                    Application.SetCookie(uri, newCookie);
+                    var cookieName = cookieNameGroup.Split('=')[0];
+                    if (cookieName != null)
+                    {
+                        newCookie = String.Format("{0}=; expires={1}; path=/; domani={2}", cookieName, expiration.ToString("R"), uri.ToString());
+                        Application.SetCookie(uri, newCookie);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine("Failed to delete cookie for: " + uri.ToString());
             }
         }
         protected void DestroyWebBrowser(object _unused)
@@ -132,6 +139,10 @@ namespace SandRibbon.Components
                 browseHistory.ForEach((uri) => DeleteCookieForUrl(uri));
                 browseHistory.Clear();
             }
+        }
+        protected Boolean detectIEErrors(Uri uri)
+        {
+            return (uri.Scheme == "res");
         }
         protected void ResetWebBrowser(object _unused)
         {
@@ -146,6 +157,17 @@ namespace SandRibbon.Components
             logonBrowser.Navigating += (sender, args) =>
             {
                 hideBrowser();
+                if (detectIEErrors(args.Uri))
+                {
+                    if (browseHistory.Last() != null)
+                    {
+                        logonBrowser.Navigate(browseHistory.Last());
+                    }
+                    else
+                    {
+                        ResetWebBrowser(null);
+                    }
+                }
             };
             logonBrowser.LoadCompleted += (sender, args) => {
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
