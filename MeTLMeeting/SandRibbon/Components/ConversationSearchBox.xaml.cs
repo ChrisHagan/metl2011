@@ -386,9 +386,9 @@ namespace SandRibbon.Components
                     return false;
                 if (backstageNav.currentMode == "currentConversation" && conversation.IsJidEqual(activeConversation))
                     return true;
-                var author = conversation.Author.ToLower();
+                var author = conversation.Author;
                 var title = conversation.Title.ToLower();
-                var searchField = new[] { author, title };
+                var searchField = new[] { author.ToLower(), title };
                 var searchQuery = SearchInput.Text.ToLower().Trim();
                 if (backstageNav.currentMode == "find" && searchQuery.Length == 0)
                 {
@@ -409,7 +409,8 @@ namespace SandRibbon.Components
         }
         private void searchConversations_Click(object sender, RoutedEventArgs e)
         {
-            RefreshSortedConversationsList();
+            FillSearchResultsFromInput();
+            //RefreshSortedConversationsList();
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {            

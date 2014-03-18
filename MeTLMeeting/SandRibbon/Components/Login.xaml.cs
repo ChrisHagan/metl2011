@@ -107,36 +107,66 @@ namespace SandRibbon.Components
             restartLoginProcessContainer.Visibility = Visibility.Collapsed;
             showTimeoutButton.Change(Timeout.Infinite,Timeout.Infinite);
         }
+        protected List<String> updatedCookieKeys = new List<String>{"expires","path","domain"};
         protected void DeleteCookieForUrl(Uri uri)
         {
             try
             {
                 DateTime expiration = DateTime.UtcNow - TimeSpan.FromDays(1);
                 var newCookie = Application.GetCookie(uri);
-                var cookieNameGroup = newCookie.Split(';')[0];
-                if (cookieNameGroup != null)
+                var finalCookies = newCookie.Split(';').Where(cps => cps.Contains('=')).Select(cps =>
                 {
-                    var cookieName = cookieNameGroup.Split('=')[0];
-                    if (cookieName != null)
+                    var parts = cps.Split('=');
+                    return new KeyValuePair<String, String>(parts[0], parts[1]);
+                });
+                foreach (var cp in finalCookies)
+                {
+                    try
                     {
-                        newCookie = String.Format("{0}=; expires={1}; path=/; domani={2}", cookieName, expiration.ToString("R"), uri.ToString());
-                        Application.SetCookie(uri, newCookie);
+                      var replacementCookie = String.Format(@"{0}={1}; Expires={2}; Path=/; Domain={3}", cp.Key,cp.Value, expiration.ToString("R"), uri.Host);
+                      Application.SetCookie(uri, replacementCookie);
+                      Application.SetCookie(new Uri("http://" + uri.Host + "/"), replacementCookie);
+                    }
+                    catch (Exception e)
+                    {
+                      System.Console.WriteLine("Failed to delete cookie for: " + uri.ToString());
                     }
                 }
             }
             catch (Exception e)
             {
-                System.Console.WriteLine("Failed to delete cookie for: " + uri.ToString());
+                if (e.Message.ToLower().Contains("no more data")) { } else 
+                System.Console.WriteLine("Failed to read cookie prior to deletion for: " + uri.ToString());
+            }
+        }
+        class UriHostComparer : IEqualityComparer<System.Uri> {
+
+            public bool Equals(Uri x, Uri y)
+            {
+                return x.Host == y.Host;
+            }
+
+            public int GetHashCode(Uri obj)
+            {
+                return obj.Host.GetHashCode();
             }
         }
         protected void DestroyWebBrowser(object _unused)
         {
             if (logonBrowser != null)
             {
+                browseHistory.Distinct(new UriHostComparer()).ToList().ForEach((uri) => DeleteCookieForUrl(uri));
                 logonBrowserContainer.Children.Clear();
                 logonBrowser.Dispose();
                 logonBrowser = null;
-                browseHistory.ForEach((uri) => DeleteCookieForUrl(uri));
+                //Console.WriteLine("cookies deleted");
+                browseHistory.ForEach((uri) => {
+                    try {
+                        //Console.WriteLine("COOKIE: " + uri.ToString() + " => " + Application.GetCookie(uri));
+                    } catch {
+                        //Console.WriteLine("NO COOKIE: " + uri.ToString());
+                    }
+                });
                 browseHistory.Clear();
             }
         }
@@ -148,6 +178,7 @@ namespace SandRibbon.Components
         {
             var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
             DestroyWebBrowser(null); 
+            DeleteCookieForUrl(loginUri);
             logonBrowser = new WebBrowser();
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
@@ -157,6 +188,13 @@ namespace SandRibbon.Components
             logonBrowser.Navigating += (sender, args) =>
             {
                 hideBrowser();
+                browseHistory.Add(args.Uri);
+                var cookie = "unknown";
+                try {
+                    cookie = Application.GetCookie(args.Uri);
+                } catch (Exception e){
+                }
+                //Console.WriteLine(String.Format("{0} => {1}",args.Uri.ToString(),cookie));
                 if (detectIEErrors(args.Uri))
                 {
                     if (browseHistory.Last() != null)

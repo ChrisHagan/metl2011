@@ -7,7 +7,7 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.x.muc;
 using agsXMPP.Xml.Dom;
 using System.Windows.Ink;
-using SandRibbonInterop.MeTLStanzas;
+using SandRibbonInterop.Stanzas;
 using SandRibbonObjects;
 using System.Net;
 using System.Xml;
