@@ -1,12 +1,18 @@
 ﻿
+<<<<<<< HEAD
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+=======
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+>>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbon", "SandRibbon\SandRibbon.csproj", "{0213D150-6485-4F40-AF80-5AC5E8BB10CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonInterop", "SandRibbonInterop\SandRibbonInterop.csproj", "{936C46AC-5A2F-4476-A89C-52537260DBE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonObjects", "SandRibbonObjects\SandRibbonObjects.csproj", "{87F30CE0-8265-4934-8E1E-CF90B26B2562}"
 EndProject
+<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\LectureMeTL.csproj", "{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLib", "MeTLLib\MeTLLib.csproj", "{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}"
@@ -42,10 +48,37 @@ Global
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
 		Release|x86 = Release|x86
+=======
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{68C42447-99FE-4477-A2AF-CC46212F85AA}"
+	ProjectSection(SolutionItems) = preProject
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		SandRibbon1.vsmdi = SandRibbon1.vsmdi
+		SandRibbon2.vsmdi = SandRibbon2.vsmdi
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadfulClassRoom", "HeadfulClassRoom\HeadfulClassRoom.csproj", "{2B5FFAF9-C3A3-459F-9E24-D0F42586E1FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadlessClassroom", "HeadlessClassroom\HeadlessClassroom.csproj", "{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTest", "CryptoTest\CryptoTest.csproj", "{42D16EC6-044C-4D78-B027-E780D0AC0FC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functional", "Functional\Functional.csproj", "{EEA9F528-4885-4D7E-8BDC-914FA52370C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlidePostMortem", "SlidePostMortem\SlidePostMortem.csproj", "{28A1F00D-55E4-4A43-8C6D-65293F4CE384}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = SandRibbon2.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+>>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+<<<<<<< HEAD
 		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Debug|Win32.ActiveCfg = Debug|Any CPU
@@ -164,6 +197,38 @@ Global
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|Win32.ActiveCfg = Release|Any CPU
 		{2FED8C4C-2184-41D8-A920-4307F963805D}.Release|x86.ActiveCfg = Release|Any CPU
+=======
+		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0213D150-6485-4F40-AF80-5AC5E8BB10CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{936C46AC-5A2F-4476-A89C-52537260DBE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{936C46AC-5A2F-4476-A89C-52537260DBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{936C46AC-5A2F-4476-A89C-52537260DBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{936C46AC-5A2F-4476-A89C-52537260DBE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B5FFAF9-C3A3-459F-9E24-D0F42586E1FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B5FFAF9-C3A3-459F-9E24-D0F42586E1FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B5FFAF9-C3A3-459F-9E24-D0F42586E1FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B5FFAF9-C3A3-459F-9E24-D0F42586E1FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
