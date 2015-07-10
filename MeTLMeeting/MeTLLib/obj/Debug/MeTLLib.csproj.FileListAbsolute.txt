@@ -11,6 +11,5 @@ C:\sandbox\metl2011\MeTLMeeting\MeTLLib\bin\Debug\Microsoft.Practices.Composite.
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\bin\Debug\Newtonsoft.Json.dll
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\bin\Debug\Ninject.dll
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\bin\Debug\Microsoft.Practices.ServiceLocation.dll
-C:\sandbox\metl2011\MeTLMeeting\MeTLLib\obj\Debug\MeTLLib.csprojResolveAssemblyReference.cache
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\obj\Debug\MeTLLib.dll
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\obj\Debug\MeTLLib.pdb

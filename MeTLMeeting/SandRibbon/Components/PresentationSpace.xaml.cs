@@ -44,10 +44,6 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
-<<<<<<< HEAD
-=======
-            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(ExploreBubble));
->>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
@@ -58,26 +54,13 @@ namespace SandRibbon.Components
             Commands.AllStaticCommandsAreRegistered();
             inConversation = true;
         }
-<<<<<<< HEAD
-=======
-        private void ExploreBubble(ThoughtBubble thoughtBubble)
-        {
-            var origin = new Point(0, 0);
-            var marquee = new Rectangle();
-            marquee.Width = this.ActualWidth;
-            marquee.Height = this.ActualHeight;
->>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
 
         private void hideConversationSearch(object obj)
         {
             inConversation = true;
         }
-<<<<<<< HEAD
 
         private void showConversationSearch(object obj)
-=======
-        private void presentationSpaceLoaded(object sender, RoutedEventArgs e)
->>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
         {
             inConversation = false;
         }
@@ -139,9 +122,8 @@ namespace SandRibbon.Components
                 //You are listening to the channel but have not yet joined the room
             }
         }
-        private void UpdateConversationDetails(ConversationDetails _details)
+        private void UpdateConversationDetails(ConversationDetails details)
         {
-<<<<<<< HEAD
             if (details.IsEmpty) return;
             if (string.IsNullOrEmpty(details.Jid) || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()))) return;
             try
@@ -150,13 +132,6 @@ namespace SandRibbon.Components
                     Commands.SetPrivacy.ExecuteAsync("private");
                 else if (Globals.conversationDetails.Author == Globals.me) 
                         Commands.SetPrivacy.ExecuteAsync("public");
-=======
-            joiningConversation = false;
-            try
-            {
-                if (currentDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
-                    Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
->>>>>>> 719c8e43b84766b4fcbff20be9b761dc1f0604b0
             }
             catch (NotSetException)
             {

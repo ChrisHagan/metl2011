@@ -29,7 +29,6 @@ C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Org.TechA.Wpf.UserControls
 C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Microsoft.Scripting.Core.dll
 C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\IronRuby.dll
 C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Org.TechA.Wpf.UserControls.pdb
-C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\LectureMeTL.csprojResolveAssemblyReference.cache
 C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\Window1.baml
 C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\Window1.g.cs
 C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\App.g.cs

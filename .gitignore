@@ -1,0 +1,57 @@
+# ignore dll's
+*.dll
+
+#backup files
+*~
+
+# remote debugging configuration
+*.idc
+
+#swap files
+.*.swp
+
+#generated filed
+*.g.*
+
+*.dat
+
+*.version
+
+*.pdb
+
+*.exe
+
+*.trx
+
+*.baml
+
+*.log
+
+*\bin\*
+*\obj\*
+*\Release\*
+*\Debug\*
+*\publish\*
+*\Publish\*
+MSBuildExtensions\*
+
+*.orig
+*.Cache
+*\Properties\HgId.cs
+
+*.resharper.*
+
+*_ReSharper*
+
+*.suo
+*.user
+*.filters
+
+# C++ specific
+*.sdf
+*.opensdf
+*.vcxproj.user
+*\ipch\*
+
+#Generated test results
+TestResults

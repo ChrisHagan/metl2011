@@ -1,0 +1,3 @@
+C:\sandbox\metl2011\MeTLMeeting\SlidePostMortem\obj\Debug\SlidePostMortem.csprojResolveAssemblyReference.cache
+C:\sandbox\metl2011\MeTLMeeting\SlidePostMortem\obj\Debug\App.g.cs
+C:\sandbox\metl2011\MeTLMeeting\SlidePostMortem\obj\Debug\SlidePostMortem_MarkupCompile.cache
