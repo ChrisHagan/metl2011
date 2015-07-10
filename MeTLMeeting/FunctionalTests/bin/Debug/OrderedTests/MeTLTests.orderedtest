@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="metltests" storage="c:\projects\specialmetl\metlmeeting\functionaltests\orderedtests\metltests.orderedtest" id="5cdb461c-932c-4503-bc60-168b7eadabc7" continueAfterFailure="true" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Execution id="51aedead-1816-4b85-bde3-b386383c0eb9" />
+  <TestLinks>
+    <TestLink id="12bea1d3-3acd-b5f1-a954-24e174ad2924" name="StartOneInstance" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="db41b97b-8edf-5e73-5ac6-d41ef6fa4b54" name="LoginWithValidCredentials" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="80beb629-2d82-a3ec-afac-7f8a98d0ff0f" name="SearchForOwnedAndJoin" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="19588366-e4a8-2b7f-18d2-1f31d4c65fba" name="AddInkToOwner" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="1ed392df-0dbf-ada3-1a4a-80c6bc6746e4" name="DeleteInkFromOwner" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

@@ -1,0 +1,44 @@
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\MeTL.exe.manifest
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\AddVideo.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\Highlighter.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\audio.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\document.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\gadget.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\image.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\presentation.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\publication.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\spreadsheet.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\text.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\unknown.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\video.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\mimeTypes\web.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\Pen.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\Results.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\Ribbon-Palette.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\Slide_Not_Loaded.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\Spectrum.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\SyncGreen.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Resources\SyncRed.png
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\MeTL Presenter.exe.manifest
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\MeTL Presenter.application
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\MeTL Presenter.exe
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\MeTL Presenter.pdb
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Microsoft.Scripting.dll
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Microsoft.Scripting.ExtensionAttribute.dll
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Org.TechA.Wpf.UserControls.dll
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Microsoft.Scripting.Core.dll
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\IronRuby.dll
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\bin\Debug\Org.TechA.Wpf.UserControls.pdb
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\LectureMeTL.csprojResolveAssemblyReference.cache
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\Window1.baml
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\Window1.g.cs
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\App.g.cs
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter_Content.g.cs
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter_MarkupCompile.cache
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter.g.resources
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\LectureMeTL.Properties.Resources.resources
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\LectureMeTL.csproj.GenerateResource.Cache
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter.exe.manifest
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter.application
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter.exe
+C:\sandbox\metl2011\MeTLMeeting\LectureMeTL\obj\Debug\MeTL Presenter.pdb

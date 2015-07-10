@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="case002" storage="c:\projects\specialmetl\metlmeeting\functionaltests\orderedtests\case002.orderedtest" id="0cabcdc9-24b6-4386-857e-a99516272c32" continueAfterFailure="true" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="12bea1d3-3acd-b5f1-a954-24e174ad2924" name="StartOneInstance" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="db41b97b-8edf-5e73-5ac6-d41ef6fa4b54" name="LoginWithValidCredentials" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="d513c072-c42b-c1ff-919d-2a3231800927" name="CloseInstance" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="12bea1d3-3acd-b5f1-a954-24e174ad2924" name="StartOneInstance" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="e2269dfc-e108-9efa-7fe9-d30db28d04a2" name="LoginWithInvalidCredentials" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="d513c072-c42b-c1ff-919d-2a3231800927" name="CloseInstance" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

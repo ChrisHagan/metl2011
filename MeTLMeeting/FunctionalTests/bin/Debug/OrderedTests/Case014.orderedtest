@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="Case014" storage="c:\projects\specialmetl\metlmeeting\functionaltests\orderedtests\case014.orderedtest" id="c0170583-bccb-4247-b8b7-ecf2d2d09834" continueAfterFailure="true" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="616a1e79-c8d7-64e1-52a7-95e21773a5e0" name="StartTwoInstances" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="d6527e57-d99f-2771-d2bb-b70d18a1342e" name="LoginOwnerAndParticipant" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="2ee4be03-32b0-d1d8-c9de-f68235898606" name="JoinConversation" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="d97c3032-8e84-dd0f-03d1-389de0f62060" name="ParticipantToggleSyncToOwner" storage="..\bin\debug\functionaltests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

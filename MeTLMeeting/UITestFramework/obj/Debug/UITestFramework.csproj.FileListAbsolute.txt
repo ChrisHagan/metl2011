@@ -1,0 +1,7 @@
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\bin\Debug\UITestFramework.dll
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\bin\Debug\UITestFramework.pdb
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\bin\Debug\Microsoft.Scripting.dll
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\bin\Debug\Microsoft.Scripting.Core.dll
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\obj\Debug\UITestFramework.csprojResolveAssemblyReference.cache
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\obj\Debug\UITestFramework.dll
+C:\sandbox\metl2011\MeTLMeeting\UITestFramework\obj\Debug\UITestFramework.pdb
