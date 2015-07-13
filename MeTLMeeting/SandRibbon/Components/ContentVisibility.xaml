@@ -28,7 +28,7 @@
                 <Binding ElementName="contentVisibility" Path="OwnerVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
             </CheckBox.IsChecked>
         </CheckBox>
-        <CheckBox x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Peers'" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
+        <CheckBox x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Everyone else" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
             <CheckBox.IsChecked>
                 <Binding ElementName="contentVisibility" Path="TheirsVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
             </CheckBox.IsChecked>

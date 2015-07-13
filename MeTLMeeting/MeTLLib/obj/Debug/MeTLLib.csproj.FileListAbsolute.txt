@@ -13,3 +13,4 @@ C:\sandbox\metl2011\MeTLMeeting\MeTLLib\bin\Debug\Ninject.dll
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\bin\Debug\Microsoft.Practices.ServiceLocation.dll
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\obj\Debug\MeTLLib.dll
 C:\sandbox\metl2011\MeTLMeeting\MeTLLib\obj\Debug\MeTLLib.pdb
+C:\sandbox\metl2011\MeTLMeeting\MeTLLib\obj\Debug\MeTLLib.csprojResolveAssemblyReference.cache

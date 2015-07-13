@@ -104,14 +104,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL Presenter.exe" size="3648512">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL Presenter.exe" size="3649536">
       <assemblyIdentity name="MeTL Presenter" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>R5qXMpLO7Y+dHqiTcxEV861dHxE=</dsig:DigestValue>
+        <dsig:DigestValue>gBlk2f8IXeI6sUH4Eoi8tPa98ac=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -123,7 +123,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>om2dYDRxlljjobYJdCDzNJjnGck=</dsig:DigestValue>
+        <dsig:DigestValue>N8IpVOixHEXaKyWm2vO5tw4SmAE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -219,7 +219,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>NMV0j0H4uk6EQHtVmC/h4W7iu8c=</dsig:DigestValue>
+        <dsig:DigestValue>qG+9clmpxHMCbLU7kWC1kigEaWI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
