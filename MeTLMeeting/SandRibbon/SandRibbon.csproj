@@ -17,9 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>C6ED83C9437EFB7C49C13EBEBCE97230BEA4A6E7</ManifestCertificateThumbprint>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestCertificateThumbprint>C949DF41EFB0CE185EC74A6714F7B20DBA0010AC</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_2_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -71,15 +70,15 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
-    <ProductName>MeTL Staging</ProductName>
-    <InstallUrl>http://adm-web25-v02.adm.monash.edu.au/MeTLStaging/</InstallUrl>
-    <UpdateUrl>http://adm-web25-v02.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
+    <ProductName>MeTL</ProductName>
+    <InstallUrl>http://192.168.20.253:80/MeTL/</InstallUrl>
+    <UpdateUrl>http://192.168.20.253:80/MeTL/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.295</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -89,8 +88,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL</ProductName>
-    <InstallUrl>http://adm-web25-v02.adm.monash.edu.au/MeTL2011/</InstallUrl>
-    <UpdateUrl>http://adm-web25-v02.adm.monash.edu.au/MeTL2011/</UpdateUrl>
+    <InstallUrl>http://192.168.20.253:80/MeTL/</InstallUrl>
+    <UpdateUrl>http://192.168.20.253:80/MeTL/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup>
@@ -890,6 +889,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="SandRibbon_2_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">

@@ -220,10 +220,6 @@
       <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
       <Name>SandRibbon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UITestFramework\UITestFramework.csproj">
-      <Project>{D91E43FB-3666-4840-AB1F-579B05AC963C}</Project>
-      <Name>UITestFramework</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
