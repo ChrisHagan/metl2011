@@ -135,11 +135,19 @@ namespace SandRibbon
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
             // mark("App.onStartup finished");
         }
-
+        String[] falseAlarms = new[]{
+                "Index was out of range. Must be non-negative and less than the size of the collection.",
+                "The operation completed successfully",
+                "Thread was being aborted."
+            };
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            doCrash((Exception)e.ExceptionObject);
-            MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.");
+            var ex = (Exception)e.ExceptionObject;
+            doCrash(ex);
+            if (!falseAlarms.Any(m => ex.Message.StartsWith(m)))
+            {
+                MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.");
+            }
         }
         void Current_Exit(object sender, ExitEventArgs e)
         {
@@ -156,10 +164,6 @@ namespace SandRibbon
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            var falseAlarms = new[]{
-                "Index was out of range. Must be non-negative and less than the size of the collection.",
-                "The operation completed successfully"
-            };
             var msg = e.Exception.Message;
             if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
             {

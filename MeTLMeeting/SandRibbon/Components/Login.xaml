@@ -33,7 +33,7 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <Grid x:Name="commandEscape">
+        <Grid x:Name="commandEscape" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid x:Name="logonBrowserContainer" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/> 
             <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto">
                 <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
