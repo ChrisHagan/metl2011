@@ -1,10 +1,3 @@
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\SandRibbonObjects.dll
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\SandRibbonObjects.pdb
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\agsXMPP.dll
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\Divan.dll
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\Newtonsoft.Json.dll
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.dll
-C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.pdb
 C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\SandRibbonObjects.dll
 C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\SandRibbonObjects.pdb
 C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\agsXMPP.dll
@@ -12,3 +5,11 @@ C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\Divan.dll
 C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\Newtonsoft.Json.dll
 C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.dll
 C:\sandbox\saintLeo\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.pdb
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\SandRibbonObjects.dll
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\SandRibbonObjects.pdb
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\agsXMPP.dll
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\Divan.dll
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\bin\Debug\Newtonsoft.Json.dll
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.csprojResolveAssemblyReference.cache
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.dll
+C:\sandbox\metl2011\MeTLMeeting\SandRibbonObjects\obj\Debug\SandRibbonObjects.pdb
