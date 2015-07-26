@@ -496,26 +496,29 @@ namespace MeTLLib.Providers.Connection
         {
             if (1 == Interlocked.Increment(ref resetInProgress))
             {
+                Trace.TraceWarning(string.Format("JabberWire::Reset.  {0}", caller));
                 if (conn != null)
                     switch (conn.XmppConnectionState)
                     {
                         case XmppConnectionState.Disconnected:
-                            Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
+                            Trace.TraceWarning(string.Format("JabberWire::Reset: Disconnected.  {0}", caller));
                             openConnection();
                             break;
                         case XmppConnectionState.Connecting:
                             // Timed out trying to connect, so disconnect and start again
+                            Trace.TraceWarning(string.Format("JabberWire::Reset: Connecting.  {0}", caller));
                             disconnectSocket();
                             openConnection();
                             break;
                         case XmppConnectionState.Authenticating:
+                            Trace.TraceWarning(string.Format("JabberWire::Reset: Authenticating.  {0}", caller));
                             disconnectSocket();
                             openConnection();
                             break;
                     }
                 else
                 {
-                    Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Conn is null - openingConnection.  {0}", caller));
+                    Trace.TraceWarning(string.Format("JabberWire::Reset: Conn is null - openingConnection.  {0}", caller));
                     openConnection();
                 }
 

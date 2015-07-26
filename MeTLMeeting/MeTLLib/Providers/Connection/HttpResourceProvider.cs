@@ -81,6 +81,7 @@ namespace MeTLLib.Providers.Connection
             catch (WebException e)
             {
                 if (e.Message.Contains("404")) { return new byte[0]; }
+                Trace.TraceError("HttpResourceProvider download data exception: {1} {0}", e.Message, resource.AbsoluteUri);
                 throw e;
             }
         }
@@ -152,6 +153,7 @@ namespace MeTLLib.Providers.Connection
         {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
             /*Ssl3 is not compatible with modern servers and IE*/
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
             /*This would be a workaround but is not required.  We permit engine to select algorithm.*/
@@ -164,6 +166,7 @@ namespace MeTLLib.Providers.Connection
         }
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
+            return true;
             if (cert == null) return false;
             if (!(sender is HttpWebRequest)) return true;
             //if (((HttpWebRequest)sender).Address.Host.Contains("my.monash.edu")) return true;

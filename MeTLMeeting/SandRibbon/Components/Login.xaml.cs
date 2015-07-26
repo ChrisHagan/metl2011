@@ -57,7 +57,7 @@ namespace SandRibbon.Components
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
         public string Version { get; private set; }
-        protected Awesomium.Windows.Controls.WebControl logonBrowser;
+        protected WebBrowser logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
         public Login()
         {
@@ -165,25 +165,50 @@ namespace SandRibbon.Components
         {
             return (uri.Scheme == "res");
         }
+
         protected void ResetWebBrowser(object _unused)
         {
             var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
-            DestroyWebBrowser(null); 
+            DestroyWebBrowser(null);
             DeleteCookieForUrl(loginUri);
-            logonBrowser = new Awesomium.Windows.Controls.WebControl();
+            logonBrowser = new WebBrowser();
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
             logonBrowser.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-            logonBrowser.CertificateError += new Awesomium.Core.CertificateErrorEventHandler(logonBrowser_CertificateError);
-            logonBrowser.DocumentReady += (sender, args) => {
-                var d = (sender as Awesomium.Windows.Controls.WebControl).HTML;
-                var authResult = checkWhetherWebBrowserAuthenticationSucceeded(d);
+            logonBrowser.Width = Double.NaN;
+            logonBrowser.Height = Double.NaN;
+            logonBrowser.Navigating += (sender, args) =>
+            {
+                hideBrowser();
+                browseHistory.Add(args.Uri);
+                var cookie = "unknown";
+                try
+                {
+                    cookie = Application.GetCookie(args.Uri);
+                }
+                catch (Exception e)
+                {
+                }
+                //Console.WriteLine(String.Format("{0} => {1}",args.Uri.ToString(),cookie));
+                if (detectIEErrors(args.Uri))
+                {
+                    if (browseHistory.Last() != null)
+                    {
+                        logonBrowser.Navigate(browseHistory.Last());
+                    }
+                    else
+                    {
+                        ResetWebBrowser(null);
+                    }
+                }
+            };
+            logonBrowser.LoadCompleted += (sender, args) =>
+            {
+                var doc = ((sender as WebBrowser).Document as HTMLDocument);
+                var authResult = checkWhetherWebBrowserAuthenticationSucceeded(doc);
                 if (!authResult)
                 {
                     showBrowser();
-                }
-                else {
-                    hideBrowser();
                 }
             };
             if (showTimeoutButton != null)
@@ -199,13 +224,8 @@ namespace SandRibbon.Components
                     showResetButton();
                 });
             }, null, Timeout.Infinite, Timeout.Infinite);
-            logonBrowser.Source = loginUri;
-        }
-
-        void logonBrowser_CertificateError(object sender, Awesomium.Core.CertificateErrorEventArgs e)
-        {
-            e.Ignore = true;
-            Console.WriteLine("Ignoring certificate exception");
+            hideBrowser();
+            logonBrowser.Navigate(loginUri);
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName)
         {
@@ -213,7 +233,7 @@ namespace SandRibbon.Components
             var children = x.Select(xel => { return getElementsByTag(xel.Elements().ToList(), tagName); });
             var root = x.FindAll((xel) =>
             {
-                return xel.Name.ToString().Trim().ToLower() == tagName.Trim().ToLower();
+                return xel.Name.LocalName.ToString().Trim().ToLower() == tagName.Trim().ToLower();
             });
             foreach (List<XElement> child in children)
             {
@@ -236,36 +256,58 @@ namespace SandRibbon.Components
                 return false;
             }
         }
-        protected bool checkWhetherWebBrowserAuthenticationSucceeded(string html)
+
+        protected bool checkWhetherWebBrowserAuthenticationSucceeded(HTMLDocument doc)
         {
-            try
+            if (doc != null && checkUri(doc.url))
             {
-                var xml = XDocument.Parse(html).Elements().ToList();
-                var authData = getElementsByTag(xml, "authdata");
-                var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
-                var usernameNode = getElementsByTag(authData, "username").First();
-                var authGroupsNodes = getElementsByTag(authData, "authGroup");
-                var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
-                var username = usernameNode.Value.ToString();
-                var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
-                var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
-                var emailAddress = "";
-                if (emailAddressNode != null)
+                if (doc.readyState != null && (doc.readyState == "complete" || doc.readyState == "interactive"))
                 {
-                    emailAddress = emailAddressNode.Attribute("name").Value.ToString();
+                    try
+                    {
+                        var authDataContainer = doc.getElementById("authData");
+                        if (authDataContainer == null) return false;
+                        var html = authDataContainer.innerHTML;
+                        if (html == null) return false;
+                        var xml = XDocument.Parse(html).Elements().ToList();
+                        var authData = getElementsByTag(xml, "authdata");
+                        var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
+                        var usernameNode = getElementsByTag(authData, "username").First();
+                        var authGroupsNodes = getElementsByTag(authData, "authGroup");
+                        var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
+                        var username = usernameNode.Value.ToString();
+                        var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
+                        var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
+                        var emailAddress = "";
+                        if (emailAddressNode != null)
+                        {
+                            emailAddress = emailAddressNode.Attribute("name").Value.ToString();
+                        }
+                        var credentials = new Credentials(username, "", authGroups, emailAddress);
+                        if (authenticated)
+                        {
+                            Commands.AddWindowEffect.ExecuteAsync(null);
+                            App.Login(credentials);
+                        }
+                        return authenticated;
+                    }
+                    catch (Exception e)
+                    {
+                        System.Console.WriteLine("exception in checking auth response data: " + e.Message);
+                        return false;
+                    }
                 }
-                var credentials = new Credentials(username, "", authGroups, emailAddress);
-                if (authenticated)
+                else
                 {
-                    Commands.AddWindowEffect.ExecuteAsync(null);
-                    App.Login(credentials);
+                    return false;
                 }
-                return authenticated;
             }
-            catch (Exception e) {
+            else
+            {
                 return false;
             }
         }
+
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
