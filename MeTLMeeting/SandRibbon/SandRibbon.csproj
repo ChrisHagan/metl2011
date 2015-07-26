@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>0654174F2FD2F0E92D558D4B5925710E6B1697A2</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_3_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>84F4AC7FABC5ECB0CC95DF3BF5568AAD8E1C0DCE</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_4_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -51,7 +51,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>297</ApplicationRevision>
+    <ApplicationRevision>300</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -59,8 +59,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.297</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.297</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.300</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.300</ApplicationVersion>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -70,9 +70,9 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
-    <ProductName>MeTL</ProductName>
-    <InstallUrl>http://192.168.20.253:80/MeTL/</InstallUrl>
-    <UpdateUrl>http://192.168.20.253:80/MeTL/</UpdateUrl>
+    <ProductName>MeTL Demo</ProductName>
+    <InstallUrl>http://ec2-52-7-180-42.compute-1.amazonaws.com:8080/MeTL/</InstallUrl>
+    <UpdateUrl>http://ec2-52-7-180-42.compute-1.amazonaws.com:8080/MeTL/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -893,6 +893,7 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
+    <None Include="SandRibbon_4_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
