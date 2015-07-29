@@ -204,6 +204,7 @@ namespace SandRibbon.Components.BannedContent
             return checkBoxes;
         }
 
+        /*
         private void emailReport_Click(object sender, RoutedEventArgs e)
         {
             emailReport.IsEnabled = false;
@@ -238,6 +239,7 @@ namespace SandRibbon.Components.BannedContent
             Commands.ReceiveMeTLUserInformations.RegisterCommand(doWork);
             Commands.RequestMeTLUserInformations.Execute(theUsers);
         }
+         **/
 
         private void UpdateDisplayNames(PrivacyWrapper sub)
         {

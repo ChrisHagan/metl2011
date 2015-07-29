@@ -53,9 +53,10 @@
                     <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
                     Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
                 </Viewbox>
+                <!--This doesn't work in the context of making up usernames
                 <Button x:Name="emailReport" Grid.Row="2" Margin="5,5,0,5" Width="100" HorizontalAlignment="Left" 
                         Visibility="{Binding Path=IsEnabled, Converter={StaticResource boolToVisibilityCollapse}}" 
-                        ToolTip="{DynamicResource EmailReportTooltip}" Click="emailReport_Click">Email Report</Button>
+                        ToolTip="{DynamicResource EmailReportTooltip}" Click="emailReport_Click">Email Report</Button>-->
                 <components:CircularProgressBar x:Name="progressBar" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Margin="5,5,0,5" 
                                                Visibility="{Binding ElementName=emailReport, Path=IsEnabled, Converter={StaticResource boolToVisibility}}"/>
                 <TextBlock x:Name="sendEmail" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic" Margin="30,5,0,5" Text="Sending email..." 
