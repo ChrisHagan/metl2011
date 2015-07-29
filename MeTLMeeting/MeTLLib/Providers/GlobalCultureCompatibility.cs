@@ -10,6 +10,7 @@ namespace MeTLLib.Providers
     class DateTimeFactory
     {
         private static CultureInfo enAUCulture = CultureInfo.GetCultureInfo("en-AU");
+        private static CultureInfo enUSCulture = CultureInfo.GetCultureInfo("en-US");
 
         public static DateTime Parse(string s)
         {
@@ -52,7 +53,7 @@ namespace MeTLLib.Providers
         {
             try
             {
-                Thread.CurrentThread.CurrentCulture = enAUCulture;
+                Thread.CurrentThread.CurrentCulture = enUSCulture;
                 // I got a security permissions here once.  MSCorLib of course.
             }
             catch(Exception)

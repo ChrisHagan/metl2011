@@ -32,7 +32,7 @@ namespace SandRibbon
     public partial class Window1
     {
         private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
-        
+
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
@@ -54,21 +54,24 @@ namespace SandRibbon
         {
             InitializeComponent();
 
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>{
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>
+            {
                 App.mark("Window1 knows about identity");
             }));
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
             Title = Strings.Global_ProductName;
-            try {
+            try
+            {
                 //Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\MeTL Presenter.ico");
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
             }
-            PreviewKeyDown += new KeyEventHandler(KeyPressed); 
+            PreviewKeyDown += new KeyEventHandler(KeyPressed);
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -129,7 +132,7 @@ namespace SandRibbon
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed)); 
+            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
 
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.SetLayer.ExecuteAsync("Sketch");
@@ -192,7 +195,7 @@ namespace SandRibbon
                     /// 1. Extended mode activated, there are now 2 screens
                     /// 2. Extended mode deactivated, back to 1 screen
                     /// 3. Extended screen position has changed, so need to reinit the projector window
-                    
+
                     var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
 
 
@@ -222,10 +225,11 @@ namespace SandRibbon
             }
         }
 
-        private System.Windows.Threading.DispatcherTimer createExtendedDesktopTimer(){
+        private System.Windows.Threading.DispatcherTimer createExtendedDesktopTimer()
+        {
             displayDispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);
             displayDispatcherTimer.Interval = TimeSpan.FromSeconds(1);
-            displayDispatcherTimer.Tick += new EventHandler( dispatcherEventHandler );
+            displayDispatcherTimer.Tick += new EventHandler(dispatcherEventHandler);
             displayDispatcherTimer.Start();
             return displayDispatcherTimer;
         }
@@ -267,7 +271,7 @@ namespace SandRibbon
                 FlowDirection = culture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
                 var mergedDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
                 var currentToolTips = mergedDicts.Where(rd => ((ResourceDictionary)rd).Source.ToString().ToLower().Contains("tooltips")).First();
-                var rdUri = new Uri("Components\\ResourceDictionaries\\ToolTips_"+lang+".xaml", UriKind.Relative);
+                var rdUri = new Uri("Components\\ResourceDictionaries\\ToolTips_" + lang + ".xaml", UriKind.Relative);
                 var newDict = (ResourceDictionary)App.LoadComponent(rdUri);
                 var sourceUri = new Uri("ToolTips_" + lang + ".xaml", UriKind.Relative);
                 newDict.Source = sourceUri;
@@ -292,7 +296,7 @@ namespace SandRibbon
         }
         private void ImportPowerpoint(object obj)
         {
-            if(loader == null) loader = new PowerPointLoader();
+            if (loader == null) loader = new PowerPointLoader();
             loader.ImportPowerpoint(this);
         }
         private void SetRibbonAppearance(RibbonAppearance appearance)
@@ -302,11 +306,11 @@ namespace SandRibbon
         private void createBlankConversation(object obj)
         {
             var element = Keyboard.FocusedElement;
-            if(loader == null) loader = new PowerPointLoader();
+            if (loader == null) loader = new PowerPointLoader();
             loader.CreateBlankConversation();
         }
-        
-        private void HelpBinding(object sender, EventArgs e) 
+
+        private void HelpBinding(object sender, EventArgs e)
         {
             LaunchHelp(null);
         }
@@ -321,21 +325,24 @@ namespace SandRibbon
             {
             }
         }
-        private void PrintBinding(object sender, EventArgs e) {
+        private void PrintBinding(object sender, EventArgs e)
+        {
             PrintConversation(null);
         }
-        private void PrintConversation(object _arg) {
-            if(Globals.UserOptions.includePrivateNotesOnPrint)
+        private void PrintConversation(object _arg)
+        {
+            if (Globals.UserOptions.includePrivateNotesOnPrint)
                 new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
             else
                 new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
         }
-        private void SetUserOptions(UserOptions options) {
+        private void SetUserOptions(UserOptions options)
+        {
             //this next line should be removed.
             SaveUserOptions(options);
 
             if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
-                    ribbon.ToggleMinimize();
+                ribbon.ToggleMinimize();
         }
         private void SaveUserOptions(UserOptions options)
         {
@@ -345,8 +352,9 @@ namespace SandRibbon
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
             DelegateCommand<object> hideRibbon = null;
-            hideRibbon = new DelegateCommand<object>((_obj) =>{
-            
+            hideRibbon = new DelegateCommand<object>((_obj) =>
+            {
+
                 Commands.SetPedagogyLevel.UnregisterCommand(hideRibbon);
                 if (!ribbon.IsMinimized)
                     ribbon.ToggleMinimize();
@@ -369,7 +377,8 @@ namespace SandRibbon
             if (ribbon.IsMinimized)
                 ribbon.ToggleMinimize();
         }
-        private void Reconnecting(bool success) {
+        private void Reconnecting(bool success)
+        {
             if (success)
             {
                 try
@@ -390,14 +399,15 @@ namespace SandRibbon
                                     null,
                                     null,
                                     (parser) =>
-                                        {
-                                            Commands.PreParserAvailable.Execute(parser);
-                                            hideReconnectingDialog();
-                                        },
+                                    {
+                                        Commands.PreParserAvailable.Execute(parser);
+                                        hideReconnectingDialog();
+                                    },
                                     jid);
                     }
                 }
-                catch (NotSetException e) {
+                catch (NotSetException e)
+                {
                     Logger.Crash(e);
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
@@ -462,7 +472,7 @@ namespace SandRibbon
         {
             Viewbox viewbox = null;
             UIElement container = null;
-            GetViewboxAndCanvasFromTarget(info.AdornerTarget, out viewbox, out container); 
+            GetViewboxAndCanvasFromTarget(info.AdornerTarget, out viewbox, out container);
             Dispatcher.adoptAsync(() =>
             {
                 var adornerRect = new Rect(container.TranslatePoint(info.ElementBounds.TopLeft, viewbox), container.TranslatePoint(info.ElementBounds.BottomRight, viewbox));
@@ -476,7 +486,7 @@ namespace SandRibbon
         private Adorner[] GetPrivacyAdorners(Viewbox viewbox, out AdornerLayer adornerLayer)
         {
             adornerLayer = AdornerLayer.GetAdornerLayer(viewbox);
-            if (adornerLayer == null) 
+            if (adornerLayer == null)
                 return null;
 
             return adornerLayer.GetAdorners(viewbox);
@@ -498,7 +508,7 @@ namespace SandRibbon
         {
             Viewbox viewbox;
             UIElement container;
-            GetViewboxAndCanvasFromTarget(targetName, out viewbox, out container); 
+            GetViewboxAndCanvasFromTarget(targetName, out viewbox, out container);
 
             bool hasAdorners = false;
             AdornerLayer adornerLayer;
@@ -561,7 +571,7 @@ namespace SandRibbon
 
         private void BlockSearch()
         {
-            SearchBlocker.Visibility = Visibility.Visible; 
+            SearchBlocker.Visibility = Visibility.Visible;
         }
 
         private void UnblockSearch()
@@ -592,7 +602,7 @@ namespace SandRibbon
             // ensure the "pages" tab is selected
             Action selectPagesTab = () =>
                 {
-                    if (contentTabs.SelectedIndex != 0) 
+                    if (contentTabs.SelectedIndex != 0)
                         contentTabs.SelectedIndex = 0;
                 };
             Dispatcher.Invoke(selectPagesTab, System.Windows.Threading.DispatcherPriority.Normal);
@@ -606,7 +616,7 @@ namespace SandRibbon
         {
             EnsureConversationTabSelected();
 
-            if(ribbon.SelectedTab!=null)
+            if (ribbon.SelectedTab != null)
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var thisDetails = ClientFactory.Connection().DetailsOf(title);
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
@@ -635,7 +645,8 @@ namespace SandRibbon
                                      });
             CommandManager.InvalidateRequerySuggested();
         }
-        private void hideReconnectingDialog() { 
+        private void hideReconnectingDialog()
+        {
             ProgressDisplay.Children.Clear();
             InputBlocker.Visibility = Visibility.Collapsed;
         }
@@ -668,7 +679,7 @@ namespace SandRibbon
         }
         private bool mustBeLoggedIn(object _arg)
         {
-            var v =  !Globals.credentials.ValueEquals(Credentials.Empty);
+            var v = !Globals.credentials.ValueEquals(Credentials.Empty);
             return v;
         }
         private bool conversationSearchMustBeClosed(object _obj)
@@ -688,11 +699,11 @@ namespace SandRibbon
         private bool mustBeInConversation(object _arg)
         {
             var details = Globals.conversationDetails;
-            if(!details.IsValid)
-            if(Globals.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower())) return true;
+            if (!details.IsValid)
+                if (Globals.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
             var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
             validGroups.Add("unrestricted");
-            if (!details.isDeleted  && validGroups.Contains(details.Subject.ToLower())) return true;
+            if (!details.isDeleted && validGroups.Contains(details.Subject.ToLower())) return true;
             return false;
         }
         private bool mustBeAuthor(object _arg)
@@ -702,35 +713,28 @@ namespace SandRibbon
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            
             Dispatcher.adopt(delegate
                                  {
-/*
-                                     if (details.Author == Globals.me)
-                                         ParticipantsTabItem.Visibility = Visibility.Visible;
-                                     else
-                                         ParticipantsTabItem.Visibility = Visibility.Collapsed;
-                                     */
-                                    if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
-                                    {
+                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
+                                     {
                                          UpdateTitle(details);
                                          if (!mustBeInConversation(null))
                                          {
                                              ShowConversationSearchBox(null);
                                              Commands.LeaveLocation.Execute(null);
                                          }
-                                    }
-            });
+                                     }
+                                 });
         }
         private void UpdateTitle(ConversationDetails details)
         {
             if (Globals.conversationDetails != null && mustBeInConversation(null))
             {
-                #if DEBUG
+#if DEBUG
                     Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
-                #else
-                    Title = messageFor(Globals.conversationDetails);
-                #endif 
+#else
+                Title = messageFor(Globals.conversationDetails);
+#endif
             }
             else
                 Title = Strings.Global_ProductName;
@@ -770,7 +774,7 @@ namespace SandRibbon
                     Commands.JoinConversation.ExecuteAsync(details.Jid);
             }
         }
-       private void setSync(object _obj)
+        private void setSync(object _obj)
         {
             Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }
@@ -783,8 +787,8 @@ namespace SandRibbon
             scroll.Height = currentSlide.defaultHeight;
             if (canvas != null && canvas.stack != null && !Double.IsNaN(canvas.stack.offsetX) && !Double.IsNaN(canvas.stack.offsetY))
             {
-                scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth,Math.Max(0,-canvas.stack.offsetX)));
-                scroll.ScrollToVerticalOffset(Math.Min(scroll.ExtentHeight,Math.Max(0,-canvas.stack.offsetY)));
+                scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth, Math.Max(0, -canvas.stack.offsetX)));
+                scroll.ScrollToVerticalOffset(Math.Min(scroll.ExtentHeight, Math.Max(0, -canvas.stack.offsetY)));
             }
             else
             {
@@ -966,7 +970,7 @@ namespace SandRibbon
             catch (NotSetException)
             {
                 return;
-            }   
+            }
         }
         private void SetConversationPermissions(object obj)
         {
@@ -976,7 +980,7 @@ namespace SandRibbon
                 var details = Globals.conversationDetails;
                 if (details == null)
                     return;
-                if(style == "lecture")
+                if (style == "lecture")
                     details.Permissions.applyLectureStyle();
                 else
                     details.Permissions.applyTuteStyle();
@@ -994,8 +998,9 @@ namespace SandRibbon
 
         private void sleep(object _obj)
         {
-            Dispatcher.adoptAsync(delegate { 
-                Hide(); 
+            Dispatcher.adoptAsync(delegate
+            {
+                Hide();
             });
         }
         private void wakeUp(object _obj)
@@ -1052,9 +1057,9 @@ namespace SandRibbon
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());
-                            #if TOGGLE_CONTENT
+#if TOGGLE_CONTENT
                             homeGroups.Add(new ContentVisibilityHost());
-                            #endif
+#endif
                             break;
                         case 3:
                             homeGroups.Add(new CollaborationControlsHost());
@@ -1127,7 +1132,8 @@ namespace SandRibbon
                     else
                         player.Pause();
                 };
-                Func<Func<Point>,RoutedEventHandler> handler = point =>{
+                Func<Func<Point>, RoutedEventHandler> handler = point =>
+                {
                     return delegate
                     {
                         var location = String.Format("{0}{1}.jpg", System.IO.Path.GetTempPath(), DateTime.Now.Ticks);
@@ -1157,12 +1163,12 @@ namespace SandRibbon
                 {
                     Text = "Drop"
                 };
-                under.Click += handler(()=>popup.TranslatePoint(new Point(0, 0), canvasViewBox));
+                under.Click += handler(() => popup.TranslatePoint(new Point(0, 0), canvasViewBox));
                 var fullScreen = new SandRibbon.Components.ResourceDictionaries.Button
                 {
                     Text = "Fill"
                 };
-                fullScreen.Click += handler(()=>new Point(0,0));
+                fullScreen.Click += handler(() => new Point(0, 0));
                 buttons.Children.Add(under);
                 buttons.Children.Add(fullScreen);
                 sp.Children.Add(player);

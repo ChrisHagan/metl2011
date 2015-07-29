@@ -3,6 +3,7 @@ using System.Windows;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -23,11 +24,18 @@ namespace SandRibbon.Tabs.Groups
             InitializeComponent();
             DataContext = this;
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
         }
-        private void updateConversationDetails(object obj)
+        private void updateConversationDetails(ConversationDetails details)
         {
-            NavigationIsLocked = Globals.conversationDetails.Permissions.NavigationLocked;
+            NavigationIsLocked = details.Permissions.NavigationLocked;
+            if (details.Permissions.studentCanPublish)
+            {
+                tutorialStyle.IsChecked = true;
+            }
+            else {
+                lectureStyle.IsChecked = true;
+            }
         }
         private void joinConversation(object obj)
         {

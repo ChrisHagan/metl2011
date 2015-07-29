@@ -10,22 +10,19 @@ using SandRibbon.Providers;
 using MeTLLib.Utilities;
 using System.Collections.Specialized;
 using SandRibbon.Components.Utility;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace SandRibbon.Components
 {
-    /// <summary>
-    /// Interaction logic for EditConversation.xaml
-    /// </summary>
-    /// 
-    
     public partial class EditConversation : Window
     {
         public ObservableCollection<Slide> activeSlideList = new ObservableCollection<Slide>();
-        public static SlideToThumbConverter SlideToThumb;
         public static SlideIndexConverter SlideIndex;
+        public static UrlForSlideConverter UrlForSlide;
         public EditConversation()
         {
-            SlideToThumb = new SlideToThumbConverter();
             SlideIndex = new SlideIndexConverter(activeSlideList);
             InitializeComponent();
             activeSlides.ItemsSource = activeSlideList;
@@ -38,7 +35,10 @@ namespace SandRibbon.Components
             foreach (var slide in slides.OrderBy(s => s.index))
             {
                 activeSlideList.Add(slide);
+
             }
+            activeSlides.UpdateLayout();
+            var generator = activeSlides.ItemContainerGenerator;
         }
 
         private void cancel(object sender, RoutedEventArgs e)
@@ -50,7 +50,7 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
-            
+
             ClientFactory.Connection().UpdateConversationDetails(details);
             Commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
             Close();
@@ -76,15 +76,20 @@ namespace SandRibbon.Components
                 activeSlides.ScrollIntoView(item);
             }
         }
-
-        /*private void deleteConversation(object sender, RoutedEventArgs e)
+    }
+    public class UrlForSlideConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var owner = Window.GetWindow(this);
-            if (MeTLMessage.Question("Really delete this conversation?", owner) == MessageBoxResult.Yes)
-            {
-                MeTLLib.ClientFactory.Connection().DeleteConversation(Globals.conversationDetails);
-                Close();
-            }
-        }*/
+            var id = (string)value;
+            var server = ClientFactory.Connection().server;
+            var host = server.Name;
+            return new BitmapImage(new Uri(string.Format(server.thumbnail + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

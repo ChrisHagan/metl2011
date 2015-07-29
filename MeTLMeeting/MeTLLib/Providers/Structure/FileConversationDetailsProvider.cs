@@ -193,7 +193,7 @@ namespace MeTLLib.Providers.Structure
                 details.Jid = id.ToString();
                 details.Slides.Add(new Slide(id + 1, details.Author, Slide.TYPE.SLIDE, 0, 720, 540));
             }
-            details.Created = DateTimeFactory.Parse(DateTimeFactory.Now().ToString());
+            details.Created = DateTimeFactory.Now();
             Update(details);
             return details;
         }

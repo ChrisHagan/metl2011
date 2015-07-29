@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Divan;
 using MeTLLib.Providers;
+using System.Globalization;
 
 namespace MeTLLib.DataTypes
 {
@@ -37,11 +38,13 @@ namespace MeTLLib.DataTypes
         public int relevance { get; set; }
         public long LastModified { get; set; }
 
-        public SearchConversationDetails(ConversationDetails conv) : base(conv)
+        public SearchConversationDetails(ConversationDetails conv)
+            : base(conv)
         {
             Created = conv.Created;
         }
-        public SearchConversationDetails(string title, string author, string created, int relevance, string restriction, string jid, string lastModified):base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
+        public SearchConversationDetails(string title, string author, string created, int relevance, string restriction, string jid, string lastModified)
+            : base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
         {
             this.relevance = relevance;
             Created = new DateTime(long.Parse(created));
@@ -53,10 +56,10 @@ namespace MeTLLib.DataTypes
             var date = new DateTime();
             var dateString = doc.Element(CREATED_TAG).Value;
             var match = Regex.Match(dateString, dateRegex);
-            if(match.Success)
+            if (match.Success)
             {
                 var year = Int32.Parse(match.Groups[3].Value);
-                var month =Int32.Parse(match.Groups[2].Value);
+                var month = Int32.Parse(match.Groups[2].Value);
                 var day = Int32.Parse(match.Groups[1].Value);
                 var rawHour = Int32.Parse(match.Groups[4].Value);
                 int hour = 0;
@@ -74,7 +77,7 @@ namespace MeTLLib.DataTypes
 
             return date.Ticks.ToString();
         }
-        
+
         public static SearchConversationDetails ReadXML(XElement doc)
         {
             var cd = new SearchConversationDetails(ConversationDetails.ReadXml(doc));
@@ -90,7 +93,7 @@ namespace MeTLLib.DataTypes
         }
         public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
         {
-            if (scd == null) 
+            if (scd == null)
                 throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");
 
             var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(scd.Jid);
@@ -107,24 +110,25 @@ namespace MeTLLib.DataTypes
 
     public class ConversationDetails : INotifyPropertyChanged
     {
-       public bool isDeleted
+        public bool isDeleted
         {
-            get 
+            get
             {
                 return Subject.ToLower().GetHashCode() == "deleted".GetHashCode();
             }
         }
-       public bool IsEmpty
-       {
-           get
-           {
-               return Equals(ConversationDetails.Empty);
-           }
-       }
+        public bool IsEmpty
+        {
+            get
+            {
+                return Equals(ConversationDetails.Empty);
+            }
+        }
         public static string DefaultName(string author)
         {
-            var now = DateTimeFactory.Now();
-            return string.Format("{0} at {1}", author, now);
+            var ci = CultureInfo.GetCultureInfo("en-US");
+            var d = DateTime.Now.ToString("r", ci);
+            return string.Format("{0} at {1}", author, d);
         }
         public ConversationDetails(String title, String jid, String author, List<Slide> slides, Permissions permissions, String subject)
             : base()
@@ -176,7 +180,8 @@ namespace MeTLLib.DataTypes
         {
             return Slides.Select(s => s.id).Max() + 1;
         }
-        public ConversationDetails Clone() {
+        public ConversationDetails Clone()
+        {
             return ReadXml(WriteXml());
         }
         public string Title { get; set; }
@@ -195,7 +200,7 @@ namespace MeTLLib.DataTypes
 
         // I want this to be an always valid string because we're comparing this with other conversation detail tags 
         private string internalTag = string.Empty;
-        public string Tag 
+        public string Tag
         {
             get
             {
@@ -230,7 +235,7 @@ namespace MeTLLib.DataTypes
                     return true;
             }
         }
- 
+
         public bool UserIsBlackListed(string userId)
         {
             return blacklist.Any(user => user == userId);
@@ -274,8 +279,9 @@ namespace MeTLLib.DataTypes
                 && (foreignConversationDetails.Tag == Tag)
                 && (foreignConversationDetails.Title == Title));
         }
-        
-        public ConversationDetails() : this(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime())
+
+        public ConversationDetails()
+            : this(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime())
         {
         }
 
@@ -315,7 +321,7 @@ namespace MeTLLib.DataTypes
             DateTime LastAccessed = new DateTime();
             if (doc.Element(LAST_ACCESSED_TAG) != null)
                 LastAccessed = DateTimeFactory.TryParse(doc.Element(LAST_ACCESSED_TAG).Value);
-            
+
             var Subject = "";
             if (doc.Element(SUBJECT_TAG) != null)
                 Subject = doc.Element(SUBJECT_TAG).Value;
@@ -332,7 +338,7 @@ namespace MeTLLib.DataTypes
             )).ToList();
             var blacklistElements = doc.Elements(BLACKLIST_TAG);
             var blacklist = new List<string>();
-            if(blacklistElements != null && blacklistElements.Count() > 0)
+            if (blacklistElements != null && blacklistElements.Count() > 0)
                 blacklist = blacklistElements.Select(d => d.Value).ToList();
             return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed, blacklist.ToList());
         }
@@ -513,13 +519,15 @@ namespace MeTLLib.DataTypes
             exposed = newExposed;
         }
         public event PropertyChangedEventHandler PropertyChanged;
-        public void refresh() {
+        public void refresh()
+        {
             if (PropertyChanged != null)
-            PropertyChanged(this,new PropertyChangedEventArgs("id"));
+                PropertyChanged(this, new PropertyChangedEventArgs("id"));
         }
-        public void refreshIndex() {
+        public void refreshIndex()
+        {
             if (PropertyChanged != null)
-            PropertyChanged(this,new PropertyChangedEventArgs("index"));
+                PropertyChanged(this, new PropertyChangedEventArgs("index"));
         }
         public static Slide Empty
         {
@@ -538,10 +546,12 @@ namespace MeTLLib.DataTypes
         public float defaultWidth;
         public float defaultHeight;
         public string author;
-        public int id{
-            get;set;
+        public int id
+        {
+            get;
+            set;
         }
-        public int index{get;set;}
+        public int index { get; set; }
         public TYPE type;
         public bool exposed;
     }

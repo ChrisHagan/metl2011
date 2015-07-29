@@ -29,7 +29,7 @@ namespace SandRibbon.Providers
         private static Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
         private static object cacheLock = new object();
         //acceptableStaleTime is measured in ticks
-        public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 30;
+        public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 5;
         private static int maximumCachedBitmaps = 200;
         private static void addToCache(int slideId, CachedThumbnail ct)
         {
@@ -49,20 +49,26 @@ namespace SandRibbon.Providers
         {
           image.Dispatcher.adopt(delegate
           {
-              var internalSlide = (Slide)image.DataContext;
-              if (internalSlide != null)
+              try
               {
-                  lock (cacheLock)
+                  var internalSlide = (Slide)image.DataContext;
+                  if (internalSlide != null)
                   {
-                      if (cache.ContainsKey(internalSlide.id))
+                      lock (cacheLock)
                       {
-                          Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
-                          image.Source = cache[internalSlide.id].image;
+                          if (cache.ContainsKey(internalSlide.id))
+                          {
+                              Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
+                              image.Source = cache[internalSlide.id].image;
+                          }
                       }
                   }
+                  else
+                      image.Source = emptyImage;
               }
-              else
-                  image.Source = emptyImage;
+              catch (Exception e) { 
+                      image.Source = emptyImage;
+              }
           });
         }
         public static void thumbnail(Image image, int slideId)

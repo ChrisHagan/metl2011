@@ -25,10 +25,7 @@
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
-             HorizontalAlignment="Stretch" Width="Auto"
-             VirtualizingStackPanel.IsVirtualizing="True"
-             VirtualizingStackPanel.VirtualizationMode="Recycling"
-            >
+             HorizontalAlignment="Stretch" Width="Auto" >
             <ListBox.InputBindings>
                 <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
                 <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
@@ -68,15 +65,7 @@
                         </Border.Focusable>
                         <Grid>
                             <Viewbox IsHitTestVisible="False">
-                                <Image Height="200" Width="320" x:Name="thumbnailImage">
-                                    <Image.Source>
-                                        <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
-                                            <Binding RelativeSource="{RelativeSource Self}" />
-                                            <Binding Path="id" />
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Border}}"/>
-                                        </MultiBinding>
-                                    </Image.Source>
-                                </Image>
+                                <Image Height="200" Width="320" x:Name="thumbnailImage"  />
                             </Viewbox>
                             <Image Source="/Resources/FogOfWar.png">
                                 <Image.Visibility>
