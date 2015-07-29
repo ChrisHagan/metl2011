@@ -24,6 +24,7 @@ namespace SandRibbon.Components
         public EditConversation()
         {
             SlideIndex = new SlideIndexConverter(activeSlideList);
+            UrlForSlide = new UrlForSlideConverter();
             InitializeComponent();
             activeSlides.ItemsSource = activeSlideList;
             loadConversation(Globals.conversationDetails.Slides);
@@ -81,7 +82,7 @@ namespace SandRibbon.Components
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var id = (string)value;
+            var id = value.ToString();
             var server = ClientFactory.Connection().server;
             var host = server.Name;
             return new BitmapImage(new Uri(string.Format(server.thumbnail + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));

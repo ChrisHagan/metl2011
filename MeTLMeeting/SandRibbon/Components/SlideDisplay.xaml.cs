@@ -152,7 +152,7 @@ namespace SandRibbon.Components
         {
             var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
             var generator = slides.ItemContainerGenerator;
-            var context = Globals.conversationDetails.Slides;
+            var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToList();
             var top = view.VerticalOffset;
             var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
             for (var i = (int) Math.Floor(top); i <= bottom; i++)
