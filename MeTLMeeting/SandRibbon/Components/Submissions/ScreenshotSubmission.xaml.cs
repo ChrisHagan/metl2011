@@ -125,7 +125,7 @@ namespace SandRibbon.Components.Submissions
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
                                                     {
                                                         time = time,
-                                                        message = string.Format("Submission at {0}", new DateTime(time)),
+                                                        message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
                                                         showPrivate = true
                                                     });
         }

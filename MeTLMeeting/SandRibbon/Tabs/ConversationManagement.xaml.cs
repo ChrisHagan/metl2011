@@ -31,21 +31,24 @@ namespace SandRibbon.Tabs
             var bannedContent = new BannedContent(submissionList);
             bannedContent.Owner = Window.GetWindow(this);
             bannedContent.Show();
+            banContent.IsChecked = false;
+            Commands.BanhammerActive.Execute(false);
+            ManageBannedContent.Execute(null, null);
         }
 
         private bool canViewBannedContent(object _e)
         {
-           return submissionList.Count > 0;
+            return submissionList.Count > 0;
         }
 
         private void CheckManageBannedAllowed(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = StateHelper.mustBeInConversation(); 
+            e.CanExecute = StateHelper.mustBeInConversation();
         }
 
         private void PreParserAvailable(PreParser parser)
         {
-            foreach(var submission in parser.submissions)
+            foreach (var submission in parser.submissions)
                 receiveSubmission(submission);
         }
         private void updateConversationDetails(ConversationDetails details)

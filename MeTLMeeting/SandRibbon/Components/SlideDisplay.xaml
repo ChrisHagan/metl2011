@@ -64,7 +64,7 @@
                             </MultiBinding>
                         </Border.Focusable>
                         <Grid>
-                            <Viewbox IsHitTestVisible="False">
+                            <Viewbox IsHitTestVisible="False" Width="Auto">
                                 <Image Height="200" Width="320" x:Name="thumbnailImage"  />
                             </Viewbox>
                             <Image Source="/Resources/FogOfWar.png">

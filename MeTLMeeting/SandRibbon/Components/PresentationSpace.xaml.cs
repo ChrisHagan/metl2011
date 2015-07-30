@@ -77,7 +77,7 @@ namespace SandRibbon.Components
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
-            Commands.SetPrivacyOfItems.Execute(Privacy.Private);
+            Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
 
         private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
@@ -89,8 +89,8 @@ namespace SandRibbon.Components
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = MeTLLib.ClientFactory.Connection();
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1,Globals.me,"bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted,Globals.generateId(hostedFileName)));
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
+                                     Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -105,7 +105,7 @@ namespace SandRibbon.Components
         private void setUpSyncDisplay(int slide)
         {
             if (!Globals.synched) return;
-            if(!inConversation) return;
+            if (!inConversation) return;
             if (slide == Globals.slide) return;
             try
             {
@@ -130,8 +130,8 @@ namespace SandRibbon.Components
             {
                 if (Globals.conversationDetails == null)
                     Commands.SetPrivacy.ExecuteAsync("private");
-                else if (Globals.conversationDetails.Author == Globals.me) 
-                        Commands.SetPrivacy.ExecuteAsync("public");
+                else if (Globals.conversationDetails.Author == Globals.me)
+                    Commands.SetPrivacy.ExecuteAsync("public");
             }
             catch (NotSetException)
             {
@@ -160,16 +160,16 @@ namespace SandRibbon.Components
             Dispatcher.adopt(() =>
             {
                 var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack, details.dimensions);
-                var bitmap = new RenderTargetBitmap((int)targetSize.Width ,(int)targetSize.Height, dpi, dpi, PixelFormats.Default);
+                var bitmap = new RenderTargetBitmap((int)targetSize.Width, (int)targetSize.Height, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
                     context.DrawRectangle(new VisualBrush(visual), null, targetSize);
                     context.DrawText(new FormattedText(
-                                            details.message, 
-                                            CultureInfo.CurrentCulture, 
-                                            FlowDirection.LeftToRight, 
+                                            details.message,
+                                            CultureInfo.CurrentCulture,
+                                            FlowDirection.LeftToRight,
                                             new Typeface(
                                                 new FontFamily("Arial"),
                                                 FontStyles.Normal,
@@ -336,7 +336,7 @@ namespace SandRibbon.Components
                 finalRect.Height = Math.Abs(pos.Y - origin.Y);
                 finalRect.Width = Math.Abs(pos.X - origin.X);
                 mouseDown = false;
-                if (!isPointNear(marquee.PointToScreen(finalRect.TopLeft),marquee.PointToScreen(finalRect.BottomRight),10))
+                if (!isPointNear(marquee.PointToScreen(finalRect.TopLeft), marquee.PointToScreen(finalRect.BottomRight), 10))
                     doWithRect(finalRect);
                 adornerLayer.Remove(adorner);
             };
@@ -362,13 +362,13 @@ namespace SandRibbon.Components
         }
         private void SendNewDig(Rect rect)
         {
-            var marquee = new Rectangle {Height=rect.Height, Width=rect.Width };
+            var marquee = new Rectangle { Height = rect.Height, Width = rect.Width };
             System.Windows.Controls.Canvas.SetLeft(marquee, rect.Left);
             System.Windows.Controls.Canvas.SetTop(marquee, rect.Top);
-            
+
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0), 
+            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0),
             MeTLLib.ClientFactory.Connection().UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
@@ -490,51 +490,25 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path,UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
         }
-        private FrameworkElement clonePublicOnly(){
+        private FrameworkElement clonePublicOnly()
+        {
             var clone = new InkCanvas();
             clone.Height = ActualHeight;
             clone.Width = ActualWidth;
-            foreach(var stroke in stack.PublicStrokes)
+            foreach (var stroke in stack.PublicStrokes)
                 clone.Strokes.Add(stroke.Clone());
-                foreach (var child in stack.Work.Children)
+            foreach (var child in stack.Work.Children)
+            {
+                var fe = (FrameworkElement)child;
+                if (fe.privacy() == Privacy.Public)
                 {
-                    var fe = (FrameworkElement)child;
-                    if (fe.privacy() == Privacy.Public)
-                    {
-                        if (child is Image)
-                        {
-                            var image = (Image)child;
-                            var e = viewFor((FrameworkElement)child);
-                            Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 2);
-                            clone.Children.Add(e);
-                        }
-                        else
-                        {
-                            var e = viewFor(fe);
-                            Panel.SetZIndex(e, 4);
-                            clone.Children.Add(e);
-                        }
-                    }
-                }
-            var size = new Size(ActualWidth,ActualHeight);
-            clone.Measure(size);
-            clone.Arrange(new Rect(size));
-            return clone;
-        }
-        private FrameworkElement cloneAll(){
-            var clone = new InkCanvas();
-            foreach(var stroke in stack.AllStrokes)
-                clone.Strokes.Add(stroke.Clone());
-                foreach (var child in stack.Work.Children)
-                {
-                    var fe = (FrameworkElement)child;
-                    if(child is Image)
+                    if (child is Image)
                     {
                         var image = (Image)child;
-                        var e = viewFor(image);
-                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
+                        var e = viewFor((FrameworkElement)child);
+                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 2);
                         clone.Children.Add(e);
                     }
                     else
@@ -544,7 +518,35 @@ namespace SandRibbon.Components
                         clone.Children.Add(e);
                     }
                 }
-            var size = new Size(ActualWidth,ActualHeight);
+            }
+            var size = new Size(ActualWidth, ActualHeight);
+            clone.Measure(size);
+            clone.Arrange(new Rect(size));
+            return clone;
+        }
+        private FrameworkElement cloneAll()
+        {
+            var clone = new InkCanvas();
+            foreach (var stroke in stack.AllStrokes)
+                clone.Strokes.Add(stroke.Clone());
+            foreach (var child in stack.Work.Children)
+            {
+                var fe = (FrameworkElement)child;
+                if (child is Image)
+                {
+                    var image = (Image)child;
+                    var e = viewFor(image);
+                    Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
+                    clone.Children.Add(e);
+                }
+                else
+                {
+                    var e = viewFor(fe);
+                    Panel.SetZIndex(e, 4);
+                    clone.Children.Add(e);
+                }
+            }
+            var size = new Size(ActualWidth, ActualHeight);
             clone.Measure(size);
             clone.Arrange(new Rect(size));
             return clone;
@@ -564,11 +566,12 @@ namespace SandRibbon.Components
             return 0.0;
         }
 
-        private FrameworkElement viewFor(FrameworkElement element) 
+        private FrameworkElement viewFor(FrameworkElement element)
         {
             var effectDiameter = 2 * GetEffectRadius(element);
 
-            var rect = new Rectangle {
+            var rect = new Rectangle
+            {
                 Width = element.ActualWidth + effectDiameter,
                 Height = element.ActualHeight + effectDiameter,
                 Fill = new VisualBrush(element)
@@ -586,16 +589,16 @@ namespace SandRibbon.Components
             var top = InkCanvas.GetTop(element);
             if (element is Image)
             {
-                if(!Double.IsNaN(element.Height) && element.Height != element.ActualHeight)
-                  top += ((element.Height - element.ActualHeight)/2);
+                if (!Double.IsNaN(element.Height) && element.Height != element.ActualHeight)
+                    top += ((element.Height - element.ActualHeight) / 2);
                 if (!Double.IsNaN(element.Width) && element.Width != element.ActualWidth)
-                  left += ((element.Width - element.ActualWidth)/2); 
+                    left += ((element.Width - element.ActualWidth) / 2);
             }
             left -= effectDiameter / 2;
             top -= effectDiameter / 2;
-            
+
             InkCanvas.SetTop(rect, top);
-            InkCanvas.SetLeft(rect,left);
+            InkCanvas.SetLeft(rect, left);
 
             return rect;
         }

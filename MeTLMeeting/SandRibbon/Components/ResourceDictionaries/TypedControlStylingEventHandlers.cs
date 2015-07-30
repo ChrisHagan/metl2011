@@ -120,7 +120,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             rectToPush.Stroke = Brushes.Red;
             rectToPush.Height = MediaElement.ActualHeight;
             rectToPush.Width = MediaElement.ActualWidth;
-            Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(srVideo.tag().id, rectToPush ));
+            Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(srVideo.tag().id, rectToPush));
         }
     }
     public class MeTLImageToolTip : System.Windows.Controls.ToolTip
@@ -177,7 +177,7 @@ namespace SandRibbon.Components.ResourceDictionaries
     }
     public enum InternalButtonSize
     {
-        Small, Medium,MediumNoText, Large, LargeIcon
+        Small, Medium, MediumNoText, Large, LargeIcon
     }
     public class CheckBox : System.Windows.Controls.CheckBox
     {
@@ -248,6 +248,56 @@ namespace SandRibbon.Components.ResourceDictionaries
             {
             };
         }
+    }
+    public class ToggleButton : System.Windows.Controls.Primitives.ToggleButton
+    {
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(ToggleButton), new UIPropertyMetadata("No label"));
+
+        public ImageSource Icon
+        {
+            get { return (ImageSource)GetValue(IconProperty); }
+            set { SetValue(IconProperty, value); }
+        }
+        public static readonly DependencyProperty IconProperty =
+            DependencyProperty.Register("Icon", typeof(ImageSource), typeof(ToggleButton), new UIPropertyMetadata(null));
+
+        public ButtonSize CollapseToMedium
+        {
+            get { return (ButtonSize)GetValue(CollapseToMediumProperty); }
+            set { SetValue(CollapseToMediumProperty, value); }
+        }
+        public static readonly DependencyProperty CollapseToMediumProperty =
+            DependencyProperty.Register("CollapseToMedium", typeof(ButtonSize), typeof(ToggleButton), new UIPropertyMetadata(ButtonSize.WhenGroupIsMedium));
+
+        public ButtonSize CollapseToSmall
+        {
+            get { return (ButtonSize)GetValue(CollapseToSmallProperty); }
+            set { SetValue(CollapseToSmallProperty, value); }
+        }
+        public static readonly DependencyProperty CollapseToSmallProperty =
+            DependencyProperty.Register("CollapseToSmall", typeof(ButtonSize), typeof(ToggleButton), new UIPropertyMetadata(ButtonSize.WhenGroupIsSmall));
+
+        public InternalButtonSize InternalButtonSize
+        {
+            get { return (InternalButtonSize)GetValue(InternalButtonSizeProperty); }
+            set { SetValue(InternalButtonSizeProperty, value); }
+        }
+        public static readonly DependencyProperty InternalButtonSizeProperty =
+            DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(ToggleButton), new UIPropertyMetadata(InternalButtonSize.Large));
+
+        public RibbonGroupVariant ParentActiveVariant
+        {
+            get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
+            set { SetValue(ParentActiveVariantProperty, value); }
+        }
+        public static readonly DependencyProperty ParentActiveVariantProperty =
+            DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(ToggleButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
     }
     public class RadioButton : System.Windows.Controls.RadioButton
     {

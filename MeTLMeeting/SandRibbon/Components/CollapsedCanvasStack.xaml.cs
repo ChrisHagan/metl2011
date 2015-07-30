@@ -517,7 +517,7 @@ namespace SandRibbon.Components
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected text");
         }
 
-        private void AddTextBoxToCanvas(MeTLTextBox box,Boolean isAdjustedForNegativeCartesian)
+        private void AddTextBoxToCanvas(MeTLTextBox box, Boolean isAdjustedForNegativeCartesian)
         {
             Panel.SetZIndex(box, 3);
             AddTextboxToMyCanvas(box);
@@ -533,8 +533,16 @@ namespace SandRibbon.Components
             List<PrivateAwareStroke> selectedStrokes = null;
             Dispatcher.adopt(() =>
                                  {
-                                     selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke));
-                                     selectedElements = filterOnlyMine(Work.GetSelectedElements());
+                                     if (Globals.IsBanhammerActive)
+                                     {
+                                         selectedStrokes = filterExceptMine(Work.GetSelectedStrokes().ToList()).Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
+                                         selectedElements = filterExceptMine(Work.GetSelectedElements());
+                                     }
+                                     else
+                                     {
+                                         selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).ToList();
+                                         selectedElements = filterOnlyMine(Work.GetSelectedElements());
+                                     }
                                  });
             selectedTextBoxes = selectedElements.OfType<MeTLTextBox>();
             selectedImages = selectedElements.OfType<MeTLImage>();
@@ -633,7 +641,7 @@ namespace SandRibbon.Components
 
             //contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
             //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
-                //strokesAtTheStart.AddRange(st.Select(s => {
+            //strokesAtTheStart.AddRange(st.Select(s => {
             //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
             bool shouldUpdateContentBounds = false;
             var newStrokes = inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
@@ -644,9 +652,9 @@ namespace SandRibbon.Components
                 strokesAtTheStart.Clear();
                 strokesAtTheStart.AddRange(newStrokes.Select(s => s.Clone()));
             }
-           //     strokesAtTheStart.AddRange(st.Select(s => {
+            //     strokesAtTheStart.AddRange(st.Select(s => {
             //        return s.Clone();
-             //   }));
+            //   }));
             //});
 
             //contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
@@ -674,45 +682,45 @@ namespace SandRibbon.Components
                 moveMetrics.SetContentBounds(ContentBuffer.getLogicalBoundsOfContent(newImages, newBoxes, newStrokes));
             }
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
-/*
+            /*
 
-            if (e.NewRectangle.Size.Equals(e.OldRectangle.Size))
-                return;
-            // following code is image specific
-            if (strokesAtTheStart.Count != 0)
-                return;
-            if (_boxesAtTheStart.Count != 0)
-                return;
+                        if (e.NewRectangle.Size.Equals(e.OldRectangle.Size))
+                            return;
+                        // following code is image specific
+                        if (strokesAtTheStart.Count != 0)
+                            return;
+                        if (_boxesAtTheStart.Count != 0)
+                            return;
 
-            Rect imageCanvasRect = new Rect(new Size(ActualWidth, ActualHeight));
+                        Rect imageCanvasRect = new Rect(new Size(ActualWidth, ActualHeight));
 
-            double resizeWidth;
-            double resizeHeight;
+                        double resizeWidth;
+                        double resizeHeight;
 
-            if (e.NewRectangle.Right > imageCanvasRect.Right)
-                resizeWidth = MeTLMath.Clamp(imageCanvasRect.Width - e.NewRectangle.X, 0, imageCanvasRect.Width);
-            else
-                resizeWidth = e.NewRectangle.Width;
+                        if (e.NewRectangle.Right > imageCanvasRect.Right)
+                            resizeWidth = MeTLMath.Clamp(imageCanvasRect.Width - e.NewRectangle.X, 0, imageCanvasRect.Width);
+                        else
+                            resizeWidth = e.NewRectangle.Width;
 
-            if (e.NewRectangle.Height > imageCanvasRect.Height)
-                resizeHeight = MeTLMath.Clamp(imageCanvasRect.Height - e.NewRectangle.Y, 0, imageCanvasRect.Height);
-            else
-                resizeHeight = e.NewRectangle.Height;
+                        if (e.NewRectangle.Height > imageCanvasRect.Height)
+                            resizeHeight = MeTLMath.Clamp(imageCanvasRect.Height - e.NewRectangle.Y, 0, imageCanvasRect.Height);
+                        else
+                            resizeHeight = e.NewRectangle.Height;
 
-            // ensure image is being resized uniformly maintaining aspect ratio
-            var aspectRatio = e.OldRectangle.Width / e.OldRectangle.Height;
-            if (e.NewRectangle.Width != e.OldRectangle.Width)
-            {
-                resizeHeight = resizeWidth / aspectRatio;
-            }
-            else if (e.NewRectangle.Height != e.OldRectangle.Height)
-                resizeWidth = resizeHeight * aspectRatio;
-            else
-                resizeWidth = resizeHeight * aspectRatio;
+                        // ensure image is being resized uniformly maintaining aspect ratio
+                        var aspectRatio = e.OldRectangle.Width / e.OldRectangle.Height;
+                        if (e.NewRectangle.Width != e.OldRectangle.Width)
+                        {
+                            resizeHeight = resizeWidth / aspectRatio;
+                        }
+                        else if (e.NewRectangle.Height != e.OldRectangle.Height)
+                            resizeWidth = resizeHeight * aspectRatio;
+                        else
+                            resizeWidth = resizeHeight * aspectRatio;
 
-            e.NewRectangle = new Rect(e.NewRectangle.X, e.NewRectangle.Y, resizeWidth, resizeHeight);
-            moveMetrics.Update(e.OldRectangle, e.NewRectangle);
-             */
+                        e.NewRectangle = new Rect(e.NewRectangle.X, e.NewRectangle.Y, resizeWidth, resizeHeight);
+                        moveMetrics.Update(e.OldRectangle, e.NewRectangle);
+                         */
         }
 
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<MeTLImage> endingElements, List<MeTLImage> startingElements)
@@ -814,7 +822,7 @@ namespace SandRibbon.Components
                   }
                   foreach (var box in undoBoxesToAdd)
                   {
-                      AddTextBoxToCanvas(box,true);                      
+                      AddTextBoxToCanvas(box, true);
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -827,7 +835,7 @@ namespace SandRibbon.Components
                   }
                   foreach (var box in redoBoxesToAdd)
                   {
-                      AddTextBoxToCanvas(box,false);                      
+                      AddTextBoxToCanvas(box, false);
                       box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
                   }
               };
@@ -922,7 +930,7 @@ namespace SandRibbon.Components
             var thisYScale = moveMetrics.Scale.Y;
 
             var startingBounds = ContentBuffer.getLogicalBoundsOfContent(startingImages, startingBoxes, startingStrokes);
-            var endingBounds = ContentBuffer.getLogicalBoundsOfContent(endingImages,endingTexts,endingStrokes);
+            var endingBounds = ContentBuffer.getLogicalBoundsOfContent(endingImages, endingTexts, endingStrokes);
 
             var thisOriginalBoundsX = moveMetrics.OriginalContentBounds.Left;
             var thisOriginalBoundsY = moveMetrics.OriginalContentBounds.Top;
@@ -938,9 +946,9 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(endingStrokes.Select(s => (s as Stroke).Clone())),
-                        endingTexts.Select(et => et as TextBox), 
+                        endingTexts.Select(et => et as TextBox),
                         endingImages.Select(et => et as Image));
-                       
+
                     moveDelta.xTranslate = -thisXTrans;
                     moveDelta.yTranslate = -thisYTrans;
                     moveDelta.xScale = 1 / thisXScale;
@@ -968,7 +976,7 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(startingStrokes.Select(s => (s as Stroke).Clone())),
-                        startingBoxes.Select(et => et as TextBox), 
+                        startingBoxes.Select(et => et as TextBox),
                         startingImages.Select(et => et as Image));
 
                     moveDelta.xTranslate = thisXTrans;
@@ -1013,19 +1021,16 @@ namespace SandRibbon.Components
 
         private void selectionChanging(object sender, InkCanvasSelectionChangingEventArgs e)
         {
-            Dispatcher.adopt(() =>
-             {
-                 if (Globals.IsBanhammerActive)
-                 {
-                     e.SetSelectedElements(filterExceptMine(e.GetSelectedElements()));
-                     e.SetSelectedStrokes(filterExceptMine(e.GetSelectedStrokes()));
-                 }
-                 else
-                 {
-                     e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
-                     e.SetSelectedStrokes(new StrokeCollection(filterOnlyMine(e.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)));
-                 }
-             });
+            if (Globals.IsBanhammerActive)
+            {
+                e.SetSelectedElements(filterExceptMine(e.GetSelectedElements()));
+                e.SetSelectedStrokes(filterExceptMine(e.GetSelectedStrokes()));
+            }
+            else
+            {
+                e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
+                e.SetSelectedStrokes(new StrokeCollection(filterOnlyMine(e.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)));
+            }
         }
 
         public List<String> GetSelectedAuthors()
@@ -1094,7 +1099,7 @@ namespace SandRibbon.Components
             myElements.AddRange(myImages);
             return myElements;
         }
-        private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements,Func<T,string> authorExtractor)
+        private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements, Func<T, string> authorExtractor)
         {
             return elements.Where(e => authorExtractor(e).Trim().ToLower() == Globals.me.Trim().ToLower());
             /*var myText = elements.Where(e => e is MeTLTextBox && ((MeTLTextBox)e).tag().author == Globals.me);
@@ -1261,7 +1266,7 @@ namespace SandRibbon.Components
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(),strokeTarget));
+                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
             }
         }
 
@@ -1288,7 +1293,7 @@ namespace SandRibbon.Components
                 });
             }
             else
-                contentBuffer.AddStroke(stroke, (st) => Work.Strokes.Add(st)); 
+                contentBuffer.AddStroke(stroke, (st) => Work.Strokes.Add(st));
         }
 
         private double ReturnPositiveValue(double x)
@@ -1299,7 +1304,7 @@ namespace SandRibbon.Components
         {
             var newStroke = stroke.Clone();
             var transformMatrix = new Matrix();
-            transformMatrix.Translate(stroke.offsetX,stroke.offsetY);
+            transformMatrix.Translate(stroke.offsetX, stroke.offsetY);
             newStroke.Transform(transformMatrix, false);
             newStroke.offsetX = 0;
             newStroke.offsetY = 0;
@@ -1521,7 +1526,7 @@ namespace SandRibbon.Components
                     //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = newPrivacy;
-                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
+                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -1538,7 +1543,7 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = oldPrivacy;
-                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(),selectedTextBoxes.ToList(),selectedStrokes);
+                    var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
@@ -1554,7 +1559,7 @@ namespace SandRibbon.Components
             redo();
             UndoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
-        
+
         public void RefreshCanvas()
         {
             Work.Children.Clear();
@@ -1592,7 +1597,8 @@ namespace SandRibbon.Components
                     {
                         if (existingStroke != null)
                         {
-                            contentBuffer.RemoveStroke(existingStroke, (str) => {
+                            contentBuffer.RemoveStroke(existingStroke, (str) =>
+                            {
                                 Work.Strokes.Remove(str);
                             });
                             doMyStrokeRemovedExceptHistory(existingStroke);
@@ -1614,7 +1620,7 @@ namespace SandRibbon.Components
                             });
                         }
                         else
-                            contentBuffer.AddStroke(thisStroke, (st) => Work.Strokes.Add(st)); 
+                            contentBuffer.AddStroke(thisStroke, (st) => Work.Strokes.Add(st));
                         doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
                     }
                     if (Work.EditingMode == InkCanvasEditingMode.Select)
@@ -1709,7 +1715,7 @@ namespace SandRibbon.Components
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
             if (_target == "presentationSpace")
-            {   
+            {
                 // don't want to duplicate what has already been done locally
                 moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
                 /*
@@ -1745,7 +1751,9 @@ namespace SandRibbon.Components
                                 //image.clone();
                                 AddImage(Work, receivedImage);
                                 receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
-                            } catch (Exception) {
+                            }
+                            catch (Exception)
+                            {
                             }
                         });
                     }
@@ -1765,21 +1773,21 @@ namespace SandRibbon.Components
                 canvas.Children.Add(img);
             });
         }
-/*
-        private MeTLImage NegativeCartesianImageTranslate(MeTLImage incomingImage)
-        {
-            return contentBuffer.adjustImage(incomingImage, (i) =>
-            {
-                var translateX = ReturnPositiveValue(contentBuffer.logicalX);
-                var translateY = ReturnPositiveValue(contentBuffer.logicalY);
-                InkCanvas.SetLeft(i, (InkCanvas.GetLeft(i) + translateX));
-                InkCanvas.SetTop(i, (InkCanvas.GetTop(i) + translateY));
-                i.offsetX = contentBuffer.logicalX;
-                i.offsetY = contentBuffer.logicalY;
-                return i;
-            });
-        }
-        */
+        /*
+                private MeTLImage NegativeCartesianImageTranslate(MeTLImage incomingImage)
+                {
+                    return contentBuffer.adjustImage(incomingImage, (i) =>
+                    {
+                        var translateX = ReturnPositiveValue(contentBuffer.logicalX);
+                        var translateY = ReturnPositiveValue(contentBuffer.logicalY);
+                        InkCanvas.SetLeft(i, (InkCanvas.GetLeft(i) + translateX));
+                        InkCanvas.SetTop(i, (InkCanvas.GetTop(i) + translateY));
+                        i.offsetX = contentBuffer.logicalX;
+                        i.offsetY = contentBuffer.logicalY;
+                        return i;
+                    });
+                }
+                */
         private MeTLImage OffsetNegativeCartesianImageTranslate(MeTLImage image)
         {
             var newImage = image.Clone();
@@ -2031,7 +2039,7 @@ namespace SandRibbon.Components
         private void uploadFileForUse(string unMangledFilename)
         {
             string filePart = Path.GetFileName(unMangledFilename);
-            string filename = LocalFileProvider.getUserFile(new string[]{},filePart + ".MeTLFileUpload");
+            string filename = LocalFileProvider.getUserFile(new string[] { }, filePart + ".MeTLFileUpload");
             if (filename.Length > 260)
             {
                 MeTLMessage.Warning("Sorry, your filename is too long, must be less than 260 characters");
@@ -2305,10 +2313,10 @@ namespace SandRibbon.Components
                 AddTextBoxToCanvas(box, true);
             }
 
-           /* 
-            InkCanvas.SetLeft(box, InkCanvas.GetLeft(textbox));
-            InkCanvas.SetTop(box, InkCanvas.GetTop(textbox));
-            */
+            /* 
+             InkCanvas.SetLeft(box, InkCanvas.GetLeft(textbox));
+             InkCanvas.SetTop(box, InkCanvas.GetTop(textbox));
+             */
 
             return box;
         }
@@ -2563,7 +2571,7 @@ namespace SandRibbon.Components
 
             //Dirty the text box if its privacy does not match the canvas aligned privacy
             if (box.tag().privacy != currentPrivacy)
-                dirtyTextBoxWithoutHistory(box,false);
+                dirtyTextBoxWithoutHistory(box, false);
             var oldTextTag = box.tag();
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id, oldTextTag.timestamp);
             box.tag(newTextTag);
@@ -2587,12 +2595,12 @@ namespace SandRibbon.Components
                 Commands.SneakOutOf.Execute(privateRoom);*/
         }
 
-        private void dirtyTextBoxWithoutHistory(MeTLTextBox box,bool removeLocal = true)
+        private void dirtyTextBoxWithoutHistory(MeTLTextBox box, bool removeLocal = true)
         {
-            dirtyTextBoxWithoutHistory(box, Globals.slide,removeLocal);
+            dirtyTextBoxWithoutHistory(box, Globals.slide, removeLocal);
         }
 
-        private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide,bool removeLocal = true)
+        private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide, bool removeLocal = true)
         {
             box.RemovePrivacyStyling(contentBuffer);
             if (removeLocal)
@@ -2754,7 +2762,7 @@ namespace SandRibbon.Components
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != _target) return;
-            
+
             if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
 
@@ -2762,7 +2770,8 @@ namespace SandRibbon.Components
             {
                 DoText(targettedBox);
                 return;
-            }*///I never want my live text to collide with me.
+            }*/
+            //I never want my live text to collide with me.
             if (targettedBox.slide == Globals.slide && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == Globals.PROJECTOR))
                 RemoveTextBoxWithMatchingId(targettedBox.identity);
             if (targettedBox.slide == Globals.slide && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != Globals.PROJECTOR)))
@@ -2885,7 +2894,7 @@ namespace SandRibbon.Components
             var images = new List<MeTLImage>();
             foreach (var imageSource in selectedImages)
             {
-                var tmpFile = LocalFileProvider.getUserFile(new string[]{},"tmpImage.png");
+                var tmpFile = LocalFileProvider.getUserFile(new string[] { }, "tmpImage.png");
                 using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
                 {
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
@@ -3175,7 +3184,7 @@ namespace SandRibbon.Components
         }
         private List<PrivateAwareStroke> HandleInkCutRedo(IEnumerable<PrivateAwareStroke> selectedStrokes)
         {
-            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy),stroke.tag().id /* stroke.sum().checksum.ToString()*/, stroke.tag().timestamp)).ToList();
+            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.tag().id /* stroke.sum().checksum.ToString()*/, stroke.tag().timestamp)).ToList();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
             return selectedStrokes.ToList();

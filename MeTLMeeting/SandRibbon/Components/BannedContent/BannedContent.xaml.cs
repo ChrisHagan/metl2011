@@ -55,6 +55,7 @@ namespace SandRibbon.Components.BannedContent
 
         private string GenerateDisplayName(Dictionary<string, string> userMapping, string userName, ref int labelIndex)
         {
+            return userName;
             var displayName = "";
             if (!userMapping.TryGetValue(userName, out displayName))
             {
@@ -123,6 +124,7 @@ namespace SandRibbon.Components.BannedContent
             Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(JoinConversation));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
         }
+
         private void closeMe(object obj)
         {
             Close();
@@ -156,12 +158,11 @@ namespace SandRibbon.Components.BannedContent
                 var displayName = "";
                 if (!userMapping.TryGetValue(user, out displayName))
                 {
-                    displayName = String.Format("User {0}", alphabetSeq.GetEncoded((uint)labelIndex++));
+                    displayName = user;
                 }
                 var privUser = new PrivateUser(user, displayName, Colors.Black);
                 privateUsers.Add(privUser);
             }
-
             return privateUsers;
         }
 
@@ -204,43 +205,6 @@ namespace SandRibbon.Components.BannedContent
             return checkBoxes;
         }
 
-        /*
-        private void emailReport_Click(object sender, RoutedEventArgs e)
-        {
-            emailReport.IsEnabled = false;
-            emailReport.Visibility = Visibility.Collapsed;
-            var fileName = SaveImageTemporarilyToFile();
-            var currentSelection = submissions.SelectedItem as PrivacyWrapper;
-            var theUsers = new List<string>();
-            var iter = currentSelection.PrivateUsers;
-            iter.ForEach(i => theUsers.Add(i.UserName));
-            DelegateCommand<List<MeTLUserInformation>> doWork = null;
-            doWork = new DelegateCommand<List<MeTLUserInformation>>(inputList =>
-            {
-                if (doWork == null || !theUsers.All(u => inputList.Any(i => i.username == u)))
-                {
-                    return;
-                }
-                else
-                {
-                    Commands.ReceiveMeTLUserInformations.UnregisterCommand(doWork);
-                    var report = BuildReport(inputList);
-                    ThreadPool.QueueUserWorkItem((state) =>
-                    {
-                        SendEmail(fileName, report);
-                        Dispatcher.adopt(() =>
-                        {
-                            emailReport.IsEnabled = true;
-                            emailReport.Visibility = Visibility.Visible;
-                        });
-                    });
-                }
-            });
-            Commands.ReceiveMeTLUserInformations.RegisterCommand(doWork);
-            Commands.RequestMeTLUserInformations.Execute(theUsers);
-        }
-         **/
-
         private void UpdateDisplayNames(PrivacyWrapper sub)
         {
             userMapping.Clear();
@@ -280,7 +244,7 @@ namespace SandRibbon.Components.BannedContent
                 currentSelection.slide,
                 time.ToShortDateString(), time.ToLongTimeString());
 
-            report.Append("The following banned users and corresponding authcates were recorded:\n\n");
+            report.Append("The following banned users and corresponding usernames were recorded:\n\n");
 
             foreach (var user in theUsers)
             {
