@@ -472,7 +472,7 @@ namespace SandRibbon.Components
                 };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected images");
         }
-        private UndoHistory.HistoricalAction deleteSelectedInk(List<PrivateAwareStroke> selectedStrokes)
+        private UndoHistory.HistoricalAction deleteSelectedInk(IEnumerable<PrivateAwareStroke> selectedStrokes)
         {
             Action undo = () =>
                 {
@@ -971,8 +971,8 @@ namespace SandRibbon.Components
         {
             var authorList = new List<string>();
 
-            var strokeList = filterExceptMine(Work.GetSelectedStrokes());
-            var elementList = filterExceptMine(Work.GetSelectedElements());
+            var strokeList = Work.GetSelectedStrokes();
+            var elementList = Work.GetSelectedElements();
 
             foreach (var stroke in strokeList)
             {
@@ -1002,28 +1002,22 @@ namespace SandRibbon.Components
 
             return authorColor;
         }
-
-        private StrokeCollection filterExceptMine(IEnumerable<Stroke> strokes)
-        {
-            var me = Globals.me;
-            return new StrokeCollection(strokes.Where(s => s.tag().author != me));
-        }
-        private IEnumerable<UIElement> filterExceptMine(IEnumerable<UIElement> elements)
+        private IEnumerable<T> filterExceptMine<T>(IEnumerable<T> elements) where T : UIElement
         {
             var me = Globals.me;
             var myText = elements.Where(e => e is MeTLTextBox && (e as MeTLTextBox).tag().author != me);
             var myImages = elements.Where(e => e is Image && (e as Image).tag().author != me);
-            var myElements = new List<UIElement>();
+            var myElements = new List<T>();
             myElements.AddRange(myText);
             myElements.AddRange(myImages);
             return myElements;
         }
-        private IEnumerable<UIElement> filterExceptMine(IEnumerable<UIElement> elements, Func<UIElement,string> authorExtractor)
+        private IEnumerable<T> filterExceptMine<T>(IEnumerable<T> elements, Func<T, string> authorExtractor) where T : UIElement
         {
             var me = Globals.me.Trim().ToLower();
             var myText = elements.Where(e => e is MeTLTextBox && authorExtractor(e).Trim().ToLower() == me);
             var myImages = elements.Where(e => e is Image && authorExtractor(e).Trim().ToLower() == me);
-            var myElements = new List<UIElement>();
+            var myElements = new List<T>();
             myElements.AddRange(myText);
             myElements.AddRange(myImages);
             return myElements;
@@ -1031,29 +1025,26 @@ namespace SandRibbon.Components
 
         private IEnumerable<PrivateAwareStroke> filterOnlyMineExceptIfHammering(IEnumerable<PrivateAwareStroke> strokes)
         {
+            var me = Globals.me;
             if (Globals.IsBanhammerActive)
             {
-                return filterExceptMine(strokes).OfType<PrivateAwareStroke>();
+                return strokes.Where(s => s.tag().author != me);
             }
             else
             {
-                return filterOnlyMine(strokes);
+                return strokes.Where(s => s.tag().author == me).ToList();
             }
         }
-        private IEnumerable<PrivateAwareStroke> filterOnlyMine(IEnumerable<PrivateAwareStroke> strokes)
+        private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements) where T : UIElement
         {
-            return strokes.Where(s => s.tag().author == Globals.me).ToList();
-        }
-        private IEnumerable<UIElement> filterOnlyMine(IEnumerable<UIElement> elements)
-        {
-            var myText = elements.Where(e => e is MeTLTextBox && ((MeTLTextBox)e).tag().author == Globals.me);
-            var myImages = elements.Where(e => e is Image && ((Image)e).tag().author == Globals.me);
-            var myElements = new List<UIElement>();
-            myElements.AddRange(myText);
-            myElements.AddRange(myImages);
+            var myText = elements.OfType<MeTLTextBox>().Where(t => t.tag().author == Globals.me);
+            var myImages = elements.OfType<MeTLImage>().Where(i => i.tag().author == Globals.me);
+            var myElements = new List<T>();
+            myElements.AddRange(myText.OfType<T>());
+            myElements.AddRange(myImages.OfType<T>());
             return myElements;
         }
-        private IEnumerable<UIElement> filterOnlyMineExceptIfHammering(IEnumerable<UIElement> elements, Func<UIElement, string> authorExtractor)
+        private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements, Func<T, string> authorExtractor) where T : UIElement
         {
             if (Globals.IsBanhammerActive)
             {
@@ -1064,7 +1055,7 @@ namespace SandRibbon.Components
                 return filterOnlyMine(elements, authorExtractor);
             }
         }
-        private IEnumerable<UIElement> filterOnlyMineExceptIfHammering(IEnumerable<UIElement> elements)
+        private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements) where T : UIElement
         {
             if (Globals.IsBanhammerActive)
             {
@@ -1289,14 +1280,14 @@ namespace SandRibbon.Components
             canvas.Strokes.Remove(deadStrokes);
         }
 
-        private void addStrokes(List<PrivateAwareStroke> strokes)
+        private void addStrokes(IEnumerable<PrivateAwareStroke> strokes)
         {
             foreach (var stroke in strokes)
             {
                 doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
             }
         }
-        private void removeStrokes(List<PrivateAwareStroke> strokes)
+        private void removeStrokes(IEnumerable<PrivateAwareStroke> strokes)
         {
             foreach (var stroke in strokes)
             {
@@ -1311,7 +1302,7 @@ namespace SandRibbon.Components
                 deleteSelectedElements(null, null);
         }
 
-        private UndoHistory.HistoricalAction changeSelectedInkPrivacy(List<PrivateAwareStroke> selectedStrokes, Privacy newPrivacy, Privacy oldPrivacy)
+        private UndoHistory.HistoricalAction changeSelectedInkPrivacy(IEnumerable<PrivateAwareStroke> selectedStrokes, Privacy newPrivacy, Privacy oldPrivacy)
         {
             Action redo = () =>
             {
@@ -3079,7 +3070,7 @@ namespace SandRibbon.Components
             }
             return selectedImages.Select(i => (BitmapSource)i.Source);
         }
-        protected void HandleTextCutUndo(List<MeTLTextBox> selectedElements, MeTLTextBox currentTextBox)
+        protected void HandleTextCutUndo(IEnumerable<MeTLTextBox> selectedElements, MeTLTextBox currentTextBox)
         {
             if (currentTextBox != null && currentTextBox.SelectionLength > 0)
             {
@@ -3106,7 +3097,7 @@ namespace SandRibbon.Components
                     sendBox(box);
             }
         }
-        protected List<string> HandleTextCutRedo(List<MeTLTextBox> elements, MeTLTextBox currentTextBox)
+        protected IEnumerable<string> HandleTextCutRedo(IEnumerable<MeTLTextBox> elements, MeTLTextBox currentTextBox)
         {
             var clipboardText = new List<string>();
             if (currentTextBox != null && currentTextBox.SelectionLength > 0)
@@ -3149,7 +3140,7 @@ namespace SandRibbon.Components
                 doMyStrokeAddedExceptHistory(s, s.tag().privacy);
             }
         }
-        private List<PrivateAwareStroke> HandleInkCutRedo(IEnumerable<PrivateAwareStroke> selectedStrokes)
+        private IEnumerable<PrivateAwareStroke> HandleInkCutRedo(IEnumerable<PrivateAwareStroke> selectedStrokes)
         {
             var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.tag().id /* stroke.sum().checksum.ToString()*/, stroke.tag().timestamp)).ToList();
             foreach (var element in listToCut)
@@ -3159,10 +3150,10 @@ namespace SandRibbon.Components
         protected void HandleCut(object _args)
         {
             if (me == Globals.PROJECTOR) return;
-            var strokesToCut = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s.Clone());
+            var strokesToCut = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().OfType<PrivateAwareStroke>()).Select(s => s.Clone());
             var currentTextBox = myTextBox.clone();
-            var selectedImages = filterOnlyMineExceptIfHammering(Work.GetSelectedImages().Cast<UIElement>()).Select(i => ((MeTLImage)i).Clone()).ToList(); // TODO: fix the casting craziness
-            var selectedText = filterOnlyMineExceptIfHammering(Work.GetSelectedTextBoxes().Cast<UIElement>()).Select(t => ((MeTLTextBox)t).clone()).ToList(); // TODO: fix the casting craziness
+            var selectedImages = filterOnlyMineExceptIfHammering(Work.GetSelectedImages()).Select(i => i.Clone());
+            var selectedText = filterOnlyMineExceptIfHammering(Work.GetSelectedTextBoxes()).Select(t => t.clone());
 
             Action redo = () =>
             {
