@@ -5,6 +5,7 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    WindowStyle="ToolWindow"
     Title="Banned Content"
     x:Name="bannedContent"
     SizeToContent="WidthAndHeight"

@@ -53,7 +53,7 @@ namespace SandRibbon.Components.Utility
 
         public List<PrivateAwareStroke> FilteredStrokes(ContentVisibilityEnum contentVisibility)
         {
-            return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility); 
+            return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility);
         }
 
         public IEnumerable<UIElement> FilteredTextBoxes(ContentVisibilityEnum contentVisibility)
@@ -208,7 +208,7 @@ namespace SandRibbon.Components.Utility
 
             OnElementsRepositioned(new EventArgs());
         }
-        public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke,PrivateAwareStroke> adjustment)
+        public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
             reassociateStrokeToCanvas(stroke);
             var oldCanvasOffsetX = logicalX;
@@ -229,11 +229,11 @@ namespace SandRibbon.Components.Utility
                 updateCanvasPositioning(strokeFilter.Strokes.Where(s => s.tag().id != stroke.tag().id),
                     textFilter.TextBoxes,
                     imageFilter.Images
-                    , translateX, 
+                    , translateX,
                     translateY);
                 reassociateStrokeToCanvas(stroke);
             }
-            return doAdjustStroke(stroke, adjustment);            
+            return doAdjustStroke(stroke, adjustment);
         }
         public void adjustStrokeForMoveDelta(String strokeIdentity, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {
@@ -263,7 +263,7 @@ namespace SandRibbon.Components.Utility
 
         public void AddDeltaStrokes(List<PrivateAwareStroke> strokes, Action<List<PrivateAwareStroke>> modifyUndoContainer)
         {
-            strokeDeltaFilter.Add(strokes, modifyUndoContainer); 
+            strokeDeltaFilter.Add(strokes, modifyUndoContainer);
         }
         public Rect getBoundsOfMoveDelta(TargettedMoveDelta moveDelta)
         {
@@ -272,7 +272,12 @@ namespace SandRibbon.Components.Utility
             var relevantStrokes = strokeFilter.Strokes.Where(s => moveDelta.inkIds.Select(id => id.Identity).Contains((s).tag().id)).ToList();
             return getLogicalBoundsOfContent(relevantImages, relevantTexts, relevantStrokes);
         }
-        public static Rect getBoundsOfContent(List<MeTLImage> images, List<MeTLTextBox> texts, List<PrivateAwareStroke> strokes)
+
+        public static Rect getBoundsOfContent(IEnumerable<UIElement> images, IEnumerable<UIElement> texts, IEnumerable<PrivateAwareStroke> strokes)
+        {
+            return getBoundsOfContent(images.OfType<MeTLImage>(), texts.OfType<MeTLTextBox>(), strokes);
+        }
+        public static Rect getBoundsOfContent(IEnumerable<MeTLImage> images, IEnumerable<MeTLTextBox> texts, IEnumerable<PrivateAwareStroke> strokes)
         {
             var top = 0.0;
             var bottom = 0.0;
@@ -329,25 +334,35 @@ namespace SandRibbon.Components.Utility
             }
             return new Rect(new Point(left, top), new Size(right - left, bottom - top));
         }
-        public static Rect getLogicalBoundsOfContent(List<MeTLImage> images, List<MeTLTextBox> texts, List<PrivateAwareStroke> strokes)
+        public static Rect getLogicalBoundsOfContent(IEnumerable<UIElement> images, IEnumerable<UIElement> texts, IEnumerable<PrivateAwareStroke> strokes)
+        {
+            var coImages = images.OfType<MeTLImage>();
+            var coTexts = texts.OfType<MeTLTextBox>();
+            return getLogicalBoundsOfContent(coImages, coTexts, strokes);
+        }
+        public static Rect getLogicalBoundsOfContent(IEnumerable<MeTLImage> images, IEnumerable<MeTLTextBox> texts, IEnumerable<PrivateAwareStroke> strokes)
         {
             var top = 0.0;
             var bottom = 0.0;
             var left = 0.0;
             var right = 0.0;
             bool firstItem = true;
-            Func<double,double,double,double,bool> updateRect = (t,l,h,w) => {
+            Func<double, double, double, double, bool> updateRect = (t, l, h, w) =>
+            {
                 var b = t + h;
                 var r = l + w;
                 bool changed = false;
-                 if (firstItem){
+                if (firstItem)
+                {
                     top = t;
-                    bottom = b; 
+                    bottom = b;
                     left = l;
                     right = r;
                     firstItem = false;
                     changed = true;
-                } else {
+                }
+                else
+                {
                     if (t < top)
                     {
                         top = t;
@@ -372,14 +387,15 @@ namespace SandRibbon.Components.Utility
                 return changed;
             };
             foreach (var i in images)
-                updateRect(InkCanvas.GetTop(i) + i.offsetY,InkCanvas.GetLeft(i) + i.offsetX,i.Height,i.Width);
+                updateRect(InkCanvas.GetTop(i) + i.offsetY, InkCanvas.GetLeft(i) + i.offsetX, i.Height, i.Width);
             foreach (var t in texts)
                 updateRect(InkCanvas.GetTop(t) + t.offsetY, InkCanvas.GetLeft(t) + t.offsetX, t.Height, t.Width);
-            foreach (var s in strokes){
+            foreach (var s in strokes)
+            {
                 var sBounds = s.GetBounds();
                 updateRect(sBounds.Top + s.offsetY, sBounds.Left + s.offsetX, sBounds.Height, sBounds.Width);
             }
-            return new Rect(new Point(left,top),new Size(right - left, bottom - top));
+            return new Rect(new Point(left, top), new Size(right - left, bottom - top));
         }
         public void AddDeltaImages(List<UIElement> images, Action<List<UIElement>> modifyUndoContainer)
         {
@@ -399,7 +415,7 @@ namespace SandRibbon.Components.Utility
             double translateX = 0.0;
             double translateY = 0.0;
             var localX = InkCanvas.GetLeft(image);
-            var localY = InkCanvas.GetTop(image);           
+            var localY = InkCanvas.GetTop(image);
             if (checkIfLogicalBoundsUpdates(localX, localY))
             {
                 var newBounds = generateLogicalBounds(localX, localY);
@@ -408,10 +424,10 @@ namespace SandRibbon.Components.Utility
                 translateX = ReturnPositiveValue(ReturnPositiveValue(logicalX) - ReturnPositiveValue(oldCanvasOffsetX));
                 translateY = ReturnPositiveValue(ReturnPositiveValue(logicalY) - ReturnPositiveValue(oldCanvasOffsetY));
 
-                updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, 
-                    imageFilter.Images.Where(i => ((MeTLImage)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY );
+                updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes,
+                    imageFilter.Images.Where(i => ((MeTLImage)(i)).tag().id != image.tag().id).Select(i => (UIElement)i), translateX, translateY);
                 reassociateImageToCanvas(image);
-           }
+            }
             return doAdjustImage(image, adjustment);
         }
 
@@ -439,12 +455,12 @@ namespace SandRibbon.Components.Utility
         public void adjustImagesForMoveDelta(List<String> imageIdentities)
         {
             var images = imageFilter.Images.Where(i => imageIdentities.Contains((i as MeTLImage).tag().id));
-            foreach(var image in images)            
+            foreach (var image in images)
             {
                 if (checkIfMoveDeltaBoundsUpdates(InkCanvas.GetLeft(image), InkCanvas.GetTop(image)))
                 {
                     updateMoveDeltaBounds(InkCanvas.GetLeft(image), InkCanvas.GetTop(image));
-                    updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
+                    updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
                 //doAdjustImage(image as Image, adjustment);
             }
@@ -468,7 +484,7 @@ namespace SandRibbon.Components.Utility
         {
             if (element is MeTLImage)
             {
-               // Debug.Assert((element as MeTLImage) != null);
+                // Debug.Assert((element as MeTLImage) != null);
                 imageFilter.Remove(element as MeTLImage, modifyVisibleContainer);
             }
         }
@@ -497,7 +513,7 @@ namespace SandRibbon.Components.Utility
             doAdjustText(box, adjustment);
         }
 
- 
+
 
         public void adjustTextForMoveDelta(String textIdentity, Func<MeTLTextBox, MeTLTextBox> adjustment)
         {
@@ -522,13 +538,13 @@ namespace SandRibbon.Components.Utility
 
         public void adjustTextsForMoveDelta(List<String> textIdentities)
         {
-            var boxes = textFilter.TextBoxes.Where(t => textIdentities.Contains((t as MeTLTextBox).tag().id));            
+            var boxes = textFilter.TextBoxes.Where(t => textIdentities.Contains((t as MeTLTextBox).tag().id));
             foreach (var box in boxes)
             {
                 if (checkIfMoveDeltaBoundsUpdates(InkCanvas.GetLeft(box), InkCanvas.GetTop(box)))
                 {
                     updateMoveDeltaBounds(InkCanvas.GetLeft(box), InkCanvas.GetTop(box));
-                    updateCanvasPositioning( strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
+                    updateCanvasPositioning(strokeFilter.Strokes, textFilter.TextBoxes, imageFilter.Images, Math.Abs(moveDeltaX), Math.Abs(moveDeltaY));
                 }
                 //doAdjustImage(image as Image, adjustment);
             }
@@ -554,7 +570,7 @@ namespace SandRibbon.Components.Utility
         {
             if (element is MeTLTextBox)
             {
-             //   Debug.Assert((element as MeTLTextBox) != null);
+                //   Debug.Assert((element as MeTLTextBox) != null);
                 textFilter.Remove(element as MeTLTextBox, modifyVisibleContainer);
             }
         }

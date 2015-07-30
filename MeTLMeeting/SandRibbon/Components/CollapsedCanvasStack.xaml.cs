@@ -533,16 +533,8 @@ namespace SandRibbon.Components
             List<PrivateAwareStroke> selectedStrokes = null;
             Dispatcher.adopt(() =>
                                  {
-                                     if (Globals.IsBanhammerActive)
-                                     {
-                                         selectedStrokes = filterExceptMine(Work.GetSelectedStrokes().ToList()).Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
-                                         selectedElements = filterExceptMine(Work.GetSelectedElements());
-                                     }
-                                     else
-                                     {
-                                         selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).ToList();
-                                         selectedElements = filterOnlyMine(Work.GetSelectedElements());
-                                     }
+                                     selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).ToList();
+                                     selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements());
                                  });
             selectedTextBoxes = selectedElements.OfType<MeTLTextBox>();
             selectedImages = selectedElements.OfType<MeTLImage>();
@@ -635,14 +627,8 @@ namespace SandRibbon.Components
         private MoveDeltaMetrics moveMetrics;
         private void SelectionMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
-            // don't want to move or resize any uielements or strokes that weren't authored by the owner
             var inkCanvas = sender as InkCanvas;
-            inkCanvas.Select(new StrokeCollection(filterOnlyMine(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)), filterOnlyMine(inkCanvas.GetSelectedElements()));
-
-            //contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
-            //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
-            //strokesAtTheStart.AddRange(st.Select(s => {
-            //contentBuffer.AddDeltaStrokes(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList(), (st) => {
+            inkCanvas.Select(new StrokeCollection(filterOnlyMineExceptIfHammering(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)), filterOnlyMine(inkCanvas.GetSelectedElements()));
             bool shouldUpdateContentBounds = false;
             var newStrokes = inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
             var strokeEqualityCount = strokesAtTheStart.Select(s => s.tag().id).Union(newStrokes.Select(s => s.tag().id)).Count();
@@ -652,13 +638,7 @@ namespace SandRibbon.Components
                 strokesAtTheStart.Clear();
                 strokesAtTheStart.AddRange(newStrokes.Select(s => s.Clone()));
             }
-            //     strokesAtTheStart.AddRange(st.Select(s => {
-            //        return s.Clone();
-            //   }));
-            //});
 
-            //contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
-            //contentBuffer.AddDeltaImages(GetSelectedClonedImages().ToList(), (img) => imagesAtStartOfTheMove.AddRange(img));
             var newImages = GetSelectedClonedImages().Where(i => i is MeTLImage).Select(i => i as MeTLImage).ToList();
             var imageEqualityCount = imagesAtStartOfTheMove.Where(i => i is MeTLImage).Select(i => (i as MeTLImage).tag().id).Union(newImages.Where(i => i is MeTLImage).Select(i => (i as MeTLImage).tag().id)).Count();
             if (imageEqualityCount != newImages.Count || imageEqualityCount != imagesAtStartOfTheMove.Count)
@@ -682,45 +662,6 @@ namespace SandRibbon.Components
                 moveMetrics.SetContentBounds(ContentBuffer.getLogicalBoundsOfContent(newImages, newBoxes, newStrokes));
             }
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
-            /*
-
-                        if (e.NewRectangle.Size.Equals(e.OldRectangle.Size))
-                            return;
-                        // following code is image specific
-                        if (strokesAtTheStart.Count != 0)
-                            return;
-                        if (_boxesAtTheStart.Count != 0)
-                            return;
-
-                        Rect imageCanvasRect = new Rect(new Size(ActualWidth, ActualHeight));
-
-                        double resizeWidth;
-                        double resizeHeight;
-
-                        if (e.NewRectangle.Right > imageCanvasRect.Right)
-                            resizeWidth = MeTLMath.Clamp(imageCanvasRect.Width - e.NewRectangle.X, 0, imageCanvasRect.Width);
-                        else
-                            resizeWidth = e.NewRectangle.Width;
-
-                        if (e.NewRectangle.Height > imageCanvasRect.Height)
-                            resizeHeight = MeTLMath.Clamp(imageCanvasRect.Height - e.NewRectangle.Y, 0, imageCanvasRect.Height);
-                        else
-                            resizeHeight = e.NewRectangle.Height;
-
-                        // ensure image is being resized uniformly maintaining aspect ratio
-                        var aspectRatio = e.OldRectangle.Width / e.OldRectangle.Height;
-                        if (e.NewRectangle.Width != e.OldRectangle.Width)
-                        {
-                            resizeHeight = resizeWidth / aspectRatio;
-                        }
-                        else if (e.NewRectangle.Height != e.OldRectangle.Height)
-                            resizeWidth = resizeHeight * aspectRatio;
-                        else
-                            resizeWidth = resizeHeight * aspectRatio;
-
-                        e.NewRectangle = new Rect(e.NewRectangle.X, e.NewRectangle.Y, resizeWidth, resizeHeight);
-                        moveMetrics.Update(e.OldRectangle, e.NewRectangle);
-                         */
         }
 
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<MeTLImage> endingElements, List<MeTLImage> startingElements)
@@ -913,16 +854,16 @@ namespace SandRibbon.Components
             strokesAtTheStart.Clear();
             _boxesAtTheStart.Clear();
 
-            var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()));
-            var selectedElements = filterOnlyMine(Work.GetSelectedElements());
+            var selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => (s as PrivateAwareStroke).Clone()));
+            var selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements());
 
-            var endingStrokes = filterOnlyMine(selectedStrokes);
-            var endingImages = filterOnlyMine(selectedElements.Where(el => el is MeTLImage).Select(el => el as MeTLImage), img => (img as MeTLImage).tag().author).ToList();
-            var endingTexts = filterOnlyMine(selectedElements.Where(el => el is MeTLTextBox).Select(el => el as MeTLTextBox), el => (el as MeTLTextBox).tag().author).ToList();
+            var endingStrokes = filterOnlyMineExceptIfHammering(selectedStrokes);
+            var endingImages = filterOnlyMineExceptIfHammering(selectedElements.Where(el => el is MeTLImage).Select(el => el as MeTLImage), img => (img as MeTLImage).tag().author).ToList();
+            var endingTexts = filterOnlyMineExceptIfHammering(selectedElements.Where(el => el is MeTLTextBox).Select(el => el as MeTLTextBox), el => (el as MeTLTextBox).tag().author).ToList();
 
             var ink = InkSelectionMovedOrResized(endingStrokes, startingStrokes);
-            var images = ImageSelectionMovedOrResized(endingImages, startingImages);
-            var text = TextMovedOrResized(endingTexts, startingBoxes);
+            var images = ImageSelectionMovedOrResized(endingImages.Select(i => (MeTLImage)i).ToList(), startingImages);
+            var text = TextMovedOrResized(endingTexts.Select(t => (MeTLTextBox)t).ToList(), startingBoxes);
 
             var thisXTrans = moveMetrics.Delta.X;
             var thisYTrans = moveMetrics.Delta.Y;
@@ -1021,16 +962,9 @@ namespace SandRibbon.Components
 
         private void selectionChanging(object sender, InkCanvasSelectionChangingEventArgs e)
         {
-            if (Globals.IsBanhammerActive)
-            {
-                e.SetSelectedElements(filterExceptMine(e.GetSelectedElements()));
-                e.SetSelectedStrokes(filterExceptMine(e.GetSelectedStrokes()));
-            }
-            else
-            {
-                e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
-                e.SetSelectedStrokes(new StrokeCollection(filterOnlyMine(e.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)));
-            }
+
+            e.SetSelectedElements(filterOnlyMineExceptIfHammering(e.GetSelectedElements()));
+            e.SetSelectedStrokes(new StrokeCollection(filterOnlyMineExceptIfHammering(e.GetSelectedStrokes().OfType<PrivateAwareStroke>()).OfType<Stroke>()));
         }
 
         public List<String> GetSelectedAuthors()
@@ -1074,8 +1008,7 @@ namespace SandRibbon.Components
             var me = Globals.me;
             return new StrokeCollection(strokes.Where(s => s.tag().author != me));
         }
-
-        private IEnumerable<UIElement> filterExceptMine(ReadOnlyCollection<UIElement> elements)
+        private IEnumerable<UIElement> filterExceptMine(IEnumerable<UIElement> elements)
         {
             var me = Globals.me;
             var myText = elements.Where(e => e is MeTLTextBox && (e as MeTLTextBox).tag().author != me);
@@ -1085,8 +1018,29 @@ namespace SandRibbon.Components
             myElements.AddRange(myImages);
             return myElements;
         }
+        private IEnumerable<UIElement> filterExceptMine(IEnumerable<UIElement> elements, Func<UIElement,string> authorExtractor)
+        {
+            var me = Globals.me.Trim().ToLower();
+            var myText = elements.Where(e => e is MeTLTextBox && authorExtractor(e).Trim().ToLower() == me);
+            var myImages = elements.Where(e => e is Image && authorExtractor(e).Trim().ToLower() == me);
+            var myElements = new List<UIElement>();
+            myElements.AddRange(myText);
+            myElements.AddRange(myImages);
+            return myElements;
+        }
 
-        private List<PrivateAwareStroke> filterOnlyMine(IEnumerable<PrivateAwareStroke> strokes)
+        private IEnumerable<PrivateAwareStroke> filterOnlyMineExceptIfHammering(IEnumerable<PrivateAwareStroke> strokes)
+        {
+            if (Globals.IsBanhammerActive)
+            {
+                return filterExceptMine(strokes).OfType<PrivateAwareStroke>();
+            }
+            else
+            {
+                return filterOnlyMine(strokes);
+            }
+        }
+        private IEnumerable<PrivateAwareStroke> filterOnlyMine(IEnumerable<PrivateAwareStroke> strokes)
         {
             return strokes.Where(s => s.tag().author == Globals.me).ToList();
         }
@@ -1099,16 +1053,31 @@ namespace SandRibbon.Components
             myElements.AddRange(myImages);
             return myElements;
         }
+        private IEnumerable<UIElement> filterOnlyMineExceptIfHammering(IEnumerable<UIElement> elements, Func<UIElement, string> authorExtractor)
+        {
+            if (Globals.IsBanhammerActive)
+            {
+                return filterExceptMine(elements, authorExtractor);
+            }
+            else
+            {
+                return filterOnlyMine(elements, authorExtractor);
+            }
+        }
+        private IEnumerable<UIElement> filterOnlyMineExceptIfHammering(IEnumerable<UIElement> elements)
+        {
+            if (Globals.IsBanhammerActive)
+            {
+                return filterExceptMine(elements);
+            }
+            else
+            {
+                return filterOnlyMine(elements);
+            }
+        }
         private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements, Func<T, string> authorExtractor)
         {
             return elements.Where(e => authorExtractor(e).Trim().ToLower() == Globals.me.Trim().ToLower());
-            /*var myText = elements.Where(e => e is MeTLTextBox && ((MeTLTextBox)e).tag().author == Globals.me);
-            var myImages = elements.Where(e => e is Image && ((Image)e).tag().author == Globals.me);
-            var myElements = new List<UIElement>();
-            myElements.AddRange(myText);
-            myElements.AddRange(myImages);
-            return myElements;
-             */
         }
         private T filterOnlyMine<T>(UIElement element) where T : UIElement
         {
@@ -3078,11 +3047,9 @@ namespace SandRibbon.Components
         {
             if (me == Globals.PROJECTOR) return;
             //text 
-            var selectedElements = filterOnlyMine(Work.GetSelectedElements()).ToList();
-            var selectedStrokes = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select((s => s.Clone())).ToList();
-            string selectedText = "";
-            if (filterOnlyMine<MeTLTextBox>(myTextBox) != null)
-                selectedText = myTextBox.SelectedText;
+            var selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements()).ToList();
+            var selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select((s => s.Clone())).ToList();
+            string selectedText = selectedText = myTextBox.SelectedText;
 
             // copy previously was an undoable action, ie restore the clipboard to what it previously was
             var images = HandleImageCopyRedo(selectedElements);
@@ -3192,10 +3159,10 @@ namespace SandRibbon.Components
         protected void HandleCut(object _args)
         {
             if (me == Globals.PROJECTOR) return;
-            var strokesToCut = filterOnlyMine(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s.Clone());
-            var currentTextBox = filterOnlyMine<MeTLTextBox>(myTextBox.clone());
-            var selectedImages = filterOnlyMine(Work.GetSelectedImages().Cast<UIElement>()).Select(i => ((MeTLImage)i).Clone()).ToList(); // TODO: fix the casting craziness
-            var selectedText = filterOnlyMine(Work.GetSelectedTextBoxes().Cast<UIElement>()).Select(t => ((MeTLTextBox)t).clone()).ToList(); // TODO: fix the casting craziness
+            var strokesToCut = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s.Clone());
+            var currentTextBox = myTextBox.clone();
+            var selectedImages = filterOnlyMineExceptIfHammering(Work.GetSelectedImages().Cast<UIElement>()).Select(i => ((MeTLImage)i).Clone()).ToList(); // TODO: fix the casting craziness
+            var selectedText = filterOnlyMineExceptIfHammering(Work.GetSelectedTextBoxes().Cast<UIElement>()).Select(t => ((MeTLTextBox)t).clone()).ToList(); // TODO: fix the casting craziness
 
             Action redo = () =>
             {
