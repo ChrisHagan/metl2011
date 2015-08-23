@@ -46,7 +46,8 @@ namespace SandRibbon.Components
 
     public partial class ConversationSearchBox : UserControl
     {
-        public class HideIfNotCurrentConversation : IValueConverter {
+        public class HideIfNotCurrentConversation : IValueConverter
+        {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 return activeConversation == ((MeTLLib.DataTypes.ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
@@ -56,11 +57,14 @@ namespace SandRibbon.Components
                 return false;
             }
         }
-        public class HideErrorsIfEmptyConverter : IValueConverter { 
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+        public class HideErrorsIfEmptyConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
                 return string.IsNullOrEmpty((string)value) ? Visibility.Collapsed : Visibility.Visible;
             }
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
                 return value;
             }
         }
@@ -75,7 +79,7 @@ namespace SandRibbon.Components
                 return false;
             }
         }
-        
+
         private bool editInProgress = false;
         public static RoutedCommand RenameConversation = new RoutedCommand();
         public static RoutedCommand ShareConversation = new RoutedCommand();
@@ -115,7 +119,7 @@ namespace SandRibbon.Components
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
             SearchResults.ItemsSource = searchResultsObserver;
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg=> me = Globals.me));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg => me = Globals.me));
             refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
             App.mark("Initialized conversation search");
@@ -169,13 +173,13 @@ namespace SandRibbon.Components
             Commands.SetConversationPermissions.UnregisterCommand(setConversationPermissionsCommand);
             Commands.BackstageModeChanged.UnregisterCommand(backstageModeChangedCommand);
         }
-        
+
         private void FillSearchResultsFromInput()
         {
             Dispatcher.Invoke((Action)delegate
             {
                 var trimmedSearchInput = SearchInput.Text.Trim();
-                if (String.IsNullOrEmpty(trimmedSearchInput)) 
+                if (String.IsNullOrEmpty(trimmedSearchInput))
                 {
                     if (backstageNav.currentMode == "mine")
                         trimmedSearchInput = Globals.me;
@@ -252,8 +256,8 @@ namespace SandRibbon.Components
                         searchButtonText = "Filter my Conversations";
                         FillSearchResults(Globals.me);
                         break;
-                    default: 
-                        searchButtonText = "Search all Conversations"; 
+                    default:
+                        searchButtonText = "Search all Conversations";
                         FillSearchResultsFromInput();
                         break;
                 }
@@ -267,7 +271,7 @@ namespace SandRibbon.Components
 
         private void updateLiveButton(string mode)
         {
-            var elements = new[] {mine, find, currentConversation};
+            var elements = new[] { mine, find, currentConversation };
             foreach (var button in elements)
                 if (button.Name == mode)
                 {
@@ -275,7 +279,8 @@ namespace SandRibbon.Components
                 }
         }
 
-        private void clearState(){
+        private void clearState()
+        {
             SearchInput.Clear();
             RefreshSortedConversationsList();
             SearchInput.SelectionStart = 0;
@@ -302,7 +307,8 @@ namespace SandRibbon.Components
 
             if (String.IsNullOrEmpty(activeConversation) || (currentConversationDetails != null && currentConversationDetails.isDeleted))
                 currentConversation.Visibility = Visibility.Collapsed;
-            else {
+            else
+            {
                 currentConversation.Visibility = Visibility.Visible;
             }
             this.Visibility = Visibility.Visible;
@@ -338,33 +344,33 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-           if (details.IsEmpty) return;
-           // can I use the following test to determine if we're in a conversation?
-           if (String.IsNullOrEmpty(Globals.location.activeConversation))
-               return;
-           
-           /*if (!details.isDeleted)
-               searchResultsObserver.Add(new SearchConversationDetails(details));
-            */
-           //if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
-           // was the above line but this doesn't handle the case of bug #1492
-           // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
-           if (details.IsJidEqual(Globals.location.activeConversation))
-           {
-               if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
-               {
-                   currentConversation.Visibility = Visibility.Collapsed;
-                   // really don't like the following line, but it stops the backstagemode changing if already switched to it
-                   if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
-                    Commands.BackstageModeChanged.ExecuteAsync("find");
-               }
-               if (!shouldShowConversation(details) || details.isDeleted)
-               {
-                   Commands.RequerySuggested();
-                   this.Visibility = Visibility.Visible;
-               }
-           }
-           RefreshSortedConversationsList(); 
+            if (details.IsEmpty) return;
+            // can I use the following test to determine if we're in a conversation?
+            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+                return;
+
+            /*if (!details.isDeleted)
+                searchResultsObserver.Add(new SearchConversationDetails(details));
+             */
+            //if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
+            // was the above line but this doesn't handle the case of bug #1492
+            // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
+            if (details.IsJidEqual(Globals.location.activeConversation))
+            {
+                if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))//(!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
+                {
+                    currentConversation.Visibility = Visibility.Collapsed;
+                    // really don't like the following line, but it stops the backstagemode changing if already switched to it
+                    if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
+                        Commands.BackstageModeChanged.ExecuteAsync("find");
+                }
+                if (!shouldShowConversation(details) || details.isDeleted)
+                {
+                    Commands.RequerySuggested();
+                    this.Visibility = Visibility.Visible;
+                }
+            }
+            RefreshSortedConversationsList();
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
@@ -413,8 +419,8 @@ namespace SandRibbon.Components
             //RefreshSortedConversationsList();
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
-        {            
-            
+        {
+
             RestartRefreshTimer();
         }
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -456,17 +462,20 @@ namespace SandRibbon.Components
             var mode = ((FrameworkElement)sender).Name;
             backstageNav.currentMode = mode;
         }
-        private ContentPresenter view(object backedByConversation) { 
+        private ContentPresenter view(object backedByConversation)
+        {
             var conversation = (ConversationDetails)((FrameworkElement)backedByConversation).DataContext;
             var item = SearchResults.ItemContainerGenerator.ContainerFromItem(conversation);
             var view = (ContentPresenter)item;
             return view;
         }
-        private ConversationDetails context(object sender) {
+        private ConversationDetails context(object sender)
+        {
             return ((FrameworkElement)sender).DataContext as ConversationDetails;
         }
         ConversationDetails originalContext;
-        private void assignTemplate(string dataTemplateResourceKey, object sender){
+        private void assignTemplate(string dataTemplateResourceKey, object sender)
+        {
             var sentContext = context(sender);
             var presenter = view(sender);
             presenter.Content = sentContext;
@@ -504,11 +513,11 @@ namespace SandRibbon.Components
             proposedDetails.Title = proposedDetails.Title.Trim();
             var thisTitleIsASCII = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(proposedDetails.Title)).Equals(proposedDetails.Title);
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
-            var titleAlreadyUsed = searchResultsObserver.Except(new[]{proposedDetails}).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
+            var titleAlreadyUsed = searchResultsObserver.Except(new[] { proposedDetails }).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
             var errorText = String.Empty;
             if (proposedDetails.Title.Length > 110) errorText += "Conversation titles have a maximum length of 110 characters";
             if (!thisTitleIsASCII)
-                errorText += "Conversation title can only contain letters, numbers and punctuation marks. "; 
+                errorText += "Conversation title can only contain letters, numbers and punctuation marks. ";
             if (!thisIsAValidTitle) { errorText += "Invalid conversation title.  "; }
             if (titleAlreadyUsed) { errorText += "Conversation title already used.  "; }
             return errorText;
@@ -517,7 +526,7 @@ namespace SandRibbon.Components
         {
             editInProgress = false;
             var details = SearchConversationDetails.HydrateFromServer(context(sender));
-            
+
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
@@ -525,28 +534,34 @@ namespace SandRibbon.Components
                 originalContext = null;
                 assignTemplate("viewing", sender);
             }
-            else {
+            else
+            {
                 this.Errors = errors;
             }
         }
         private void TextBox_Loaded(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke((Action)delegate {
+            Dispatcher.Invoke((Action)delegate
+            {
                 ((TextBox)sender).Focus();
             }, DispatcherPriority.Background);
         }
-        private void EditTitleChanged(object sender, TextChangedEventArgs e) {
+        private void EditTitleChanged(object sender, TextChangedEventArgs e)
+        {
             //Be slow to complain and quick to forgive.  Remove the errors output as soon as the user starts editing.
             this.Errors = String.Empty;
         }
-        private void KeyPressedInTitleRename(object sender, KeyEventArgs e) {
-            if(e.Key == Key.Enter){
+        private void KeyPressedInTitleRename(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
                 var source = (TextBox)sender;
                 var context = (ConversationDetails)source.DataContext;
                 context.Title = source.Text;
                 saveEdit(source, null);
             }
-            else if (e.Key == Key.Escape) {
+            else if (e.Key == Key.Escape)
+            {
                 cancelEdit(sender, null);
             }
         }
@@ -564,7 +579,8 @@ namespace SandRibbon.Components
             throw new ArgumentException("obj is of invalid type: " + obj.GetType().Name);
         }
 
-        public int Compare(object x, object y) {
+        public int Compare(object x, object y)
+        {
             var dis = ConvertToSearchConversationDetails(x);
             var dat = ConvertToSearchConversationDetails(y);
             return -1 * dis.Created.CompareTo(dat.Created);
@@ -596,5 +612,5 @@ namespace SandRibbon.Components
         {
             return itemsView.Name;
         }
-    } 
+    }
 }

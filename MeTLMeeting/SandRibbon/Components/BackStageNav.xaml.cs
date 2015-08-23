@@ -38,7 +38,7 @@ namespace SandRibbon.Components
             // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
             if (details.IsJidEqual(Globals.location.activeConversation))
             {
-                if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
+                if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
@@ -56,8 +56,8 @@ namespace SandRibbon.Components
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
             }
-            else 
-            { 
+            else
+            {
                 current.Visibility = Visibility.Visible;
                 currentConversation.Visibility = Visibility.Visible;
                 separator2.Visibility = Visibility.Visible;
@@ -75,41 +75,46 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(() =>
             find.IsChecked = true);
         }
-        private void openCorrectTab(string mode) {
+        private void openCorrectTab(string mode)
+        {
             if ("MyConversations" == mode)
                 openMyConversations();
             else
                 openFindConversations();
         }
-        public string currentMode { 
-            get{
-                return new[]{mine,find,currentConversation}.Aggregate(mine, (acc, item) =>
-                                                                     {
-                                                                         if (true == item.IsChecked)
-                                                                             return item;
-                                                                         return acc;
-                                                                     }).Name;
+        public string currentMode
+        {
+            get
+            {
+                return new[] { mine, find, currentConversation }.Aggregate(mine, (acc, item) =>
+                                                                          {
+                                                                              if (true == item.IsChecked)
+                                                                                  return item;
+                                                                              return acc;
+                                                                          }).Name;
             }
             set
             {
-                var elements = new[] {mine, find, currentConversation};
+                var elements = new[] { mine, find, currentConversation };
                 foreach (var button in elements)
                     if (button.Name == value)
                         button.IsChecked = true;
             }
         }
-        private void mode_Checked(object sender, RoutedEventArgs e) {
+        private void mode_Checked(object sender, RoutedEventArgs e)
+        {
             var mode = ((FrameworkElement)sender).Name;
             Commands.BackstageModeChanged.ExecuteAsync(mode);
         }
-        private void current_Click(object sender, RoutedEventArgs e){
+        private void current_Click(object sender, RoutedEventArgs e)
+        {
             Commands.HideConversationSearchBox.Execute(null);
         }
-        
+
         private void HelpCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-          e.CanExecute = true;
-          e.Handled = true;
+            e.CanExecute = true;
+            e.Handled = true;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Ink;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.Providers.Connection;
+using System.IO;
+using System.Windows.Ink;
 
 namespace SandRibbon.Components
 {
@@ -39,15 +42,15 @@ namespace SandRibbon.Components
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             //If the user is the conversion author, do not display the ban button
-            if( (string)values[1] == SandRibbon.Providers.Globals.conversationDetails.Author )
+            if ((string)values[1] == SandRibbon.Providers.Globals.conversationDetails.Author)
             {
                 return Visibility.Collapsed;
             }
 
             //If isBanned, then do not show ban button, else show
-            if ( (bool)values[0] )
+            if ((bool)values[0])
                 return Visibility.Collapsed;
-            
+
             return Visibility.Visible;
         }
 
@@ -60,41 +63,50 @@ namespace SandRibbon.Components
 
     public class MeTLUser : DependencyObject
     {
-
-        public bool isBanned
-        {
-            get { return (bool)GetValue(isBannedProperty); }
-            set { SetValue(isBannedProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for isBanned.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty isBannedProperty =
-            DependencyProperty.Register("isBanned", typeof(bool), typeof(MeTLUser), new UIPropertyMetadata(false));
-
-        public string displayName { get; set; }
         public string username { private set; get; }
-
-
-
-        public string email
+        public Dictionary<string, int> usages = new Dictionary<string, int>();
+        public string themes
         {
-            get { return (string)GetValue(emailProperty); }
-            set { SetValue(emailProperty, value); }
+            get
+            {
+                return (string)GetValue(themeProperty);
+            }
+            set
+            {
+                SetValue(themeProperty, value);
+            }
         }
-
-        // Using a DependencyProperty as the backing store for email.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty emailProperty =
-            DependencyProperty.Register("email", typeof(string), typeof(MeTLUser), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty themeProperty = DependencyProperty.Register("themes", typeof(string), typeof(MeTLUser), new UIPropertyMetadata(""));
+        public int activityCount
+        {
+            get
+            {
+                return (int)GetValue(activityCountProperty);
+            }
+            set
+            {
+                SetValue(activityCountProperty, value);
+            }
+        }
+        public static readonly DependencyProperty activityCountProperty = DependencyProperty.Register("activityCount", typeof(int), typeof(MeTLUser), new UIPropertyMetadata(0));
+        public int submissionCount
+        {
+            get
+            {
+                return (int)GetValue(submissionCountProperty);
+            }
+            set
+            {
+                SetValue(submissionCountProperty, value);
+            }
+        }
+        public static readonly DependencyProperty submissionCountProperty = DependencyProperty.Register("submissionCount", typeof(int), typeof(MeTLUser), new UIPropertyMetadata(0));
 
         public MeTLUser(string user)
         {
             username = user;
-            isBanned = false;
-            displayName = "anonymous";
-        }
-        public void update(MeTLUserInformation info){
-            if (info.username == username)
-            email = info.emailAddress;
+            activityCount = 0;
+            submissionCount = 0;
         }
     }
     /// <summary>
@@ -102,25 +114,15 @@ namespace SandRibbon.Components
     /// </summary>
     public partial class Participants : UserControl
     {
-        public ObservableCollection<MeTLUser> people { get; set;}
-        private List<string> requestedPeople;
-        private List<string> pendingPeople;
-        public static BannedToColorConverter bannedToColorConverter = new BannedToColorConverter();
-        public static BanButtonBannedToVisibilityConverter banButtonBannedToVisibilityConverter = new BanButtonBannedToVisibilityConverter();
-
+        public Dictionary<string, MeTLUser> people = new Dictionary<string, MeTLUser>();
         public Participants()
         {
             InitializeComponent();
-            people = new ObservableCollection<MeTLUser>();
-            requestedPeople = new List<string>();
-            pendingPeople = new List<string>();
-            participantListBox.ItemsSource = people;
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<List<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(ReceiveStroke));
             Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(ReceiveTextbox));
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>(ReceiveImage));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(ReceivePreParser));
-            Commands.ReceiveMeTLUserInformations.RegisterCommand(new DelegateCommand<List<MeTLUserInformation>>(ReceiveMeTLUserInformations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
@@ -134,15 +136,19 @@ namespace SandRibbon.Components
             Dispatcher.adopt(() =>
             {
                 people.Clear();
-                pendingPeople.Clear();
-                requestedPeople.Clear();
             });
         }
         private void ReceiveSubmission(TargettedSubmission sub)
         {
             if (sub.target == "bannedcontent")
-              foreach (var historicallyBannedUser in sub.blacklisted)
-                  constructPersonFromUsername(historicallyBannedUser.UserName);
+            {
+                foreach (var historicallyBannedUser in sub.blacklisted)
+                {
+                    constructPersonFromUsername(historicallyBannedUser.UserName);
+                }
+            }
+            RegisterAction(sub.author);
+            RegisterSubmission(sub.author);
         }
         private void ReceiveConversationDetails(ConversationDetails details)
         {
@@ -150,93 +156,75 @@ namespace SandRibbon.Components
             {
                 foreach (var bannedUsername in details.blacklist)
                 {
-                    constructPersonFromUsername(bannedUsername);
-                }
-                Dispatcher.adoptAsync(delegate
-                {
-                    foreach (var u in people)
+                    Dispatcher.adoptAsync(() =>
                     {
-                        u.isBanned = details.UserIsBlackListed(u.username);
-                    }
-                    Console.WriteLine("Number of people banned: " + people.Where(p => p.isBanned).Count().ToString());
-                });
-            }
-        }
-        private void unbanThisUser(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button)
-            {
-                var dc = ((Button)sender).DataContext;
-                if (dc is MeTLUser)
-                {
-                    var u = (MeTLUser)dc;
-                    var details = SandRibbon.Providers.Globals.conversationDetails;
-                    details.blacklist.Remove(u.username);
-                    ClientFactory.Connection().UpdateConversationDetails(details);
-                }
-            }
-        }
-        private void banThisUser(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button)
-            {
-                var dc = ((Button)sender).DataContext;
-                if (dc is MeTLUser )
-                {
-                    var u = (MeTLUser)dc;
-                    if (u.username != SandRibbon.Providers.Globals.conversationDetails.Author)
-                    {
-                        var details = SandRibbon.Providers.Globals.conversationDetails;
-                        details.blacklist.Add(u.username);
-                        ClientFactory.Connection().UpdateConversationDetails(details);
-                    }
-                }
-            }
-        }
-
-        private void ReceiveMeTLUserInformations(List<MeTLUserInformation> infos)
-        {
-            foreach (var info in infos){
-                if (pendingPeople.Any(rp => rp == info.username))
-                {
-                    Dispatcher.adoptAsync(delegate
-                    {
-                        var person = people.First(p => p.username == info.username);
-                        person.update(info);
-                        if (SandRibbon.Providers.Globals.conversationDetails.UserIsBlackListed(person.username))
-                        {
-                            person.isBanned = true;
-                        }
-                        pendingPeople.Remove(person.username);
+                        constructPersonFromUsername(bannedUsername);
                     });
                 }
             }
         }
+
         private void ReceiveStrokes(List<TargettedStroke> strokes)
         {
             foreach (var s in strokes)
+            {
                 ReceiveStroke(s);
+            }
+            using (MemoryStream ms = new MemoryStream())
+            {
+                new StrokeCollection(strokes.Select(s => s.stroke)).Save(ms);
+                var myInkCollector = new InkCollector();
+                var ink = new Ink();
+                ink.Load(ms.ToArray());
+
+                using (RecognizerContext myRecoContext = new RecognizerContext())
+                {
+                    RecognitionStatus status;
+                    myRecoContext.Strokes = ink.Strokes;
+                    var recoResult = myRecoContext.Recognize(out status);
+
+                    if (status == RecognitionStatus.NoError)
+                    {
+                        MessageBox.Show(recoResult.TopString);
+                    }
+                    else
+                    {
+                        MessageBox.Show("ERROR: " + status.ToString());
+                    }
+                }
+            }
         }
-        private bool isContained(string username)
+        private void RegisterAction(string username)
         {
-            return requestedPeople.Any(p => p.ToLower().Trim() == username.ToLower().Trim());
+            Dispatcher.adopt(() =>
+            {
+                constructPersonFromUsername(username);
+                people[username].activityCount++;
+            });
+        }
+        private void RegisterSubmission(string username)
+        {
+            Dispatcher.adopt(() =>
+            {
+                constructPersonFromUsername(username);
+                people[username].submissionCount++;
+            });
         }
         private void ReceiveStroke(TargettedStroke s)
         {
-            constructPersonFromUsername(s.author);
+            RegisterAction(s.author);
         }
         private void ReceiveTextbox(TargettedTextBox t)
         {
-            constructPersonFromUsername(t.author);
+            RegisterAction(t.author);
         }
         private void ReceiveImage(TargettedImage i)
         {
-            constructPersonFromUsername(i.author);
+            RegisterAction(i.author);
         }
         private void ReceivePreParser(PreParser p)
         {
-            foreach (var i in p.ink)
-                ReceiveStroke(i);
+            ReceiveStrokes(p.ink);            
             foreach (var t in p.text.Values.ToList())
                 ReceiveTextbox(t);
             foreach (var i in p.images.Values.ToList())
@@ -244,17 +232,13 @@ namespace SandRibbon.Components
             foreach (var s in p.submissions)
                 ReceiveSubmission(s);
         }
+        private Object l = new Object();
         private void constructPersonFromUsername(string username)
         {
-            if (!isContained(username))
+            if (!people.ContainsKey(username))
             {
-                requestedPeople.Add(username);
-                pendingPeople.Add(username);
-                Dispatcher.adoptAsync(delegate
-                {
-                    people.Add(new MeTLUser(username));
-                });
-                Commands.RequestMeTLUserInformations.Execute(new List<string> { username });
+                people[username] = new MeTLUser(username);
+                participantListBox.ItemsSource = people.Values.ToList();
             }
         }
     }

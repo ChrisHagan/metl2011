@@ -16,7 +16,7 @@
     <sr:RibbonGroup>
         <dict:Button Text="Page Reorder" ToolTip="{DynamicResource PageReorderToolTip}" Icon="/Resources/NewSlide.png" x:Name="editConversation" 
                      Command="{x:Static api:Commands.EditConversation}" />
-        <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Ban Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" 
+        <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" 
                            Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
         <dict:Button Text="Manage banned content" Icon="/Resources/ban-management-icon.png" x:Name="bannedContentManagement" 
                      Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>

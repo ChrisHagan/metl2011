@@ -54,7 +54,7 @@ namespace SandRibbon.Chrome
                     }
                     else if (Globals.IsBanhammerActive)
                     {
-                        status = "Ban content mode is active";
+                        status = "Administer content mode is active.  You may edit other people's content.";
                     }
                     else
                     {

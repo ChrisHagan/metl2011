@@ -125,7 +125,7 @@ namespace SandRibbon.Components
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            if (string.IsNullOrEmpty(details.Jid) || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()))) return;
+            if (string.IsNullOrEmpty(details.Jid) || !(details.UserHasPermission(Globals.credentials))) return;
             try
             {
                 if (Globals.conversationDetails == null)

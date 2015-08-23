@@ -368,7 +368,7 @@ namespace SandRibbon.Components
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
                 return;
-            if (string.IsNullOrEmpty(details.Jid) || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower())))
+            if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))//!(Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower())))
             {
                 thumbnailList.Clear();
                 return;

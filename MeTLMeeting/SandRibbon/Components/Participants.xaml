@@ -8,30 +8,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ItemsControl x:Name="participantListBox">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="{Binding username}"/>
-                        <Label Content="{Binding displayName}" Foreground="{Binding Path=isBanned, Converter={x:Static components:Participants.bannedToColorConverter}}"/>
-                        <Label Content="{Binding email}"/>
-                        <Button Click="unbanThisUser" Visibility="{Binding Path=isBanned, Converter={x:Static sr:Converters.BoolToVisibilityConverter}}">Unban</Button>
-                        <Button Click="banThisUser" Content="Ban">
-                            <Button.Resources>
-                                <components:BanButtonBannedToVisibilityConverter x:Key="banButtonBannedToVisibilityConverter" />
-                            </Button.Resources>
-                            <Button.Visibility>
-                                <MultiBinding Converter="{StaticResource banButtonBannedToVisibilityConverter}">
-                                    <MultiBinding.Bindings>
-                                        <Binding Path="isBanned" />
-                                        <Binding Path="username" />
-                                    </MultiBinding.Bindings>
-                                </MultiBinding>
-                            </Button.Visibility>
-                        </Button>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <DataGrid x:Name="participantListBox" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="User" Binding="{Binding Path=username}" />
+                <DataGridTextColumn Header="Activity" Binding="{Binding Path=activityCount}" />
+                <DataGridTextColumn Header="Submissions" Binding="{Binding Path=submissionCount}" />
+                <DataGridTextColumn Header="Themes" Binding="{Binding Path=themes}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
