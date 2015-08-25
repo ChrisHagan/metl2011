@@ -2,69 +2,22 @@
 using Microsoft.Ink;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MeTLLib;
-using MeTLLib.Providers;
-using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.Providers.Connection;
 using System.IO;
 using System.Windows.Ink;
+using Iveonik.Stemmers;
 
 namespace SandRibbon.Components
 {
-    public class BannedToColorConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if ((value is bool) && (bool)value)
-                return Brushes.Red;
-            else return Brushes.Black;
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
-    }
-
-    public class BanButtonBannedToVisibilityConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            //If the user is the conversion author, do not display the ban button
-            if ((string)values[1] == SandRibbon.Providers.Globals.conversationDetails.Author)
-            {
-                return Visibility.Collapsed;
-            }
-
-            //If isBanned, then do not show ban button, else show
-            if ((bool)values[0])
-                return Visibility.Collapsed;
-
-            return Visibility.Visible;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
     public class MeTLUser : DependencyObject
     {
         public string username { private set; get; }
         public Dictionary<string, int> usages = new Dictionary<string, int>();
+        public HashSet<String> words = new HashSet<string>();
         public string themes
         {
             get
@@ -100,6 +53,9 @@ namespace SandRibbon.Components
                 SetValue(submissionCountProperty, value);
             }
         }
+
+        public object Words { get; internal set; }
+
         public static readonly DependencyProperty submissionCountProperty = DependencyProperty.Register("submissionCount", typeof(int), typeof(MeTLUser), new UIPropertyMetadata(0));
 
         public MeTLUser(string user)
@@ -109,12 +65,12 @@ namespace SandRibbon.Components
             submissionCount = 0;
         }
     }
-    /// <summary>
-    /// Interaction logic for UserControl1.xaml
-    /// </summary>
+
     public partial class Participants : UserControl
     {
         public Dictionary<string, MeTLUser> people = new Dictionary<string, MeTLUser>();
+        public HashSet<String> seen = new HashSet<string>();
+        public IStemmer stemmer = new EnglishStemmer();
         public Participants()
         {
             InitializeComponent();
@@ -133,6 +89,7 @@ namespace SandRibbon.Components
         }
         private void ClearList()
         {
+            seen.Clear();
             Dispatcher.adopt(() =>
             {
                 people.Clear();
@@ -170,29 +127,6 @@ namespace SandRibbon.Components
             {
                 ReceiveStroke(s);
             }
-            using (MemoryStream ms = new MemoryStream())
-            {
-                new StrokeCollection(strokes.Select(s => s.stroke)).Save(ms);
-                var myInkCollector = new InkCollector();
-                var ink = new Ink();
-                ink.Load(ms.ToArray());
-
-                using (RecognizerContext myRecoContext = new RecognizerContext())
-                {
-                    RecognitionStatus status;
-                    myRecoContext.Strokes = ink.Strokes;
-                    var recoResult = myRecoContext.Recognize(out status);
-
-                    if (status == RecognitionStatus.NoError)
-                    {
-                        MessageBox.Show(recoResult.TopString);
-                    }
-                    else
-                    {
-                        MessageBox.Show("ERROR: " + status.ToString());
-                    }
-                }
-            }
         }
         private void RegisterAction(string username)
         {
@@ -212,25 +146,86 @@ namespace SandRibbon.Components
         }
         private void ReceiveStroke(TargettedStroke s)
         {
+            if (seen.Contains(s.identity)) return;
+            seen.Add(s.identity);
             RegisterAction(s.author);
         }
         private void ReceiveTextbox(TargettedTextBox t)
         {
+            if (seen.Contains(t.identity)) return;
+            seen.Add(t.identity);
             RegisterAction(t.author);
         }
         private void ReceiveImage(TargettedImage i)
         {
+            if (seen.Contains(i.identity)) return;
+            seen.Add(i.identity);
             RegisterAction(i.author);
         }
         private void ReceivePreParser(PreParser p)
         {
-            ReceiveStrokes(p.ink);            
+            ReceiveStrokes(p.ink);
             foreach (var t in p.text.Values.ToList())
                 ReceiveTextbox(t);
             foreach (var i in p.images.Values.ToList())
                 ReceiveImage(i);
             foreach (var s in p.submissions)
                 ReceiveSubmission(s);
+            Analyze(p);
+        }
+        private void Ensure(string key, Dictionary<String,List<String>> dict) {
+            if (!dict.ContainsKey(key)) {
+                dict[key] = new List<String>();
+            }
+        }
+        private List<string> Filter(List<string> words) {
+            return words.Where(w => w.Count() > 3).Select(w => stemmer.Stem(w)).ToList();
+        }
+        private void Analyze(PreParser p)
+        {
+            var interim = new Dictionary<string, List<String>>();
+            foreach (var pInk in p.ink.GroupBy(s => s.author)) {
+                Ensure(pInk.Key, interim);
+                interim[pInk.Key].AddRange(Filter(AnalyzeStrokes(pInk.ToList())));
+            }
+            foreach (var pText in p.text.Values.GroupBy(t => t.author)) {
+                Ensure(pText.Key, interim);
+                foreach (var words in pText.Select(t => Filter(t.box.Text.Split().ToList())))
+                {
+                    interim[pText.Key].AddRange(words);
+                }
+            }
+            foreach (var result in interim) {
+                var person = people[result.Key];
+                foreach (var word in result.Value)
+                {
+                    person.words.Add(word);
+                }
+                person.themes = String.Join(",", person.words);
+            }
+        }
+        private List<String> AnalyzeStrokes(List<TargettedStroke> strokes)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                new StrokeCollection(strokes.Select(s => s.stroke)).Save(ms);
+                var myInkCollector = new InkCollector();
+                var ink = new Ink();
+                ink.Load(ms.ToArray());
+
+                using (RecognizerContext myRecoContext = new RecognizerContext())
+                {
+                    RecognitionStatus status;
+                    myRecoContext.Strokes = ink.Strokes;
+                    var recoResult = myRecoContext.Recognize(out status);
+
+                    if (status == RecognitionStatus.NoError)
+                    {
+                        return recoResult.TopString.Split().ToList();
+                    }                    
+                    return new List<String>();                    
+                }
+            }
         }
         private Object l = new Object();
         private void constructPersonFromUsername(string username)
