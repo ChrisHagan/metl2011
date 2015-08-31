@@ -8,9 +8,9 @@
     <sr:RibbonGroup.Resources>
         <core:String x:Key="preferredDisplayIndex">4</core:String>
     </sr:RibbonGroup.Resources>
-    <sr:RibbonGroup.Variants>
+    <!--sr:RibbonGroup.Variants>
         <sr:GroupVariant Variant="Small" Priority="4"/>
-    </sr:RibbonGroup.Variants>
+    </-->
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot" >
         <components:PrivacyTools x:Name="ribbonPrivacyTools" Visibility="Visible"/>   
     </StackPanel >

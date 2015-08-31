@@ -59,8 +59,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.300</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.300</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.320</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.320</ApplicationVersion>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -70,7 +70,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
-    <ProductName>MeTL Demo</ProductName>
+    <ProductName>MeTL Teacher</ProductName>
     <InstallUrl>http://ec2-52-7-180-42.compute-1.amazonaws.com:8080/MeTLTeacher/</InstallUrl>
     <UpdateUrl>http://ec2-52-7-180-42.compute-1.amazonaws.com:8080/MeTLTeacher/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
@@ -85,7 +85,7 @@
     <DefineConstants>TRACE;TOGGLE_CONTENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL Teacher</ProductName>
     <InstallUrl>http://ec2-52-7-180-42.compute-1.amazonaws.com:8080/MeTLTeacher/</InstallUrl>
@@ -95,6 +95,24 @@
   <PropertyGroup>
     <StartupObject>SandRibbon.Window1</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TOGGLE_CONTENT</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;TOGGLE_CONTENT</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
       <HintPath>lib\agsXMPP.dll</HintPath>
@@ -102,10 +120,6 @@
     <Reference Include="Divelements.SandRibbon, Version=2.0.1.2, Culture=neutral, PublicKeyToken=75b7ec17dd7c14c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Divelements.SandRibbon.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Ink, Version=1.7.2600.2180, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Microsoft.Ink.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>

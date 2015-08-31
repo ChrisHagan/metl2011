@@ -83,7 +83,7 @@
                     <ColumnDefinition x:Name="LHSDrawerDefinition" Width="0"/>
                     <ColumnDefinition x:Name="LHSSplitterDefinition" Width="0"/>
                     <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
-                    <ColumnDefinition x:Name="RHSSplitterDefinition" Width="10" />
+                    <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
@@ -106,7 +106,7 @@
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
                 </Grid>
-                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
+                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
                 <Grid Grid.Column="4" x:Name="rightDrawer">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>

@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Ink;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -16,20 +15,19 @@ namespace SandRibbon.Components
     public class MeTLUser : DependencyObject
     {
         public string username { private set; get; }
-        public Dictionary<string, int> usages = new Dictionary<string, int>();
-        public HashSet<String> words = new HashSet<string>();
-        public string themes
+        public Dictionary<string, int> usages = new Dictionary<string, int>();        
+        public HashSet<String> words
         {
             get
             {
-                return (string)GetValue(themeProperty);
+                return (HashSet<string>)GetValue(themeProperty);
             }
             set
             {
                 SetValue(themeProperty, value);
             }
         }
-        public static readonly DependencyProperty themeProperty = DependencyProperty.Register("themes", typeof(string), typeof(MeTLUser), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty themeProperty = DependencyProperty.Register("themes", typeof(HashSet<String>), typeof(MeTLUser), new UIPropertyMetadata(new HashSet<String>()));
         public int activityCount
         {
             get
@@ -171,7 +169,6 @@ namespace SandRibbon.Components
                 ReceiveImage(i);
             foreach (var s in p.submissions)
                 ReceiveSubmission(s);
-            Analyze(p);
         }
         private void Ensure(string key, Dictionary<String,List<String>> dict) {
             if (!dict.ContainsKey(key)) {
@@ -181,52 +178,7 @@ namespace SandRibbon.Components
         private List<string> Filter(List<string> words) {
             return words.Where(w => w.Count() > 3).Select(w => stemmer.Stem(w)).ToList();
         }
-        private void Analyze(PreParser p)
-        {
-            var interim = new Dictionary<string, List<String>>();
-            foreach (var pInk in p.ink.GroupBy(s => s.author)) {
-                Ensure(pInk.Key, interim);
-                interim[pInk.Key].AddRange(Filter(AnalyzeStrokes(pInk.ToList())));
-            }
-            foreach (var pText in p.text.Values.GroupBy(t => t.author)) {
-                Ensure(pText.Key, interim);
-                foreach (var words in pText.Select(t => Filter(t.box.Text.Split().ToList())))
-                {
-                    interim[pText.Key].AddRange(words);
-                }
-            }
-            foreach (var result in interim) {
-                var person = people[result.Key];
-                foreach (var word in result.Value)
-                {
-                    person.words.Add(word);
-                }
-                person.themes = String.Join(",", person.words);
-            }
-        }
-        private List<String> AnalyzeStrokes(List<TargettedStroke> strokes)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                new StrokeCollection(strokes.Select(s => s.stroke)).Save(ms);
-                var myInkCollector = new InkCollector();
-                var ink = new Ink();
-                ink.Load(ms.ToArray());
 
-                using (RecognizerContext myRecoContext = new RecognizerContext())
-                {
-                    RecognitionStatus status;
-                    myRecoContext.Strokes = ink.Strokes;
-                    var recoResult = myRecoContext.Recognize(out status);
-
-                    if (status == RecognitionStatus.NoError)
-                    {
-                        return recoResult.TopString.Split().ToList();
-                    }                    
-                    return new List<String>();                    
-                }
-            }
-        }
         private Object l = new Object();
         private void constructPersonFromUsername(string username)
         {
@@ -236,5 +188,6 @@ namespace SandRibbon.Components
                 participantListBox.ItemsSource = people.Values.ToList();
             }
         }
+
     }
 }

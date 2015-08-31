@@ -38,10 +38,10 @@ namespace SandRibbon.Providers
                 if (cache.Keys.Count >= maximumCachedBitmaps)
                 {
                     var toRemove = cache.OrderBy(kvp => kvp.Value.created).First();
-                    Console.WriteLine(String.Format("removing item from cache: {0} ({1})",toRemove.Key,toRemove.Value.created));
+                    //Console.WriteLine(String.Format("removing item from cache: {0} ({1})",toRemove.Key,toRemove.Value.created));
                     cache.Remove(toRemove.Key);
                 }
-                Console.WriteLine(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
+                //Console.WriteLine(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
                 cache[slideId] = ct;
             }
         }
@@ -58,7 +58,7 @@ namespace SandRibbon.Providers
                       {
                           if (cache.ContainsKey(internalSlide.id))
                           {
-                              Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
+                              //Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
                               image.Source = cache[internalSlide.id].image;
                           }
                       }
@@ -89,7 +89,7 @@ namespace SandRibbon.Providers
                 var server = ClientFactory.Connection().server;
                 var host = server.Name;
                 var url = string.Format(server.thumbnail + "{0}/{1}",host,internalSlideId);
-                Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));
+                //Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
                     try
