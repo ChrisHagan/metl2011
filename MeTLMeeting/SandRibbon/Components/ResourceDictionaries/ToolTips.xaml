@@ -8,7 +8,7 @@
     <resources:MeTLImageToolTip x:Key="DisplaySubmissionToolTip" 
                                         TitleText="Show submission"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
-                                        ContentText="Import this submission onto a new page, so that you can show it publicly."/>
+                                        ContentText="Import all your selected submissions onto a new page, stacking them vertically.  This does not close the submissions dialog."/>
     <resources:MeTLImageToolTip x:Key="EmailReportTooltip" 
                                         TitleText="Email report"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 

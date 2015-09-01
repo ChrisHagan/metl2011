@@ -453,7 +453,7 @@ namespace SandRibbon
                 return string.Format("{0}", (new DateTime(privacyWrapper.time)));
             }
 
-            return "Preview";
+            return submission.author;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

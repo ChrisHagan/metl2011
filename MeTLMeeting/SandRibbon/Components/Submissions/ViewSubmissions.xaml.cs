@@ -192,29 +192,10 @@ namespace SandRibbon.Components.Submissions
 
             UpdateAllBucket(submission);
         }
-        private void importSubmission(object sender, ExecutedRoutedEventArgs e)
-        {
-            var item = submissions.SelectedItem;
-            DelegateCommand<PreParser> onPreparserAvailable = null;
-            onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
-               {
-                   Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                   var image = (TargettedSubmission) item;
-                   Commands.ImageDropped.ExecuteAsync(new ImageDrop { 
-                         Filename = image.url.ToString (), 
-                         Target = "presentationSpace",
-                         Point = new Point(0, 0),
-                         Position = 1,
-                         OverridePoint = true
-                     });
-               });
-            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.ExecuteAsync(null);
-            this.Close();
-        }
+        
         private void importAllSubmissionsInBucket(object sender, ExecutedRoutedEventArgs e)
         {
-             var items = submissions.Items;
+             var items = submissions.SelectedItems;
             DelegateCommand<PreParser> onPreparserAvailable = null;
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
                {

@@ -165,19 +165,7 @@ namespace SandRibbon.Components
                 using (var context = dv.RenderOpen())
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
-                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);
-                    context.DrawText(new FormattedText(
-                                            details.message,
-                                            CultureInfo.CurrentCulture,
-                                            FlowDirection.LeftToRight,
-                                            new Typeface(
-                                                new FontFamily("Arial"),
-                                                FontStyles.Normal,
-                                                FontWeights.Normal,
-                                                FontStretches.Normal),
-                                            12,
-                                            Brushes.Black),
-                                        new Point(10, 10));
+                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);                  
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
