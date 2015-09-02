@@ -51,6 +51,12 @@ namespace SandRibbon
             splashScreen.Close(TimeSpan.Zero);
         }
 
+        public static void SetBackend(MeTLServerAddress.serverMode mode)
+        {
+            controller = new NetworkController(mode);
+            App.mark(String.Format("Starting on backend mode {0}", mode.ToString()));
+        }
+
         public static void Login(Credentials credentials)
         {
             try
@@ -58,10 +64,12 @@ namespace SandRibbon
                 App.mark("start network controller and log in");
                 if (controller != null)
                     controller.Deregister();
-                controller = new NetworkController();
                 if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
                 {
                     Commands.LoginFailed.Execute(null);
+                }
+                else {
+                    Commands.SetIdentity.Execute(credentials);
                 }
                 App.mark("finished logging in");
             }
@@ -86,8 +94,7 @@ namespace SandRibbon
         }
         public static void mark(string msg)
         {
-            //Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
-            //MessageBox.Show(String.Format("{0} : {1}", msg, DateTime.Now - AccidentallyClosing));
+            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
         }
         static App()
         {
@@ -176,24 +183,7 @@ namespace SandRibbon
         private void doCrash(Exception e)
         {
             Logger.Crash(e);
-        }
-        /*private void CloseSplashScreen()
-        {
-            // signal process to close splash screen
-            using (var closeSplashEvent = new EventWaitHandle(false, EventResetMode.ManualReset, "CloseSplashScreenWithoutFadeEventSplashScreenStarter"))
-            {
-                closeSplashEvent.Set();
-            }
-        }*/
-        /*private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
-        {
-            Dispatcher.BeginInvoke((Action)delegate
-            {
-                var source = (TextBox)sender;
-                source.CaretIndex = source.Text.Length;
-                source.SelectAll();
-            }, DispatcherPriority.Background);
-        }*/
+        }            
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -210,9 +200,6 @@ namespace SandRibbon
                 }
             }
 #endif
-            /*EventManager.RegisterClassHandler(typeof(TextBox),
-            TextBox.GotKeyboardFocusEvent,
-            new RoutedEventHandler(AnyTextBoxGetsFocus));*/
         }
     }
 }

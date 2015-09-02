@@ -49,10 +49,10 @@ namespace SandRibbon.Components
     {
         private ClientConnection client;
         private Action deregister;
-        public NetworkController()
+        public NetworkController(MeTLServerAddress.serverMode mode)
         {
-            App.mark("NetworkController instantiating");
-            client = buildServerSpecificClient();
+            App.mark(String.Format("NetworkController instantiating: {0}",mode));
+            client = buildServerSpecificClient(mode);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{
                 if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
@@ -60,7 +60,6 @@ namespace SandRibbon.Components
                     registerCommands();
                     attachToClient();
                     Commands.AllStaticCommandsAreRegistered();
-                    Commands.SetIdentity.ExecuteAsync(e.credentials);
                     client.events.StatusChanged -= checkValidity;
                 }
                 else
@@ -78,11 +77,11 @@ namespace SandRibbon.Components
         {
             deregister();
         }
-        private ClientConnection buildServerSpecificClient()
+        private ClientConnection buildServerSpecificClient(MeTLServerAddress.serverMode mode)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
             ClientConnection result;
-            switch (MeTLConfiguration.Config.ActiveStackEnum)
+            switch (mode)
             {
                 case MeTLServerAddress.serverMode.EXTERNAL:
                     {
@@ -99,8 +98,7 @@ namespace SandRibbon.Components
                         result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
                     }
                     break;
-            }
-            //Constants.JabberWire.SERVER = result.server.host;
+            }            
             return result;
         }
         #region commands

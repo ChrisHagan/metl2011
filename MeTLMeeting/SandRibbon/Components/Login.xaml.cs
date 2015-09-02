@@ -62,16 +62,17 @@ namespace SandRibbon.Components
         public Login()
         {
             InitializeComponent();
-            this.DataContext = this;
-            var failingCredentials = new Credentials("forbidden", "", null, "");
-            App.Login(failingCredentials);
-            ResetWebBrowser(null);
-            SandRibbon.App.CloseSplashScreen();
-            Commands.AddWindowEffect.ExecuteAsync(null);
+            App.CloseSplashScreen();
+            ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
-            ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));            
+            servers.ItemsSource = new Dictionary<String, MeTLServerAddress.serverMode> {
+                { "Saint Leo University", MeTLServerAddress.serverMode.PRODUCTION },
+                { "MeTL Demo Server (this houses data in Amazon)", MeTLServerAddress.serverMode.STAGING }
+            };
+            servers.SelectedIndex = 1;
+            Commands.AddWindowEffect.ExecuteAsync(null);
         }
         protected Timer showTimeoutButton;
         protected int loginTimeout = 5 * 1000;
@@ -89,9 +90,9 @@ namespace SandRibbon.Components
         }
         protected void showBrowser()
         {
-            hideResetButton();
-            logonBrowserContainer.Visibility = Visibility.Visible;
             loadingImage.Visibility = Visibility.Collapsed;
+            hideResetButton();
+            logonBrowserContainer.Visibility = Visibility.Visible;            
             logonBrowserContainer.IsHitTestVisible = true;
         }
         protected void showResetButton()
@@ -173,13 +174,8 @@ namespace SandRibbon.Components
             DeleteCookieForUrl(loginUri);
             logonBrowser = new WebBrowser();
             logonBrowserContainer.Children.Add(logonBrowser);
-            logonBrowser.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-            logonBrowser.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-            logonBrowser.Width = Double.NaN;
-            logonBrowser.Height = Double.NaN;
             logonBrowser.Navigating += (sender, args) =>
             {
-                hideBrowser();
                 browseHistory.Add(args.Uri);
                 var cookie = "unknown";
                 try
@@ -189,7 +185,7 @@ namespace SandRibbon.Components
                 catch (Exception e)
                 {
                 }
-                //Console.WriteLine(String.Format("{0} => {1}",args.Uri.ToString(),cookie));
+                Console.WriteLine(String.Format("{0} => {1}",args.Uri.ToString(),cookie));
                 if (detectIEErrors(args.Uri))
                 {
                     if (browseHistory.Last() != null)
@@ -205,11 +201,8 @@ namespace SandRibbon.Components
             logonBrowser.LoadCompleted += (sender, args) =>
             {
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
-                var authResult = checkWhetherWebBrowserAuthenticationSucceeded(doc);
-                if (!authResult)
-                {
-                    showBrowser();
-                }
+                checkWhetherWebBrowserAuthenticationSucceeded(doc);
+                
             };
             if (showTimeoutButton != null)
             {
@@ -224,7 +217,6 @@ namespace SandRibbon.Components
                     showResetButton();
                 });
             }, null, Timeout.Infinite, Timeout.Infinite);
-            hideBrowser();
             logonBrowser.Navigate(loginUri);
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName)
@@ -313,6 +305,7 @@ namespace SandRibbon.Components
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             Dispatcher.adoptAsync(() =>
             {
+                logonBrowserContainer.Visibility = Visibility.Collapsed;
                 var options = ClientFactory.Connection().UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
@@ -327,10 +320,21 @@ namespace SandRibbon.Components
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+        
+        private void SetBackend(object sender, RoutedEventArgs e)
+        {
+            serversContainer.Visibility = Visibility.Collapsed;
+            Commands.RemoveWindowEffect.ExecuteAsync(null);
+            var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
+            App.SetBackend(backend);            
+            ResetWebBrowser(null);           
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new LoginAutomationPeer(this);
         }
+
     }
     class LoginAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {

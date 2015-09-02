@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using MeTLLib;
 using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers.Structure;
 using MeTLLib.DataTypes;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using System.Windows.Ink;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
@@ -643,7 +638,7 @@ namespace MeTLLib
             {
                 action();
             }
-            catch (WebException)
+            catch (WebException e)
             {
                 requeue(action);
             }

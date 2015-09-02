@@ -56,26 +56,9 @@ namespace MeTLLib.Providers
             get
             {
                 if (credentials == null) return new List<AuthorizedGroup>();
-                return credentials.authorizedGroups;
-                /*var credentials = Commands.SetIdentity.lastValue();
-                return ((Credentials)credentials).authorizedGroups;
-            */
+                return credentials.authorizedGroups;                    
             }
-        }
-        /*public static bool synched
-        {
-            get
-            {
-                try
-                {
-                    return (bool)Commands.SetSync.lastValue();
-                }
-                catch (NotSetException)
-                {
-                    return true;
-                }
-            }
-        }*/
+        }        
         public static int teacherSlide
         {
             get
