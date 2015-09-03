@@ -70,13 +70,8 @@ namespace SandRibbon.Components
                     }
                 }
             };
-            deregister = () => { client.events.StatusChanged -= checkValidity; };
             client.events.StatusChanged += checkValidity;
-        }
-        public void Deregister()
-        {
-            deregister();
-        }
+        }       
         private ClientConnection buildServerSpecificClient(MeTLServerAddress.serverMode mode)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {

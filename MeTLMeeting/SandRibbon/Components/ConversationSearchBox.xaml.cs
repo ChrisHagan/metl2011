@@ -420,7 +420,6 @@ namespace SandRibbon.Components
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-
             RestartRefreshTimer();
         }
         private void Button_Click(object sender, RoutedEventArgs e)

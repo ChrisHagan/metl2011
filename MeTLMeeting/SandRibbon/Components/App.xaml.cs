@@ -61,9 +61,7 @@ namespace SandRibbon
         {
             try
             {
-                App.mark("start network controller and log in");
-                if (controller != null)
-                    controller.Deregister();
+                App.mark("start network controller and log in");                          
                 if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
                 {
                     Commands.LoginFailed.Execute(null);
@@ -98,7 +96,7 @@ namespace SandRibbon
         }
         static App()
         {
-            //App.mark("App static constructor runs");
+            App.mark("App static constructor runs");
             setDotNetPermissionState();
         }
         private static void setDotNetPermissionState()
@@ -129,18 +127,14 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
-            MeTLConfiguration.Load();
-
-            //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
-            // JJ: Disabled logging for the MeTL Resiliency Project
-            //Trace.Listeners.Add(new CouchTraceListener());
+            MeTLConfiguration.Load();            
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
-            // mark("App.onStartup finished");
+            mark("App.onStartup finished");
         }
         String[] falseAlarms = new[]{
                 "Index was out of range. Must be non-negative and less than the size of the collection.",
@@ -161,11 +155,7 @@ namespace SandRibbon
             try
             {
                 Commands.LeaveAllRooms.Execute(null);
-                MeTLLib.ClientFactory.Connection().Disconnect();
-                /* Awesomium comment out
-                AbstractCanvas.deleteTempFiles();
-                // End Awesomium comment out
-                */
+                MeTLLib.ClientFactory.Connection().Disconnect();         
             }
             catch (Exception) { }
         }

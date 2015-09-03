@@ -141,7 +141,6 @@ namespace SandRibbon.Components
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
-            Display(Globals.conversationDetails);
             var paste = new CompositeCommand();
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
             slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
