@@ -11,10 +11,12 @@ layout: public
 
   <p>MeTL exposes native clients, web clients and embeddable live images for use in Content Management or Learning Management systems.  If you can add an iframe tag to your Moodle block, you can use MeTL.</p>
 
+  <p>Conversations in MeTL are persistent.  They go from pre-class to large scale teaching events and become useful study resources afterwards.</p>
+
   <h3>
     <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
   <p>MeTL was authored by Chris Hagan (<a href="https://github.com/StackableRegiments" class="user-mention">@StackableRegiments</a>) and David Hagan.  During the journey dozens of teachers, programmers, testers and researchers were involved in the effort.</p>
 
-  <p>Professor Gordon Sanson is the director and designer of MeTL, and continues to be a primary advocate for it, now at Saint Leo University, Florida.</p>
+  <p>Professor Gordon Sanson was the director and designer of MeTL, and continues to be a primary advocate for it, now at Saint Leo University, Florida.</p>
 </div>
