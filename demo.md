@@ -3,7 +3,7 @@ layout: public
 ---
 This section will walk you through the exercise of obtaining the Windows MeTL client.
 
-This exercise is instructions are for Windows only.  Other operating systems are able to interact with the MeTL system through web interfaces, which will be covered in a different exercise.
+This set of instructions is for Windows only.  Other operating systems are able to interact with the MeTL system through web interfaces, which will be covered in a different section.
 
 It will take you through the basics of starting a conversation, enabling your students to find it and reviewing the activities within it when you're done.
 
