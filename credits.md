@@ -10,13 +10,17 @@ In no particular order, we want to mention the people who supported and grew thi
 * Chris Hagan
 * David Hagan
 * Nathan Bailey
-* Katharina Franke
+* Doctor Katharina Franke
 * Stuart James
 * Benjamin J Hughes
 * Alan Twigg
 * Llewellyn Stevens
 * Hannah Anderson
-* Marianne Hicks
+* Michael Phillips
+* Doctor Marianne Hicks
+* Chris Barnes
 * Stephen Trousse
 * Helen Palmer
 * Richard Ross
+* Kiran Sohal
+* Trishna Sohal
