@@ -27,7 +27,7 @@ Try selecting your content.  You can hide it from the rest of the class or show 
 
 [Click here]() to ask some more bots to join in.  Don't be alarmed, they're harmless.
 
-You'll notice that Mr. Roboto's screen only shows people's private work, and that it does so in real time.  Some teachers use this to put a screen behind them which doesn't show their private content.
+You'll notice that Mr. Roboto's screen only shows people's public work, and that it does so in real time.  Some teachers use this to put a screen behind them which doesn't show their private content.
 
 When you've finished teasing the robots, [click here]() to analyze the conversation you've just had.
 
