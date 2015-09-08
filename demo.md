@@ -1,11 +1,7 @@
 ---
 layout: public
 ---
-This section will walk you through the exercise of obtaining the Windows MeTL client.
-
-This set of instructions is for Windows only.  Other operating systems are able to interact with the MeTL system through web interfaces, which will be covered in a different section.
-
-It will take you through the basics of starting a conversation, enabling your students to find it and reviewing the activities within it when you're done.
+This session will take you through the basics of loading a MeTL client, starting a conversation, enabling your students to find it and reviewing the activities within it when you're done.
 
 No actual students are required for this exercise, we'll provide some.  We're sorry that they're a bit resistant to education, it was an off day when we programmed them.
 
