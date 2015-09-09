@@ -8,5 +8,5 @@ An installed MeTL system configures:
 - An authentication provider
 - An authorization provider
 
-[configurationArchitecture]: /images/configurationArchitecture.png "Configuration architecture"
+[configurationArchitecture]: images/configurationArchitecture.png "Configuration architecture"
 ![A component diagram of MeTL, demonstrating configuration points][configurationArchitecture]
