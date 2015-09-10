@@ -131,6 +131,18 @@ Ink is described in single strokes, which represent pressure variable paths.
 }
 ~~~
 
+Where a Point is a triplet of doubles pulled off the point string:
+
+~~~javascript
+{
+"x":{"type":Double},
+"y":{"type":Double},
+"thickness":{"type":Double}
+}
+~~~
+
+As a performance optimisation this is actually transmitted as "x y t x y t...", but the conceptual model is that of a sequence of pressure aware Points.
+
 ##Text
 
 ##Images
