@@ -64,13 +64,13 @@ A Conversation is the top level of content in MeTL.  It is created by a user, an
 
 A slide is a room level content space.  When a user enters a slide, their client replays the history of content on that slide.
 
-```javascript
+~~~javascript
 {
   "id":{"type":Int},
   "author":{"type":String},
   "index":{"type":Int},
 }
-```
+~~~
 
 ##Users
 
@@ -80,7 +80,7 @@ A user is a unique entity within MeTL, who must be authenticated to enter a spac
 
 A quiz has an author, a question and some answers to choose from.
 
-```javascript
+~~~javascript
 {
   "type":"quiz",
   "created":{"type":Int},
@@ -89,11 +89,11 @@ A quiz has an author, a question and some answers to choose from.
   "isDeleted":{"type":Bool},
   "options":{"type":Array,"items":{"type":Option}}
 }
-```
+~~~
 
 Quiz options are the available answers to choose from.
 
-```javascript
+~~~javascript
 {
   "type":"quizOption",
   "name":{"type":String},
@@ -101,7 +101,7 @@ Quiz options are the available answers to choose from.
   "correct":{"type":Bool},
   "color":{"type":Color}
 }
-```
+~~~
 
 ##Ink
 
