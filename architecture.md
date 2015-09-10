@@ -2,10 +2,10 @@
 layout: public
 ---
 
-* [Concepts][#concepts]
-* [Configurability][#configurability]
-* [Entities][#entities]
-* [Integration][#integration]
+* [Concepts](#concepts)
+* [Configurability](#configurability)
+* [Entities](#entities)
+* [Integration](#integration)
 
 #Concepts
 
