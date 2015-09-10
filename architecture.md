@@ -74,7 +74,7 @@ A slide is a room level content space.  When a user enters a slide, their client
 
 ##Users
 
-A user is a unique entity within MeTL, who must be authenticated to enter a space.
+A user is a unique entity within MeTL, who must be authenticated to enter a space.  They have a single unique identifier, usually their login.
 
 ##Quizzes
 
@@ -113,22 +113,24 @@ Quiz responses are an instance of an answer, tying a quiz response to a user.
   "id":{"type":String})
 )
 ~~~
+
 ##Ink
 
 Ink is described in single strokes, which represent pressure variable paths.
 
 ~~~javascript
 {
-	"type":"ink"
-	"bounds":{"type":Array},
-	"checksum":{"type":Double},
-	"startingSum":{"type":Double},
-	"points":{"type":,"array","items":Point},
-	"color":{"type":Color},
-	"thickness":{"type":Double},
-	"isHighlighter":{"type":Bool}
+    "type":"ink"
+    "bounds":{"type":Array},
+    "checksum":{"type":Double},
+    "startingSum":{"type":Double},
+    "points":{"type":,"array","items":Point},
+    "color":{"type":Color},
+    "thickness":{"type":Double},
+    "isHighlighter":{"type":Bool}
 }
 ~~~
+
 ##Text
 
 ##Images
