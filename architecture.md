@@ -45,7 +45,7 @@ Implementation for these entities can be found inside the [MeTL dependencies rep
 
 A Conversation is the top level of content in MeTL.  It is created by a user, and that user retains ownership rights over it.  A Conversation is similar to a PowerPoint presentation in structure.
 
-```
+```javascript
 {
   "author":{"type":String},
   "lastAccessed":{"type":Int},
@@ -64,7 +64,7 @@ A Conversation is the top level of content in MeTL.  It is created by a user, an
 
 A slide is a room level content space.  When a user enters a slide, their client replays the history of content on that slide.
 
-```json
+```javascript
 {
   "id":{"type":Int},
   "author":{"type":String},
@@ -80,7 +80,7 @@ A user is a unique entity within MeTL, who must be authenticated to enter a spac
 
 A quiz has an author, a question and some answers to choose from.
 
-```json
+```javascript
 {
   "type":"quiz",
   "created":{"type":Int},
@@ -93,7 +93,7 @@ A quiz has an author, a question and some answers to choose from.
 
 Quiz options are the available answers to choose from.
 
-```json
+```javascript
 {
   "type":"quizOption",
   "name":{"type":String},
