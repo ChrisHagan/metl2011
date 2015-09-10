@@ -5,7 +5,7 @@ layout: public
 If you're a teacher and you're looking to teach in a way which enables your class to work together, to spontaneously form working groups and to receive structured advice on the outcomes afterwards, [join the MeTL community](community).
 
 #Executive
-If you're considering adopting this system and want to ensure that it fits with your IT policy, [read our architecture documentation](architecture).
+If you're considering adopting this system and want to ensure that it fits with your IT policy, [read our architecture documentation](concepts).
 
 #Developers
 If you're a developer and you've been asked to investigate integrating or extending the MeTL system, [read our technical documentation](developers).

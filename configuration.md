@@ -1,8 +1,7 @@
 ---
-layout: public
+layout: architecture
 ---
-
-An installed MeTL system configures:
+An installed MeTL system must configure one of each of:
 
 * A persistence engine
 * A messaging engine
