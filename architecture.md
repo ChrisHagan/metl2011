@@ -39,45 +39,37 @@ An installed MeTL system must configure one of each of:
 
 #Entities
 
-Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within as dependencies.  This section represents them in the form of Scala [lift-json](https://github.com/lift/lift/tree/master/framework/lift-base/lift-json/) case classes.
-
-The 'toJsObj' method features in some of these definitions.  It is a wrapper method which simply adds a 'type' field to the object:
-
-```scala
-protected def toJsObj(name:String,fields:List[JField]) = Stopwatch.time("JsonSerializer.toJsObj", () => {
-    JObject(JField("type",JString(name)) :: fields)
-})
-```
+Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and {"type":SON serializers are available within as dependencies.  This section represents them in the form of Scala [lift-json]},
 
 ##Conversations
 
 A Conversation is the top level of content in MeTL.  It is created by a user, and that user retains ownership rights over it.  A Conversation is similar to a PowerPoint presentation in structure.
 
-```scala
-JObject(List(
-      JField("author",JString(input.author)),
-      JField("lastAccessed",JInt(input.lastAccessed)),
-      JField("slides",JArray(input.slides.map(s => fromSlide(s)).toList)),
-      JField("subject",JString(input.subject)),
-      JField("tag",JString(input.tag)),
-      JField("jid",JInt(input.jid)),
-      JField("title",JString(input.title)),
-      JField("created",JString(input.created)),
-      JField("permissions",fromPermissions(input.permissions)),
-      JField("configName",JString(input.server.name))
-    ))
+```json
+{
+      "author":{"type":String},
+      "lastAccessed":{"type":Int},
+      "slides":{"type":Array},
+      "subject":{"type":String},
+      "tag":{"type":String},
+      "jid":{"type":Int},
+      "title":{"type":String},
+      "created":{"type":String},
+      "permissions":{"type":Permission},
+      "configName":{"type":String},
+    }
 ```
 
 ##Slides
 
 A slide is a room level content space.  When a user enters a slide, their client replays the history of content on that slide.
 
-```scala
-JObject(List(
-      JField("id",JInt(input.id)),
-      JField("author",JString(input.author)),
-      JField("index",JInt(input.index))
-    ))
+```json
+{
+      "id":{"type":Int},
+      "author":{"type":String},
+      "index":{"type":Int},
+    }
 ```
 
 ##Users
@@ -88,24 +80,27 @@ A user is a unique entity within MeTL, who must be authenticated to enter a spac
 
 A quiz has an author, a question and some answers to choose from.
 
-```scala
-toJsObj("quiz",List(
-      JField("created",JInt(input.created)),
-      JField("question",JString(input.question)),
-      JField("id",JString(input.id)),
-      JField("isDeleted",JBool(input.isDeleted)),
-      JField("options",JArray(input.options.map(o => fromQuizOption(o))))
+```json
+{
+"type":"quiz",
+      "created":{"type":Int},
+      "question":{"type":String},
+      "id":{"type":String},
+      "isDeleted":{"type":Bool},
+      "options":{"type":Array,"items":{"type":Option}}
+      }
 ```
 
 Quiz options are the available answers to choose from.
 
-```scala
-toJsObj("quizOption",List(
-      JField("name",JString(input.name)),
-      JField("text",JString(input.text)),
-      JField("correct",JBool(input.correct)),
-      JField("color",fromColor(input.color).asInstanceOf[JValue])
-    ))
+```json
+{
+"type":"quizOption",
+      "name":{"type":String},
+      "text":{"type":String},
+      "correct":{"type":Bool},
+      "color":{"type":Color}
+    }
 ```
 
 ##Ink
