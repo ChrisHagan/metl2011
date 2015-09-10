@@ -45,19 +45,19 @@ Implementation for these entities can be found inside the [MeTL dependencies rep
 
 A Conversation is the top level of content in MeTL.  It is created by a user, and that user retains ownership rights over it.  A Conversation is similar to a PowerPoint presentation in structure.
 
-```json
+```
 {
-      "author":{"type":String},
-      "lastAccessed":{"type":Int},
-      "slides":{"type":Array},
-      "subject":{"type":String},
-      "tag":{"type":String},
-      "jid":{"type":Int},
-      "title":{"type":String},
-      "created":{"type":String},
-      "permissions":{"type":Permission},
-      "configName":{"type":String},
-    }
+  "author":{"type":String},
+  "lastAccessed":{"type":Int},
+  "slides":{"type":Array},
+  "subject":{"type":String},
+  "tag":{"type":String},
+  "jid":{"type":Int},
+  "title":{"type":String},
+  "created":{"type":String},
+  "permissions":{"type":Permission},
+  "configName":{"type":String},
+}
 ```
 
 ##Slides
@@ -65,11 +65,11 @@ A Conversation is the top level of content in MeTL.  It is created by a user, an
 A slide is a room level content space.  When a user enters a slide, their client replays the history of content on that slide.
 
 ```json
-    {
-      "id":{"type":Int},
-      "author":{"type":String},
-      "index":{"type":Int},
-    }
+{
+  "id":{"type":Int},
+  "author":{"type":String},
+  "index":{"type":Int},
+}
 ```
 
 ##Users
@@ -81,26 +81,26 @@ A user is a unique entity within MeTL, who must be authenticated to enter a spac
 A quiz has an author, a question and some answers to choose from.
 
 ```json
-    {
-    "type":"quiz",
-      "created":{"type":Int},
-      "question":{"type":String},
-      "id":{"type":String},
-      "isDeleted":{"type":Bool},
-      "options":{"type":Array,"items":{"type":Option}}
-      }
+{
+  "type":"quiz",
+  "created":{"type":Int},
+  "question":{"type":String},
+  "id":{"type":String},
+  "isDeleted":{"type":Bool},
+  "options":{"type":Array,"items":{"type":Option}}
+}
 ```
 
 Quiz options are the available answers to choose from.
 
 ```json
-    {
-    "type":"quizOption",
-      "name":{"type":String},
-      "text":{"type":String},
-      "correct":{"type":Bool},
-      "color":{"type":Color}
-    }
+{
+  "type":"quizOption",
+  "name":{"type":String},
+  "text":{"type":String},
+  "correct":{"type":Bool},
+  "color":{"type":Color}
+}
 ```
 
 ##Ink
