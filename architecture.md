@@ -120,14 +120,14 @@ Ink is described in single strokes, which represent pressure variable paths.
 
 ~~~javascript
 {
-    "type":"ink"
-    "bounds":{"type":Array},
-    "checksum":{"type":Double},
-    "startingSum":{"type":Double},
-    "points":{"type":,"array","items":Point},
-    "color":{"type":Color},
-    "thickness":{"type":Double},
-    "isHighlighter":{"type":Bool}
+  "type":"ink"
+  "bounds":{"type":Array},
+  "checksum":{"type":Double},
+  "startingSum":{"type":Double},
+  "points":{"type":,"array","items":Point},
+  "color":{"type":Color},
+  "thickness":{"type":Double},
+  "isHighlighter":{"type":Bool}
 }
 ~~~
 
