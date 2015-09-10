@@ -103,8 +103,32 @@ Quiz options are the available answers to choose from.
 }
 ~~~
 
+Quiz responses are an instance of an answer, tying a quiz response to a user.
+
+~~~javascript
+{
+  "type":"quizResponse",
+  "answer":{"type":String},
+  "answerer":{"type":String),
+  "id":{"type":String})
+)
+~~~
 ##Ink
 
+Ink is described in single strokes, which represent pressure variable paths.
+
+~~~javascript
+{
+	"type":"ink"
+	"bounds":{"type":Array},
+	"checksum":{"type":Double},
+	"startingSum":{"type":Double},
+	"points":{"type":,"array","items":Point},
+	"color":{"type":Color},
+	"thickness":{"type":Double},
+	"isHighlighter":{"type":Bool}
+}
+~~~
 ##Text
 
 ##Images
