@@ -2,10 +2,24 @@
 layout: public
 ---
 
-* [Concepts](#concepts)
-* [Configurability](#configurability)
-* [Entities](#entities)
-* [Integration](#integration)
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
+**Table of Contents**
+
+- [-](#-)
+- [Concepts](#concepts)
+- [Configurability](#configurability)
+- [Entities](#entities)
+    - [Conversations](#conversations)
+    - [Slides](#slides)
+    - [Users](#users)
+    - [Quizzes](#quizzes)
+    - [Ink](#ink)
+    - [Text](#text)
+    - [Images](#images)
+    - [Submissions](#submissions)
+- [Integration](#integration)
+
+<!-- markdown-toc end -->
 
 #Concepts
 
