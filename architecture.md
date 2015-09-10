@@ -45,7 +45,7 @@ Implementation for these entities can be found inside the [MeTL dependencies rep
 
 A Conversation is the top level of content in MeTL.  It is created by a user, and that user retains ownership rights over it.  A Conversation is similar to a PowerPoint presentation in structure.
 
-```javascript
+~~~javascript
 {
   "author":{"type":String},
   "lastAccessed":{"type":Int},
@@ -58,7 +58,7 @@ A Conversation is the top level of content in MeTL.  It is created by a user, an
   "permissions":{"type":Permission},
   "configName":{"type":String},
 }
-```
+~~~
 
 ##Slides
 
