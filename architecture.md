@@ -39,7 +39,7 @@ An installed MeTL system must configure one of each of:
 
 #Entities
 
-Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within as dependencies.  This section represents them in the form of Scala [lift-json]},
+Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within as dependencies.  This section presents them in a sloppy take on the Swagger format.
 
 ##Conversations
 
