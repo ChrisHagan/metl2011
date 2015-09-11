@@ -252,3 +252,7 @@ footer {
 	color:#444;
     }
 }
+
+#screenshots img{
+    width:300px;
+}
