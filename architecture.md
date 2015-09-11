@@ -30,7 +30,7 @@ layout: public
 
 #Concepts
 
-MeTL at its heart is a message hub, with all messages being persisted for later retrieval.
+MeTL is at its heart a message hub with all messages being persisted for later retrieval.  This makes it a system for virtualising rooms.
 
 Messages are sent to a specific space (a chatroom, continuing the MUC metaphor from XMPP), and only people who are in that room will hear the message.
 
@@ -63,6 +63,16 @@ An installed MeTL system must configure one of each of:
 
 [configurationArchitecture]: images/configurationArchitecture.png "Configuration architecture"
 ![A component diagram of MeTL, demonstrating configuration points][configurationArchitecture]
+
+#Components
+
+MeTL is a server/client application, with several different clients.
+
+##Viewer
+
+[MeTL Viewer](https://github.com/StackableRegiments/analyticalmetlx/blob/master/src/main/webapp/metlviewer.html) is a simple HTML page, with fully bookmarkable locations.  This system is intended to support very low end devices and be integrated into basic structures.  It is essentially a full sized thumbnail of a slide with navigation handles.  Quiz responses are supported.
+
+![https://github.com/StackableRegiments/analyticalmetlx/blob/master/src/main/webapp/metlviewer.html]
 
 #Authentication
 
@@ -277,7 +287,7 @@ A submission is an image and a message.
 }
 ~~~
 
-Where the blacklist specifie users who are not permitted to view this submission.
+Where the blacklist specifies users who are not permitted to view this submission.
 
 #Integration
 
