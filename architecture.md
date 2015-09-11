@@ -23,21 +23,27 @@ layout: public
 
 #Concepts
 
-MeTL at its heart is a live message exchange engine, with all messages being persisted for later retrieval.
+MeTL at its heart is a message hub, with all messages being persisted for later retrieval.
 
-The default messaging mechanism is XMPP, and most of the MeTL messaging components use that protocol.
-
-The default persistence mechanism is a filestore.  Alternative components include MongoDB and SQL (each of these is under development).
-
-Clients to the MeTL system operate in a room metaphor - each message is sent to a specific space, and only peers who are connected and in that space will receive it.
+Messages are sent to a specific space (a chatroom, continuing the MUC metaphor from XMPP), and only people who are in that room will hear the message.
 
 Messages can be user level, and be visible to a human user, or system level and used to coordinate clients behaviour.
 
 All messages which have ever been through a room are retained, and can be replayed in order.  Server side mechanisms optimize the results so that, for instance, a sentence which was published, moved and then later deleted does not show up in the client history at all.
 
-[Conversations](#conversations) are structured as a collection of [slides](#slides) and some metadata.
+[Conversations](#conversations) are structured as a collection of [slides](#slides) and some metadata.  This is similar to the structure of a PowerPoint presentation, which enables some interoperability.
 
-This is similar to the mental model of a PowerPoint presentation.
+A slide is a room.
+
+Each user has a private room on each slide.
+
+Each conversation has a conversation global room.  Quizzes, submissions and attachments use this space, as they are not specific to a slide.
+
+A server global room carries configuration data to all connected clients (when a conversation is shared differently, for instance, this is broadcast globally in case that conversation needs to be added or removed from a search result).
+
+The default messaging mechanism is XMPP, and most of the MeTL messaging components use that protocol.
+
+The default persistence mechanism is a filestore.  Alternative components include MongoDB and SQL (each of these is under development).
 
 #Configurability
 
