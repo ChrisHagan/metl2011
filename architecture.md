@@ -1,3 +1,7 @@
+---
+layout: public
+---
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
 
@@ -26,10 +30,6 @@
 - [Integration](#integration)
 
 <!-- markdown-toc end -->
----
-layout: public
----
-
 
 #Concepts
 
