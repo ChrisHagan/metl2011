@@ -57,6 +57,60 @@ An installed MeTL system must configure one of each of:
 [configurationArchitecture]: images/configurationArchitecture.png "Configuration architecture"
 ![A component diagram of MeTL, demonstrating configuration points][configurationArchitecture]
 
+#Authentication
+
+MeTL support several different strategies for authorization, which must be configured at server level.  They are all web authentication strategies, some form submission and some redirect-based.  The MeTL 2011 client interacts with this strategy by embedding an Internet Explorer instance and running web based authentication through it, to avoid having a separate authentication channel.
+
+##CAS
+
+##ADFS
+
+To interact with an Active Directory Federation Service, a MeTL system must provide the following details in its configuration.
+
+A keystore must be built on the MeTL server to store certificates for establishment of SSL.
+
+~~~
+  <saml>
+    <serverScheme>https</serverScheme>
+    <serverName></serverName>
+    <serverPort>8443</serverPort>
+    <maximumAuthenticationLifetime>
+      28800 <!-- in seconds, must match corresponding settings in IDP -->
+    </maximumAuthenticationLifetime>
+    <expectedAttributes>
+      <emailAddress>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress</emailAddress>
+      <group>http://schemas.xmlsoap.org/claims/Group</group>
+    </expectedAttributes>
+    <callbackUrl>saml-callback</callbackUrl>
+    <protectedRoutes>
+      <route>authenticationState</route>
+      <route>board</route>
+      <route>future</route>
+      <route>metlviewer</route>
+      <route>summaries</route>
+      <route>conversation</route>
+      <route>slide</route>
+      <route>slideNext</route>
+      <route>slidePrev</route>
+      <route>slideNavigation</route>
+      <route>quiz</route>
+      <route>quizzes</route>
+    </protectedRoutes>
+    <idpMetadataFileName>federationmetadata.xml</idpMetadataFileName>
+    <keystorePath>exampleKeystorePath</keystorePath>
+    <keystorePassword></keystorePassword>
+    <keystorePrivateKeyPassword></keystorePrivateKeyPassword>
+  </saml>
+ ~~~
+
+##Simple
+
+##LDAP
+
+##OpenId
+
+##OpenAuth
+
 #Entities
 
 Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within this repository as dependencies.  This section presents them in non-compliant JSON Schema.
