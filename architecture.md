@@ -41,7 +41,7 @@ Each conversation has a conversation global room.  Quizzes, submissions and atta
 
 A server global room carries configuration data to all connected clients (when a conversation is shared differently, for instance, this is broadcast globally in case that conversation needs to be added or removed from a search result).
 
-The default messaging mechanism is XMPP, and most of the MeTL messaging components use that protocol.
+The default messaging mechanism is XMPP (Jabber), and most of the MeTL messaging components use that protocol.  XMPP is so pervasive in the MeTL architecture that conversations and slides refer to themselves using a jid (Jabber ID).
 
 The default persistence mechanism is a filestore.  Alternative components include MongoDB and SQL (each of these is under development).
 
@@ -59,7 +59,7 @@ An installed MeTL system must configure one of each of:
 
 #Entities
 
-Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within as dependencies.  This section presents them in a sloppy take on the Swagger format.
+Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within this repository as dependencies.  This section presents them in non-compliant JSON Schema.
 
 All entities share the following attributes:
 
@@ -219,3 +219,9 @@ A submission is an image and a message.
 Where the blacklist specifie users who are not permitted to view this submission.
 
 #Integration
+
+All work in all conversations by a user can be retrieved over HTTP:
+
+1. Given a particular username: /conversationSearch?query={username}
+1. For each of the conversation jids returned: /detailsFor/{jid}
+1. For each of the returned details.slides: /fullHistory/{slideJid}
