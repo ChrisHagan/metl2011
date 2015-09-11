@@ -7,6 +7,13 @@ layout: public
 
 - [Concepts](#concepts)
 - [Configurability](#configurability)
+- [Authentication](#authentication)
+    - [CAS](#cas)
+    - [ADFS](#adfs)
+    - [Simple](#simple)
+    - [LDAP](#ldap)
+    - [OpenId](#openid)
+    - [OpenAuth](#openauth)
 - [Entities](#entities)
     - [Structure](#structure)
         - [Conversations](#conversations)
@@ -101,7 +108,7 @@ A keystore must be built on the MeTL server to store certificates for establishm
     <keystorePassword></keystorePassword>
     <keystorePrivateKeyPassword></keystorePrivateKeyPassword>
   </saml>
- ~~~
+~~~
 
 ##Simple
 
