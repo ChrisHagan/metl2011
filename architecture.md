@@ -1,12 +1,11 @@
----
-layout: public
----
-
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
 
 - [Concepts](#concepts)
 - [Configurability](#configurability)
+- [Components](#components)
+    - [Viewer](#viewer)
+    - [MeTL 2011](#metl-2011)
 - [Authentication](#authentication)
     - [CAS](#cas)
     - [ADFS](#adfs)
@@ -27,6 +26,10 @@ layout: public
 - [Integration](#integration)
 
 <!-- markdown-toc end -->
+---
+layout: public
+---
+
 
 #Concepts
 
