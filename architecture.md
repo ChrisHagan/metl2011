@@ -5,17 +5,17 @@ layout: public
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
 
-- [-](#-)
 - [Concepts](#concepts)
 - [Configurability](#configurability)
 - [Entities](#entities)
-    - [Conversations](#conversations)
-    - [Slides](#slides)
-    - [Users](#users)
-    - [Quizzes](#quizzes)
-    - [Ink](#ink)
-    - [Text](#text)
-    - [Images](#images)
+    - [Structure](#structure)
+        - [Conversations](#conversations)
+        - [Slides](#slides)
+        - [Quizzes](#quizzes)
+    - [Canvas content](#canvas-content)
+        - [Ink](#ink)
+        - [Text](#text)
+        - [Images](#images)
     - [Submissions](#submissions)
 - [Integration](#integration)
 
@@ -55,53 +55,67 @@ An installed MeTL system must configure one of each of:
 
 Implementation for these entities can be found inside the [MeTL dependencies repository](https://github.com/StackableRegiments/dependencies/blob/master/MeTLData/MeTLData/src/main/scala/metlDataTypes.scala).  XML and JSON serializers are available within as dependencies.  This section presents them in a sloppy take on the Swagger format.
 
-##Conversations
+All entities share the following attributes:
+
+~~~javascript
+{
+  server:{type:ServerConfiguration},       
+  author:{type:String},
+  timestamp:{type:Long}
+}
+~~~
+
+A ServerConfiguration indicates the top level location of the content.  This can be used to differentiate between organizations, or org units, or separate installations.
+
+The timestamp indicates the time at which the server processed the content.  It is not dependent on the user's locale or clock.
+
+The user is identified as a simple string UID.
+
+##Structure 
+
+###Conversations
 
 A Conversation is the top level of content in MeTL.  It is created by a user, and that user retains ownership rights over it.  A Conversation is similar to a PowerPoint presentation in structure.
 
 ~~~javascript
 {
-  "author":{"type":String},
-  "lastAccessed":{"type":Int},
-  "slides":{"type":Array},
-  "subject":{"type":String},
-  "tag":{"type":String},
-  "jid":{"type":Int},
-  "title":{"type":String},
-  "created":{"type":String},
-  "permissions":{"type":Permission},
-  "configName":{"type":String},
+  author:{type:String},
+  lastAccessed:{type:Int},
+  slides:{type:Array},
+  subject:{type:String},
+  tag:{type:String},
+  jid:{type:Int},
+  title:{type:String},
+  created:{type:String},
+  permissions:{type:Permission},
+  configName:{type:String},
 }
 ~~~
 
-##Slides
+###Slides
 
 A slide is a room level content space.  When a user enters a slide, their client replays the history of content on that slide.
 
 ~~~javascript
 {
-  "id":{"type":Int},
-  "author":{"type":String},
-  "index":{"type":Int},
+  id:{type:Int},
+  author:{type:String},
+  index:{type:Int},
 }
 ~~~
 
-##Users
-
-A user is a unique entity within MeTL, who must be authenticated to enter a space.  They have a single unique identifier, usually their login.
-
-##Quizzes
+###Quizzes
 
 A quiz has an author, a question and some answers to choose from.
 
 ~~~javascript
 {
-  "type":"quiz",
-  "created":{"type":Int},
-  "question":{"type":String},
-  "id":{"type":String},
-  "isDeleted":{"type":Bool},
-  "options":{"type":Array,"items":{"type":Option}}
+  type:"quiz",
+  created:{type:Int},
+  question:{type:String},
+  id:{type:String},
+  isDeleted:{type:Bool},
+  options:{type:Array,items:{type:Option}}
 }
 ~~~
 
@@ -109,11 +123,11 @@ Quiz options are the available answers to choose from.
 
 ~~~javascript
 {
-  "type":"quizOption",
-  "name":{"type":String},
-  "text":{"type":String},
-  "correct":{"type":Bool},
-  "color":{"type":Color}
+  type:"quizOption",
+  name:{type:String},
+  text:{type:String},
+  correct:{type:Bool},
+  color:{type:Color}
 }
 ~~~
 
@@ -121,27 +135,48 @@ Quiz responses are an instance of an answer, tying a quiz response to a user.
 
 ~~~javascript
 {
-  "type":"quizResponse",
-  "answer":{"type":String},
-  "answerer":{"type":String),
-  "id":{"type":String})
+  type:"quizResponse",
+  answer:{type:String},
+  answerer:{type:String),
+  id:{type:String})
 )
 ~~~
 
-##Ink
+##Canvas content
+
+All objects which appear visually on the main canvas have the following attributes in common:
+
+~~~javascript
+{
+  target:{type:String},
+  privacy:{type:Privacy},
+  slide:{type:String},
+  identity:{type:String},
+  scaleFactorX:{type:Double},
+  scaleFactorY:{type:Double}
+}
+~~~
+
+Where a target is the location on which the content should appear.  The private note space, or the public canvas, for instance, are locations.
+
+A Privacy can be Private or Public.
+
+The identity of the element is a hash of its significant attributes, enabling simple comparison by value or identity when deduplication or modification is required.
+
+###Ink
 
 Ink is described in single strokes, which represent pressure variable paths.
 
 ~~~javascript
 {
-  "type":"ink"
-  "bounds":{"type":Array},
-  "checksum":{"type":Double},
-  "startingSum":{"type":Double},
-  "points":{"type":,"array","items":Point},
-  "color":{"type":Color},
-  "thickness":{"type":Double},
-  "isHighlighter":{"type":Bool}
+  type:"ink"
+  bounds:{type:Array},
+  checksum:{type:Double},
+  startingSum:{type:Double},
+  points:{type:,array","items:Point},
+  color:{type:Color},
+  thickness:{type:Double},
+  isHighlighter:{type:Bool}
 }
 ~~~
 
@@ -149,18 +184,32 @@ Where a Point is a triplet of doubles pulled off the point string:
 
 ~~~javascript
 {
-"x":{"type":Double},
-"y":{"type":Double},
-"thickness":{"type":Double}
+  x:{type:Double},
+  y:{type:Double},
+  thickness:{type:Double}
 }
 ~~~
 
 As a performance optimisation this is actually transmitted as "x y t x y t...", but the conceptual model is that of a sequence of pressure aware Points.
 
-##Text
+###Text
 
-##Images
+###Images
 
 ##Submissions
+
+A submission is an image and a message.
+
+~~~javascript
+{
+  title:{type:String},
+  slide:{type:Int},
+  url:{type:String},
+  bytes:{type:Array,items:Byte},
+  blacklist:{type:Array,items:String}
+}
+~~~
+
+Where the blacklist specifie users who are not permitted to view this submission.
 
 #Integration
