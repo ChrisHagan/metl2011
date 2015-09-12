@@ -149,6 +149,10 @@ td img {
     max-width:300px;
 }
 
+td {
+    vertical-align:top;
+} 
+
 p img {
     display: inline;
     margin: 0;
