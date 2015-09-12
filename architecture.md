@@ -71,6 +71,8 @@ An installed MeTL system must configure one of each of:
 
 MeTL is a server/client application, with several different clients.
 
+From least to most powerful, they are:
+
 ##Viewer
 
 [MeTL Viewer](https://github.com/StackableRegiments/analyticalmetlx/blob/master/src/main/webapp/metlviewer.html) is a simple HTML page, with fully bookmarkable locations.  This system is intended to support very low end devices and be integrated into basic structures.  It is essentially a full sized thumbnail of a slide with navigation handles.  Quiz responses are supported.
