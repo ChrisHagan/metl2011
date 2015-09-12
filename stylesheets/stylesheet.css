@@ -145,6 +145,10 @@ img {
     margin: 10px 0 10px 0;
 }
 
+td img {
+    max-width:300px;
+}
+
 p img {
     display: inline;
     margin: 0;
