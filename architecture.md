@@ -75,8 +75,8 @@ MeTL is a server/client application, with several different clients.
 
 [MeTL Viewer](https://github.com/StackableRegiments/analyticalmetlx/blob/master/src/main/webapp/metlviewer.html) is a simple HTML page, with fully bookmarkable locations.  This system is intended to support very low end devices and be integrated into basic structures.  It is essentially a full sized thumbnail of a slide with navigation handles.  Quiz responses are supported.
 
-|:Caption:|:Sample image:|
-|----------|--------------|
+|Caption|Sample image|
+|:----------:|:--------------:|
 |The search interface to MeTL Viewer. | ![Search page](images/snapshots/metlViewerSearchPage.PNG)|
 |The content viewing interface to MeTL Viewer.  No visual input is enabled in this system.| ![In conversation](images/snapshots/metlViewerInConversation.PNG)|
 |The quiz viewing and response interface to MeTL Viewer.  This is the only form of interactivity in this system. | ![In quiz](images/snapshots/metlViewerQuizResponsePage.PNG)|
