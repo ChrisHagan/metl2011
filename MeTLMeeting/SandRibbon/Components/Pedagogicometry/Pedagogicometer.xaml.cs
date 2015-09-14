@@ -12,18 +12,17 @@ namespace SandRibbon.Components.Sandpit
     }
     public partial class Pedagogicometer : UserControl
     {
-        private static IEnumerable<PedagogyLevel> allPedagogies = null;
-        private static Pedagogicometer instance;
-        public Pedagogicometer()
-        {
-            InitializeComponent();
-            instance = this;
-            allPedagogies = new[] { 
+        private static IEnumerable<PedagogyLevel> allPedagogies = new[] { 
                 new PedagogyLevel{ code = PedagogyCode.Whiteboard,                  label= "Whiteboard" },
                 new PedagogyLevel{ code = PedagogyCode.SurveyRespondent,            label= "Survey Respondent" },
                 new PedagogyLevel{ code = PedagogyCode.ResponsivePresentation,      label= "Responsive Presentation" },
                 new PedagogyLevel{ code = PedagogyCode.CollaborativePresentation,   label= "Collaborative Presentation" },
                 new PedagogyLevel{ code = PedagogyCode.CrowdsourcedConversation,    label= "Crowdsourced Conversation" }};
+        private static Pedagogicometer instance;
+        public Pedagogicometer()
+        {
+            InitializeComponent();
+            instance = this;            
             pedagogies.ItemsSource = allPedagogies;
         }
         public static void SetPedagogyLevel(PedagogyLevel level)

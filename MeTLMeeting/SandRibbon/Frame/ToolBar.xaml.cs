@@ -48,8 +48,7 @@ namespace SandRibbon.Chrome
                         //add("friends");
                         //add("notes");
                         add("lectureStyle");
-                        add("tutorialStyle");
-                        //add("meetingStyle");
+                        add("tutorialStyle");                        
                         break; 
                 }
             }

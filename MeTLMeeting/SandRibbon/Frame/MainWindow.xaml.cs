@@ -1,4 +1,4 @@
-﻿using Divelements.SandRibbon;
+﻿using Microsoft.Windows.Controls.Ribbon;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
@@ -72,8 +72,7 @@ namespace SandRibbon
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));            
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
@@ -82,14 +81,9 @@ namespace SandRibbon
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-
-            
+            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));            
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
-
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -104,16 +98,14 @@ namespace SandRibbon
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
-            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
-            Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
+            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));            
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));            
             
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
-            displayDispatcherTimer = createExtendedDesktopTimer();
-            ribbon.Loaded += ribbon_Loaded;
+            displayDispatcherTimer = createExtendedDesktopTimer();            
         }
 
         [System.STAThreadAttribute()]
@@ -243,11 +235,7 @@ namespace SandRibbon
         {
             if (loader == null) loader = new PowerPointLoader();
             loader.ImportPowerpoint(this);
-        }
-        private void SetRibbonAppearance(RibbonAppearance appearance)
-        {
-            Appearance = appearance;
-        }
+        }        
         private void createBlankConversation(object obj)
         {
             var element = Keyboard.FocusedElement;
@@ -290,35 +278,13 @@ namespace SandRibbon
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
             ClientFactory.Connection().SaveUserOptions(Globals.me, options);
-        }
-        void ribbon_Loaded(object sender, RoutedEventArgs e)
-        {
-            DelegateCommand<object> hideRibbon = null;
-            hideRibbon = new DelegateCommand<object>((_obj) =>
-            {
-
-                Commands.SetPedagogyLevel.UnregisterCommand(hideRibbon);
-                if (!ribbon.IsMinimized)
-                    ribbon.ToggleMinimize();
-            });
-            Commands.SetPedagogyLevel.RegisterCommand(hideRibbon);
-        }
+        }        
 
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
         }
 
-        private void ShowConversationSearchBox(object _arg)
-        {
-            if (!ribbon.IsMinimized)
-                ribbon.ToggleMinimize();
-        }
-        private void HideConversationSearchBox(object _arg)
-        {
-            if (ribbon.IsMinimized)
-                ribbon.ToggleMinimize();
-        }
         private void Reconnecting(bool success)
         {
             if (success)
@@ -367,11 +333,7 @@ namespace SandRibbon
         {
             mainFrame.Navigate(new CollaborationPage(slide));
         }
-        private void JoinConversation(string title)
-        {            
-            if (ribbon.SelectedTab != null)
-                ribbon.SelectedTab = ribbon.Tabs[0];            
-        }
+        
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
@@ -434,8 +396,7 @@ namespace SandRibbon
                                      {
                                          UpdateTitle(details);
                                          if (!mustBeInConversation(null))
-                                         {
-                                             ShowConversationSearchBox(null);
+                                         {        
                                              Commands.LeaveLocation.Execute(null);
                                          }
                                      }
@@ -557,23 +518,23 @@ namespace SandRibbon
                         case 0:     
                             homeGroups.Add(new EditingOptions());
                             break;
-                        case 1:
+                        case 6:
                             tabs.Add(new Tabs.Quizzes());
                             tabs.Add(new Tabs.Submissions());
                             tabs.Add(new Tabs.Attachments());
                             homeGroups.Add(new EditingModes());
                             break;
-                        case 2:
+                        case 7:
                             tabs.Add(new Tabs.ConversationManagement());                            
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());
                             homeGroups.Add(new ContentVisibilityHost());
                             break;
-                        case 3:
+                        case 8:
                             homeGroups.Add(new CollaborationControlsHost());
                             homeGroups.Add(new PrivacyToolsHost());
                             break;
-                        case 4:
+                        case 9:
                             homeGroups.Add(new Notes());
                             tabs.Add(new Tabs.Analytics());
                             break;
@@ -587,11 +548,8 @@ namespace SandRibbon
                     home.Items.Add((RibbonGroup)group);
                 tabs.Add(home);
                 tabs.Sort(new PreferredDisplayIndexComparer());
-                foreach (var tab in tabs)
-                    ribbon.Tabs.Add((RibbonTab)tab);
-                ribbon.SelectedTab = home;
-                if (!ribbon.IsMinimized)
-                    ribbon.ToggleMinimize();
+                ribbon.ItemsSource = tabs;                
+                
 
                 Commands.RestoreUIState.Execute(null);
             });

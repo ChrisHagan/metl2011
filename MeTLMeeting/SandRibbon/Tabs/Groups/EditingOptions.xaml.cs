@@ -1,6 +1,6 @@
 ﻿using System.Windows;
-using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using Microsoft.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Tabs.Groups
 {

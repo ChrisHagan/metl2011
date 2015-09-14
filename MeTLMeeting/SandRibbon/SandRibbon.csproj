@@ -136,6 +136,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\RibbonControlsLibrary.4.0.0\lib\net40\RibbonControlsLibrary.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SmartThreadPool">
       <HintPath>lib\SmartThreadPool.dll</HintPath>
     </Reference>
@@ -919,6 +923,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\HgId.pre" />
     <None Include="LectureMeTL_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />

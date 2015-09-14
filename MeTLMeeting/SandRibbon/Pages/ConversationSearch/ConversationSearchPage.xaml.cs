@@ -415,7 +415,6 @@ namespace SandRibbon.Pages.ConversationSearch
         private void searchConversations_Click(object sender, RoutedEventArgs e)
         {
             FillSearchResultsFromInput();
-            //RefreshSortedConversationsList();
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {

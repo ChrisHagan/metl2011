@@ -1,21 +1,16 @@
-﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.EditingOptions"
+﻿<ribbon:RibbonGroup x:Class="SandRibbon.Tabs.Groups.EditingOptions"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
+    xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    ShowDialogLauncher="False" Header="Editing Options" Image="\Resources\ArtistPalette.png">
-    <sr:RibbonGroup.Resources>
+    Header="Editing Options" >
+    <ribbon:RibbonGroup.Resources>
         <core:String x:Key="preferredDisplayIndex">1</core:String>
-    </sr:RibbonGroup.Resources>
-    <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Small" Priority="9"/>
-        <sr:GroupVariant Variant="Medium" Priority="8"/>
-        <sr:GroupVariant Variant="Collapsed" Priority="10"/>
-    </sr:RibbonGroup.Variants>
+    </ribbon:RibbonGroup.Resources>
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot" >
         <groups:ToolBox x:Name="toolBox"/>
         <groups:PenColors x:Name="penColors"/>
         <groups:TextTools x:Name="textTools"/>
     </StackPanel >
-</sr:RibbonGroup>           
+</ribbon:RibbonGroup>           
