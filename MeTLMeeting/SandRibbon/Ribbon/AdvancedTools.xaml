@@ -1,0 +1,19 @@
+﻿<sr:RibbonTab x:Class="SandRibbon.Tabs.AdvancedTools"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
+    sr:KeyboardAccess.Keys="P" Text="Advanced Tools" x:Name="advancedRoot">
+    <sr:RibbonTab.Resources>
+        <core:String x:Key="preferredDisplayIndex">8</core:String>    
+    </sr:RibbonTab.Resources>
+    <sr:RibbonGroup>
+        <dict:Button Text="Manage Blacklist"  Icon="/Resources/NewSlide.png" x:Name="manageBlackList" Click="ManageBlacklist"/>
+        <dict:Button Text="Edit conversation" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
+        <dict:Button Text="Present Video" Icon="/Resources/NewSlide.png" x:Name="presentVideo" Command="{x:Static api:Commands.PresentVideo}"/>
+    </sr:RibbonGroup>
+</sr:RibbonTab>

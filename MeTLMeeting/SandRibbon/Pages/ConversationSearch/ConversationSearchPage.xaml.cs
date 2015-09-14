@@ -442,7 +442,7 @@ namespace SandRibbon.Pages.ConversationSearch
                 if (conversation.UserHasPermission(Globals.credentials))
                 {                    
                     Commands.JoinConversation.ExecuteAsync(requestedJid);
-                    NavigationService.Navigate(new CollaborationPage(conversation.Slides.First().id));
+                    NavigationService.Navigate(new ConversationOverviewPage(conversation));                    
                 }
                 else
                     MeTLMessage.Information("You no longer have permission to view this conversation.");

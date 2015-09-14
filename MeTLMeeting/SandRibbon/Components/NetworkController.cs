@@ -48,7 +48,6 @@ namespace SandRibbon.Components
     public class NetworkController
     {
         public ClientConnection client;
-        private Action deregister;
         public NetworkController(MeTLServerAddress.serverMode mode)
         {
             App.mark(String.Format("NetworkController instantiating: {0}",mode));

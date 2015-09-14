@@ -1,0 +1,17 @@
+﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.EditingModes"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    ShowDialogLauncher="False" Header="Editing Modes" Image="\Resources\ArtistEasel.png">
+    <sr:RibbonGroup.Resources>
+        <core:String x:Key="preferredDisplayIndex">0</core:String>    
+    </sr:RibbonGroup.Resources>
+    <sr:RibbonGroup.Variants>
+        <sr:GroupVariant Variant="Small" Priority="12"/>
+        <sr:GroupVariant Variant="Medium" Priority="11"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="13"/>
+    </sr:RibbonGroup.Variants>
+    <simple:SimpleModeSwitcher x:Name="modes"/>
+</sr:RibbonGroup>           

@@ -1,0 +1,15 @@
+﻿<sr:RibbonTab x:Class="SandRibbon.Tabs.ClassManagement"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
+    sr:KeyboardAccess.Keys="P" Text="Class Management" x:Name="classRoot">
+    <sr:RibbonTab.Resources>
+        <core:String x:Key="preferredDisplayIndex">8</core:String>    
+    </sr:RibbonTab.Resources>
+    <sr:RibbonGroup>
+        <dict:Button Text="Manage Blacklist"  Icon="/Resources/NewSlide.png" x:Name="manageBlackList" Click="ManageBlacklist"/>
+    </sr:RibbonGroup>
+
+</sr:RibbonTab>

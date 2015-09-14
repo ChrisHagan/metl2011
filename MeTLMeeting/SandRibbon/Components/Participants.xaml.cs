@@ -107,7 +107,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveConversationDetails(ConversationDetails details)
         {
-            if (details.Jid == SandRibbon.Providers.Globals.conversationDetails.Jid)
+            if (details.Jid == Providers.Globals.conversationDetails.Jid)
             {
                 foreach (var bannedUsername in details.blacklist)
                 {
@@ -179,7 +179,6 @@ namespace SandRibbon.Components
             return words.Where(w => w.Count() > 3).Select(w => stemmer.Stem(w)).ToList();
         }
 
-        private Object l = new Object();
         private void constructPersonFromUsername(string username)
         {
             if (!people.ContainsKey(username))
@@ -188,6 +187,5 @@ namespace SandRibbon.Components
                 participantListBox.ItemsSource = people.Values.ToList();
             }
         }
-
     }
 }

@@ -205,6 +205,9 @@
     <Compile Include="Pages\Collaboration\CollaborationPage.xaml.cs">
       <DependentUpon>CollaborationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\ConversationOverviewPage.xaml.cs">
+      <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\IdentitySetup\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -217,7 +220,7 @@
     <Compile Include="Quizzing\ViewEditAQuiz.xaml.cs">
       <DependentUpon>ViewEditAQuiz.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
+    <Compile Include="Ribbon\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\LocalFileProvider.cs" />
@@ -281,6 +284,10 @@
     <Page Include="Components\CommandBridge.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\Collaboration\ConversationOverviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\ConversationSearch\ConversationSearchPage.xaml">
       <SubType>Designer</SubType>
@@ -426,49 +433,49 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\ClassManagement.xaml">
+    <Page Include="Ribbon\ClassManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Attachments.xaml">
+    <Page Include="Ribbon\Attachments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\CollaborationControlsHost.xaml">
+    <Page Include="Ribbon\Groups\CollaborationControlsHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tabs\Groups\ContentVisibilityHost.xaml">
+    <Page Include="Ribbon\Groups\ContentVisibilityHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Groups\EditingOptions.xaml">
+    <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Submissions.xaml">
+    <Page Include="Ribbon\Groups\EditingOptions.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\ZoomControlsHost.xaml">
+    <Page Include="Ribbon\Submissions.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\PenColors.xaml">
+    <Page Include="Ribbon\Groups\ZoomControlsHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ribbon\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -558,13 +565,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\TextTools.xaml">
+    <Page Include="Ribbon\Groups\TextTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\ToolBox.xaml">
+    <Page Include="Ribbon\Groups\ToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -594,49 +601,49 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Analytics.xaml">
+    <Page Include="Ribbon\Analytics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\EditingModes.xaml">
+    <Page Include="Ribbon\Groups\EditingModes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\Friends.xaml">
+    <Page Include="Ribbon\Groups\Friends.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\MiniMap.xaml">
+    <Page Include="Ribbon\Groups\MiniMap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\Notes.xaml">
+    <Page Include="Ribbon\Groups\Notes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Home.xaml">
+    <Page Include="Ribbon\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Plugins.xaml">
+    <Page Include="Ribbon\Plugins.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Quizzes.xaml">
+    <Page Include="Ribbon\Quizzes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -697,7 +704,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Tabs\ConversationManagement.xaml">
+    <Page Include="Ribbon\ConversationManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -778,28 +785,28 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\ClassManagement.xaml.cs">
+    <Compile Include="Ribbon\ClassManagement.xaml.cs">
       <DependentUpon>ClassManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Attachments.xaml.cs">
+    <Compile Include="Ribbon\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\CollaborationControlsHost.xaml.cs">
+    <Compile Include="Ribbon\Groups\CollaborationControlsHost.xaml.cs">
       <DependentUpon>CollaborationControlsHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\PrivacyToolsHost.xaml.cs">
+    <Compile Include="Ribbon\Groups\PrivacyToolsHost.xaml.cs">
       <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\EditingOptions.xaml.cs">
+    <Compile Include="Ribbon\Groups\EditingOptions.xaml.cs">
       <DependentUpon>EditingOptions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Submissions.xaml.cs">
+    <Compile Include="Ribbon\Submissions.xaml.cs">
       <DependentUpon>Submissions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\ZoomControlsHost.xaml.cs">
+    <Compile Include="Ribbon\Groups\ZoomControlsHost.xaml.cs">
       <DependentUpon>ZoomControlsHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
+    <Compile Include="Ribbon\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
       <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
     </Compile>
@@ -837,8 +844,8 @@
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\TextTools.xaml.cs" />
-    <Compile Include="Tabs\Groups\ToolBox.xaml.cs">
+    <Compile Include="Ribbon\Groups\TextTools.xaml.cs" />
+    <Compile Include="Ribbon\Groups\ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SyncDisplay.xaml.cs">
@@ -853,32 +860,31 @@
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\Globals.cs" />
     <Compile Include="Providers\RecentConversationProvider.cs" />
-    <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
-    <Compile Include="Tabs\Analytics.xaml.cs">
+    <Compile Include="Ribbon\Analytics.xaml.cs">
       <DependentUpon>Analytics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\EditingModes.xaml.cs">
+    <Compile Include="Ribbon\Groups\EditingModes.xaml.cs">
       <DependentUpon>EditingModes.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\Friends.xaml.cs">
+    <Compile Include="Ribbon\Groups\Friends.xaml.cs">
       <DependentUpon>Friends.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\MiniMap.xaml.cs">
+    <Compile Include="Ribbon\Groups\MiniMap.xaml.cs">
       <DependentUpon>MiniMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\Notes.xaml.cs">
+    <Compile Include="Ribbon\Groups\Notes.xaml.cs">
       <DependentUpon>Notes.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Home.xaml.cs">
+    <Compile Include="Ribbon\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Plugins.xaml.cs">
+    <Compile Include="Ribbon\Plugins.xaml.cs">
       <DependentUpon>Plugins.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Quizzes.xaml.cs">
+    <Compile Include="Ribbon\Quizzes.xaml.cs">
       <DependentUpon>Quizzes.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\ConversationManagement.xaml.cs">
+    <Compile Include="Ribbon\ConversationManagement.xaml.cs">
       <DependentUpon>ConversationManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
@@ -925,14 +931,12 @@
     </None>
     <None Include="packages.config" />
     <None Include="Properties\HgId.pre" />
-    <None Include="LectureMeTL_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
