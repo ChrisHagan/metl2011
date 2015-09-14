@@ -1,0 +1,35 @@
+﻿<Page x:Class="SandRibbon.Pages.Login.LoginPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SandRibbon.Pages.Login"
+      xmlns:components="clr-namespace:SandRibbon.Components"
+      xmlns:my="clr-namespace:SandRibbon"
+       xmlns:sr="clr-namespace:SandRibbon"    
+    xmlns:utility="clr-namespace:SandRibbon.Components.Utility"
+    xmlns:p="clr-namespace:SandRibbon.Properties"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="Login">
+    <Grid>
+        <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid x:Name="commandEscape" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid x:Name="logonBrowserContainer" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto">
+                    <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Loading...</Label>
+                            <components:CircularProgressBar DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Margin="20,0,20,0"/>
+                        </StackPanel>
+                        <StackPanel x:Name="restartLoginProcessContainer" Visibility="Collapsed">
+                            <Label>Logging in has been taking a long time.</Label>
+                            <Label>This is often normal, but if you'd like to restart the process:</Label>
+                            <Button Click="restartLoginProcess">Restart login process</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Page>

@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="SandRibbon.ProgressDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    x:Name="importProgress">
+    <UserControl.Background>
+        <SolidColorBrush Color="Gray" Opacity="0.2"/>
+    </UserControl.Background>
+    <UserControl.Resources>
+        <core:Double x:Key="slideHeight">54.0</core:Double>
+        <core:Double x:Key="slideWidth">72.0</core:Double>
+        <core:Double x:Key="lowX">00.0</core:Double>
+        <core:Double x:Key="lowY">100.0</core:Double>
+        <core:Double x:Key="highX">200.0</core:Double>
+        <core:Double x:Key="highY">0.0</core:Double>
+        <DataTemplate x:Key="slideTemplate">
+            <Image Width="{StaticResource slideWidth}" Height="{StaticResource slideHeight}" Source="{Binding Path=slideThumbnailSource, Converter={x:Static my:Converters.nonCachedImage}}" Margin="0 5 0 0"/>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="panelTemplate">
+            <StackPanel /> 
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+    <Border CornerRadius="15" Padding="15" Background="#92806F" Width="450" Height="450" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>   
+                <ColumnDefinition/>   
+                <ColumnDefinition/>   
+            </Grid.ColumnDefinitions>
+            <Viewbox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" Stretch="Fill">
+                <Image Source="..\Resources\progressBackground.png" />
+            </Viewbox>
+            <ItemsControl x:Name="from"
+                         Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  VerticalAlignment="Bottom"                             
+                          ItemTemplate="{StaticResource slideTemplate}"
+                          ItemsPanel="{StaticResource panelTemplate}" />
+            <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="20">
+                <quiz:GoldPlaque />
+                <StackPanel>
+                    <Label x:Name="goldLabel" Content="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="32"/>
+                    <ProgressBar Height="25" IsIndeterminate="False" Minimum="0" Maximum="100" x:Name="progress" Margin="10 0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

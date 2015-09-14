@@ -182,10 +182,10 @@ namespace SandRibbon
         public static DefaultableCompositeCommand UpdateContentVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ForcePageRefresh = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand OriginalView = new DefaultableCompositeCommand();
-        public static RoutedCommand Flush = new RoutedCommand();
-        public static RoutedCommand CreateQuizStructure = new RoutedCommand();
-        public static RoutedCommand ZoomIn = new RoutedCommand();
-        public static RoutedCommand ZoomOut = new RoutedCommand();
+        public static DefaultableCompositeCommand CreateQuizStructure = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand Flush = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ZoomIn = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ZoomOut = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ExtendCanvasBothWays = new DefaultableCompositeCommand();
         #endregion
         #region ImageCanvas
@@ -235,6 +235,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand RegisterPowerpointSourceDirectoryPreference = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LogOut = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BackendSelected = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LoginFailed = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetIdentity = new DefaultableCompositeCommand(Credentials.Empty);
         public static DefaultableCompositeCommand NoNetworkConnectionAvailable = new DefaultableCompositeCommand();

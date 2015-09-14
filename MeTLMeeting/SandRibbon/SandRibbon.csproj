@@ -93,7 +93,7 @@
     <WebPageSource>$(WebPageProd)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>SandRibbon.Window1</StartupObject>
+    <StartupObject>SandRibbon.MainWindow</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -195,6 +195,18 @@
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />
     <Compile Include="Components\Utility\TimedAction.cs" />
+    <Compile Include="Pages\Collaboration\ChooseCollaborationContextPage.xaml.cs">
+      <DependentUpon>ChooseCollaborationContextPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Collaboration\CollaborationPage.xaml.cs">
+      <DependentUpon>CollaborationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IdentitySetup\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IdentitySetup\ServerSelectorPage.xaml.cs">
+      <DependentUpon>ServerSelectorPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
       <DependentUpon>DisplayAQuiz.xaml</DependentUpon>
     </Compile>
@@ -222,17 +234,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Chrome\ImportProgress.xaml">
+    <Page Include="Frame\ImportProgress.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Chrome\StatusBar.xaml">
+    <Page Include="Frame\StatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Chrome\ToolBar.xaml">
+    <Page Include="Frame\ToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -266,7 +278,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\ConversationSearchBox.xaml">
+    <Page Include="Pages\ConversationSearch\ConversationSearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -289,12 +301,6 @@
     <Page Include="Components\HelpButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\Login.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -361,6 +367,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Utility\MeTLVideoPlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\ChooseCollaborationContextPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\CollaborationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\IdentitySetup\LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\IdentitySetup\ServerSelectorPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -556,7 +578,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Window1.xaml">
+    <Page Include="Frame\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -617,7 +639,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="AttachedInputBindings.cs" />
-    <Compile Include="Chrome\ImportProgress.xaml.cs">
+    <Compile Include="Frame\ImportProgress.xaml.cs">
       <DependentUpon>ImportProgress.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\App.xaml.cs">
@@ -667,8 +689,8 @@
       <DependentUpon>MeTLVideoPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Utility\PasswordBoxBinder.cs" />
-    <Compile Include="Components\Window1.xaml.cs">
-      <DependentUpon>Window1.xaml</DependentUpon>
+    <Compile Include="Frame\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Tabs\ConversationManagement.xaml">
@@ -688,22 +710,19 @@
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Chrome\StatusBar.xaml.cs">
+    <Compile Include="Frame\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Chrome\ToolBar.xaml.cs">
+    <Compile Include="Frame\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\ConversationSearchBox.xaml.cs">
-      <DependentUpon>ConversationSearchBox.xaml</DependentUpon>
+    <Compile Include="Pages\ConversationSearch\ConversationSearchPage.xaml.cs">
+      <DependentUpon>ConversationSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\DrawerSplitter.xaml.cs">
       <DependentUpon>DrawerSplitter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\HelpButton.xaml.cs" />
-    <Compile Include="Components\Login.xaml.cs">
-      <DependentUpon>Login.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\Pedagogicometry\Pedagogicometer.xaml.cs">
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>

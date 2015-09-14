@@ -7,13 +7,6 @@
     Title="View Submissions"
     x:Name="viewSubmissions"
     SizeToContent="WidthAndHeight">
-    <Window.Resources>
-        <CollectionViewSource Source="{Binding ElementName=Buckets, Path=SelectedItem.submissions}" x:Key="sortedSubmissionsView">
-            <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription PropertyName="time"/>
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-    </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ImportSubmissions}" Executed="importAllSubmissionsInBucket"/>
     </Window.CommandBindings>
@@ -22,60 +15,24 @@
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
                 <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmissions}" HorizontalAlignment="Right">Insert selected submissions as a new slide</Button>
             </StackPanel>
-            <Grid MaxHeight="450">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="325"/>
-                    <ColumnDefinition MaxWidth="325"/>
-                    <ColumnDefinition MinWidth="500"/>
-                </Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" x:Name="Buckets" SelectionMode="Single" Background="Transparent" SelectedIndex="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Path=submissionList}" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding BindsDirectlyToSource=True, Converter={x:Static SandRibbon:Converters.submissionCountConverter}}"></TextBlock>
-                                <TextBlock Margin="10 0 0 0 " Text="{Binding Path=From}"/>
-                                <TextBlock Margin="10 0 0 0 " Text="{Binding Path=To}"/>
-                            </StackPanel>
-
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <ListBox Grid.Column="1" x:Name="submissions" SelectionMode="Multiple" Background ="Transparent" 
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         ItemsSource="{Binding Source={StaticResource sortedSubmissionsView}}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Viewbox Width="100" Height="100">
-                                    <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
-                                </Viewbox>
-                                <TextBlock Text="{Binding Path=author}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <ScrollViewer Grid.Column="2" >
-                    <ItemsControl ItemsSource="{Binding ElementName=submissions, Path=SelectedItems}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid x:Name="GridContainer" MinHeight="150">
-                                    <Viewbox Margin="0,35,0,0" Height="Auto" Width="{Binding ElementName=GridContainer, Path=ActualWidth}" VerticalAlignment="Top" HorizontalAlignment="Left" >
-                                        <Image x:Name="previewImage" Source="{Binding Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
-                                    </Viewbox>
-                                    <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                                        Content="{Binding Converter={x:Static SandRibbon:Converters.ExtractSubmissionAuthor}}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </Grid>
+            <ListBox Grid.Column="1" x:Name="Submissions" SelectionMode="Multiple" Background ="Transparent" 
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Viewbox Width="300">
+                                <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding Path=author}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </DockPanel>
     </Border>
 </Window>

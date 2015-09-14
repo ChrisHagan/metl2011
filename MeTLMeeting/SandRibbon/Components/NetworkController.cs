@@ -47,7 +47,7 @@ namespace SandRibbon.Components
 
     public class NetworkController
     {
-        private ClientConnection client;
+        public ClientConnection client;
         private Action deregister;
         public NetworkController(MeTLServerAddress.serverMode mode)
         {

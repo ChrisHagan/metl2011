@@ -16,7 +16,7 @@ namespace SandRibbon.Automation
             InitializeComponent();
             userCount.Height = 20;
         }
-        List<Window1> windows;
+        List<MainWindow> windows;
         private void launchClients()
         {
             var desiredClients = Int32.Parse(userCount.Text);
@@ -26,9 +26,9 @@ namespace SandRibbon.Automation
             double maxWidth = System.Windows.SystemParameters.PrimaryScreenWidth - width;
             int x = 0;
             int y = 0;
-            windows = new List<Window1>();
+            windows = new List<MainWindow>();
             for (int i = 0; i < desiredClients; i++)
-                windows.Add(new Window1());
+                windows.Add(new MainWindow());
             foreach (var window in windows)
             {
                 window.Height = height;

@@ -1,0 +1,641 @@
+﻿using Divelements.SandRibbon;
+using MeTLLib;
+using MeTLLib.DataTypes;
+using MeTLLib.Providers.Connection;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components;
+using SandRibbon.Components.Pedagogicometry;
+using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.ServerSelection;
+using SandRibbon.Properties;
+using SandRibbon.Providers;
+using SandRibbon.Tabs.Groups;
+using SandRibbon.Utils;
+using SandRibbon.Utils.Connection;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+
+namespace SandRibbon
+{
+    public partial class MainWindow
+    {
+        private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
+
+        private PowerPointLoader loader;
+        private UndoHistory undoHistory;
+        public string CurrentProgress { get; set; }
+        public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
+        public string log
+        {
+            get { return Logger.log; }
+        }
+        public MainWindow()
+        {
+            DoConstructor();
+            Commands.AllStaticCommandsAreRegistered();
+            App.CloseSplashScreen();
+            mainFrame.Navigate(new ServerSelectorPage());
+        }
+        private void DoConstructor()
+        {
+            InitializeComponent();
+
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>
+            {
+                App.mark("Window1 knows about identity");
+            }));
+            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
+            Commands.MeTLType.DefaultValue = Globals.METL;
+            Title = Strings.Global_ProductName;
+            try
+            {                
+                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\MeTL Presenter.ico");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
+            }            
+            //create
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation, mustBeLoggedIn));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
+            Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            //conversation movement
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
+            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
+
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
+            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+
+            
+
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
+
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
+            
+            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
+            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));                               
+
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));            
+
+            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
+
+            Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
+            Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
+
+            Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
+            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
+            Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));            
+            
+            WorkspaceStateProvider.RestorePreviousSettings();
+            getDefaultSystemLanguage();
+            undoHistory = new UndoHistory();
+            displayDispatcherTimer = createExtendedDesktopTimer();
+            ribbon.Loaded += ribbon_Loaded;
+        }
+
+        [System.STAThreadAttribute()]
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public static void Main()
+        {
+            // want to customise the main function so we'll create one here instead of the automatically generated one from app.g.cs
+            SandRibbon.App.ShowSplashScreen();
+            SandRibbon.App app = new SandRibbon.App();
+
+            app.InitializeComponent();
+            app.Run();
+        }
+
+        private static int checkExtendedInProgress = 0;
+
+        private void dispatcherEventHandler(Object sender, EventArgs args)
+        {
+            if (1 == Interlocked.Increment(ref checkExtendedInProgress))
+            {
+                try
+                {
+                    /// There are three conditions we want to handle
+                    /// 1. Extended mode activated, there are now 2 screens
+                    /// 2. Extended mode deactivated, back to 1 screen
+                    /// 3. Extended screen position has changed, so need to reinit the projector window
+
+                    var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
+
+
+                    if (Projector.Window == null && screenCount > 1)
+                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                    else if (Projector.Window != null && screenCount == 1)
+                        Projector.Window.Close();
+                    else if (Projector.Window != null && screenCount > 1)
+                    {
+                        // Case 3.
+                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                    }
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref checkExtendedInProgress, 0);
+                }
+            }
+        }
+
+        private void CheckForExtendedDesktop()
+        {
+            if (!displayDispatcherTimer.IsEnabled)
+            {
+                //This dispather timer is left running in the background and is never stopped
+                displayDispatcherTimer.Start();
+            }
+        }
+
+        private System.Windows.Threading.DispatcherTimer createExtendedDesktopTimer()
+        {
+            displayDispatcherTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);
+            displayDispatcherTimer.Interval = TimeSpan.FromSeconds(1);
+            displayDispatcherTimer.Tick += new EventHandler(dispatcherEventHandler);
+            displayDispatcherTimer.Start();
+            return displayDispatcherTimer;
+        }
+
+        private void getDefaultSystemLanguage()
+        {
+            try
+            {
+                Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
+            }
+            catch (Exception e)
+            {
+                Logger.Crash(e);
+            }
+        }
+        #region helpLinks
+        private void OpenEULABrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(Properties.Settings.Default.UserAgreementUrl);
+        }
+        private void OpenTutorialBrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(Properties.Settings.Default.TutorialUrl);
+        }
+        private void OpenReportBugBrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(Properties.Settings.Default.BugReportUrl);
+        }
+        private void OpenAboutMeTLBrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(Properties.Settings.Default.DescriptionUrl);
+        }
+        #endregion
+        private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
+        {
+            try
+            {
+                var culture = lang.GetSpecificCulture();
+                FlowDirection = culture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                var mergedDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
+                var currentToolTips = mergedDicts.Where(rd => ((ResourceDictionary)rd).Source.ToString().ToLower().Contains("tooltips")).First();
+                var rdUri = new Uri("Components\\ResourceDictionaries\\ToolTips_" + lang + ".xaml", UriKind.Relative);
+                var newDict = (ResourceDictionary)App.LoadComponent(rdUri);
+                var sourceUri = new Uri("ToolTips_" + lang + ".xaml", UriKind.Relative);
+                newDict.Source = sourceUri;
+                mergedDicts[mergedDicts.IndexOf(currentToolTips)] = newDict;
+            }
+
+            catch (Exception e)
+            {
+                Logger.Crash(e);
+            }
+        }
+        private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
+        {
+            Trace.TraceInformation("UserOptionsDialog_Show");
+            if (mustBeLoggedIn(null))
+            {
+                var userOptions = new UserOptionsDialog();
+                userOptions.Owner = Window.GetWindow(this);
+                userOptions.ShowDialog();
+            }
+            else MeTLMessage.Warning("You must be logged in to edit your options");
+        }
+        private void ImportPowerpoint(object obj)
+        {
+            if (loader == null) loader = new PowerPointLoader();
+            loader.ImportPowerpoint(this);
+        }
+        private void SetRibbonAppearance(RibbonAppearance appearance)
+        {
+            Appearance = appearance;
+        }
+        private void createBlankConversation(object obj)
+        {
+            var element = Keyboard.FocusedElement;
+            if (loader == null) loader = new PowerPointLoader();
+            loader.CreateBlankConversation();
+        }
+
+        private void HelpBinding(object sender, EventArgs e)
+        {
+            LaunchHelp(null);
+        }
+
+        private void LaunchHelp(object _arg)
+        {
+            try
+            {
+                Process.Start("http://monash.edu/eeducation/metl/help.html");
+            }
+            catch (Exception)
+            {
+            }
+        }
+        private void PrintBinding(object sender, EventArgs e)
+        {
+            PrintConversation(null);
+        }
+        private void PrintConversation(object _arg)
+        {
+            if (Globals.UserOptions.includePrivateNotesOnPrint)
+                new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+            else
+                new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+        }
+        private void SetUserOptions(UserOptions options)
+        {
+            //this next line should be removed.
+            SaveUserOptions(options);            
+        }
+        private void SaveUserOptions(UserOptions options)
+        {
+            //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
+            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+        }
+        void ribbon_Loaded(object sender, RoutedEventArgs e)
+        {
+            DelegateCommand<object> hideRibbon = null;
+            hideRibbon = new DelegateCommand<object>((_obj) =>
+            {
+
+                Commands.SetPedagogyLevel.UnregisterCommand(hideRibbon);
+                if (!ribbon.IsMinimized)
+                    ribbon.ToggleMinimize();
+            });
+            Commands.SetPedagogyLevel.RegisterCommand(hideRibbon);
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+        }
+
+        private void ShowConversationSearchBox(object _arg)
+        {
+            if (!ribbon.IsMinimized)
+                ribbon.ToggleMinimize();
+        }
+        private void HideConversationSearchBox(object _arg)
+        {
+            if (ribbon.IsMinimized)
+                ribbon.ToggleMinimize();
+        }
+        private void Reconnecting(bool success)
+        {
+            if (success)
+            {
+                try
+                {                    
+                    var details = Globals.conversationDetails;
+                    if (details == null || details.Equals(ConversationDetails.Empty))
+                    {
+                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                    }
+                    else
+                    {
+                        var jid = Globals.conversationDetails.Jid;
+                        Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
+                        Commands.MoveTo.Execute(Globals.location.currentSlide);
+                        SlideDisplay.SendSyncMove(Globals.location.currentSlide);
+                        ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                                    null,
+                                    null,
+                                    (parser) =>
+                                    {
+                                        Commands.PreParserAvailable.Execute(parser);                 
+                                    },
+                                    jid);
+                    }
+                }
+                catch (NotSetException e)
+                {
+                    Logger.Crash(e);
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
+            }
+            else
+            {
+                showReconnectingDialog();
+            }
+        }                    
+               
+        private void ExecuteMoveTo(int slide)
+        {
+            mainFrame.Navigate(new CollaborationPage(slide));
+        }
+        private void JoinConversation(string title)
+        {            
+            if (ribbon.SelectedTab != null)
+                ribbon.SelectedTab = ribbon.Tabs[0];            
+        }
+        private string messageFor(ConversationDetails details)
+        {
+            var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
+            if (details.Equals(ConversationDetails.Empty))
+                return Strings.Global_ProductName;
+            return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
+        }                
+        private void showReconnectingDialog()
+        {
+            var majorHeading = new TextBlock
+                           {
+                               Foreground = Brushes.White,
+                               Text = "Connection lost...  Reconnecting",
+                               FontSize = 72,
+                               HorizontalAlignment = HorizontalAlignment.Center,
+                               VerticalAlignment = VerticalAlignment.Center
+                           };
+            var minorHeading = new TextBlock
+                           {
+                               Foreground = Brushes.White,
+                               Text = "You must have an active internet connection,\nand you must not be logged in twice with the same account.",
+                               FontSize = 30,
+                               HorizontalAlignment = HorizontalAlignment.Center,
+                               VerticalAlignment = VerticalAlignment.Center
+                           };            
+        }
+        private bool canCreateConversation(object obj)
+        {
+            return mustBeLoggedIn(obj);
+        }
+        private bool mustBeLoggedIn(object _arg)
+        {
+            var v = !Globals.credentials.ValueEquals(Credentials.Empty);
+            return v;
+        }                
+        private bool mustBeInConversationAndBeAuthor(object _arg)
+        {
+            return mustBeInConversation(_arg) && mustBeAuthor(_arg);
+        }
+        private bool mustBeInConversation(object _arg)
+        {
+            var details = Globals.conversationDetails;
+            if (!details.IsValid)
+                if (Globals.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
+            var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
+            validGroups.Add("unrestricted");
+            if (!details.isDeleted && validGroups.Contains(details.Subject.ToLower())) return true;
+            return false;
+        }
+        private bool mustBeAuthor(object _arg)
+        {
+            return Globals.isAuthor;
+        }
+        private void UpdateConversationDetails(ConversationDetails details)
+        {
+            if (details.IsEmpty) return;
+            Dispatcher.adopt(delegate
+                                 {
+                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
+                                     {
+                                         UpdateTitle(details);
+                                         if (!mustBeInConversation(null))
+                                         {
+                                             ShowConversationSearchBox(null);
+                                             Commands.LeaveLocation.Execute(null);
+                                         }
+                                     }
+                                 });
+        }
+        private void UpdateTitle(ConversationDetails details)
+        {
+            if (Globals.conversationDetails != null && mustBeInConversation(null))
+            {
+#if DEBUG
+                    Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
+#else
+                Title = messageFor(Globals.conversationDetails);
+#endif
+            }
+            else
+                Title = Strings.Global_ProductName;
+        }
+        private DelegateCommand<object> canOpenFriendsOverride;
+        private void applyPermissions(Permissions permissions)
+        {
+            if (canOpenFriendsOverride != null)
+                Commands.ToggleFriendsVisibility.UnregisterCommand(canOpenFriendsOverride);
+            canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
+            Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
+        }
+        
+        private void createConversation(object detailsObject)
+        {
+            var details = (ConversationDetails)detailsObject;
+            if (details == null) return;
+            if (Commands.CreateConversation.CanExecute(details))
+            {
+                if (details.Tag == null)
+                    details.Tag = "unTagged";
+                details.Author = Globals.userInformation.credentials.name;
+                var connection = ClientFactory.Connection();
+                details = connection.CreateConversation(details);
+                CommandManager.InvalidateRequerySuggested();
+                if (Commands.JoinConversation.CanExecute(details.Jid))
+                    Commands.JoinConversation.ExecuteAsync(details.Jid);
+            }
+        }
+        private void setSync(object _obj)
+        {
+            Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
+        }
+     
+      
+        public Visibility GetVisibilityOf(UIElement target)
+        {
+            return target.Visibility;
+        }
+        public void toggleNavigationLock(object _obj)
+        {
+           
+                var details = Globals.conversationDetails;
+                if (details == null)
+                    return;
+                details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
+                ClientFactory.Connection().UpdateConversationDetails(details);                       
+        }
+        private void SetConversationPermissions(object obj)
+        {
+            var style = (string)obj;
+            try
+            {
+                var details = Globals.conversationDetails;
+                if (details == null)
+                    return;
+                if (style == "lecture")
+                    details.Permissions.applyLectureStyle();
+                else
+                    details.Permissions.applyTuteStyle();
+                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            }
+            catch (NotSetException)
+            {
+                return;
+            }
+        }
+        private bool CanSetConversationPermissions(object _style)
+        {
+            return Globals.isAuthor;
+        }
+
+        private void sleep(object _obj)
+        {
+            Dispatcher.adoptAsync(delegate
+            {
+                Hide();
+            });
+        }
+        private void wakeUp(object _obj)
+        {
+            Dispatcher.adoptAsync(delegate
+            {
+                Show();
+                WindowState = WindowState.Maximized;
+            });
+        }
+        public void SetPedagogyLevel(PedagogyLevel level)
+        {
+            SetupUI(level);
+        }        
+
+        public void SetupUI(PedagogyLevel level)
+        {
+            Dispatcher.adoptAsync(() =>
+            {
+                Commands.SaveUIState.Execute(null);
+
+                List<FrameworkElement> homeGroups = new List<FrameworkElement>();
+                List<FrameworkElement> tabs = new List<FrameworkElement>();
+                foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
+                {
+                    switch (i)
+                    {
+                        case 0:     
+                            homeGroups.Add(new EditingOptions());
+                            break;
+                        case 1:
+                            tabs.Add(new Tabs.Quizzes());
+                            tabs.Add(new Tabs.Submissions());
+                            tabs.Add(new Tabs.Attachments());
+                            homeGroups.Add(new EditingModes());
+                            break;
+                        case 2:
+                            tabs.Add(new Tabs.ConversationManagement());                            
+                            homeGroups.Add(new ZoomControlsHost());
+                            homeGroups.Add(new MiniMap());
+                            homeGroups.Add(new ContentVisibilityHost());
+                            break;
+                        case 3:
+                            homeGroups.Add(new CollaborationControlsHost());
+                            homeGroups.Add(new PrivacyToolsHost());
+                            break;
+                        case 4:
+                            homeGroups.Add(new Notes());
+                            tabs.Add(new Tabs.Analytics());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                var home = new Tabs.Home();
+                homeGroups.Sort(new PreferredDisplayIndexComparer());
+                foreach (var group in homeGroups)
+                    home.Items.Add((RibbonGroup)group);
+                tabs.Add(home);
+                tabs.Sort(new PreferredDisplayIndexComparer());
+                foreach (var tab in tabs)
+                    ribbon.Tabs.Add((RibbonTab)tab);
+                ribbon.SelectedTab = home;
+                if (!ribbon.IsMinimized)
+                    ribbon.ToggleMinimize();
+
+                Commands.RestoreUIState.Execute(null);
+            });
+            CommandManager.InvalidateRequerySuggested();
+            Commands.RequerySuggested();
+        }
+        private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
+        {
+            public int Compare(FrameworkElement anX, FrameworkElement aY)
+            {
+                try
+                {
+                    var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));
+                    var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
+                    return x - y;
+                }
+                catch (FormatException)
+                {
+                    return 0;
+                }
+            }
+        }
+        
+        
+        private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                Commands.CloseApplication.Execute(null);
+                Application.Current.Shutdown();
+            }
+        }
+        private void ApplicationPopup_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            App.AccidentallyClosing = DateTime.Now;
+        }
+
+        private void ribbon_SelectedTabChanged(object sender, EventArgs e)
+        {
+            var ribbon = sender as Ribbon;
+        }        
+    }
+}

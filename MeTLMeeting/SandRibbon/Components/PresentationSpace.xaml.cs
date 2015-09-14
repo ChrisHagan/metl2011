@@ -23,6 +23,7 @@ using SandRibbon.Components.Pedagogicometry;
 using Image = System.Windows.Controls.Image;
 using SandRibbon.Quizzing;
 using System.Windows.Media.Effects;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
@@ -39,7 +40,7 @@ namespace SandRibbon.Components
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<CollaborationPage>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
@@ -191,15 +192,14 @@ namespace SandRibbon.Components
             stack.RefreshCanvas();
             EndInit();
         }
-        private void MirrorPresentationSpace(Window1 parent)
+        private void MirrorPresentationSpace(CollaborationPage presentationSpace)
         {
             try
             {
-                var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
+                var mirror = new Window { Content = new Projector { viewConstraint = presentationSpace.scroll } };
                 if (Projector.Window != null)
                     Projector.Window.Close();
-                Projector.Window = mirror;
-                parent.Closed += (_sender, _args) => mirror.Close();
+                Projector.Window = mirror;                
                 mirror.WindowStyle = WindowStyle.None;
                 mirror.AllowsTransparency = true;
                 setSecondaryWindowBounds(mirror);
