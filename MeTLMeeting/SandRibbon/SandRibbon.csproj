@@ -24,7 +24,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <ApplicationIcon>MeTLLogo-bronze.ico</ApplicationIcon>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
@@ -708,6 +708,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ResourceDictionaries\Controls2015.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Utils\UndoHistoryVisualiserWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1038,6 +1042,7 @@
     <Resource Include="Resources\Collaborate.png" />
     <Resource Include="Resources\ban-management-icon.png" />
     <Resource Include="Resources\banhammer.png" />
+    <Resource Include="favicon.ico" />
     <Content Include="Resources\empty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1071,8 +1076,6 @@
     <Resource Include="Resources\Ribbon-SlideStack.png" />
     <Resource Include="Resources\FitToPage.png" />
     <Resource Include="Resources\FitToView.png" />
-    <Resource Include="MeTLExperimenterIcon.ico" />
-    <Resource Include="MeTLLogo-bronze.ico" />
     <Content Include="Resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1186,6 +1189,7 @@
     <Resource Include="Resources\strikethrough.png" />
     <Resource Include="Resources\subscript.png" />
     <Resource Include="Resources\superscript.png" />
+    <Resource Include="Resources\slu.jpg" />
     <Content Include="Resources\Spectrum.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

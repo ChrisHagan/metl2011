@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="ResourceDictionaries\Brushes.xaml"/>
                 <ResourceDictionary Source="ResourceDictionaries\ToolTips.xaml"/>
                 <ResourceDictionary Source="ResourceDictionaries\TypedControlStylings.xaml"/>
+                <ResourceDictionary Source="ResourceDictionaries\Controls2015.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

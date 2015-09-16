@@ -9,14 +9,22 @@
       Title="ServerSelectorPage">
 
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
-        <TextBlock>Please select a server against which to work.</TextBlock>
-        <ListBox x:Name="servers">
+        <TextBlock Style="{StaticResource Header}">Please select a server against which to work.</TextBlock>
+        <ListBox x:Name="servers" BorderThickness="0" Margin="50">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Path=Key}" />
+                    <StackPanel Margin="100">
+                        <Image Width="100" Height="100" Source="{Binding Path=Value.image}" />
+                        <TextBlock Text="{Binding Path=Key}" Style="{StaticResource Label}"/>
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
-        <Button x:Name="connect" Content="Connect" Click="SetBackend" />
+        <Button x:Name="connect" Content="Connect" Click="SetBackend" FontSize="30" HorizontalContentAlignment="Center" Height="100"/>
     </StackPanel>
 </Page>

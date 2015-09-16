@@ -346,7 +346,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="{x:Type RadioButton}" TargetType="RadioButton">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
@@ -394,7 +394,7 @@
         </Setter>
     </Style>
 
-    
+
     <Style TargetType="{x:Type dict:ToggleButton}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>

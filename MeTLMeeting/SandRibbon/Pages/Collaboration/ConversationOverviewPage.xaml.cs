@@ -36,7 +36,7 @@ namespace SandRibbon.Pages.Collaboration
                                     (parser) =>
                                     {
                                         processing.Value++;
-                                        foreach(var user in process(parser)) {
+                                        foreach(var user in process(parser)) {                                            
                                             participantList.Add(user);
                                         }                                        
                                     },

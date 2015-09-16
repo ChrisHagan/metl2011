@@ -90,8 +90,6 @@ namespace SandRibbon
             Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));                               
 
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));            
-
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
 
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
@@ -498,80 +496,7 @@ namespace SandRibbon
                 WindowState = WindowState.Maximized;
             });
         }
-        public void SetPedagogyLevel(PedagogyLevel level)
-        {
-            SetupUI(level);
-        }        
-
-        public void SetupUI(PedagogyLevel level)
-        {
-            Dispatcher.adoptAsync(() =>
-            {
-                Commands.SaveUIState.Execute(null);
-
-                List<FrameworkElement> homeGroups = new List<FrameworkElement>();
-                List<FrameworkElement> tabs = new List<FrameworkElement>();
-                foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
-                {
-                    switch (i)
-                    {
-                        case 0:     
-                            homeGroups.Add(new EditingOptions());
-                            break;
-                        case 6:
-                            tabs.Add(new Tabs.Quizzes());
-                            tabs.Add(new Tabs.Submissions());
-                            tabs.Add(new Tabs.Attachments());
-                            homeGroups.Add(new EditingModes());
-                            break;
-                        case 7:
-                            tabs.Add(new Tabs.ConversationManagement());                            
-                            homeGroups.Add(new ZoomControlsHost());
-                            homeGroups.Add(new MiniMap());
-                            homeGroups.Add(new ContentVisibilityHost());
-                            break;
-                        case 8:
-                            homeGroups.Add(new CollaborationControlsHost());
-                            homeGroups.Add(new PrivacyToolsHost());
-                            break;
-                        case 9:
-                            homeGroups.Add(new Notes());
-                            tabs.Add(new Tabs.Analytics());
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                var home = new Tabs.Home();
-                homeGroups.Sort(new PreferredDisplayIndexComparer());
-                foreach (var group in homeGroups)
-                    home.Items.Add((RibbonGroup)group);
-                tabs.Add(home);
-                tabs.Sort(new PreferredDisplayIndexComparer());
-                ribbon.ItemsSource = tabs;                
-                
-
-                Commands.RestoreUIState.Execute(null);
-            });
-            CommandManager.InvalidateRequerySuggested();
-            Commands.RequerySuggested();
-        }
-        private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
-        {
-            public int Compare(FrameworkElement anX, FrameworkElement aY)
-            {
-                try
-                {
-                    var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));
-                    var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
-                    return x - y;
-                }
-                catch (FormatException)
-                {
-                    return 0;
-                }
-            }
-        }
+        
         
         
         private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

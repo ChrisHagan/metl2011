@@ -1,8 +1,12 @@
-﻿using Microsoft.Practices.Composite.Presentation.Commands;
+﻿using Divelements.SandRibbon;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
+using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
+using SandRibbon.Tabs.Groups;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -41,7 +45,87 @@ namespace SandRibbon.Pages.Collaboration
             PreviewKeyDown += new KeyEventHandler(KeyPressed);
 
             //mirroring - add yourself to the chain so the target can reference back to you
-            Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(o => Commands.MirrorPresentationSpace.Execute(this)));            
+            Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(o => Commands.MirrorPresentationSpace.Execute(this)));
+
+            //pedagogy setup
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel));
+
+        }
+
+        private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
+        {
+            public int Compare(FrameworkElement anX, FrameworkElement aY)
+            {
+                try
+                {
+                    var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));
+                    var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
+                    return x - y;
+                }
+                catch (FormatException)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public void SetPedagogyLevel(PedagogyLevel level)
+        {
+            SetupUI(level);
+        }
+
+        public void SetupUI(PedagogyLevel level)
+        {
+            Dispatcher.adoptAsync(() =>
+            {
+                Commands.SaveUIState.Execute(null);
+
+                List<FrameworkElement> homeGroups = new List<FrameworkElement>();
+                List<FrameworkElement> tabs = new List<FrameworkElement>();
+                foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            homeGroups.Add(new EditingOptions());
+                            break;
+                        case 6:
+                            tabs.Add(new Tabs.Quizzes());
+                            tabs.Add(new Tabs.Submissions());
+                            tabs.Add(new Tabs.Attachments());
+                            homeGroups.Add(new EditingModes());
+                            break;
+                        case 7:
+                            tabs.Add(new Tabs.ConversationManagement());
+                            homeGroups.Add(new ZoomControlsHost());
+                            homeGroups.Add(new MiniMap());
+                            homeGroups.Add(new ContentVisibilityHost());
+                            break;
+                        case 8:
+                            homeGroups.Add(new CollaborationControlsHost());
+                            homeGroups.Add(new PrivacyToolsHost());
+                            break;
+                        case 9:
+                            homeGroups.Add(new Notes());
+                            tabs.Add(new Tabs.Analytics());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                var home = new Tabs.Home();
+                homeGroups.Sort(new PreferredDisplayIndexComparer());
+                foreach (var group in homeGroups)
+                    home.Items.Add((RibbonGroup)group);
+                tabs.Add(home);
+                tabs.Sort(new PreferredDisplayIndexComparer());
+                ribbon.ItemsSource = tabs;
+
+
+                Commands.RestoreUIState.Execute(null);
+            });
+            CommandManager.InvalidateRequerySuggested();
+            Commands.RequerySuggested();
         }
 
         private bool LessThan(double val1, double val2, double tolerance)

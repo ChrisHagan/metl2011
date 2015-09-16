@@ -7,15 +7,32 @@ using System.Windows.Controls;
 
 namespace SandRibbon.Pages.ServerSelection
 {
-
+    public class Server
+    {
+        public String image { get; set; }
+        public MeTLServerAddress.serverMode mode { get; set; }
+    }
     public partial class ServerSelectorPage : Page
     {
         public ServerSelectorPage()
         {
             InitializeComponent();
-            servers.ItemsSource = new Dictionary<String, MeTLServerAddress.serverMode> {
-                { "Saint Leo University", MeTLServerAddress.serverMode.PRODUCTION },
-                { "MeTL Demo Server (this houses data in Amazon)", MeTLServerAddress.serverMode.STAGING }
+            servers.ItemsSource = new Dictionary<String, Server>
+            {
+                {
+                    "Saint Leo University",
+                    new Server {
+                        image = "/Resources/slu.jpg",
+                        mode = MeTLServerAddress.serverMode.PRODUCTION
+                    }
+                },
+                {
+                    "Open MeTL Server",
+                    new Server {
+                        image = "/Resources/splashScreen.png",
+                        mode = MeTLServerAddress.serverMode.STAGING
+                    }
+                }
             };
             servers.SelectedIndex = 1;
         }
@@ -24,11 +41,11 @@ namespace SandRibbon.Pages.ServerSelection
         {
             serversContainer.Visibility = Visibility.Collapsed;
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var backendMode = ((KeyValuePair<String, MeTLServerAddress.serverMode>)servers.SelectedItem).Value;
-            App.SetBackend(backendMode);
+            var selection = ((KeyValuePair<String, Server>)servers.SelectedItem).Value;
+            App.SetBackend(selection.mode);
             var backend = App.controller.client.server;
             Commands.BackendSelected.Execute(backend);
-            NavigationService.Navigate(new LoginPage(backend));                   
+            NavigationService.Navigate(new LoginPage(backend));
         }
     }
 }
