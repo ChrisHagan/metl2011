@@ -23,7 +23,7 @@
         <GradientStop Color="#FF7AA3F4" Offset="0.40"/>
         <GradientStop Color="#FFC5D5F6" Offset="1"/>
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ShinyAbsoluteHighlightBrush" Opacity="0.8" StartPoint="0.8,0.55" EndPoint="0.2,0.2" >
+    <LinearGradientBrush x:Key="ShinyAbsoluteHighlightBrush" Opacity="0.8" StartPoint="0.95,0.55" EndPoint="0.9,0.2" >
         <GradientStop Color="#00FFFFFF" Offset="0.78"/>
         <GradientStop Color="#80FFFFFF" Offset="0.80"/>
         <GradientStop Color="#99FFFFFF" Offset="0.87"/>
@@ -34,8 +34,8 @@
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="ShinyHighlightBrush" Opacity="0.8" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#00FFFFFF" Offset="0"/>
-        <GradientStop Color="#99FFFFFF" Offset="0.2"/>
-        <GradientStop Color="#00FFFFFF" Offset="0.6"/>
+        <GradientStop Color="#99FFFFFF" Offset="0.9"/>
+        <GradientStop Color="#00FFFFFF" Offset="0.95"/>
         <GradientStop Color="#FF000000" Offset="1"/>
     </LinearGradientBrush>
     <SandRibbonInterop:AutoShape x:Key="BlueAutoShape" Background="LightBlue" Foreground="DarkBlue">
@@ -70,7 +70,7 @@
 
     <SolidColorBrush Color="DarkGray" x:Key="CheckedBorderBrush"/>
     <SolidColorBrush Color="Black" x:Key="CheckedContentBrush"/>
-    <LinearGradientBrush x:Key="CheckedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="CheckedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,0.1">
         <GradientStop Color="#FFFED7A9" Offset="0"/>
         <GradientStop Color="#FFFBB565" Offset="0.39"/>
         <GradientStop Color="#FFFA9831" Offset="0.40"/>

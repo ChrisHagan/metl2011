@@ -5,8 +5,12 @@
       Title="ServerSelectorPage">
 
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
-        <TextBlock Style="{StaticResource Header}">Please select a server against which to work.</TextBlock>
         <ListBox x:Name="servers" BorderThickness="0" Margin="50">
+            <ListBox.Resources>
+                <SolidColorBrush x:Key="AccentColorBrush" Color="Transparent" />                
+                <SolidColorBrush x:Key="AccentColorBrush2" Color="Transparent" />
+                <Thickness x:Key="spacing" Top="50" />
+            </ListBox.Resources>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />
@@ -16,13 +20,15 @@
                 <DataTemplate>
                     <StackPanel Margin="100">
                         <Image Width="100" Height="100" Source="{Binding Path=Value.image}" />
-                        <TextBlock Text="{Binding Path=Key}" Style="{StaticResource Label}"/>
+                        <Label Content="{Binding Path=Key}" Margin="{DynamicResource spacing}"/>
+                        <RadioButton IsChecked="{Binding Path=IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Mode=TwoWay}" 
+                                     HorizontalAlignment="Center" Margin="{DynamicResource spacing}"/>                        
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
         <Button x:Name="connect" Click="SetBackend" HorizontalContentAlignment="Center">
-            <TextBlock Text="Connect" Padding="30" FontSize="30" />
+            <Label>Connect</Label>
         </Button>
     </StackPanel>
 </Page>

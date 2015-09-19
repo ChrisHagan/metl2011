@@ -1,7 +1,8 @@
-﻿<Window x:Class="SandRibbon.MainWindow"
+﻿<Controls:MetroWindow x:Class="SandRibbon.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     Foreground="Black"
     AllowDrop="True"    
     x:Name="ribbonWindow"
@@ -9,7 +10,7 @@
     WindowState="Maximized"
     MinHeight="240"
     MinWidth="320">
-    <Window.InputBindings>
+    <Controls:MetroWindow.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
         <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
         <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
@@ -28,6 +29,6 @@
         <KeyBinding Key="Down" Command="{x:Static api:Commands.MoveToNext}" />
         <KeyBinding Key="PageDown" Command="{x:Static api:Commands.MoveToNext}" />
         <KeyBinding Key="Delete" Command="{x:Static api:Commands.DeleteSelectedItems}"/>
-    </Window.InputBindings>
+    </Controls:MetroWindow.InputBindings>
     <Frame x:Name="mainFrame" Width="Auto" Height="Auto"/>
-</Window>
+</Controls:MetroWindow>

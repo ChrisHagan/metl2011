@@ -7,9 +7,7 @@
         <core:Double x:Key="two">2.0</core:Double>
     </UserControl.Resources>
     <Grid x:Name="container">
-        <Rectangle Fill="Gold" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray"/>
-        <Rectangle Margin="0,0,0,0" HorizontalAlignment="Right" 
-                   Fill="{StaticResource ShinyAbsoluteHighlightBrush}" RadiusX="3" RadiusY="3"
+        <Rectangle Margin="0,0,0,0" HorizontalAlignment="Right"                    
                    Height="Auto" VerticalAlignment="Stretch">
             <Rectangle.Width>
                 <MultiBinding Converter="{x:Static sr:Converters.multiply}">
