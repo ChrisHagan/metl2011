@@ -7,12 +7,15 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Linq;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace SandRibbon.Pages.Collaboration
 {
     public class ConversationParticipant : MeTLUser
     {
         public int slide { get; set; }
+        public int index { get; set; }
         public ConversationParticipant(string name, int slide, int activityCount) : base(name)
         {
             this.slide = slide;
@@ -21,12 +24,21 @@ namespace SandRibbon.Pages.Collaboration
     };
     public partial class ConversationOverviewPage : Page
     {
+        ConversationDetails conversation;
         public ConversationOverviewPage(ConversationDetails conversation)
         {
             InitializeComponent();
+            this.conversation = conversation;
             DataContext = conversation;
-            var participantList = new ObservableCollection<ConversationParticipant>();
-            participants.ItemsSource = participantList;
+
+            locations.ItemsSource = conversation.Slides.OrderBy(s => s.index);
+
+            var plotModel = new PlotModel();
+            var aggregateLine = new LineSeries { Color = OxyColors.White, Smooth = true };            
+            plotModel.Series.Add(aggregateLine);
+            activityPlot.Model = plotModel;
+
+            var participantList = new ObservableCollection<ConversationParticipant>();            
             processing.Maximum = conversation.Slides.Count;
             conversation.Slides.ForEach(slide =>
             {
@@ -36,33 +48,52 @@ namespace SandRibbon.Pages.Collaboration
                                     (parser) =>
                                     {
                                         processing.Value++;
-                                        foreach(var user in process(parser)) {                                            
+                                        foreach (var user in process(parser))
+                                        {
+                                            aggregateLine.Points.Clear();
+                                            user.index = slide.index;
                                             participantList.Add(user);
-                                        }                                        
+                                            var grouped = participantList.GroupBy(cp => cp.index)
+                                            .ToDictionary(g => g.Key, g =>
+                                            {
+                                                return new ConversationParticipant("", g.Key, g.Select(u => u.activityCount).Sum());
+                                            });
+                                            for (var i = 0; i < conversation.Slides.Count; i++)
+                                            {
+                                                aggregateLine.Points.Add(new DataPoint(i, grouped.ContainsKey(i) ? grouped[i].activityCount : 0));
+                                            }
+                                            activityPlot.InvalidatePlot();                                            
+                                        }
                                     },
                                     slide.id.ToString());
             });
         }
 
-        private void inc(Dictionary<string, int> dict, string author) {
+        private void inc(Dictionary<string, int> dict, string author)
+        {
             if (!dict.ContainsKey(author))
             {
                 dict[author] = 1;
             }
-            else {
+            else
+            {
                 dict[author]++;
             }
         }
 
-        private IEnumerable<ConversationParticipant> process(PreParser p) {
+        private IEnumerable<ConversationParticipant> process(PreParser p)
+        {
             var tallies = new Dictionary<string, int>();
-            foreach (var s in p.ink) {
+            foreach (var s in p.ink)
+            {
                 inc(tallies, s.author);
             }
-            foreach (var t in p.text.Values) {
+            foreach (var t in p.text.Values)
+            {
                 inc(tallies, t.author);
             }
-            foreach (var i in p.images.Values) {
+            foreach (var i in p.images.Values)
+            {
                 inc(tallies, i.author);
             }
             return tallies.Select(kv => new ConversationParticipant(kv.Key, p.location.currentSlide, kv.Value));

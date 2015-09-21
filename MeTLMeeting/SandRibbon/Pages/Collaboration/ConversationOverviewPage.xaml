@@ -3,34 +3,36 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"  
+      xmlns:components="clr-namespace:SandRibbon.Components"
+      xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
       Title="Conversation Overview">
+    <Page.Resources>
+        <components:UrlForSlideConverter x:Key="renderer" />
+    </Page.Resources>
     <StackPanel>
-        <TextBlock Text="{Binding Path=Title}" />
-        <TextBlock Text="{Binding Path=Id}" />
-        <TextBlock Text="{Binding Path=Author}" />
-        <ProgressBar Minimum="0"  Width="300" x:Name="processing"/>
-        <ItemsControl x:Name="participants">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding Path=username}" />
-                        <TextBlock Text="{Binding Path=slide}" />
-                        <TextBlock Text="{Binding Path=activityCount}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <ListBox x:Name="locations" ItemsSource="{Binding Path=Slides}" SelectionChanged="locations_SelectionChanged">
+        <Label Content="{Binding Path=Title}" />
+        <Label Content="{Binding Path=Id}" />
+        <Label Content="{Binding Path=Author}" />
+        <ProgressBar Minimum="0"  Width="Auto" x:Name="processing" Margin="{StaticResource clearTop}"/>
+        <oxy:PlotView x:Name="activityPlot" Height="100" Width="Auto" Margin="{StaticResource clearTop}">
+            <oxy:PlotView.Background>
+                <SolidColorBrush Color="{StaticResource AccentColor}" />
+            </oxy:PlotView.Background>
+        </oxy:PlotView>
+        <ListBox x:Name="locations" SelectionChanged="locations_SelectionChanged" Margin="{StaticResource clearTop}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel />
+                    <WrapPanel Width="Auto"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Label Content="{Binding Path=index}" />
+                        <Image Height="90" Width="90" Source="{Binding Path=id, Converter={StaticResource renderer}}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
     </StackPanel>    
 </Page>

@@ -28,6 +28,19 @@
         <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
                                    Margin="{StaticResource space}">
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="View">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="JoinConversation">
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_door_enter}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" />
                 <DataGridTextColumn Header="Owner" Binding="{Binding Path=Author}" />
                 <DataGridTextColumn Header="Created" Binding="{Binding Path=Created}" />

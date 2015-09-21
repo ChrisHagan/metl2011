@@ -3,14 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
-using MeTLLib.Utilities;
-using System.Collections.Specialized;
-using SandRibbon.Components.Utility;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 

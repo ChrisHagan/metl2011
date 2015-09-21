@@ -182,29 +182,7 @@ namespace SandRibbon.Pages.Conversations
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             RestartRefreshTimer();
-        }
-        private void ChooseConversationToEnter(object sender, RoutedEventArgs e)
-        {
-            var requestedJid = ((FrameworkElement)sender).Tag as string;
-            // Check that the permissions have not changed since user searched for the conversation
-            var conversation = ClientFactory.Connection().DetailsOf(requestedJid);
-            if (conversation.UserHasPermission(Globals.credentials))
-            {
-                Commands.JoinConversation.ExecuteAsync(requestedJid);
-                NavigationService.Navigate(new ConversationOverviewPage(conversation));
-            }
-            else
-                MeTLMessage.Information("You no longer have permission to view this conversation.");
-        }
-
-
-        private ContentPresenter view(object backedByConversation)
-        {
-            var conversation = (ConversationDetails)((FrameworkElement)backedByConversation).DataContext;
-            var item = SearchResults.ItemContainerGenerator.ContainerFromItem(conversation);
-            var view = (ContentPresenter)item;
-            return view;
-        }
+        }        
 
         private void EditConversation(object sender, RoutedEventArgs e)
         {
@@ -215,6 +193,19 @@ namespace SandRibbon.Pages.Conversations
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)
         {
             RefreshSortedConversationsList();
+        }
+
+        private void JoinConversation(object sender, RoutedEventArgs e)
+        {
+            var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
+            var conversation = ClientFactory.Connection().DetailsOf(requestedConversation.Jid);
+            if (conversation.UserHasPermission(Globals.credentials))
+            {
+                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
+                NavigationService.Navigate(new ConversationOverviewPage(conversation));
+            }
+            else
+                MeTLMessage.Information("You no longer have permission to view this conversation.");
         }
     }
     public class ConversationComparator : System.Collections.IComparer
