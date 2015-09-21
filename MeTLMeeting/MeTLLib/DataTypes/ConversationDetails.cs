@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Divan;
 using MeTLLib.Providers;
 using System.Globalization;
 
@@ -103,6 +102,8 @@ namespace MeTLLib.DataTypes
             scd.Permissions = conversation.Permissions;
             scd.Slides = conversation.Slides;
             scd.Tag = conversation.Tag;
+            scd.Author = conversation.Author;
+            scd.Created = conversation.Created;
 
             return scd;
         }

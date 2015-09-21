@@ -228,10 +228,13 @@
     <Compile Include="Pages\Collaboration\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\IdentitySetup\LoginPage.xaml.cs">
+    <Compile Include="Pages\Conversations\ConversationEditPage.xaml.cs">
+      <DependentUpon>ConversationEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Identity\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\IdentitySetup\ServerSelectorPage.xaml.cs">
+    <Compile Include="Pages\Identity\ServerSelectorPage.xaml.cs">
       <DependentUpon>ServerSelectorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
@@ -309,7 +312,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ConversationSearch\ConversationSearchPage.xaml">
+    <Page Include="Pages\Conversations\ConversationEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Conversations\ConversationSearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -409,11 +416,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\IdentitySetup\LoginPage.xaml">
+    <Page Include="Pages\Identity\LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\IdentitySetup\ServerSelectorPage.xaml">
+    <Page Include="Pages\Identity\ServerSelectorPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -755,7 +762,7 @@
     <Compile Include="Frame\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ConversationSearch\ConversationSearchPage.xaml.cs">
+    <Compile Include="Pages\Conversations\ConversationSearchPage.xaml.cs">
       <DependentUpon>ConversationSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\DrawerSplitter.xaml.cs">
