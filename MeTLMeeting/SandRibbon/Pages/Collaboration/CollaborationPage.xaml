@@ -48,7 +48,7 @@
                         </ScrollViewer>
                     </Viewbox>
                     <Grid x:Name="dynamicContent" />
-                    <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}"/>
+                    <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" />
                 </Grid>
                 <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
                 <AdornerDecorator>
@@ -61,11 +61,7 @@
                     <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
                 <TabControl Grid.Row="1" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
-                    <TabItem Header="Pages" Width="80">
-                        <components:SlideDisplay x:Name="slides" />
-                    </TabItem>
                     <TabItem Header="Notes" Width="80">
                         <Grid>
                             <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">

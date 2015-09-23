@@ -36,7 +36,7 @@ namespace SandRibbon.Pages.Conversations
     {
         private ObservableCollection<ConversationDetails> searchResultsObserver = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
 
-        private System.Threading.Timer refreshTimer;
+        private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
 
         public ConversationSearchPage()
@@ -46,8 +46,9 @@ namespace SandRibbon.Pages.Conversations
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
             SearchResults.ItemsSource = searchResultsObserver;
-            refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
+            typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
+            FillSearchResults(Globals.me);
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -130,12 +131,12 @@ namespace SandRibbon.Pages.Conversations
 
         private void PauseRefreshTimer()
         {
-            refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            typingDelay.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         private void RestartRefreshTimer()
         {
-            refreshTimer.Change(500, Timeout.Infinite);
+            typingDelay.Change(500, Timeout.Infinite);
         }
 
         private void UpdateAllConversations(ConversationDetails details)

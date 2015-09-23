@@ -5,7 +5,7 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     x:Class="SandRibbon.Components.ResourceDictionaries.TypedControlStylingEventHandlers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!--This area is for defining control templates and their triggers on specific controls-->
+    <!--This area is for defining control templates and their triggers on specific controls-->    
     <Style x:Key="ThicknessButton" TargetType="Button">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Template">

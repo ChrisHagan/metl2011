@@ -1,16 +1,14 @@
 ﻿<UserControl x:Class="SandRibbon.Components.SlideNavigationControls"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"
     Height="{Binding ElementName=nav, Path=ActualHeight}"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Components="clr-namespace:SandRibbon.Components">
     <UserControl.InputBindings>
         <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static api:Commands.ClipboardManager}" CommandParameter="{x:Static Components:ClipboardAction.Paste}"/>
     </UserControl.InputBindings>
-        <Grid>
-        <quizzing:GoldPlaque Height="Auto"/>
-        <Rectangle HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Fill="{StaticResource ShinyHighlightBrush}" RadiusX="3" RadiusY="3" />
+    <Grid>
         <dict:RibbonPanel Orientation="Horizontal" Visibility="Hidden" x:Name="nav" HorizontalAlignment="Center" Margin="0 0 0 0">
             <dict:Button Text="Previous" Icon="\Resources\Previous.png" x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
             <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>

@@ -2,11 +2,13 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"             
       xmlns:local="clr-namespace:SandRibbon.Pages.ServerSelection"      
+      xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
       Title="ServerSelectorPage">
 
     <Viewbox>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
-            <ListBox x:Name="servers" BorderThickness="0" Margin="50">
+            <Label Content="Where are you going?" Margin="{StaticResource clearTop}"/>
+            <ListBox x:Name="servers" BorderThickness="0" Margin="{StaticResource clearTop}" SelectionChanged="servers_SelectionChanged">
                 <ListBox.Resources>
                     <SolidColorBrush x:Key="AccentColorBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="AccentColorBrush2" Color="Transparent" />
@@ -21,15 +23,10 @@
                         <StackPanel Margin="100">
                             <Image Width="100" Height="100" Source="{Binding Path=Value.image}" />
                             <Label Content="{Binding Path=Key}" Margin="{StaticResource clearTop}"/>
-                            <RadioButton IsChecked="{Binding Path=IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Mode=TwoWay}" 
-                                     HorizontalAlignment="Center" Margin="{StaticResource clearTop}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ListBox>
-            <Button x:Name="connect" Click="SetBackend" HorizontalContentAlignment="Center" Margin="{StaticResource clearBottom}">
-                <Label>Connect</Label>
-            </Button>
         </StackPanel>
     </Viewbox>
 </Page>

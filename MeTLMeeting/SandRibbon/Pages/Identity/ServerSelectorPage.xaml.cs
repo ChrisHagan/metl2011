@@ -2,7 +2,6 @@
 using SandRibbon.Pages.Login;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.ServerSelection
@@ -34,14 +33,11 @@ namespace SandRibbon.Pages.ServerSelection
                     }
                 }
             };
-            servers.SelectedIndex = 1;
         }
 
-        private void SetBackend(object sender, RoutedEventArgs e)
-        {
-            serversContainer.Visibility = Visibility.Collapsed;
-            Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var selection = ((KeyValuePair<String, Server>)servers.SelectedItem).Value;
+        private void servers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {            
+            var selection = ((KeyValuePair<String, Server>)e.AddedItems[0]).Value;
             App.SetBackend(selection.mode);
             var backend = App.controller.client.server;
             Commands.BackendSelected.Execute(backend);

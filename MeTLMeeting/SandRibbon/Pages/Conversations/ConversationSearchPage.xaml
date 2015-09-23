@@ -16,7 +16,8 @@
     </Page.Resources>
     <DockPanel >
         <StackPanel  DockPanel.Dock="Top">
-            <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp"
+            <Label Content="What are you looking for?" Margin="{StaticResource clearBottom}"/>
+            <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"
                  Margin="{StaticResource space}"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"/>
             <StackPanel Orientation="Horizontal">

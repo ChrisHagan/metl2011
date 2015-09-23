@@ -48,8 +48,7 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(o => Commands.MirrorPresentationSpace.Execute(this)));
 
             //pedagogy setup
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel));
-
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel));            
         }
 
         private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>

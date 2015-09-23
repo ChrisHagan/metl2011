@@ -362,6 +362,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             };
         }
     }
+    
     public class Button : System.Windows.Controls.Button
     {
         public string Text

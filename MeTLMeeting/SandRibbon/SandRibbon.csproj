@@ -240,6 +240,9 @@
     <Compile Include="Pages\Collaboration\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\Palettes\CommandBarConfigurationPage.xaml.cs">
+      <DependentUpon>CommandBarConfigurationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Conversations\ConversationEditPage.xaml.cs">
       <DependentUpon>ConversationEditPage.xaml</DependentUpon>
     </Compile>
@@ -321,6 +324,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\Collaboration\ConversationOverviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\Palettes\CommandBarConfigurationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\Palettes\Macros.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

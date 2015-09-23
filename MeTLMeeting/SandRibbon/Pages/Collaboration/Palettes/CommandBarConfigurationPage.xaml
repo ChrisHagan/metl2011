@@ -1,0 +1,43 @@
+﻿<Page x:Class="SandRibbon.Pages.Collaboration.Palettes.CommandBarConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
+      xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      Title="CommandBarConfigurationPage">
+    <StackPanel>
+        <Label Content="What do you want in your toolbar?" />
+        <ItemsControl x:Name="sliders">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Label Style="{StaticResource medium}" Content="{Binding}" />
+                        <Slider x:Name="ButtonWidth" Minimum="20" Maximum="200" Value="{DynamicResource {Binding}}" 
+                                Width="200" ValueChanged="SliderMoved" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl x:Name="TopBar">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{StaticResource slot}" Margin="{DynamicResource SlotMargin}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Canvas Width="Auto" Height="Auto">
+            <Thumb DragDelta="Thumb_DragDelta" Canvas.Top="0" Canvas.Left="0">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <ContentControl Content="{StaticResource pen_red}" />
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+        </Canvas>
+    </StackPanel>
+</Page>

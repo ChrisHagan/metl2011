@@ -29,7 +29,7 @@
                 <DataTemplate>
                     <StackPanel>
                         <Label Content="{Binding Path=index}" />
-                        <Image Height="90" Width="90" Source="{Binding Path=id, Converter={StaticResource renderer}}"/>
+                        <Image Height="90" Width="90" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
