@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>546196D3B389504A3C406481A20A4230913E991E</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_3_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>D29B6AD8D4E3730DE5E2612CF1A9E2CE2FAC50CD</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_5_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -243,6 +243,7 @@
     <Compile Include="Pages\Collaboration\Palettes\CommandBarConfigurationPage.xaml.cs">
       <DependentUpon>CommandBarConfigurationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\Palettes\Macros.xaml.cs" />
     <Compile Include="Pages\Conversations\ConversationEditPage.xaml.cs">
       <DependentUpon>ConversationEditPage.xaml</DependentUpon>
     </Compile>
@@ -995,6 +996,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="SandRibbon_5_TemporaryKey.pfx" />
     <Resource Include="Resources\Entypo.ttf" />
     <None Include="Resources\Icon_" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />

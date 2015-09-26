@@ -4,40 +4,90 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:Converters="clr-namespace:MahApps.Metro.Converters"
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls"
       Title="CommandBarConfigurationPage">
+    <Page.Resources>
+        <local:DynamicResourceConverter x:Key="resourceConverter" />
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="IsEnabled" Value="True" />
+        </Style>
+    </Page.Resources>
     <StackPanel>
-        <Label Content="What do you want in your toolbar?" />
-        <ItemsControl x:Name="sliders">
+        <Label Content="How do you want your controls to look?" Margin="{StaticResource clearBottom}"/>
+        <ItemsControl x:Name="sliders" Margin="{StaticResource clearLeft}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <Label Style="{StaticResource medium}" Content="{Binding}" />
-                        <Slider x:Name="ButtonWidth" Minimum="20" Maximum="200" Value="{DynamicResource {Binding}}" 
-                                Width="200" ValueChanged="SliderMoved" />
+                        <Label Style="{StaticResource medium}" Content="{Binding Path=DisplayLabel}" />
+                        <Slider Minimum="10" Maximum="200"
+                                Value="{Binding Path=Property, Converter={StaticResource resourceConverter}, Mode=OneWay}"
+                                ValueChanged="Slider_ValueChanged"
+                                Width="200" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl x:Name="TopBar">
+        <Label Content="What do you want in your toolbars?" Margin="{StaticResource clearTop}"/>
+        <ItemsControl x:Name="Bars" Margin="{StaticResource clearTop}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <Grid />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <ContentControl Content="{StaticResource slot}" Margin="{DynamicResource SlotMargin}"/>
+                    <ItemsControl ItemsSource="{Binding Path=Macros}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="{Binding Path=Rows}" Columns="{Binding Path=Columns}" 
+                                                 HorizontalAlignment="{Binding Path=HorizontalAlignment}"
+                                                 VerticalAlignment="{Binding Path=VerticalAlignment}"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" 
+                                                AllowDrop="True" Drop="ContentControl_Drop"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Canvas Width="Auto" Height="Auto">
-            <Thumb DragDelta="Thumb_DragDelta" Canvas.Top="0" Canvas.Left="0">
-                <Thumb.Template>
-                    <ControlTemplate>
-                        <ContentControl Content="{StaticResource pen_red}" />
-                    </ControlTemplate>
-                </Thumb.Template>
-            </Thumb>
-        </Canvas>
+        <ScrollViewer>
+            <ItemsControl x:Name="ToolSets">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Label Content="{Binding Path=Label}" />
+                            <ItemsControl ItemsSource="{Binding Path=Macros}" Margin="{StaticResource clearLeft}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Thumb DragStarted="Thumb_DragStarted" Background="Transparent">
+                                            <Thumb.Template>
+                                                <ControlTemplate>
+                                                    <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" />
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </StackPanel>
 </Page>

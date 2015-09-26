@@ -154,6 +154,7 @@ namespace SandRibbon
 
         //public static DefaultableCompositeCommand Relogin = new DefaultableCompositeCommand();
         #region Quizzing
+        public static DefaultableCompositeCommand ToggleWorm = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendWormMove = new DefaultableCompositeCommand(); 
         public static DefaultableCompositeCommand ReceiveWormMove = new DefaultableCompositeCommand(); 
         public static DefaultableCompositeCommand ConvertPresentationSpaceToQuiz = new DefaultableCompositeCommand();
