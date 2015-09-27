@@ -8,6 +8,7 @@
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls"
       Title="CommandBarConfigurationPage">
     <Page.Resources>
+        <local:FactorConverter x:Key="factor" />
         <local:DynamicResourceConverter x:Key="resourceConverter" />
         <Style TargetType="{x:Type Button}">
             <Setter Property="IsEnabled" Value="True" />
@@ -29,34 +30,34 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         <Label Content="What do you want in your toolbars?" Margin="{StaticResource clearTop}"/>
-        <ItemsControl x:Name="Bars" Margin="{StaticResource clearTop}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ItemsControl ItemsSource="{Binding Path=Macros}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Rows="{Binding Path=Rows}" Columns="{Binding Path=Columns}" 
+        <Grid>
+            <ItemsControl x:Name="Bars" Margin="{StaticResource clearTop}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ItemsControl ItemsSource="{Binding Path=Macros}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="{Binding Path=Orientation}"
                                                  HorizontalAlignment="{Binding Path=HorizontalAlignment}"
                                                  VerticalAlignment="{Binding Path=VerticalAlignment}"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" 
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" 
                                                 AllowDrop="True" Drop="ContentControl_Drop"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <ScrollViewer>
-            <ItemsControl x:Name="ToolSets">
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl x:Name="ToolSets" Margin="0 150">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
@@ -88,6 +89,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </ScrollViewer>
+        </Grid>
     </StackPanel>
 </Page>

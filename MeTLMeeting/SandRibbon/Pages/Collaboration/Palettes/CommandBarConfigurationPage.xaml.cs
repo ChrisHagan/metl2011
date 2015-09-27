@@ -1,4 +1,5 @@
 ﻿using MeTLLib.DataTypes;
+using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,16 +25,8 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                 new SlotConfigurer("How wide are your graphs?", "SensorWidth")
             };            
             sliders.ItemsSource = rangeProperties;            
-            TopBar = new Bar(5)
-                {
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    Rows = 1,
-                    Columns = 8
-                };
-            Bars.ItemsSource = new[] {
-                TopBar
-            };
+            
+            Bars.ItemsSource = Globals.currentProfile.castBars;
             ToolSets.ItemsSource = new[] {
                 new MacroGroup {
                     Label="Freehand inking",
@@ -108,9 +101,8 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         }
     }
     public class Bar
-    {        
-        public int Rows { get; set; }
-        public int Columns { get; set; }
+    {              
+        public Orientation Orientation { get; set; }
         public HorizontalAlignment HorizontalAlignment { get; set; }
         public VerticalAlignment VerticalAlignment { get; set; }
         public ObservableCollection<Macro> Macros { get; set; }
@@ -127,6 +119,19 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         {
             this.DisplayLabel = label;
             this.Property = property;
+        }
+    }
+
+    class FactorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (Double)value * Double.Parse(parameter as string);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 

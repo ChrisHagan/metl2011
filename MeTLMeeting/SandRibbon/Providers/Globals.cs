@@ -7,6 +7,8 @@ using SandRibbon.Components.Pedagogicometry;
 using System.Drawing;
 using TextInformation = SandRibbon.Components.TextInformation;
 using SandRibbonObjects;
+using SandRibbon.Profiles;
+using SandRibbon.Pages.Collaboration.Palettes;
 
 namespace SandRibbon.Providers
 {
@@ -31,7 +33,7 @@ namespace SandRibbon.Providers
         }
         public static bool AuthorInRoom(string author, string jid)
         {
-            
+
             var authorStatus = PresenceListing.Keys.Where(k => k.Contains(author));
             if (authorStatus.Count() == 0)
                 return false;
@@ -46,8 +48,8 @@ namespace SandRibbon.Providers
         {
             if (!PresenceListing.ContainsKey(presence.Who))
             {
-                if(presence.Joining)
-                    PresenceListing.Add(presence.Who, new List<string> {presence.Where});
+                if (presence.Joining)
+                    PresenceListing.Add(presence.Who, new List<string> { presence.Where });
             }
             else
             {
@@ -67,7 +69,7 @@ namespace SandRibbon.Providers
         public static readonly string PUBLIC = "public";
         public static readonly string PRIVATE = "private";
         public static readonly string PROJECTOR = "projector";
-        
+
         public static string generateId()
         {
             return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
@@ -84,9 +86,9 @@ namespace SandRibbon.Providers
                 return me == conversationDetails.Author;
             }
         }
-        public static UserOptions UserOptions 
+        public static UserOptions UserOptions
         {
-            get 
+            get
             {
                 return SandRibbon.Commands.SetUserOptions.IsInitialised ? (UserOptions)SandRibbon.Commands.SetUserOptions.LastValue() : UserOptions.DEFAULT;
             }
@@ -144,7 +146,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var value = ((ConversationDetails)Commands.UpdateConversationDetails.LastValue()); 
+                var value = ((ConversationDetails)Commands.UpdateConversationDetails.LastValue());
                 if (value != null)
                     return value.Slides;
                 else throw new NotSetException("Slides not set");
@@ -168,7 +170,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return quizData;                
+                return quizData;
             }
         }
         public static TextInformation currentTextInfo
@@ -180,7 +182,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.LastValue();
+                return (MeTLLib.DataTypes.Credentials)Commands.SetIdentity.LastValue();
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
@@ -190,8 +192,9 @@ namespace SandRibbon.Providers
                 return credentials.authorizedGroups;
             }
         }
-        public static List<string> authorizedGroupNames {
-            get 
+        public static List<string> authorizedGroupNames
+        {
+            get
             {
                 return authorizedGroups.Select(g => g.groupKey).ToList();
             }
@@ -241,15 +244,15 @@ namespace SandRibbon.Providers
             get { return new UserInformation(credentials, location, policy); }
         }
 
-        public static bool IsBanhammerActive 
-        { 
-            get 
+        public static bool IsBanhammerActive
+        {
+            get
             {
                 return (bool)(Commands.BanhammerActive.IsInitialised ? Commands.BanhammerActive.LastValue() : false);
-            } 
+            }
         }
 
-        public static bool rememberMe 
+        public static bool rememberMe
         {
             get
             {
@@ -276,6 +279,25 @@ namespace SandRibbon.Providers
 
         private static object lockCurrentCanvasClipboardFocus = new object();
         private static string currentCanvasClipboardFocus = "";
+        internal static Profile currentProfile = new Profile
+        {
+            logicalName = Globals.me,
+            castBars = new[] {
+                new Bar(8)
+            {
+                VerticalAlignment = System.Windows.VerticalAlignment.Top,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                Orientation=System.Windows.Controls.Orientation.Horizontal
+            },
+                new Bar(5)
+            {
+                VerticalAlignment = System.Windows.VerticalAlignment.Top,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                Orientation=System.Windows.Controls.Orientation.Vertical
+            }
+            }
+        };
+
         public static event CanvasClipboardFocusChangedHandler CanvasClipboardFocusChanged;
         public static string CurrentCanvasClipboardFocus
         {

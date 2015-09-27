@@ -253,6 +253,7 @@
     <Compile Include="Pages\Identity\ServerSelectorPage.xaml.cs">
       <DependentUpon>ServerSelectorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
       <DependentUpon>DisplayAQuiz.xaml</DependentUpon>
     </Compile>
