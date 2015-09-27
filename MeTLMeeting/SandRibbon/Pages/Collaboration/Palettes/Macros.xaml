@@ -6,7 +6,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <sys:Double x:Key="ButtonWidth">70</sys:Double>
     <sys:Double x:Key="ButtonHeight">70</sys:Double>
-    <sys:Double x:Key="SensorWidth">150</sys:Double>
+    <sys:Double x:Key="SensorWidth">120</sys:Double>
     <Rectangle x:Key="slot" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" 
             x:Shared="False">
         <Rectangle.Fill>
@@ -98,6 +98,12 @@
     </Button>
     <!-- Activity monitoring -->
     <StackPanel Orientation="Horizontal" x:Key="worm" x:Shared="False">
+        <Border BorderThickness="1">
+            <Border.BorderBrush>
+                <SolidColorBrush Color="{StaticResource AccentColor}" />
+            </Border.BorderBrush>
+        <Label Content="Worm" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </Border>
         <oxy:PlotView x:Name="wormPlot" Height="{DynamicResource ButtonHeight}" Width="{DynamicResource SensorWidth}" Loaded="WormLoaded">
             <oxy:PlotView.Background>
                 <SolidColorBrush Color="{StaticResource AccentColor}" />

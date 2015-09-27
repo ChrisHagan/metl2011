@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MeTLLib.DataTypes;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -6,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace SandRibbon.Pages.Collaboration.Palettes
 {
@@ -54,9 +57,21 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                         new Macro("worm")                        
                     }
                 }
-            };            
-        }        
-        
+            };
+            SimulateFeedback();            
+        }
+
+        private void SimulateFeedback() {
+            var t = new DispatcherTimer();
+            t.Interval = new System.TimeSpan(0, 0, 5);
+            t.Tick += delegate {
+                Commands.ReceiveStrokes.Execute(Enumerable.Range(0,new Random().Next(50)).Select(i => new TargettedStroke(
+                    0,"","",Privacy.NotSet,"",0,null,0.0
+                    )).ToList());
+            };
+            t.Start();
+        }
+
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {//Package the macro you picked up
             var thumb = sender as Thumb;
