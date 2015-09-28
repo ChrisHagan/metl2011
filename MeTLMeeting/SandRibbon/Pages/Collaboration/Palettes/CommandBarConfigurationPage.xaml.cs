@@ -106,9 +106,13 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         public HorizontalAlignment HorizontalAlignment { get; set; }
         public VerticalAlignment VerticalAlignment { get; set; }
         public ObservableCollection<Macro> Macros { get; set; }
+        public double ScaleFactor { get; set; }
+        public int Rows { get; internal set; }
+        public int Columns { get; internal set; }
+
         public Bar(int size)
         {
-            Macros = new ObservableCollection<Macro>(Enumerable.Range(0, size).Select(i => new Macro("slot")));
+            Macros = new ObservableCollection<Macro>(Enumerable.Range(0, size).Select(i => new Macro("slot")));            
         }
     }
     public class SlotConfigurer
@@ -122,14 +126,25 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         }
     }
 
-    class FactorConverter : IValueConverter
+    class FactorConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (Double)value * Double.Parse(parameter as string);
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {            
+            var containerMeasure = (Double)values[0];
+            var dataContext = values[1] as Bar;
+            var orientation = (Orientation) Enum.Parse(typeof(Orientation),(string) parameter);
+            if (dataContext.Orientation == orientation)
+            {
+                return containerMeasure * dataContext.ScaleFactor;
+            }
+            switch (dataContext.Orientation) {
+                case Orientation.Horizontal: return App.Current.TryFindResource("ButtonHeight");
+                case Orientation.Vertical: return (Double)App.Current.TryFindResource("ButtonWidth") + (Double)App.Current.TryFindResource("SensorWidth");
+                default:return DependencyProperty.UnsetValue;
+            }
         }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

@@ -287,13 +287,19 @@ namespace SandRibbon.Providers
             {
                 VerticalAlignment = System.Windows.VerticalAlignment.Top,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
-                Orientation=System.Windows.Controls.Orientation.Horizontal
+                Orientation=System.Windows.Controls.Orientation.Horizontal,
+                ScaleFactor=0.8,
+                Rows=1,
+                Columns=8
             },
                 new Bar(5)
             {
                 VerticalAlignment = System.Windows.VerticalAlignment.Top,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-                Orientation=System.Windows.Controls.Orientation.Vertical
+                Orientation=System.Windows.Controls.Orientation.Vertical,
+                ScaleFactor=0.5,
+                Rows=5,
+                Columns=1
             }
             }
         };

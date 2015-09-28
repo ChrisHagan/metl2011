@@ -6,9 +6,10 @@
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:Converters="clr-namespace:MahApps.Metro.Converters"
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls"
+      x:Name="page"
       Title="CommandBarConfigurationPage">
     <Page.Resources>
-        <local:FactorConverter x:Key="factor" />
+        <local:FactorConverter x:Key="factorConverter" />
         <local:DynamicResourceConverter x:Key="resourceConverter" />
         <Style TargetType="{x:Type Button}">
             <Setter Property="IsEnabled" Value="True" />
@@ -20,7 +21,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <Label Style="{StaticResource medium}" Content="{Binding Path=DisplayLabel}" />
+                        <Label VerticalAlignment="Center" Style="{StaticResource medium}" Content="{Binding Path=DisplayLabel}" />
                         <Slider Minimum="10" Maximum="200"
                                 Value="{Binding Path=Property, Converter={StaticResource resourceConverter}, Mode=OneWay}"
                                 ValueChanged="Slider_ValueChanged"
@@ -42,9 +43,23 @@
                         <ItemsControl ItemsSource="{Binding Path=Macros}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="{Binding Path=Orientation}"
-                                                 HorizontalAlignment="{Binding Path=HorizontalAlignment}"
-                                                 VerticalAlignment="{Binding Path=VerticalAlignment}"/>
+                                    <UniformGrid HorizontalAlignment="{Binding Path=HorizontalAlignment}"
+                                            VerticalAlignment="{Binding Path=VerticalAlignment}"
+                                            Rows="{Binding Path=Rows}"
+                                            Columns="{Binding Path=Columns}">
+                                        <UniformGrid.Width>
+                                            <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Horizontal">
+                                                <Binding ElementName="page" Path="ActualWidth" />
+                                                <Binding />                                                
+                                            </MultiBinding>
+                                        </UniformGrid.Width>
+                                        <UniformGrid.Height>
+                                            <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Vertical">
+                                                <Binding ElementName="page" Path="ActualHeight" />
+                                                <Binding />
+                                            </MultiBinding>
+                                        </UniformGrid.Height>
+                                    </UniformGrid>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
