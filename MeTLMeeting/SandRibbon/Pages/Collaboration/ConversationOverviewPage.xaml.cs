@@ -102,7 +102,7 @@ namespace SandRibbon.Pages.Collaboration
         private void locations_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var slideJid = (e.AddedItems[0] as Slide).id;
-            NavigationService.Navigate(new CollaborationPage(slideJid));
+            NavigationService.Navigate(new GroupCollaborationPage(slideJid));
         }
     }
 }

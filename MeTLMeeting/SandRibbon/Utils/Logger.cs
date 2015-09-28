@@ -103,10 +103,7 @@ namespace SandRibbon.Utils
         public NameValueCollection BuildQueryString()
         {
             NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            if (App.isStaging)
-                queryString["program"] = "metlStaging";
-            else
-                queryString["program"] = "metl2011";
+            queryString["program"] = "metl2011";
             queryString["version"] = ConfigurationProvider.instance.getMetlVersion();
             queryString["content"] = content;
             queryString["user"] = user;
@@ -123,12 +120,12 @@ namespace SandRibbon.Utils
         public static string log = "MeTL Log\r\n";
         private static string[] blacklist = new[] {
                 "CouchServer(madam.adm.monash.edu.au:5984)",
-                "MeTL Presenter.exe ", 
-                "MeTL Presenter.vshost.exe ", 
-                "Failed to add item to relogin-queue.", 
-                "MeTL Presenter.exe Warning: 0 :", 
-                "MeTL Presenter.exe Info: 0 :", 
-                "MeTL Presenter.exe Information: 0 :", 
+                "MeTL Presenter.exe ",
+                "MeTL Presenter.vshost.exe ",
+                "Failed to add item to relogin-queue.",
+                "MeTL Presenter.exe Warning: 0 :",
+                "MeTL Presenter.exe Info: 0 :",
+                "MeTL Presenter.exe Information: 0 :",
                 "MeTL Staging.vshost.exe Information: 0 : ",
                 "MeTL Staging.exe Information: 0 : ",
                 "Error loading thumbnail:"};

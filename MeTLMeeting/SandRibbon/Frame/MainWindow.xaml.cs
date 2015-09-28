@@ -4,13 +4,11 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
-using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Components.Utility;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.ServerSelection;
 using SandRibbon.Properties;
 using SandRibbon.Providers;
-using SandRibbon.Tabs.Groups;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using System;
@@ -22,10 +20,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using SandRibbon.Pages.Collaboration.Palettes;
+using MahApps.Metro.Controls;
 
 namespace SandRibbon
 {
-    public partial class MainWindow
+    public partial class MainWindow : MetroWindow
     {
         private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
 
@@ -39,15 +39,14 @@ namespace SandRibbon
         }
         public MainWindow()
         {
+            InitializeComponent();
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
-            App.CloseSplashScreen();
             mainFrame.Navigate(new ServerSelectorPage());
+            App.CloseSplashScreen();
         }
         private void DoConstructor()
         {
-            InitializeComponent();
-
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>
             {
                 App.mark("Window1 knows about identity");
@@ -98,12 +97,20 @@ namespace SandRibbon
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));            
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));            
-            
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
+
+            Commands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
+
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();            
+        }
+
+        private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
+        {
+            this.flyout.Content = TryFindResource("worm");
+            this.flyout.IsOpen= !this.flyout.IsOpen;
         }
 
         [System.STAThreadAttribute()]
@@ -329,7 +336,7 @@ namespace SandRibbon
                
         private void ExecuteMoveTo(int slide)
         {
-            mainFrame.Navigate(new CollaborationPage(slide));
+            mainFrame.Navigate(new PublicCollaborationPage(slide));
         }
         
         private string messageFor(ConversationDetails details)
@@ -519,6 +526,11 @@ namespace SandRibbon
         private void ribbon_SelectedTabChanged(object sender, EventArgs e)
         {
             var ribbon = sender as Ribbon;
-        }        
+        }
+
+        private void UserPreferences(object sender, RoutedEventArgs e)
+        {
+            mainFrame.Navigate(new CommandBarConfigurationPage());
+        }
     }
 }

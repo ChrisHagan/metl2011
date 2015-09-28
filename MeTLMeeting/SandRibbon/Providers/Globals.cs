@@ -231,7 +231,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : String.Empty);
+                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : "public");
             }
         }
         public static Policy policy
@@ -290,14 +290,14 @@ namespace SandRibbon.Providers
                 Orientation=System.Windows.Controls.Orientation.Horizontal,
                 ScaleFactor=0.8,
                 Rows=1,
-                Columns=8
+                Columns=8                
             },
                 new Bar(5)
             {
-                VerticalAlignment = System.Windows.VerticalAlignment.Top,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                 Orientation=System.Windows.Controls.Orientation.Vertical,
-                ScaleFactor=0.5,
+                ScaleFactor=0.8,
                 Rows=5,
                 Columns=1
             }

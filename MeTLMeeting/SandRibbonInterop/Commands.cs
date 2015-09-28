@@ -130,6 +130,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
 
+        public static DefaultableCompositeCommand ModifySelection = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand TogglePens = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetPedagogyLevel = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand GetMainScrollViewer = new DefaultableCompositeCommand();

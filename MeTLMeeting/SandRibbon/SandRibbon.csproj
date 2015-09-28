@@ -234,8 +234,11 @@
     <Compile Include="Pages\Collaboration\ChooseCollaborationContextPage.xaml.cs">
       <DependentUpon>ChooseCollaborationContextPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Collaboration\CollaborationPage.xaml.cs">
-      <DependentUpon>CollaborationPage.xaml</DependentUpon>
+    <Compile Include="Pages\Collaboration\GroupCollaborationPage.xaml.cs">
+      <DependentUpon>GroupCollaborationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Collaboration\PublicCollaborationPage.xaml.cs">
+      <DependentUpon>PublicCollaborationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Collaboration\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
@@ -326,6 +329,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\Collaboration\ConversationOverviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\GroupCollaborationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -437,7 +444,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Collaboration\CollaborationPage.xaml">
+    <Page Include="Pages\Collaboration\PublicCollaborationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

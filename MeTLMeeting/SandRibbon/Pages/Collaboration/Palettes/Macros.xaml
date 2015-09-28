@@ -110,4 +110,12 @@
             </oxy:PlotView.Background>
         </oxy:PlotView>
     </StackPanel>
+    <!-- Selection modification-->
+    <Button x:Key="toggleFlyout" Command="{x:Static api:Commands.ModifySelection}">
+        <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+            <Rectangle.Fill>
+                <VisualBrush Visual="{StaticResource appbar_cog}" />
+            </Rectangle.Fill>
+        </Rectangle>
+    </Button>
 </ResourceDictionary>

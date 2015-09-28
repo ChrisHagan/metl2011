@@ -122,11 +122,6 @@ namespace SandRibbon
         }
         protected override void OnStartup(StartupEventArgs e)
         {
-#if DEBUG
-            isStaging = true;
-#else
-            isStaging = false;
-#endif
             MeTLConfiguration.Load();            
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
@@ -134,6 +129,7 @@ namespace SandRibbon
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
+            new MainWindow().Show();
             mark("App.onStartup finished");
         }
         String[] falseAlarms = new[]{

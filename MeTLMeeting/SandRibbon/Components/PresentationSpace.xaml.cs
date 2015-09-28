@@ -40,7 +40,7 @@ namespace SandRibbon.Components
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<CollaborationPage>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<PublicCollaborationPage>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
@@ -192,7 +192,7 @@ namespace SandRibbon.Components
             stack.RefreshCanvas();
             EndInit();
         }
-        private void MirrorPresentationSpace(CollaborationPage presentationSpace)
+        private void MirrorPresentationSpace(PublicCollaborationPage presentationSpace)
         {
             try
             {

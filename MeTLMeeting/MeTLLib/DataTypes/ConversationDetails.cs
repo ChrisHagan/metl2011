@@ -286,7 +286,6 @@ namespace MeTLLib.DataTypes
         {
         }
 
-        //private static readonly ConversationDetails empty = new ConversationDetails();
         public static ConversationDetails Empty
         {
             get { return new ConversationDetails(); }
