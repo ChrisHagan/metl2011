@@ -7,6 +7,8 @@
       xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
       x:Name="page"
       Title="GroupCollaborationPage">
     <Page.Resources>
@@ -37,6 +39,14 @@
                                             VerticalAlignment="{Binding Path=VerticalAlignment}"
                                             Rows="{Binding Path=Rows}"
                                             Columns="{Binding Path=Columns}">
+                                    <i:Interaction.Behaviors>
+                                        <resourceChangeEvent:ResourceChangeEventBehavior 
+                                                Resource="{DynamicResource ButtonWidth}"
+                                                ResourceChanged="ButtonWidthChanged" />
+                                        <resourceChangeEvent:ResourceChangeEventBehavior 
+                                                Resource="{DynamicResource ButtonHeight}"
+                                                ResourceChanged="ButtonHeightChanged" />
+                                    </i:Interaction.Behaviors>
                                     <UniformGrid.Width>
                                         <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Horizontal">
                                             <Binding ElementName="page" Path="ActualWidth" />
