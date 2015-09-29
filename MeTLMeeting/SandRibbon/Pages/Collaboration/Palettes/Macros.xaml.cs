@@ -5,13 +5,30 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
 using System.Windows.Threading;
 
 namespace SandRibbon.Pages.Collaboration.Palettes
 {
+    /*This class exists to mark the root beneath which the control is not operable and can be manipulated in bar configurations*/
+    public class Appearance : ContentControl
+    {
+        internal Appearance Clone()
+        {
+            object clone;
+            using (var stream = new MemoryStream())
+            {
+                XamlWriter.Save(this, stream);
+                stream.Seek(0, SeekOrigin.Begin);
+                clone = XamlReader.Load(stream);
+            }
+            return clone as Appearance;
+        }
+    }
     public partial class Macros
     {
         public void WormLoaded(object sender, RoutedEventArgs e)

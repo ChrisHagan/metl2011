@@ -1,0 +1,70 @@
+﻿<Page x:Class="SandRibbon.Pages.Collaboration.GroupCollaborationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"      
+      xmlns:components="clr-namespace:SandRibbon.Components"      
+      xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
+      x:Name="page"
+      Title="GroupCollaborationPage">
+    <Page.Resources>
+        <palettes:FactorConverter x:Key="factorConverter" />
+        <palettes:DynamicResourceConverter x:Key="resourceConverter" />
+    </Page.Resources>
+    <Grid>
+        <Canvas x:Name="syncPageOverlay"/>
+        <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
+            <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" 
+                          ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+            </ScrollViewer>
+        </Viewbox>
+
+        <ItemsControl x:Name="Bars">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ItemsControl ItemsSource="{Binding Path=Macros}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid HorizontalAlignment="{Binding Path=HorizontalAlignment}"
+                                            VerticalAlignment="{Binding Path=VerticalAlignment}"
+                                            Rows="{Binding Path=Rows}"
+                                            Columns="{Binding Path=Columns}">
+                                    <UniformGrid.Width>
+                                        <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Horizontal">
+                                            <Binding ElementName="page" Path="ActualWidth" />
+                                            <Binding />
+                                        </MultiBinding>
+                                    </UniformGrid.Width>
+                                    <UniformGrid.Height>
+                                        <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Vertical">
+                                            <Binding ElementName="page" Path="ActualHeight" />
+                                            <Binding />
+                                        </MultiBinding>
+                                    </UniformGrid.Height>
+                                </UniformGrid>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
+        <AdornerDecorator>
+            <Canvas x:Name="privacyTools"/>
+        </AdornerDecorator>
+    </Grid>
+</Page>

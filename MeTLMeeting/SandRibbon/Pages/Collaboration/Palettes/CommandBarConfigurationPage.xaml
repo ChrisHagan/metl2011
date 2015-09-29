@@ -6,14 +6,14 @@
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:Converters="clr-namespace:MahApps.Metro.Converters"
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
       x:Name="page"
       Title="CommandBarConfigurationPage">
     <Page.Resources>
+        <local:MacroAppearanceConverter x:Key="macroAppearance" />
         <local:FactorConverter x:Key="factorConverter" />
-        <local:DynamicResourceConverter x:Key="resourceConverter" />
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="IsEnabled" Value="True" />
-        </Style>
+        <local:DynamicResourceConverter x:Key="resourceConverter" />        
     </Page.Resources>
     <StackPanel>
         <Label Content="How do you want your controls to look?" Margin="{StaticResource clearBottom}"/>
@@ -43,20 +43,28 @@
                         <ItemsControl ItemsSource="{Binding Path=Macros}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid HorizontalAlignment="{Binding Path=HorizontalAlignment}"
+                                    <UniformGrid HorizontalAlignment="{Binding Path=HorizontalAlignment}"                                            
                                             VerticalAlignment="{Binding Path=VerticalAlignment}"
                                             Rows="{Binding Path=Rows}"
                                             Columns="{Binding Path=Columns}">
+                                        <i:Interaction.Behaviors>
+                                            <resourceChangeEvent:ResourceChangeEventBehavior 
+                                                Resource="{DynamicResource ButtonWidth}"
+                                                ResourceChanged="ButtonWidthChanged" />
+                                            <resourceChangeEvent:ResourceChangeEventBehavior 
+                                                Resource="{DynamicResource ButtonHeight}"
+                                                ResourceChanged="ButtonHeightChanged" />
+                                        </i:Interaction.Behaviors>
                                         <UniformGrid.Width>
                                             <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Horizontal">
                                                 <Binding ElementName="page" Path="ActualWidth" />
-                                                <Binding />                                                
+                                                <Binding />                                                   
                                             </MultiBinding>
                                         </UniformGrid.Width>
                                         <UniformGrid.Height>
                                             <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Vertical">
                                                 <Binding ElementName="page" Path="ActualHeight" />
-                                                <Binding />
+                                                <Binding />                                                
                                             </MultiBinding>
                                         </UniformGrid.Height>
                                     </UniformGrid>
@@ -93,7 +101,7 @@
                                         <Thumb DragStarted="Thumb_DragStarted" Background="Transparent">
                                             <Thumb.Template>
                                                 <ControlTemplate>
-                                                    <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" />
+                                                    <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource macroAppearance}}" />
                                                 </ControlTemplate>
                                             </Thumb.Template>
                                         </Thumb>

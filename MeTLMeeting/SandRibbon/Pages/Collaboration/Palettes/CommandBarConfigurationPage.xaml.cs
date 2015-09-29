@@ -1,4 +1,5 @@
-﻿using MeTLLib.DataTypes;
+﻿using Itschwabing.Libraries.ResourceChangeEvent;
+using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,6 @@ namespace SandRibbon.Pages.Collaboration.Palettes
 {
     public partial class CommandBarConfigurationPage : Page
     {
-        Bar TopBar;
         public CommandBarConfigurationPage()
         {
             InitializeComponent();
@@ -87,7 +87,31 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             var context = element.DataContext as SlotConfigurer;
             Application.Current.Resources[context.Property] = e.NewValue;
         }
-        
+
+        private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)
+        {
+            var behaviour = sender as ResourceChangeEventBehavior;
+            var element = behaviour.GetAssociatedObject();
+            if (element == null) return;
+            var context = element.DataContext as Bar;
+            if (context.Orientation == Orientation.Vertical) {
+                var width = (Double) e.NewValue;
+                element.Width = width;
+            }
+        }
+
+        private void ButtonHeightChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)
+        {
+            var behaviour = sender as ResourceChangeEventBehavior;
+            var element = behaviour.GetAssociatedObject();
+            if (element == null) return;
+            var context = element.DataContext as Bar;
+            if (context.Orientation == Orientation.Horizontal)
+            {
+                var height = (Double)e.NewValue;
+                element.Height = height;
+            }
+        }
     }
     public class MacroGroup {
         public string Label { get; set; }
@@ -149,7 +173,27 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             throw new NotImplementedException();
         }
     }
+    class MacroAppearanceConverter : IValueConverter
+    {
+        public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
+        {
+            var resourceKey = value as string;
+            var functionalControl = Application.Current.FindResource(resourceKey) as FrameworkElement;
+            foreach (var c in LogicalTreeHelper.GetChildren(functionalControl)) {                
+                if (c is Appearance)
+                {
+                    var a = c as Appearance;
+                    return a.Clone() ;
+                }
+            }
+            return null;         
+        }
 
+        public object ConvertBack(object value, System.Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
     class DynamicResourceConverter : IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)

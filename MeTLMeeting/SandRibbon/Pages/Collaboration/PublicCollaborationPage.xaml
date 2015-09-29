@@ -1,0 +1,87 @@
+﻿<Page x:Class="SandRibbon.Pages.Collaboration.PublicCollaborationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
+      xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"
+      xmlns:components="clr-namespace:SandRibbon.Components"
+      xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"            
+      xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
+      Title="Collaboration">
+    <DockPanel>
+        <ribbon:Ribbon DockPanel.Dock="Top" x:Name="ribbon">
+            <ribbon:Ribbon.ApplicationMenu>
+                <ribbon:RibbonApplicationMenu>
+                    <ribbon:RibbonApplicationMenuItem Header="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}" />
+                    <ribbon:RibbonApplicationMenuItem Header="Import PowerPoint" ToolTip="{StaticResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+                    <ribbon:RibbonApplicationMenuItem Header="Search" ToolTip="{StaticResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
+                    <ribbon:RibbonApplicationMenuItem Header="My Conversations" ToolTip="{StaticResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
+                    <ribbon:RibbonApplicationMenuItem Header="Help" ToolTip="{StaticResource HelpToolTip}" Command="ApplicationCommands.Help" />
+                    <ribbon:RibbonApplicationMenuItem Header="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
+                    <ribbon:RibbonApplicationMenuItem Header="Logout and Exit" ToolTip="{StaticResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
+                </ribbon:RibbonApplicationMenu>
+            </ribbon:Ribbon.ApplicationMenu>
+            <ribbon:Ribbon.QuickAccessToolBar>
+                <ribbon:RibbonQuickAccessToolBar>
+                    <ribbon:RibbonButton Label="Undo" Command="{x:Static api:Commands.Undo}" />
+                    <ribbon:RibbonButton Label="Redo" Command="{x:Static api:Commands.Redo}" />
+                </ribbon:RibbonQuickAccessToolBar>
+            </ribbon:Ribbon.QuickAccessToolBar>
+        </ribbon:Ribbon>
+        <Grid x:Name="columns">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="0"/>
+                <ColumnDefinition x:Name="LHSSplitterDefinition" Width="0"/>
+                <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
+                <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
+                <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
+            </Grid>
+            <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" 
+                              HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
+            <Grid Grid.Column="2">
+                <Grid x:Name="adornerGrid" Margin="0,0,27,27">
+                    <Canvas x:Name="syncPageOverlay"/>
+                    <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
+                        <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                            <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                        </ScrollViewer>
+                    </Viewbox>
+                    <Grid x:Name="dynamicContent" />
+                    <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" />
+                </Grid>
+                <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
+                <AdornerDecorator>
+                    <Canvas x:Name="privacyTools"/>
+                </AdornerDecorator>
+            </Grid>
+            <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
+            <Grid Grid.Column="4" x:Name="rightDrawer">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TabControl Grid.Row="1" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
+                    <TabItem Header="Notes" Width="80">
+                        <Grid>
+                            <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">
+                                <Viewbox x:Name="notesViewBox" SizeChanged="notepadSizeChanged">
+                                    <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="notepadScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                        <components:PrivateNotepadSpace Height="auto" Width="auto" x:Name="privateNotes" />
+                                    </ScrollViewer>
+                                </Viewbox>
+                            </Grid>
+                            <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
+                            <AdornerDecorator>
+                                <Canvas x:Name="notesPrivacyTools"/>
+                            </AdornerDecorator>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="ParticipantsTabItem" Header="Participants">
+                        <components:Participants/>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Page>
