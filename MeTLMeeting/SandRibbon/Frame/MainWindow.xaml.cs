@@ -54,15 +54,7 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
-            Title = Strings.Global_ProductName;
-            try
-            {                
-                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\MeTL Presenter.ico");
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
-            }            
+            Title = Strings.Global_ProductName;                      
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));

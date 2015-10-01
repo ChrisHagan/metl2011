@@ -37,6 +37,9 @@
     </Button>
     <Button x:Key="pen_blue" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" 
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <Button.CommandParameter>
+            <DrawingAttributes Color="Blue" IsHighlighter="False"/>
+        </Button.CommandParameter>
         <macro:Appearance>
             <Grid>
                 <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" Fill="Blue"></Rectangle>
@@ -132,7 +135,7 @@
         </macro:Appearance>
     </Grid>
     <!-- Selection modification-->
-    <Button x:Key="toggleFlyout" Command="{x:Static api:Commands.ModifySelection}">
+    <Button x:Key="participants_toggle" Command="{x:Static api:Commands.ModifySelection}">
         <macro:Appearance>
             <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <Rectangle.Fill>

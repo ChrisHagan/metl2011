@@ -30,6 +30,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             ToolSets.ItemsSource = new[] {
                 new MacroGroup {
                     Label="Freehand inking",
+                    Row=1,
                     Macros=new[] {
                         new Macro("pen_red"),
                         new Macro("pen_blue"),
@@ -39,6 +40,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                 },
                 new MacroGroup {
                     Label="Highlighters",
+                    Row=0,
                     Macros=new[] {
                         new Macro("pen_yellow_highlighter"),                        
                         new Macro("pen_orange_highlighter")
@@ -46,11 +48,19 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                 },
                 new MacroGroup {
                     Label="Immediate teaching feedback",
+                    Row=2,
                     Macros=new[] {
                         new Macro("worm")                        
                     }
+                },
+                new MacroGroup {
+                    Label="Social controls",
+                    Row=3,
+                    Macros=new[] {
+                        new Macro("participants_toggle")
+                    }
                 }
-            };
+            };            
             SimulateFeedback();            
         }
 
@@ -78,7 +88,8 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         {//Land the macro on the right slot
             var resourceKey = e.Data.GetData("Macro") as string;
             var slot = sender as ContentControl;
-            slot.DataContext = new Macro(resourceKey);
+            var macro = slot.DataContext as Macro;
+            macro.ResourceKey = resourceKey;
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -112,14 +123,33 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                 element.Height = height;
             }
         }
+
+        private void SetGridRows(object sender, RoutedEventArgs e)
+        {
+            var grid = sender as Grid;
+            var itemsSource = ToolSets.ItemsSource;
+            foreach (var element in itemsSource) {
+                grid.RowDefinitions.Add(new RowDefinition { Height=GridLength.Auto });
+            }
+        }
     }
     public class MacroGroup {
         public string Label { get; set; }
+        public int Row { get; set; }
         public IEnumerable<Macro> Macros { get; set; }
     }
-    public class Macro
-    {
-        public string ResourceKey { get; set; }
+    public class Macro : DependencyObject
+    {        
+        public string ResourceKey
+        {
+            get { return (string)GetValue(ResourceKeyProperty); }
+            set { SetValue(ResourceKeyProperty, value); }
+        }
+
+        public static readonly DependencyProperty ResourceKeyProperty =
+            DependencyProperty.Register("ResourceKey", typeof(string), typeof(Macro), new PropertyMetadata("slot"));
+
+
         public Macro(string resourceKey) {
             ResourceKey = resourceKey;
         }
