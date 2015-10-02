@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
+      xmlns:collaboration="clr-namespace:SandRibbon.Pages.Collaboration"
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:Converters="clr-namespace:MahApps.Metro.Converters"
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls"
@@ -12,9 +13,8 @@
       x:Name="page"
       Title="CommandBarConfigurationPage">
     <Page.Resources>
-        <local:MacroAppearanceConverter x:Key="macroAppearance" />
-        <local:FactorConverter x:Key="factorConverter" />
         <local:DynamicResourceConverter x:Key="resourceConverter" />
+        <local:MacroAppearanceConverter x:Key="macroAppearance" />
     </Page.Resources>
     <ScrollViewer>
         <Grid layout:GridLayout.ItemsPerRow="1">
@@ -34,88 +34,42 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Label Content="What do you want in your toolbars?" Margin="{StaticResource clearTop}"/>
-            <Grid>
-                <ItemsControl x:Name="Bars" Margin="{StaticResource clearTop}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Grid />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ItemsControl ItemsSource="{Binding Path=Macros}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid HorizontalAlignment="{Binding Path=HorizontalAlignment}"                                            
-                                            VerticalAlignment="{Binding Path=VerticalAlignment}"
-                                            Rows="{Binding Path=Rows}"
-                                            Columns="{Binding Path=Columns}">
-                                            <i:Interaction.Behaviors>
-                                                <resourceChangeEvent:ResourceChangeEventBehavior 
-                                                Resource="{DynamicResource ButtonWidth}"
-                                                ResourceChanged="ButtonWidthChanged" />
-                                                <resourceChangeEvent:ResourceChangeEventBehavior 
-                                                Resource="{DynamicResource ButtonHeight}"
-                                                ResourceChanged="ButtonHeightChanged" />
-                                            </i:Interaction.Behaviors>
-                                            <UniformGrid.Width>
-                                                <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Horizontal">
-                                                    <Binding ElementName="page" Path="ActualWidth" />
-                                                    <Binding />
-                                                </MultiBinding>
-                                            </UniformGrid.Width>
-                                            <UniformGrid.Height>
-                                                <MultiBinding Converter="{StaticResource factorConverter}" ConverterParameter="Vertical">
-                                                    <Binding ElementName="page" Path="ActualHeight" />
-                                                    <Binding />
-                                                </MultiBinding>
-                                            </UniformGrid.Height>
-                                        </UniformGrid>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource resourceConverter}}" 
-                                                AllowDrop="True" Drop="ContentControl_Drop"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <ItemsControl x:Name="ToolSets">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Grid layout:GridLayout.ItemsPerRow="1" Margin="0 150 150 0"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid layout:GridLayout.ItemsPerRow="1">
-                                <Label Content="{Binding Path=Label}" />
-                                <ItemsControl ItemsSource="{Binding Path=Macros}" Margin="{StaticResource clearLeft}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Thumb DragStarted="Thumb_DragStarted" Background="Transparent">
-                                                <Thumb.Template>
-                                                    <ControlTemplate>
-                                                        <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource macroAppearance}}" />
-                                                    </ControlTemplate>
-                                                </Thumb.Template>
-                                            </Thumb>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
+            <collaboration:CastBarFrame Margin="{StaticResource clearTop}" x:Name="Bars">
+                <collaboration:CastBarFrame.Content>
+                    <ItemsControl ItemsSource="{DynamicResource ToolSets}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid layout:GridLayout.ItemsPerRow="1" Margin="0 150 150 0"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid layout:GridLayout.ItemsPerRow="1">
+                                    <Label Content="{Binding Path=Label}" />
+                                    <ItemsControl ItemsSource="{Binding Path=Macros}" Margin="{StaticResource clearLeft}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Thumb DragStarted="Thumb_DragStarted" Background="Transparent">
+                                                    <Thumb.Template>
+                                                        <ControlTemplate>
+                                                            <ContentControl Content="{Binding Path=ResourceKey, Converter={StaticResource macroAppearance}}" />
+                                                        </ControlTemplate>
+                                                    </Thumb.Template>
+                                                </Thumb>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </collaboration:CastBarFrame.Content>
+            </collaboration:CastBarFrame>
         </Grid>
     </ScrollViewer>
 </Page>

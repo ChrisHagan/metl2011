@@ -1,5 +1,4 @@
-﻿using Itschwabing.Libraries.ResourceChangeEvent;
-using MeTLLib.DataTypes;
+﻿using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -26,8 +25,8 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             };            
             sliders.ItemsSource = rangeProperties;            
             
-            Bars.ItemsSource = Globals.currentProfile.castBars;
-            ToolSets.ItemsSource = new[] {
+            Bars.DataContext = Globals.currentProfile;
+            Resources["ToolSets"] = new[] {
                 new MacroGroup {
                     Label="Freehand inking",
                     Row=1,
@@ -76,62 +75,20 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         }
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
-        {//Package the macro you picked up
+        {//Package whichever Macro you've picked up
             var thumb = sender as Thumb;
             var macro = thumb.DataContext as Macro;
             var dataObject = new DataObject();
             dataObject.SetData("Macro", macro.ResourceKey);
             DragDrop.DoDragDrop(thumb, dataObject, DragDropEffects.Copy);
         }
-
-        private void ContentControl_Drop(object sender, DragEventArgs e)
-        {//Land the macro on the right slot
-            var resourceKey = e.Data.GetData("Macro") as string;
-            var slot = sender as ContentControl;
-            var macro = slot.DataContext as Macro;
-            macro.ResourceKey = resourceKey;
-        }
-
+        
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             var element = sender as FrameworkElement;
             var context = element.DataContext as SlotConfigurer;
             Application.Current.Resources[context.Property] = e.NewValue;
-        }
-
-        private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)
-        {
-            var behaviour = sender as ResourceChangeEventBehavior;
-            var element = behaviour.GetAssociatedObject();
-            if (element == null) return;
-            var context = element.DataContext as Bar;
-            if (context.Orientation == Orientation.Vertical) {
-                var width = (Double) e.NewValue;
-                element.Width = width;
-            }
-        }
-
-        private void ButtonHeightChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)
-        {
-            var behaviour = sender as ResourceChangeEventBehavior;
-            var element = behaviour.GetAssociatedObject();
-            if (element == null) return;
-            var context = element.DataContext as Bar;
-            if (context.Orientation == Orientation.Horizontal)
-            {
-                var height = (Double)e.NewValue;
-                element.Height = height;
-            }
-        }
-
-        private void SetGridRows(object sender, RoutedEventArgs e)
-        {
-            var grid = sender as Grid;
-            var itemsSource = ToolSets.ItemsSource;
-            foreach (var element in itemsSource) {
-                grid.RowDefinitions.Add(new RowDefinition { Height=GridLength.Auto });
-            }
-        }
+        }        
     }
     public class MacroGroup {
         public string Label { get; set; }
@@ -183,18 +140,26 @@ namespace SandRibbon.Pages.Collaboration.Palettes
     class FactorConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {            
-            var containerMeasure = (Double)values[0];
-            var dataContext = values[1] as Bar;
-            var orientation = (Orientation) Enum.Parse(typeof(Orientation),(string) parameter);
-            if (dataContext.Orientation == orientation)
+        {
+            if (values[0] == DependencyProperty.UnsetValue)
             {
-                return containerMeasure * dataContext.ScaleFactor;
+                return DependencyProperty.UnsetValue;
             }
-            switch (dataContext.Orientation) {
-                case Orientation.Horizontal: return App.Current.TryFindResource("ButtonHeight");
-                case Orientation.Vertical: return (Double)App.Current.TryFindResource("ButtonWidth") + (Double)App.Current.TryFindResource("SensorWidth");
-                default:return DependencyProperty.UnsetValue;
+            else
+            {
+                var containerMeasure = (Double)values[0];
+                var dataContext = values[1] as Bar;
+                var orientation = (Orientation)Enum.Parse(typeof(Orientation), (string)parameter);
+                if (dataContext.Orientation == orientation)
+                {
+                    return containerMeasure * dataContext.ScaleFactor;
+                }
+                switch (dataContext.Orientation)
+                {
+                    case Orientation.Horizontal: return App.Current.TryFindResource("ButtonHeight");
+                    case Orientation.Vertical: return (Double)App.Current.TryFindResource("ButtonWidth") + (Double)App.Current.TryFindResource("SensorWidth");
+                    default: return DependencyProperty.UnsetValue;
+                }
             }
         }
         
@@ -203,7 +168,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             throw new NotImplementedException();
         }
     }
-    class MacroAppearanceConverter : IValueConverter
+    public class MacroAppearanceConverter : IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
         {
