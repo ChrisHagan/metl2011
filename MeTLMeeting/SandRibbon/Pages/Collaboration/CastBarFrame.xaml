@@ -13,6 +13,7 @@
     <ContentControl.Template>
         <ControlTemplate TargetType="ContentControl">
             <Grid>
+                <ContentPresenter />
                 <ItemsControl ItemsSource="{Binding Path=castBars}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -63,7 +64,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <ContentPresenter />
             </Grid>
         </ControlTemplate>
     </ContentControl.Template>
