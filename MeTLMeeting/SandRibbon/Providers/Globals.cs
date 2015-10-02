@@ -286,7 +286,7 @@ namespace SandRibbon.Providers
                 new Bar(8)
             {
                 VerticalAlignment = System.Windows.VerticalAlignment.Top,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                 Orientation=System.Windows.Controls.Orientation.Horizontal,
                 ScaleFactor=0.8,
                 Rows=1,
@@ -296,6 +296,15 @@ namespace SandRibbon.Providers
             {
                 VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                Orientation=System.Windows.Controls.Orientation.Vertical,
+                ScaleFactor=0.8,
+                Rows=5,
+                Columns=1
+            },
+                new Bar(5)
+            {
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
                 Orientation=System.Windows.Controls.Orientation.Vertical,
                 ScaleFactor=0.8,
                 Rows=5,

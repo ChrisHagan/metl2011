@@ -19,9 +19,11 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         {
             InitializeComponent();
              var rangeProperties = new[] {
+                new SlotConfigurer("How wide are your slider handles?","HorizontalThumbWidth"),
                 new SlotConfigurer("How wide are your buttons?","ButtonWidth"),
                 new SlotConfigurer("How tall are your buttons?","ButtonHeight"),
-                new SlotConfigurer("How wide are your graphs?", "SensorWidth")
+                new SlotConfigurer("How wide are your graphs?", "SensorWidth"),
+                new SlotConfigurer("How wide are your column dividers?", "SplitterWidth")
             };            
             sliders.ItemsSource = rangeProperties;            
             

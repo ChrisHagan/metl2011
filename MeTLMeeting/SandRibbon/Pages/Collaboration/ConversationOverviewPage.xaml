@@ -3,36 +3,55 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"  
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
       Title="Conversation Overview">
     <Page.Resources>
         <components:UrlForSlideConverter x:Key="renderer" />
     </Page.Resources>
-    <StackPanel>
-        <Label Content="{Binding Path=Title}" />
-        <Label Content="{Binding Path=Id}" />
-        <Label Content="{Binding Path=Author}" />
-        <ProgressBar Minimum="0"  Width="Auto" x:Name="processing" Margin="{StaticResource clearTop}"/>
-        <oxy:PlotView x:Name="activityPlot" Height="100" Width="Auto" Margin="{StaticResource clearTop}">
-            <oxy:PlotView.Background>
-                <SolidColorBrush Color="{StaticResource AccentColor}" />
-            </oxy:PlotView.Background>
-        </oxy:PlotView>
-        <ListBox x:Name="locations" SelectionChanged="locations_SelectionChanged" Margin="{StaticResource clearTop}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Width="Auto"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <Label Content="{Binding Path=index}" />
-                        <Image Height="90" Width="90" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>    
+    <Grid layout:GridLayout.ItemsPerRow="1">
+        <Grid x:Name="layout">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />                
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding Path=Title}" />
+            <Label Grid.Row="1" Content="{Binding Path=Jid}" />
+            <Label Grid.Row="2" Content="{Binding Path=Author}" />            
+            <Label Grid.Row="1" Grid.Column="1" Content="Teaching objectives" />
+            <TextBlock Grid.Row="2" Grid.Column="1" />
+        </Grid>
+        <Grid layout:GridLayout.ItemsPerRow="1">
+            <ProgressBar Minimum="0" Width="Auto" x:Name="processing" Margin="{StaticResource clearTop}"/>
+            <oxy:PlotView x:Name="activityPlot" Height="100" Width="Auto" Margin="{StaticResource clearTop}">
+                <oxy:PlotView.Background>
+                    <SolidColorBrush Color="{StaticResource AccentColor}" />
+                </oxy:PlotView.Background>
+            </oxy:PlotView>
+            <Label Content="Where do you want to enter the conversation?" />
+            <ListBox x:Name="locations" SelectionChanged="locations_SelectionChanged" Margin="{StaticResource clearTop}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Width="Auto"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Label Content="{Binding Path=index}" />
+                            <Image Height="90" Width="90" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
 </Page>

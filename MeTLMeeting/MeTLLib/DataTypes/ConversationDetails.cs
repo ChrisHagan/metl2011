@@ -193,7 +193,7 @@ namespace MeTLLib.DataTypes
                                        * (If anybody finds another character that breaks it - 
                                        * obvious when history stops working - add it to the illegals 
                                        * string in generateJid).  Never mind that, we're just using a number.*/
-        public string Author;
+        public string Author { get; set; }
         public Permissions Permissions { get; set; }
         public System.DateTime Created;
         public long CreatedAsTicks;

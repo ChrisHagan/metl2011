@@ -10,6 +10,12 @@ using System.Linq;
 using OxyPlot;
 using OxyPlot.Series;
 
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
+using System;
+using Itschwabing.Libraries.ResourceChangeEvent;
+
 namespace SandRibbon.Pages.Collaboration
 {
     public class ConversationParticipant : MeTLUser
@@ -34,11 +40,11 @@ namespace SandRibbon.Pages.Collaboration
             locations.ItemsSource = conversation.Slides.OrderBy(s => s.index);
 
             var plotModel = new PlotModel();
-            var aggregateLine = new LineSeries { Color = OxyColors.White, Smooth = true };            
+            var aggregateLine = new LineSeries { Color = OxyColors.White, Smooth = true };
             plotModel.Series.Add(aggregateLine);
             activityPlot.Model = plotModel;
 
-            var participantList = new ObservableCollection<ConversationParticipant>();            
+            var participantList = new ObservableCollection<ConversationParticipant>();
             processing.Maximum = conversation.Slides.Count;
             conversation.Slides.ForEach(slide =>
             {
@@ -62,7 +68,7 @@ namespace SandRibbon.Pages.Collaboration
                                             {
                                                 aggregateLine.Points.Add(new DataPoint(i, grouped.ContainsKey(i) ? grouped[i].activityCount : 0));
                                             }
-                                            activityPlot.InvalidatePlot();                                            
+                                            activityPlot.InvalidatePlot();
                                         }
                                     },
                                     slide.id.ToString());
@@ -103,6 +109,32 @@ namespace SandRibbon.Pages.Collaboration
         {
             var slideJid = (e.AddedItems[0] as Slide).id;
             NavigationService.Navigate(new GroupCollaborationPage(slideJid));
+        }
+
+        private void SplitterWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)
+        {                        
+            var width = (double)e.NewValue;
+            if (layout.ColumnDefinitions.Count >= 2)
+            {//Don't apply if we're still laying out
+                layout.ColumnDefinitions[1].Width = new GridLength(width);
+            }
+        }
+    }
+    public class GridLengthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            double val = (double)value;
+            GridLength gridLength = new GridLength(val);
+
+            return gridLength;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            GridLength val = (GridLength)value;
+
+            return val.Value;
         }
     }
 }

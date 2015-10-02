@@ -25,7 +25,7 @@ namespace SandRibbon.Layout
                 int rowsToAdd = (childCount - grid.RowDefinitions.Count) / itemsPerRow;
                 for (int row = 0; row < rowsToAdd; row++)
                 {
-                    grid.RowDefinitions.Add(new RowDefinition());
+                    grid.RowDefinitions.Add(new RowDefinition { Height=GridLength.Auto});
                 }
 
                 // set the row property for each chid
