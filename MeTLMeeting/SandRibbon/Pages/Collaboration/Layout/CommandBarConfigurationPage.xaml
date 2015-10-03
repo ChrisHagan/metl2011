@@ -22,9 +22,8 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid layout:GridLayout.ItemsPerRow="1">
-                            <Label VerticalAlignment="Center" Style="{StaticResource medium}" Content="{Binding Path=DisplayLabel}" />
-                            <Slider Minimum="10" Maximum="100"
-                                VerticalAlignment="Top"
+                            <Label Style="{StaticResource medium}" Content="{Binding Path=DisplayLabel}" />
+                            <Slider Minimum="10" Maximum="100"                                
                                 Value="{Binding Path=Property, Converter={StaticResource resourceConverter}, Mode=OneWay}"
                                 ValueChanged="Slider_ValueChanged"
                                 Width="200" />

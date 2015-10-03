@@ -10,6 +10,9 @@
       xmlns:collaboration="clr-namespace:SandRibbon.Pages.Collaboration"
       Title="GroupCollaborationPage">
     <Grid>
+        <Grid.Resources>
+            <Grid x:Key="slot" Visibility="Collapsed" />
+        </Grid.Resources>
         <collaboration:CastBarFrame x:Name="Bars">
             <Viewbox>
                 <components:PresentationSpace Height="auto" Width="auto" />

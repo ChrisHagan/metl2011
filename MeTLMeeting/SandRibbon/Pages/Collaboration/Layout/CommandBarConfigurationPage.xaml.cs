@@ -35,8 +35,14 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             };
             Resources["ToolSets"] = new[] {
                 new MacroGroup {
-                    Label="Freehand inking",
-                    Row=1,
+                    Label="Navigation",                    
+                    Macros=new[] {
+                        new Macro("slide_prev"),
+                        new Macro("slide_next")
+                    }
+                },
+                new MacroGroup {
+                    Label="Freehand inking",                    
                     Macros=new[] {
                         new Macro("pen_red"),
                         new Macro("pen_blue"),
@@ -45,23 +51,20 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                     }
                 },
                 new MacroGroup {
-                    Label="Highlighters",
-                    Row=0,
+                    Label="Highlighters",                    
                     Macros=new[] {
                         new Macro("pen_yellow_highlighter"),                        
                         new Macro("pen_orange_highlighter")
                     }
                 },
                 new MacroGroup {
-                    Label="Immediate teaching feedback",
-                    Row=2,
+                    Label="Immediate teaching feedback",                    
                     Macros=new[] {
                         new Macro("worm")                        
                     }
                 },
                 new MacroGroup {
-                    Label="Social controls",
-                    Row=3,
+                    Label="Social controls",                    
                     Macros=new[] {
                         new Macro("participants_toggle")
                     }
@@ -98,8 +101,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         }        
     }
     public class MacroGroup {
-        public string Label { get; set; }
-        public int Row { get; set; }
+        public string Label { get; set; }        
         public IEnumerable<Macro> Macros { get; set; }
     }
     public class Macro : DependencyObject

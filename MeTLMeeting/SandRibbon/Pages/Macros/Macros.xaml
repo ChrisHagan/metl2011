@@ -10,7 +10,7 @@
     <sys:Double x:Key="ButtonHeight">70</sys:Double>
     <sys:Double x:Key="SensorWidth">120</sys:Double>
     <sys:Double x:Key="SplitterWidth">20</sys:Double>
-   
+
     <Grid x:Key="slot" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" x:Shared="False">
         <macro:Appearance>
             <Rectangle>
@@ -20,6 +20,27 @@
             </Rectangle>
         </macro:Appearance>
     </Grid>
+    <!-- Slide navigation -->
+    <Button x:Key="slide_next" Command="{x:Static api:Commands.MoveToNext}" x:Shared="False"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_chevron_right}" />
+                </Rectangle.Fill>
+            </Rectangle>
+        </macro:Appearance>
+    </Button>
+    <Button x:Key="slide_prev" Command="{x:Static api:Commands.MoveToPrevious}" x:Shared="False"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_chevron_left}" />
+                </Rectangle.Fill>
+            </Rectangle>
+        </macro:Appearance>
+    </Button>
     <!-- Pen colors-->
     <Button x:Key="pen_red" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" 
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">

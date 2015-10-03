@@ -66,6 +66,8 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
+            Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1)));
+            Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1)));
 
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
@@ -97,6 +99,22 @@ namespace SandRibbon
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();            
         }
+
+        private void Shift(int direction)
+        {
+            var details = Globals.conversationDetails;
+            var slides = details.Slides.OrderBy(s => s.index).Select(s => s.id).ToList();
+            var currentIndex = slides.IndexOf(Globals.location.currentSlide);
+            var end = slides.Count - 1;
+            var targetIndex = 0;
+            if (direction >= 0 && currentIndex == end) targetIndex = 0;
+            else if (direction >= 0) targetIndex = currentIndex + 1;
+            else if (currentIndex == 0) targetIndex = end;
+            else targetIndex = currentIndex - 1;
+
+            mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
+        }
+
 
         private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
         {
