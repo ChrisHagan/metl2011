@@ -233,25 +233,24 @@
     <Compile Include="Components\Utility\TimedAction.cs" />
     <Compile Include="Layout\ConstrainingStackPanel.cs" />
     <Compile Include="Layout\Grid.cs" />
-    <Compile Include="Pages\Collaboration\CastBarFrame.xaml.cs">
+    <Compile Include="Pages\Collaboration\Layout\CastBarFrame.xaml.cs">
       <DependentUpon>CastBarFrame.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Collaboration\ChooseCollaborationContextPage.xaml.cs">
+    <Compile Include="Pages\CollaborationContext\ChooseCollaborationContextPage.xaml.cs">
       <DependentUpon>ChooseCollaborationContextPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Collaboration\GroupCollaborationPage.xaml.cs">
       <DependentUpon>GroupCollaborationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Collaboration\PublicCollaborationPage.xaml.cs">
-      <DependentUpon>PublicCollaborationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Collaboration\ConversationOverviewPage.xaml.cs">
+    <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
+    <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
+    <Compile Include="Pages\Conversations\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Collaboration\Palettes\CommandBarConfigurationPage.xaml.cs">
+    <Compile Include="Pages\Collaboration\Layout\CommandBarConfigurationPage.xaml.cs">
       <DependentUpon>CommandBarConfigurationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Collaboration\Palettes\Macros.xaml.cs" />
+    <Compile Include="Pages\Macros\Macros.xaml.cs" />
     <Compile Include="Pages\Conversations\ConversationEditPage.xaml.cs">
       <DependentUpon>ConversationEditPage.xaml</DependentUpon>
     </Compile>
@@ -333,11 +332,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\Collaboration\CastBarFrame.xaml">
+    <Page Include="Pages\Collaboration\Layout\CastBarFrame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Collaboration\ConversationOverviewPage.xaml">
+    <Page Include="Pages\Conversations\ConversationOverviewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -345,11 +344,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Collaboration\Palettes\CommandBarConfigurationPage.xaml">
+    <Page Include="Pages\Collaboration\Layout\CommandBarConfigurationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Collaboration\Palettes\Macros.xaml">
+    <Page Include="Pages\Macros\Macros.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -449,11 +448,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Collaboration\ChooseCollaborationContextPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Collaboration\PublicCollaborationPage.xaml">
+    <Page Include="Pages\CollaborationContext\ChooseCollaborationContextPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

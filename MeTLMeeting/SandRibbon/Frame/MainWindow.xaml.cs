@@ -63,7 +63,6 @@ namespace SandRibbon
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));            
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
@@ -325,11 +324,6 @@ namespace SandRibbon
                 showReconnectingDialog();
             }
         }                    
-               
-        private void ExecuteMoveTo(int slide)
-        {
-            mainFrame.Navigate(new PublicCollaborationPage(slide));
-        }
         
         private string messageFor(ConversationDetails details)
         {

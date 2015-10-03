@@ -1,4 +1,5 @@
 ﻿using Itschwabing.Libraries.ResourceChangeEvent;
+using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Collaboration.Palettes;
 using SandRibbon.Providers;
 using System;
@@ -8,12 +9,15 @@ namespace SandRibbon.Pages.Collaboration
 {
     public partial class GroupCollaborationPage : Page
     {
-        int slide;
         public GroupCollaborationPage(int slide)
         {
             InitializeComponent();
-            this.slide = slide;
-            Bars.DataContext = Globals.currentProfile;
+            DataContext = new ToolableSpaceModel
+            {
+                context = new VisibleSpaceModel { Slide = slide },
+                profile = Globals.currentProfile
+            };            
+            Commands.MoveTo.Execute(slide);            
         }
         
         private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)

@@ -195,9 +195,9 @@ namespace MeTLLib.DataTypes
                                        * string in generateJid).  Never mind that, we're just using a number.*/
         public string Author { get; set; }
         public Permissions Permissions { get; set; }
-        public System.DateTime Created;
-        public long CreatedAsTicks;
-        public System.DateTime LastAccessed;
+        public System.DateTime Created { get; set; }
+        public long CreatedAsTicks { get; set; }
+        public System.DateTime LastAccessed { get; set; }
 
         // I want this to be an always valid string because we're comparing this with other conversation detail tags 
         private string internalTag = string.Empty;
@@ -216,7 +216,7 @@ namespace MeTLLib.DataTypes
             }
         }
         public string Subject { get; set; }
-        public List<Slide> Slides = new List<Slide>();
+        public List<Slide> Slides { get; set; }
         public List<string> blacklist = new List<string>();
         public byte[] GetBytes()
         {

@@ -44,6 +44,7 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" />
                 <DataGridTextColumn Header="Owner" Binding="{Binding Path=Author}" />
+                <DataGridTextColumn Header="Slides" Binding="{Binding Path=Slides.Count}" />
                 <DataGridTextColumn Header="Created" Binding="{Binding Path=Created}" />
                 <DataGridTextColumn Header="Identity" Binding="{Binding Path=Jid}" />
                 <DataGridTemplateColumn Header="Edit">

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -12,7 +11,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
 using System.Windows.Automation.Peers;
@@ -24,6 +22,7 @@ using Image = System.Windows.Controls.Image;
 using SandRibbon.Quizzing;
 using System.Windows.Media.Effects;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -38,11 +37,8 @@ namespace SandRibbon.Components
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<PublicCollaborationPage>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
@@ -95,12 +91,12 @@ namespace SandRibbon.Components
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
-                                                    {
-                                                        time = time,
-                                                        message = string.Format("Banned content submission at {0}", new DateTime(time)),
-                                                        showPrivate = false,
-                                                        dimensions = new Size(1024, 768)
-                                                    });
+            {
+                time = time,
+                message = string.Format("Banned content submission at {0}", new DateTime(time)),
+                showPrivate = false,
+                dimensions = new Size(1024, 768)
+            });
         }
 
         private void setUpSyncDisplay(int slide)
@@ -121,22 +117,6 @@ namespace SandRibbon.Components
             catch (NotSetException)
             {
                 //You are listening to the channel but have not yet joined the room
-            }
-        }
-        private void UpdateConversationDetails(ConversationDetails details)
-        {
-            if (details.IsEmpty) return;
-            if (string.IsNullOrEmpty(details.Jid) || !(details.UserHasPermission(Globals.credentials))) return;
-            try
-            {
-                if (Globals.conversationDetails == null)
-                    Commands.SetPrivacy.ExecuteAsync("private");
-                else if (Globals.conversationDetails.Author == Globals.me)
-                    Commands.SetPrivacy.ExecuteAsync("public");
-            }
-            catch (NotSetException)
-            {
-                Commands.SetPrivacy.ExecuteAsync("private");
             }
         }
         private FrameworkElement GetAdorner()
@@ -166,7 +146,7 @@ namespace SandRibbon.Components
                 using (var context = dv.RenderOpen())
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
-                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);                  
+                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
@@ -181,38 +161,17 @@ namespace SandRibbon.Components
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            BeginInit();
-            stack.ReceiveStrokes(parser.ink);
-            stack.ReceiveImages(parser.images.Values);
-            foreach (var text in parser.text.Values)
-                stack.DoText(text);
-            /*foreach (var moveDelta in parser.moveDeltas)
-                stack.ReceiveMoveDelta(moveDelta, processHistory: true);
-            */
-            stack.RefreshCanvas();
-            EndInit();
-        }
-        private void MirrorPresentationSpace(PublicCollaborationPage presentationSpace)
-        {
-            try
+            var model = DataContext as ToolableSpaceModel;
+            if (parser.location.currentSlide == model.context.Slide)
             {
-                var mirror = new Window { Content = new Projector { viewConstraint = presentationSpace.scroll } };
-                if (Projector.Window != null)
-                    Projector.Window.Close();
-                Projector.Window = mirror;                
-                mirror.WindowStyle = WindowStyle.None;
-                mirror.AllowsTransparency = true;
-                setSecondaryWindowBounds(mirror);
-                mirror.Show();
+                BeginInit();
+                stack.ReceiveStrokes(parser.ink);
+                stack.ReceiveImages(parser.images.Values);
+                foreach (var text in parser.text.Values)
+                    stack.DoText(text);
+                stack.RefreshCanvas();
+                EndInit();
             }
-            catch (NotSetException)
-            {
-                //Fine it's not time yet anyway.  I don't care.
-            }
-        }
-        private static bool CanMirrorPresentationSpace(object _param)
-        {
-            return Projector.Window == null && System.Windows.Forms.Screen.AllScreens.Length > 1;
         }
         private static System.Windows.Forms.Screen getSecondaryScreen()
         {
@@ -235,21 +194,6 @@ namespace SandRibbon.Components
             w.Left = r.Left;
             w.Width = r.Width;
             w.Height = r.Height;
-        }
-        private void MoveTo(int slide)
-        {
-            ClearAdorners();
-            stack.Flush();
-        }
-        private void ClearAdorners()
-        {
-            Dispatcher.adoptAsync(delegate
-                          {
-                              removeAdornerItems(this);
-                              ClearPrivacy();
-                              removeSyncDisplay();
-                          });
-
         }
         private void removeSyncDisplay()
         {
@@ -379,9 +323,9 @@ namespace SandRibbon.Components
                 using (DrawingContext dc = dv.RenderOpen())
                 {
                     var vb = new VisualBrush(adornee)
-                                 {
-                                     Viewbox = new Rect(origin, new Size(marquee.ActualWidth, marquee.ActualHeight))
-                                 };
+                    {
+                        Viewbox = new Rect(origin, new Size(marquee.ActualWidth, marquee.ActualHeight))
+                    };
                     dc.DrawRectangle(vb, null, new Rect(origin, new Point(marquee.ActualWidth, marquee.ActualHeight)));
                 }
                 rtb.Render(dv);
@@ -401,10 +345,6 @@ namespace SandRibbon.Components
             {
                 return new byte[0];
             }
-        }
-        private void receiveQuiz(QuizQuestion details)
-        {
-
         }
         private System.Windows.Shapes.Path privacyAdorner = new System.Windows.Shapes.Path();
         public Brush privacyOverlay;
