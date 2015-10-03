@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public partial class CastBarFrame
+    public partial class CastBarFrame : ContentControl
     {
         public CastBarFrame()
         {

@@ -6,6 +6,8 @@
     xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
     AllowDrop="True"                          
     Title="MeTL"
+    Icon="\Resources\favicon.ico"
+    ShowIconOnTitleBar="False"
     x:Name="ribbonWindow"
     Closing="ribbonWindow_Closing">
     <Window.Resources>

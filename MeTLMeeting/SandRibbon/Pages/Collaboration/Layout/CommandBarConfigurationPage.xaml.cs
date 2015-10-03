@@ -1,4 +1,5 @@
 ﻿using MeTLLib.DataTypes;
+using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,13 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                 new SlotConfigurer("How wide are your graphs?", "SensorWidth"),
                 new SlotConfigurer("How wide are your column dividers?", "SplitterWidth")
             };            
-            sliders.ItemsSource = rangeProperties;            
-            
-            Bars.DataContext = Globals.currentProfile;
+            sliders.ItemsSource = rangeProperties;
+
+            DataContext = new ToolableSpaceModel
+            {//There is no slide context for this UI
+                context = new VisibleSpaceModel(),
+                profile = Globals.currentProfile
+            };
             Resources["ToolSets"] = new[] {
                 new MacroGroup {
                     Label="Freehand inking",

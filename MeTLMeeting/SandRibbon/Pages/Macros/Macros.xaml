@@ -4,12 +4,13 @@
                     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
                     xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                    xmlns:macro="clr-namespace:SandRibbon.Pages.Collaboration.Palettes">    
+                    xmlns:macro="clr-namespace:SandRibbon.Pages.Collaboration.Palettes">
+    <sys:Double x:Key="HorizontalThumbWidth">50</sys:Double>
     <sys:Double x:Key="ButtonWidth">70</sys:Double>
     <sys:Double x:Key="ButtonHeight">70</sys:Double>
     <sys:Double x:Key="SensorWidth">120</sys:Double>
     <sys:Double x:Key="SplitterWidth">20</sys:Double>
-
+   
     <Grid x:Key="slot" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" x:Shared="False">
         <macro:Appearance>
             <Rectangle>

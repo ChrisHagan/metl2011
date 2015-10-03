@@ -8,12 +8,12 @@
       xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:collaboration="clr-namespace:SandRibbon.Pages.Collaboration"
-      xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
-      x:Name="page"
       Title="GroupCollaborationPage">
-    <collaboration:CastBarFrame x:Name="Bars">
-        <Viewbox>
-            <components:PresentationSpace Height="auto" Width="auto" />
-        </Viewbox>
-    </collaboration:CastBarFrame>
+    <Grid>
+        <collaboration:CastBarFrame x:Name="Bars">
+            <Viewbox>
+                <components:PresentationSpace Height="auto" Width="auto" />
+            </Viewbox>
+        </collaboration:CastBarFrame>
+    </Grid>
 </Page>
