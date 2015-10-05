@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Data;
 using System;
 using OxyPlot.Axes;
+using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Pages.Collaboration
 {
@@ -35,20 +36,19 @@ namespace SandRibbon.Pages.Collaboration
         {
             InitializeComponent();
             this.conversation = conversation;
-            DataContext = conversation;
-
-            locations.ItemsSource = conversation.Slides.OrderBy(s => s.index);
-
+            DataContext = new ReticulatedConversation { PresentationPath = conversation };
             var plotModel = new PlotModel();
-            var aggregateLine = new LineSeries { Color = OxyColors.White};
+            var aggregateLine = new LineSeries { Color = OxyColors.White };
             plotModel.Series.Add(aggregateLine);
-            plotModel.Axes.Add(new LinearAxis {
-                Position=AxisPosition.Bottom                
+            plotModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Bottom
             });
-            plotModel.Axes.Add(new LinearAxis {
+            plotModel.Axes.Add(new LinearAxis
+            {
                 Position = AxisPosition.Left
             });
-            activityPlot.Model = plotModel;            
+            activityPlot.Model = plotModel;
 
             var participantList = new ObservableCollection<ConversationParticipant>();
             processing.Maximum = conversation.Slides.Count;
@@ -78,9 +78,9 @@ namespace SandRibbon.Pages.Collaboration
                                         }
                                     },
                                     slide.id.ToString());
-            });
+            });            
         }
-
+       
         private void inc(Dictionary<string, int> dict, string author)
         {
             if (!dict.ContainsKey(author))
@@ -110,7 +110,7 @@ namespace SandRibbon.Pages.Collaboration
             }
             return tallies.Select(kv => new ConversationParticipant(kv.Key, p.location.currentSlide, kv.Value));
         }
-        
+
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;

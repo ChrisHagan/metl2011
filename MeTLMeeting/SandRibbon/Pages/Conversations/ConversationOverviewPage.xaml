@@ -8,10 +8,17 @@
       xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
       xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
+      xmlns:TreeContainer="clr-namespace:TreeContainer;assembly=TreeContainer"
       Title="Conversation Overview">
     <Page.Resources>
-        <components:UrlForSlideConverter x:Key="renderer" />        
+        <components:UrlForSlideConverter x:Key="renderer" />
+        <CollectionViewSource x:Key="slidesByIndex" Source="{Binding Path=PresentationPath.Slides}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="index" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
     </Page.Resources>
     <Grid layout:GridLayout.ItemsPerRow="1">
         <Grid x:Name="layout">
@@ -24,38 +31,59 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding Path=Title}" />
-            <Label Grid.Row="1" Content="{Binding Path=Jid}" />
-            <Label Grid.Row="2" Content="{Binding Path=Author}" />
+            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding Path=PresentationPath.Title}" />
+            <Label Grid.Row="1" Content="{Binding Path=PresentationPath.Jid}" />
+            <Label Grid.Row="2" Content="{Binding Path=PresentationPath.Author}" />
             <Label Grid.Row="1" Grid.Column="1" Content="Teaching objectives" />
             <TextBlock Grid.Row="2" Grid.Column="1" />
         </Grid>
         <Grid layout:GridLayout.ItemsPerRow="1">
             <ProgressBar Minimum="0" Width="Auto" x:Name="processing" Margin="{StaticResource clearTop}"/>
+            <ItemsControl ItemsSource="{Binding Path=Locations}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid layout:GridLayout.ColumnCount="{Binding Path=LongestPathLength}" layout:GridLayout.RowCount="4" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="Grid.Row" Value="{Binding Path=Row}" />
+                        <Setter Property="Grid.Column" Value="{Binding Path=Column}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="SlideSelected">
+                            <Grid layout:GridLayout.ItemsPerRow="1" Height="{DynamicResource ButtonHeight}" Width="{DynamicResource ButtonWidth}">
+                                <Label Content="{Binding Path=Column}" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
             <oxy:PlotView x:Name="activityPlot" Height="100" Width="Auto" Margin="{StaticResource clearTop}">
                 <oxy:PlotView.Background>
                     <SolidColorBrush Color="{StaticResource AccentColor}" />
                 </oxy:PlotView.Background>
             </oxy:PlotView>
             <Label Content="Where do you want to enter the conversation?" />
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="locations" Margin="{StaticResource clearTop}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Width="Auto" ItemWidth="{DynamicResource ButtonWidth}" ItemHeight="{DynamicResource ButtonHeight}"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Click="SlideSelected">
-                                <Grid layout:GridLayout.ItemsPerRow="1" Height="{DynamicResource ButtonHeight}" Width="{DynamicResource ButtonWidth}">
-                                    <Label Content="{Binding Path=index}" />                                    
-                                </Grid>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <ItemsControl x:Name="locations" Margin="{StaticResource clearTop}" ItemsSource="{Binding Source={StaticResource slidesByIndex}}" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Width="Auto" ItemWidth="{DynamicResource ButtonWidth}" ItemHeight="{DynamicResource ButtonHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="SlideSelected">
+                            <Grid layout:GridLayout.ItemsPerRow="1" Height="{DynamicResource ButtonHeight}" Width="{DynamicResource ButtonWidth}">
+                                <Label Content="{Binding Path=index}" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
     </Grid>
 </Page>

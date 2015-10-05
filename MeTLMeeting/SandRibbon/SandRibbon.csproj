@@ -250,6 +250,8 @@
     <Compile Include="Pages\Collaboration\Layout\CommandBarConfigurationPage.xaml.cs">
       <DependentUpon>CommandBarConfigurationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Conversations\Models\LearningObjective.cs" />
+    <Compile Include="Pages\Conversations\Models\ReticulatedConversation.cs" />
     <Compile Include="Pages\Macros\Macros.xaml.cs" />
     <Compile Include="Pages\Conversations\ConversationEditPage.xaml.cs">
       <DependentUpon>ConversationEditPage.xaml</DependentUpon>
@@ -1018,6 +1020,10 @@
     <ProjectReference Include="..\..\..\..\..\Users\chris\WpfResourceChangeEvent\ResourceChangeEvent\ResourceChangeEvent.csproj">
       <Project>{8fb70c9b-54d8-4c05-b2dc-a5fc2f629e82}</Project>
       <Name>ResourceChangeEvent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TreeContainer\TreeContainer\TreeContainer.csproj">
+      <Project>{88b86170-ec9f-4acf-b96e-0f97c28f57ba}</Project>
+      <Name>TreeContainer</Name>
     </ProjectReference>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
       <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
