@@ -31,28 +31,16 @@ namespace SandRibbon.Pages.Collaboration
     };
     public partial class ConversationOverviewPage : Page
     {
-        ConversationDetails conversation;
-        public ConversationOverviewPage(ConversationDetails conversation)
+        ReticulatedConversation conversation;
+        public ConversationOverviewPage(ConversationDetails presentationPath)
         {
             InitializeComponent();
-            this.conversation = conversation;
-            DataContext = new ReticulatedConversation { PresentationPath = conversation };
-            var plotModel = new PlotModel();
-            var aggregateLine = new LineSeries { Color = OxyColors.White };
-            plotModel.Series.Add(aggregateLine);
-            plotModel.Axes.Add(new LinearAxis
-            {
-                Position = AxisPosition.Bottom
-            });
-            plotModel.Axes.Add(new LinearAxis
-            {
-                Position = AxisPosition.Left
-            });
-            activityPlot.Model = plotModel;
-
+            DataContext = conversation = new ReticulatedConversation { PresentationPath = presentationPath };
+            conversation.CalculateLocations();
+            //We need the location references to remain stable so we can bind to them and modify them in parsers
             var participantList = new ObservableCollection<ConversationParticipant>();
-            processing.Maximum = conversation.Slides.Count;
-            conversation.Slides.ForEach(slide =>
+            processing.Maximum = conversation.Locations.Count;
+            foreach (var slide in conversation.Locations)
             {
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
                                     null,
@@ -62,25 +50,20 @@ namespace SandRibbon.Pages.Collaboration
                                         processing.Value++;
                                         foreach (var user in process(parser))
                                         {
-                                            aggregateLine.Points.Clear();
-                                            user.index = slide.index;
+                                            user.index = slide.Slide.index;
                                             participantList.Add(user);
                                             var grouped = participantList.GroupBy(cp => cp.index)
                                             .ToDictionary(g => g.Key, g =>
                                             {
                                                 return new ConversationParticipant("", g.Key, g.Select(u => u.activityCount).Sum());
                                             });
-                                            for (var i = 0; i < conversation.Slides.Count; i++)
-                                            {
-                                                aggregateLine.Points.Add(new DataPoint(i, grouped.ContainsKey(i) ? grouped[i].activityCount : 0));
-                                            }
-                                            activityPlot.InvalidatePlot(true);
+                                            slide.Activity = grouped[slide.Slide.index]?.activityCount ?? 0;
                                         }
                                     },
-                                    slide.id.ToString());
-            });            
+                                    slide.Slide.id.ToString());
+            }
         }
-       
+
         private void inc(Dictionary<string, int> dict, string author)
         {
             if (!dict.ContainsKey(author))
@@ -114,8 +97,8 @@ namespace SandRibbon.Pages.Collaboration
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
-            var slide = element.DataContext as Slide;
-            NavigationService.Navigate(new GroupCollaborationPage(slide.id));
+            var slide = element.DataContext as VmSlide;
+            NavigationService.Navigate(new GroupCollaborationPage(slide.Slide.id));
         }
     }
     public class GridLengthConverter : IValueConverter

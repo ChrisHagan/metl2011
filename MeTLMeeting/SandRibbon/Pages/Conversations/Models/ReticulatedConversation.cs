@@ -4,14 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
-    public class VmSlide
+    public class VmSlide : DependencyObject
     {
         public Slide Slide { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
+
+
+        public int Activity
+        {
+            get { return (int)GetValue(ActivityProperty); }
+            set { SetValue(ActivityProperty, value); }
+        }
+        
+        public static readonly DependencyProperty ActivityProperty =
+            DependencyProperty.Register("Activity", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
     }
     public class ReticulatedConversation
     {
@@ -28,21 +39,23 @@ namespace SandRibbon.Pages.Conversations.Models
                     RemedialMaterial
                 }.ToList();
         }
-        public int LongestPathLength => cds().Where(cd => cd != null).Select(d => d.Slides.Count()).Max();         
-        public List<VmSlide> Locations
+
+        internal void CalculateLocations()
         {
-            get
+            var relevantDetails = cds();
+            var locs = new List<VmSlide>();
+            for (int row = 0; row < relevantDetails.Count(); row++)
             {
-                var relevantDetails = cds();
-                var locs = new List<VmSlide>();
-                for (int row = 0; row < relevantDetails.Count(); row++)
-                {
-                    relevantDetails[row]?.Slides.ForEach(s => locs.Add(new VmSlide { Slide = s, Row = row + 1, Column = s.index }));                    
-                }
-                //TODO: Fill assessments            
-                return locs;
+                relevantDetails[row]?.Slides.ForEach(s => locs.Add(new VmSlide { Slide = s, Row = row + 1, Column = s.index }));
+            }
+            //TODO: Fill assessments            
+            Locations.Clear();
+            foreach (var loc in locs) {
+                Locations.Add(loc);
             }
         }
+        public ObservableCollection<VmSlide> Locations { get; set; } = new ObservableCollection<VmSlide>();
+        public int LongestPathLength => cds().Where(cd => cd != null).Select(d => d.Slides.Count()).Max();                
     }
 
     public class ReticulatedNode
