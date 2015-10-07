@@ -20,15 +20,28 @@ namespace SandRibbon.Pages.Conversations.Models
             get { return (int)GetValue(ActivityProperty); }
             set { SetValue(ActivityProperty, value); }
         }
-        
+
         public static readonly DependencyProperty ActivityProperty =
             DependencyProperty.Register("Activity", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
+
+
+        public int Voices
+        {
+            get { return (int)GetValue(VoicesProperty); }
+            set { SetValue(VoicesProperty, value); }
+        }
+
+        public static readonly DependencyProperty VoicesProperty =
+            DependencyProperty.Register("Voices", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
+
+
     }
     public class ReticulatedConversation
     {
         public ConversationDetails PresentationPath { get; set; }
         public ConversationDetails AdvancedMaterial { get; set; }
         public ConversationDetails RemedialMaterial { get; set; }
+        public List<ConversationDetails> RelatedMaterial { get; set; }
         public List<LearningObjective> Objectives { get; set; }
         private List<ConversationDetails> cds()
         {
@@ -37,7 +50,7 @@ namespace SandRibbon.Pages.Conversations.Models
                 PresentationPath,
                     AdvancedMaterial,
                     RemedialMaterial
-                }.ToList();
+                }.Concat(RelatedMaterial?? new List<ConversationDetails>()).ToList();
         }
 
         internal void CalculateLocations()
@@ -50,12 +63,13 @@ namespace SandRibbon.Pages.Conversations.Models
             }
             //TODO: Fill assessments            
             Locations.Clear();
-            foreach (var loc in locs) {
+            foreach (var loc in locs)
+            {
                 Locations.Add(loc);
             }
         }
         public ObservableCollection<VmSlide> Locations { get; set; } = new ObservableCollection<VmSlide>();
-        public int LongestPathLength => cds().Where(cd => cd != null).Select(d => d.Slides.Count()).Max();                
+        public int LongestPathLength => cds().Where(cd => cd != null).Select(d => d.Slides.Count()).Max();
     }
 
     public class ReticulatedNode

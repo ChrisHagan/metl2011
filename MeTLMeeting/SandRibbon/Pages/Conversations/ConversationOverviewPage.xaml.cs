@@ -7,26 +7,25 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Linq;
-using OxyPlot;
-using OxyPlot.Series;
 
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System;
-using OxyPlot.Axes;
 using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public class ConversationParticipant : MeTLUser
+    public class LocatedActivity : MeTLUser
     {
         public int slide { get; set; }
         public int index { get; set; }
-        public ConversationParticipant(string name, int slide, int activityCount) : base(name)
+        public int voices { get; set; }
+        public LocatedActivity(string name, int slide, int activityCount, int voiceCount) : base(name)
         {
             this.slide = slide;
             this.activityCount = activityCount;
+            this.voices = voiceCount;
         }
     };
     public partial class ConversationOverviewPage : Page
@@ -38,7 +37,7 @@ namespace SandRibbon.Pages.Collaboration
             DataContext = conversation = new ReticulatedConversation { PresentationPath = presentationPath };
             conversation.CalculateLocations();
             //We need the location references to remain stable so we can bind to them and modify them in parsers
-            var participantList = new ObservableCollection<ConversationParticipant>();
+            var participantList = new ObservableCollection<LocatedActivity>();
             processing.Maximum = conversation.Locations.Count;
             foreach (var slide in conversation.Locations)
             {
@@ -55,9 +54,10 @@ namespace SandRibbon.Pages.Collaboration
                                             var grouped = participantList.GroupBy(cp => cp.index)
                                             .ToDictionary(g => g.Key, g =>
                                             {
-                                                return new ConversationParticipant("", g.Key, g.Select(u => u.activityCount).Sum());
+                                                return new LocatedActivity("", g.Key, g.Select(u => u.activityCount).Sum(), g.Count());
                                             });
                                             slide.Activity = grouped[slide.Slide.index]?.activityCount ?? 0;
+                                            slide.Voices = grouped[slide.Slide.index]?.voices ?? 0;
                                         }
                                     },
                                     slide.Slide.id.ToString());
@@ -76,7 +76,7 @@ namespace SandRibbon.Pages.Collaboration
             }
         }
 
-        private IEnumerable<ConversationParticipant> process(PreParser p)
+        private IEnumerable<LocatedActivity> process(PreParser p)
         {
             var tallies = new Dictionary<string, int>();
             foreach (var s in p.ink)
@@ -91,7 +91,7 @@ namespace SandRibbon.Pages.Collaboration
             {
                 inc(tallies, i.author);
             }
-            return tallies.Select(kv => new ConversationParticipant(kv.Key, p.location.currentSlide, kv.Value));
+            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value,0));
         }
 
         private void SlideSelected(object sender, RoutedEventArgs e)

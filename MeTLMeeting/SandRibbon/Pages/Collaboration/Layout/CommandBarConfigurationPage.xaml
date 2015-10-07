@@ -14,6 +14,7 @@
     <Page.Resources>
         <local:DynamicResourceConverter x:Key="resourceConverter" />
         <local:MacroAppearanceConverter x:Key="macroAppearance" />
+        <Visibility x:Key="emptySlotVisibility">Visible</Visibility>
     </Page.Resources>
     <ScrollViewer>
         <Grid layout:GridLayout.ItemsPerRow="1">

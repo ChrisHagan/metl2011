@@ -10,8 +10,10 @@
     <sys:Double x:Key="ButtonHeight">70</sys:Double>
     <sys:Double x:Key="SensorWidth">120</sys:Double>
     <sys:Double x:Key="SplitterWidth">20</sys:Double>
-
-    <Grid x:Key="slot" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" x:Shared="False">
+    <Visibility x:Key="emptySlotVisibility">Collapsed</Visibility>
+    <!-- Empty slots-->
+    <Grid x:Key="slot" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" x:Shared="False"
+          Visibility="{DynamicResource emptySlotVisibility}">
         <macro:Appearance>
             <Rectangle>
                 <Rectangle.Fill>
@@ -21,6 +23,16 @@
         </macro:Appearance>
     </Grid>
     <!-- Slide navigation -->
+    <Button x:Key="conversation_overview" Command="{x:Static api:Commands.MoveToOverview}" x:Shared="False"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_diagram}" Stretch="UniformToFill"/>
+                </Rectangle.Fill>
+            </Rectangle>
+        </macro:Appearance>
+    </Button>
     <Button x:Key="slide_next" Command="{x:Static api:Commands.MoveToNext}" x:Shared="False"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
@@ -41,7 +53,7 @@
             </Rectangle>
         </macro:Appearance>
     </Button>
-    <!-- Pen colors-->
+    <!-- Pen colors-->    
     <Button x:Key="pen_red" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" 
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <Button.CommandParameter>
@@ -162,7 +174,7 @@
         <macro:Appearance>
             <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_cog}" />
+                    <VisualBrush Visual="{StaticResource appbar_cog}" Stretch="UniformToFill"/>
                 </Rectangle.Fill>
             </Rectangle>
         </macro:Appearance>

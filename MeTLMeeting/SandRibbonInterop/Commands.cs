@@ -6,10 +6,6 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Xml.Linq;
-using System.ComponentModel;
-using System.Windows.Threading;
-using System.Threading;
 using MeTLLib.DataTypes;
 
 namespace SandRibbon
@@ -264,6 +260,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PreParserAvailable = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ConversationPreParserAvailable = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MoveToOverview = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToPrevious = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand();

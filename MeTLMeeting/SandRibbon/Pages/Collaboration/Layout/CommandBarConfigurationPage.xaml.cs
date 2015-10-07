@@ -37,13 +37,12 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                 new MacroGroup {
                     Label="Navigation",                    
                     Macros=new[] {
-                        new Macro("slide_prev"),
-                        new Macro("slide_next")
+                        new Macro("conversation_overview")
                     }
                 },
                 new MacroGroup {
                     Label="Freehand inking",                    
-                    Macros=new[] {
+                    Macros=new[] {         
                         new Macro("pen_red"),
                         new Macro("pen_blue"),
                         new Macro("pen_black"),
