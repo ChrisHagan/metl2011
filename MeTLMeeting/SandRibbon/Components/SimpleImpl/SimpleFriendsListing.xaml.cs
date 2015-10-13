@@ -35,7 +35,7 @@ namespace SandRibbon.Components
         public SimpleFriendsListing()
         {
             InitializeComponent();
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((_obj)=>Flush()));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((_obj)=>Flush()));
         }
         public void SetPopulation(List<Friend> newPopulation)
         {

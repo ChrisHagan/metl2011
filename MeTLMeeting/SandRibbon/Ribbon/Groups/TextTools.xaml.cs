@@ -29,7 +29,7 @@ namespace SandRibbon.Tabs.Groups
             //This is used only when a text box is selected
             //A seperate command is used because TextBoxFocused command calls updateprivacy method which is not needed when a text box is selected
             Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
+            Commands.MoveToCollaborationPage.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));

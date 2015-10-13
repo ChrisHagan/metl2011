@@ -4,6 +4,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
     xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
+    xmlns:providers="clr-namespace:SandRibbon.Providers"
     AllowDrop="True"                          
     Title="MeTL"
     Icon="\Resources\favicon.ico"
@@ -39,6 +40,9 @@
     </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
+            <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{x:Static providers:Globals.OneNoteConfiguration}">
+                <Image Source="/Resources/onenote.png" />
+            </Button>
             <Button Click="UserPreferences">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>

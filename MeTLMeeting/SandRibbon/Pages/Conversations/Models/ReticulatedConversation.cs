@@ -10,10 +10,9 @@ namespace SandRibbon.Pages.Conversations.Models
 {
     public class VmSlide : DependencyObject
     {
+        public ConversationRelevance Relevance { get; set; }
         public Slide Slide { get; set; }
-        public int Row { get; set; }
-        public int Column { get; set; }
-
+        public ConversationDetails Details { get; set; }                
 
         public int Activity
         {
@@ -24,7 +23,6 @@ namespace SandRibbon.Pages.Conversations.Models
         public static readonly DependencyProperty ActivityProperty =
             DependencyProperty.Register("Activity", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
 
-
         public int Voices
         {
             get { return (int)GetValue(VoicesProperty); }
@@ -33,8 +31,12 @@ namespace SandRibbon.Pages.Conversations.Models
 
         public static readonly DependencyProperty VoicesProperty =
             DependencyProperty.Register("Voices", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
-
-
+    }
+    public enum ConversationRelevance {
+        PRESENTATION_PATH,
+        ADVANCED_MATERIAL,
+        REMEDIAL_MATERIAL,
+        RELATED_MATERIAL
     }
     public class ReticulatedConversation
     {
@@ -54,14 +56,16 @@ namespace SandRibbon.Pages.Conversations.Models
         }
 
         internal void CalculateLocations()
-        {
-            var relevantDetails = cds();
+        {            
             var locs = new List<VmSlide>();
-            for (int row = 0; row < relevantDetails.Count(); row++)
+            PresentationPath?.Slides.ForEach(s => locs.Add(new VmSlide { Details = PresentationPath, Slide = s, Relevance = ConversationRelevance.PRESENTATION_PATH }));
+            AdvancedMaterial?.Slides.ForEach(s => locs.Add(new VmSlide { Details = AdvancedMaterial, Slide = s, Relevance = ConversationRelevance.ADVANCED_MATERIAL }));
+            RemedialMaterial?.Slides.ForEach(s => locs.Add(new VmSlide { Details = RemedialMaterial, Slide = s, Relevance = ConversationRelevance.REMEDIAL_MATERIAL }));
+            for (int row = 0; row < RelatedMaterial.Count(); row++)
             {
-                relevantDetails[row]?.Slides.ForEach(s => locs.Add(new VmSlide { Slide = s, Row = row + 1, Column = s.index }));
-            }
-            //TODO: Fill assessments            
+                var details = RelatedMaterial[row];
+                details?.Slides.ForEach(s => locs.Add(new VmSlide { Details = details, Slide = s, Relevance = ConversationRelevance.RELATED_MATERIAL }));
+            }            
             Locations.Clear();
             foreach (var loc in locs)
             {
@@ -70,6 +74,7 @@ namespace SandRibbon.Pages.Conversations.Models
         }
         public ObservableCollection<VmSlide> Locations { get; set; } = new ObservableCollection<VmSlide>();
         public int LongestPathLength => cds().Where(cd => cd != null).Select(d => d.Slides.Count()).Max();
+        public int PathCount => cds().Count();
     }
 
     public class ReticulatedNode

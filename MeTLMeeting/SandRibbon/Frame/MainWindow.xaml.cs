@@ -22,6 +22,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using SandRibbon.Pages.Collaboration.Palettes;
 using MahApps.Metro.Controls;
+using SandRibbon.Pages.Conversations.Models;
+using System.Web;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon
 {
@@ -62,6 +65,8 @@ namespace SandRibbon
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
+            Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
             //conversation movement
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -69,6 +74,7 @@ namespace SandRibbon
             Commands.MoveToOverview.RegisterCommand(new DelegateCommand<object>(MoveToOverview, mustBeInConversation));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
+            Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
 
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
@@ -99,6 +105,57 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();            
+        }
+
+        private void NavigateToNotebookPage(NotebookPage page)
+        {
+            mainFrame.Navigate(new OneNotePage(page));
+        }
+
+        private void browseOneNote(OneNoteConfiguration config)
+        {
+            var w = new WebBrowser();
+            w.Navigated += oauthNavigated;
+            flyout.Content = w;
+            flyout.Width = 600;
+            flyout.IsOpen = true;
+            var scope = "office.onenote_update";
+            var responseType = "token";
+            var clientId = config.apiKey;
+            var redirectUri = "https://login.live.com/oauth20_desktop.srf";
+            var req = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type={2}&redirect_uri={3}";
+            var uri = new Uri(String.Format(req, 
+                config.apiKey, 
+                scope, 
+                responseType,
+                redirectUri));
+            w.Navigate(uri);
+        }
+
+        private void oauthNavigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {            
+            var queryPart = e.Uri.AbsoluteUri.Split('#');
+            if (queryPart.Length > 1) {
+                var ps = HttpUtility.ParseQueryString(queryPart[1]);
+                var token = ps["access_token"];
+                if (token != null) {
+                    Console.WriteLine("Token: {0}", token);                                  
+                    flyout.DataContext = Globals.OneNoteConfiguration;
+                    var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
+                    oneNoteModel.Books.Clear();
+                    foreach(var book in OneNote.Notebooks(token)) {
+                        oneNoteModel.Books.Add(book);                        
+                    }
+                    flyout.Content = TryFindResource("oneNoteListing");
+                }
+            }            
+        }
+
+        private void openOneNoteConfiguration(object obj)
+        {            
+            flyout.Content = TryFindResource("oneNoteConfiguration");
+            flyout.DataContext = Globals.OneNoteConfiguration;
+            flyout.IsOpen = true;
         }
 
         private void MoveToOverview(object obj)
@@ -321,7 +378,7 @@ namespace SandRibbon
                     {
                         var jid = Globals.conversationDetails.Jid;
                         Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
-                        Commands.MoveTo.Execute(Globals.location.currentSlide);
+                        Commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
                         SlideDisplay.SendSyncMove(Globals.location.currentSlide);
                         ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
                                     null,

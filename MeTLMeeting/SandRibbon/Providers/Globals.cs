@@ -9,6 +9,7 @@ using TextInformation = SandRibbon.Components.TextInformation;
 using SandRibbonObjects;
 using SandRibbon.Profiles;
 using SandRibbon.Pages.Collaboration.Palettes;
+using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Providers
 {
@@ -127,6 +128,11 @@ namespace SandRibbon.Providers
                 canvasSize = value;
             }
         }
+        public static OneNoteConfiguration OneNoteConfiguration { get; set; } = new OneNoteConfiguration
+        {
+            apiKey = "exampleApiKey",
+            apiSecret = "exampleApiSecret"
+        };
         public static PedagogyLevel pedagogy
         {
             get
@@ -217,7 +223,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return Commands.MoveTo.IsInitialised ? (int)Commands.MoveTo.LastValue() : -1;
+                return Commands.MoveToCollaborationPage.IsInitialised ? (int)Commands.MoveToCollaborationPage.LastValue() : -1;
             }
         }
         public static string me

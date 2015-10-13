@@ -24,7 +24,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
+            Commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
         }
 
         private void MoveTo(int slide)

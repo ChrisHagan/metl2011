@@ -102,7 +102,7 @@ namespace SandRibbon.Components
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));

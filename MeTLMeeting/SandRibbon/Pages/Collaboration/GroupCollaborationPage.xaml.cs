@@ -19,7 +19,7 @@ namespace SandRibbon.Pages.Collaboration
                 context = new VisibleSpaceModel { Slide = slide },
                 profile = Globals.currentProfile
             };
-            Commands.MoveTo.Execute(slide);        
+            Commands.MoveToCollaborationPage.Execute(slide);        
         }
         
         private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)

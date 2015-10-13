@@ -32,7 +32,7 @@ namespace SandRibbon.Utils
         {
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(Redo, CanRedo));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(
                 i =>
                 {
                     currentSlide = i;

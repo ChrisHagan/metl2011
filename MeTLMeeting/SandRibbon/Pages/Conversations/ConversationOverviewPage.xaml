@@ -3,22 +3,22 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"  
+      xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
       xmlns:layout="clr-namespace:SandRibbon.Layout"
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-      xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
-      xmlns:TreeContainer="clr-namespace:TreeContainer;assembly=TreeContainer"
+      xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"      
       x:Name="page"
       Title="Conversation Overview">
     <Page.Resources>
         <components:UrlForSlideConverter x:Key="renderer" />
-        <CollectionViewSource x:Key="slidesByIndex" Source="{Binding Path=PresentationPath.Slides}">
-            <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription PropertyName="index" />
-            </CollectionViewSource.SortDescriptions>
+        <CollectionViewSource x:Key="labelledLocations" Source="{Binding Path=Locations}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Details.Jid" />
+            </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
     </Page.Resources>
     <Grid layout:GridLayout.ItemsPerRow="1">
@@ -38,58 +38,83 @@
             <Label Grid.Row="1" Grid.Column="1" Content="Teaching objectives" />
             <TextBlock Grid.Row="2" Grid.Column="1" />
         </Grid>
+        <Button Command="{x:Static api:Commands.ManuallyConfigureOneNote}">
+            <Grid layout:GridLayout.ItemsPerRow="1">
+                <Image Source="/Resources/onenote.png" Width="{DynamicResource ButtonWidth}"  Height="{DynamicResource ButtonHeight}" />
+                <Label Style="{DynamicResource medium}" Content="Include OneNote" />
+            </Grid>
+        </Button>
         <Grid layout:GridLayout.ItemsPerRow="1">
             <ProgressBar Minimum="0" Width="Auto" x:Name="processing" Margin="{StaticResource clearTop}"/>
             <Label Content="Where do you want to enter the conversation?" />
             <ScrollViewer Width="{Binding ElementName=page, Path=ActualWidth}" HorizontalScrollBarVisibility="Visible">
-                <ItemsControl ItemsSource="{Binding Path=Locations}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Grid layout:GridLayout.ColumnCount="{Binding Path=LongestPathLength}" layout:GridLayout.RowCount="4" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="{x:Type ContentPresenter}">
-                            <Setter Property="Grid.Row" Value="{Binding Path=Row}" />
-                            <Setter Property="Grid.Column" Value="{Binding Path=Column}" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Click="SlideSelected">
-                                <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="3">
-                                    <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                <Grid layout:GridLayout.ItemsPerRow="1">
+                    <ItemsControl ItemsSource="{Binding Source={StaticResource labelledLocations}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid layout:GridLayout.RowCount="1"
+                                      layout:GridLayout.ColumnCount="{Binding ElementName=page, Path=DataContext.LongestPathLength}" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                    <GroupBox Header="{Binding Name}">
+                                                        <ItemsPresenter />
+                                                    </GroupBox>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ItemsControl.GroupStyle>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="{x:Type ContentPresenter}">
+                                <Setter Property="Grid.Column" Value="{Binding Path=Slide.index}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Click="SlideSelected">
+                                    <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="3">
+                                        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
                                             BorderThickness="0 0 0 1">
-                                        <Border.BorderBrush>
-                                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                                        </Border.BorderBrush>
-                                        <Label Content="{Binding Path=Column}" HorizontalAlignment="Center"/>
-                                    </Border>
-                                    <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Activity}" />
-                                    <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
+                                            <Border.BorderBrush>
+                                                <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                                            </Border.BorderBrush>
+                                            <Label Content="{Binding Path=Slide.index}" HorizontalAlignment="Center"/>
+                                        </Border>
+                                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Activity}" />
+                                        <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
-                                        <Rectangle Width="200" Height="200" Margin="50">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_chat}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                    </Viewbox>
-                                    <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Voices}" />
-                                    <Viewbox Grid.Row="2" Grid.Column="1" 
+                                            <Rectangle Width="200" Height="200" Margin="50">
+                                                <Rectangle.Fill>
+                                                    <VisualBrush Visual="{StaticResource appbar_chat}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Viewbox>
+                                        <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Voices}" />
+                                        <Viewbox Grid.Row="2" Grid.Column="1" 
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
-                                        <Rectangle Width="200" Height="200" Margin="50">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_people_multiple}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                    </Viewbox>
-                                </Grid>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                            <Rectangle Width="200" Height="200" Margin="50">
+                                                <Rectangle.Fill>
+                                                    <VisualBrush Visual="{StaticResource appbar_people_multiple}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Viewbox>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
             </ScrollViewer>
         </Grid>
     </Grid>

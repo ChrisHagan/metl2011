@@ -67,7 +67,10 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static DefaultableCompositeCommand BrowseOneNote = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ManuallyConfigureOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RequestMeTLUserInformations = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MoveToNotebookPage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveMeTLUserInformations = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RequestTeacherStatus = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveTeacherStatus = new DefaultableCompositeCommand();
@@ -254,7 +257,7 @@ namespace SandRibbon
         #region ConversationLevel
         public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand(0);
         public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand MoveTo = new DefaultableCompositeCommand(0);
+        public static DefaultableCompositeCommand MoveToCollaborationPage = new DefaultableCompositeCommand(0);
         public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SneakIntoAndDo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand();
@@ -320,7 +323,8 @@ namespace SandRibbon
                 return all.Aggregate(0, (acc, item) => acc += item.RegisteredCommands.Count());
             }
         }
-        private static List<ICommand> staticHandlers = new List<ICommand>();
+        private static List<ICommand> staticHandlers = new List<ICommand>();        
+
         public static void AllStaticCommandsAreRegistered() {
             foreach (var command in all) {
                 foreach (var handler in command.RegisteredCommands)

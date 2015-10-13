@@ -130,7 +130,7 @@ namespace SandRibbon.Components
             DataContext = this;
             slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
             Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
@@ -424,7 +424,7 @@ namespace SandRibbon.Components
                         foreach (var slide in removedItems) ((Slide)slide).refresh();
                         AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
 
-                        Commands.MoveTo.ExecuteAsync(currentSlideId);
+                        Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
                         SendSyncMove(currentSlideId);
                         checkMovementLimits();
                     }

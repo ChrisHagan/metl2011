@@ -34,7 +34,15 @@ namespace SandRibbon.Pages.Collaboration
         public ConversationOverviewPage(ConversationDetails presentationPath)
         {
             InitializeComponent();
-            DataContext = conversation = new ReticulatedConversation { PresentationPath = presentationPath };
+            DataContext = conversation = new ReticulatedConversation
+            {
+                PresentationPath = presentationPath,
+                RelatedMaterial = new List<string>{
+                    "57000",
+                    "61000"
+                }.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
+
+            };
             conversation.CalculateLocations();
             //We need the location references to remain stable so we can bind to them and modify them in parsers
             var participantList = new ObservableCollection<LocatedActivity>();
@@ -91,7 +99,7 @@ namespace SandRibbon.Pages.Collaboration
             {
                 inc(tallies, i.author);
             }
-            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value,0));
+            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, 0));
         }
 
         private void SlideSelected(object sender, RoutedEventArgs e)
@@ -100,7 +108,7 @@ namespace SandRibbon.Pages.Collaboration
             var slide = element.DataContext as VmSlide;
             NavigationService.Navigate(new GroupCollaborationPage(slide.Slide.id));
         }
-    }
+    }    
     public class GridLengthConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

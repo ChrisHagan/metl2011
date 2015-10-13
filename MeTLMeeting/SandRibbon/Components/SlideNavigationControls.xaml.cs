@@ -68,7 +68,7 @@ namespace SandRibbon.Components
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
                     if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
-                        Commands.MoveTo.Execute((int)Globals.teacherSlide);
+                        Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException){ }
             }

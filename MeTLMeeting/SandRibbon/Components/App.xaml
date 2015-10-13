@@ -20,6 +20,7 @@
                 <ResourceDictionary Source="ResourceDictionaries\Controls2015.xaml"/>
 
                 <ResourceDictionary Source="\Pages\Macros\Macros.xaml"/>
+                <ResourceDictionary Source="\Frame\Flyouts\Flyouts.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

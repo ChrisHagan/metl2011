@@ -280,7 +280,7 @@ namespace SandRibbon.Components
 
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imageDropped));
             Commands.ImagesDropped.RegisterCommandToDispatcher(new DelegateCommand<List<ImageDrop>>(imagesDropped));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<Privacy>(changeSelectedItemsPrivacy));

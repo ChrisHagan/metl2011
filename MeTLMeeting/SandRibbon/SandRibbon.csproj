@@ -244,6 +244,9 @@
     </Compile>
     <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
+    <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">
+      <DependentUpon>OneNotePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Conversations\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
     </Compile>
@@ -251,6 +254,7 @@
       <DependentUpon>CommandBarConfigurationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Conversations\Models\LearningObjective.cs" />
+    <Compile Include="Pages\Conversations\Models\OneNoteConfiguration.cs" />
     <Compile Include="Pages\Conversations\Models\ReticulatedConversation.cs" />
     <Compile Include="Pages\Macros\Macros.xaml.cs" />
     <Compile Include="Pages\Conversations\ConversationEditPage.xaml.cs">
@@ -263,6 +267,7 @@
       <DependentUpon>ServerSelectorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Profiles\Profile.cs" />
+    <Compile Include="Providers\OneNote.cs" />
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
       <DependentUpon>DisplayAQuiz.xaml</DependentUpon>
     </Compile>
@@ -289,6 +294,10 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frame\Flyouts\Flyouts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Frame\ImportProgress.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -335,6 +344,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\Collaboration\Layout\CastBarFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\OneNotePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1021,10 +1034,6 @@
       <Project>{8fb70c9b-54d8-4c05-b2dc-a5fc2f629e82}</Project>
       <Name>ResourceChangeEvent</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\TreeContainer\TreeContainer\TreeContainer.csproj">
-      <Project>{88b86170-ec9f-4acf-b96e-0f97c28f57ba}</Project>
-      <Name>TreeContainer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
       <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
       <Name>MeTLLib</Name>
@@ -1077,6 +1086,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\favicon.ico" />
+    <Resource Include="Resources\onenote.png" />
     <Content Include="Resources\tablet-mobile-combo.svg" />
     <Content Include="Resources\tablet.svg" />
     <Content Include="Resources\tag.svg" />

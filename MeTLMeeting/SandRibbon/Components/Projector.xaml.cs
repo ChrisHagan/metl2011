@@ -55,7 +55,7 @@ namespace SandRibbon.Components
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            Commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
         }
         private string generateTitle(ConversationDetails details)
         {
