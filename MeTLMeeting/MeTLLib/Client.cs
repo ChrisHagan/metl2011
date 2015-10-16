@@ -180,7 +180,7 @@ namespace MeTLLib
         [Inject]
         public UserOptionsProvider userOptionsProvider { private get; set; }
         [Inject]
-        public HttpResourceProvider resourceProvider { private get; set; }
+        public HttpResourceProvider resourceProvider { get; set; }
         [Inject]
         public IUserInformationProvider userInformationProvider { private get; set; }
         public MeTLServerAddress server { private set; get; }
@@ -436,7 +436,7 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi)
+        public void UploadAndSendFile(MeTLStanzas.LocalFileInformation lfi)
         {
             Action work = delegate
             {
