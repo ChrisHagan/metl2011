@@ -9,7 +9,9 @@ namespace SandRibbon.Pages.Collaboration
         {
             InitializeComponent();
             DataContext = page;
-            wb.NavigateToString(page.Html);            
+            wb.NativeViewInitialized += delegate {
+                wb.LoadHTML(page.Html);
+            };            
         }        
     }
 }

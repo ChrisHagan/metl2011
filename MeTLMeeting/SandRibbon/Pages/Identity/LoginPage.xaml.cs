@@ -4,6 +4,8 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using mshtml;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.Identity;
+using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -238,7 +240,7 @@ namespace SandRibbon.Pages.Login
                         {
                             Commands.AddWindowEffect.ExecuteAsync(null);
                             App.Login(credentials);
-                            NavigationService.Navigate(new ChooseCollaborationContextPage());
+                            NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
                         }
                         return authenticated;
                     }
@@ -267,6 +269,7 @@ namespace SandRibbon.Pages.Login
                 logonBrowserContainer.Visibility = Visibility.Collapsed;
                 var options = ClientFactory.Connection().UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
+                Globals.loadProfiles(identity);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Components.Pedagogicometry.PedagogyCode)options.pedagogyLevel));
                 DestroyWebBrowser(null);
                 this.Visibility = Visibility.Collapsed;

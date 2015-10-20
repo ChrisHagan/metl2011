@@ -53,6 +53,27 @@
             </Rectangle>
         </macro:Appearance>
     </Button>
+    <!-- Keyboarding -->
+    <Button x:Key="font_size_increase" Command="{x:Static api:Commands.IncreaseFontSize}" x:Shared="False"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_text_size_plus}" />
+                </Rectangle.Fill>
+            </Rectangle>
+        </macro:Appearance>
+    </Button>
+    <Button x:Key="font_size_decrease" Command="{x:Static api:Commands.IncreaseFontSize}" x:Shared="False"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_text_size_minus}" />
+                </Rectangle.Fill>
+            </Rectangle>
+        </macro:Appearance>
+    </Button>
     <!-- Pen colors-->    
     <Button x:Key="pen_red" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" 
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">

@@ -25,6 +25,7 @@ using MahApps.Metro.Controls;
 using SandRibbon.Pages.Conversations.Models;
 using System.Web;
 using System.Collections.ObjectModel;
+using Awesomium.Windows.Controls;
 
 namespace SandRibbon
 {
@@ -114,8 +115,8 @@ namespace SandRibbon
 
         private void browseOneNote(OneNoteConfiguration config)
         {
-            var w = new WebBrowser();
-            w.Navigated += oauthNavigated;
+            var w = new WebControl();
+            w.DocumentReady += W_DocumentReady;
             flyout.Content = w;
             flyout.Width = 600;
             flyout.IsOpen = true;
@@ -129,12 +130,12 @@ namespace SandRibbon
                 scope, 
                 responseType,
                 redirectUri));
-            w.Navigate(uri);
+            w.Source = uri;
         }
 
-        private void oauthNavigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {            
-            var queryPart = e.Uri.AbsoluteUri.Split('#');
+        private void W_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
+        {                     
+            var queryPart = e.Url.AbsoluteUri.Split('#');
             if (queryPart.Length > 1) {
                 var ps = HttpUtility.ParseQueryString(queryPart[1]);
                 var token = ps["access_token"];

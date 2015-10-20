@@ -38,8 +38,10 @@ namespace SandRibbon.Pages.Collaboration
             {
                 PresentationPath = presentationPath,
                 RelatedMaterial = new List<string>{
+                    /*
                     "57000",
                     "61000"
+                    */
                 }.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
 
             };

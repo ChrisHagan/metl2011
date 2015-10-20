@@ -5,10 +5,6 @@ using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
-using SandRibbon.Components;
-using MeTLLib.DataTypes;
-using System.IO;
-using SandRibbonObjects;
 
 namespace SandRibbon.Providers
 {
@@ -76,7 +72,7 @@ namespace SandRibbon.Providers
                     wc.Headers.Add("Authorization", string.Format("Bearer {0}", Token));          
                     var oneNoteData = wc.DownloadData(source);
                     var alias = string.Format("{0}.png",Guid.NewGuid().ToString());                                        
-                    var upload = MeTLLib.ClientFactory.Connection().UploadResourceToPath(oneNoteData,"onenote",alias,false);
+                    var upload = MeTLLib.ClientFactory.Connection().UploadResourceToPath(oneNoteData,"onenote",alias,false);                    
                     img.SetAttributeValue("src", upload.AbsoluteUri);
                 }
                 html = xDoc.ToString();               

@@ -129,10 +129,12 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         public int Rows { get; internal set; }
         public int Columns { get; internal set; }
 
-        public Bar(int size)
-        {
-            Macros = new ObservableCollection<Macro>(Enumerable.Range(0, size).Select(i => new Macro("slot")));            
+        public Bar(int size) : this(Enumerable.Range(0, size).Select(i => new Macro("slot")))
+        {            
         }
+        public Bar(IEnumerable<Macro> macros) {
+            Macros = new ObservableCollection<Macro>(macros);
+        }       
     }
     public class SlotConfigurer
     {

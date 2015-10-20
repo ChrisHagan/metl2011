@@ -188,7 +188,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (MeTLLib.DataTypes.Credentials)Commands.SetIdentity.LastValue();
+                return (Credentials)Commands.SetIdentity.LastValue();
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
@@ -285,39 +285,94 @@ namespace SandRibbon.Providers
 
         private static object lockCurrentCanvasClipboardFocus = new object();
         private static string currentCanvasClipboardFocus = "";
-        internal static Profile currentProfile = new Profile
-        {
-            logicalName = Globals.me,
-            castBars = new[] {
-                new Bar(8)
-            {
-                VerticalAlignment = System.Windows.VerticalAlignment.Top,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                Orientation=System.Windows.Controls.Orientation.Horizontal,
-                ScaleFactor=0.8,
-                Rows=1,
-                Columns=8                
-            },
-                new Bar(5)
-            {
-                VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-                Orientation=System.Windows.Controls.Orientation.Vertical,
-                ScaleFactor=0.8,
-                Rows=5,
-                Columns=1
-            },
-                new Bar(5)
-            {
-                VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
-                Orientation=System.Windows.Controls.Orientation.Vertical,
-                ScaleFactor=0.8,
-                Rows=5,
-                Columns=1
+        public static List<Profile> profiles = new List<Profile> {
+            new Profile {
+                logicalName = "Basic user",
+                castBars = new[] {
+                    new Bar(new[] {
+                        new Macro("pen_red"),
+                        new Macro("pen_blue"),
+                        new Macro("pen_black"),
+                        new Macro("pen_yellow_highlighter")
+                    })
+                {
+                    VerticalAlignment = System.Windows.VerticalAlignment.Top,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    Orientation=System.Windows.Controls.Orientation.Horizontal,
+                    ScaleFactor=0.8,
+                    Rows=1,
+                    Columns=8
+                }
             }
-            }
+        }
         };
+        public static void loadProfiles(Credentials credentials)
+        {
+            var name = credentials.name;
+            profiles = new[] {
+            new Profile {
+                ownerName = name,
+                logicalName = string.Format("{0} as a student",name)                    
+            },
+            new Profile {
+                ownerName = name,
+                logicalName = string.Format("{0} with a keyboard",name),
+                castBars = new[] {
+                    new Bar(new[] {
+                        new Macro("font_size_increase"),
+                        new Macro("font_size_decrease")
+                    }) {
+                        VerticalAlignment = System.Windows.VerticalAlignment.Top,
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                        Orientation=System.Windows.Controls.Orientation.Horizontal,
+                        ScaleFactor=0.8,
+                        Rows=1,
+                        Columns=8
+                    }
+                }
+            },
+            new Profile
+            {
+                ownerName = name,
+                logicalName = string.Format("{0} with a pen",name),
+                castBars = new[] {
+                    new Bar(new[] {
+                        new Macro("pen_red"),
+                        new Macro("pen_blue"),
+                        new Macro("pen_black"),
+                        new Macro("pen_yellow_highlighter")
+                    })
+                {
+                    VerticalAlignment = System.Windows.VerticalAlignment.Top,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    Orientation=System.Windows.Controls.Orientation.Horizontal,
+                    ScaleFactor=0.8,
+                    Rows=1,
+                    Columns=8
+                },
+                    new Bar(5)
+                {
+                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                    Orientation=System.Windows.Controls.Orientation.Vertical,
+                    ScaleFactor=0.8,
+                    Rows=5,
+                    Columns=1
+                },
+                    new Bar(5)
+                {
+                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                    Orientation=System.Windows.Controls.Orientation.Vertical,
+                    ScaleFactor=0.8,
+                    Rows=5,
+                    Columns=1
+                }
+                }
+            }
+        }.ToList();
+        }
+        public static Profile currentProfile = profiles[0];
 
         public static event CanvasClipboardFocusChangedHandler CanvasClipboardFocusChanged;
         public static string CurrentCanvasClipboardFocus

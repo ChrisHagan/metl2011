@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:layout="clr-namespace:SandRibbon.Layout"
-                    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
+                    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"   
+                    xmlns:osm="http://schemas.awesomium.com/winfx"
                     xmlns:viewModel="clr-namespace:SandRibbon.Pages.Conversations.Models"                    
                    >
     <Grid x:Key="oneNoteConfiguration" x:Shared="False"
