@@ -1141,6 +1141,7 @@ namespace SandRibbon.Components
             {
                 Trace.TraceInformation("Cursor failed (no crash):", e.Message);
             }
+            setInkCanvasMode("Ink");
             Work.DefaultDrawingAttributes = zoomCompensatedAttributes;
         }
         public List<Stroke> PublicStrokes

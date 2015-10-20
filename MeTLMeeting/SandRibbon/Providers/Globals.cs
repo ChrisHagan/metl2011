@@ -312,7 +312,7 @@ namespace SandRibbon.Providers
             profiles = new[] {
             new Profile {
                 ownerName = name,
-                logicalName = string.Format("{0} as a student",name)                    
+                logicalName = string.Format("{0} as an observer",name)                    
             },
             new Profile {
                 ownerName = name,
@@ -340,7 +340,8 @@ namespace SandRibbon.Providers
                         new Macro("pen_red"),
                         new Macro("pen_blue"),
                         new Macro("pen_black"),
-                        new Macro("pen_yellow_highlighter")
+                        new Macro("pen_yellow_highlighter"),
+                        new Macro("select_mode")
                     })
                 {
                     VerticalAlignment = System.Windows.VerticalAlignment.Top,

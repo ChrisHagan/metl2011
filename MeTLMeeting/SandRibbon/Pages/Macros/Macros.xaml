@@ -74,7 +74,7 @@
             </Rectangle>
         </macro:Appearance>
     </Button>
-    <!-- Pen colors-->    
+    <!-- Pen colors-->
     <Button x:Key="pen_red" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" 
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <Button.CommandParameter>
@@ -191,6 +191,17 @@
         </macro:Appearance>
     </Grid>
     <!-- Selection modification-->
+    <Button x:Key="select_mode" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="Select">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_image_ants}" Stretch="UniformToFill"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Viewbox>
+        </macro:Appearance>
+    </Button>
     <Button x:Key="participants_toggle" Command="{x:Static api:Commands.ModifySelection}">
         <macro:Appearance>
             <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
