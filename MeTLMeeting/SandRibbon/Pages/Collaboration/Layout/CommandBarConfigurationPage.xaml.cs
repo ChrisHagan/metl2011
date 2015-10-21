@@ -44,6 +44,9 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                     Label="Keyboarding",
                     Macros=new[] {
                         new Macro("font_toggle_bold"),
+                        new Macro("font_toggle_italic"),
+                        new Macro("font_toggle_underline"),
+                        new Macro("font_toggle_strikethrough"),
                         new Macro("font_size_increase"),
                         new Macro("font_size_decrease")                        
                     }

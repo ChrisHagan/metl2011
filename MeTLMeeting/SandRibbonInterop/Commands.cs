@@ -234,6 +234,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ToggleBold = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleItalic = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleUnderline = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ToggleStrikethrough = new DefaultableCompositeCommand();
         #endregion
         #region AppLevel
         public static DefaultableCompositeCommand RegisterPowerpointSourceDirectoryPreference = new DefaultableCompositeCommand();

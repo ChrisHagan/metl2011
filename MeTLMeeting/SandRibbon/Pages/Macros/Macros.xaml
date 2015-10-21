@@ -48,11 +48,35 @@
         </macro:Appearance>
     </Button>
     <!-- Keyboarding -->
+    <ToggleButton x:Key="font_toggle_underline" Command="{x:Static api:Commands.ToggleUnderline}"
+                  Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_text_underline}" />
+            </Viewbox>
+        </macro:Appearance>
+    </ToggleButton>
+    <ToggleButton x:Key="font_toggle_italic" Command="{x:Static api:Commands.ToggleItalic}"
+                  Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_text_italic}" />
+            </Viewbox>
+        </macro:Appearance>
+    </ToggleButton>
     <ToggleButton x:Key="font_toggle_bold" Command="{x:Static api:Commands.ToggleBold}"
                   Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <ContentControl Content="{StaticResource appbar_text_bold}" />
+            </Viewbox>
+        </macro:Appearance>
+    </ToggleButton>
+    <ToggleButton x:Key="font_toggle_strikethrough" Command="{x:Static api:Commands.ToggleStrikethrough}"
+                  Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_text_strikethrough}" />
             </Viewbox>
         </macro:Appearance>
     </ToggleButton>

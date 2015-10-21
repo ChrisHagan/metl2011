@@ -22,8 +22,7 @@ namespace SandRibbon.Tabs.Groups
                     Header = "Ink Tools";
                     break;
                 case "Text":
-                    toolBox.Visibility = Visibility.Visible;
-                    textTools.Visibility = Visibility.Visible;
+                    toolBox.Visibility = Visibility.Visible;                    
                     Header = "Text Tools";
                     break;
                 case "Insert":
@@ -38,7 +37,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void hideAll()
         {
-            foreach (FrameworkElement child in new FrameworkElement[] { penColors, textTools, toolBox })
+            foreach (FrameworkElement child in new FrameworkElement[] { penColors, toolBox })
             {
                 child.Visibility = Visibility.Collapsed;
             }

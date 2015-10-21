@@ -47,10 +47,10 @@ namespace SandRibbon.Components
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));            
             Commands.AllStaticCommandsAreRegistered();
             inConversation = true;
-        }
+        }        
 
         private void hideConversationSearch(object obj)
         {

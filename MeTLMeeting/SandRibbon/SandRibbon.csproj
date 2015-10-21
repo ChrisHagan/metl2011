@@ -669,12 +669,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\Groups\TextTools.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Ribbon\Groups\ToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -952,7 +946,6 @@
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\Groups\TextTools.xaml.cs" />
     <Compile Include="Ribbon\Groups\ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>

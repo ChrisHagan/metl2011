@@ -178,12 +178,7 @@ namespace SandRibbon.Providers
             {
                 return quizData;
             }
-        }
-        public static TextInformation currentTextInfo
-        {
-            get;
-            set;
-        }
+        }        
         public static MeTLLib.DataTypes.Credentials credentials
         {
             get
@@ -320,7 +315,10 @@ namespace SandRibbon.Providers
                 castBars = new[] {
                     new Bar(8,new[] {
                         new Macro("font_size_increase"),
-                        new Macro("font_size_decrease")
+                        new Macro("font_size_decrease"),
+                        new Macro("font_toggle_bold"),
+                        new Macro("font_toggle_italic"),
+                        new Macro("font_toggle_underline")
                     }) {
                         VerticalAlignment = System.Windows.VerticalAlignment.Top,
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Center,

@@ -11,6 +11,5 @@
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot" >
         <groups:ToolBox x:Name="toolBox"/>
         <groups:PenColors x:Name="penColors"/>
-        <groups:TextTools x:Name="textTools"/>
     </StackPanel >
 </ribbon:RibbonGroup>           

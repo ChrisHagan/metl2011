@@ -1,10 +1,8 @@
 ﻿using Itschwabing.Libraries.ResourceChangeEvent;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Collaboration.Palettes;
 using SandRibbon.Providers;
 using System;
-using System.Linq;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Collaboration
@@ -19,7 +17,7 @@ namespace SandRibbon.Pages.Collaboration
                 context = new VisibleSpaceModel { Slide = slide },
                 profile = Globals.currentProfile
             };
-            Commands.MoveToCollaborationPage.Execute(slide);        
+            Commands.MoveToCollaborationPage.Execute(slide);            
         }
         
         private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)

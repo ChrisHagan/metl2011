@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -14,8 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
-using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using SandRibbon.Components.Utility;
@@ -29,7 +26,6 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
-using MeTLLib.Providers;
 
 namespace SandRibbon.Components
 {
@@ -151,14 +147,16 @@ namespace SandRibbon.Components
 
     public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
-        List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
-        private Color _currentColor = Colors.Black;
-        private const double DefaultSize = 24.0;
-        private readonly FontFamily _defaultFamily = new FontFamily("Arial");
-        private double _currentSize = 24.0;
-        private FontFamily _currentFamily = new FontFamily("Arial");
+        List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();        
         private const bool CanFocus = true;
         private bool _focusable = true;
+        private bool bold = false;
+        private bool underline = false;
+        private bool italic = false;
+        private bool strikethrough = false;
+        private FontFamily family = new FontFamily("Arial");
+        private Color color = Colors.Black;
+        private float size = 24.0f;
         public static TypingTimedAction TypingTimer;
         private string _originalText;
         private ContentBuffer contentBuffer;
@@ -198,54 +196,6 @@ namespace SandRibbon.Components
                 _lastFocusedTextBox = value;
             }
         }
-
-        private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
-        {
-            if (_target == "presentationSpace")
-            {
-                //if (Globals.conversationDetails.Permissions.studentCanPublish == false)
-                //{
-                //    if (Globals.conversationDetails.Author != Globals.me)
-                //    {
-                //        incomingPrivacy = Privacy.Private;
-                //    }
-                //}
-                return incomingPrivacy;
-            }
-            else
-                return _defaultPrivacy;
-        }
-
-        private Privacy currentPrivacy
-        {
-            get { return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true)); }
-        }
-
-        private Point pos = new Point(15, 15);
-        private void wireInPublicHandlers()
-        {
-            PreviewKeyDown += keyPressed;
-            Work.StrokeCollected += singleStrokeCollected;
-            Work.SelectionChanging += selectionChanging;
-            Work.SelectionChanged += selectionChanged;
-            Work.StrokeErasing += erasingStrokes;
-            Work.SelectionMoving += SelectionMovingOrResizing;
-            Work.SelectionMoved += SelectionMovedOrResized;
-            Work.SelectionResizing += SelectionMovingOrResizing;
-            Work.SelectionResized += SelectionMovedOrResized;
-            Work.AllowDrop = true;
-            Work.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
-            Work.Drop += ImagesDrop;
-            Loaded += (a, b) =>
-            {
-                MouseUp += (c, args) => placeCursor(this, args);
-            };
-        }
-
-        void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            pos = e.GetPosition(this);
-        }
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -259,6 +209,11 @@ namespace SandRibbon.Components
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
+
+            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(ToggleBold));
+            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(ToggleUnderline));
+            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(ToggleItalic));
+            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(ToggleStrikethrough));
 
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>((image) => ReceiveImages(new[] { image })));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
@@ -320,6 +275,66 @@ namespace SandRibbon.Components
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
+        private void ToggleBold(object o) {
+            SetLayer("Text");
+            bold = !bold;
+        }
+        private void ToggleUnderline(object o)
+        {
+            SetLayer("Text");
+            underline = !underline;
+        }
+        private void ToggleItalic(object o)
+        {
+            SetLayer("Text");
+            italic = !italic;
+        }
+        private void ToggleStrikethrough(object o)
+        {
+            SetLayer("Text");
+            strikethrough = !strikethrough;
+        }
+        private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
+        {
+            if (_target == "presentationSpace")
+            {                
+                return incomingPrivacy;
+            }
+            else
+                return _defaultPrivacy;
+        }
+
+        private Privacy currentPrivacy
+        {
+            get { return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true)); }
+        }
+
+        private Point pos = new Point(15, 15);
+        private void wireInPublicHandlers()
+        {
+            PreviewKeyDown += keyPressed;
+            Work.StrokeCollected += singleStrokeCollected;
+            Work.SelectionChanging += selectionChanging;
+            Work.SelectionChanged += selectionChanged;
+            Work.StrokeErasing += erasingStrokes;
+            Work.SelectionMoving += SelectionMovingOrResizing;
+            Work.SelectionMoved += SelectionMovedOrResized;
+            Work.SelectionResizing += SelectionMovingOrResizing;
+            Work.SelectionResized += SelectionMovedOrResized;
+            Work.AllowDrop = true;
+            Work.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
+            Work.Drop += ImagesDrop;
+            Loaded += (a, b) =>
+            {
+                MouseUp += (c, args) => placeCursor(this, args);
+            };
+        }
+
+        void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            pos = e.GetPosition(this);
+        }
+        
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -408,11 +423,11 @@ namespace SandRibbon.Components
             {
                 case "Text":
                     Work.EditingMode = InkCanvasEditingMode.None;
-                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                    Work.UseCustomCursor = false;
                     break;
                 case "Insert":
                     Work.EditingMode = InkCanvasEditingMode.Select;
-                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                    Work.UseCustomCursor = false;
                     Work.Cursor = Cursors.Arrow;
                     break;
                 case "Sketch":
@@ -465,9 +480,7 @@ namespace SandRibbon.Components
                         if (imagesToRemove.Count() > 0)
                         {
                             contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
-                        }
-                        // dirty is now handled by movedelta
-                        //dirtyThisElement(element);
+                        }                        
                     }
                 };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected images");
@@ -2364,30 +2377,11 @@ namespace SandRibbon.Components
             Action redo = () =>
                               {
                                   ClearAdorners();
-                                  resetText(currentTextBox);
                                   updateTools();
                               };
             UndoHistory.Queue(undo, redo, "Restored text defaults");
             redo();
-        }
-        private void resetText(MeTLTextBox box)
-        {
-            box.RemovePrivacyStyling(contentBuffer);
-            _currentColor = Colors.Black;
-            box.FontWeight = FontWeights.Normal;
-            box.FontStyle = FontStyles.Normal;
-            box.TextDecorations = new TextDecorationCollection();
-            box.FontFamily = new FontFamily("Arial");
-            box.FontSize = 24;
-            box.Foreground = Brushes.Black;
-            var info = new TextInformation
-            {
-                Family = box.FontFamily,
-                Size = box.FontSize,
-            };
-            Commands.TextboxFocused.ExecuteAsync(info);
-            sendTextWithoutHistory(box, box.tag().privacy);
-        }
+        }        
         private void updateStyling(TextInformation info)
         {
             var selectedTextBoxes = new List<MeTLTextBox>();
@@ -2628,13 +2622,13 @@ namespace SandRibbon.Components
         {
             var info = new TextInformation
             {
-                Family = _defaultFamily,
-                Size = DefaultSize,
-                Bold = false,
-                Italics = false,
-                Strikethrough = false,
-                Underline = false,
-                Color = Colors.Black
+                Family = family,
+                Size = size,
+                Bold = bold,
+                Italics = italic,
+                Strikethrough = strikethrough,
+                Underline = underline,
+                Color = color
             };
             if (myTextBox != null)
             {
@@ -2653,8 +2647,7 @@ namespace SandRibbon.Components
                     info.Strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
                     info.Underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
                 }
-                info.IsPrivate = myTextBox.tag().privacy == Privacy.Private ? true : false;
-                //Commands.TextboxFocused.ExecuteAsync(info);
+                info.IsPrivate = myTextBox.tag().privacy == Privacy.Private ? true : false;                
                 Commands.TextboxSelected.ExecuteAsync(info);
             }
 
@@ -2776,28 +2769,22 @@ namespace SandRibbon.Components
                 privacy = currentPrivacy,
                 id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
             });
-
-            //setting the currentfamily, currentsize, currentcolor, style whenever there is a new box created
-            _currentColor = Globals.currentTextInfo.Color;
-            _currentSize = Globals.currentTextInfo.Size;
-            _currentFamily = Globals.currentTextInfo.Family;
-
-            box.FontStyle = Globals.currentTextInfo.Italics ? FontStyles.Italic : FontStyles.Normal;
-            box.FontWeight = Globals.currentTextInfo.Bold ? FontWeights.Bold : FontWeights.Normal;
+                        
+            box.FontStyle = italic ? FontStyles.Italic : FontStyles.Normal;
+            box.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
             box.TextDecorations = new TextDecorationCollection();
-            if (Globals.currentTextInfo.Underline)
+            if(underline)
                 box.TextDecorations = TextDecorations.Underline;
-            else if (Globals.currentTextInfo.Strikethrough)
+            else if (strikethrough)
                 box.TextDecorations = TextDecorations.Strikethrough;
 
-            box.FontFamily = _currentFamily;
-            box.FontSize = _currentSize;
-            box.Foreground = new SolidColorBrush(_currentColor);
+            box.FontFamily = family;
+            box.FontSize = size;
+            box.Foreground = new SolidColorBrush(color);
             box.UndoLimit = 0;
             box.LostFocus += (_sender, _args) =>
             {
                 myTextBox = null;
-
             };
             return applyDefaultAttributes(box);
         }
@@ -2805,7 +2792,6 @@ namespace SandRibbon.Components
         {
             HandleCopy(null);
         }
-
         public void OnClipboardCut()
         {
             HandleCut(null);
