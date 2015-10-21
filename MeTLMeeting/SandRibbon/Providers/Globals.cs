@@ -289,7 +289,7 @@ namespace SandRibbon.Providers
             new Profile {
                 logicalName = "Basic user",
                 castBars = new[] {
-                    new Bar(new[] {
+                    new Bar(8,new[] {
                         new Macro("pen_red"),
                         new Macro("pen_blue"),
                         new Macro("pen_black"),
@@ -318,7 +318,7 @@ namespace SandRibbon.Providers
                 ownerName = name,
                 logicalName = string.Format("{0} with a keyboard",name),
                 castBars = new[] {
-                    new Bar(new[] {
+                    new Bar(8,new[] {
                         new Macro("font_size_increase"),
                         new Macro("font_size_decrease")
                     }) {
@@ -336,7 +336,7 @@ namespace SandRibbon.Providers
                 ownerName = name,
                 logicalName = string.Format("{0} with a pen",name),
                 castBars = new[] {
-                    new Bar(new[] {
+                    new Bar(8,new[] {
                         new Macro("pen_red"),
                         new Macro("pen_blue"),
                         new Macro("pen_black"),

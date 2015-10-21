@@ -173,7 +173,7 @@
     <!-- Activity monitoring -->
     <Grid  x:Key="worm" x:Shared="False">
         <macro:Appearance>
-            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+            <Viewbox Width="{DynamicResource SensorWidth}" Height="{DynamicResource ButtonHeight}">
                 <StackPanel Orientation="Horizontal">
                     <Border BorderThickness="1">
                         <Border.BorderBrush>
@@ -191,7 +191,8 @@
         </macro:Appearance>
     </Grid>
     <!-- Selection modification-->
-    <Button x:Key="select_mode" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="Select">
+    <Button x:Key="select_mode" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="Select"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <ContentControl Content="{DynamicResource appbar_image_ants}" />                

@@ -137,11 +137,15 @@ namespace SandRibbon.Pages.Collaboration.Palettes
         public int Rows { get; internal set; }
         public int Columns { get; internal set; }
 
-        public Bar(int size) : this(Enumerable.Range(0, size).Select(i => new Macro("slot")))
+        public Bar(int size) : this(size,Enumerable.Range(0, size).Select(i => new Macro("slot")))
         {            
         }
-        public Bar(IEnumerable<Macro> macros) {
+        public Bar(int size, IEnumerable<Macro> macros) {            
             Macros = new ObservableCollection<Macro>(macros);
+            for (var i = macros.Count(); i < size; i++)
+            {
+                Macros.Insert(i, new Macro("slot"));
+            }
         }       
     }
     public class SlotConfigurer
