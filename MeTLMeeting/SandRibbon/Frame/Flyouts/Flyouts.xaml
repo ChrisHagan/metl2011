@@ -5,15 +5,6 @@
                     xmlns:osm="http://schemas.awesomium.com/winfx"
                     xmlns:viewModel="clr-namespace:SandRibbon.Pages.Conversations.Models"                    
                    >
-    <Grid x:Key="oneNoteConfiguration" x:Shared="False"
-          layout:GridLayout.ItemsPerRow="1">
-        <Label Content="Public API Key" />
-        <TextBox Text="{Binding Path=apiKey}" />
-        <Label Content="Private API Secret" />
-        <TextBox Text="{Binding Path=apiSecret}" />
-        <Button Content="Test Connection" Command="{x:Static api:Commands.BrowseOneNote}" 
-                CommandParameter="{Binding}" />
-    </Grid>
     <Grid x:Key="diagnostics" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
         <Label Content="Diagnostic logging" />
@@ -22,6 +13,16 @@
                 <SolidColorBrush Color="{DynamicResource AccentColor}" />
             </DataGrid.Foreground>
         </DataGrid>
+    </Grid>
+    <Grid x:Key="moreTextOptions" x:Shared="False"
+          layout:GridLayout.ItemsPerRow="1">
+        <Label Content="Font options" />
+        <ComboBox Margin="{DynamicResource clearTop}">
+            <ComboBoxItem>Arial</ComboBoxItem>
+            <ComboBoxItem>Calibri</ComboBoxItem>
+            <ComboBoxItem>Georgia</ComboBoxItem>
+            <ComboBoxItem>Verdana</ComboBoxItem>
+        </ComboBox>
     </Grid>
     <Grid x:Key="oneNoteListing" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">

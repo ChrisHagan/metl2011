@@ -87,7 +87,9 @@ namespace SandRibbon
             
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));            
+            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+
+            Commands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
             
@@ -112,6 +114,12 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();            
+        }
+
+        private void MoreTextOptions(object obj)
+        {
+            flyout.Content = TryFindResource("moreTextOptions");
+            flyout.IsOpen = true;
         }
 
         private void NavigateToNotebookPage(NotebookPage page)

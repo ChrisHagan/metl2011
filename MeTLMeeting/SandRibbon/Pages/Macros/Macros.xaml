@@ -48,6 +48,14 @@
         </macro:Appearance>
     </Button>
     <!-- Keyboarding -->
+    <Button x:Key="font_more_options" Command="{x:Static api:Commands.MoreTextOptions}"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_chevron_down}" />
+            </Viewbox>
+        </macro:Appearance>
+    </Button>
     <ToggleButton x:Key="font_toggle_underline" Command="{x:Static api:Commands.ToggleUnderline}"
                   Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
@@ -219,7 +227,7 @@
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <ContentControl Content="{DynamicResource appbar_image_ants}" />                
+                <ContentControl Content="{DynamicResource appbar_image_ants}" />
             </Viewbox>
         </macro:Appearance>
     </Button>

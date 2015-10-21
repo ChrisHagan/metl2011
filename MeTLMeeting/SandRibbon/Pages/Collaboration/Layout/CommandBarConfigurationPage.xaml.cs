@@ -48,7 +48,8 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                         new Macro("font_toggle_underline"),
                         new Macro("font_toggle_strikethrough"),
                         new Macro("font_size_increase"),
-                        new Macro("font_size_decrease")                        
+                        new Macro("font_size_decrease"),
+                        new Macro("font_more_options")                        
                     }
                 },
                 new MacroGroup {
