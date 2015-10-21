@@ -17,12 +17,26 @@
     <Grid x:Key="moreTextOptions" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
         <Label Content="Font options" />
-        <ComboBox Margin="{DynamicResource clearTop}">
-            <ComboBoxItem>Arial</ComboBoxItem>
-            <ComboBoxItem>Calibri</ComboBoxItem>
-            <ComboBoxItem>Georgia</ComboBoxItem>
-            <ComboBoxItem>Verdana</ComboBoxItem>
-        </ComboBox>
+        <StackPanel Orientation="Horizontal" Margin="{DynamicResource clearTop}">
+            <Label Content="Font family" Style="{DynamicResource medium}" />
+            <ComboBox >
+                <ComboBoxItem>Arial</ComboBoxItem>
+                <ComboBoxItem>Calibri</ComboBoxItem>
+                <ComboBoxItem>Georgia</ComboBoxItem>
+                <ComboBoxItem>Verdana</ComboBoxItem>
+            </ComboBox>
+        </StackPanel >
+        <StackPanel Orientation="Horizontal" Margin="{DynamicResource clearTop}">
+            <Label Content="Font size" Style="{DynamicResource medium}" />
+            <ComboBox>
+                <ComboBoxItem>10</ComboBoxItem>
+                <ComboBoxItem>12</ComboBoxItem>
+                <ComboBoxItem>15</ComboBoxItem>
+                <ComboBoxItem>20</ComboBoxItem>
+                <ComboBoxItem>25</ComboBoxItem>
+                <ComboBoxItem>30</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
     </Grid>
     <Grid x:Key="oneNoteListing" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
