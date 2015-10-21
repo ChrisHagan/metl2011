@@ -40,6 +40,13 @@
     </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
+            <Button Click="ShowDiagnostics">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_alert}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
             <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{x:Static providers:Globals.OneNoteConfiguration}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>

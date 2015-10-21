@@ -14,6 +14,15 @@
         <Button Content="Test Connection" Command="{x:Static api:Commands.BrowseOneNote}" 
                 CommandParameter="{Binding}" />
     </Grid>
+    <Grid x:Key="diagnostics" x:Shared="False"
+          layout:GridLayout.ItemsPerRow="1">
+        <Label Content="Diagnostic logging" />
+        <DataGrid ItemsSource="{Binding}" IsReadOnly="True">
+            <DataGrid.Foreground>
+                <SolidColorBrush Color="{DynamicResource AccentColor}" />
+            </DataGrid.Foreground>
+        </DataGrid>
+    </Grid>
     <Grid x:Key="oneNoteListing" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
         <Grid.Resources>

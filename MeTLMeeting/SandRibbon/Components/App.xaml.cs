@@ -92,7 +92,7 @@ namespace SandRibbon
         }
         public static void mark(string msg)
         {
-            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+            Logger.Log(msg);            
         }
         static App()
         {
@@ -160,7 +160,7 @@ namespace SandRibbon
             var msg = e.Exception.Message;
             if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
             {
-                Logger.Fixed(msg);
+                Logger.Log(msg);
                 e.Handled = true;
             }
             else

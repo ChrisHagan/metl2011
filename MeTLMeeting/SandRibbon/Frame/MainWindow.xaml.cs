@@ -76,9 +76,7 @@ namespace SandRibbon
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
             Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
-
-            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
-            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
+            
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));            
@@ -600,6 +598,13 @@ namespace SandRibbon
         private void UserPreferences(object sender, RoutedEventArgs e)
         {
             mainFrame.Navigate(new CommandBarConfigurationPage());
+        }        
+
+        private void ShowDiagnostics(object sender, RoutedEventArgs e)
+        {
+            this.flyout.Content = TryFindResource("diagnostics");
+            this.flyout.DataContext = Logger.logs;
+            this.flyout.IsOpen = !this.flyout.IsOpen;
         }
     }
 }

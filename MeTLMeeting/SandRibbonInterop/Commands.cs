@@ -169,6 +169,7 @@ namespace SandRibbon
 
         #endregion
         #region InkCanvas
+        public static DefaultableCompositeCommand ShowDiagnostics = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetInkCanvasMode = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetPrivacyOfItems = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand GotoThread = new DefaultableCompositeCommand();

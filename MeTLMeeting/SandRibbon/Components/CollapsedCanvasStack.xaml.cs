@@ -1832,12 +1832,12 @@ namespace SandRibbon.Components
                     {
                     }
                 var fileBrowser = new OpenFileDialog
-                                             {
-                                                 InitialDirectory = initialDirectory,
-                                                 Filter = filter,
-                                                 FilterIndex = 1,
-                                                 RestoreDirectory = true
-                                             };
+                {
+                    InitialDirectory = initialDirectory,
+                    Filter = filter,
+                    FilterIndex = 1,
+                    RestoreDirectory = true
+                };
                 DisableDragDrop();
                 var dialogResult = fileBrowser.ShowDialog(Window.GetWindow(this));
                 EnableDragDrop();
@@ -2381,71 +2381,62 @@ namespace SandRibbon.Components
             box.FontSize = 24;
             box.Foreground = Brushes.Black;
             var info = new TextInformation
-                           {
-                               Family = box.FontFamily,
-                               Size = box.FontSize,
-                           };
+            {
+                Family = box.FontFamily,
+                Size = box.FontSize,
+            };
             Commands.TextboxFocused.ExecuteAsync(info);
             sendTextWithoutHistory(box, box.tag().privacy);
         }
         private void updateStyling(TextInformation info)
         {
-            try
+            var selectedTextBoxes = new List<MeTLTextBox>();
+            selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
+            if (filterOnlyMine<MeTLTextBox>(myTextBox) != null)
+                selectedTextBoxes.Add(myTextBox);
+            var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
+
+            if (selectedTextBox != null)
             {
-                var selectedTextBoxes = new List<MeTLTextBox>();
-                selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
-                if (filterOnlyMine<MeTLTextBox>(myTextBox) != null)
-                    selectedTextBoxes.Add(myTextBox);
-                var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
+                // create a clone of the selected textboxes and their textinformation so we can keep a reference to something that won't be changed
+                var clonedTextBox = selectedTextBox.clone();
+                var clonedTextInfo = getInfoOfBox(selectedTextBox);
 
-                if (selectedTextBox != null)
-                {
-                    // create a clone of the selected textboxes and their textinformation so we can keep a reference to something that won't be changed
-                    var clonedTextBox = selectedTextBox.clone();
-                    var clonedTextInfo = getInfoOfBox(selectedTextBox);
-
-                    Action undo = () =>
-                      {
+                Action undo = () =>
+                  {
                           //ClearAdorners();
 
                           // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
                           var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
-                          if (activeTextbox != null)
-                          {
-                              var activeTextInfo = clonedTextInfo;
-                              activeTextbox.TextChanged -= SendNewText;
-                              applyStylingTo(activeTextbox, activeTextInfo);
-                              Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
+                      if (activeTextbox != null)
+                      {
+                          var activeTextInfo = clonedTextInfo;
+                          activeTextbox.TextChanged -= SendNewText;
+                          applyStylingTo(activeTextbox, activeTextInfo);
+                          Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
                               //AddAdorners();
                               sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
-                              activeTextbox.TextChanged += SendNewText;
-                          }
-                      };
-                    Action redo = () =>
-                      {
+                          activeTextbox.TextChanged += SendNewText;
+                      }
+                  };
+                Action redo = () =>
+                  {
                           //ClearAdorners();
 
                           var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
-                          if (activeTextbox != null)
-                          {
-                              var activeTextInfo = info;
-                              activeTextbox.TextChanged -= SendNewText;
-                              applyStylingTo(activeTextbox, activeTextInfo);
-                              Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
-                              //AddAdorners();
-                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
-                              activeTextbox.TextChanged += SendNewText;
-                          }
-                      };
-                    UndoHistory.Queue(undo, redo, "Styling of text changed");
-                    redo();
-                }
+                      if (activeTextbox != null)
+                      {
+                          var activeTextInfo = info;
+                          activeTextbox.TextChanged -= SendNewText;
+                          applyStylingTo(activeTextbox, activeTextInfo);
+                          Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
+                          sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                          activeTextbox.TextChanged += SendNewText;
+                      }
+                  };
+                UndoHistory.Queue(undo, redo, "Styling of text changed");
+                redo();
             }
-            catch (Exception e)
-            {
-                Logger.Fixed(string.Format("There was an ERROR:{0} INNER:{1}, it is now fixed", e, e.InnerException));
-            }
-
         }
         private static void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
         {
@@ -2470,15 +2461,15 @@ namespace SandRibbon.Components
                 strikethrough = box.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
             }
             return new TextInformation
-                       {
-                           Bold = box.FontWeight == FontWeights.Bold,
-                           Italics = box.FontStyle == FontStyles.Italic,
-                           Size = box.FontSize,
-                           Underline = underline,
-                           Strikethrough = strikethrough,
-                           Family = box.FontFamily,
-                           Color = ((SolidColorBrush)box.Foreground).Color
-                       };
+            {
+                Bold = box.FontWeight == FontWeights.Bold,
+                Italics = box.FontStyle == FontStyles.Italic,
+                Size = box.FontSize,
+                Underline = underline,
+                Strikethrough = strikethrough,
+                Family = box.FontFamily,
+                Color = ((SolidColorBrush)box.Foreground).Color
+            };
         }
 
         private void sendBox(MeTLTextBox box, bool localOnly = false)
@@ -2780,11 +2771,11 @@ namespace SandRibbon.Components
             box.offsetX = contentBuffer.logicalX;
             box.offsetY = contentBuffer.logicalY;
             box.tag(new TextTag
-                        {
-                            author = Globals.me,
-                            privacy = currentPrivacy,
-                            id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
-                        });
+            {
+                author = Globals.me,
+                privacy = currentPrivacy,
+                id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
+            });
 
             //setting the currentfamily, currentsize, currentcolor, style whenever there is a new box created
             _currentColor = Globals.currentTextInfo.Color;
@@ -2868,12 +2859,12 @@ namespace SandRibbon.Components
                         MeTLLib.ClientFactory.Connection().NoAuthUploadResource(
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new MeTLImage
-                                    {
-                                        Source = new BitmapImage(uri),
-                                        Width = imageSource.Width,
-                                        Height = imageSource.Height,
-                                        Stretch = Stretch.Fill
-                                    };
+                    {
+                        Source = new BitmapImage(uri),
+                        Width = imageSource.Width,
+                        Height = imageSource.Height,
+                        Stretch = Stretch.Fill
+                    };
                     image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, -1)); // ZIndex was -1, timestamp is -1L
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
