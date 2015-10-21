@@ -26,52 +26,50 @@
     <Button x:Key="conversation_overview" Command="{x:Static api:Commands.MoveToOverview}" x:Shared="False"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
-            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_diagram}" Stretch="UniformToFill"/>
-                </Rectangle.Fill>
-            </Rectangle>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_diagram}" />
+            </Viewbox>
         </macro:Appearance>
     </Button>
     <Button x:Key="slide_next" Command="{x:Static api:Commands.MoveToNext}" x:Shared="False"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
-            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_chevron_right}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_chevron_right}" />
+            </Viewbox>
         </macro:Appearance>
     </Button>
     <Button x:Key="slide_prev" Command="{x:Static api:Commands.MoveToPrevious}" x:Shared="False"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
-            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_chevron_left}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_chevron_left}" />
+            </Viewbox>
         </macro:Appearance>
     </Button>
     <!-- Keyboarding -->
+    <ToggleButton x:Key="font_toggle_bold" Command="{x:Static api:Commands.ToggleBold}"
+                  Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_text_bold}" />
+            </Viewbox>
+        </macro:Appearance>
+    </ToggleButton>
     <Button x:Key="font_size_increase" Command="{x:Static api:Commands.IncreaseFontSize}" x:Shared="False"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
-            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_text_size_plus}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_text_size_plus}" />
+            </Viewbox>
         </macro:Appearance>
     </Button>
     <Button x:Key="font_size_decrease" Command="{x:Static api:Commands.IncreaseFontSize}" x:Shared="False"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
-            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_text_size_minus}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_text_size_minus}" />
+            </Viewbox>
         </macro:Appearance>
     </Button>
     <!-- Pen colors-->
@@ -175,40 +173,36 @@
     <!-- Activity monitoring -->
     <Grid  x:Key="worm" x:Shared="False">
         <macro:Appearance>
-            <StackPanel Orientation="Horizontal">
-                <Border BorderThickness="1">
-                    <Border.BorderBrush>
-                        <SolidColorBrush Color="{StaticResource AccentColor}" />
-                    </Border.BorderBrush>
-                    <Label Content="Worm" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                </Border>
-                <oxy:PlotView x:Name="wormPlot" Height="{DynamicResource ButtonHeight}" Width="{DynamicResource SensorWidth}" Loaded="WormLoaded">
-                    <oxy:PlotView.Background>
-                        <SolidColorBrush Color="{StaticResource AccentColor}" />
-                    </oxy:PlotView.Background>
-                </oxy:PlotView>
-            </StackPanel>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <StackPanel Orientation="Horizontal">
+                    <Border BorderThickness="1">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{StaticResource AccentColor}" />
+                        </Border.BorderBrush>
+                        <Label Content="Worm" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+                    <oxy:PlotView x:Name="wormPlot" Height="{DynamicResource ButtonHeight}" Width="{DynamicResource SensorWidth}" Loaded="WormLoaded">
+                        <oxy:PlotView.Background>
+                            <SolidColorBrush Color="{StaticResource AccentColor}" />
+                        </oxy:PlotView.Background>
+                    </oxy:PlotView>
+                </StackPanel>
+            </Viewbox>
         </macro:Appearance>
     </Grid>
     <!-- Selection modification-->
     <Button x:Key="select_mode" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="Select">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_image_ants}" Stretch="UniformToFill"/>
-                    </Rectangle.Fill>
-                </Rectangle>
+                <ContentControl Content="{DynamicResource appbar_image_ants}" />                
             </Viewbox>
         </macro:Appearance>
     </Button>
     <Button x:Key="participants_toggle" Command="{x:Static api:Commands.ModifySelection}">
         <macro:Appearance>
-            <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_cog}" Stretch="UniformToFill"/>
-                </Rectangle.Fill>
-            </Rectangle>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{DynamicResource appbar_cog}" />
+            </Viewbox>
         </macro:Appearance>
     </Button>
 </ResourceDictionary>

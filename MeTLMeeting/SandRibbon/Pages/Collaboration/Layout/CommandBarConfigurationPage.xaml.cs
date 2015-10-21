@@ -41,6 +41,14 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                     }
                 },
                 new MacroGroup {
+                    Label="Keyboarding",
+                    Macros=new[] {
+                        new Macro("font_toggle_bold"),
+                        new Macro("font_size_increase"),
+                        new Macro("font_size_decrease")                        
+                    }
+                },
+                new MacroGroup {
                     Label="Freehand inking",                    
                     Macros=new[] {         
                         new Macro("pen_red"),
