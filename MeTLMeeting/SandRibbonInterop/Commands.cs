@@ -67,6 +67,8 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand();
+
         public static DefaultableCompositeCommand BrowseOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ManuallyConfigureOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RequestMeTLUserInformations = new DefaultableCompositeCommand();

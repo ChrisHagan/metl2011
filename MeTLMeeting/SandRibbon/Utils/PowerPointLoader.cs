@@ -176,17 +176,14 @@ namespace SandRibbon.Utils
                         {
                             case PowerpointImportType.HighDefImage:
                                 Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
-                                Logger.Log(string.Format("ImportingPowerpoint HighDef {0}", spec.File));
                                 LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                                 break;
                             case PowerpointImportType.Image:
                                 Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
-                                Logger.Log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File));
                                 LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                                 break;
                             case PowerpointImportType.Shapes:
                                 Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
-                                Logger.Log(string.Format("ImportingPowerpoint Flexible {0}", spec.File));
                                 LoadPowerpoint(app, spec.File, conversation);
                                 break;
                         }
@@ -317,7 +314,7 @@ namespace SandRibbon.Utils
             }
             catch (COMException e)
             {
-                Logger.Crash(e);
+                Commands.Mark.Execute(e.Message);
             }
             finally
             {
@@ -404,7 +401,7 @@ namespace SandRibbon.Utils
                 }
                 catch (COMException e)
                 {
-                    Logger.Crash(e);
+                    Commands.Mark.Execute(e.Message);
                 }
                 finally
                 {
@@ -412,7 +409,7 @@ namespace SandRibbon.Utils
                 }
             }
             catch (Exception e) {
-                Logger.Crash(e);
+                Commands.Mark.Execute(e.Message);
             }
         }
         

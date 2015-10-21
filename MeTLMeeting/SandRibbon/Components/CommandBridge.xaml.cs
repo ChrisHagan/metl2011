@@ -69,7 +69,7 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                Logger.Crash(e);
+                Commands.Mark.Execute(e.Message);
             }
         }
         bool IValueProvider.IsReadOnly

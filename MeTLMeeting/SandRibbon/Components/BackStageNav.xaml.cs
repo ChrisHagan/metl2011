@@ -62,9 +62,7 @@ namespace SandRibbon.Components
                 currentConversation.Visibility = Visibility.Visible;
                 separator2.Visibility = Visibility.Visible;
             }
-            openCorrectTab((string)mode);
-            //setMyConversationVisibility();
-            App.mark("Conversation Search is open for business");
+            openCorrectTab((string)mode);            
         }
         private void openMyConversations()
         {

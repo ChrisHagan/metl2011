@@ -112,29 +112,64 @@ namespace SandRibbon.Pages.Login
             {
                 return obj.Host.GetHashCode();
             }
-        }
-        protected void DestroyWebBrowser(object _unused)
-        {
-            if (logonBrowser != null)
-            {
-                browseHistory.Distinct(new UriHostComparer()).ToList().ForEach((uri) => DeleteCookieForUrl(uri));
-                logonBrowserContainer.Children.Clear();
-                logonBrowser.Dispose();
-                logonBrowser = null;
-                browseHistory.Clear();
-            }
-        }
+        }        
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
-            DestroyWebBrowser(null);
+            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;            
             DeleteCookieForUrl(loginUri);
             logonBrowser = new WebControl();
             logonBrowserContainer.Children.Add(logonBrowser);
+            var loginAttempted = false;
             logonBrowser.DocumentReady += (sender, args) =>
             {
+                if (loginAttempted) return;
                 var html = (sender as WebControl).HTML;
-                checkWhetherWebBrowserAuthenticationSucceeded(html);
+                if (string.IsNullOrEmpty(html)) return;
+                try
+                {
+                    var xml = XDocument.Parse(html).Elements().ToList();
+                    var authData = getElementsByTag(xml, "authdata");
+                    var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
+                    var usernameNode = getElementsByTag(authData, "username").First();
+                    var authGroupsNodes = getElementsByTag(authData, "authGroup");
+                    var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
+                    var username = usernameNode.Value.ToString();
+                    var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
+                    var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
+                    var emailAddress = "";
+                    if (emailAddressNode != null)
+                    {
+                        emailAddress = emailAddressNode.Attribute("name").Value.ToString();
+                    }
+                    var credentials = new Credentials(username, "", authGroups, emailAddress);
+                    if (authenticated)
+                    {
+                        try
+                        {
+                            Commands.Mark.Execute("Login");
+                            if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
+                            {
+                                Commands.LoginFailed.Execute(null);
+                            }
+                            else
+                            {
+                                loginAttempted = true;
+                                Commands.SetIdentity.Execute(credentials);
+                            }
+                        }
+                        catch (TriedToStartMeTLWithNoInternetException)
+                        {
+                            Commands.Mark.Execute("Internet not found");
+                            Commands.LoginFailed.Execute(null);
+                            Commands.NoNetworkConnectionAvailable.Execute(null);
+                        }
+                        NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
+                    }                    
+                }
+                catch (Exception e)
+                {
+                    Commands.Mark.Execute(e.Message);                    
+                }
 
             };
             if (showTimeoutButton != null)
@@ -169,64 +204,14 @@ namespace SandRibbon.Pages.Login
             }
             return root;
         }
-        protected Boolean checkUri(String url)
-        {
-            try
-            {
-                var uri = new Uri(url);
-                browseHistory.Add(uri);
-                var authenticationUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
-                return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine("exception in checking uri: " + e.Message);
-                return false;
-            }
-        }
-
-        protected bool checkWhetherWebBrowserAuthenticationSucceeded(string html)
-        {
-            if (string.IsNullOrEmpty(html)) return false;
-            try
-            {
-                var xml = XDocument.Parse(html).Elements().ToList();
-                var authData = getElementsByTag(xml, "authdata");
-                var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
-                var usernameNode = getElementsByTag(authData, "username").First();
-                var authGroupsNodes = getElementsByTag(authData, "authGroup");
-                var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
-                var username = usernameNode.Value.ToString();
-                var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
-                var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
-                var emailAddress = "";
-                if (emailAddressNode != null)
-                {
-                    emailAddress = emailAddressNode.Attribute("name").Value.ToString();
-                }
-                var credentials = new Credentials(username, "", authGroups, emailAddress);
-                if (authenticated)
-                {
-                    Commands.AddWindowEffect.ExecuteAsync(null);
-                    App.Login(credentials);
-                    NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
-                }
-                return authenticated;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e.Message);
-                return false;
-            }
-        }
-
+        
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             var options = ClientFactory.Connection().UserOptionsFor(identity.name);
             Commands.SetUserOptions.Execute(options);
             Globals.loadProfiles(identity);            
-            App.mark("Identity is established");
+            Commands.Mark.Execute("Identity is established");
         }
     }
 }

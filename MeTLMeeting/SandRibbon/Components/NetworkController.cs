@@ -50,7 +50,7 @@ namespace SandRibbon.Components
         public ClientConnection client;
         public NetworkController(MeTLServerAddress.serverMode mode)
         {
-            App.mark(String.Format("NetworkController instantiating: {0}",mode));
+            Commands.Mark.Execute(String.Format("NetworkController instantiating: {0}",mode));
             client = buildServerSpecificClient(mode);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{

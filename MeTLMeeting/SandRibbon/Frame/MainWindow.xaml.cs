@@ -24,7 +24,6 @@ using SandRibbon.Pages.Collaboration.Palettes;
 using MahApps.Metro.Controls;
 using SandRibbon.Pages.Conversations.Models;
 using System.Web;
-using System.Collections.ObjectModel;
 using Awesomium.Windows.Controls;
 
 namespace SandRibbon
@@ -37,24 +36,33 @@ namespace SandRibbon
         private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-        public string log
-        {
-            get { return Logger.log; }
-        }
+        private AsyncObservableCollection<LogMessage> logs = new AsyncObservableCollection<LogMessage>();
+
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
             mainFrame.Navigate(new ServerSelectorPage());
             App.CloseSplashScreen();
         }
+
+        public void Log(string message)
+        {
+            if (String.IsNullOrEmpty(message)) return;            
+            logs.Add(new LogMessage
+            {
+                content = message,
+                user = Globals.me,
+                slide = Globals.location.currentSlide,
+                timestamp = DateTime.Now.Ticks
+            });            
+        }
+
         private void DoConstructor()
         {
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>
-            {
-                App.mark("Window1 knows about identity");
-            }));
+            Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
+
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
@@ -256,7 +264,7 @@ namespace SandRibbon
             }
             catch (Exception e)
             {
-                Logger.Crash(e);
+                Log(string.Format("Exception in MainWindow.getDefaultSystemLanguage: {0}", e.Message));
             }
         }
         #region helpLinks
@@ -294,7 +302,7 @@ namespace SandRibbon
 
             catch (Exception e)
             {
-                Logger.Crash(e);
+                Log(string.Format("Failure in language set: {0}", e.Message));
             }
         }
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
@@ -391,12 +399,12 @@ namespace SandRibbon
                 }
                 catch (NotSetException e)
                 {
-                    Logger.Crash(e);
+                    Log(string.Format("Reconnecting: {0}",e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
+                    Log(string.Format("Reconnecting: {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
             }
@@ -603,8 +611,8 @@ namespace SandRibbon
         private void ShowDiagnostics(object sender, RoutedEventArgs e)
         {
             this.flyout.Content = TryFindResource("diagnostics");
-            this.flyout.DataContext = Logger.logs;
-            this.flyout.IsOpen = !this.flyout.IsOpen;
+            this.flyout.DataContext = logs;
+            this.flyout.IsOpen = true;
         }
     }
 }
