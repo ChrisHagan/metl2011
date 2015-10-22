@@ -285,7 +285,7 @@ namespace MeTLLib.Providers.Connection
                 conn.OnWriteXml -= WriteXml;
     #endif
             }
-            this.conn = new XmppClientConnection(jid.Server);
+            this.conn = new XmppClientConnection(metlServerAddress.xmppServiceName);
             conn.ConnectServer = metlServerAddress.host;
             conn.UseSSL = false;
             conn.AutoAgents = false;

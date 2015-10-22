@@ -129,12 +129,15 @@ namespace SandRibbon.Pages.Login
                 {
                     var xml = XDocument.Parse(html).Elements().ToList();
                     var authData = getElementsByTag(xml, "authdata");
-                    var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
                     var usernameNode = getElementsByTag(authData, "username").First();
                     var authGroupsNodes = getElementsByTag(authData, "authGroup");
                     var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
                     var username = usernameNode.Value.ToString();
                     var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
+
+                    var authenticated = true;// getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
+                    authGroups.Add(new AuthorizedGroup("name","type"));
+
                     var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
                     var emailAddress = "";
                     if (emailAddressNode != null)

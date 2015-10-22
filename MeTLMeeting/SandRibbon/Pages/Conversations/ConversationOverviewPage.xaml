@@ -38,12 +38,6 @@
             <Label Grid.Row="1" Grid.Column="1" Content="Teaching objectives" />
             <TextBlock Grid.Row="2" Grid.Column="1" />
         </Grid>
-        <Button Command="{x:Static api:Commands.ManuallyConfigureOneNote}">
-            <Grid layout:GridLayout.ItemsPerRow="1">
-                <Image Source="/Resources/onenote.png" Width="{DynamicResource ButtonWidth}"  Height="{DynamicResource ButtonHeight}" />
-                <Label Style="{DynamicResource medium}" Content="Include OneNote" />
-            </Grid>
-        </Button>
         <Grid layout:GridLayout.ItemsPerRow="1">
             <ProgressBar Minimum="0" Width="Auto" x:Name="processing" Margin="{StaticResource clearTop}"/>
             <Label Content="Where do you want to enter the conversation?" />
