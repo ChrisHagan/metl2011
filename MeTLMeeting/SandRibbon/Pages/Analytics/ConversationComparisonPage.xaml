@@ -5,32 +5,37 @@
       xmlns:local="clr-namespace:SandRibbon.Pages"      
       xmlns:layout="clr-namespace:SandRibbon.Layout"      
       Title="ConversationComparisonPage">
-    <Grid layout:GridLayout.ItemsPerRow="1">
+    
+        <Grid layout:GridLayout.ItemsPerRow="1">
         <Label Content="What do you want to find out?" Margin="{StaticResource clearTop}" />
-        <DataGrid ItemsSource="{Binding Path=outputs}" Margin="{StaticResource clearTop}" 
+        <ScrollViewer>
+            <DataGrid ItemsSource="{Binding Path=outputs}" Margin="{StaticResource clearTop}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ProgressBar Minimum="0" Maximum="{Binding Path=locationCount}" Value="{Binding Path=processingProgress}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <!--<DataGridTemplateColumn>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ItemsControl>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <DataGrid ItemsSource="{Binding Path=participantList}" CanUserAddRows="False" CanUserDeleteRows="False" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>-->
-            </DataGrid.Columns>
-        </DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ProgressBar Minimum="0" Maximum="{Binding Path=LocationCount}" Value="{Binding Path=ProcessingProgress}" VerticalAlignment="Top"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DataGrid ItemsSource="{Binding Path=ParticipantList}" 
+                                          AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Slide" Binding="{Binding Path=slide}" />
+                                        <DataGridTextColumn Header="Index" Binding="{Binding Path=index}" />
+                                        <DataGridTextColumn Header="Username" Binding="{Binding Path=username}" />
+                                        <DataGridTextColumn Header="Activity" Binding="{Binding Path=activityCount}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
     </Grid>
 </Page>

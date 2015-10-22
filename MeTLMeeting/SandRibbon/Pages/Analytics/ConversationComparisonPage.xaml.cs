@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Analytics
@@ -19,25 +20,46 @@ namespace SandRibbon.Pages.Analytics
             DataContext = new ConversationComparableCorpus(cs);
         }
     }
-    public class ConversationComparable {
-        public int locationCount { get; set; } = 0;
-        public int processingProgress { get; set; } = 0;
-        public ObservableCollection<LocatedActivity> participantList { get; set; } = new ObservableCollection<LocatedActivity>();
+    public class ConversationComparable : DependencyObject{        
+        public int LocationCount
+        {
+            get { return (int)GetValue(LocationCountProperty); }
+            set { SetValue(LocationCountProperty, value); }
+        }
+        public static readonly DependencyProperty LocationCountProperty =
+            DependencyProperty.Register("LocationCount", typeof(int), typeof(ConversationComparable), new PropertyMetadata(0));
+
+        public int ProcessingProgress
+        {
+            get { return (int)GetValue(ProcessingProgressProperty); }
+            set { SetValue(ProcessingProgressProperty, value); }
+        }        
+        public static readonly DependencyProperty ProcessingProgressProperty =
+            DependencyProperty.Register("ProcessingProgress", typeof(int), typeof(ConversationComparable), new PropertyMetadata(0));
+
+        
+        public ObservableCollection<LocatedActivity> ParticipantList
+        {
+            get { return (ObservableCollection<LocatedActivity>)GetValue(ParticipantListProperty); }
+            set { SetValue(ParticipantListProperty, value); }
+        }
+        
+        public static readonly DependencyProperty ParticipantListProperty =
+            DependencyProperty.Register("ParticipantList", typeof(ObservableCollection<LocatedActivity>), typeof(ConversationComparable), new PropertyMetadata(new ObservableCollection<LocatedActivity>()));
     }
     public class ConversationComparableCorpus {
         public ObservableCollection<ConversationComparable> outputs { get; set; } = new ObservableCollection<ConversationComparable>();        
-        public ObservableCollection<string> participants { get; set; }        
         public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds) {            
             BuildComparisons(cds.Select(cd => new ReticulatedConversation
             {
                 PresentationPath = cd
             }));
         }
-        private void BuildComparisons(IEnumerable<ReticulatedConversation> conversations) {
-            foreach (var conversation in conversations)
+        private void BuildComparisons(IEnumerable<ReticulatedConversation> conversations) {            
+            foreach (var conversation in conversations.AsParallel())
             {
                 conversation.CalculateLocations();
-                var output = new ConversationComparable { locationCount = conversation.LongestPathLength };
+                var output = new ConversationComparable { LocationCount = conversation.LongestPathLength };
                 outputs.Add(output);
                 foreach (var slide in conversation.Locations)
                 {
@@ -46,12 +68,11 @@ namespace SandRibbon.Pages.Analytics
                                         null,
                                         (parser) =>
                                         {
-                                            output.processingProgress++;
+                                            output.ProcessingProgress++;
                                             foreach (var user in process(parser))
                                             {
                                                 user.index = slide.Slide.index;
-                                                output.participantList.Add(user);
-                                                Console.WriteLine(slide.Slide.id);
+                                                output.ParticipantList.Add(user);                                                
                                             }
                                         },
                                         slide.Slide.id.ToString());
