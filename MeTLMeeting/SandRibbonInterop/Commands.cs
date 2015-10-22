@@ -101,6 +101,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand VideoMirrorRefreshRectangle = new DefaultableCompositeCommand();
 
         #region Sandpit
+        public static DefaultableCompositeCommand AnalyzeSelectedConversations = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendWakeUp = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendSleep = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveWakeUp = new DefaultableCompositeCommand();

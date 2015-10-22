@@ -49,6 +49,7 @@ namespace MeTLLib.DataTypes
             Created = new DateTime(long.Parse(created));
             LastModified = long.Parse(lastModified);
         }
+        public bool Selected { get; set; } = false;
         private static string ParseDate(XElement doc, string elementTag)
         {
             var dateRegex = @"(\d+)/(\d+)/(\d+) (\d+):(\d+):(\d+) (\w+)";

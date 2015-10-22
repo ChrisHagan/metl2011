@@ -255,6 +255,9 @@
     <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">
       <DependentUpon>OneNotePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Analytics\ConversationComparisonPage.xaml.cs">
+      <DependentUpon>ConversationComparisonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Conversations\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
     </Compile>
@@ -362,6 +365,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Collaboration\OneNotePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Analytics\ConversationComparisonPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

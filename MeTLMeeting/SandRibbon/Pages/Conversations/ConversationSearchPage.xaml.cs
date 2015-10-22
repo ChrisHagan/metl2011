@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using SandRibbon.Components.Utility;
 using System.Windows.Automation;
 using SandRibbon.Pages.Collaboration;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Pages.Analytics;
 
 namespace SandRibbon.Pages.Conversations
 {
@@ -34,7 +36,7 @@ namespace SandRibbon.Pages.Conversations
     }
     public partial class ConversationSearchPage : Page
     {
-        private ObservableCollection<ConversationDetails> searchResultsObserver = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
+        private ObservableCollection<SearchConversationDetails> searchResultsObserver = new ObservableCollection<SearchConversationDetails>();
 
         private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
@@ -42,14 +44,16 @@ namespace SandRibbon.Pages.Conversations
         public ConversationSearchPage()
         {
             InitializeComponent();
+            DataContext = searchResultsObserver;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
             SearchResults.ItemsSource = searchResultsObserver;
             typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
-            FillSearchResults(Globals.me);
-        }
+            FillSearchResults(Globals.me);            
+        }       
+                      
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
@@ -207,6 +211,14 @@ namespace SandRibbon.Pages.Conversations
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");
+        }
+
+        private void AnalyzeSelectedConversations(object sender, RoutedEventArgs e)
+        {
+            if (SearchResults.SelectedItems.Count > 0)
+            {
+                NavigationService.Navigate(new ConversationComparisonPage(SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+            }
         }
     }
     public class ConversationComparator : System.Collections.IComparer

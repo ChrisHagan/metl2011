@@ -43,8 +43,8 @@ namespace SandRibbon.Pages.Conversations.Models
         public ConversationDetails PresentationPath { get; set; }
         public ConversationDetails AdvancedMaterial { get; set; }
         public ConversationDetails RemedialMaterial { get; set; }
-        public List<ConversationDetails> RelatedMaterial { get; set; }
-        public List<LearningObjective> Objectives { get; set; }
+        public List<ConversationDetails> RelatedMaterial { get; set; } = new List<ConversationDetails>();
+        public List<LearningObjective> Objectives { get; set; } = new List<LearningObjective>();
         private List<ConversationDetails> cds()
         {
             return new[]
@@ -55,7 +55,7 @@ namespace SandRibbon.Pages.Conversations.Models
                 }.Concat(RelatedMaterial?? new List<ConversationDetails>()).ToList();
         }
 
-        internal void CalculateLocations()
+        public void CalculateLocations()
         {            
             var locs = new List<VmSlide>();
             PresentationPath?.Slides.ForEach(s => locs.Add(new VmSlide { Details = PresentationPath, Slide = s, Relevance = ConversationRelevance.PRESENTATION_PATH }));
