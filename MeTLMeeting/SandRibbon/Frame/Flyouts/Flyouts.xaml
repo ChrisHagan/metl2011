@@ -20,7 +20,19 @@
         <Button Command="{x:Static api:Commands.PickImages}" CommandParameter="{Binding}">
             <Label Content="Choose images to add" Style="{DynamicResource medium}"/>
         </Button>
-        <ItemsControl ItemsSource="{Binding Path=Files}" Margin="{DynamicResource clearTop}"/>
+        <DataGrid ItemsSource="{Binding Path=Files}" Margin="{DynamicResource clearTop}" CanUserDeleteRows="True" CanUserAddRows="False"
+                  CanUserReorderColumns="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Preview">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding}" Width="{DynamicResource ButtonWidth}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="File" Binding="{Binding}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
     <Grid x:Key="moreTextOptions" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
