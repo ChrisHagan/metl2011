@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>84F4AC7FABC5ECB0CC95DF3BF5568AAD8E1C0DCE</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>190949F597F2EBD6B3B05BD63EE4A4895A854A6E</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_2_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -908,6 +908,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="SandRibbon_2_TemporaryKey.pfx" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
   </ItemGroup>

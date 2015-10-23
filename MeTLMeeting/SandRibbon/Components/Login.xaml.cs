@@ -68,6 +68,7 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));            
             servers.ItemsSource = new Dictionary<String, MeTLServerAddress.serverMode> {
+                { "StackableRegiments.com", MeTLServerAddress.serverMode.EXTERNAL },
                 { "Saint Leo University", MeTLServerAddress.serverMode.PRODUCTION },
                 { "MeTL Demo Server (this houses data in Amazon)", MeTLServerAddress.serverMode.STAGING }
             };
