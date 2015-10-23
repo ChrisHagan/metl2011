@@ -4,13 +4,15 @@
                     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
                     xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                    xmlns:macro="clr-namespace:SandRibbon.Pages.Collaboration.Palettes">
+                    xmlns:macro="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"
+                    xmlns:macros="clr-namespace:SandRibbon.Pages.Macros">
     <sys:Double x:Key="HorizontalThumbWidth">50</sys:Double>
     <sys:Double x:Key="ButtonWidth">70</sys:Double>
     <sys:Double x:Key="ButtonHeight">70</sys:Double>
     <sys:Double x:Key="SensorWidth">120</sys:Double>
     <sys:Double x:Key="SplitterWidth">20</sys:Double>
     <Visibility x:Key="emptySlotVisibility">Collapsed</Visibility>
+    <macros:VisualCloneConverter x:Key="clone" />
     <!-- Empty slots-->
     <Grid x:Key="slot" Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}" x:Shared="False"
           Visibility="{DynamicResource emptySlotVisibility}">
@@ -47,12 +49,21 @@
             </Viewbox>
         </macro:Appearance>
     </Button>
+    <!-- Image insert -->
+    <Button x:Key="image_more_options" Command="{x:Static api:Commands.MoreImageOptions}"
+            Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <ContentControl Content="{StaticResource appbar_image}" />
+            </Viewbox>
+        </macro:Appearance>
+    </Button>
     <!-- Keyboarding -->
     <Button x:Key="font_more_options" Command="{x:Static api:Commands.MoreTextOptions}"
             Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                <ContentControl Content="{StaticResource appbar_chevron_down}" />
+                <ContentControl Content="{StaticResource appbar_text_serif}" />
             </Viewbox>
         </macro:Appearance>
     </Button>

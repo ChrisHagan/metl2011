@@ -134,10 +134,7 @@ namespace SandRibbon.Pages.Login
                     var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
                     var username = usernameNode.Value.ToString();
                     var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
-
-                    var authenticated = true;// getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
-                    authGroups.Add(new AuthorizedGroup("name","type"));
-
+                    var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";                    
                     var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
                     var emailAddress = "";
                     if (emailAddressNode != null)

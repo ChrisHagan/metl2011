@@ -14,6 +14,14 @@
             </DataGrid.Foreground>
         </DataGrid>
     </Grid>
+    <Grid x:Key="moreImageOptions" x:Shared="False"
+          layout:GridLayout.ItemsPerRow="1">
+        <Label Content="Image options" />
+        <Button Command="{x:Static api:Commands.PickImages}" CommandParameter="{Binding}">
+            <Label Content="Choose images to add" Style="{DynamicResource medium}"/>
+        </Button>
+        <ItemsControl ItemsSource="{Binding Path=Files}" Margin="{DynamicResource clearTop}"/>
+    </Grid>
     <Grid x:Key="moreTextOptions" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
         <Label Content="Font options" />

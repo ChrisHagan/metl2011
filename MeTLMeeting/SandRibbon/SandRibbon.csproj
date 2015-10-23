@@ -274,6 +274,7 @@
     </Compile>
     <Compile Include="Pages\Conversations\Models\LearningObjective.cs" />
     <Compile Include="Pages\Conversations\Models\OneNoteConfiguration.cs" />
+    <Compile Include="Pages\Conversations\Models\PickContext.cs" />
     <Compile Include="Pages\Conversations\Models\ReticulatedConversation.cs" />
     <Compile Include="Pages\Identity\CreateProfilePage.xaml.cs">
       <DependentUpon>CreateProfilePage.xaml</DependentUpon>
@@ -291,6 +292,7 @@
     <Compile Include="Pages\Identity\ServerSelectorPage.xaml.cs">
       <DependentUpon>ServerSelectorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Macros\VisualCloneConverter.cs" />
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Providers\OneNote.cs" />
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">

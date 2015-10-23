@@ -39,7 +39,9 @@
                                     <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                 </Button.Background>
                                 <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                                    <ContentControl Content="{StaticResource appbar_door_enter}" />
+                                    <ContentControl Content="{Binding 
+                                        Source={StaticResource appbar_door_enter}, 
+                                        Converter={StaticResource clone}}" />
                                 </Viewbox>
                             </Button>
                         </DataTemplate>

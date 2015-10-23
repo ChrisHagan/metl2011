@@ -25,6 +25,7 @@ using MahApps.Metro.Controls;
 using SandRibbon.Pages.Conversations.Models;
 using System.Web;
 using Awesomium.Windows.Controls;
+using Microsoft.Win32;
 
 namespace SandRibbon
 {
@@ -90,6 +91,7 @@ namespace SandRibbon
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
 
             Commands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
+            Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
             
@@ -99,6 +101,7 @@ namespace SandRibbon
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));                               
 
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
+            Commands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
 
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
@@ -114,6 +117,26 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();            
+        }
+
+        private void PickImages(PickContext context)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.DefaultExt = "png";
+            dialog.FileOk += delegate {
+                foreach (var file in dialog.FileNames)
+                {
+                    context.Files.Add(file);
+                }
+            };
+            dialog.ShowDialog();
+        }
+
+        private void MoreImageOptions(object obj)
+        {
+            flyout.Content = TryFindResource("moreImageOptions");
+            flyout.DataContext = new PickContext();
+            flyout.IsOpen = true;
         }
 
         private void MoreTextOptions(object obj)

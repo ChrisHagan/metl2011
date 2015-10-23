@@ -41,6 +41,12 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                     }
                 },
                 new MacroGroup {
+                    Label="Image",
+                    Macros=new[] {
+                        new Macro("image_more_options")                        
+                    }
+                },
+                new MacroGroup {
                     Label="Keyboarding",
                     Macros=new[] {
                         new Macro("font_toggle_bold"),

@@ -194,6 +194,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ExtendCanvasBothWays = new DefaultableCompositeCommand();
         #endregion
         #region ImageCanvas
+        public static DefaultableCompositeCommand MoreImageOptions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PickImages = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ImageDropped = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ImagesDropped = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand AddImage = new DefaultableCompositeCommand();
