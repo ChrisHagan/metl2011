@@ -179,14 +179,14 @@ namespace SandRibbon
                 if (token != null) {
                     Console.WriteLine("Token: {0}", token);                                  
                     flyout.DataContext = Globals.OneNoteConfiguration;
+                    flyout.Content = TryFindResource("oneNoteListing");
                     var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
                     oneNoteModel.Books.Clear();
                     foreach(var book in OneNote.Notebooks(token)) {
                         oneNoteModel.Books.Add(book);                        
-                    }
-                    flyout.Content = TryFindResource("oneNoteListing");
+                    }                    
                 }
-            }            
+            }           
         }
 
         private void openOneNoteConfiguration(object obj)

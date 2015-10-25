@@ -87,7 +87,7 @@
                                         <ItemsControl ItemsSource="{Binding Path=Pages}" Margin="{DynamicResource inset}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Button Command="{x:Static api:Commands.MoveToNotebookPage}" CommandParameter="{Binding}">
+                                                    <Button Command="{x:Static api:Commands.MoveToNotebookPage}" CommandParameter="{Binding}" HorizontalAlignment="Right">
                                                         <Label Style="{DynamicResource medium}" Content="{Binding Path=Title}" />
                                                     </Button>
                                                 </DataTemplate>

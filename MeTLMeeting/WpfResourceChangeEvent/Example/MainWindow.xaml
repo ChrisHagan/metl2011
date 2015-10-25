@@ -1,0 +1,31 @@
+﻿<Window x:Class="Example.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"
+        Title="MainWindow" Height="350" Width="525">
+  <Window.Resources>
+    <ResourceDictionary>
+      <system:Double x:Key="VariableFontSize">11</system:Double>
+    </ResourceDictionary>
+  </Window.Resources>
+
+
+  <i:Interaction.Behaviors>
+    <resourceChangeEvent:ResourceChangeEventBehavior 
+      Resource="{DynamicResource VariableFontSize}" 
+      ResourceChanged="OnResourceChanged_VariableFontSize"/>
+  </i:Interaction.Behaviors>
+
+
+  <Grid>
+    <Button Click="LargeFont_Click" Margin="12,12,407,270">Large Font</Button>
+    <Button Click="SmallFont_Click" Margin="0,12,321,270" HorizontalAlignment="Right" Width="80">Small Font</Button>
+      
+    <TextBlock FontSize="{DynamicResource VariableFontSize}" Margin="12,110,12,111">
+      This is a text which size is bound to dynamic resource VariableFontSize
+    </TextBlock>
+      
+  </Grid>
+</Window>

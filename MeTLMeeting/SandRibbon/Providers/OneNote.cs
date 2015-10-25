@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Providers
 {
@@ -14,12 +15,17 @@ namespace SandRibbon.Providers
         static string pages = "https://www.onenote.com/api/v1.0/me/notes/sections/{0}/pages";
         public static List<Notebook> Notebooks(string token)
         {
+            var context = Globals.OneNoteConfiguration;
             var wc = new WebClient();
             wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
             var jsonS = wc.DownloadString(notebooks);
             var json = JObject.Parse(jsonS);
             var books = new List<Notebook>();
-            foreach (var j in json["value"].Children<JObject>())
+            var remoteBooks = json["value"].Children<JObject>();
+            var bookCount = remoteBooks.Count();
+            var booksProcessed = 0;
+            context.ReportPagesProgress(booksProcessed, bookCount);
+            foreach (var j in remoteBooks)
             {
                 var book = new Notebook
                 {
@@ -32,29 +38,36 @@ namespace SandRibbon.Providers
                         Name = s["name"].Value<string>(),
                         Id = s["id"].Value<string>()
                     };
-                    Pages(token, section);
+                    Pages(token, section, context);
                     book.Sections.Add(section);
                 }
                 books.Add(book);
+                context.ReportPagesProgress(booksProcessed++, bookCount);
             }
             return books;
         }
 
-        public static void Pages(string token, NotebookSection section)
+        public static void Pages(string token, NotebookSection section, OneNoteConfiguration context)
         {
             var wc = new WebClient();
-            wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
+            wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));           
             wc.DownloadStringCompleted += (s, e) =>
-            {           
+            {
+                var processed = 0;
                 var json = JObject.Parse(e.Result);
-                foreach (var j in json["value"].Children<JObject>())
+                var remotePages = json["value"].Children<JObject>();
+                var pageCount = remotePages.Count();
+                context.ReportPageProgress(processed, pageCount, null);
+                foreach (var j in remotePages)
                 {
+                    var title = j["title"].Value<string>();
                     section.Pages.Add(new NotebookPage
                     {
                         Token = token,
                         Html = wc.DownloadString(j["contentUrl"].Value<string>()),
-                        Title = j["title"].Value<string>()                        
+                        Title = title                        
                     });
+                    context.ReportPageProgress(processed, pageCount,title);
                 }
             };
             wc.DownloadStringAsync(new Uri(string.Format(OneNote.pages, section.Id)));
@@ -83,6 +96,7 @@ namespace SandRibbon.Providers
         }
         public string Title { get; set; }        
         public string Token { get; set; }
+        public OneNoteConfiguration context { get; set; }
     }
     public class NotebookSection
     {

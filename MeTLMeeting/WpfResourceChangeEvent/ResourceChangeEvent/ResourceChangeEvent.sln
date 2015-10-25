@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceChangeEvent", "ResourceChangeEvent.csproj", "{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "..\Example\Example.csproj", "{1D5C9AC9-1B1E-40DC-BD89-AAB710C683F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Debug|x86.ActiveCfg = Debug|x86
+		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Debug|x86.Build.0 = Debug|x86
+		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Release|x86.ActiveCfg = Release|x86
+		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Release|x86.Build.0 = Release|x86
+		{1D5C9AC9-1B1E-40DC-BD89-AAB710C683F1}.Debug|x86.ActiveCfg = Debug|x86
+		{1D5C9AC9-1B1E-40DC-BD89-AAB710C683F1}.Debug|x86.Build.0 = Debug|x86
+		{1D5C9AC9-1B1E-40DC-BD89-AAB710C683F1}.Release|x86.ActiveCfg = Release|x86
+		{1D5C9AC9-1B1E-40DC-BD89-AAB710C683F1}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
