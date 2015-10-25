@@ -15,6 +15,7 @@ using System.Xml.Linq;
 
 namespace MeTLLib
 {
+    /*
     public abstract class MeTLGenericAddress
     {
         public Uri Uri { get; protected set; }
@@ -110,7 +111,7 @@ namespace MeTLLib
             }
         }
     }
-
+*/
     public interface IClientBehaviour
     {
         void AskForTeachersStatus(string teacher, string where);
@@ -157,12 +158,12 @@ namespace MeTLLib
         Uri NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
         UserOptions UserOptionsFor(string username);
-        List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
+        //List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
     }
     public class ClientConnection : IClientBehaviour
     {
-        [Inject]
-        public IReceiveEvents events { get; set; }
+        //[Inject]
+        public IReceiveEvents events { get; protected set; }
         [Inject]
         public AuthorisationProvider authorisationProvider { private get; set; }
         [Inject]
@@ -182,11 +183,12 @@ namespace MeTLLib
         [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
         [Inject]
-        public IUserInformationProvider userInformationProvider { private get; set; }
-        public MeTLServerAddress server { private set; get; }
-        public ClientConnection(MeTLServerAddress address)
+        //public IUserInformationProvider userInformationProvider { private get; set; }
+        public MetlConfiguration server { private set; get; }
+        public ClientConnection(MetlConfiguration address,IReceiveEvents _events)
         {
             server = address;
+            events = _events;
         }
         #region fields
         private JabberWire wire;
@@ -447,7 +449,8 @@ namespace MeTLLib
         }
         public Uri UploadResource(Uri file, string muc)
         {
-            System.Uri returnValue = server.uri;
+            System.Uri returnValue = new System.Uri(server.resourceUrl);
+            //System.Uri returnValue = server.uri;
             Action work = delegate
             {
                 returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
@@ -458,7 +461,7 @@ namespace MeTLLib
 
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
-            System.Uri returnValue = server.uri;
+            System.Uri returnValue = new System.Uri(server.resourceUrl);// server.uri;
             Action work = delegate
             {
                 returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
@@ -619,10 +622,12 @@ namespace MeTLLib
         }
         #endregion
         #region UserCommands
+        /*
         public List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames)
         {
             return userInformationProvider.lookupUsers(usernames);
         }
+        */
         #endregion
         #region HelperMethods
         private void requeue(Action action)

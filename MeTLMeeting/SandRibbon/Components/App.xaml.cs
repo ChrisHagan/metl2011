@@ -11,6 +11,7 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
+using System.Collections.Generic;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -34,6 +35,7 @@ namespace SandRibbon
         public static bool isStaging = false;
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
+        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
 
 #if DEBUG
         public static string OverrideUsername { get; private set; }
@@ -51,10 +53,21 @@ namespace SandRibbon
             splashScreen.Close(TimeSpan.Zero);
         }
 
-        public static void SetBackend(MeTLServerAddress.serverMode mode)
+        public static void SetBackend(MetlConfiguration configuration)
         {
-            controller = new NetworkController(mode);
-            App.mark(String.Format("Starting on backend mode {0}", mode.ToString()));
+            controller = new NetworkController(configuration);
+            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
+        }
+        public static List<MetlConfiguration> availableServers()
+        {
+            return metlConfigManager.Configs;
+        }
+        protected MetlConfiguration currentServer = null;
+        public static MetlConfiguration getCurrentServer
+        {
+            get {
+                return controller.config;
+            }
         }
 
         public static void Login(Credentials credentials)
@@ -127,7 +140,6 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
-            MeTLConfiguration.Load();            
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));

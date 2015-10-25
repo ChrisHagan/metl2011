@@ -15,7 +15,7 @@ namespace MeTLLib.Providers
         [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
         [Inject]
-        public MeTLServerAddress serverAddress { private get; set; }
+        public MetlConfiguration serverAddress { private get; set; }
         [Inject]
         public IResourceUploader resourceUploader { private get; set; }
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
+    /*
     public class ExternalServerAddress : MeTLServerAddress
     {
         public ExternalServerAddress()
@@ -44,15 +45,17 @@ namespace SandRibbon.Components
             Uri = new Uri(MeTLConfiguration.Config.External.MeggleUrl, UriKind.Absolute);
         }
     }
-
+    */
     public class NetworkController
     {
-        private ClientConnection client;
+        protected ClientConnection client;
         private Action deregister;
-        public NetworkController(MeTLServerAddress.serverMode mode)
+        public MetlConfiguration config { get; protected set; }
+        public NetworkController(MetlConfiguration _config)
         {
-            App.mark(String.Format("NetworkController instantiating: {0}",mode));
-            client = buildServerSpecificClient(mode);
+            config = _config;
+            App.mark(String.Format("NetworkController instantiating: {0}",config));
+            client = buildServerSpecificClient(_config);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{
                 if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
@@ -72,9 +75,11 @@ namespace SandRibbon.Components
             };
             client.events.StatusChanged += checkValidity;
         }       
-        private ClientConnection buildServerSpecificClient(MeTLServerAddress.serverMode mode)
+        private ClientConnection buildServerSpecificClient(MetlConfiguration config)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
+            return MeTLLib.ClientFactory.Connection(config);
+            /*
             ClientConnection result;
             switch (mode)
             {
@@ -95,11 +100,12 @@ namespace SandRibbon.Components
                     break;
             }            
             return result;
+            */
         }
         #region commands
         private void registerCommands()
         {
-            Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
+            //Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
@@ -126,11 +132,13 @@ namespace SandRibbon.Components
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
         }
+        /*
         private void RequestUserInformations(List<string> usernames)
         {
             var results = client.getMeTLUserInformations(usernames);
             Commands.ReceiveMeTLUserInformations.Execute(results);
         }
+        */
         private void RequestTeacherStatus(TeacherStatus obj)
         {
             client.AskForTeachersStatus(obj.Teacher, obj.Conversation);

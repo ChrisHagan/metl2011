@@ -8,7 +8,7 @@
     <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray">
             <Grid>
-                <Image HorizontalAlignment="Left" Stretch="None" Source="\Resources\MonashLogo.jpg"/>
+                <!--<Image HorizontalAlignment="Left" Stretch="None" Source="\Resources\MonashLogo.jpg"/>-->
                 <StackPanel HorizontalAlignment="Right">
                     <TextBlock FontSize="9" HorizontalAlignment="Right">
                         <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=ContactUrl, Mode=OneWay}">Contact us</Hyperlink>
@@ -53,7 +53,7 @@
                 <ListBox x:Name="servers">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Key}" />
+                            <TextBlock Text="{Binding Path=name}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ListBox>

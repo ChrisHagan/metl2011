@@ -30,7 +30,7 @@ namespace SandRibbon.Utils.Connection
             MeTLLib.Providers.Structure.IConversationDetailsProvider conversationDetailsProvider,
             HttpHistoryProvider historyProvider,
             CachedHistoryProvider cachedHistoryProvider,
-            MeTLServerAddress metlServerAddress,
+            MetlConfiguration metlServerAddress,
             ResourceCache cache,
             IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,

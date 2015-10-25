@@ -14,6 +14,7 @@ using MeTLLib.Providers.Structure;
 using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
+using System.Net;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -75,7 +76,7 @@ namespace MeTLLib.Providers.Connection
         [Inject]
         public CachedHistoryProvider cachedHistoryProvider { private get; set; }
         [Inject]
-        public MeTLServerAddress metlServerAddress { private get; set; }
+        public MetlConfiguration metlServerAddress { private get; set; }
         [Inject]
         public ResourceCache cache { private get; set; }
         [Inject]
@@ -180,7 +181,7 @@ namespace MeTLLib.Providers.Connection
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -286,7 +287,7 @@ namespace MeTLLib.Providers.Connection
     #endif
             }
             this.conn = new XmppClientConnection(jid.Server);
-            conn.ConnectServer = metlServerAddress.host;
+            conn.ConnectServer = metlServerAddress.xmppHost;
             conn.UseSSL = false;
             conn.AutoAgents = false;
             conn.OnAuthError += OnAuthError;
@@ -311,7 +312,7 @@ namespace MeTLLib.Providers.Connection
         }
         private Jid createJid(string username)
         {
-            return new Jid(username + "@" + metlServerAddress.xmppServiceName);
+            return new Jid(username + "@" + metlServerAddress.xmppDomain);
         }
         public void SendLiveWindow(LiveWindowSetup window)
         {
@@ -349,7 +350,7 @@ namespace MeTLLib.Providers.Connection
                 usernameToBeRegistered = null;
             }
             StartConnectionTimeoutTimer();
-            conn.Open(jid.User, MeTLConfiguration.Config.XmppCredential.Password, resource, 1);
+            conn.Open(jid.User, metlServerAddress.xmppPassword, resource, 1);// MeTLConfiguration.Config.XmppCredential.Password, resource, 1);
         }
        
         private void OnLogin(object o)
@@ -489,7 +490,7 @@ namespace MeTLLib.Providers.Connection
         protected IConversationDetailsProvider conversationDetailsProvider;
         protected HttpHistoryProvider historyProvider;
         protected CachedHistoryProvider cachedHistoryProvider;
-        protected MeTLServerAddress metlServerAddress;
+        protected MetlConfiguration metlServerAddress;
         private static int resetInProgress = 0;
 
         private void Reset(string caller)
@@ -534,7 +535,7 @@ namespace MeTLLib.Providers.Connection
             var rooms = new List<Jid>();
             if (!stayInGlobal)
             {
-                rooms.Add(metlServerAddress.global);
+                rooms.Add(new Jid(metlServerAddress.globalMuc));
             }
             rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
 
@@ -575,7 +576,7 @@ namespace MeTLLib.Providers.Connection
             if (!fastJoin)
             {
                 leaveRooms();
-                joinRoom(metlServerAddress.global);
+                joinRoom(new Jid(metlServerAddress.globalMuc));
             }
             if (isLocationValid())
             {
@@ -649,7 +650,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void directCommand(string target, string message)
         {
-            send(new Message(new Jid(target + "@" + metlServerAddress.xmppServiceName), jid, MessageType.chat, message));
+            send(new Message(new Jid(target + "@" + metlServerAddress.xmppDomain), jid, MessageType.chat, message));
         }
         private void onStart()
         {
@@ -685,8 +686,15 @@ namespace MeTLLib.Providers.Connection
             {
                 Func<Boolean> checkPing = delegate
                 {
+                    try {
+                        return webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "/serverStatus")).Trim().ToLower() == "ok";
+                    }
+                    catch (Exception e){
+                        return e is WebException && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound;
+                    }
+                    /*
                     var healthy = false;
-                    var uri = metlServerAddress.uri;
+                    var uri = new System.Uri(metlServerAddress.resourceUrl);
                     var ping = new System.Net.NetworkInformation.Ping();
                     var reply = ping.Send(uri.Host, 5000);
                     if (reply != null && reply.Status == IPStatus.Success)
@@ -697,6 +705,7 @@ namespace MeTLLib.Providers.Connection
                         Console.WriteLine(reply.Status);
                     }
                     return healthy;
+                    */
                 };
                 return conn.Authenticated && checkPing();
             }

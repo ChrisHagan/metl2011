@@ -204,7 +204,7 @@ namespace SandRibbon.Utils
                 content = message,
                 user = user,
                 slide = slide,
-                server = ClientFactory.Connection().server.host
+                server = ClientFactory.Connection().server.name
             };
 
             logQueue.EnqueueLog(msg);

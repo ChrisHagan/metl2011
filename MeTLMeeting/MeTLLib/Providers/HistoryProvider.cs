@@ -42,7 +42,7 @@ namespace MeTLLib.Providers
         [Inject]
         public JabberWireFactory jabberWireFactory { protected get; set; }
         [Inject]
-        public MeTLServerAddress serverAddress { protected get; set; }
+        public MetlConfiguration serverAddress { protected get; set; }
         public abstract void Retrieve<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
@@ -151,7 +151,8 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
+                                     var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
+                                     //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
                                      var directoryExists = resourceProvider.exists(new Uri(directoryUri));
                                      if (!directoryExists)
                                          return;

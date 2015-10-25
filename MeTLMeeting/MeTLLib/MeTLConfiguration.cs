@@ -1,9 +1,139 @@
 ﻿namespace MeTLLib
 {
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
+    using System.Linq;
+    
+    public class MetlConfiguration
+    {
+        public MetlConfiguration(
+            string _name,
+            string _xmppHost,
+            string _xmppPort,
+            string _xmppDomain,
+            string _xmppUsername,
+            string _xmppPassword,
+            string _conversationsUrl,
+            string _authenticationUrl,
+            string _thumbnailUrl,
+            string _resourceUrl,
+            string _historyUrl,
+            string _resourceUsername,
+            string _resourcePassword,
+            string _structureDirectory,
+            string _resourceDirectory,
+            string _uploadPath,
+            string _primaryKeyGenerator,
+            string _cryptoKey,
+            string _cryptoIV
+       )
+        {
+            name = _name;
+            xmppHost = _xmppHost;
+            xmppPort = _xmppPort;
+            xmppDomain = _xmppDomain;
+            xmppUsername = _xmppUsername;
+            xmppPassword = _xmppPassword;
+            conversationsUrl = _conversationsUrl;
+            authenticationUrl = _authenticationUrl;
+            thumbnailUrl = _thumbnailUrl;
+            resourceUrl = _resourceUrl;
+            historyUrl = _historyUrl;
+            resourceUsername = _resourceUsername;
+            resourcePassword = _resourcePassword;
+            structureDirectory = _structureDirectory;
+            resourceDirectory = _resourceDirectory;
+            uploadPath = _uploadPath;
+            primaryKeyGenerator = _primaryKeyGenerator;
+            cryptoKey = _cryptoKey;
+            cryptoIV = _cryptoIV;
+        }
+        public string name { get; protected set; }
+        public string xmppHost { get; protected set; }
+        public string xmppPort { get; protected set; }
+        public string xmppDomain { get; protected set; }
+        public string xmppUsername { get; protected set; }
+        public string xmppPassword { get; protected set; }
+        public string conversationsUrl { get; protected set; }
+        public string authenticationUrl { get; protected set; }
+        public string thumbnailUrl { get; protected set; }
+        public string resourceUrl { get; protected set; }
+        public string historyUrl { get; protected set; }
+        public string resourceUsername { get; protected set; }
+        public string resourcePassword { get; protected set; }
+        public string resourceDirectory { get; protected set; }
+        public string structureDirectory { get; protected set; }
+        public string uploadPath { get; protected set; }
+        public string primaryKeyGenerator { get; protected set; }
+        public string cryptoKey { get; protected set; }
+        public string cryptoIV { get; protected set; }
+        public string muc {
+            get { return "conference." + xmppDomain; }
+        }
+        public string globalMuc
+        {
+            get { return "global@" + muc; }
+        }
+    }
+    public abstract class MetlConfigurationManager
+    {
+        public MetlConfigurationManager()
+        {
+            loadConfigs();
+        }
+        public List<MetlConfiguration> Configs
+        {
+            get;
+            protected set;
+        }
+        protected abstract void loadConfigs();
+        public void reload()
+        {
+            loadConfigs();
+        }
+    }
+    public class LocalAppMeTLConfigurationManager : MetlConfigurationManager {
+        override protected void loadConfigs()
+        {
+            deprecatedLib.MeTLConfiguration.Load();
+            var config = deprecatedLib.MeTLConfiguration.Config;
+            Configs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf => 
+              {
+                  return new MetlConfiguration(
+                      conf.Name,
+                      conf.Host,
+                      conf.XmppPort,
+                      conf.xmppServiceName,
+                      config.XmppCredential.Username,
+                      config.XmppCredential.Password,
+                      conf.MeggleUrl,
+                      conf.WebAuthenticationEndpoint,
+                      conf.Thumbnail,
+                      String.Format("{0}://{1}:{2}", conf.Protocol,conf.Host, conf.ResourcePort),
+                      String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.HistoryPort),
+                      config.ResourceCredential.Username,
+                      config.ResourceCredential.Password,
+                      "Structure",
+                      "Resources",
+                      conf.UploadEndpoint,
+                      "primarykey.yaws",
+                      config.Crypto.Key,
+                      config.Crypto.IV
+                  );
+              }).ToList();
+        }
+    }
+}
 
+namespace deprecatedLib {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Diagnostics;
+    using MeTLLib;
+    using System.Linq;
     public static class MeTLConfiguration
     {
         private static MeTLConfigurationSection conf = null;
@@ -33,7 +163,12 @@
         {
             try
             {
-                Config = ConfigurationManager.GetSection("metlConfigurationGroup/metlConfiguration") as MeTLConfigurationSection;
+                var section = ConfigurationManager.GetSection("metlConfigurationGroup/metlConfiguration");
+                var mc = section as MeTLConfigurationSection;
+                if (mc != null)
+                {
+                    Config = mc;
+                }
             }
             catch (Exception e)
             {
@@ -45,6 +180,7 @@
 
     public class MeTLConfigurationSection : ConfigurationSection
     {
+        /*
         public MeTLServerAddress.serverMode ActiveStackEnum
         {
             get
@@ -52,7 +188,7 @@
                 return (MeTLServerAddress.serverMode)Enum.Parse(typeof(MeTLServerAddress.serverMode), ActiveStackConfig.Name, true);
             }
         }
-
+        */
         public StackServerElement ActiveStack
         {
             get
@@ -248,19 +384,42 @@
             }
         }
 
-        [ConfigurationProperty("port", IsRequired = true)]
-        public String Port
+        [ConfigurationProperty("xmppPort", IsRequired = true)]
+        public String XmppPort
         {
             get
             {
-                return (String)this["port"];
+                return (String)this["xmppPort"];
             }
             set
             {
                 this["port"] = value;
             }
         }
-
+        [ConfigurationProperty("historyPort", IsRequired = true)]
+        public String HistoryPort
+        {
+            get
+            {
+                return (String)this["historyPort"];
+            }
+            set
+            {
+                this["port"] = value;
+            }
+        }
+        [ConfigurationProperty("resourcePort", IsRequired = true)]
+        public String ResourcePort
+        {
+            get
+            {
+                return (String)this["resourcePort"];
+            }
+            set
+            {
+                this["port"] = value;
+            }
+        }
         [ConfigurationProperty("xmppServiceName", IsRequired = true)]
         public String xmppServiceName
         {
@@ -377,3 +536,4 @@
         }
     }
 }
+

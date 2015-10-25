@@ -87,8 +87,8 @@ namespace SandRibbon.Providers
                 paintThumb(image);
             } else {
                 var server = ClientFactory.Connection().server;
-                var host = server.Name;
-                var url = string.Format(server.thumbnail + "{0}/{1}",host,internalSlideId);
+                var host = server.name;
+                var url = string.Format(server.thumbnailUrl + "{0}/{1}",host,internalSlideId);
                 //Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));
                 WebThreadPool.QueueUserWorkItem(delegate
                 {

@@ -84,8 +84,8 @@ namespace SandRibbon.Components
         {
             var id = value.ToString();
             var server = ClientFactory.Connection().server;
-            var host = server.Name;
-            return new BitmapImage(new Uri(string.Format(server.thumbnail + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
+            var host = server.name;
+            return new BitmapImage(new Uri(string.Format(server.thumbnailUrl + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

@@ -66,12 +66,15 @@ namespace SandRibbon.Components
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));            
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
+            servers.ItemsSource = App.availableServers();
+            /*            
             servers.ItemsSource = new Dictionary<String, MeTLServerAddress.serverMode> {
                 { "StackableRegiments.com", MeTLServerAddress.serverMode.EXTERNAL },
                 { "Saint Leo University", MeTLServerAddress.serverMode.PRODUCTION },
                 { "MeTL Demo Server (this houses data in Amazon)", MeTLServerAddress.serverMode.STAGING }
             };
+            */
             servers.SelectedIndex = 1;
             Commands.AddWindowEffect.ExecuteAsync(null);
         }
@@ -170,9 +173,9 @@ namespace SandRibbon.Components
 
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
+            var loginUri = ClientFactory.Connection().server.authenticationUrl;
             DestroyWebBrowser(null);
-            DeleteCookieForUrl(loginUri);
+            DeleteCookieForUrl(new Uri(loginUri));
             logonBrowser = new WebBrowser();
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.Navigating += (sender, args) =>
@@ -240,7 +243,7 @@ namespace SandRibbon.Components
             {
                 var uri = new Uri(url);
                 browseHistory.Add(uri);
-                var authenticationUri = ClientFactory.Connection().server.webAuthenticationEndpoint;
+                var authenticationUri = new Uri(ClientFactory.Connection().server.authenticationUrl);
                 return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
             }
             catch (Exception e)
@@ -326,7 +329,8 @@ namespace SandRibbon.Components
         {
             serversContainer.Visibility = Visibility.Collapsed;
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
+            var backend = servers.SelectedItem as MetlConfiguration;
+            //var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
             App.SetBackend(backend);            
             ResetWebBrowser(null);           
         }
