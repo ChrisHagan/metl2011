@@ -21,8 +21,8 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="100">
-                            <Image Width="100" Height="100" Source="{Binding Path=Value.image}" />
-                            <Label Content="{Binding Path=Key}" Margin="{StaticResource clearTop}"/>
+                            <Image Width="100" Height="100" Source="{Binding Path=imageUrl}" />
+                            <Label Content="{Binding Path=name}" Margin="{StaticResource clearTop}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -25,11 +25,12 @@ namespace SandRibbon.Pages.Login
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
-        public MeTLServerAddress backend { get; set; }
+        public MetlConfiguration backend { get; set; }
         protected WebControl logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
-        public LoginPage(MeTLServerAddress backend)
+        public LoginPage(MetlConfiguration _backend)
         {
+            backend = _backend;
             InitializeComponent();
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
@@ -115,8 +116,8 @@ namespace SandRibbon.Pages.Login
         }        
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.webAuthenticationEndpoint;            
-            DeleteCookieForUrl(loginUri);
+            var loginUri = ClientFactory.Connection().server.authenticationUrl;            
+            DeleteCookieForUrl(new Uri(loginUri));
             logonBrowser = new WebControl();
             logonBrowserContainer.Children.Add(logonBrowser);
             var loginAttempted = false;
@@ -187,7 +188,7 @@ namespace SandRibbon.Pages.Login
             }, null, Timeout.Infinite, Timeout.Infinite);
             logonBrowser.NativeViewInitialized += delegate
             {
-                logonBrowser.Source = loginUri;
+                logonBrowser.Source = new Uri(loginUri);
             };
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName)

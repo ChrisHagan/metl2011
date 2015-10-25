@@ -484,10 +484,10 @@ namespace MeTLLib.DataTypes
 
         public MeTLImage imageProperty;
         public MeTLStanzas.Image imageSpecification;
-        public MeTLServerAddress server;
+        public MetlConfiguration server;
         private IWebClient downloader;
         private HttpResourceProvider provider;
-        public void injectDependencies(MeTLServerAddress server, IWebClient downloader, HttpResourceProvider provider)
+        public void injectDependencies(MetlConfiguration server, IWebClient downloader, HttpResourceProvider provider)
         {
             if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
             this.server = server;
@@ -1255,12 +1255,12 @@ namespace MeTLLib.DataTypes
             {
                 fileResource = file;
             }
-            public FileResource injectDependencies(MeTLServerAddress server)
+            public FileResource injectDependencies(MetlConfiguration server)
             {
                 this.server = server;
                 return this;
             }
-            private MeTLServerAddress server;
+            private MetlConfiguration server;
             public TargettedFile fileResource
             {
                 get
@@ -1272,7 +1272,8 @@ namespace MeTLLib.DataTypes
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? (Privacy)GetTagEnum(privacyTag, typeof(Privacy)) : Privacy.Public;
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    //var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
                     return file;
@@ -1594,18 +1595,19 @@ namespace MeTLLib.DataTypes
             {
                 this.parameters = submission;
             }
-            public ScreenshotSubmission injectDependencies(MeTLServerAddress server)
+            public ScreenshotSubmission injectDependencies(MetlConfiguration server)
             {
                 this.server = server;
                 return this;
             }
-            private MeTLServerAddress server;
+            private MetlConfiguration server;
 
             public TargettedSubmission parameters
             {
                 get
                 {
-                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+//                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
 
@@ -1786,19 +1788,21 @@ namespace MeTLLib.DataTypes
             {
                 this.parameters = parameters;
             }
-            public Quiz injectDependencies(MeTLServerAddress server)
+            public Quiz injectDependencies(MetlConfiguration server)
             {
                 this.server = server;
                 return this;
             }
-            private MeTLServerAddress server;
+            private MetlConfiguration server;
 
             private string ProcessedUrl()
             {
                 string url = HasTag(URL) ? GetTag(URL) : "none";
                 if (url.ToLower() != "none")
                 {
-                    url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
+                    url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
+
+     //               url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
                 }
                 return url;
             }
@@ -1916,7 +1920,7 @@ namespace MeTLLib.DataTypes
         public class Image : Element
         {
             private IWebClient downloader;
-            private MeTLServerAddress server;
+            private MetlConfiguration server;
             private HttpResourceProvider provider;
             static Image()
             {
@@ -1933,7 +1937,7 @@ namespace MeTLLib.DataTypes
             {
                 this.Img = image;
             }
-            public Image injectDependencies(MeTLServerAddress server, IWebClient downloader, HttpResourceProvider provider)
+            public Image injectDependencies(MetlConfiguration server, IWebClient downloader, HttpResourceProvider provider)
             {
                 this.provider = provider;
                 this.server = server;
@@ -1957,7 +1961,7 @@ namespace MeTLLib.DataTypes
                 }
             }
 
-            public Func<MeTLImage> curryEvaluation(MeTLServerAddress server)
+            public Func<MeTLImage> curryEvaluation(MetlConfiguration server)
             {
                 return () => forceEvaluation();
             }
@@ -1976,7 +1980,9 @@ namespace MeTLLib.DataTypes
             }
             public MeTLImage forceEvaluation()
             {
-                var sourceString = string.Format("{3}://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)), server.protocol);
+                var sourceString = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(sourceTag)));
+
+                //var sourceString = string.Format("{3}://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)), server.protocol);
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
                 MeTLImage image = new MeTLImage
                     {
@@ -2039,7 +2045,8 @@ namespace MeTLLib.DataTypes
                 {
                     var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
                     var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                    var path = string.Format("{3}://{0}:{1}{2}", server.host, server.port, stemmedRelativePath,server.protocol);
+                    var path = server.resourceUrl + stemmedRelativePath;
+//                    var path = string.Format("{3}://{0}:{1}{2}", server.host, server.port, stemmedRelativePath,server.protocol);
                     var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);

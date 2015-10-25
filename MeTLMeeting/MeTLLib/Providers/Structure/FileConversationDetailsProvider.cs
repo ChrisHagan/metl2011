@@ -16,12 +16,12 @@ namespace MeTLLib.Providers.Structure
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
         [Inject]
-        public MeTLServerAddress server { private get; set; }
+        public MetlConfiguration server { private get; set; }
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
         private JabberWire _wire;
-        [Inject]
-        public MeTLGenericAddress searchServer { private get; set; }
+        //[Inject]
+        ///public MeTLGenericAddress searchServer { private get; set; }
         private static object wireLock = new object();
         private JabberWire wire
         {
@@ -41,17 +41,22 @@ namespace MeTLLib.Providers.Structure
         {
             resourceUploader = uploader;
         }
+        /*
         private string ROOT_ADDRESS
         {
             get { return string.Format("{2}://{0}:{1}", server.host, server.port, server.protocol); }
         }
-        private readonly string STRUCTURE = "Structure";
-        private readonly string UPLOAD = "upload_nested.yaws";
+        */
+
+        //private readonly string STRUCTURE = "Structure";
+        //private readonly string UPLOAD = "upload_nested.yaws";
         private string NEXT_AVAILABLE_ID
         {
-            get { return string.Format("{0}/primarykey.yaws", ROOT_ADDRESS); }
+            //            get { return string.Format("{0}/primarykey.yaws", ROOT_ADDRESS); }
+            get { return server.resourceUrl + "/" + server.primaryKeyGenerator; }
+
         }
-        private readonly string DETAILS = "details.xml";
+        private static readonly string DETAILS = "details.xml";
         public bool isAccessibleToMe(string jid)
         {
             var myGroups = Globals.authorizedGroups.Select(g => g.groupKey.ToLower());
@@ -68,7 +73,8 @@ namespace MeTLLib.Providers.Structure
             }
             try
             {
-                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
+//                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
+                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
                 Console.WriteLine("Details of: {0}", url);
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
@@ -124,7 +130,7 @@ namespace MeTLLib.Providers.Structure
         }
         private bool DetailsAreAccurate(ConversationDetails details)
         {
-            var url = string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
+            var url = string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
             var currentServerString = secureGetBytesAsString(new System.Uri(url));
             var currentServerCD = ConversationDetails.ReadXml(XElement.Parse(currentServerString));
             if (details.ValueEquals(currentServerCD))
@@ -134,7 +140,7 @@ namespace MeTLLib.Providers.Structure
         }
         public ConversationDetails Update(ConversationDetails details)
         {
-            var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", ROOT_ADDRESS, UPLOAD, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
+            var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
             securePutData(new System.Uri(url), details.GetBytes());
             wire.SendDirtyConversationDetails(details.Jid);
             if (!DetailsAreAccurate(details))
@@ -167,7 +173,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.RelativeOrAbsolute);
+                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", server.conversationsUrl, query)), UriKind.RelativeOrAbsolute);
                 Console.WriteLine("ConversationsFor: {0}", uri);
                 var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();

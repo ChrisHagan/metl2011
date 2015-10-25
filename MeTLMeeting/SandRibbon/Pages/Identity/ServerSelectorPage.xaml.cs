@@ -6,17 +6,19 @@ using System.Windows.Controls;
 
 namespace SandRibbon.Pages.ServerSelection
 {
+    /*
     public class Server
     {
         public String image { get; set; }
-        public MeTLServerAddress.serverMode mode { get; set; }
+        public MetlConfiguration config { get; set; }
     }
+    */
     public partial class ServerSelectorPage : Page
     {
         public ServerSelectorPage()
         {
             InitializeComponent();
-            servers.ItemsSource = new Dictionary<String, Server>
+            servers.ItemsSource = App.availableServers();/* List<MetlConfiguration>(); new Dictionary<String, Server>
             {
                 {
                     "Saint Leo University",
@@ -33,15 +35,16 @@ namespace SandRibbon.Pages.ServerSelection
                     }
                 }
             };
+            */
         }
 
         private void servers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
-            var selection = ((KeyValuePair<String, Server>)e.AddedItems[0]).Value;
-            App.SetBackend(selection.mode);
-            var backend = App.controller.client.server;
-            Commands.BackendSelected.Execute(backend);
-            NavigationService.Navigate(new LoginPage(backend));
+        {
+            var selection = e.AddedItems[0] as MetlConfiguration;// ((KeyValuePair<String, Server>)e.AddedItems[0]).Value;
+            App.SetBackend(selection);
+            //var backend = App.controller.client.server;
+            Commands.BackendSelected.Execute(selection);
+            NavigationService.Navigate(new LoginPage(selection));
         }
     }
 }

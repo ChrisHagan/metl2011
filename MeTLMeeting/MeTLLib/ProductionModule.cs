@@ -14,7 +14,7 @@ namespace MeTLLib
     {
         public TriedToStartMeTLWithNoInternetException(Exception inner) : base("Couldn't connect to MeTL servers", inner) { }
     }
-
+    /*
     public class ProductionServerAddress : MeTLServerAddress
     {
         public ProductionServerAddress()
@@ -77,24 +77,26 @@ namespace MeTLLib
             Console.WriteLine("Setting External server address: {0}, {1}", externalUri, xmppServiceName);
         }
     }
+    */
     public class ProductionModule : NinjectModule
     {
         public override void Load()
         {
-            Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
+            //      Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
+            //Bind<MetlConfiguration>().To<MetlConfiguration>().InSingletonScope();
             Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            Bind<IUserInformationProvider>().To<ProductionUserInformationProvider>().InSingletonScope();
-            Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+      //      Bind<IUserInformationProvider>().To<ProductionUserInformationProvider>().InSingletonScope();
+            //Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             Bind<ClientConnection>().ToSelf().InSingletonScope();
             Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             Bind<WebClientWithTimeout>().ToSelf();
             Bind<JabberWireFactory>().ToSelf().InSingletonScope();
             Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             Bind<ITimerFactory>().To<ProductionTimerFactory>().InSingletonScope();
-            Bind<IReceiveEvents>().To<ProductionReceiveEvents>().InSingletonScope();
             Bind<UserOptionsProvider>().To<UserOptionsProvider>().InSingletonScope();
         }
     }
+    /*
     public class StagingModule : ProductionModule
     {
         public override void Load()
@@ -103,4 +105,5 @@ namespace MeTLLib
             Bind<MeTLServerAddress>().To<StagingServerAddress>().InSingletonScope();
         }
     }
+    */
 }
