@@ -314,6 +314,7 @@ namespace SandRibbon.Providers
                 logicalName = string.Format("{0} with a keyboard",name),
                 castBars = new[] {
                     new Bar(8,new[] {
+                        new Macro("font_more_options"),
                         new Macro("font_size_increase"),
                         new Macro("font_size_decrease"),
                         new Macro("font_toggle_bold"),
