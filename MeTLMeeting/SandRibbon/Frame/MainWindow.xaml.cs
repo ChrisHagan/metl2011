@@ -26,6 +26,8 @@ using SandRibbon.Pages.Conversations.Models;
 using System.Web;
 using Awesomium.Windows.Controls;
 using Microsoft.Win32;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace SandRibbon
 {
@@ -41,7 +43,7 @@ namespace SandRibbon
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
             mainFrame.Navigate(new ServerSelectorPage());
@@ -50,14 +52,14 @@ namespace SandRibbon
 
         public void Log(string message)
         {
-            if (String.IsNullOrEmpty(message)) return;            
+            if (String.IsNullOrEmpty(message)) return;
             logs.Add(new LogMessage
             {
                 content = message,
                 user = Globals.me,
                 slide = Globals.location.currentSlide,
                 timestamp = DateTime.Now.Ticks
-            });            
+            });
         }
 
         private void DoConstructor()
@@ -67,7 +69,7 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
-            Title = Strings.Global_ProductName;                      
+            Title = Strings.Global_ProductName;
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -85,7 +87,7 @@ namespace SandRibbon
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
             Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
-            
+
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -94,11 +96,11 @@ namespace SandRibbon
             Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
-            
+
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
-            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));                               
+            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
 
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
             Commands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
@@ -107,7 +109,7 @@ namespace SandRibbon
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
-            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));            
+            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
@@ -116,14 +118,15 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
-            displayDispatcherTimer = createExtendedDesktopTimer();            
+            displayDispatcherTimer = createExtendedDesktopTimer();
         }
 
         private void PickImages(PickContext context)
         {
             var dialog = new OpenFileDialog();
             dialog.DefaultExt = "png";
-            dialog.FileOk += delegate {
+            dialog.FileOk += delegate
+            {
                 foreach (var file in dialog.FileNames)
                 {
                     context.Files.Add(file);
@@ -153,7 +156,7 @@ namespace SandRibbon
         private void browseOneNote(OneNoteConfiguration config)
         {
             var w = new WebControl();
-            w.DocumentReady += W_DocumentReady;
+            w.DocumentReady += DocumentReady;
             flyout.Content = w;
             flyout.Width = 600;
             flyout.IsOpen = true;
@@ -162,35 +165,33 @@ namespace SandRibbon
             var clientId = config.apiKey;
             var redirectUri = "https://login.live.com/oauth20_desktop.srf";
             var req = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type={2}&redirect_uri={3}";
-            var uri = new Uri(String.Format(req, 
-                config.apiKey, 
-                scope, 
+            var uri = new Uri(String.Format(req,
+                config.apiKey,
+                scope,
                 responseType,
                 redirectUri));
             w.Source = uri;
         }
 
-        private void W_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
-        {                     
+        private void DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
+        {
             var queryPart = e.Url.AbsoluteUri.Split('#');
-            if (queryPart.Length > 1) {
+            if (queryPart.Length > 1)
+            {
                 var ps = HttpUtility.ParseQueryString(queryPart[1]);
                 var token = ps["access_token"];
-                if (token != null) {
-                    Console.WriteLine("Token: {0}", token);                                  
+                if (token != null)
+                {
                     flyout.DataContext = Globals.OneNoteConfiguration;
                     flyout.Content = TryFindResource("oneNoteListing");
-                    var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
-                    oneNoteModel.Books.Clear();
-                    foreach(var book in OneNote.Notebooks(token)) {
-                        oneNoteModel.Books.Add(book);                        
-                    }                    
+                    var oneNoteModel = flyout.DataContext as OneNoteConfiguration;                    
+                    oneNoteModel.LoadNotebooks(token);                                        
                 }
-            }           
+            }
         }
 
         private void openOneNoteConfiguration(object obj)
-        {            
+        {
             flyout.Content = TryFindResource("oneNoteConfiguration");
             flyout.DataContext = Globals.OneNoteConfiguration;
             flyout.IsOpen = true;
@@ -221,7 +222,7 @@ namespace SandRibbon
         private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
         {
             this.flyout.Content = TryFindResource("worm");
-            this.flyout.IsOpen= !this.flyout.IsOpen;
+            this.flyout.IsOpen = !this.flyout.IsOpen;
         }
 
         [System.STAThreadAttribute()]
@@ -351,7 +352,7 @@ namespace SandRibbon
         {
             if (loader == null) loader = new PowerPointLoader();
             loader.ImportPowerpoint(this);
-        }        
+        }
         private void createBlankConversation(object obj)
         {
             var element = Keyboard.FocusedElement;
@@ -388,13 +389,13 @@ namespace SandRibbon
         private void SetUserOptions(UserOptions options)
         {
             //this next line should be removed.
-            SaveUserOptions(options);            
+            SaveUserOptions(options);
         }
         private void SaveUserOptions(UserOptions options)
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
             ClientFactory.Connection().SaveUserOptions(Globals.me, options);
-        }        
+        }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -406,7 +407,7 @@ namespace SandRibbon
             if (success)
             {
                 try
-                {                    
+                {
                     var details = Globals.conversationDetails;
                     if (details == null || details.Equals(ConversationDetails.Empty))
                     {
@@ -423,14 +424,14 @@ namespace SandRibbon
                                     null,
                                     (parser) =>
                                     {
-                                        Commands.PreParserAvailable.Execute(parser);                 
+                                        Commands.PreParserAvailable.Execute(parser);
                                     },
                                     jid);
                     }
                 }
                 catch (NotSetException e)
                 {
-                    Log(string.Format("Reconnecting: {0}",e.Message));
+                    Log(string.Format("Reconnecting: {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
@@ -443,33 +444,33 @@ namespace SandRibbon
             {
                 showReconnectingDialog();
             }
-        }                    
-        
+        }
+
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             if (details.Equals(ConversationDetails.Empty))
                 return Strings.Global_ProductName;
             return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
-        }                
+        }
         private void showReconnectingDialog()
         {
             var majorHeading = new TextBlock
-                           {
-                               Foreground = Brushes.White,
-                               Text = "Connection lost...  Reconnecting",
-                               FontSize = 72,
-                               HorizontalAlignment = HorizontalAlignment.Center,
-                               VerticalAlignment = VerticalAlignment.Center
-                           };
+            {
+                Foreground = Brushes.White,
+                Text = "Connection lost...  Reconnecting",
+                FontSize = 72,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             var minorHeading = new TextBlock
-                           {
-                               Foreground = Brushes.White,
-                               Text = "You must have an active internet connection,\nand you must not be logged in twice with the same account.",
-                               FontSize = 30,
-                               HorizontalAlignment = HorizontalAlignment.Center,
-                               VerticalAlignment = VerticalAlignment.Center
-                           };            
+            {
+                Foreground = Brushes.White,
+                Text = "You must have an active internet connection,\nand you must not be logged in twice with the same account.",
+                FontSize = 30,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
         }
         private bool canCreateConversation(object obj)
         {
@@ -479,7 +480,7 @@ namespace SandRibbon
         {
             var v = !Globals.credentials.ValueEquals(Credentials.Empty);
             return v;
-        }                
+        }
         private bool mustBeInConversationAndBeAuthor(object _arg)
         {
             return mustBeInConversation(_arg) && mustBeAuthor(_arg);
@@ -507,7 +508,7 @@ namespace SandRibbon
                                      {
                                          UpdateTitle(details);
                                          if (!mustBeInConversation(null))
-                                         {        
+                                         {
                                              Commands.LeaveLocation.Execute(null);
                                          }
                                      }
@@ -518,7 +519,7 @@ namespace SandRibbon
             if (Globals.conversationDetails != null && mustBeInConversation(null))
             {
 #if DEBUG
-                    Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
+                Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
 #else
                 Title = messageFor(Globals.conversationDetails);
 #endif
@@ -534,7 +535,7 @@ namespace SandRibbon
             canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
             Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
         }
-        
+
         private void createConversation(object detailsObject)
         {
             var details = (ConversationDetails)detailsObject;
@@ -555,20 +556,20 @@ namespace SandRibbon
         {
             Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }
-     
-      
+
+
         public Visibility GetVisibilityOf(UIElement target)
         {
             return target.Visibility;
         }
         public void toggleNavigationLock(object _obj)
         {
-           
-                var details = Globals.conversationDetails;
-                if (details == null)
-                    return;
-                details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
-                ClientFactory.Connection().UpdateConversationDetails(details);                       
+
+            var details = Globals.conversationDetails;
+            if (details == null)
+                return;
+            details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
+            ClientFactory.Connection().UpdateConversationDetails(details);
         }
         private void SetConversationPermissions(object obj)
         {
@@ -609,9 +610,9 @@ namespace SandRibbon
                 WindowState = WindowState.Maximized;
             });
         }
-        
-        
-        
+
+
+
         private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)
@@ -637,7 +638,7 @@ namespace SandRibbon
         private void UserPreferences(object sender, RoutedEventArgs e)
         {
             mainFrame.Navigate(new CommandBarConfigurationPage());
-        }        
+        }
 
         private void ShowDiagnostics(object sender, RoutedEventArgs e)
         {

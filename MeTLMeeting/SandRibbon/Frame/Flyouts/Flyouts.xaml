@@ -64,6 +64,9 @@
             <Thickness x:Key="inset" Left="10" />
         </Grid.Resources>
         <Label Content="OneNote Notebooks" />
+        <ProgressBar Maximum="{Binding Path=maxBooks}" Value="{Binding Path=booksProgress}"/>
+        <ProgressBar Maximum="{Binding Path=maxPages}" Value="{Binding Path=pagesProgress}"/>
+        <ProgressBar Maximum="{Binding Path=maxElements}" Value="{Binding Path=elementsProgress}"/>
         <ItemsControl ItemsSource="{Binding Path=Books}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>

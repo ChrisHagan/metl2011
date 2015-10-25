@@ -1,4 +1,4 @@
-﻿using SandRibbon.Providers;
+﻿using SandRibbon.Pages.Conversations.Models;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Collaboration

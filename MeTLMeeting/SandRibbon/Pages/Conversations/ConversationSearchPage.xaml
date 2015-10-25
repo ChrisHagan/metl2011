@@ -41,7 +41,7 @@
                                 <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                                     <ContentControl Content="{Binding 
                                         Source={StaticResource appbar_door_enter}, 
-                                        Converter={StaticResource clone}}" />
+                                        Converter={DynamicResource clone}}" />
                                 </Viewbox>
                             </Button>
                         </DataTemplate>

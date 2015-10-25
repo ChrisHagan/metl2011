@@ -315,7 +315,6 @@
     </Compile>
     <Compile Include="Pages\Macros\VisualCloneConverter.cs" />
     <Compile Include="Profiles\Profile.cs" />
-    <Compile Include="Providers\OneNote.cs" />
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
       <DependentUpon>DisplayAQuiz.xaml</DependentUpon>
     </Compile>
