@@ -11,6 +11,7 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
+using System.Collections.Generic;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -20,8 +21,7 @@ namespace SandRibbon
     {
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
         public static NetworkController controller;
-        public static bool isStaging = false;
-        public static bool isExternal = false;
+        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
         public static DateTime AccidentallyClosing = DateTime.Now;
 
 #if DEBUG
@@ -40,11 +40,22 @@ namespace SandRibbon
             splashScreen.Close(TimeSpan.Zero);
         }
 
-        public static void SetBackend(MeTLServerAddress.serverMode mode)
+        public static void SetBackend(MetlConfiguration config)
         {
-            controller = new NetworkController(mode);
-            Commands.Mark.Execute(String.Format("Starting on backend mode {0}", mode.ToString()));
-        }        
+            controller = new NetworkController(config);
+            Commands.Mark.Execute(String.Format("Starting on backend mode {0}", config));
+        }
+        public static List<MetlConfiguration> availableServers()
+        {
+            return metlConfigManager.Configs;
+        }
+        public static MetlConfiguration getCurrentServer
+        {
+            get
+            {
+                return controller.config;
+            }
+        }
         public static void noop(object _arg)
         {
         }
@@ -85,7 +96,7 @@ namespace SandRibbon
         }
         protected override void OnStartup(StartupEventArgs e)
         {
-            MeTLConfiguration.Load();            
+            //MeTLConfiguration.Load();            
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));

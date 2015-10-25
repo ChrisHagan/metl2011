@@ -100,7 +100,7 @@ namespace MeTLLib.Providers.Connection
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
             var safeFile = filename;
-            if (filename.StartsWith("file:///")){
+            if (filename.StartsWith("file:///")) {
                 safeFile = filename.Substring(8);
             }
             return client.UploadFile(resource.ToString(), safeFile);
@@ -110,12 +110,16 @@ namespace MeTLLib.Providers.Connection
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
     }
+    /*
     public class MeTLCredentials : NetworkCredential
     {
-        private readonly static String USERNAME = MeTLConfiguration.Config.ResourceCredential.Username;
-        private readonly static String PASSWORD = MeTLConfiguration.Config.ResourceCredential.Password;
+        [Inject]
+        protected MetlConfiguration server;
+        private string USERNAME { get {return server.resourceUsername; } }// MeTLConfiguration.Config.ResourceCredential.Username;
+        private string PASSWORD { get {return server.resourcePassword; } }// MeTLConfiguration.Config.ResourceCredential.Password;
         public MeTLCredentials() : base(USERNAME, PASSWORD) { }
     }
+    */
     public class HttpFileUploadResultArgs
     {
         public byte[] Result { get; set; }

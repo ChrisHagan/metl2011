@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Divan;
 using MeTLLib.Providers;
 using System.Globalization;
 
@@ -49,7 +50,6 @@ namespace MeTLLib.DataTypes
             Created = new DateTime(long.Parse(created));
             LastModified = long.Parse(lastModified);
         }
-        public bool Selected { get; set; } = false;
         private static string ParseDate(XElement doc, string elementTag)
         {
             var dateRegex = @"(\d+)/(\d+)/(\d+) (\d+):(\d+):(\d+) (\w+)";
@@ -103,8 +103,6 @@ namespace MeTLLib.DataTypes
             scd.Permissions = conversation.Permissions;
             scd.Slides = conversation.Slides;
             scd.Tag = conversation.Tag;
-            scd.Author = conversation.Author;
-            scd.Created = conversation.Created;
 
             return scd;
         }
@@ -194,11 +192,11 @@ namespace MeTLLib.DataTypes
                                        * (If anybody finds another character that breaks it - 
                                        * obvious when history stops working - add it to the illegals 
                                        * string in generateJid).  Never mind that, we're just using a number.*/
-        public string Author { get; set; }
+        public string Author;
         public Permissions Permissions { get; set; }
-        public System.DateTime Created { get; set; }
-        public long CreatedAsTicks { get; set; }
-        public System.DateTime LastAccessed { get; set; }
+        public System.DateTime Created;
+        public long CreatedAsTicks;
+        public System.DateTime LastAccessed;
 
         // I want this to be an always valid string because we're comparing this with other conversation detail tags 
         private string internalTag = string.Empty;
@@ -217,7 +215,7 @@ namespace MeTLLib.DataTypes
             }
         }
         public string Subject { get; set; }
-        public List<Slide> Slides { get; set; }
+        public List<Slide> Slides = new List<Slide>();
         public List<string> blacklist = new List<string>();
         public byte[] GetBytes()
         {
@@ -287,6 +285,7 @@ namespace MeTLLib.DataTypes
         {
         }
 
+        //private static readonly ConversationDetails empty = new ConversationDetails();
         public static ConversationDetails Empty
         {
             get { return new ConversationDetails(); }

@@ -8,6 +8,7 @@ using System.Xml.Linq;
 
 namespace MeTLLib.Providers
 {
+    /*
     public class MeTLUserInformation
     {
         public string username { private set; get; }
@@ -68,7 +69,7 @@ namespace MeTLLib.Providers
     public class ProductionUserInformationProvider : IUserInformationProvider
     {
         [Inject]
-        public MeTLServerAddress server { private get; set; }
+        public MetlConfiguration server { private get; set; }
         [Inject]
         public IWebClientFactory webClientFactory { private get; set; }
 
@@ -81,4 +82,5 @@ namespace MeTLLib.Providers
             return doc.Descendants("{metl.monash}result").Select(r => MeTLUserInformation.fromXml(r)).ToList();
         }
     }
+    */
 }

@@ -16,9 +16,9 @@ namespace MeTLLib.Providers
 {
     public class AuthorisationProvider : HttpResourceProvider
     {
-        private MeTLServerAddress server;
+        private MetlConfiguration server;
         private IWebClientFactory webclientFactory;
-        public AuthorisationProvider(IWebClientFactory factory, MeTLServerAddress server)
+        public AuthorisationProvider(IWebClientFactory factory, MetlConfiguration server)
             : base(factory)
         {
             this.webclientFactory = factory;

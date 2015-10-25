@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
+    /*
     public class ExternalServerAddress : MeTLServerAddress
     {
         public ExternalServerAddress()
@@ -44,14 +45,17 @@ namespace SandRibbon.Components
             Uri = new Uri(MeTLConfiguration.Config.External.MeggleUrl, UriKind.Absolute);
         }
     }
+    */
 
     public class NetworkController
     {
-        public ClientConnection client;
-        public NetworkController(MeTLServerAddress.serverMode mode)
+        protected ClientConnection client;
+        public MetlConfiguration config { get; protected set; }
+        public NetworkController(MetlConfiguration _config)
         {
-            Commands.Mark.Execute(String.Format("NetworkController instantiating: {0}",mode));
-            client = buildServerSpecificClient(mode);
+            config = _config;
+            Commands.Mark.Execute(String.Format("NetworkController instantiating: {0}",config));
+            client = buildServerSpecificClient(config);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{
                 if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
@@ -71,34 +75,15 @@ namespace SandRibbon.Components
             };
             client.events.StatusChanged += checkValidity;
         }       
-        private ClientConnection buildServerSpecificClient(MeTLServerAddress.serverMode mode)
+        private ClientConnection buildServerSpecificClient(MetlConfiguration c)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
-            ClientConnection result;
-            switch (mode)
-            {
-                case MeTLServerAddress.serverMode.EXTERNAL:
-                    {
-                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.EXTERNAL, new ExternalSearchAddress());
-                    }
-                    break;
-                case MeTLServerAddress.serverMode.STAGING:
-                    {
-                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING, new StagingSearchAddress());
-                    }
-                    break;
-                default:
-                    {
-                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
-                    }
-                    break;
-            }            
-            return result;
+            return MeTLLib.ClientFactory.Connection(c);
         }
         #region commands
         private void registerCommands()
         {
-            Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
+            //Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
@@ -125,11 +110,13 @@ namespace SandRibbon.Components
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
         }
+        /*
         private void RequestUserInformations(List<string> usernames)
         {
             var results = client.getMeTLUserInformations(usernames);
             Commands.ReceiveMeTLUserInformations.Execute(results);
         }
+        */
         private void RequestTeacherStatus(TeacherStatus obj)
         {
             client.AskForTeachersStatus(obj.Teacher, obj.Conversation);

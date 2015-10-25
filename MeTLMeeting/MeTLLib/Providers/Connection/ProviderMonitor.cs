@@ -21,7 +21,7 @@ namespace MeTLLib.Providers.Connection
     public partial class ProductionProviderMonitor : IProviderMonitor
     {
         [Inject]
-        public MeTLServerAddress metlServerAddress { private get; set; }
+        public MetlConfiguration metlServerAddress { private get; set; }
         [Inject]
         public ITimerFactory timerFactory { private get; set; }
         public void HealthCheck (Action healthyBehaviour){
@@ -37,7 +37,7 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceError("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
                     return;
                 }
-                var uri = metlServerAddress.uri;
+                var uri = new System.Uri(metlServerAddress.resourceUrl);
                 var ping = new System.Net.NetworkInformation.Ping();
                 var reply = ping.Send(uri.Host,2000);
                 if (reply != null && reply.Status == IPStatus.Success)

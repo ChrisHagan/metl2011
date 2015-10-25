@@ -36,13 +36,13 @@ namespace MeTLLib.Providers.Connection
     public class ProductionResourceUploader : IResourceUploader
     {
         [Inject]
-        public MeTLServerAddress metlServerAddress { private get; set; }
+        public MetlConfiguration metlServerAddress { private get; set; }
         private HttpResourceProvider _httpResourceProvider;
         public ProductionResourceUploader(HttpResourceProvider provider)
         {
             _httpResourceProvider = provider;
         }
-        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{2}://{0}:{1}/{3}", metlServerAddress.host, metlServerAddress.port, metlServerAddress.protocol, metlServerAddress.uploadEndpoint); } }
+        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{0}/{1}", metlServerAddress.resourceUrl, metlServerAddress.uploadPath); } }
         public string uploadResource(string path, string file)
         {
             return uploadResource(path, file, false);
@@ -79,7 +79,9 @@ namespace MeTLLib.Providers.Connection
         }
         public string getStemmedPathForResource(string path, string name)
         {
-            return string.Format("{5}://{0}:{1}/{2}/{3}/{4}", metlServerAddress.host, metlServerAddress.port, INodeFix.Stem(path), path, name, metlServerAddress.protocol);
+            return string.Format("{0}/{1}/{2}/{3}", metlServerAddress.resourceUrl, metlServerAddress.resourceDirectory, INodeFix.Stem(path), path, name);
+
+//            return string.Format("{5}://{0}:{1}/{2}/{3}/{4}", metlServerAddress.host, metlServerAddress.port, INodeFix.Stem(path), path, name, metlServerAddress.protocol);
         }
 
         public string uploadResourceToPath(string localFile, string remotePath, string name)

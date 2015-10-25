@@ -229,6 +229,7 @@ namespace SandRibbon.Components.BannedContent
                 colorName = color;
             }
         }
+        /*
         private string BuildReport(List<MeTLUserInformation> users)
         {
             var currentSelection = submissions.SelectedItem as PrivacyWrapper;
@@ -253,7 +254,7 @@ namespace SandRibbon.Components.BannedContent
 
             return report.ToString();
         }
-
+        */
         private void SendEmail(string fileName, string report)
         {
             try
