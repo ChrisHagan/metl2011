@@ -1085,10 +1085,6 @@
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WpfResourceChangeEvent\ResourceChangeEvent\ResourceChangeEvent.csproj">
-      <Project>{8fb70c9b-54d8-4c05-b2dc-a5fc2f629e82}</Project>
-      <Name>ResourceChangeEvent</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
       <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
       <Name>MeTLLib</Name>
