@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbon", "SandRibbon\SandRibbon.csproj", "{0213D150-6485-4F40-AF80-5AC5E8BB10CC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82} = {8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonInterop", "SandRibbonInterop\SandRibbonInterop.csproj", "{936C46AC-5A2F-4476-A89C-52537260DBE4}"
 EndProject
