@@ -62,7 +62,6 @@ namespace SandRibbon
         {
             return metlConfigManager.Configs;
         }
-        protected MetlConfiguration currentServer = null;
         public static MetlConfiguration getCurrentServer
         {
             get {

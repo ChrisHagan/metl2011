@@ -5,11 +5,12 @@
     using System.Configuration;
     using System.Diagnostics;
     using System.Linq;
-    
+
     public class MetlConfiguration
     {
         public MetlConfiguration(
             string _name,
+            string _imageUrl,
             string _xmppHost,
             string _xmppPort,
             string _xmppDomain,
@@ -31,6 +32,7 @@
        )
         {
             name = _name;
+            imageUrl = _imageUrl;
             xmppHost = _xmppHost;
             xmppPort = _xmppPort;
             xmppDomain = _xmppDomain;
@@ -51,6 +53,7 @@
             cryptoIV = _cryptoIV;
         }
         public string name { get; protected set; }
+        public string imageUrl { get; protected set; }
         public string xmppHost { get; protected set; }
         public string xmppPort { get; protected set; }
         public string xmppDomain { get; protected set; }
@@ -69,7 +72,8 @@
         public string primaryKeyGenerator { get; protected set; }
         public string cryptoKey { get; protected set; }
         public string cryptoIV { get; protected set; }
-        public string muc {
+        public string muc
+        {
             get { return "conference." + xmppDomain; }
         }
         public string globalMuc
@@ -94,40 +98,43 @@
             loadConfigs();
         }
     }
-    public class LocalAppMeTLConfigurationManager : MetlConfigurationManager {
+    public class LocalAppMeTLConfigurationManager : MetlConfigurationManager
+    {
         override protected void loadConfigs()
         {
             deprecatedLib.MeTLConfiguration.Load();
             var config = deprecatedLib.MeTLConfiguration.Config;
-            Configs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf => 
+            Configs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf =>
               {
                   return new MetlConfiguration(
                       conf.Name,
-                      conf.Host,
-                      conf.XmppPort,
-                      conf.xmppServiceName,
-                      config.XmppCredential.Username,
-                      config.XmppCredential.Password,
-                      conf.MeggleUrl,
-                      conf.WebAuthenticationEndpoint,
-                      conf.Thumbnail,
-                      String.Format("{0}://{1}:{2}", conf.Protocol,conf.Host, conf.ResourcePort),
-                      String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.HistoryPort),
-                      config.ResourceCredential.Username,
-                      config.ResourceCredential.Password,
-                      "Structure",
-                      "Resources",
-                      conf.UploadEndpoint,
-                      "primarykey.yaws",
-                      config.Crypto.Key,
-                      config.Crypto.IV
-                  );
+                      conf.Image,
+                          conf.Host,
+                          conf.XmppPort,
+                          conf.xmppServiceName,
+                          config.XmppCredential.Username,
+                          config.XmppCredential.Password,
+                          conf.MeggleUrl,
+                          conf.WebAuthenticationEndpoint,
+                          conf.Thumbnail,
+                          String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.ResourcePort),
+                          String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.HistoryPort),
+                          config.ResourceCredential.Username,
+                          config.ResourceCredential.Password,
+                          "Structure",
+                          "Resources",
+                          conf.UploadEndpoint,
+                          "primarykey.yaws",
+                          config.Crypto.Key,
+                          config.Crypto.IV
+                      );
               }).ToList();
         }
     }
 }
 
-namespace deprecatedLib {
+namespace deprecatedLib
+{
     using System;
     using System.Collections.Generic;
     using System.Configuration;
@@ -152,7 +159,8 @@ namespace deprecatedLib {
             }
             private set
             {
-                if (value == null) {
+                if (value == null)
+                {
                     throw new InvalidOperationException("MeTLConfiguration cannot be set to a null value");
                 }
                 conf = value;
@@ -200,7 +208,7 @@ namespace deprecatedLib {
                     throw new ArgumentException(String.Format("Active Stack Server {0} specified not found", active));
             }
         }
-        
+
         [ConfigurationProperty("activeStackConfig")]
         public ActiveStackElement ActiveStackConfig
         {
@@ -307,6 +315,18 @@ namespace deprecatedLib {
             set
             {
                 this["name"] = value;
+            }
+        }
+        [ConfigurationProperty("imageUrl", IsRequired = false)]
+        public String Image
+        {
+            get
+            {
+                return (String)this["imageUrl"];
+            }
+            set
+            {
+                this["imageUrl"] = value;
             }
         }
 
