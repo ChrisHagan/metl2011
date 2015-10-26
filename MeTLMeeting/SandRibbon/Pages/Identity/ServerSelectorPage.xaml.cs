@@ -1,48 +1,23 @@
 ﻿using MeTLLib;
 using SandRibbon.Pages.Login;
-using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.ServerSelection
 {
-    /*
-    public class Server
-    {
-        public String image { get; set; }
-        public MetlConfiguration config { get; set; }
-    }
-    */
     public partial class ServerSelectorPage : Page
     {
         public ServerSelectorPage()
         {
             InitializeComponent();
-            servers.ItemsSource = App.availableServers();/* List<MetlConfiguration>(); new Dictionary<String, Server>
-            {
-                {
-                    "Saint Leo University",
-                    new Server {
-                        image = "/Resources/slu.jpg",
-                        mode = MeTLServerAddress.serverMode.PRODUCTION
-                    }
-                },
-                {
-                    "Open MeTL Server",
-                    new Server {
-                        image = "/Resources/splashScreen.png",
-                        mode = MeTLServerAddress.serverMode.STAGING
-                    }
-                }
-            };
-            */
-        }
-
-        private void servers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            DataContext = App.availableServers().OrderBy(s => s.displayIndex).ToList();            
+        }        
+        private void ServerSelected(object sender, System.Windows.RoutedEventArgs e)
         {
-            var selection = e.AddedItems[0] as MetlConfiguration;// ((KeyValuePair<String, Server>)e.AddedItems[0]).Value;
+            var source = sender as FrameworkElement;
+            var selection = source.DataContext as MetlConfiguration;
             App.SetBackend(selection);
-            //var backend = App.controller.client.server;
             Commands.BackendSelected.Execute(selection);
             NavigationService.Navigate(new LoginPage(selection));
         }

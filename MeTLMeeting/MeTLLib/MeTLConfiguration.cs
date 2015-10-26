@@ -28,7 +28,8 @@
             string _uploadPath,
             string _primaryKeyGenerator,
             string _cryptoKey,
-            string _cryptoIV
+            string _cryptoIV,
+            int _displayIndex
        )
         {
             name = _name;
@@ -51,6 +52,7 @@
             primaryKeyGenerator = _primaryKeyGenerator;
             cryptoKey = _cryptoKey;
             cryptoIV = _cryptoIV;
+            displayIndex = _displayIndex;
         }
         public string name { get; protected set; }
         public string imageUrl { get; protected set; }
@@ -72,6 +74,7 @@
         public string primaryKeyGenerator { get; protected set; }
         public string cryptoKey { get; protected set; }
         public string cryptoIV { get; protected set; }
+        public int displayIndex { get; protected set; }
         public string muc
         {
             get { return "conference." + xmppDomain; }
@@ -126,7 +129,8 @@
                           conf.UploadEndpoint,
                           "primarykey.yaws",
                           config.Crypto.Key,
-                          config.Crypto.IV
+                          config.Crypto.IV,
+                          conf.DisplayIndex
                       );
               }).ToList();
         }
@@ -261,8 +265,7 @@ namespace deprecatedLib
             }
         }
 
-
-
+        
         [ConfigurationProperty("resourceCredential")]
         public CredentialElement ResourceCredential
         {
@@ -305,6 +308,19 @@ namespace deprecatedLib
 
     public class StackServerElement : ConfigurationElement
     {
+        [ConfigurationProperty("displayIndex")]
+        public int DisplayIndex
+        {
+            get
+            {
+                return (int) this["displayIndex"];
+            }
+            set
+            {
+                this["displayIndex"] = value;
+            }
+        }
+
         [ConfigurationProperty("name", IsRequired = false)]
         public String Name
         {

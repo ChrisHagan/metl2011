@@ -2,8 +2,8 @@
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Conversations.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -18,6 +18,21 @@ namespace SandRibbon.Pages.Analytics
         {
             InitializeComponent();
             DataContext = new ConversationComparableCorpus(cs);
+        }
+        private void SlideSelected(object sender, RoutedEventArgs e)
+        {
+            var context = DataContext as ConversationComparableCorpus;
+            var source = sender as FrameworkElement;
+            var slide = source.DataContext as Slide;
+            if (!(context.slideContexts.Any(s => s.context.Slide == slide.id)))
+            {
+                context.slideContexts.Add(new ToolableSpaceModel {
+                    context = new VisibleSpaceModel {
+                        Slide = slide.id
+                    }
+                });
+                Commands.SneakInto.Execute(slide.id.ToString());
+            }
         }
     }
     public class ConversationComparable : DependencyObject{        
@@ -48,9 +63,12 @@ namespace SandRibbon.Pages.Analytics
             DependencyProperty.Register("ParticipantList", typeof(ObservableCollection<LocatedActivity>), typeof(ConversationComparable), new PropertyMetadata(new ObservableCollection<LocatedActivity>()));
     }
     public class ConversationComparableCorpus {
-        public ObservableCollection<ConversationComparable> outputs { get; set; } = new ObservableCollection<ConversationComparable>();        
-        public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds) {            
-            BuildComparisons(cds.Select(cd => new ReticulatedConversation
+        public IEnumerable<SearchConversationDetails> conversations { get; set; }
+        public ObservableCollection<ConversationComparable> outputs { get; set; } = new ObservableCollection<ConversationComparable>();
+        public ObservableCollection<ToolableSpaceModel> slideContexts { get; set; } = new ObservableCollection<ToolableSpaceModel>();
+        public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds) {
+            conversations = cds;
+            BuildComparisons(conversations.Select(cd => new ReticulatedConversation
             {
                 PresentationPath = cd
             }));

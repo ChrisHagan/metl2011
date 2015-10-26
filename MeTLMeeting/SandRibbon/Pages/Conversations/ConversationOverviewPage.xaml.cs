@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Linq;
-
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -37,12 +36,7 @@ namespace SandRibbon.Pages.Collaboration
             DataContext = conversation = new ReticulatedConversation
             {
                 PresentationPath = presentationPath,
-                RelatedMaterial = new List<string>{
-                    /*
-                    "57000",
-                    "61000"
-                    */
-                }.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
+                RelatedMaterial = new List<string>{}.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
 
             };
             conversation.CalculateLocations();

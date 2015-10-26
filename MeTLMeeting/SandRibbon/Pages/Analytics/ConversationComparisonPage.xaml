@@ -2,12 +2,86 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
-      xmlns:local="clr-namespace:SandRibbon.Pages"      
       xmlns:layout="clr-namespace:SandRibbon.Layout"      
+      xmlns:components="clr-namespace:SandRibbon.Components"
       Title="ConversationComparisonPage">
-    
-        <Grid layout:GridLayout.ItemsPerRow="1">
-        <Label Content="What do you want to find out?" Margin="{StaticResource clearTop}" />
+    <Page.Resources>
+        <components:UrlForSlideConverter x:Key="renderer" />
+    </Page.Resources>
+    <Grid layout:GridLayout.ItemsPerRow="1">
+        <Label Content="What are you hoping to discover?" Margin="{StaticResource clearTop}" />
+        <Label Content="What is happening on specific slides right now?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
+        <ItemsControl ItemsSource="{Binding Path=slides}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Viewbox Height="150">
+                        <components:PresentationSpace />
+                    </Viewbox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
+        <ItemsControl ItemsSource="{Binding Path=conversations}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Path=Slides}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid layout:GridLayout.ColumnCount="{Binding Path=slides.Count}" layout:GridLayout.RowCount="1" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="{x:Type ContentPresenter}">
+                                    <Setter Property="Grid.Column" Value="{Binding Path=Slide.index}" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Click="SlideSelected">
+                                        <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="3">
+                                            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                            BorderThickness="0 0 0 1">
+                                                <Border.BorderBrush>
+                                                    <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                                                </Border.BorderBrush>
+                                                <Label Content="{Binding Path=Slide.index}" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Activity}" />
+                                            <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
+                                         Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
+                                         Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
+                                                <Rectangle Width="200" Height="200" Margin="50">
+                                                    <Rectangle.Fill>
+                                                        <VisualBrush Visual="{StaticResource appbar_chat}" />
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+                                            </Viewbox>
+                                            <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Voices}" />
+                                            <Viewbox Grid.Row="2" Grid.Column="1" 
+                                         Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
+                                         Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
+                                                <Rectangle Width="200" Height="200" Margin="50">
+                                                    <Rectangle.Fill>
+                                                        <VisualBrush Visual="{StaticResource appbar_people_multiple}" />
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+                                            </Viewbox>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" />
         <ScrollViewer>
             <DataGrid ItemsSource="{Binding Path=outputs}" Margin="{StaticResource clearTop}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">

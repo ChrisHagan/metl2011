@@ -3,30 +3,38 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"             
       xmlns:local="clr-namespace:SandRibbon.Pages.ServerSelection"      
       xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
       Title="ServerSelectorPage">
-
-    <Viewbox>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
-            <Label Content="Where are you going?" Margin="{StaticResource clearTop}"/>
-            <ListBox x:Name="servers" BorderThickness="0" Margin="{StaticResource clearTop}" SelectionChanged="servers_SelectionChanged">
-                <ListBox.Resources>
-                    <SolidColorBrush x:Key="AccentColorBrush" Color="Transparent" />
-                    <SolidColorBrush x:Key="AccentColorBrush2" Color="Transparent" />
-                </ListBox.Resources>
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="100">
-                            <Image Width="100" Height="100" Source="{Binding Path=imageUrl}" />
-                            <Label Content="{Binding Path=name}" Margin="{StaticResource clearTop}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ListBox>
-        </StackPanel>
-    </Viewbox>
+    <Page.Resources>
+        <Style x:Key="lowProfileButton" TargetType="{x:Type Button}">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Label Content="Where are you going?" Grid.Row="0" Margin="{DynamicResource clearTop}" />
+        <ItemsControl ItemsSource="{Binding}" BorderThickness="0" Margin="{StaticResource clearTop}" Grid.Row="1">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding Path=Count}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}">
+                        <Grid layout:GridLayout.ItemsPerRow="1">
+                            <Image Source="{Binding Path=imageUrl}" Margin="{StaticResource clearHorizontal}" />
+                            <Label HorizontalAlignment="Center" Content="{Binding Path=name}" Margin="{StaticResource clearTop}"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
 </Page>
+
+    

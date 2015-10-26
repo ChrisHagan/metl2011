@@ -9,6 +9,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:macros="clr-namespace:SandRibbon.Pages.Macros"
     xmlns:layout="clr-namespace:SandRibbon.Layout"
     xmlns:p="clr-namespace:SandRibbon.Properties"
     x:Name="root">
@@ -39,9 +40,7 @@
                                     <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                 </Button.Background>
                                 <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                                    <ContentControl Content="{Binding 
-                                        Source={StaticResource appbar_door_enter}, 
-                                        Converter={DynamicResource clone}}" />
+                                    <macros:IconControl Content="appbar_door_enter" />
                                 </Viewbox>
                             </Button>
                         </DataTemplate>

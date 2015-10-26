@@ -12,7 +12,7 @@ namespace SandRibbon.Pages.Collaboration
             InitializeComponent();
             collaborationContexts.ItemsSource = new List<CollaborationContext>
             {
-                new CollaborationContext { code=1, label="I'm going to class",image=(Canvas)TryFindResource("appbar_chat")},                
+                new CollaborationContext { code=1, label="I'm going to class",image=(Canvas)TryFindResource("appbar_chat")},
                 new CollaborationContext { code=3, label="I'm looking for someone",image=(Canvas)TryFindResource("appbar_user_add")},
                 new CollaborationContext { code=4, label="I just need help",image=(Canvas)TryFindResource("appbar_book_perspective_help")}
             };
