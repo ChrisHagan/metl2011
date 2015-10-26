@@ -46,7 +46,7 @@ namespace MeTLLib.Providers.Connection
                 return (Action)actionsAfterRelogin.Peek();
             }
         }
-        
+
         public void Enqueue(Action action)
         {
             lock (queueLock)
@@ -66,25 +66,36 @@ namespace MeTLLib.Providers.Connection
 
     public class JabberWireFactory
     {
-        public Credentials credentials { private get; set; }
-        [Inject]
-        public ConfigurationProvider configurationProvider { private get; set; }
-        [Inject]
-        public IConversationDetailsProvider conversationDetailsProvider { private get; set; }
-        [Inject]
-        public HttpHistoryProvider historyProvider { private get; set; }
-        [Inject]
-        public CachedHistoryProvider cachedHistoryProvider { private get; set; }
-        [Inject]
-        public MetlConfiguration metlServerAddress { private get; set; }
-        [Inject]
-        public ResourceCache cache { private get; set; }
-        [Inject]
-        public IReceiveEvents receiveEvents { private get; set; }
-        [Inject]
-        public IWebClientFactory clientFactory { private get; set; }
-        [Inject]
-        public HttpResourceProvider resourceProvider { private get; set; }
+        public JabberWireFactory(
+            MetlConfiguration config,
+            Credentials _credentials,
+            ConfigurationProvider _configurationProvider,
+            IConversationDetailsProvider _conversationDetailsProvider,
+            ResourceCache _cache,
+            IReceiveEvents _receiveEvents,
+            IWebClientFactory _clientFactory,
+            HttpResourceProvider _resourceProvider)
+        {
+            credentials = _credentials;
+            configurationProvider = _configurationProvider;
+            conversationDetailsProvider = _conversationDetailsProvider;
+            historyProvider= new HttpHistoryProvider(resourceProvider, this, config);
+            cachedHistoryProvider = new CachedHistoryProvider(historyProvider, resourceProvider, this, config);
+            cache = _cache;
+            receiveEvents = _receiveEvents;
+            clientFactory = _clientFactory;
+            resourceProvider = _resourceProvider;
+        }
+        public Credentials credentials { get; protected set; }
+        public ConfigurationProvider configurationProvider { get; protected set; }
+        public IConversationDetailsProvider conversationDetailsProvider { get; protected set; }
+        public HttpHistoryProvider historyProvider { get; protected set; }
+        public CachedHistoryProvider cachedHistoryProvider { get; protected set; }
+        public MetlConfiguration metlServerAddress { get; protected set; }
+        public ResourceCache cache { get; protected set; }
+        public IReceiveEvents receiveEvents { get; protected set; }
+        public IWebClientFactory clientFactory { get; protected set; }
+        public HttpResourceProvider resourceProvider { get; protected set; }
         private JabberWire instance;
         private static object instanceLock = new object();
         public JabberWire wire()
@@ -103,7 +114,7 @@ namespace MeTLLib.Providers.Connection
                         cache,
                         receiveEvents,
                         clientFactory,
-                        resourceProvider,true);
+                        resourceProvider, true);
                     instance.openConnection();
                 }
                 return instance;
@@ -163,7 +174,7 @@ namespace MeTLLib.Providers.Connection
         private const uint HEARTBEAT_PERIOD = 20000;
         private const uint TIMEOUT_PERIOD = 10000;
         public Credentials credentials;
-        public Location location = Location.Empty; 
+        public Location location = Location.Empty;
         protected IReceiveEvents receiveEvents;
         protected IWebClientFactory webClientFactory;
         protected HttpResourceProvider resourceProvider;
@@ -218,11 +229,13 @@ namespace MeTLLib.Providers.Connection
         }
 
         private Timer ConnectionTimeoutTimer;
-        private void EstablishConnectionTimer(){ 
-            ConnectionTimeoutTimer = new Timer((_unused) => {
+        private void EstablishConnectionTimer()
+        {
+            ConnectionTimeoutTimer = new Timer((_unused) =>
+            {
                 if (conn == null || conn.XmppConnectionState != XmppConnectionState.Connected)
                     Reset("Resetting because connection took too long");
-            },null,TIMEOUT_PERIOD,TIMEOUT_PERIOD);
+            }, null, TIMEOUT_PERIOD, TIMEOUT_PERIOD);
         }
         private void StopConnectionTimeoutTimer()
         {
@@ -238,10 +251,11 @@ namespace MeTLLib.Providers.Connection
         private void checkConnection()
         {
             if (!this.IsConnected()) Reset("resetting on heartbeat");
-         }
+        }
         private void listenToStatusChangedForReset(object sender, StatusChangedEventArgs e)
         {
-            if (e.isConnected) {
+            if (e.isConnected)
+            {
                 StopConnectionTimeoutTimer();
             }
             if (conn == null) return;
@@ -271,7 +285,8 @@ namespace MeTLLib.Providers.Connection
 
         private void makeAvailableNewSocket()
         {
-            if (this.conn != null) { 
+            if (this.conn != null)
+            {
                 conn.OnAuthError -= OnAuthError;
                 conn.OnLogin -= OnLogin;
                 conn.OnMessage -= OnMessage;
@@ -281,10 +296,10 @@ namespace MeTLLib.Providers.Connection
                 conn.OnRegisterError -= ElementError;
                 conn.OnStreamError -= ElementError;
                 conn.OnClose -= OnClose;
-    #if DEBUG
+#if DEBUG
                 conn.OnReadXml -= ReadXml;
                 conn.OnWriteXml -= WriteXml;
-    #endif
+#endif
             }
             this.conn = new XmppClientConnection(jid.Server);
             conn.ConnectServer = metlServerAddress.xmppHost;
@@ -352,7 +367,7 @@ namespace MeTLLib.Providers.Connection
             StartConnectionTimeoutTimer();
             conn.Open(jid.User, metlServerAddress.xmppPassword, resource, 1);// MeTLConfiguration.Config.XmppCredential.Password, resource, 1);
         }
-       
+
         private void OnLogin(object o)
         {
             receiveEvents.statusChanged(true, this.credentials);
@@ -362,7 +377,7 @@ namespace MeTLLib.Providers.Connection
 
         private void OnPresence(object sender, Presence pres)
         {
-            receiveEvents.receivePresence(new MeTLPresence{Joining = pres.Type.ToString().ToLower() != "unavailable", Who=pres.From.Resource, Where = pres.From.User});
+            receiveEvents.receivePresence(new MeTLPresence { Joining = pres.Type.ToString().ToLower() != "unavailable", Who = pres.From.Resource, Where = pres.From.User });
         }
         private void OnMessage(object sender, Message message)
         {
@@ -424,7 +439,7 @@ namespace MeTLLib.Providers.Connection
         }
 
         private static int catchUpDisconnectedWorkInProgress = 0;
-        private void catchUpDisconnectedWork() 
+        private void catchUpDisconnectedWork()
         {
             if (1 == Interlocked.Increment(ref catchUpDisconnectedWorkInProgress))
             {
@@ -433,7 +448,7 @@ namespace MeTLLib.Providers.Connection
                     var catchUpTimer = new System.Timers.Timer(500);
                     catchUpTimer.Elapsed += catchUpTimer_Elapsed;
                     catchUpTimer.Start();
-               }
+                }
                 finally
                 {
                     Interlocked.Exchange(ref catchUpDisconnectedWorkInProgress, 0);
@@ -463,7 +478,7 @@ namespace MeTLLib.Providers.Connection
                             break;
                         }
                     }
-        
+
                     if (actionsAfterRelogin.Count == 0)
                     {
                         var catchUpTimer = sender as System.Timers.Timer;
@@ -476,8 +491,8 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-        
-        
+
+
         public void Logout()
         {
             shutdownHeartBeat();
@@ -543,7 +558,7 @@ namespace MeTLLib.Providers.Connection
             {
                 rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
             }
-            
+
             if (location != null)
                 rooms.AddRange(
                     new[]{
@@ -590,7 +605,7 @@ namespace MeTLLib.Providers.Connection
 
                 if (!alreadyInConversation)
                 {
-                    rooms.Add(new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource));
+                    rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
                 }
                 foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
                 {
@@ -619,7 +634,8 @@ namespace MeTLLib.Providers.Connection
         {
             conn.Send(message);
         }
-        private bool compareString(string a, string b){
+        private bool compareString(string a, string b)
+        {
             if (String.IsNullOrEmpty(a) || String.IsNullOrEmpty(b))
                 return false;
             return a.ToLower().Trim() == b.ToLower().Trim();
@@ -628,7 +644,7 @@ namespace MeTLLib.Providers.Connection
         {
             var message = new Message();
             string modifiedTarget =
-                compareString(stanza.GetTag(MeTLStanzas.privacyTag),"private") ?
+                compareString(stanza.GetTag(MeTLStanzas.privacyTag), "private") ?
                 string.Format("{0}{1}", target, stanza.GetTag("author")) : target;
             message.To = new Jid(string.Format("{0}@{1}", modifiedTarget, metlServerAddress.muc));
             message.From = jid;
@@ -686,10 +702,12 @@ namespace MeTLLib.Providers.Connection
             {
                 Func<Boolean> checkPing = delegate
                 {
-                    try {
+                    try
+                    {
                         return webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "/serverStatus")).Trim().ToLower() == "ok";
                     }
-                    catch (Exception e){
+                    catch (Exception e)
+                    {
                         return e is WebException && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound;
                     }
                     /*
@@ -709,7 +727,8 @@ namespace MeTLLib.Providers.Connection
                 };
                 return conn.Authenticated && checkPing();
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
                 return false;
             }
@@ -761,25 +780,27 @@ namespace MeTLLib.Providers.Connection
                 historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => { 
-                        receiveEvents.receivePreParser(finishedParser); 
-                        cachedHistoryProvider.PopulateFromHistory(finishedParser); 
+                    finishedParser =>
+                    {
+                        receiveEvents.receivePreParser(finishedParser);
+                        cachedHistoryProvider.PopulateFromHistory(finishedParser);
                     },
                     location.currentSlide.ToString());
                 historyProvider.RetrievePrivateContent<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => 
-                    { 
-                        receiveEvents.receivePreParser(finishedParser); 
-                        cachedHistoryProvider.PopulateFromHistory(finishedParser); 
+                    finishedParser =>
+                    {
+                        receiveEvents.receivePreParser(finishedParser);
+                        cachedHistoryProvider.PopulateFromHistory(finishedParser);
                     },
                     credentials.name,
                     location.currentSlide.ToString());
-                
+
 
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
             }
         }
@@ -816,7 +837,7 @@ namespace MeTLLib.Providers.Connection
 
                         if (privateInksToPublicise.Count() > 0 || privateTextsToPublicise.Count() > 0 || privateImagesToPublicise.Count() > 0)
                         {
-                            privateDirtier = TargettedMoveDelta.CreateDirtier(tmd, notP, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);                             
+                            privateDirtier = TargettedMoveDelta.CreateDirtier(tmd, notP, privateInksToPublicise, privateTextsToPublicise, privateImagesToPublicise);
                         }
                         if (publicInks.Count() > 0 || publicTexts.Count() > 0 || publicImages.Count() > 0)
                         {
@@ -883,7 +904,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void MoveDeltaDispatcher(TargettedMoveDelta adjuster, TargettedMoveDelta dirtier, IEnumerable<TargettedStroke> strokes = null, IEnumerable<TargettedTextBox> texts = null, IEnumerable<TargettedImage> images = null)
         {
-            if (dirtier != null) 
+            if (dirtier != null)
                 stanza(dirtier.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(dirtier));
             if (adjuster != null)
                 stanza(adjuster.slide.ToString(), new MeTLStanzas.MoveDeltaStanza(adjuster));
@@ -932,7 +953,8 @@ namespace MeTLLib.Providers.Connection
                     leaveRoom(fileConversationJid);
             }
         }
-        public void SendStanza(string where, Element what) {
+        public void SendStanza(string where, Element what)
+        {
             stanza(where, what);
         }
         private void SendChat(TargettedTextBox message)
@@ -992,7 +1014,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void sendDirtyStroke(TargettedDirtyElement element)
         {
-        //    stanza(element.slide.ToString(), new MeTLStanzas.DirtyInk(element));
+            //    stanza(element.slide.ToString(), new MeTLStanzas.DirtyInk(element));
             stanza(new MeTLStanzas.DirtyInk(element));
         }
         public virtual void ReceiveCommand(string message)
@@ -1094,7 +1116,7 @@ namespace MeTLLib.Providers.Connection
         public void ReceiveAndSortMessages()
         {
             orderedMessages = SortOnTimestamp(unOrderedMessages);
-            foreach ( MeTLStanzas.TimestampedMeTLElement message in orderedMessages)
+            foreach (MeTLStanzas.TimestampedMeTLElement message in orderedMessages)
             {
                 HistoryReceivedMessage(message);
                 //ReceivedMessage(message, MessageOrigin.History);
@@ -1118,7 +1140,7 @@ namespace MeTLLib.Providers.Connection
             {
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
                 return;
-            }           
+            }
 
             //ActOnUntypedMessage(message, timestamp);
             ActOnUntypedMessage(element);
@@ -1134,7 +1156,8 @@ namespace MeTLLib.Providers.Connection
                 if (imageTag.HasTag("source"))
                 {
                     var sourceValue = imageTag.GetTag("source");
-                    if(System.Uri.IsWellFormedUriString(sourceValue,System.UriKind.Absolute)) {
+                    if (System.Uri.IsWellFormedUriString(sourceValue, System.UriKind.Absolute))
+                    {
                         System.Uri sourceUri = new System.Uri(sourceValue);
                         sourceValue = sourceUri.AbsolutePath;
                         imageTag.SetTag("source", sourceValue);
@@ -1211,7 +1234,7 @@ namespace MeTLLib.Providers.Connection
             }
             foreach (var ink in timestampedElement.element.SelectElements<MeTLStanzas.Ink>(true))
             {
-                var targettedStroke = ink.Stroke;                
+                var targettedStroke = ink.Stroke;
                 targettedStroke.timestamp = timestampedElement.timestamp;
                 var stroke = targettedStroke.stroke;
                 stroke.tag(new StrokeTag(stroke.tag(), timestampedElement.timestamp));
@@ -1241,10 +1264,10 @@ namespace MeTLLib.Providers.Connection
                 actOnQuizReceived(quiz.injectDependencies(metlServerAddress).parameters);
             foreach (var quizAnswer in timestampedElement.element.SelectElements<MeTLStanzas.QuizResponse>(true))
                 actOnQuizAnswerReceived(quizAnswer.parameters);
-            
+
             foreach (var file in timestampedElement.element.SelectElements<MeTLStanzas.FileResource>(true))
                 actOnFileResource(file.injectDependencies(metlServerAddress));
-            
+
         }
 
         public virtual void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
@@ -1348,11 +1371,11 @@ namespace MeTLLib.Providers.Connection
 
         public void LoadSubmissions(string conversationJid)
         {
-             historyProvider.Retrieve<PreParser>(
-            onStart,
-            onProgress,
-            finishedParser => receiveEvents.receivesubmissions(finishedParser),
-            conversationJid.ToString());
+            historyProvider.Retrieve<PreParser>(
+           onStart,
+           onProgress,
+           finishedParser => receiveEvents.receivesubmissions(finishedParser),
+           conversationJid.ToString());
         }
         public void LoadAttachments(string conversationJid)
         {

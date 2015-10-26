@@ -16,11 +16,16 @@ namespace MeTLLib.Providers.Connection
     }
     public class ProductionResourceUploaderFactory : ResourceUploaderFactory
     {
-        [Inject]
-        public HttpResourceProvider provider { private get; set; }
+        protected HttpResourceProvider provider;
+        protected MetlConfiguration config;
+        public ProductionResourceUploaderFactory(MetlConfiguration _config, HttpResourceProvider _provider)
+        {
+            provider = _provider;
+            config = _config;
+        }
         public IResourceUploader get()
         {
-            return new ProductionResourceUploader(provider);
+            return new ProductionResourceUploader(config,provider);
         }
     }
     public interface IResourceUploader
@@ -35,11 +40,11 @@ namespace MeTLLib.Providers.Connection
     }
     public class ProductionResourceUploader : IResourceUploader
     {
-        [Inject]
-        public MetlConfiguration metlServerAddress { private get; set; }
-        private HttpResourceProvider _httpResourceProvider;
-        public ProductionResourceUploader(HttpResourceProvider provider)
+        protected MetlConfiguration metlServerAddress;
+        protected HttpResourceProvider _httpResourceProvider;
+        public ProductionResourceUploader(MetlConfiguration _metlServerAddress,HttpResourceProvider provider)
         {
+            _metlServerAddress = metlServerAddress;
             _httpResourceProvider = provider;
         }
         private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{0}/{1}", metlServerAddress.resourceUrl, metlServerAddress.uploadPath); } }

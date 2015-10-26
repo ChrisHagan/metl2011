@@ -18,12 +18,18 @@ namespace MeTLLib.Providers.Connection
     {
         void HealthCheck(Action healthyBehaviour);
     }
-    public partial class ProductionProviderMonitor : IProviderMonitor
+    public class ProductionProviderMonitor : IProviderMonitor
     {
-        [Inject]
-        public MetlConfiguration metlServerAddress { private get; set; }
-        [Inject]
-        public ITimerFactory timerFactory { private get; set; }
+        public MetlConfiguration metlServerAddress { get; protected set; }
+        public ITimerFactory timerFactory { get; protected set; }
+        public ProductionProviderMonitor(
+            MetlConfiguration _metlServerAddress,
+            ITimerFactory _timerFactory
+            )
+        {
+            metlServerAddress = _metlServerAddress;
+            timerFactory = _timerFactory;
+        }
         public void HealthCheck (Action healthyBehaviour){
             HealthCheck(healthyBehaviour,0);
         }

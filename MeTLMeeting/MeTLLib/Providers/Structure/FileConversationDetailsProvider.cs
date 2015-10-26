@@ -15,14 +15,10 @@ namespace MeTLLib.Providers.Structure
 {
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
-        [Inject]
-        public MetlConfiguration server { private get; set; }
-        [Inject]
-        public JabberWireFactory jabberWireFactory { private get; set; }
-        private JabberWire _wire;
-        //[Inject]
-        ///public MeTLGenericAddress searchServer { private get; set; }
-        private static object wireLock = new object();
+        protected MetlConfiguration server;
+        protected JabberWireFactory jabberWireFactory;
+        protected JabberWire _wire;
+        protected static object wireLock = new object();
         private JabberWire wire
         {
             get 
@@ -36,9 +32,10 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private IResourceUploader resourceUploader;
-        public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader)
+        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader)
             : base(factory)
         {
+            server = _server;
             resourceUploader = uploader;
         }
         /*

@@ -84,19 +84,19 @@ namespace MeTLLib.DataTypes
             return cd;
         }
 
-        public static SearchConversationDetails HydrateFromServer(ConversationDetails con)
+        public static SearchConversationDetails HydrateFromServer(ClientConnection conn, ConversationDetails conv)
         {
-            if (con == null)
+            if (conv == null)
                 throw new ArgumentNullException();
 
-            return HydrateFromServer(new SearchConversationDetails(con));
+            return HydrateFromServer(conn,new SearchConversationDetails(conv));
         }
-        public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
+        public static SearchConversationDetails HydrateFromServer(ClientConnection conn,SearchConversationDetails scd)
         {
             if (scd == null)
                 throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");
 
-            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(scd.Jid);
+            var conversation = conn.DetailsOf(scd.Jid);
 
             scd.blacklist = conversation.blacklist;
             scd.CreatedAsTicks = conversation.CreatedAsTicks;

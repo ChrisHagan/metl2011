@@ -162,33 +162,42 @@ namespace MeTLLib
     }
     public class ClientConnection : IClientBehaviour
     {
-        //[Inject]
+        public MetlConfiguration server { get; protected set; }
         public IReceiveEvents events { get; protected set; }
-        [Inject]
-        public AuthorisationProvider authorisationProvider { private get; set; }
-        [Inject]
-        public IResourceUploader resourceUploader { private get; set; }
-        [Inject]
-        public HttpHistoryProvider historyProvider { private get; set; }
-        [Inject]
-        public IConversationDetailsProvider conversationDetailsProvider { private get; set; }
-        [Inject]
-        public ResourceCache cache { private get; set; }
-        [Inject]
-        public JabberWireFactory jabberWireFactory { private get; set; }
-        [Inject]
-        public IWebClientFactory downloaderFactory { private get; set; }
-        [Inject]
-        public UserOptionsProvider userOptionsProvider { private get; set; }
-        [Inject]
-        public HttpResourceProvider resourceProvider { private get; set; }
-        [Inject]
+        public AuthorisationProvider authorisationProvider { get; protected set; }
+        public IResourceUploader resourceUploader { get; protected set; }
+        public IHistoryProvider historyProvider { get { return jabberWireFactory.cachedHistoryProvider; } }
+        public IConversationDetailsProvider conversationDetailsProvider { get; protected set; }
+        public ResourceCache cache { get; protected set; }
+        public JabberWireFactory jabberWireFactory { get; protected set; }
+        public IWebClientFactory downloaderFactory { get; protected set; }
+        public UserOptionsProvider userOptionsProvider { get; protected set; }
+        public HttpResourceProvider resourceProvider { get; protected set; }
         //public IUserInformationProvider userInformationProvider { private get; set; }
-        public MetlConfiguration server { private set; get; }
-        public ClientConnection(MetlConfiguration address,IReceiveEvents _events)
+        
+        public ClientConnection(
+            MetlConfiguration address,
+            IReceiveEvents _events,
+            AuthorisationProvider _authProvider,
+            IResourceUploader _resourceUploader,
+            IConversationDetailsProvider _conversationDetailsProvider,
+            ResourceCache _resourceCache,
+            JabberWireFactory _jabberWireFactory,
+            IWebClientFactory _downloaderFactory,
+            UserOptionsProvider _userOptionsProvider,
+            HttpResourceProvider _resourceProvider
+            )
         {
             server = address;
             events = _events;
+            authorisationProvider = _authProvider;
+            resourceUploader = _resourceUploader;
+            conversationDetailsProvider = _conversationDetailsProvider;
+            cache = _resourceCache;
+            jabberWireFactory = _jabberWireFactory;
+            downloaderFactory = _downloaderFactory;
+            userOptionsProvider = _userOptionsProvider;
+            resourceProvider = _resourceProvider;
         }
         #region fields
         private JabberWire wire;
@@ -217,7 +226,7 @@ namespace MeTLLib
             }
         }
         #endregion
-        public HttpHistoryProvider getHistoryProvider()
+        public IHistoryProvider getHistoryProvider()
         {
             return historyProvider;
         }
@@ -250,7 +259,7 @@ namespace MeTLLib
         {
             if (credentials != null && credentials.isValid)
             {
-                jabberWireFactory.credentials = credentials;
+                //jabberWireFactory.credentials = credentials;
                 wire = jabberWireFactory.wire();
                 return true;
             }
