@@ -1,4 +1,4 @@
-﻿<Window x:Class="SandRibbon.Components.EditConversation"
+﻿<sr:ServerAwareWindow x:Class="SandRibbon.Components.EditConversation"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sr="clr-namespace:SandRibbon"
@@ -23,6 +23,8 @@
                 <Image Height="90" Width="90" /> 
             </StackPanel>
         </DataTemplate>
+        <components:UrlForSlideConverter x:Key="urlForSlideConverter"></components:UrlForSlideConverter>
+        <components:SlideIndexConverter x:Key="slideIndexConverter"></components:SlideIndexConverter>
     </Window.Resources>
     <Grid Background="{StaticResource BackgroundBlueGradient}">
         <Grid.ColumnDefinitions>
@@ -59,12 +61,13 @@
                                         Padding="5" Background="{StaticResource BackgroundBlueGradient}"
                                         SnapsToDevicePixels="true" CornerRadius="2">
                                         <Grid>
-                                            <Image Height="90" Width="90" Source="{Binding Path=id, Converter={x:Static components:EditConversation.UrlForSlide}}"/>
+                                            <Image Height="90" Width="90" Source="{Binding Path=id, Converter={StaticResource urlForSlideConverter}, ConverterParameter={Binding RelativeSource}}"/>
                                             <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                     HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                     VerticalAlignment="Bottom" 
                                                     BorderThickness="1">
-                                                <Label Content="{Binding Path=index, Converter={x:Static components:EditConversation.SlideIndex}}"/>
+                                                <!--<Label Content="{Binding Path=index}"/>-->
+                                                <Label Content="{Binding Path=index, Converter={StaticResource slideIndexConverter}}"/> 
                                             </Border>
                                         </Grid>
                                     </Border>
@@ -98,4 +101,4 @@
             </DockPanel>
         </DockPanel>
     </Grid>
-</Window>
+</sr:ServerAwareWindow>

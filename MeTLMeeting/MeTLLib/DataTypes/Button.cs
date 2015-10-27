@@ -121,7 +121,7 @@ namespace MeTLLib.DataTypes
         }
         public void RequestNewRectangle()
         {
-            Commands.VideoMirrorRefreshRectangle.Execute(id);
+            //Commands.VideoMirrorRefreshRectangle.Execute(id);
         }
 
         public System.Windows.Shapes.Rectangle Rectangle
@@ -306,7 +306,7 @@ namespace MeTLLib.DataTypes
                 rectToPush.Stroke = Brushes.Red;
                 rectToPush.Height = MediaElement.ActualHeight;
                 rectToPush.Width = MediaElement.ActualWidth;
-                Commands.MirrorVideo.Execute(new VideoMirror.VideoMirrorInformation(id, rectToPush));
+                //Commands.MirrorVideo.Execute(new VideoMirror.VideoMirrorInformation(id, rectToPush));
             }
         }
         public Video()

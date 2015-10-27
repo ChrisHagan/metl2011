@@ -32,7 +32,7 @@
                     </MultiBinding> 
                 </ScrollViewer.Height>
                 <Grid>
-                    <components:CollapsedCanvasStack x:Name="stack"/>
+                    <components:CollapsedCanvasStack x:Name="stack" ToolableSpaceModel="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ToolableSpaceModel}" />
                 </Grid>
             </ScrollViewer>
         </Viewbox>

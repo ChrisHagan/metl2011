@@ -11,11 +11,23 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using System.Collections.Generic;
 using MeTLLib.DataTypes;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
     public partial class Projector : UserControl
     {
+        public ToolableSpaceModel ToolableSpaceModel
+        {
+            get { return (ToolableSpaceModel)GetValue(toolableSpaceModelProperty); }
+            set { SetValue(toolableSpaceModelProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for backend.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty toolableSpaceModelProperty =
+            DependencyProperty.Register("toolableSpaceModel_projector", typeof(ToolableSpaceModel), typeof(Projector), new PropertyMetadata(new ToolableSpaceModel(MetlConfiguration.empty)));
+
+        public MetlConfiguration backend {  get { return ToolableSpaceModel.backend; } }
         public static WidthCorrector WidthCorrector = new WidthCorrector();
         public static HeightCorrector HeightCorrector = new HeightCorrector();
         public ScrollViewer viewConstraint
@@ -54,8 +66,8 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
-            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
-            Commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            App.getContextFor(backend).controller.commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
+            App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
         }
         private string generateTitle(ConversationDetails details)
         {
@@ -104,7 +116,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
+                App.getContextFor(ToolableSpaceModel.backend).controller.client.getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
             }
             catch (Exception)
             {

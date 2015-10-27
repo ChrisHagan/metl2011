@@ -1,5 +1,6 @@
-﻿<Page x:Class="SandRibbon.Pages.Collaboration.ConversationOverviewPage"
+﻿<sr:ServerAwarePage x:Class="SandRibbon.Pages.Collaboration.ConversationOverviewPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:sr="clr-namespace:SandRibbon"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"  
@@ -112,4 +113,4 @@
             </ScrollViewer>
         </Grid>
     </Grid>
-</Page>
+</sr:ServerAwarePage>

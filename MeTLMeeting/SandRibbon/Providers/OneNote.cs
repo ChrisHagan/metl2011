@@ -6,16 +6,24 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 using SandRibbon.Pages.Conversations.Models;
+using MeTLLib;
 
 namespace SandRibbon.Providers
 {
     public class OneNote
     {
+        public MetlConfiguration backend { get; protected set; }
+        public OneNoteConfiguration config { get; protected set; }
+        public OneNote(OneNoteConfiguration _config)
+        {
+            backend = _config.backend;
+            config = _config;
+        }
         static string notebooks = "https://www.onenote.com/api/v1.0/me/notes/notebooks?expand=sections";
         static string pages = "https://www.onenote.com/api/v1.0/me/notes/sections/{0}/pages";
-        public static List<Notebook> Notebooks(string token)
+        public List<Notebook> Notebooks(string token)
         {
-            var context = Globals.OneNoteConfiguration;
+            var context = config;
             var wc = new WebClient();
             wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
             var jsonS = wc.DownloadString(notebooks);
@@ -47,10 +55,10 @@ namespace SandRibbon.Providers
             return books;
         }
 
-        public static void Pages(string token, NotebookSection section, OneNoteConfiguration context)
+        public void Pages(string token, NotebookSection section, OneNoteConfiguration context)
         {
             var wc = new WebClient();
-            wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));           
+            wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
             wc.DownloadStringCompleted += (s, e) =>
             {
                 var processed = 0;
@@ -65,9 +73,11 @@ namespace SandRibbon.Providers
                     {
                         Token = token,
                         Html = wc.DownloadString(j["contentUrl"].Value<string>()),
-                        Title = title                        
+                        Title = title,
+                        Backend = backend,
+                        context = context
                     });
-                    context.ReportPageProgress(processed, pageCount,title);
+                    context.ReportPageProgress(processed, pageCount, title);
                 }
             };
             wc.DownloadStringAsync(new Uri(string.Format(OneNote.pages, section.Id)));
@@ -76,27 +86,33 @@ namespace SandRibbon.Providers
     public class NotebookPage
     {
         private string html;
-        public string Html { get { return html; }
-            set {
+        public string Html
+        {
+            get { return html; }
+            set
+            {
                 var xDoc = XDocument.Parse(value);
-                foreach (var img in xDoc.Descendants().Where(d => d.Name.LocalName == "img")) {
+                foreach (var img in xDoc.Descendants().Where(d => d.Name.LocalName == "img"))
+                {
                     var source = img.Attribute("src").Value;
                     var wc = new WebClient();
-                    wc.Headers.Add("Authorization", string.Format("Bearer {0}", Token));          
+                    wc.Headers.Add("Authorization", string.Format("Bearer {0}", Token));
                     var oneNoteData = wc.DownloadData(source);
-                    var alias = string.Format("{0}.png",Guid.NewGuid().ToString());                                        
-                    var upload = MeTLLib.ClientFactory.Connection().UploadResourceToPath(oneNoteData,"onenote",alias,false);
-                    var securedUpload = new UriBuilder(upload) {
+                    var alias = string.Format("{0}.png", Guid.NewGuid().ToString());
+                    var upload = App.getContextFor(Backend).controller.client.UploadResourceToPath(oneNoteData, "onenote", alias, false);
+                    var securedUpload = new UriBuilder(upload)
+                    {
                         Scheme = "https"
-                    };            
+                    };
                     img.SetAttributeValue("src", securedUpload.Uri.AbsoluteUri);
                 }
-                html = xDoc.ToString();               
+                html = xDoc.ToString();
             }
         }
-        public string Title { get; set; }        
+        public string Title { get; set; }
         public string Token { get; set; }
         public OneNoteConfiguration context { get; set; }
+        public MetlConfiguration Backend { get; set; }
     }
     public class NotebookSection
     {

@@ -42,10 +42,11 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>((_unused) => { UploadFile(); }));
         }
+        protected MetlConfiguration backend = MetlConfiguration.empty; //This needs to be threaded in, when we get around to making this a flyout, as we'll have to.
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
@@ -100,7 +101,7 @@ namespace SandRibbon.Tabs
                 backgroundWorker.DoWork += (s, a) =>
                                                {
                                                    var stream = saveFile.OpenFile();
-                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential( App.getCurrentServer.resourceUsername,App.getCurrentServer.resourcePassword) }.DownloadData(file.url);
+                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential( backend.resourceUsername, backend.resourcePassword) }.DownloadData(file.url);
                                                    stream.Write(sourceBytes, 0, sourceBytes.Count());
                                                    stream.Close();
                                                };
@@ -112,7 +113,7 @@ namespace SandRibbon.Tabs
 
         private void UploadFile()
         {
-            var upload = new OpenFileForUpload(Window.GetWindow(this));
+            var upload = new OpenFileForUpload(backend,Window.GetWindow(this));
             upload.AddResourceFromDisk();
         }
     }

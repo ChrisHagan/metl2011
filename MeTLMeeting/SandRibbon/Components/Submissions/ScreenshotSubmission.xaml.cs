@@ -10,6 +10,7 @@ using MeTLLib.Providers.Connection;
 using System.Diagnostics;
 using SandRibbon.Components.Utility;
 using System.Windows.Media;
+using MeTLLib;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -22,13 +23,14 @@ namespace SandRibbon.Components.Submissions
     }
     public partial class ScreenshotSubmission : UserControl
     {
+        public MetlConfiguration backend;
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
         public ScreenshotSubmission()
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(detailsChanged));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
             conversationChanged(null);
@@ -117,8 +119,8 @@ namespace SandRibbon.Components.Submissions
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 MeTLLib.ClientFactory.Connection().UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                                 (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission",Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                                 App.getContextFor(backend).controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                                 (App.getContextFor(backend).controller.client.location.currentSlide,Globals.me,"submission",Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
                                  MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

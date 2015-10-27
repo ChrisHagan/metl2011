@@ -66,6 +66,8 @@ namespace SandRibbon.Components
 
     public partial class Participants : UserControl
     {
+        protected MeTLLib.MetlConfiguration backend;
+                
         public Dictionary<string, MeTLUser> people = new Dictionary<string, MeTLUser>();
         public HashSet<String> seen = new HashSet<string>();
         public IStemmer stemmer = new EnglishStemmer();
@@ -77,7 +79,7 @@ namespace SandRibbon.Components
             Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(ReceiveTextbox));
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>(ReceiveImage));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(ReceivePreParser));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
         }

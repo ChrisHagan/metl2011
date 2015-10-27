@@ -390,6 +390,7 @@ namespace SandRibbon.Tabs.Groups
             new DrawingAttributes{Color = Colors.Cyan, IsHighlighter = true, Height = 25,Width = 25},
             new DrawingAttributes{Color = Colors.Yellow, IsHighlighter = true, Height = 25,Width = 25}
         };
+        protected MeTLLib.MetlConfiguration backend;
 
         public PenColors()
         {
@@ -401,7 +402,7 @@ namespace SandRibbon.Tabs.Groups
             SetupPreviousColoursWithDefaults();
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
 
             Commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));

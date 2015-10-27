@@ -162,6 +162,7 @@ namespace MeTLLib
     }
     public class ClientConnection : IClientBehaviour
     {
+        public Commands commands { get; protected set; }
         public MetlConfiguration server { get; protected set; }
         public IReceiveEvents events { get; protected set; }
         public AuthorisationProvider authorisationProvider { get; protected set; }
@@ -178,6 +179,7 @@ namespace MeTLLib
         public ClientConnection(
             MetlConfiguration address,
             IReceiveEvents _events,
+            Commands _commands,
             AuthorisationProvider _authProvider,
             IResourceUploader _resourceUploader,
             IConversationDetailsProvider _conversationDetailsProvider,
@@ -190,6 +192,7 @@ namespace MeTLLib
         {
             server = address;
             events = _events;
+            commands = _commands;
             authorisationProvider = _authProvider;
             resourceUploader = _resourceUploader;
             conversationDetailsProvider = _conversationDetailsProvider;

@@ -13,10 +13,17 @@ namespace SandRibbon.Chrome
         {
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => SetIdentity()));
             Commands.BanhammerActive.RegisterCommandToDispatcher(new DelegateCommand<bool>((_unused) => BanhammerActive()));
+            Commands.BackendSelected.RegisterCommandToDispatcher(new DelegateCommand<MetlConfiguration>(updateBackend));
+        }
+        protected MetlConfiguration backend = MetlConfiguration.empty;
+        protected void updateBackend(MetlConfiguration _backend)
+        {
+            backend = _backend;
+            showDetails();
         }
         private void SetIdentity()
         {
@@ -65,7 +72,7 @@ namespace SandRibbon.Chrome
                              details.Subject, Globals.me);
                     }
 #if DEBUG
-                    var activeStack = App.getCurrentServer;
+                    var activeStack = backend;
                     status += String.Format(" | ({0}) Connected to [{1}]", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
                         activeStack.name);
 #endif

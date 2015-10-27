@@ -130,8 +130,10 @@ namespace MeTLLib
 
     class ProductionReceiveEvents : IReceiveEvents
     {
-        public ProductionReceiveEvents()
+        public Commands commands { get;  protected set; }
+        public ProductionReceiveEvents(Commands _commands)
         {
+            commands = _commands;
             this.PresenceAvailable += (sender, args) => { } ;
             this.SlideCollectionUpdated += (sender, args) => { };
             this.ChatAvailable += (sender, args) => { };
@@ -158,7 +160,7 @@ namespace MeTLLib
             this.TeacherStatusRequest += (sender, args) => { };
             this.TeacherStatusReceived += (sender, args)=> { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
-            Commands.ServersDown.RegisterCommand(new DelegateCommand<String>(ServersDown));
+            commands.ServersDown.RegisterCommand(new DelegateCommand<String>(ServersDown));
         }
         private void ServersDown(string url){
             Trace.TraceError("CRASH: (Fixed) MeTLLib::ProductionReceiveEvents:ServersDown {0}", url);

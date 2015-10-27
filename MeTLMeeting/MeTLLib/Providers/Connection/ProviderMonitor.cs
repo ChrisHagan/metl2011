@@ -22,13 +22,16 @@ namespace MeTLLib.Providers.Connection
     {
         public MetlConfiguration metlServerAddress { get; protected set; }
         public ITimerFactory timerFactory { get; protected set; }
+        public Commands commands { get; protected set; }
         public ProductionProviderMonitor(
             MetlConfiguration _metlServerAddress,
-            ITimerFactory _timerFactory
+            ITimerFactory _timerFactory,
+            Commands _commands
             )
         {
             metlServerAddress = _metlServerAddress;
             timerFactory = _timerFactory;
+            commands = _commands;
         }
         public void HealthCheck (Action healthyBehaviour){
             HealthCheck(healthyBehaviour,0);
@@ -55,7 +58,7 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck could not ping {0}", uri);
                     if (attempts >= maximum)
                     {
-                        Commands.ServersDown.Execute(uri.Host);
+                        commands.ServersDown.Execute(uri.Host);
                     }
                     else
                     {

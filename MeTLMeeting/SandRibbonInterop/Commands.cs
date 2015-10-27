@@ -7,64 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using MeTLLib.DataTypes;
+using MeTLLib;
 
 namespace SandRibbon
 {
-    public class NotSetException : Exception{
-        public NotSetException(string msg) : base(msg) { }
-    }
-    public class DefaultableCompositeCommand : CompositeCommand 
-    {
-        private bool isSet = false;
-        private object commandValue = null;
-
-        public object DefaultValue
-        {
-            get
-            {
-                Debug.Assert(isSet, "Default value has not been set");
-                return commandValue;
-            }
-            set 
-            {
-                isSet = true;
-                commandValue = value;
-            }
-        }
-
-        public DefaultableCompositeCommand()
-        {
-        }
-
-        public DefaultableCompositeCommand(object newValue) 
-        {
-            DefaultValue = newValue;
-        }
-
-        public bool IsInitialised
-        {
-            get
-            {
-                return isSet;
-            }
-        }
-
-        public object LastValue()
-        {
-            Debug.Assert(isSet, "Default value has not been set");
-            return DefaultValue;
-        }
-        public override void Execute(object arg) 
-        {
-            DefaultValue = arg;
-            base.Execute(arg);
-        }
-
-        public override void RegisterCommand(ICommand command)
-        {
-            base.RegisterCommand(command);
-        }
-    }
     public class Commands
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand();

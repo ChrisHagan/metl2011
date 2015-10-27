@@ -1,5 +1,6 @@
-﻿<Window x:Class="SandRibbon.Components.blacklistController"
+﻿<sr:ServerAwareWindow x:Class="SandRibbon.Components.blacklistController"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:sr="clr-namespace:SandRibbon"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="blacklistController" Height="300" Width="300">
     <DockPanel Background="{StaticResource BackgroundBlueGradient}">
@@ -17,4 +18,4 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </DockPanel>
-</Window>
+</sr:ServerAwareWindow>

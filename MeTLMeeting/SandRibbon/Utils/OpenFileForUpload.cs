@@ -9,6 +9,7 @@ using System.ComponentModel;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using System.Windows.Threading;
+using MeTLLib;
 
 namespace SandRibbon.Utils
 {
@@ -16,8 +17,10 @@ namespace SandRibbon.Utils
     {
         private Window _owner;
 
-        public OpenFileForUpload(Window owner)
+        protected MetlConfiguration backend;
+        public OpenFileForUpload(MetlConfiguration _backend, Window owner)
         {
+            backend = _backend;
             _owner = owner;
         }
 
@@ -78,7 +81,7 @@ namespace SandRibbon.Utils
                  {
                      var target = "presentationSpace"; // looks like this can be "presentationSpace" or "notepad"
                      System.IO.File.Copy(unMangledFilename, filename);
-                     MeTLLib.ClientFactory.Connection().UploadAndSendFile(
+                     App.getContextFor(backend).controller.client.UploadAndSendFile(
                          new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, target, Privacy.Public, -1L, filename, System.IO.Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(filename)));
                      System.IO.File.Delete(filename);
                  };

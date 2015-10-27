@@ -7,6 +7,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {

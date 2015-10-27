@@ -28,10 +28,10 @@ namespace SandRibbon.Pages.Collaboration
             this.voices = voiceCount;
         }
     };
-    public partial class ConversationOverviewPage : Page
+    public partial class ConversationOverviewPage : ServerAwarePage
     {
         ReticulatedConversation conversation;
-        public ConversationOverviewPage(ConversationDetails presentationPath)
+        public ConversationOverviewPage(MetlConfiguration _backend,ConversationDetails presentationPath) : base(_backend)
         {
             InitializeComponent();
             DataContext = conversation = new ReticulatedConversation
@@ -42,7 +42,7 @@ namespace SandRibbon.Pages.Collaboration
                     "57000",
                     "61000"
                     */
-                }.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
+                }.Select(jid => ServerContext.controller.client.DetailsOf(jid)).ToList()
 
             };
             conversation.CalculateLocations();
@@ -51,7 +51,7 @@ namespace SandRibbon.Pages.Collaboration
             processing.Maximum = conversation.Locations.Count;
             foreach (var slide in conversation.Locations)
             {
-                ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                ServerContext.controller.client.getHistoryProvider().Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>
@@ -108,7 +108,7 @@ namespace SandRibbon.Pages.Collaboration
         {
             var element = sender as FrameworkElement;
             var slide = element.DataContext as VmSlide;
-            NavigationService.Navigate(new GroupCollaborationPage(slide.Slide.id));
+            NavigationService.Navigate(new GroupCollaborationPage(ServerConfig,slide.Slide.id));
         }
     }    
     public class GridLengthConverter : IValueConverter

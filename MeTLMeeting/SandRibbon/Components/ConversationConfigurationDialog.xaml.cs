@@ -13,10 +13,11 @@ using MeTLLib.DataTypes;
 using System.IO;
 using Microsoft.Win32;
 using SandRibbon.Components.Utility;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {
-    public partial class ConversationConfigurationDialog : Window
+    public partial class ConversationConfigurationDialog : ServerAwareWindow
     {
         private static readonly string DEFAULT_POWERPOINT_PREFIX = "Presentation";
         public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
@@ -26,15 +27,15 @@ namespace SandRibbon.Components
         private PowerPointLoader.PowerpointImportType importType;
         private string importFile;
         private string conversationJid;
-
+        protected MetlConfiguration backend;
         public static RoutedCommand CompleteConversationDialog = new RoutedCommand();
 
-        public ConversationConfigurationDialog(ConversationConfigurationMode mode, string activeConversation)
-            : this(mode)
+        public ConversationConfigurationDialog(MetlConfiguration _backend, ConversationConfigurationMode mode, string activeConversation)
+            : this(_backend,mode)
         {
             conversationJid = activeConversation;
         }
-        public ConversationConfigurationDialog(ConversationConfigurationMode mode)
+        public ConversationConfigurationDialog(MetlConfiguration _backend,ConversationConfigurationMode mode) : base(_backend)
         {
             InitializeComponent();
             this.dialogMode = mode;
@@ -65,7 +66,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
-                    details = MeTLLib.ClientFactory.Connection().DetailsOf(conversationJid);
+                    details = App.getContextFor(backend).controller.client.DetailsOf(conversationJid);
                     PopulateFields();
                     if (details == null)
                     {
@@ -225,11 +226,11 @@ namespace SandRibbon.Components
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
-                    MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                    App.getContextFor(backend).controller.client.UpdateConversationDetails(details);
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.DELETE:
-                    MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                    App.getContextFor(backend).controller.client.UpdateConversationDetails(details);
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
             }

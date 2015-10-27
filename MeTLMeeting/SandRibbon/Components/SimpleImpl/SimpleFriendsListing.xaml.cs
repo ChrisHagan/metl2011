@@ -32,10 +32,12 @@ namespace SandRibbon.Components
         public static FriendToDisplayConverter friendToDisplayConverter = new FriendToDisplayConverter();
         public static ObservableCollection<Friend> friendsList = new ObservableCollection<Friend>();
         private const string ANONYMOUS_PIC = @"\Resources\AnonHead.png";
+        protected MeTLLib.MetlConfiguration backend;
+
         public SimpleFriendsListing()
         {
             InitializeComponent();
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((_obj)=>Flush()));
+            App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((_obj)=>Flush()));
         }
         public void SetPopulation(List<Friend> newPopulation)
         {

@@ -124,18 +124,22 @@ namespace SandRibbon.Utils
             Image,
             Shapes
         }
-        public PowerPointLoader()
+        protected MetlConfiguration backend;
+        public PowerPointLoader(MetlConfiguration _backend)
         {
+            backend = _backend;
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
-            clientConnection = MeTLLib.ClientFactory.Connection();
+            clientConnection = App.getContextFor(backend).controller.client;
         }
         private class PowerpointLoadTracker {
             private int slidesUploaded = 0;
             private readonly int target;
             private String conversationJid;
             private DelegateCommand<object> cancel = new DelegateCommand<object>(delegate { }, _unused => false);
-            public PowerpointLoadTracker(int _target, String _conversation) {
+            protected MetlConfiguration backend;
+            public PowerpointLoadTracker(MetlConfiguration _backend,int _target, String _conversation) {
                 target = _target;
+                backend = _backend;
                 conversationJid = _conversation;
                 Commands.ReceiveImage.RegisterCommand(cancel);
                 Commands.ReceiveTextBox.RegisterCommand(cancel);
@@ -149,7 +153,7 @@ namespace SandRibbon.Utils
                     Commands.ReceiveTextBox.UnregisterCommand(cancel);
 
                     // join successfully created conversation 
-                    Commands.JoinConversation.Execute(conversationJid);
+                    App.getContextFor(backend).controller.commands.JoinConversation.Execute(conversationJid);
                 }
             }
         }
@@ -165,7 +169,7 @@ namespace SandRibbon.Utils
             if (app == null)
                 return;
             
-            var conversation = ClientFactory.Connection().CreateConversation(spec.Details);
+            var conversation = App.getContextFor(backend).controller.client.CreateConversation(spec.Details);
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
                 {
@@ -191,7 +195,7 @@ namespace SandRibbon.Utils
                     }
                     catch (Exception)
                     {
-                        ClientFactory.Connection().DeleteConversation(conversation);
+                        App.getContextFor(backend).controller.client.DeleteConversation(conversation);
                     }
                 }));
             worker.SetApartmentState(ApartmentState.STA);
@@ -205,7 +209,7 @@ namespace SandRibbon.Utils
         }
         public void ImportPowerpoint(Window owner)
         {
-            var configDialog = new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
+            var configDialog = new ConversationConfigurationDialog(backend,ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
             configDialog.Owner = owner;
             configDialog.ChooseFileForImport();
 
@@ -323,7 +327,7 @@ namespace SandRibbon.Utils
             var startingId = conversation.Slides.First().id;
             var index = 0;
             conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-            var updatedConversation = ClientFactory.Connection().UpdateConversationDetails(conversation);
+            var updatedConversation = App.getContextFor(backend).controller.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
                 Trace.TraceInformation("PowerpointImport: Failed to update conversation");
@@ -335,7 +339,7 @@ namespace SandRibbon.Utils
         {
             var xmlSlides = conversationDescriptor.Xml.Descendants("slide");
             var slideCount = xmlSlides.Count();
-            var tracker = new PowerpointLoadTracker(slideCount, conversationDescriptor.Details.Jid);
+            var tracker = new PowerpointLoadTracker(backend,slideCount, conversationDescriptor.Details.Jid);
             for (var i = 0; i < slideCount; i++)
             {
                 var slideXml = xmlSlides.ElementAt(i);
@@ -378,7 +382,7 @@ namespace SandRibbon.Utils
             try
             {
                 var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
-                var provider = ClientFactory.Connection();
+                var provider = App.getContextFor(backend).controller.client;
                 var convDescriptor = new ConversationDescriptor(conversation, new XElement("presentation"));
                 convDescriptor.Xml.Add(new XAttribute("name", conversation.Title));
                 if (conversation.Tag == null)
@@ -483,7 +487,7 @@ namespace SandRibbon.Utils
         }
         private XElement uploadXmlUrls(int slide, XElement doc)
         {
-            var conn = MeTLLib.ClientFactory.Connection();
+            var conn = App.getContextFor(backend).controller.client;
             var shapeCount = doc.Descendants("shape").Count();
             for (var i = 0; i < shapeCount; i++)
             {

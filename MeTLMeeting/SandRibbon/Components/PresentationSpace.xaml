@@ -8,5 +8,5 @@
         <x:Static x:Key="defaultPrivacy" Member="metllib:Privacy.Public" />
         <core:String x:Key="target">presentationSpace</core:String>
     </UserControl.Resources>
-    <components:CollapsedCanvasStack x:Name="stack" />
+    <components:CollapsedCanvasStack x:Name="stack" ToolableSpaceModel="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" />
 </UserControl>

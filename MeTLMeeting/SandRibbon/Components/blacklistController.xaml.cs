@@ -8,11 +8,11 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
-    public partial class blacklistController : Window
+    public partial class blacklistController : ServerAwareWindow
     {
         ObservableCollection<string> blacklistedUsersList = new ObservableCollection<string>(); 
         List<string> blacklist = new List<string>();
-        public blacklistController()
+        public blacklistController(MetlConfiguration _backend) : base(_backend)
         {
             InitializeComponent();
             blacklistedUsers.ItemsSource = blacklistedUsersList;
@@ -24,7 +24,7 @@ namespace SandRibbon.Components
         {
             var details = Globals.conversationDetails;
             details.blacklist = blacklist;
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            ServerContext.controller.client.UpdateConversationDetails(details);
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {

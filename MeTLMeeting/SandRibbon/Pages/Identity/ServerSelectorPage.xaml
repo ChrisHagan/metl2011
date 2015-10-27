@@ -8,7 +8,7 @@
     <Viewbox>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
             <Label Content="Where are you going?" Margin="{StaticResource clearTop}"/>
-            <ListBox x:Name="servers" BorderThickness="0" Margin="{StaticResource clearTop}" SelectionChanged="servers_SelectionChanged">
+            <ListBox x:Name="servers" ItemsSource="{Binding}" BorderThickness="0" Margin="{StaticResource clearTop}" SelectionChanged="servers_SelectionChanged">
                 <ListBox.Resources>
                     <SolidColorBrush x:Key="AccentColorBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="AccentColorBrush2" Color="Transparent" />

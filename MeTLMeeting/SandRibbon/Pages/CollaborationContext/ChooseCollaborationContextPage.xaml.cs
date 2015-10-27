@@ -1,4 +1,5 @@
-﻿using SandRibbon.Pages.Conversations;
+﻿using MeTLLib;
+using SandRibbon.Pages.Conversations;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -7,8 +8,10 @@ namespace SandRibbon.Pages.Collaboration
 {
     public partial class ChooseCollaborationContextPage : Page
     {
-        public ChooseCollaborationContextPage()
+        protected MetlConfiguration backend;
+        public ChooseCollaborationContextPage(MetlConfiguration _backend)
         {
+            backend = _backend;
             InitializeComponent();
             collaborationContexts.ItemsSource = new List<CollaborationContext>
             {
@@ -23,10 +26,10 @@ namespace SandRibbon.Pages.Collaboration
             switch (selection.code)
             {
                 case 1:
-                    NavigationService.Navigate(new ConversationSearchPage());
+                    NavigationService.Navigate(new ConversationSearchPage(backend));
                     break;
                 default:
-                    NavigationService.Navigate(new ConversationSearchPage());
+                    NavigationService.Navigate(new ConversationSearchPage(backend));
                     break;
             }
         }

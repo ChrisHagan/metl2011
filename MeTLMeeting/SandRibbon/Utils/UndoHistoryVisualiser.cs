@@ -10,13 +10,13 @@ namespace SandRibbon.Utils
     {
         #region Debug helpers
 
-        public static void ShowVisualiser(Window parent)
+        public void ShowVisualiser(Window parent)
         {
             if (visualiser != null)
                 visualiser.Show(parent);
         }
 
-        public static void HideVisualiser()
+        public void HideVisualiser()
         {
             if (visualiser != null)
                 visualiser.Hide();

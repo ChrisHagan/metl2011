@@ -1,6 +1,7 @@
-﻿<Window x:Class="SandRibbon.Components.colorCodedUsers"
+﻿<sr:ServerAwareWindow x:Class="SandRibbon.Components.colorCodedUsers"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sr="clr-namespace:SandRibbon"
         Title="colorCodedUsers" Height="300" Width="300">
     <Grid>
         <ItemsControl x:Name="codedUsers" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible">
@@ -19,4 +20,4 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </Grid>
-</Window>
+</sr:ServerAwareWindow>

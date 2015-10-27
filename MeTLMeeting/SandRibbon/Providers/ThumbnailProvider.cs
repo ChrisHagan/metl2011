@@ -25,13 +25,19 @@ namespace SandRibbon.Providers
     }
     public class ThumbnailProvider
     {
+        public MetlConfiguration backend;
+
+        public ThumbnailProvider(MetlConfiguration _backend)
+        {
+            backend = _backend;
+        }
         public static ImageSource emptyImage = new ImageSourceConverter().ConvertFromString("Resources/Slide_Not_Loaded.png") as ImageSource;
-        private static Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
-        private static object cacheLock = new object();
+        private Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
+        private object cacheLock = new object();
         //acceptableStaleTime is measured in ticks
         public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 5;
         private static int maximumCachedBitmaps = 200;
-        private static void addToCache(int slideId, CachedThumbnail ct)
+        private void addToCache(int slideId, CachedThumbnail ct)
         {
             lock (cacheLock)
             {
@@ -45,7 +51,7 @@ namespace SandRibbon.Providers
                 cache[slideId] = ct;
             }
         }
-        private static void paintThumb(Image image)
+        private void paintThumb(Image image)
         {
           image.Dispatcher.adopt(delegate
           {
@@ -71,7 +77,7 @@ namespace SandRibbon.Providers
               }
           });
         }
-        public static void thumbnail(Image image, int slideId)
+        public void thumbnail(Image image, int slideId)
         {
             var slide = (Slide)image.DataContext;
             var internalSlideId = slide.id;
@@ -86,7 +92,7 @@ namespace SandRibbon.Providers
             if (shouldPaintThumb) {
                 paintThumb(image);
             } else {
-                var server = ClientFactory.Connection().server;
+                var server = App.getContextFor(backend).controller.client.server;
                 var host = server.name;
                 var url = string.Format(server.thumbnailUrl + "{0}/{1}",host,internalSlideId);                
                 WebThreadPool.QueueUserWorkItem(delegate

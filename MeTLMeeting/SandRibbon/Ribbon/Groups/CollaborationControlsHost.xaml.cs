@@ -10,8 +10,10 @@ namespace SandRibbon.Tabs.Groups
     /// <summary>
     /// Interaction logic for CollaborationControlsHost.xaml
     /// </summary>
-    public partial class CollaborationControlsHost 
+    public partial class CollaborationControlsHost
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public static readonly DependencyProperty NavigationIsLockedProperty = DependencyProperty.Register("NavigationIsLocked", typeof (bool), typeof(CollaborationControlsHost));
         public bool NavigationIsLocked 
         {
@@ -23,7 +25,7 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             DataContext = this;
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
         }
         private void updateConversationDetails(ConversationDetails details)

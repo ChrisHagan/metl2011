@@ -1,4 +1,5 @@
-﻿using MeTLLib.DataTypes;
+﻿using MeTLLib;
+using MeTLLib.DataTypes;
 using SandRibbon.Components.Utility;
 using System;
 using System.Globalization;
@@ -11,7 +12,7 @@ using System.Windows.Threading;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public partial class ConversationEditPage : Page
+    public partial class ConversationEditPage : ServerAwarePage
     {
         public static RoutedCommand RenameConversation = new RoutedCommand();
         public static RoutedCommand ShareConversation = new RoutedCommand();
@@ -27,14 +28,15 @@ namespace SandRibbon.Pages.Conversations
                 return value;
             }
         }
-        public ConversationEditPage()
+        public ConversationEditPage(MetlConfiguration _backend) : base(_backend)
         {
             InitializeComponent();
         }
 
-        public ConversationEditPage(ConversationDetails conversation)
+        public ConversationEditPage(MetlConfiguration _backend,ConversationDetails conversation) : base(_backend)
         {
             this.conversation = conversation;
+            InitializeComponent();
         }
 
         public string Errors
@@ -63,18 +65,18 @@ namespace SandRibbon.Pages.Conversations
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var details = (ConversationDetails)e.OriginalSource;
-                MeTLLib.ClientFactory.Connection().DeleteConversation(details);
+                ServerContext.controller.client.DeleteConversation(details);
 
             }
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            var details = SearchConversationDetails.HydrateFromServer((ConversationDetails)sender);
+            var details = SearchConversationDetails.HydrateFromServer(ServerContext.controller.client,(ConversationDetails)sender);
 
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
-                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                ServerContext.controller.client.UpdateConversationDetails(details);
             }
             else
             {

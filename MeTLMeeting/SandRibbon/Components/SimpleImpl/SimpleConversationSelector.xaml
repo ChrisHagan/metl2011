@@ -28,8 +28,8 @@
         <DataTemplate DataType="{x:Type objects:ConversationDetails}">
             <Button Command="{x:Static api:Commands.ProxyJoinConversation}" CommandParameter="{Binding Path=Jid}">
                 <TextBlock Text="{Binding Converter={x:Static my:Converters.conversationNameExtractor}}" 
-                       HorizontalAlignment="Left"
-                       ToolTip="{Binding Converter={x:Static my:Converters.conversationTooltipExtractor}}" /> 
+                       HorizontalAlignment="Left" />
+                       <!--ToolTip="{Binding Converter={x:Static my:Converters.conversationTooltipExtractor}}" /> -->
             </Button>
         </DataTemplate>
         <components:SeparatorStyleSelector x:Key="separatorStyleSelector"/>

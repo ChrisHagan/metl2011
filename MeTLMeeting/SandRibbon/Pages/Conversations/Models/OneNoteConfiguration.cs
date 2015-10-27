@@ -1,11 +1,29 @@
 ﻿using SandRibbon.Providers;
 using System.Collections.ObjectModel;
 using System;
+using MeTLLib;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
     public class OneNoteConfiguration
     {
+        public MetlConfiguration backend
+        {
+            get; protected set;
+        }
+        public OneNoteConfiguration(MetlConfiguration _backend)
+        {
+            backend = _backend;
+        }
+        public static OneNoteConfiguration create(MetlConfiguration _backend) 
+        {
+            return new OneNoteConfiguration(_backend)
+            {
+                apiKey = "exampleApiKey",
+                apiSecret = "exampleApiSecret"
+            };
+        }
+
         public ObservableCollection<Notebook> Books { get; set; } = new ObservableCollection<Notebook>();
         public string apiKey { get; set; }
         public string apiSecret { get; set; }

@@ -74,7 +74,8 @@ namespace MeTLLib.Providers.Connection
             ResourceCache _cache,
             IReceiveEvents _receiveEvents,
             IWebClientFactory _clientFactory,
-            HttpResourceProvider _resourceProvider)
+            HttpResourceProvider _resourceProvider,
+            Commands _commands)
         {
             metlServerAddress = _config;
             credentials = _credentials;
@@ -86,6 +87,7 @@ namespace MeTLLib.Providers.Connection
             cache = _cache;
             receiveEvents = _receiveEvents;
             clientFactory = _clientFactory;
+            commands = _commands;
         }
         public MetlConfiguration metlServerAddress { get;  protected set; }
         public Credentials credentials { get; protected set; }
@@ -97,6 +99,7 @@ namespace MeTLLib.Providers.Connection
         public IReceiveEvents receiveEvents { get; protected set; }
         public IWebClientFactory clientFactory { get; protected set; }
         public HttpResourceProvider resourceProvider { get; protected set; }
+        public Commands commands { get; protected set; }
         private JabberWire instance;
         private static object instanceLock = new object();
         public JabberWire wire()
@@ -115,7 +118,7 @@ namespace MeTLLib.Providers.Connection
                         cache,
                         receiveEvents,
                         clientFactory,
-                        resourceProvider, true);
+                        resourceProvider, true,commands);
                     instance.openConnection();
                 }
                 return instance;
@@ -131,7 +134,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache, receiveEvents, clientFactory, resourceProvider);
+                cache, receiveEvents, clientFactory, resourceProvider,commands);
         }
         public T preParser<T>(int room) where T : PreParser
         {
@@ -145,7 +148,8 @@ namespace MeTLLib.Providers.Connection
                 cache,
                 receiveEvents,
                 clientFactory,
-                resourceProvider);
+                resourceProvider,
+                commands);
         }
         public virtual PreParser create<T>(int room) where T : PreParser
         {
@@ -187,13 +191,14 @@ namespace MeTLLib.Providers.Connection
 
         private void registerCommands()
         {
-            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
-            Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
-            Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
-            Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
+            //Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
+            //Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
+            //Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
+            //Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active)
+        public Commands commands { get; protected set; }
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active,Commands _commands)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -205,7 +210,8 @@ namespace MeTLLib.Providers.Connection
             this.webClientFactory = webClientFactory;
             this.resourceProvider = resourceProvider;
             this.jid = createJid(credentials.name);
-            new MeTLLib.DataTypes.MeTLStanzasConstructor();
+            commands = _commands;
+            new MeTLLib.DataTypes.MeTLStanzasConstructor(commands);
             this.activeWire = active;
             if (activeWire)
             {
@@ -773,8 +779,8 @@ namespace MeTLLib.Providers.Connection
                 location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
                 var oldLocation = location.currentSlide.ToString();
                 location.currentSlide = where;
-                Globals.conversationDetails = currentDetails;
-                Globals.slide = where;
+                //Globals.conversationDetails = currentDetails;
+                //Globals.slide = where;
                 joinRooms(fastJoin: true, alreadyInConversation: true);
                 cachedHistoryProvider.ClearCache(oldLocation);
                 cachedHistoryProvider.ClearCache(where.ToString());
@@ -922,7 +928,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void SendScreenshotSubmission(TargettedSubmission submission)
         {
-            stanza(Globals.location.activeConversation, new MeTLStanzas.ScreenshotSubmission(submission));
+            stanza(location.activeConversation, new MeTLStanzas.ScreenshotSubmission(submission));
         }
         public void AskForTeacherStatus(string teacher, string where)
         {
@@ -942,15 +948,15 @@ namespace MeTLLib.Providers.Connection
         public void sendFileResource(TargettedFile file)
         {
             var fileResource = new MeTLStanzas.FileResource(file);
-            if (Globals.location.availableSlides.Contains(file.slide))
-                stanza(Globals.location.activeConversation, fileResource);
+            if (location.availableSlides.Contains(file.slide))
+                stanza(location.activeConversation, fileResource);
             else
             {
                 var fileConversation = file.conversationJid.ToString();
                 var fileConversationJid = new Jid(fileConversation + "@" + metlServerAddress.muc);
                 joinRoom(fileConversationJid);
                 stanza(fileConversation.ToString(), fileResource);
-                if (fileConversation != Globals.location.activeConversation)
+                if (fileConversation != location.activeConversation)
                     leaveRoom(fileConversationJid);
             }
         }
@@ -978,12 +984,12 @@ namespace MeTLLib.Providers.Connection
         public void SendQuiz(QuizQuestion parameters)
         {
             var quiz = new MeTLStanzas.Quiz(parameters);
-            stanza(Globals.location.activeConversation, quiz);
+            stanza(location.activeConversation, quiz);
         }
         public void SendQuizAnswer(QuizAnswer parameters)
         {
             var quiz = new MeTLStanzas.QuizResponse(parameters);
-            stanza(Globals.location.activeConversation, quiz);
+            stanza(location.activeConversation, quiz);
         }
         public void SendDirtyConversationDetails(string jid)
         {
@@ -995,7 +1001,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void WakeUp(string room)
         {
-            Commands.WakeUpBoards.Execute(room);
+            //Commands.WakeUpBoards.Execute(room);
             /*This next bit needs to be moved back into the application
             foreach (var board in BoardManager.boards[room])
             {
@@ -1008,7 +1014,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void GoToSleep(string room)
         {
-            Commands.SleepBoards.Execute(room);
+            //Commands.SleepBoards.Execute(room);
             /*This bit needs to be moved back into the application
             foreach (var board in BoardManager.boards[room])
                 directCommand(room, SLEEP);*/
@@ -1069,7 +1075,7 @@ namespace MeTLLib.Providers.Connection
         }
         public virtual void handlePong(string[] parts)
         {
-            Commands.ReceivePong.Execute(parts[1]);
+            commands.ReceivePong.Execute(parts[1]);
         }
         public virtual void handleUpdateSlideCollection(string[] parts)
         {
@@ -1094,11 +1100,11 @@ namespace MeTLLib.Providers.Connection
         }
         public virtual void handleWakeUp(string[] parts)
         {
-            Commands.ReceiveWakeUp.Execute(null);
+            //Commands.ReceiveWakeUp.Execute(null);
         }
         public virtual void handleSleep(string[] parts)
         {
-            Commands.ReceiveSleep.Execute(null);
+            //Commands.ReceiveSleep.Execute(null);
         }
 
         private List<MeTLStanzas.TimestampedMeTLElement> SortOnTimestamp(List<MeTLStanzas.TimestampedMeTLElement> nodeList)

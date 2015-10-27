@@ -21,16 +21,14 @@ using System.Xml.Linq;
 namespace SandRibbon.Pages.Login
 {
 
-    public partial class LoginPage : Page
+    public partial class LoginPage : ServerAwarePage
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
-        public MetlConfiguration backend { get; set; }
         protected WebControl logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
-        public LoginPage(MetlConfiguration _backend)
+        public LoginPage(MetlConfiguration _backend) : base(_backend)
         {
-            backend = _backend;
             InitializeComponent();
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
@@ -116,7 +114,7 @@ namespace SandRibbon.Pages.Login
         }        
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.authenticationUrl;            
+            var loginUri = ServerContext.config.authenticationUrl;
             DeleteCookieForUrl(new Uri(loginUri));
             logonBrowser = new WebControl();
             logonBrowserContainer.Children.Add(logonBrowser);
@@ -147,8 +145,9 @@ namespace SandRibbon.Pages.Login
                     {
                         try
                         {
+                            ServerContext.initController(credentials);
                             Commands.Mark.Execute("Login");
-                            if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
+                            if (ServerContext.controller.client.Connect(credentials))
                             {
                                 Commands.LoginFailed.Execute(null);
                             }
@@ -164,7 +163,7 @@ namespace SandRibbon.Pages.Login
                             Commands.LoginFailed.Execute(null);
                             Commands.NoNetworkConnectionAvailable.Execute(null);
                         }
-                        NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
+                        NavigationService.Navigate(new ProfileSelectorPage(ServerConfig,Globals.profiles));
                     }                    
                 }
                 catch (Exception e)
@@ -209,7 +208,7 @@ namespace SandRibbon.Pages.Login
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var options = ClientFactory.Connection().UserOptionsFor(identity.name);
+            var options = ServerContext.controller.client.UserOptionsFor(identity.name);
             Commands.SetUserOptions.Execute(options);
             Globals.loadProfiles(identity);            
             Commands.Mark.Execute("Identity is established");

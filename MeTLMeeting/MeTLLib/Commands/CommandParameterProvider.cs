@@ -9,22 +9,18 @@ namespace MeTLLib
     class CommandParameterProvider
     {
         public static Dictionary<CompositeCommand, object> parameters = new Dictionary<CompositeCommand, object>();
-        static CommandParameterProvider() 
+        public CommandParameterProvider(Commands commands) 
         {
-            RegisterToAllCommands();
+            RegisterToAllCommands(commands);
         }
-        public static void RegisterToAllCommands()
+        public void RegisterToAllCommands(Commands commands)
         {
-            var ignoreCommands = new[] {
-                Commands.ReceiveWormMove, 
-                Commands.SendWormMove
-            };
             var applicationCommands = typeof(Commands)
                 .GetFields()
                 .Where(f=>f.FieldType == typeof(CompositeCommand))
-                .Select(f=>f.GetValue(null))
+                .Select(f=>f.GetValue(commands))
                 .Select(o=>(CompositeCommand)o)
-                .Where(hcc=>!ignoreCommands.Contains(hcc)).ToList();
+                .ToList();
             foreach(var command in applicationCommands)
             {
                 var thisCommand = command;

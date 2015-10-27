@@ -47,7 +47,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
-            <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{x:Static providers:Globals.OneNoteConfiguration}">
+            <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=Backend}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_office_onenote}" />

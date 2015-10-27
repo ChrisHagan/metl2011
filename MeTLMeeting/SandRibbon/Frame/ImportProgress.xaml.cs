@@ -13,13 +13,14 @@ namespace SandRibbon
         public static SubtractionConverter subtract = new SubtractionConverter();
         public static SlideDisplacementConverter SlideDisplacement = new SlideDisplacementConverter();
         public ObservableCollection<PowerpointImportProgress> fromStack = new ObservableCollection<PowerpointImportProgress>();
+        protected MeTLLib.MetlConfiguration backend;
 
         public ProgressDialog()
         {
             InitializeComponent();
             from.ItemsSource = fromStack;
             Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>(PreParserAvailable));
             Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));

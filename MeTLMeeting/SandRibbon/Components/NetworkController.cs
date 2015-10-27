@@ -9,112 +9,78 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
-    /*
-    public class ExternalServerAddress : MeTLServerAddress
-    {
-        public ExternalServerAddress()
-        {
-            var conf = MeTLConfiguration.Config;
-
-            Name = conf.External.Name;
-            stagingUri = new Uri(conf.External.Host, UriKind.Absolute);
-            productionUri = new Uri(conf.External.Host, UriKind.Absolute);
-        }
-    }
-
-    public class StagingSearchAddress : MeTLGenericAddress
-    {
-        public StagingSearchAddress()
-        {
-            Uri = new Uri(MeTLConfiguration.Config.Staging.MeggleUrl, UriKind.Absolute);
-        }
-    }
-
-    public class ProductionSearchAddress : MeTLGenericAddress
-    {
-        public ProductionSearchAddress()
-        {
-            Uri = new Uri(MeTLConfiguration.Config.Production.MeggleUrl, UriKind.Absolute);
-        }
-    }
-
-    public class ExternalSearchAddress : MeTLGenericAddress
-    {
-        public ExternalSearchAddress()
-        {
-            Uri = new Uri(MeTLConfiguration.Config.External.MeggleUrl, UriKind.Absolute);
-        }
-    }
-    */
-
     public class NetworkController
     {
-        protected ClientConnection client;
+        public ClientConnection client { get; protected set; }
         public MetlConfiguration config { get; protected set; }
-        public NetworkController(MetlConfiguration _config)
+        public Credentials creds { get; protected set; }
+        public MeTLLib.Commands commands { get; protected set; }
+        public NetworkController(MetlConfiguration _config,Credentials _creds)
         {
             config = _config;
-            Commands.Mark.Execute(String.Format("NetworkController instantiating: {0}",config));
-            client = buildServerSpecificClient(config);
+            creds = _creds;
+            commands = new MeTLLib.Commands();
+            commands.Mark.Execute(String.Format("NetworkController instantiating: {0}",config));
+            client = buildServerSpecificClient(config,creds,commands);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{
                 if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
                 {
                     registerCommands();
                     attachToClient();
-                    Commands.AllStaticCommandsAreRegistered();
+                    commands.AllStaticCommandsAreRegistered();
                     client.events.StatusChanged -= checkValidity;
                 }
                 else
                 {
                     if (WorkspaceStateProvider.savedStateExists())
                     {
-                        Commands.LogOut.Execute(true);
+                        commands.LogOut.Execute(true);
                     }
                 }
             };
             client.events.StatusChanged += checkValidity;
         }       
-        private ClientConnection buildServerSpecificClient(MetlConfiguration c)
+        private ClientConnection buildServerSpecificClient(MetlConfiguration c,Credentials creds,MeTLLib.Commands cmds)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
-            return MeTLLib.ClientFactory.Connection(c);
+            return MeTLLib.ClientFactory.Connection(c,creds,cmds);
         }
         #region commands
         private void registerCommands()
         {
-            //Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
-            Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
-            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
-            Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
-            Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
-            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyStroke));
-            Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
-            Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(SendFile));
-            Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
-            Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
-            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
-            Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
-            Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
-            Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
-            Commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));
-            Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
-            Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
-            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
-            Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
-            Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
-            Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
+            //commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
+            commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
+            commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
+            commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
+            commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
+            commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
+            commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
+            commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyStroke));
+            commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
+            commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(SendFile));
+            commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
+            commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
+            commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
+            commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
+            commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
+            commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
+            commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
+            commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));
+            commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
+            commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
+            commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
+            commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
+            commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
+            commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
         }
         /*
         private void RequestUserInformations(List<string> usernames)
         {
             var results = client.getMeTLUserInformations(usernames);
-            Commands.ReceiveMeTLUserInformations.Execute(results);
+            commands.ReceiveMeTLUserInformations.Execute(results);
         }
         */
         private void RequestTeacherStatus(TeacherStatus obj)
@@ -141,7 +107,7 @@ namespace SandRibbon.Components
         private void JoinConversation(string jid)
         {
             client.JoinConversation(jid);
-            Commands.CheckExtendedDesktop.ExecuteAsync(null);
+            commands.CheckExtendedDesktop.ExecuteAsync(null);
         }
         private void MoveTo(int slide)
         {
@@ -201,7 +167,7 @@ namespace SandRibbon.Components
         }
         private void LeaveLocation(object _unused)
         {
-            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             client.LeaveLocation();
         }
         private void SendTextBox(TargettedTextBox ttb)
@@ -282,7 +248,7 @@ namespace SandRibbon.Components
         }
         private void teacherStatusReceived(object sender, TeacherStatusRequestEventArgs e)
         {
-            Commands.ReceiveTeacherStatus.Execute(e.status);
+            commands.ReceiveTeacherStatus.Execute(e.status);
         }
         private void teacherStatusRequest(object sender, TeacherStatusRequestEventArgs e)
         {
@@ -299,7 +265,7 @@ namespace SandRibbon.Components
         }
         private void presenceAvailable(object sender, PresenceAvailableEventArgs e)
         {
-           Commands.ReceiveTeacherStatus.Execute(new TeacherStatus
+           commands.ReceiveTeacherStatus.Execute(new TeacherStatus
            {
                Conversation = e.presence.Where,
                Joining = e.presence.Joining,
@@ -310,11 +276,11 @@ namespace SandRibbon.Components
 
         private void slideCollectionChanged(object sender, SlideCollectionUpdatedEventArgs e)
         {
-            Commands.UpdateNewSlideOrder.Execute(e.Conversation);
+            commands.UpdateNewSlideOrder.Execute(e.Conversation);
         }
         private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
         {
-            Commands.SyncedMoveRequested.Execute(e.where);
+            commands.SyncedMoveRequested.Execute(e.where);
         }
         private void chatAvailable(object sender, ChatAvailableEventArgs e)
         {
@@ -325,77 +291,77 @@ namespace SandRibbon.Components
         
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == ClientFactory.Connection().location.activeConversation.GetHashCode())
-                Commands.UpdateConversationDetails.Execute(e.conversationDetails);
+            if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == client.location.activeConversation.GetHashCode())
+                commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else 
             {
-                Application.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
+                Application.Current.Dispatcher.adopt(() => commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
             }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyAutoShape.ExecuteAsync(e.dirtyElement);
+            commands.ReceiveDirtyAutoShape.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyImageAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyImage.ExecuteAsync(e.dirtyElement);
+            commands.ReceiveDirtyImage.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyLiveWindowAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyLiveWindow.ExecuteAsync(e.dirtyElement);
+            commands.ReceiveDirtyLiveWindow.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyStrokeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyStrokes.ExecuteAsync(new[] { e.dirtyElement });
+            commands.ReceiveDirtyStrokes.ExecuteAsync(new[] { e.dirtyElement });
         }
         private void dirtyTextBoxAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyText.ExecuteAsync(e.dirtyElement);
+            commands.ReceiveDirtyText.ExecuteAsync(e.dirtyElement);
         }
         private void discoAvailable(object sender, DiscoAvailableEventArgs e)
         {
         }
         private void fileAvailable(object sender, FileAvailableEventArgs e)
         {
-            Commands.ReceiveFileResource.ExecuteAsync(e.file);
+            commands.ReceiveFileResource.ExecuteAsync(e.file);
         }
         private void imageAvailable(object sender, ImageAvailableEventArgs e)
         {
-            Commands.ReceiveImage.ExecuteAsync(e.image);
+            commands.ReceiveImage.ExecuteAsync(e.image);
         }
         private void moveDeltaAvailable(object sender, MoveDeltaAvailableEventArgs e)
         {
-            Commands.ReceiveMoveDelta.ExecuteAsync(e.moveDelta);
+            commands.ReceiveMoveDelta.ExecuteAsync(e.moveDelta);
         }
         private void liveWindowAvailable(object sender, LiveWindowAvailableEventArgs e)
         {
-            Commands.ReceiveLiveWindow.ExecuteAsync(e.livewindow);
+            commands.ReceiveLiveWindow.ExecuteAsync(e.livewindow);
         }
         private void preParserAvailable(object sender, PreParserAvailableEventArgs e)
         {
-            Commands.PreParserAvailable.ExecuteAsync(e.parser);
+            commands.PreParserAvailable.ExecuteAsync(e.parser);
         }
         private void quizAnswerAvailable(object sender, QuizAnswerAvailableEventArgs e)
         {
-            Commands.ReceiveQuizAnswer.ExecuteAsync(e.QuizAnswer);
+            commands.ReceiveQuizAnswer.ExecuteAsync(e.QuizAnswer);
         }
         private void quizQuestionAvailable(object sender, QuizQuestionAvailableEventArgs e)
-        { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
+        { commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            Commands.Reconnecting.Execute(e.isConnected);
+            commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {
-            Commands.ReceiveStroke.ExecuteAsync(e.stroke);
+            commands.ReceiveStroke.ExecuteAsync(e.stroke);
         }
         private void submissionAvailable(object sender, SubmissionAvailableEventArgs e)
         {
-            Commands.ReceiveScreenshotSubmission.ExecuteAsync(e.submission);
+            commands.ReceiveScreenshotSubmission.ExecuteAsync(e.submission);
         }
         private void textBoxAvailable(object sender, TextBoxAvailableEventArgs e)
         {
-            Commands.ReceiveTextBox.ExecuteAsync(e.textBox);
+            commands.ReceiveTextBox.ExecuteAsync(e.textBox);
         }
         #endregion
     }

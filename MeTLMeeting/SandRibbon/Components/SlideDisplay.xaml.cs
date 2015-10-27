@@ -23,16 +23,20 @@ using System.Windows.Media;
 using MeTLLib.Utilities;
 using System.ComponentModel;
 using System.Windows.Threading;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {
     public class SlideIndexConverter : IValueConverter
     {
-        private ObservableCollection<Slide> collection;
+        //private ObservableCollection<Slide> collection;
+        public SlideIndexConverter() : base() { }
+        /*
         public SlideIndexConverter(ObservableCollection<Slide> collection)
         {
             this.collection = collection;
         }
+        */
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value is int)
@@ -113,7 +117,9 @@ namespace SandRibbon.Components
         }
         public int currentSlideId = -1;
         public ObservableCollection<Slide> thumbnailList { get; set; }
-        public static SlideIndexConverter SlideIndex;
+        //public static SlideIndexConverter SlideIndex;
+        public ThumbnailProvider thumbnailProvider;
+        public MetlConfiguration backend;
         public SlideDisplay()
         {
             refresher = new DispatcherTimer();
@@ -122,25 +128,26 @@ namespace SandRibbon.Components
             refresher.Start();
             thumbnailList = new ObservableCollection<Slide>();
             thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
-            SlideIndex = new SlideIndexConverter(thumbnailList);
+            //SlideIndex = new SlideIndexConverter();
             myMaxSlideIndex = -1;
             TeachersCurrentSlideIndex = -1;
             IsNavigationLocked = calculateNavigationLocked();
+            thumbnailProvider = new ThumbnailProvider(backend);
             InitializeComponent();
             DataContext = this;
             slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
             Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
+            App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); }));
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
-            Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
+            App.getContextFor(backend).controller.commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             var paste = new CompositeCommand();
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
             slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
@@ -158,7 +165,7 @@ namespace SandRibbon.Components
             {
                 var id = context[i].id;
                 var container = generator.ContainerFromIndex(i);
-                ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                thumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
             }
         }
 
@@ -246,7 +253,7 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
+            App.getContextFor(backend).controller.client.AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
         }
         private bool isSlideInSlideDisplay(int slide)
         {
@@ -359,7 +366,7 @@ namespace SandRibbon.Components
         }
         public void EditConversation(object _obj)
         {
-            var editConversation = new EditConversation();
+            var editConversation = new EditConversation(backend);
             editConversation.Owner = Window.GetWindow(this);
             editConversation.ShowDialog();
         }
@@ -372,7 +379,7 @@ namespace SandRibbon.Components
                 thumbnailList.Clear();
                 return;
             }
-            Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = Globals.conversationDetails.Jid, Slide = "0", Teacher = Globals.conversationDetails.Author });
+            App.getContextFor(backend).controller.commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = Globals.conversationDetails.Jid, Slide = "0", Teacher = Globals.conversationDetails.Author });
             IsNavigationLocked = calculateNavigationLocked();
             checkMovementLimits();
             if (thumbnailList.Count == 0)
@@ -424,8 +431,8 @@ namespace SandRibbon.Components
                         foreach (var slide in removedItems) ((Slide)slide).refresh();
                         AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
 
-                        Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
-                        SendSyncMove(currentSlideId);
+                        App.getContextFor(backend).controller.commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
+                        SendSyncMove(currentSlideId,backend);
                         checkMovementLimits();
                     }
                     else if (sender is ListBox)
@@ -439,11 +446,11 @@ namespace SandRibbon.Components
             }
         }
 
-        public static void SendSyncMove(int currentSlideId)
+        public static void SendSyncMove(int currentSlideId,MetlConfiguration backend)
         {
             if (Globals.isAuthor && Globals.synched)
             {
-                Commands.SendSyncMove.ExecuteAsync(currentSlideId);
+                App.getContextFor(backend).controller.commands.SendSyncMove.ExecuteAsync(currentSlideId);
             }
         }
 

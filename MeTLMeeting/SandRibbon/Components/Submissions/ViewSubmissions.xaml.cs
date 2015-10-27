@@ -11,13 +11,15 @@ namespace SandRibbon.Components.Submissions
 {
     public partial class ViewSubmissions : Window
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public ObservableCollection<TargettedSubmission> submissions {get; set;}        
         public ViewSubmissions()
         {
             InitializeComponent();
             Submissions.ItemsSource = submissions;
             Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(close));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(close));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(close));
         }
         

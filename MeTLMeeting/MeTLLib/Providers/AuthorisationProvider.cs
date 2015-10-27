@@ -35,7 +35,7 @@ namespace MeTLLib.Providers
                 {
                     var eligibleGroups = token.groups;
                     var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups, token.mail);
-                    Globals.credentials = credentials;
+                    //Globals.credentials = credentials;
                     return credentials;
                 }
             }

@@ -6,11 +6,13 @@ namespace SandRibbon.Tabs.Groups
 {
     public partial class ToolBox : UserControl
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public ToolBox()
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
             Commands.ChangeTextMode.RegisterCommand(new DelegateCommand<string>(changeTextMode));
 
         }

@@ -25,10 +25,12 @@ namespace SandRibbon.Components.SimpleImpl
     /// </summary>
     public partial class SimpleModeSwitcher : UserControl
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public SimpleModeSwitcher()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
             Commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));

@@ -13,11 +13,13 @@ using SandRibbon.Providers;
 using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using MeTLLib;
 
 namespace SandRibbon.Quizzing
 {
-    public partial class CreateAQuiz : Window
+    public partial class CreateAQuiz : ServerAwareWindow
     {
+        public CreateAQuiz(MetlConfiguration backend) : base(backend) { }
         private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
@@ -31,17 +33,17 @@ namespace SandRibbon.Quizzing
             question.GotFocus += selectAll;
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(ServerConfig).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             question.Focus();
         }
         private void JoinConversation(object obj)
         {
-            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(ServerConfig).controller.commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             Close();
         }
         private void Close(object sender, RoutedEventArgs e)
         {
-            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(ServerConfig).controller.commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             this.Close();
         }
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
@@ -61,7 +63,7 @@ namespace SandRibbon.Quizzing
                 if (!string.IsNullOrEmpty(answer.optionText))
                     quiz.Options.Add(answer);
             }
-            Commands.SendQuiz.ExecuteAsync(quiz);
+            ServerContext.controller.commands.SendQuiz.ExecuteAsync(quiz);
             Trace.TraceInformation("CreatedQuizQuestion {0}", question.Text);
             this.Close();
         }
@@ -189,7 +191,7 @@ namespace SandRibbon.Quizzing
                                 {
                                     Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
                                     
-                                    url = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
+                                    url = ServerContext.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                     var image = new Image();
                                     BitmapImage source = new BitmapImage();
                                     source.BeginInit();

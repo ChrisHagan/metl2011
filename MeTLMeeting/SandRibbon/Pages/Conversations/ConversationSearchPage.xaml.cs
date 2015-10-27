@@ -34,14 +34,14 @@ namespace SandRibbon.Pages.Conversations
             return false;
         }
     }
-    public partial class ConversationSearchPage : Page
+    public partial class ConversationSearchPage : ServerAwarePage
     {
         private ObservableCollection<SearchConversationDetails> searchResultsObserver = new ObservableCollection<SearchConversationDetails>();
 
         private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
 
-        public ConversationSearchPage()
+        public ConversationSearchPage(MetlConfiguration _backend) : base(_backend)
         {
             InitializeComponent();
             DataContext = searchResultsObserver;
@@ -95,7 +95,10 @@ namespace SandRibbon.Pages.Conversations
             {
                 Commands.BlockSearch.ExecuteAsync(null);
                 var bw = sender as BackgroundWorker;
-                e.Result = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+                Dispatcher.adopt(delegate
+                {
+                    e.Result = ServerContext.controller.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+                });
             };
 
             search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
@@ -192,7 +195,7 @@ namespace SandRibbon.Pages.Conversations
         private void EditConversation(object sender, RoutedEventArgs e)
         {
             var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            NavigationService.Navigate(new ConversationEditPage(conversation));
+            NavigationService.Navigate(new ConversationEditPage(ServerConfig,conversation));
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)
@@ -203,11 +206,11 @@ namespace SandRibbon.Pages.Conversations
         private void JoinConversation(object sender, RoutedEventArgs e)
         {
             var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            var conversation = ClientFactory.Connection().DetailsOf(requestedConversation.Jid);
+            var conversation = ServerContext.controller.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(Globals.credentials))
             {
-                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
-                NavigationService.Navigate(new ConversationOverviewPage(conversation));
+                ServerContext.controller.commands.JoinConversation.ExecuteAsync(conversation.Jid);
+                NavigationService.Navigate(new ConversationOverviewPage(ServerConfig,conversation));
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");
@@ -217,7 +220,7 @@ namespace SandRibbon.Pages.Conversations
         {
             if (SearchResults.SelectedItems.Count > 0)
             {
-                NavigationService.Navigate(new ConversationComparisonPage(SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+                NavigationService.Navigate(new ConversationComparisonPage(ServerConfig,SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
             }
         }
     }

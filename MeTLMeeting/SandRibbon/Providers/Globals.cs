@@ -10,6 +10,7 @@ using SandRibbonObjects;
 using SandRibbon.Profiles;
 using SandRibbon.Pages.Collaboration.Palettes;
 using SandRibbon.Pages.Conversations.Models;
+using MeTLLib;
 
 namespace SandRibbon.Providers
 {
@@ -128,11 +129,13 @@ namespace SandRibbon.Providers
                 canvasSize = value;
             }
         }
+        /*
         public static OneNoteConfiguration OneNoteConfiguration { get; set; } = new OneNoteConfiguration
         {
             apiKey = "exampleApiKey",
             apiSecret = "exampleApiSecret"
         };
+        */
         public static PedagogyLevel pedagogy
         {
             get
@@ -214,11 +217,14 @@ namespace SandRibbon.Providers
                 return (int)Commands.SyncedMoveRequested.LastValue();
             }
         }
+        private static MeTLLib.MetlConfiguration backend;
+
         public static int slide
         {
             get
             {
-                return Commands.MoveToCollaborationPage.IsInitialised ? (int)Commands.MoveToCollaborationPage.LastValue() : -1;
+                var ctx = App.getContextFor(backend);
+                return ctx != null && ctx.controller != null && ctx.controller.commands.MoveToCollaborationPage.IsInitialised ? (int)App.getContextFor(backend).controller.commands.MoveToCollaborationPage.LastValue() : -1;
             }
         }
         public static string me

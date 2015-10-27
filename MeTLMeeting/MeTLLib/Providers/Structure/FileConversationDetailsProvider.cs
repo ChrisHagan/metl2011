@@ -32,11 +32,13 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private IResourceUploader resourceUploader;
-        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader)
+        public Credentials credentials { get; protected set; }
+        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader,Credentials creds)
             : base(factory)
         {
             server = _server;
             resourceUploader = uploader;
+            credentials = creds;
         }
         /*
         private string ROOT_ADDRESS
@@ -56,7 +58,7 @@ namespace MeTLLib.Providers.Structure
         private static readonly string DETAILS = "details.xml";
         public bool isAccessibleToMe(string jid)
         {
-            var myGroups = Globals.authorizedGroups.Select(g => g.groupKey.ToLower());
+            var myGroups = credentials.authorizedGroups.Select(g => g.groupKey.ToLower());
             var details = DetailsOf(jid);
             return myGroups.Contains(details.Subject.ToLower());
         }

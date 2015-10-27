@@ -8,6 +8,7 @@ namespace SandRibbon.Automation
 {
     public partial class MultipleClientLauncher : Window
     {
+        protected MeTLLib.MetlConfiguration backend;
         private static Random random = new Random();
         public static RoutedCommand LaunchMultipleClientAutomation = new RoutedCommand();
         public static RoutedCommand AllMoveTo = new RoutedCommand();
@@ -66,8 +67,8 @@ namespace SandRibbon.Automation
         {
             foreach (var child in windows)
             {
-                Commands.JoinConversation.ExecuteAsync("Sample");
-                Commands.MoveToCollaborationPage.ExecuteAsync(e.Parameter);
+                App.getContextFor(backend).controller.commands.JoinConversation.ExecuteAsync("Sample");
+                App.getContextFor(backend).controller.commands.MoveToCollaborationPage.ExecuteAsync(e.Parameter);
             }
         }
         private void CanIMove(object sender, CanExecuteRoutedEventArgs e)

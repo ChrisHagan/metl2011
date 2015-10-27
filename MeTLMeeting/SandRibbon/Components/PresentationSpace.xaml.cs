@@ -29,16 +29,42 @@ namespace SandRibbon.Components
     public partial class PresentationSpace
     {
         private bool inConversation;
+        public ToolableSpaceModel ToolableSpaceModel
+        {
+            get
+            {
+                return (ToolableSpaceModel)GetValue(toolableSpaceModelProperty);
+            }
+            set
+            {
+                SetValue(toolableSpaceModelProperty, value);
+            }
+        }
+
+        // Using a DependencyProperty as the backing store for backend.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty toolableSpaceModelProperty =
+            DependencyProperty.Register("ToolableSpaceModel", typeof(ToolableSpaceModel), typeof(PresentationSpace), new PropertyMetadata(new ToolableSpaceModel(MetlConfiguration.empty)));
+
+        protected MetlConfiguration backend { get { return ToolableSpaceModel.backend; } }
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
             privacyOverlay.Freeze();
             InitializeComponent();
+            var a = this.DataContext;
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            Loaded += (sender, args) =>
+               {
+                   var contextCommands = App.getContextFor(backend).controller.commands;
+
+                   contextCommands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
+                   contextCommands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+
+               };
+
+
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
@@ -47,10 +73,10 @@ namespace SandRibbon.Components
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));            
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));
             Commands.AllStaticCommandsAreRegistered();
             inConversation = true;
-        }        
+        }
 
         private void hideConversationSearch(object obj)
         {
@@ -72,7 +98,7 @@ namespace SandRibbon.Components
                 if (author != Globals.me && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.getContextFor(ToolableSpaceModel.backend).controller.client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
             Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
@@ -84,7 +110,7 @@ namespace SandRibbon.Components
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = MeTLLib.ClientFactory.Connection();
+                                 var conn = App.getContextFor(ToolableSpaceModel.backend).controller.client;
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
@@ -162,8 +188,8 @@ namespace SandRibbon.Components
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             var model = DataContext as ToolableSpaceModel;
-            if (parser.location.currentSlide == model.context.Slide)
-            {
+            //if (parser.location.currentSlide == model.context.Slide)
+            //{
                 BeginInit();
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
@@ -171,7 +197,7 @@ namespace SandRibbon.Components
                     stack.DoText(text);
                 stack.RefreshCanvas();
                 EndInit();
-            }
+            //}
         }
         private static System.Windows.Forms.Screen getSecondaryScreen()
         {
@@ -299,9 +325,9 @@ namespace SandRibbon.Components
             System.Windows.Controls.Canvas.SetTop(marquee, rect.Top);
 
             var origin = rect.Location;
-            Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
+            App.getContextFor(backend).controller.commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
             (Globals.slide, Globals.me, marquee, origin, new Point(0, 0),
-            MeTLLib.ClientFactory.Connection().UploadResourceToPath(
+            App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",
@@ -418,7 +444,7 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
         }
         private FrameworkElement clonePublicOnly()
         {

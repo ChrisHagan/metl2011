@@ -11,15 +11,15 @@ using System.Windows.Media.Imaging;
 
 namespace SandRibbon.Components
 {
-    public partial class EditConversation : Window
+    public partial class EditConversation : ServerAwareWindow
     {
         public ObservableCollection<Slide> activeSlideList = new ObservableCollection<Slide>();
-        public static SlideIndexConverter SlideIndex;
-        public static UrlForSlideConverter UrlForSlide;
-        public EditConversation()
+        //public SlideIndexConverter SlideIndex;
+        //public UrlForSlideConverter UrlForSlide;
+        public EditConversation(MetlConfiguration _backend) : base(_backend)
         {
-            SlideIndex = new SlideIndexConverter(activeSlideList);
-            UrlForSlide = new UrlForSlideConverter();
+            //SlideIndex = new SlideIndexConverter(activeSlideList);
+            //UrlForSlide = new UrlForSlideConverter(backend);
             InitializeComponent();
             activeSlides.ItemsSource = activeSlideList;
             loadConversation(Globals.conversationDetails.Slides);
@@ -47,8 +47,8 @@ namespace SandRibbon.Components
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
 
-            ClientFactory.Connection().UpdateConversationDetails(details);
-            Commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
+            ServerContext.controller.client.UpdateConversationDetails(details);
+            ServerContext.controller.commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
             Close();
         }
         private void first(object sender, RoutedEventArgs e)
@@ -75,10 +75,18 @@ namespace SandRibbon.Components
     }
     public class UrlForSlideConverter : IValueConverter
     {
+        /*
+        public MetlConfiguration backend;
+        public UrlForSlideConverter(MetlConfiguration _backend)
+        {
+            backend = _backend;
+        }
+        */
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var id = value.ToString();
-            var server = ClientFactory.Connection().server;
+            var backend = parameter as MetlConfiguration;
+            var server = App.getContextFor(backend).controller.client.server;
             var host = server.name;
             return new BitmapImage(new Uri(string.Format(server.thumbnailUrl + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
         }

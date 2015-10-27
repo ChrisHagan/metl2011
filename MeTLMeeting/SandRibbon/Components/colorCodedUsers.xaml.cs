@@ -9,7 +9,7 @@ namespace SandRibbon.Components
     /// <summary>
     /// Interaction logic for colorCodedUsers.xaml
     /// </summary>
-    public partial class colorCodedUsers : Window
+    public partial class colorCodedUsers : ServerAwareWindow
     {
         public colorCodedUsers()
         {

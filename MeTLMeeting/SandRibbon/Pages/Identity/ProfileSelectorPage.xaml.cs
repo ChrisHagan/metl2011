@@ -1,4 +1,5 @@
-﻿using SandRibbon.Pages.Collaboration;
+﻿using MeTLLib;
+using SandRibbon.Pages.Collaboration;
 using SandRibbon.Profiles;
 using SandRibbon.Providers;
 using System.Collections.Generic;
@@ -6,9 +7,9 @@ using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Identity
 {
-    public partial class ProfileSelectorPage : Page
+    public partial class ProfileSelectorPage : ServerAwarePage
     {
-        public ProfileSelectorPage(IEnumerable<Profile> profiles)
+        public ProfileSelectorPage(MetlConfiguration _backend, IEnumerable<Profile> profiles) : base(_backend)
         {
             InitializeComponent();
             this.profiles.ItemsSource = profiles;
@@ -19,12 +20,12 @@ namespace SandRibbon.Pages.Identity
             var button = sender as Button;
             var profile = button.DataContext as Profile;
             Globals.currentProfile = profile;
-            NavigationService.Navigate(new ChooseCollaborationContextPage());
+            NavigationService.Navigate(new ChooseCollaborationContextPage(ServerConfig));
         }
 
         private void AddProfile(object sender, System.Windows.RoutedEventArgs e)
         {
-            NavigationService.Navigate(new CreateProfilePage());
+            NavigationService.Navigate(new CreateProfilePage(ServerConfig));
         }
     }
 }

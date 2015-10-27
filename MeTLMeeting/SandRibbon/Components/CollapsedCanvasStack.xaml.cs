@@ -26,6 +26,8 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using MeTLLib;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -147,6 +149,19 @@ namespace SandRibbon.Components
 
     public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
+
+
+        public ToolableSpaceModel ToolableSpaceModel
+        {
+            get { return (ToolableSpaceModel)GetValue(toolableSpaceModelProperty); }
+            set { SetValue(toolableSpaceModelProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for backend.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty toolableSpaceModelProperty =
+            DependencyProperty.Register("ToolableSpaceModel", typeof(ToolableSpaceModel), typeof(CollapsedCanvasStack), new PropertyMetadata(new ToolableSpaceModel(MetlConfiguration.empty)));
+
+
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();        
         private const bool CanFocus = true;
         private bool _focusable = true;
@@ -196,6 +211,7 @@ namespace SandRibbon.Components
                 _lastFocusedTextBox = value;
             }
         }
+        protected MetlConfiguration backend { get { return ToolableSpaceModel.backend; } }
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -205,9 +221,6 @@ namespace SandRibbon.Components
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
-            Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
-            Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
-            Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
 
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(ToggleBold));
@@ -215,17 +228,11 @@ namespace SandRibbon.Components
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(ToggleItalic));
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(ToggleStrikethrough));
 
-            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>((image) => ReceiveImages(new[] { image })));
-            Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
-            Commands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
-            Commands.ReceiveMoveDelta.RegisterCommandToDispatcher(new DelegateCommand<TargettedMoveDelta>((moveDelta) => { ReceiveMoveDelta(moveDelta); }));
 
-            Commands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<TargettedTextBox>(ReceiveTextBox));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<TextInformation>(updateStyling));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(resetTextbox));
             Commands.EstablishPrivileges.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
-            Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
 
 #if TOGGLE_CONTENT
             Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
@@ -235,13 +242,11 @@ namespace SandRibbon.Components
 
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imageDropped));
             Commands.ImagesDropped.RegisterCommandToDispatcher(new DelegateCommand<List<ImageDrop>>(imagesDropped));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<Privacy>(changeSelectedItemsPrivacy));
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
@@ -249,6 +254,18 @@ namespace SandRibbon.Components
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute));
             Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
             {
+                var contextCommands = App.getContextFor(backend).controller.commands;
+                contextCommands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
+                contextCommands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
+                contextCommands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
+                contextCommands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
+                contextCommands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
+                contextCommands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>((image) => ReceiveImages(new[] { image })));
+                contextCommands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
+                contextCommands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
+                contextCommands.ReceiveMoveDelta.RegisterCommandToDispatcher(new DelegateCommand<TargettedMoveDelta>((moveDelta) => { ReceiveMoveDelta(moveDelta); }));
+                contextCommands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<TargettedTextBox>(ReceiveTextBox));
+                contextCommands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
                 if (_target == null)
                 {
                     _target = (string)FindResource("target");
@@ -273,7 +290,7 @@ namespace SandRibbon.Components
 
             //For development
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
-                UndoHistory.ShowVisualiser(Window.GetWindow(this));
+                App.getContextFor(ToolableSpaceModel.backend).undoHistory.ShowVisualiser(Window.GetWindow(this));
         }
         private void ToggleBold(object o) {
             SetLayer("Text");
@@ -406,13 +423,13 @@ namespace SandRibbon.Components
             if (e.Key == Key.PageUp || (e.Key == Key.Up && myTextBox == null))
             {
                 if (Commands.MoveToPrevious.CanExecute(null))
-                    Commands.MoveToPrevious.Execute(null);
+                    Commands.MoveToPrevious.Execute(ToolableSpaceModel.backend);
                 e.Handled = true;
             }
             if (e.Key == Key.PageDown || (e.Key == Key.Down && myTextBox == null))
             {
                 if (Commands.MoveToNext.CanExecute(null))
-                    Commands.MoveToNext.Execute(null);
+                    Commands.MoveToNext.Execute(ToolableSpaceModel.backend);
                 e.Handled = true;
             }
         }
@@ -569,7 +586,7 @@ namespace SandRibbon.Components
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
                     moveDelta.isDeleted = true;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
-                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    App.getContextFor(backend).controller.commands.SendMoveDelta.ExecuteAsync(moveDelta);
                     Keyboard.Focus(this); // set keyboard focus to the current canvas so the help button does not grey out
 
                     ink.redo();
@@ -578,7 +595,7 @@ namespace SandRibbon.Components
                     ClearAdorners();
                     Work.Focus();
                 };
-            UndoHistory.Queue(undo, redo, "Delete selected items");
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Delete selected items");
             redo();
         }
         private void HideConversationSearchBox(object obj)
@@ -912,7 +929,7 @@ namespace SandRibbon.Components
                     moveDelta.yOrigin = endingBounds.Top;
 
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
-                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    App.getContextFor(backend).controller.commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.undo();
                     text.undo();
@@ -942,7 +959,7 @@ namespace SandRibbon.Components
                     moveDelta.yOrigin = startingBounds.Top;
 
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
-                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    App.getContextFor(backend).controller.commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.redo();
                     text.redo();
@@ -955,7 +972,7 @@ namespace SandRibbon.Components
                     AddAdorners();
                     Work.Focus();
                 };
-            UndoHistory.Queue(undo, redo, "Selection moved or resized");
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Selection moved or resized");
             redo();
         }
         private IEnumerable<UIElement> GetSelectedClonedImages()
@@ -1235,7 +1252,7 @@ namespace SandRibbon.Components
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
             if (receivedStrokes.Count() == 0) return;
-            if (receivedStrokes.First().slide != Globals.slide) return;
+            ///if (receivedStrokes.First().slide != Globals.slide) return;
             var strokeTarget = _target;
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
@@ -1378,7 +1395,7 @@ namespace SandRibbon.Components
                 foreach (var image in selectedElements.Where(i => i.tag().privacy != newPrivacy))
                 {
                     // dirty handled by move delta
-                    //Commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (Globals.slide, image.tag().author, _target, image.tag().privacy, image.tag().id));
+                    //App.getContextFor(backend).controller.commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (Globals.slide, image.tag().author, _target, image.tag().privacy, image.tag().id));
 
                     var imagesToUpdate = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
                     if (imagesToUpdate.Count() > 0)
@@ -1401,7 +1418,7 @@ namespace SandRibbon.Components
                 foreach (var image in selectedElements.Where(i => i.tag().privacy != newPrivacy))
                 {
                     // dirty handled by move delta
-                    //Commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (Globals.slide, image.tag().author, _target, image.tag().privacy, image.tag().id));
+                    //App.getContextFor(backend).controller.commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (Globals.slide, image.tag().author, _target, image.tag().privacy, image.tag().id));
                     var imagesToUpdate = Work.ImageChildren().Where(i => i.tag().id == image.tag().id);
                     if (imagesToUpdate.Count() > 0)
                     {
@@ -1503,7 +1520,7 @@ namespace SandRibbon.Components
                     var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
-                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    App.getContextFor(backend).controller.commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.redo();
                     text.redo();
@@ -1521,7 +1538,7 @@ namespace SandRibbon.Components
                     moveDelta.xOrigin = mdb.Left;
                     moveDelta.yOrigin = mdb.Top;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
-                    Commands.SendMoveDelta.ExecuteAsync(moveDelta);
+                    App.getContextFor(backend).controller.commands.SendMoveDelta.ExecuteAsync(moveDelta);
 
                     ink.undo();
                     text.undo();
@@ -1531,7 +1548,7 @@ namespace SandRibbon.Components
                     Work.Focus();
                 };
             redo();
-            UndoHistory.Queue(undo, redo, "Selected items changed privacy");
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
 
         public void RefreshCanvas()
@@ -1601,7 +1618,7 @@ namespace SandRibbon.Components
                         Work.Select(new StrokeCollection(new[] { thisStroke }));
                     AddAdorners();
                 };
-            UndoHistory.Queue(undo, redo, String.Format("Added stroke [{0}]", thisStroke.tag().id));
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, String.Format("Added stroke [{0}]", thisStroke.tag().id));
             //redo();
             doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
         }
@@ -1646,13 +1663,13 @@ namespace SandRibbon.Components
                                      }
                                  });
             redo();
-            UndoHistory.Queue(undo, redo, String.Format("Deleted stroke [{0}]", stroke.tag().id));
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, String.Format("Deleted stroke [{0}]", stroke.tag().id));
         }
 
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
         {
             var strokeTag = stroke.tag();
-            Commands.SendDirtyStroke.Execute(new TargettedDirtyElement(Globals.slide, strokeTag.author, _target, strokeTag.privacy, strokeTag.id, strokeTag.timestamp));
+            App.getContextFor(backend).controller.commands.SendDirtyStroke.Execute(new TargettedDirtyElement(Globals.slide, strokeTag.author, _target, strokeTag.privacy, strokeTag.id, strokeTag.timestamp));
         }
         private void doMyStrokeAddedExceptHistory(PrivateAwareStroke stroke, Privacy thisPrivacy)
         {
@@ -1668,10 +1685,10 @@ namespace SandRibbon.Components
             var translatedStroke = OffsetNegativeCartesianStrokeTranslate(stroke);
             var privateRoom = string.Format("{0}{1}", Globals.slide, translatedStroke.tag().author);
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedStroke.tag().author)
-                Commands.SneakInto.Execute(privateRoom);
-            Commands.SendStroke.Execute(new TargettedStroke(Globals.slide, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
+                App.getContextFor(backend).controller.commands.SneakInto.Execute(privateRoom);
+            App.getContextFor(backend).controller.commands.SendStroke.Execute(new TargettedStroke(Globals.slide, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != stroke.tag().author)
-                Commands.SneakOutOf.Execute(privateRoom);
+                App.getContextFor(backend).controller.commands.SneakOutOf.Execute(privateRoom);
         }
         #endregion
         #region Images
@@ -1679,12 +1696,12 @@ namespace SandRibbon.Components
         private void sendImage(MeTLImage newImage)
         {
             newImage.UpdateLayout();
-            Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().timestamp));
+            App.getContextFor(backend).controller.commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().timestamp));
         }
         private void dirtyImage(MeTLImage imageToDirty)
         {
             imageToDirty.ApplyPrivacyStyling(contentBuffer, _target, imageToDirty.tag().privacy);
-            Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, imageToDirty.tag().privacy, imageToDirty.tag().id, imageToDirty.tag().timestamp));
+            App.getContextFor(backend).controller.commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, imageToDirty.tag().privacy, imageToDirty.tag().id, imageToDirty.tag().timestamp));
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
@@ -1712,7 +1729,7 @@ namespace SandRibbon.Components
         {
             foreach (var image in images)
             {
-                if (image.slide == Globals.slide && image.HasSameTarget(_target))
+                if (/*image.slide == Globals.slide && */image.HasSameTarget(_target))
                 {
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
@@ -2025,7 +2042,7 @@ namespace SandRibbon.Components
                 worker.DoWork += (s, e) =>
                  {
                      File.Copy(unMangledFilename, filename);
-                     MeTLLib.ClientFactory.Connection().UploadAndSendFile(
+                     App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadAndSendFile(
                          new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(filename)));
                      File.Delete(filename);
                  };
@@ -2093,7 +2110,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
                     if (!fileName.StartsWith("http"))
-                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
+                        App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
                     else
                         sendImage(translatedImage);
 
@@ -2106,7 +2123,7 @@ namespace SandRibbon.Components
                     AddAdorners();
                 };
                 redo();
-                UndoHistory.Queue(undo, redo, "Dropped Image");
+                App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Dropped Image");
             });
         }
 
@@ -2331,7 +2348,7 @@ namespace SandRibbon.Components
                 var updatedBox = UpdateTextBoxWithId(redoBox, myText);
                 sendTextWithoutHistory(updatedBox, updatedBox.tag().privacy);
             };
-            UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
             // only do the change locally and let the timer do the rest
             ClearAdorners();
@@ -2379,7 +2396,7 @@ namespace SandRibbon.Components
                                   ClearAdorners();
                                   updateTools();
                               };
-            UndoHistory.Queue(undo, redo, "Restored text defaults");
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Restored text defaults");
             redo();
         }        
         private void updateStyling(TextInformation info)
@@ -2428,7 +2445,7 @@ namespace SandRibbon.Components
                           activeTextbox.TextChanged += SendNewText;
                       }
                   };
-                UndoHistory.Queue(undo, redo, "Styling of text changed");
+                App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Styling of text changed");
                 redo();
             }
         }
@@ -2525,20 +2542,20 @@ namespace SandRibbon.Components
             var privateRoom = string.Format("{0}{1}", Globals.slide, translatedTextBox.tag().author);
             /*
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
-                Commands.SneakInto.Execute(privateRoom);
+                App.getContextFor(backend).controller.commands.SneakInto.Execute(privateRoom);
              */
-            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, translatedTextBox.tag().author, _target, thisPrivacy, translatedTextBox.tag().id, translatedTextBox, translatedTextBox.tag().timestamp));
+            App.getContextFor(backend).controller.commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, translatedTextBox.tag().author, _target, thisPrivacy, translatedTextBox.tag().id, translatedTextBox, translatedTextBox.tag().timestamp));
             /*
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != translatedTextBox.tag().author)
-                Commands.SneakOutOf.Execute(privateRoom);
+                App.getContextFor(backend).controller.commands.SneakOutOf.Execute(privateRoom);
              */
             //NegativeCartesianTextTranslate(translatedTextBox);
             /*var privateRoom = string.Format("{0}{1}", Globals.slide, box.tag().author);
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
-                Commands.SneakInto.Execute(privateRoom);
-            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box.tag().id, box, box.tag().timestamp));
+                App.getContextFor(backend).controller.commands.SneakInto.Execute(privateRoom);
+            App.getContextFor(backend).controller.commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box.tag().id, box, box.tag().timestamp));
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != box.tag().author)
-                Commands.SneakOutOf.Execute(privateRoom);*/
+                App.getContextFor(backend).controller.commands.SneakOutOf.Execute(privateRoom);*/
         }
 
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box, bool removeLocal = true)
@@ -2551,7 +2568,7 @@ namespace SandRibbon.Components
             box.RemovePrivacyStyling(contentBuffer);
             if (removeLocal)
                 RemoveTextBoxWithMatchingId(box.tag().id);
-            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id, box.tag().timestamp));
+            App.getContextFor(backend).controller.commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id, box.tag().timestamp));
         }
 
         public void sendImageWithoutHistory(MeTLImage image, Privacy thisPrivacy)
@@ -2563,10 +2580,10 @@ namespace SandRibbon.Components
         {
             var privateRoom = string.Format("{0}{1}", Globals.slide, image.tag().author);
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
-                Commands.SneakInto.Execute(privateRoom);
-            Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, thisPrivacy, image.tag().id, image, image.tag().timestamp));
+                App.getContextFor(backend).controller.commands.SneakInto.Execute(privateRoom);
+            App.getContextFor(backend).controller.commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, image.tag().author, _target, thisPrivacy, image.tag().id, image, image.tag().timestamp));
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
-                Commands.SneakOutOf.Execute(privateRoom);
+                App.getContextFor(backend).controller.commands.SneakOutOf.Execute(privateRoom);
         }
 
         private void box_PreviewTextInput(object sender, KeyEventArgs e)
@@ -2842,7 +2859,7 @@ namespace SandRibbon.Components
                 if (File.Exists(tmpFile))
                 {
                     var uri =
-                        MeTLLib.ClientFactory.Connection().NoAuthUploadResource(
+                        App.getContextFor(ToolableSpaceModel.backend).controller.client.NoAuthUploadResource(
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new MeTLImage
                     {
@@ -2862,7 +2879,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<MeTLImage> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image, image.tag().timestamp));
+                App.getContextFor(backend).controller.commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image, image.tag().timestamp));
         }
         private void HandleImagePasteUndo(List<MeTLImage> selectedImages)
         {
@@ -2974,7 +2991,7 @@ namespace SandRibbon.Components
                                       HandleTextPasteRedo(boxes, currentBox);
                                       AddAdorners();
                                   };
-                UndoHistory.Queue(undo, redo, "Pasted items");
+                App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Pasted items");
                 redo();
             }
             else
@@ -2984,14 +3001,14 @@ namespace SandRibbon.Components
                     var boxes = createPastedBoxes(new List<string> { Clipboard.GetText() });
                     Action undo = () => HandleTextPasteUndo(boxes, currentBox);
                     Action redo = () => HandleTextPasteRedo(boxes, currentBox);
-                    UndoHistory.Queue(undo, redo, "Pasted text");
+                    App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Pasted text");
                     redo();
                 }
                 else if (Clipboard.ContainsImage())
                 {
                     Action undo = () => HandleImagePasteUndo(createImages(new List<BitmapSource> { Clipboard.GetImage() }));
                     Action redo = () => HandleImagePasteRedo(createImages(new List<BitmapSource> { Clipboard.GetImage() }));
-                    UndoHistory.Queue(undo, redo, "Pasted images");
+                    App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Pasted images");
                     redo();
                 }
             }
@@ -3044,7 +3061,7 @@ namespace SandRibbon.Components
             {
                 img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy);
                 Work.Children.Remove(img);
-                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id, img.tag().timestamp));
+                App.getContextFor(backend).controller.commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id, img.tag().timestamp));
             }
             return selectedImages.Select(i => (BitmapSource)i.Source);
         }
@@ -3122,7 +3139,7 @@ namespace SandRibbon.Components
         {
             var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.tag().id /* stroke.sum().checksum.ToString()*/, stroke.tag().timestamp)).ToList();
             foreach (var element in listToCut)
-                Commands.SendDirtyStroke.Execute(element);
+                App.getContextFor(backend).controller.commands.SendDirtyStroke.Execute(element);
             return selectedStrokes.ToList();
         }
         protected void HandleCut(object _args)
@@ -3153,7 +3170,7 @@ namespace SandRibbon.Components
                 }
             };
             redo();
-            UndoHistory.Queue(undo, redo, "Cut items");
+            App.getContextFor(ToolableSpaceModel.backend).undoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
         private void MoveTo(int _slide)

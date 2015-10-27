@@ -1,4 +1,5 @@
-﻿<Page x:Class="SandRibbon.Pages.Collaboration.GroupCollaborationPage"
+﻿<sr:ServerAwarePage x:Class="SandRibbon.Pages.Collaboration.GroupCollaborationPage"
+      xmlns:sr="clr-namespace:SandRibbon"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
@@ -15,8 +16,8 @@
         </Grid.Resources>
         <collaboration:CastBarFrame x:Name="Bars">
             <Viewbox>
-                <components:PresentationSpace Height="auto" Width="auto" />
+                <components:PresentationSpace ToolableSpaceModel="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Height="auto" Width="auto" />
             </Viewbox>
         </collaboration:CastBarFrame>
     </Grid>
-</Page>
+</sr:ServerAwarePage>

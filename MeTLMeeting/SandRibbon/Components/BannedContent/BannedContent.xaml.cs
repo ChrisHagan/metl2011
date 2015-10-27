@@ -111,17 +111,17 @@ namespace SandRibbon.Components.BannedContent
         }
     }
 
-    public partial class BannedContent : Window
+    public partial class BannedContent : ServerAwareWindow
     {
         public ObservableCollection<PrivacyWrapper> submissionList { get; private set; }
         public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
         private Dictionary<string, string> userMapping = new Dictionary<string,string>();
-        public BannedContent()
+        public BannedContent(MetlConfiguration _backend) : base(_backend)
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(JoinConversation));
+            App.getContextFor(_backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(JoinConversation));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
         }
 
@@ -175,7 +175,7 @@ namespace SandRibbon.Components.BannedContent
             }
         }
 
-        public BannedContent(List<TargettedSubmission> userSubmissions) : this()
+        public BannedContent(MetlConfiguration _backend, List<TargettedSubmission> userSubmissions) : this(_backend)
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
@@ -348,7 +348,7 @@ namespace SandRibbon.Components.BannedContent
                     }
                 }
             }
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            ServerContext.controller.client.UpdateConversationDetails(details);
         }
     }
 }

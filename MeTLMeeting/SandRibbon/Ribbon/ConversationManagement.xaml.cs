@@ -9,6 +9,7 @@ using SandRibbon.Components.BannedContent;
 using SandRibbon.Providers;
 using System.Windows.Input;
 using SandRibbon.Utils;
+using MeTLLib;
 
 namespace SandRibbon.Tabs
 {
@@ -16,11 +17,12 @@ namespace SandRibbon.Tabs
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
         public static RoutedCommand ManageBannedContent = new RoutedCommand();
+        public MetlConfiguration backend;
         public ConversationManagement()
         {
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
@@ -28,7 +30,7 @@ namespace SandRibbon.Tabs
 
         private void viewBannedContent(object _obj)
         {
-            var bannedContent = new BannedContent(submissionList);
+            var bannedContent = new BannedContent(backend,submissionList);
             bannedContent.Owner = Window.GetWindow(this);
             bannedContent.Show();
             banContent.IsChecked = false;

@@ -32,7 +32,7 @@ namespace SandRibbon
         public static videoMirrorPaddingSubtractorConverter videoMirrorPaddingSubtractorConverter = new videoMirrorPaddingSubtractorConverter();
         public static DebugConverter debugConverter = new DebugConverter();
         public static ConversationNameExtractor conversationNameExtractor = new ConversationNameExtractor();
-        public static ConversationTooltipExtractor conversationTooltipExtractor = new ConversationTooltipExtractor();
+        //public static ConversationTooltipExtractor conversationTooltipExtractor = new ConversationTooltipExtractor();
         public static ServerStatusAsVisibility serverStatusToVisibility = new ServerStatusAsVisibility();
         public static ServerStatusAsBackgroundColor serverStatus = new ServerStatusAsBackgroundColor();
         public static ServerStatusAsString serverStatusString = new ServerStatusAsString();
@@ -669,6 +669,7 @@ namespace SandRibbon
             return value;
         }
     }
+    /*
     public class ConversationTooltipExtractor : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -682,6 +683,7 @@ namespace SandRibbon
             return value;
         }
     }
+    */
     public class ServerStatusAsBackgroundColor : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

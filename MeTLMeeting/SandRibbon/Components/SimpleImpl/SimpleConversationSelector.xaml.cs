@@ -17,13 +17,14 @@ namespace SandRibbon.Components
 {
     public partial class SimpleConversationSelector : UserControl, IConversationSelector, IConversationListing
     {
+        public MetlConfiguration backend;
         public static IEnumerable<ConversationDetails> rawConversationList = new List<ConversationDetails>();
         public static IEnumerable<ConversationDetails> recentConversations = new List<ConversationDetails>();
         public SimpleConversationSelector()
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(joinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(joinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>(SetIdentity));
@@ -34,7 +35,7 @@ namespace SandRibbon.Components
         }
         private void joinConversation(string jid)
         {
-            var details = ClientFactory.Connection().DetailsOf(jid);
+            var details = App.getContextFor(backend).controller.client.DetailsOf(jid);
             details.LastAccessed = DateTime.Now;
             if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
                 recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
@@ -42,7 +43,7 @@ namespace SandRibbon.Components
             {
                 recentConversations = recentConversations.Concat(new[] {details});
             }
-            RecentConversationProvider.addRecentConversation(details, Globals.me);
+            //RecentConversationProvider.addRecentConversation(details, Globals.me);
             conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
         }
         private void UpdateConversationDetails(ConversationDetails details)
@@ -52,7 +53,7 @@ namespace SandRibbon.Components
             if (details.isDeleted)
             {
                 recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
-                RecentConversationProvider.removeRecentConversation(details.Jid);
+                //RecentConversationProvider.removeRecentConversation(details.Jid);
             }
             else
                 recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
@@ -60,6 +61,7 @@ namespace SandRibbon.Components
         }
         private void RedrawList(object _unused)
         {
+            /*
             Dispatcher.adopt(() =>
             {
                 var potentialConversations = RecentConversationProvider.loadRecentConversations();
@@ -70,9 +72,11 @@ namespace SandRibbon.Components
                     conversations.ItemsSource = recentConversations.Take(6);
                 }
             });
+            */
         }
         public void List(IEnumerable<ConversationDetails> conversations)
         {
+            /*
             Dispatcher.adopt((Action)delegate
             {
                 rawConversationList = conversations.ToList();
@@ -98,6 +102,7 @@ namespace SandRibbon.Components
                 }
                 this.conversations.ItemsSource = list;
             });
+            */
         }
         public IEnumerable<string> List()
         {
@@ -106,7 +111,7 @@ namespace SandRibbon.Components
         private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
         {
             var conversationJid = e.Parameter as string;
-            var details = ClientFactory.Connection().DetailsOf(conversationJid);
+            var details = App.getContextFor(backend).controller.client.DetailsOf(conversationJid);
             if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
             {
                 // remove the conversation from the menu list
@@ -115,12 +120,12 @@ namespace SandRibbon.Components
             }
             else
             {
-                Commands.JoinConversation.ExecuteAsync(conversationJid);
+                App.getContextFor(backend).controller.commands.JoinConversation.ExecuteAsync(conversationJid);
             }
         }
         private void canJoinConversation(object sender, CanExecuteRoutedEventArgs e)
         {//CommandParameter is conversation title
-            e.CanExecute = Commands.JoinConversation.CanExecute((string)e.Parameter);
+            e.CanExecute = App.getContextFor(backend).controller.commands.JoinConversation.CanExecute((string)e.Parameter);
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {

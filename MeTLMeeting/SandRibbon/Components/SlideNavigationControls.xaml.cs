@@ -7,11 +7,14 @@ using System.IO;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {
     public partial class SlideNavigationControls : UserControl
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public SlideNavigationControls()
         {
             InitializeComponent();
@@ -68,7 +71,7 @@ namespace SandRibbon.Components
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
                     if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
-                        Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
+                        App.getContextFor(backend).controller.commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException){ }
             }

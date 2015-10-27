@@ -65,6 +65,7 @@ namespace SandRibbon.Quizzing
     public partial class ViewEditAQuiz : Window
     {
         #region DependencyProperties
+        protected MeTLLib.MetlConfiguration backend;
 
         public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof (bool), typeof (ViewEditAQuiz));
 
@@ -102,7 +103,7 @@ namespace SandRibbon.Quizzing
             DataContext = thisQuiz;
 
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
 
             question.Options.CollectionChanged += UpdateOptionError;
@@ -132,7 +133,7 @@ namespace SandRibbon.Quizzing
             if (!question.IsInEditMode)
             {
                 var selection = ((Option)e.AddedItems[0]);
-                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
+                App.getContextFor(backend).controller.commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
                 Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
@@ -195,7 +196,7 @@ namespace SandRibbon.Quizzing
             if (MeTLMessage.Question("Really delete quiz?", windowOwner) == MessageBoxResult.Yes)
             {
                 question.Delete();
-                Commands.SendQuiz.Execute(question);
+                App.getContextFor(backend).controller.commands.SendQuiz.Execute(question);
                 Close();
             }    
         }
@@ -206,7 +207,7 @@ namespace SandRibbon.Quizzing
             {
                 question.RemoveEmptyOptions();
                 question.Created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-                Commands.SendQuiz.Execute(question);
+                App.getContextFor(backend).controller.commands.SendQuiz.Execute(question);
                 question.EndEdit();
             }
         }

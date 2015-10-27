@@ -7,11 +7,13 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using UserControl = System.Windows.Controls.UserControl;
 using System.Diagnostics;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {
     public partial class BackStageNav : UserControl
     {
+        public MetlConfiguration backend;
         public BackStageNav()
         {
             InitializeComponent();
@@ -21,7 +23,7 @@ namespace SandRibbon.Components
         }
         private void setMyConversationVisibility()
         {
-            mine.Visibility = MeTLLib.ClientFactory.Connection().ConversationsFor(Globals.me, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+            mine.Visibility = App.getContextFor(backend).controller.client.ConversationsFor(Globals.me, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }

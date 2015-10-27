@@ -25,8 +25,8 @@ namespace MeTLLib.Providers.Connection
         public List<MeTLStanzas.DirtyImage> dirtyImage = new List<MeTLStanzas.DirtyImage>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider) 
-            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider,false)
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider,Commands _commands) 
+            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider,false,_commands)
         {
             if (this.location == null)
                 this.location = new Location("0",1,new List<int>{1});
@@ -45,7 +45,8 @@ namespace MeTLLib.Providers.Connection
                 cache, 
                 receiveEvents, 
                 webClientFactory, 
-                resourceProvider);
+                resourceProvider,
+                commands);
             foreach (var parser in new[] { otherParser, this})
             {
                 foreach (var moveDelta in parser.moveDeltas)
@@ -103,7 +104,7 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveLiveWindow(window);
             foreach (var file in files)
                 receiveEvents.receiveFileResource(file);
-            Commands.AllContentSent.Execute(location.currentSlide);
+            commands.AllContentSent.Execute(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
         public override void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)

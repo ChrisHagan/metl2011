@@ -41,33 +41,51 @@ namespace SandRibbon
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
-            mainFrame.Navigate(new ServerSelectorPage());
+            mainFrame.Navigate(new ServerSelectorPage(App.getAvailableServers()));
             App.CloseSplashScreen();
         }
 
+
+        public MetlConfiguration backend
+        {
+            get { return (MetlConfiguration)GetValue(backendProperty); }
+            set { SetValue(backendProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for backend.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty backendProperty =
+            DependencyProperty.Register("backend", typeof(MetlConfiguration), typeof(MainWindow), new PropertyMetadata(MetlConfiguration.empty));
+
+
+
+        //public MetlConfiguration backend = MetlConfiguration.empty;
+        protected void backendSelected(MetlConfiguration config)
+        {
+            backend = config;
+        }
         public void Log(string message)
         {
-            if (String.IsNullOrEmpty(message)) return;            
+            if (String.IsNullOrEmpty(message)) return;
             logs.Add(new LogMessage
             {
                 content = message,
                 user = Globals.me,
                 slide = Globals.location.currentSlide,
                 timestamp = DateTime.Now.Ticks
-            });            
+            });
         }
 
         private void DoConstructor()
         {
             Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
-
+            Commands.BackendSelected.RegisterCommand(new DelegateCommand<MetlConfiguration>(backendSelected));
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
-            Title = Strings.Global_ProductName;                      
+            Title = Strings.Global_ProductName;
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -75,17 +93,17 @@ namespace SandRibbon
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
+            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => openOneNoteConfiguration(o)));
             Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
             //conversation movement
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
-            Commands.MoveToOverview.RegisterCommand(new DelegateCommand<object>(MoveToOverview, mustBeInConversation));
-            Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
-            Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
+            Commands.MoveToOverview.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => MoveToOverview(o), mustBeInConversation));
+            Commands.MoveToNext.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => Shift(o,1), mustBeInConversation));
+            Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => Shift(o,-1), mustBeInConversation));
             Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
-            
+
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -94,11 +112,11 @@ namespace SandRibbon
             Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
-            
+
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
-            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));                               
+            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
 
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
             Commands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
@@ -107,7 +125,7 @@ namespace SandRibbon
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
-            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));            
+            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
@@ -115,8 +133,7 @@ namespace SandRibbon
 
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
-            undoHistory = new UndoHistory();
-            displayDispatcherTimer = createExtendedDesktopTimer();            
+            displayDispatcherTimer = createExtendedDesktopTimer();
         }
 
         private void PickImages(PickContext context)
@@ -147,13 +164,13 @@ namespace SandRibbon
 
         private void NavigateToNotebookPage(NotebookPage page)
         {
-            mainFrame.Navigate(new OneNotePage(page));
+            mainFrame.Navigate(new OneNotePage(page.Backend, page));
         }
 
         private void browseOneNote(OneNoteConfiguration config)
         {
             var w = new WebControl();
-            w.DocumentReady += W_DocumentReady;
+            w.DocumentReady += delegate { W_DocumentReady(new OneNote(config)); };
             flyout.Content = w;
             flyout.Width = 600;
             flyout.IsOpen = true;
@@ -162,46 +179,56 @@ namespace SandRibbon
             var clientId = config.apiKey;
             var redirectUri = "https://login.live.com/oauth20_desktop.srf";
             var req = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type={2}&redirect_uri={3}";
-            var uri = new Uri(String.Format(req, 
-                config.apiKey, 
-                scope, 
+            var uri = new Uri(String.Format(req,
+                config.apiKey,
+                scope,
                 responseType,
                 redirectUri));
             w.Source = uri;
         }
 
-        private void W_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
-        {                     
-            var queryPart = e.Url.AbsoluteUri.Split('#');
-            if (queryPart.Length > 1) {
-                var ps = HttpUtility.ParseQueryString(queryPart[1]);
-                var token = ps["access_token"];
-                if (token != null) {
-                    Console.WriteLine("Token: {0}", token);                                  
-                    flyout.DataContext = Globals.OneNoteConfiguration;
-                    flyout.Content = TryFindResource("oneNoteListing");
-                    var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
-                    oneNoteModel.Books.Clear();
-                    foreach(var book in OneNote.Notebooks(token)) {
-                        oneNoteModel.Books.Add(book);                        
-                    }                    
+        private Action<object, Awesomium.Core.DocumentReadyEventArgs> W_DocumentReady(OneNote oneNote)
+        {
+            return new Action<object, Awesomium.Core.DocumentReadyEventArgs>((sender, e) =>
+            {
+                var queryPart = e.Url.AbsoluteUri.Split('#');
+                if (queryPart.Length > 1)
+                {
+                    var ps = HttpUtility.ParseQueryString(queryPart[1]);
+                    var token = ps["access_token"];
+                    if (token != null)
+                    {
+                        var config = oneNote.config;
+                        Console.WriteLine("Token: {0}", token);
+                        flyout.DataContext = config;
+                        flyout.Content = TryFindResource("oneNoteListing");
+                        //var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
+                        config.Books.Clear();
+                        foreach (var book in oneNote.Notebooks(token))
+                        {
+                            config.Books.Add(book);
+                        }
+                    }
+
                 }
-            }           
+            });
         }
 
-        private void openOneNoteConfiguration(object obj)
+    private void openOneNoteConfiguration(MetlConfiguration backend)
         {            
             flyout.Content = TryFindResource("oneNoteConfiguration");
-            flyout.DataContext = Globals.OneNoteConfiguration;
+            flyout.DataContext = OneNoteConfiguration.create(backend);
             flyout.IsOpen = true;
         }
-
-        private void MoveToOverview(object obj)
+        
+        private void MoveToOverview(MetlConfiguration backend)
         {
-            mainFrame.Navigate(new ConversationOverviewPage(Globals.conversationDetails));
+            mainFrame.Navigate(new ConversationOverviewPage(backend,Globals.conversationDetails));
         }
+        
 
-        private void Shift(int direction)
+            
+        private void Shift(MetlConfiguration backend,int direction)
         {
             var details = Globals.conversationDetails;
             var slides = details.Slides.OrderBy(s => s.index).Select(s => s.id).ToList();
@@ -214,16 +241,26 @@ namespace SandRibbon
             else if (currentIndex == 0) targetIndex = end;
             else targetIndex = currentIndex - 1;
 
-            mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
+            mainFrame.Navigate(new GroupCollaborationPage(backend,slides[targetIndex]));
         }
-
+        
 
         private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
         {
             this.flyout.Content = TryFindResource("worm");
             this.flyout.IsOpen= !this.flyout.IsOpen;
         }
-
+        private void ImportPowerpoint(object obj)
+        {
+            if (loader == null) loader = new PowerPointLoader(backend);
+            loader.ImportPowerpoint(this);
+        }
+        private void createBlankConversation(object obj)
+        {
+            var element = Keyboard.FocusedElement;
+            if (loader == null) loader = new PowerPointLoader(backend);
+            loader.CreateBlankConversation();
+        }
         [System.STAThreadAttribute()]
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public static void Main()
@@ -347,17 +384,6 @@ namespace SandRibbon
             }
             else MeTLMessage.Warning("You must be logged in to edit your options");
         }
-        private void ImportPowerpoint(object obj)
-        {
-            if (loader == null) loader = new PowerPointLoader();
-            loader.ImportPowerpoint(this);
-        }        
-        private void createBlankConversation(object obj)
-        {
-            var element = Keyboard.FocusedElement;
-            if (loader == null) loader = new PowerPointLoader();
-            loader.CreateBlankConversation();
-        }
 
         private void HelpBinding(object sender, EventArgs e)
         {
@@ -381,9 +407,9 @@ namespace SandRibbon
         private void PrintConversation(object _arg)
         {
             if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(backend).PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
             else
-                new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(backend).PrintHandout(Globals.conversationDetails.Jid, Globals.me);
         }
         private void SetUserOptions(UserOptions options)
         {
@@ -393,7 +419,7 @@ namespace SandRibbon
         private void SaveUserOptions(UserOptions options)
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
-            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+            App.getContextFor(backend).controller.client.SaveUserOptions(Globals.me, options);
         }        
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -415,10 +441,10 @@ namespace SandRibbon
                     else
                     {
                         var jid = Globals.conversationDetails.Jid;
-                        Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
-                        Commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
-                        SlideDisplay.SendSyncMove(Globals.location.currentSlide);
-                        ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                        Commands.UpdateConversationDetails.Execute(App.getContextFor(backend).controller.client.DetailsOf(jid));
+                        App.getContextFor(backend).controller.commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
+                        SlideDisplay.SendSyncMove(Globals.location.currentSlide,backend);
+                        App.getContextFor(backend).controller.client.getHistoryProvider().Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>
@@ -507,8 +533,8 @@ namespace SandRibbon
                                      {
                                          UpdateTitle(details);
                                          if (!mustBeInConversation(null))
-                                         {        
-                                             Commands.LeaveLocation.Execute(null);
+                                         {
+                                             App.getContextFor(backend).controller.commands.LeaveLocation.Execute(null);
                                          }
                                      }
                                  });
@@ -544,11 +570,11 @@ namespace SandRibbon
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 details.Author = Globals.userInformation.credentials.name;
-                var connection = ClientFactory.Connection();
+                var connection = App.getContextFor(backend).controller.client;
                 details = connection.CreateConversation(details);
                 CommandManager.InvalidateRequerySuggested();
-                if (Commands.JoinConversation.CanExecute(details.Jid))
-                    Commands.JoinConversation.ExecuteAsync(details.Jid);
+                if (App.getContextFor(backend).controller.commands.JoinConversation.CanExecute(details.Jid))
+                    App.getContextFor(backend).controller.commands.JoinConversation.ExecuteAsync(details.Jid);
             }
         }
         private void setSync(object _obj)
@@ -568,7 +594,7 @@ namespace SandRibbon
                 if (details == null)
                     return;
                 details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
-                ClientFactory.Connection().UpdateConversationDetails(details);                       
+                App.getContextFor(backend).controller.client.UpdateConversationDetails(details);                       
         }
         private void SetConversationPermissions(object obj)
         {
@@ -582,7 +608,7 @@ namespace SandRibbon
                     details.Permissions.applyLectureStyle();
                 else
                     details.Permissions.applyTuteStyle();
-                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                App.getContextFor(backend).controller.client.UpdateConversationDetails(details);
             }
             catch (NotSetException)
             {
@@ -636,7 +662,7 @@ namespace SandRibbon
 
         private void UserPreferences(object sender, RoutedEventArgs e)
         {
-            mainFrame.Navigate(new CommandBarConfigurationPage());
+            mainFrame.Navigate(new CommandBarConfigurationPage(backend,Globals.currentProfile));
         }        
 
         private void ShowDiagnostics(object sender, RoutedEventArgs e)

@@ -4,11 +4,14 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Providers;
+using MeTLLib;
 
 namespace SandRibbon.Tabs
 {
     public partial class ClassManagement: RibbonTab
     {
+        public MetlConfiguration backend;
+
         public ClassManagement()
         {
             InitializeComponent();
@@ -22,7 +25,7 @@ namespace SandRibbon.Tabs
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)
         {
-            var blacklist = new blacklistController();
+            var blacklist = new blacklistController(backend);
             blacklist.Owner = Window.GetWindow(this);
             blacklist.ShowDialog();
         }

@@ -14,10 +14,12 @@ namespace SandRibbon.Pages.Analytics
 {
     public partial class ConversationComparisonPage : Page
     {
-        public ConversationComparisonPage(IEnumerable<SearchConversationDetails> cs)
+        protected MetlConfiguration backend;
+        public ConversationComparisonPage(MetlConfiguration _backend, IEnumerable<SearchConversationDetails> cs)
         {
+            backend = _backend;
             InitializeComponent();
-            DataContext = new ConversationComparableCorpus(cs);
+            DataContext = new ConversationComparableCorpus(backend,cs);
         }
     }
     public class ConversationComparable : DependencyObject{        
@@ -48,8 +50,10 @@ namespace SandRibbon.Pages.Analytics
             DependencyProperty.Register("ParticipantList", typeof(ObservableCollection<LocatedActivity>), typeof(ConversationComparable), new PropertyMetadata(new ObservableCollection<LocatedActivity>()));
     }
     public class ConversationComparableCorpus {
+        protected MetlConfiguration backend;
         public ObservableCollection<ConversationComparable> outputs { get; set; } = new ObservableCollection<ConversationComparable>();        
-        public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds) {            
+        public ConversationComparableCorpus(MetlConfiguration _backend,IEnumerable<SearchConversationDetails> cds) {
+            backend = _backend;
             BuildComparisons(cds.Select(cd => new ReticulatedConversation
             {
                 PresentationPath = cd
@@ -63,7 +67,7 @@ namespace SandRibbon.Pages.Analytics
                 outputs.Add(output);
                 foreach (var slide in conversation.Locations)
                 {
-                    ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                    App.getContextFor(backend).controller.client.getHistoryProvider().Retrieve<PreParser>(
                                         null,
                                         null,
                                         (parser) =>

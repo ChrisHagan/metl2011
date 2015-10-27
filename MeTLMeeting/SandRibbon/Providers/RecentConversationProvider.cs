@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Utility;
+using MeTLLib;
 
 //using SandRibbonObjects;
 
@@ -13,10 +14,15 @@ namespace SandRibbon.Providers
 {
     public class RecentConversationProvider
     {
-        public static MeTLLib.ClientConnection ConversationProvider = MeTLLib.ClientFactory.Connection();
-        public static readonly string RECENT_DOCUMENTS = SandRibbon.Utils.LocalFileProvider.getUserFile(new string[]{},"recentDocuments.xml");
+        public MetlConfiguration backend;
+        public ClientConnection conversationProvider;
+        public RecentConversationProvider(MetlConfiguration _backend) {
+            backend = _backend;
+            conversationProvider = App.getContextFor(backend).controller.client;
+        }
+        public readonly string RECENT_DOCUMENTS = SandRibbon.Utils.LocalFileProvider.getUserFile(new string[]{},"recentDocuments.xml");
         
-        public static IEnumerable<ConversationDetails> loadRecentConversations()
+        public IEnumerable<ConversationDetails> loadRecentConversations()
         {
             if (File.Exists(RECENT_DOCUMENTS))
             {
@@ -42,7 +48,7 @@ namespace SandRibbon.Providers
             return new List<ConversationDetails>();
         }
 
-        public static void removeRecentConversation(string jid)
+        public void removeRecentConversation(string jid)
         {
             try
             {
@@ -58,7 +64,7 @@ namespace SandRibbon.Providers
             }
         }
 
-        public static void addRecentConversation(ConversationDetails document, String me)
+        public void addRecentConversation(ConversationDetails document, String me)
         {
             try
             {
@@ -91,7 +97,7 @@ namespace SandRibbon.Providers
             {
             }
         }
-        public static string DisplayNameFor(ConversationDetails conversation)
+        public string DisplayNameFor(ConversationDetails conversation)
         {
             if (conversation.Title == null) return "Untitled by Unknown";
             return String.Format("{0} by {1}",

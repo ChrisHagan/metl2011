@@ -1,23 +1,28 @@
 ﻿using Itschwabing.Libraries.ResourceChangeEvent;
+using MeTLLib;
 using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Collaboration.Palettes;
 using SandRibbon.Providers;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public partial class GroupCollaborationPage : Page
+    public partial class GroupCollaborationPage : ServerAwarePage
     {
-        public GroupCollaborationPage(int slide)
+        
+        public GroupCollaborationPage(MetlConfiguration _backend, int slide) : base(_backend)
         {
             InitializeComponent();
-            DataContext = new ToolableSpaceModel
+            DataContext = new ToolableSpaceModel(_backend)
             {
-                context = new VisibleSpaceModel { Slide = slide },
+                    context = new VisibleSpaceModel {
+                    Slide = slide
+                },
                 profile = Globals.currentProfile
             };
-            Commands.MoveToCollaborationPage.Execute(slide);            
+            ServerContext.controller.commands.MoveToCollaborationPage.Execute(slide);            
         }
         
         private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)

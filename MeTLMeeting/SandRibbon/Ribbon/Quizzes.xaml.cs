@@ -10,11 +10,14 @@ using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
 using ImageDrop = SandRibbon.Components.ImageDrop;
 using System.Collections.Generic;
+using MeTLLib;
 
 namespace SandRibbon.Tabs
 {
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public static RoutedCommand openQuizResults = new RoutedCommand();
         public Quizzes()
         {
@@ -23,7 +26,7 @@ namespace SandRibbon.Tabs
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = Globals.quiz.activeQuizzes;
             SetupUI();

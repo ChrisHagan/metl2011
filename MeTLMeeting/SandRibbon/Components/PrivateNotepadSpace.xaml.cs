@@ -20,11 +20,13 @@ namespace SandRibbon.Components
     /// </summary>
     public partial class PrivateNotepadSpace : UserControl
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         public PrivateNotepadSpace()
         {
             InitializeComponent();
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
+            App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
         }
 
         private void MoveTo(int slide)

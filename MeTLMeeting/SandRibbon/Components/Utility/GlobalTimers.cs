@@ -31,11 +31,12 @@ namespace SandRibbon.Components.Utility
     public static class GlobalTimers
     {
         private static ChangeSlideTimedAction timedActions;
+        private static MeTLLib.MetlConfiguration backend;
 
         static GlobalTimers()
         {
             timedActions = new ChangeSlideTimedAction();
-            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => ShutdownTimers()));
+            App.getContextFor(backend).controller.commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => ShutdownTimers()));
         }
 
         static void ShutdownTimers()

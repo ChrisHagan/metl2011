@@ -1,4 +1,5 @@
-﻿using MeTLLib.DataTypes;
+﻿using MeTLLib;
+using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Providers;
 using System;
@@ -14,9 +15,9 @@ using System.Windows.Threading;
 
 namespace SandRibbon.Pages.Collaboration.Palettes
 {
-    public partial class CommandBarConfigurationPage : Page
+    public partial class CommandBarConfigurationPage : ServerAwarePage
     {
-        public CommandBarConfigurationPage()
+        public CommandBarConfigurationPage(MetlConfiguration _backend, Profiles.Profile _profile) : base(_backend)
         {
             InitializeComponent();
              var rangeProperties = new[] {
@@ -28,10 +29,10 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             };            
             sliders.ItemsSource = rangeProperties;
 
-            DataContext = new ToolableSpaceModel
+            DataContext = new ToolableSpaceModel(_backend)
             {//There is no slide context for this UI
                 context = new VisibleSpaceModel(),
-                profile = Globals.currentProfile
+                profile = _profile
             };
             Resources["ToolSets"] = new[] {
                 new MacroGroup {

@@ -1,4 +1,4 @@
-﻿<Window x:Class="SandRibbon.Quizzing.CreateAQuiz"
+﻿<metl:ServerAwareWindow x:Class="SandRibbon.Quizzing.CreateAQuiz"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:q="clr-namespace:SandRibbon.Quizzing"
@@ -73,4 +73,4 @@
             </ScrollViewer>
         </DockPanel>
     </Border>
-</Window>
+</metl:ServerAwareWindow>
