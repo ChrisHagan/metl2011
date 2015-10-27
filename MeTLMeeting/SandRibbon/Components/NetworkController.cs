@@ -88,6 +88,7 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.WatchRoom.RegisterCommand(new DelegateCommand<string>(WatchRoom));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
@@ -142,6 +143,9 @@ namespace SandRibbon.Components
         {
             client.JoinConversation(jid);
             Commands.CheckExtendedDesktop.ExecuteAsync(null);
+        }
+        private void WatchRoom(string slide) {
+            client.WatchRoom(slide);
         }
         private void MoveTo(int slide)
         {

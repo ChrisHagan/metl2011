@@ -138,6 +138,7 @@ namespace MeTLLib
         Uri UploadResource(Uri uri, string slideId);
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
+        void WatchRoom(string slide);
         void JoinConversation(string conversation);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
@@ -185,6 +186,8 @@ namespace MeTLLib
         [Inject]
         //public IUserInformationProvider userInformationProvider { private get; set; }
         public MetlConfiguration server { private set; get; }
+
+
         public ClientConnection(MetlConfiguration address,IReceiveEvents _events)
         {
             server = address;
@@ -476,6 +479,13 @@ namespace MeTLLib
             Action work = delegate
             {
                 wire.SendSyncMoveTo(slide);
+            };
+            tryIfConnected(work);
+        }
+        public void WatchRoom(string slide)
+        {
+            Action work = delegate {
+                wire.WatchRoom(slide);
             };
             tryIfConnected(work);
         }

@@ -1,7 +1,4 @@
-﻿using MeTLLib;
-using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
-using SandRibbon.Pages.Collaboration;
+﻿using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Conversations.Models;
 using System.Collections.Generic;
@@ -23,108 +20,47 @@ namespace SandRibbon.Pages.Analytics
         {
             var context = DataContext as ConversationComparableCorpus;
             var source = sender as FrameworkElement;
-            var slide = source.DataContext as Slide;
-            if (!(context.slideContexts.Any(s => s.context.Slide == slide.id)))
+            var slide = source.DataContext as VmSlide;
+            if (!(context.SlideContexts.Any(s => s.context.Slide == slide.Slide.id)))
             {
-                context.slideContexts.Add(new ToolableSpaceModel {
-                    context = new VisibleSpaceModel {
-                        Slide = slide.id
+                context.SlideContexts.Add(new ToolableSpaceModel
+                {
+                    context = new VisibleSpaceModel
+                    {
+                        Slide = slide.Slide.id
                     }
                 });
-                Commands.SneakInto.Execute(slide.id.ToString());
+                Commands.WatchRoom.Execute(slide.Slide.id.ToString());
             }
         }
     }
-    public class ConversationComparable : DependencyObject{        
-        public int LocationCount
+    public class ConversationComparableCorpus : DependencyObject
+    {
+        public ObservableCollection<ReticulatedConversation> Conversations
         {
-            get { return (int)GetValue(LocationCountProperty); }
-            set { SetValue(LocationCountProperty, value); }
+            get { return (ObservableCollection<ReticulatedConversation>)GetValue(ConversationsProperty); }
+            set { SetValue(ConversationsProperty, value); }
         }
-        public static readonly DependencyProperty LocationCountProperty =
-            DependencyProperty.Register("LocationCount", typeof(int), typeof(ConversationComparable), new PropertyMetadata(0));
+        public static readonly DependencyProperty ConversationsProperty =
+            DependencyProperty.Register("Conversations", typeof(ObservableCollection<ReticulatedConversation>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ReticulatedConversation>()));
 
-        public int ProcessingProgress
+        public ObservableCollection<ToolableSpaceModel> SlideContexts
         {
-            get { return (int)GetValue(ProcessingProgressProperty); }
-            set { SetValue(ProcessingProgressProperty, value); }
-        }        
-        public static readonly DependencyProperty ProcessingProgressProperty =
-            DependencyProperty.Register("ProcessingProgress", typeof(int), typeof(ConversationComparable), new PropertyMetadata(0));
+            get { return (ObservableCollection<ToolableSpaceModel>)GetValue(SlideContextsProperty); }
+            set { SetValue(SlideContextsProperty, value); }
+        }
+        public static readonly DependencyProperty SlideContextsProperty =
+            DependencyProperty.Register("SlideContexts", typeof(ObservableCollection<ToolableSpaceModel>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ToolableSpaceModel>()));
 
-        
-        public ObservableCollection<LocatedActivity> ParticipantList
-        {
-            get { return (ObservableCollection<LocatedActivity>)GetValue(ParticipantListProperty); }
-            set { SetValue(ParticipantListProperty, value); }
-        }
-        
-        public static readonly DependencyProperty ParticipantListProperty =
-            DependencyProperty.Register("ParticipantList", typeof(ObservableCollection<LocatedActivity>), typeof(ConversationComparable), new PropertyMetadata(new ObservableCollection<LocatedActivity>()));
-    }
-    public class ConversationComparableCorpus {
-        public IEnumerable<SearchConversationDetails> conversations { get; set; }
-        public ObservableCollection<ConversationComparable> outputs { get; set; } = new ObservableCollection<ConversationComparable>();
-        public ObservableCollection<ToolableSpaceModel> slideContexts { get; set; } = new ObservableCollection<ToolableSpaceModel>();
-        public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds) {
-            conversations = cds;
-            BuildComparisons(conversations.Select(cd => new ReticulatedConversation
+        public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds)
+        {            
+            foreach (var c in cds)
             {
-                PresentationPath = cd
-            }));
-        }
-        private void BuildComparisons(IEnumerable<ReticulatedConversation> conversations) {            
-            foreach (var conversation in conversations.AsParallel())
-            {
+                var conversation = new ReticulatedConversation{ PresentationPath = c };
+                Conversations.Add(conversation);
                 conversation.CalculateLocations();
-                var output = new ConversationComparable { LocationCount = conversation.LongestPathLength };
-                outputs.Add(output);
-                foreach (var slide in conversation.Locations)
-                {
-                    ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
-                                        null,
-                                        null,
-                                        (parser) =>
-                                        {
-                                            output.ProcessingProgress++;
-                                            foreach (var user in process(parser))
-                                            {
-                                                user.index = slide.Slide.index;
-                                                output.ParticipantList.Add(user);                                                
-                                            }
-                                        },
-                                        slide.Slide.id.ToString());
-                }
+                conversation.AnalyzeLocations();
             }
-        }
-        private void inc(Dictionary<string, int> dict, string author)
-        {
-            if (!dict.ContainsKey(author))
-            {
-                dict[author] = 1;
-            }
-            else
-            {
-                dict[author]++;
-            }
-        }
-
-        private IEnumerable<LocatedActivity> process(PreParser p)
-        {
-            var tallies = new Dictionary<string, int>();
-            foreach (var s in p.ink)
-            {
-                inc(tallies, s.author);
-            }
-            foreach (var t in p.text.Values)
-            {
-                inc(tallies, t.author);
-            }
-            foreach (var i in p.images.Values)
-            {
-                inc(tallies, i.author);
-            }
-            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, 0));
         }
     }
 }

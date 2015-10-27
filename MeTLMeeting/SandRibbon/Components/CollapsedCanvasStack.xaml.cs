@@ -147,7 +147,7 @@ namespace SandRibbon.Components
 
     public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
-        List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();        
+        List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
         private const bool CanFocus = true;
         private bool _focusable = true;
         private bool bold = false;
@@ -275,7 +275,8 @@ namespace SandRibbon.Components
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
-        private void ToggleBold(object o) {
+        private void ToggleBold(object o)
+        {
             SetLayer("Text");
             bold = !bold;
         }
@@ -297,7 +298,7 @@ namespace SandRibbon.Components
         private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
         {
             if (_target == "presentationSpace")
-            {                
+            {
                 return incomingPrivacy;
             }
             else
@@ -334,7 +335,7 @@ namespace SandRibbon.Components
         {
             pos = e.GetPosition(this);
         }
-        
+
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -480,7 +481,7 @@ namespace SandRibbon.Components
                         if (imagesToRemove.Count() > 0)
                         {
                             contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
-                        }                        
+                        }
                     }
                 };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected images");
@@ -1234,8 +1235,6 @@ namespace SandRibbon.Components
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
-            if (receivedStrokes.Count() == 0) return;
-            if (receivedStrokes.First().slide != Globals.slide) return;
             var strokeTarget = _target;
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
@@ -1712,23 +1711,16 @@ namespace SandRibbon.Components
         {
             foreach (var image in images)
             {
-                if (image.slide == Globals.slide && image.HasSameTarget(_target))
+                if (image.HasSameTarget(_target))
                 {
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
                         Dispatcher.adoptAsync(() =>
                         {
-                            try
-                            {
-                                var receivedImage = image1.imageSpecification.forceEvaluation();
-                                //image.clone();
-                                AddImage(Work, receivedImage);
-                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
-                            }
-                            catch (Exception)
-                            {
-                            }
+                            var receivedImage = image1.imageSpecification.forceEvaluation();
+                            AddImage(Work, receivedImage);
+                            receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
                         });
                     }
                 }
@@ -2188,8 +2180,7 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                                       {
                                           if (targettedBox.target != _target) return;
-                                          if (targettedBox.slide == Globals.slide &&
-                                              (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me)))
+                                          if (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me))
                                           {
                                               var box = UpdateTextBoxWithId(targettedBox);
                                               if (box != null)
@@ -2381,7 +2372,7 @@ namespace SandRibbon.Components
                               };
             UndoHistory.Queue(undo, redo, "Restored text defaults");
             redo();
-        }        
+        }
         private void updateStyling(TextInformation info)
         {
             var selectedTextBoxes = new List<MeTLTextBox>();
@@ -2398,26 +2389,26 @@ namespace SandRibbon.Components
 
                 Action undo = () =>
                   {
-                          //ClearAdorners();
+                      //ClearAdorners();
 
-                          // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
-                          var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
+                      // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
+                      var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
                       if (activeTextbox != null)
                       {
                           var activeTextInfo = clonedTextInfo;
                           activeTextbox.TextChanged -= SendNewText;
                           applyStylingTo(activeTextbox, activeTextInfo);
                           Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
-                              //AddAdorners();
-                              sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
+                          //AddAdorners();
+                          sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
                           activeTextbox.TextChanged += SendNewText;
                       }
                   };
                 Action redo = () =>
                   {
-                          //ClearAdorners();
+                      //ClearAdorners();
 
-                          var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
+                      var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
                       if (activeTextbox != null)
                       {
                           var activeTextInfo = info;
@@ -2647,7 +2638,7 @@ namespace SandRibbon.Components
                     info.Strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
                     info.Underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
                 }
-                info.IsPrivate = myTextBox.tag().privacy == Privacy.Private ? true : false;                
+                info.IsPrivate = myTextBox.tag().privacy == Privacy.Private ? true : false;
                 Commands.TextboxSelected.ExecuteAsync(info);
             }
 
@@ -2769,11 +2760,11 @@ namespace SandRibbon.Components
                 privacy = currentPrivacy,
                 id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
             });
-                        
+
             box.FontStyle = italic ? FontStyles.Italic : FontStyles.Normal;
             box.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
             box.TextDecorations = new TextDecorationCollection();
-            if(underline)
+            if (underline)
                 box.TextDecorations = TextDecorations.Underline;
             else if (strikethrough)
                 box.TextDecorations = TextDecorations.Strikethrough;

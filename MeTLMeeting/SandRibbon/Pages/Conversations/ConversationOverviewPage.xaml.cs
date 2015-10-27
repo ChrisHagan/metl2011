@@ -39,63 +39,10 @@ namespace SandRibbon.Pages.Collaboration
                 RelatedMaterial = new List<string>{}.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
 
             };
-            conversation.CalculateLocations();
-            //We need the location references to remain stable so we can bind to them and modify them in parsers
-            var participantList = new ObservableCollection<LocatedActivity>();
+            conversation.CalculateLocations();            
             processing.Maximum = conversation.Locations.Count;
-            foreach (var slide in conversation.Locations)
-            {
-                ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
-                                    null,
-                                    null,
-                                    (parser) =>
-                                    {
-                                        processing.Value++;
-                                        foreach (var user in process(parser))
-                                        {
-                                            user.index = slide.Slide.index;
-                                            participantList.Add(user);
-                                            var grouped = participantList.GroupBy(cp => cp.index)
-                                            .ToDictionary(g => g.Key, g =>
-                                            {
-                                                return new LocatedActivity("", g.Key, g.Select(u => u.activityCount).Sum(), g.Count());
-                                            });
-                                            slide.Activity = grouped[slide.Slide.index]?.activityCount ?? 0;
-                                            slide.Voices = grouped[slide.Slide.index]?.voices ?? 0;
-                                        }
-                                    },
-                                    slide.Slide.id.ToString());
-            }
-        }
-
-        private void inc(Dictionary<string, int> dict, string author)
-        {
-            if (!dict.ContainsKey(author))
-            {
-                dict[author] = 1;
-            }
-            else
-            {
-                dict[author]++;
-            }
-        }
-
-        private IEnumerable<LocatedActivity> process(PreParser p)
-        {
-            var tallies = new Dictionary<string, int>();
-            foreach (var s in p.ink)
-            {
-                inc(tallies, s.author);
-            }
-            foreach (var t in p.text.Values)
-            {
-                inc(tallies, t.author);
-            }
-            foreach (var i in p.images.Values)
-            {
-                inc(tallies, i.author);
-            }
-            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, 0));
+            conversation.LocationAnalyzed += () => processing.Value++;
+            conversation.AnalyzeLocations();
         }
 
         private void SlideSelected(object sender, RoutedEventArgs e)

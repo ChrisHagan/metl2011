@@ -11,29 +11,31 @@
     <Grid layout:GridLayout.ItemsPerRow="1">
         <Label Content="What are you hoping to discover?" Margin="{StaticResource clearTop}" />
         <Label Content="What is happening on specific slides right now?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
-        <ItemsControl ItemsSource="{Binding Path=slides}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Viewbox Height="150">
-                        <components:PresentationSpace />
-                    </Viewbox>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Path=SlideContexts}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Viewbox Height="300">
+                            <components:PresentationSpace />
+                        </Viewbox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
-        <ItemsControl ItemsSource="{Binding Path=conversations}">
+        <ItemsControl ItemsSource="{Binding Path=Conversations}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ScrollViewer>
-                        <ItemsControl ItemsSource="{Binding Path=Slides}">
+                        <ItemsControl ItemsSource="{Binding Path=Locations}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <Grid layout:GridLayout.ColumnCount="{Binding Path=slides.Count}" layout:GridLayout.RowCount="1" />
+                                    <Grid layout:GridLayout.ColumnCount="{Binding Path=Locations.Count}" layout:GridLayout.RowCount="1" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemContainerStyle>
@@ -83,20 +85,13 @@
         </ItemsControl>
         <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" />
         <ScrollViewer>
-            <DataGrid ItemsSource="{Binding Path=outputs}" Margin="{StaticResource clearTop}" 
+            <DataGrid ItemsSource="{Binding Path=Conversations}" Margin="{StaticResource clearTop}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ProgressBar Minimum="0" Maximum="{Binding Path=LocationCount}" Value="{Binding Path=ProcessingProgress}" VerticalAlignment="Top"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <DataGrid ItemsSource="{Binding Path=ParticipantList}" 
+                                <DataGrid ItemsSource="{Binding Path=Participation}" 
                                           AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Slide" Binding="{Binding Path=slide}" />

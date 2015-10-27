@@ -476,7 +476,7 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-        
+
         
         public void Logout()
         {
@@ -570,6 +570,18 @@ namespace MeTLLib.Providers.Connection
             location = Location.Empty;
             joinRooms();
             receiveEvents.receiveConversationDetails(ConversationDetails.Empty);
+        }
+        public void WatchRoom(string slide)
+        {
+            joinRoom(new Jid(slide, metlServerAddress.muc,jid.Resource));
+            historyProvider.Retrieve<PreParser>(
+                    onStart,
+                    onProgress,
+                    finishedParser => {
+                        receiveEvents.receivePreParser(finishedParser);
+                        cachedHistoryProvider.PopulateFromHistory(finishedParser);
+                    },
+                    slide);
         }
         private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
         {

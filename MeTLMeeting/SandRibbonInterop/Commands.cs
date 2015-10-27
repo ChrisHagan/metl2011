@@ -263,6 +263,9 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SaveUIState = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RestoreUIState = new DefaultableCompositeCommand();
         #region ConversationLevel
+        /*Moving is a metaphor which implies that I am only in one location.  Watching can happen to many places.*/
+        public static DefaultableCompositeCommand WatchRoom = new DefaultableCompositeCommand();
+
         public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand(0);
         public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToCollaborationPage = new DefaultableCompositeCommand(0);
@@ -346,7 +349,8 @@ namespace SandRibbon
                     .Where(p => p.FieldType == typeof(DefaultableCompositeCommand))
                     .Select(f => (DefaultableCompositeCommand)f.GetValue(null));
             }
-        }
+        }        
+
         public static IEnumerable<ICommand> allHandlers() 
         {
             var handlers = new List<ICommand>();
