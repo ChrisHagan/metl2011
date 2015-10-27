@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ninject;
+//using Ninject;
 using MeTLLib.Providers.Connection;
 using System.Xml.Linq;
 using MeTLLib.DataTypes;
@@ -12,13 +12,16 @@ namespace MeTLLib.Providers
 {
     public class UserOptionsProvider
     {
-        [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
-        [Inject]
         public MetlConfiguration serverAddress { private get; set; }
-        [Inject]
         public IResourceUploader resourceUploader { private get; set; }
 
+        public UserOptionsProvider(MetlConfiguration _serverAddress, HttpResourceProvider _resourceProvider, IResourceUploader _resourceUploader)
+        {
+            serverAddress = _serverAddress;
+            resourceProvider = _resourceProvider;
+            resourceUploader = _resourceUploader;
+        }
         public UserOptions Get(string username)
         {
             try

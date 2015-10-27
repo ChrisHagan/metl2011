@@ -13,7 +13,7 @@ using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers
 {

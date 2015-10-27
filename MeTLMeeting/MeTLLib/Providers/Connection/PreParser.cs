@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {

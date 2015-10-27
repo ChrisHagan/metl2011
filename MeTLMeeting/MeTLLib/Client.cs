@@ -8,7 +8,7 @@ using MeTLLib.DataTypes;
 using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 using agsXMPP.Xml.Dom;
 using System.Net;
 using System.Xml.Linq;

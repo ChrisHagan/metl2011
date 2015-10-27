@@ -13,7 +13,7 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
 using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using Ninject;
+//using Ninject;
 using System.Net;
 
 namespace MeTLLib.Providers.Connection
@@ -67,7 +67,7 @@ namespace MeTLLib.Providers.Connection
     public class JabberWireFactory
     {
         public JabberWireFactory(
-            MetlConfiguration config,
+            MetlConfiguration _config,
             Credentials _credentials,
             ConfigurationProvider _configurationProvider,
             IConversationDetailsProvider _conversationDetailsProvider,
@@ -76,22 +76,23 @@ namespace MeTLLib.Providers.Connection
             IWebClientFactory _clientFactory,
             HttpResourceProvider _resourceProvider)
         {
+            metlServerAddress = _config;
             credentials = _credentials;
             configurationProvider = _configurationProvider;
             conversationDetailsProvider = _conversationDetailsProvider;
-            historyProvider= new HttpHistoryProvider(resourceProvider, this, config);
-            cachedHistoryProvider = new CachedHistoryProvider(historyProvider, resourceProvider, this, config);
+            resourceProvider = _resourceProvider;
+            historyProvider = new HttpHistoryProvider(resourceProvider, this, metlServerAddress);
+            cachedHistoryProvider = new CachedHistoryProvider(historyProvider, resourceProvider, this, metlServerAddress);
             cache = _cache;
             receiveEvents = _receiveEvents;
             clientFactory = _clientFactory;
-            resourceProvider = _resourceProvider;
         }
+        public MetlConfiguration metlServerAddress { get;  protected set; }
         public Credentials credentials { get; protected set; }
         public ConfigurationProvider configurationProvider { get; protected set; }
         public IConversationDetailsProvider conversationDetailsProvider { get; protected set; }
         public HttpHistoryProvider historyProvider { get; protected set; }
         public CachedHistoryProvider cachedHistoryProvider { get; protected set; }
-        public MetlConfiguration metlServerAddress { get; protected set; }
         public ResourceCache cache { get; protected set; }
         public IReceiveEvents receiveEvents { get; protected set; }
         public IWebClientFactory clientFactory { get; protected set; }

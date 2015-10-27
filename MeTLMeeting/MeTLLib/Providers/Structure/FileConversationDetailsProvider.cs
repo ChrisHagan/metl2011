@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using MeTLLib.Utilities;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Structure
 {

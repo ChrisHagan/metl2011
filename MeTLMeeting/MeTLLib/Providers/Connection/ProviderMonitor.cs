@@ -10,7 +10,7 @@ using agsXMPP;
 using System.Timers;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {

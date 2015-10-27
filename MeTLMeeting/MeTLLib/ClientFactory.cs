@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ninject;
+//using Ninject;
 using System.Net;
 using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
@@ -27,7 +27,7 @@ namespace MeTLLib
             var configurationProvider = new ConfigurationProvider(wcf);
             var conversationDetailsProvider = new FileConversationDetailsProvider(config, wcf, resourceUploader);
             var jabberWireFactory = new JabberWireFactory(config,creds, configurationProvider, conversationDetailsProvider, resourceCache, receiveEvents, wcf, httpProvider);
-            var userOptionsProvider = new UserOptionsProvider();
+            var userOptionsProvider = new UserOptionsProvider(config,httpProvider,resourceUploader);
             var cc = new ClientConnection(config, receiveEvents,authProvider,resourceUploader,conversationDetailsProvider,resourceCache,jabberWireFactory,wcf,userOptionsProvider, httpProvider);
             return cc;
         }

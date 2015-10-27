@@ -4,7 +4,7 @@ using System.Linq;
 using System;
 using System.Threading;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {

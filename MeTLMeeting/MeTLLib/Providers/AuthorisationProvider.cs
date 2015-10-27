@@ -7,7 +7,7 @@ using MeTLLib;
 using System.DirectoryServices;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 using System.Text;
 using System.Xml.Linq;
 using System.Threading;
