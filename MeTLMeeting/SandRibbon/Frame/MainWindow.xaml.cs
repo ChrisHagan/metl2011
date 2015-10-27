@@ -28,6 +28,7 @@ using Awesomium.Windows.Controls;
 using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using Awesomium.Core;
 
 namespace SandRibbon
 {
@@ -156,7 +157,25 @@ namespace SandRibbon
         private void browseOneNote(OneNoteConfiguration config)
         {
             var w = new WebControl();
-            w.DocumentReady += DocumentReady;
+            DocumentReadyEventHandler ready = null;
+            ready = (s, e) =>
+            {
+                var queryPart = e.Url.AbsoluteUri.Split('#');
+                if (queryPart.Length > 1)
+                {
+                    var ps = HttpUtility.ParseQueryString(queryPart[1]);
+                    var token = ps["access_token"];
+                    if (token != null)
+                    {
+                        w.DocumentReady -= ready;
+                        flyout.DataContext = Globals.OneNoteConfiguration;
+                        flyout.Content = TryFindResource("oneNoteListing");
+                        var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
+                        oneNoteModel.LoadNotebooks(token);
+                    }
+                }
+            };
+            w.DocumentReady += ready;
             flyout.Content = w;
             flyout.Width = 600;
             flyout.IsOpen = true;
@@ -171,23 +190,6 @@ namespace SandRibbon
                 responseType,
                 redirectUri));
             w.Source = uri;
-        }
-
-        private void DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
-        {
-            var queryPart = e.Url.AbsoluteUri.Split('#');
-            if (queryPart.Length > 1)
-            {
-                var ps = HttpUtility.ParseQueryString(queryPart[1]);
-                var token = ps["access_token"];
-                if (token != null)
-                {
-                    flyout.DataContext = Globals.OneNoteConfiguration;
-                    flyout.Content = TryFindResource("oneNoteListing");
-                    var oneNoteModel = flyout.DataContext as OneNoteConfiguration;                    
-                    oneNoteModel.LoadNotebooks(token);                                        
-                }
-            }
         }
 
         private void openOneNoteConfiguration(object obj)

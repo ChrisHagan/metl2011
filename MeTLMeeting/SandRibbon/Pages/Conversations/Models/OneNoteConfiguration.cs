@@ -2,132 +2,56 @@
 using System;
 using System.Net;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
-    public class OneNoteProcessingProgress {
-        public int booksProgress { get; set; } = 0;
-        public int maxBooks { get; set; } = 0;
-
-        public int pagesProgress { get; set; } = 0;
-        public int maxPages { get; set; } = 0;
-
-        public int elementsProgress { get; set; } = 0;
-        public int maxElements { get; set; } = 0;
-    }
     public class OneNoteConfiguration : DependencyObject
     {
-        public ObservableCollection<Notebook> Books { get; set; } = new ObservableCollection<Notebook>();
+        public ObservableCollection<Notebook> Books
+        {
+            get { return (ObservableCollection<Notebook>)GetValue(BooksProperty); }
+            set { SetValue(BooksProperty, value); }
+        }
+
+        public static readonly DependencyProperty BooksProperty =
+            DependencyProperty.Register("Books", typeof(ObservableCollection<Notebook>), typeof(OneNoteConfiguration), new PropertyMetadata(new ObservableCollection<Notebook>()));
+
         public string apiKey { get; set; }
-        public string apiSecret { get; set; }        
+        public string apiSecret { get; set; }
 
         static string notebooks = "https://www.onenote.com/api/v1.0/me/notes/notebooks?expand=sections";
         static string pages = "https://www.onenote.com/api/v1.0/me/notes/sections/{0}/pages";
-
-        public int maxBooks
-        {
-            get { return (int)GetValue(maxBooksProperty); }
-            set { SetValue(maxBooksProperty, value); }
-        }       
-        public static readonly DependencyProperty maxBooksProperty =
-            DependencyProperty.Register("maxBooks", typeof(int), typeof(OneNoteConfiguration), new PropertyMetadata(0));
-
-        public int maxPages
-        {
-            get { return (int)GetValue(maxPagesProperty); }
-            set { SetValue(maxPagesProperty, value); }
-        }
-        public static readonly DependencyProperty maxPagesProperty =
-            DependencyProperty.Register("maxPages", typeof(int), typeof(OneNoteConfiguration), new PropertyMetadata(0));
-
-        public int maxElements
-        {
-            get { return (int)GetValue(maxElementsProperty); }
-            set { SetValue(maxElementsProperty, value); }
-        }
-        public static readonly DependencyProperty maxElementsProperty =
-            DependencyProperty.Register("maxElements", typeof(int), typeof(OneNoteConfiguration), new PropertyMetadata(0));
-
-        public int currentBooks
-        {
-            get { return (int)GetValue(currentBooksProperty); }
-            set { SetValue(currentBooksProperty, value); }
-        }
-        public static readonly DependencyProperty currentBooksProperty =
-            DependencyProperty.Register("currentBooks", typeof(int), typeof(OneNoteConfiguration), new PropertyMetadata(0));
-
-        public int currentPages
-        {
-            get { return (int)GetValue(currentPagesProperty); }
-            set { SetValue(currentPagesProperty, value); }
-        }
-        public static readonly DependencyProperty currentPagesProperty =
-            DependencyProperty.Register("currentPages", typeof(int), typeof(OneNoteConfiguration), new PropertyMetadata(0));
-
-        public int currentElements
-        {
-            get { return (int)GetValue(currentElementsProperty); }
-            set { SetValue(currentElementsProperty, value); }
-        }
-        public static readonly DependencyProperty currentElementsProperty =
-            DependencyProperty.Register("currentElements", typeof(int), typeof(OneNoteConfiguration), new PropertyMetadata(0));
-
-
+        
         public void LoadNotebooks(string token)
         {
-            var worker = new BackgroundWorker {
-                WorkerReportsProgress = true
-            };
-            worker.DoWork += (sender, e) =>
+            var wc = new WebClient();
+            wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
+            var jsonS = wc.DownloadString(notebooks);
+            var json = JObject.Parse(jsonS);
+            var remoteBooks = json["value"].Children<JObject>();
+            foreach (var j in remoteBooks)
             {
-                var progress = e.Argument as OneNoteProcessingProgress;
-                var wc = new WebClient();
-                wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
-                var jsonS = wc.DownloadString(notebooks);
-                var json = JObject.Parse(jsonS);
-                var books = new List<Notebook>();
-                var remoteBooks = json["value"].Children<JObject>();
-                worker.ReportProgress(0, progress);
-                progress.booksProgress = 0;
-                progress.maxBooks = remoteBooks.Count();                
-                foreach (var j in remoteBooks)
+                var book = new Notebook
                 {
-                    var book = new Notebook
+                    Name = j["name"].Value<string>()
+                };
+                Books.Add(book);
+                foreach (var s in j["sections"].Children<JObject>())
+                {
+                    var section = new NotebookSection
                     {
-                        Name = j["name"].Value<string>()
-                    };
-                    foreach (var s in j["sections"].Children<JObject>())
-                    {
-                        var section = new NotebookSection
-                        {
-                            Name = s["name"].Value<string>(),
-                            Id = s["id"].Value<string>()
-                        };
-                        //LoadPages(token, section,worker,progress);
-                        book.Sections.Add(section);
-                    }
-                    books.Add(book);
-                    progress.booksProgress++;
+                        Name = s["name"].Value<string>(),
+                        Id = s["id"].Value<string>()
+                    };                    
+                    book.Sections.Add(section);
+                    LoadPages(token, section);
                 }
-            };
-            worker.ProgressChanged += (sender,p) => {
-                var progress = p.UserState as OneNoteProcessingProgress;
-                maxBooks = progress.maxBooks;
-                currentBooks = progress.booksProgress;
-                maxPages = progress.maxPages;
-                currentPages = progress.pagesProgress;
-                maxElements = progress.maxElements;
-                currentElements = progress.elementsProgress;
-            };
-            worker.RunWorkerAsync(new OneNoteProcessingProgress());
-        }        
-        public void LoadPages(string token, NotebookSection section, BackgroundWorker worker, OneNoteProcessingProgress progress)
+            }
+        }
+        public void LoadPages(string token, NotebookSection section)
         {
             var wc = new WebClient();
             wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
@@ -135,40 +59,30 @@ namespace SandRibbon.Pages.Conversations.Models
             {
                 var json = JObject.Parse(e.Result);
                 var remotePages = json["value"].Children<JObject>();
-                progress.maxPages = remotePages.Count();
-                worker.ReportProgress(0, progress);
                 foreach (var j in remotePages)
                 {
                     var title = j["title"].Value<string>();
                     section.Pages.Add(new NotebookPage
                     {
                         Token = token,
-                        Context = this,
-                        Html = wc.DownloadString(j["contentUrl"].Value<string>()),
+                        OriginalHtml = wc.DownloadString(j["contentUrl"].Value<string>()),
                         Title = title
                     });
-                    progress.pagesProgress++;
-                    worker.ReportProgress(0, progress);
                 }
             };
             wc.DownloadStringAsync(new Uri(string.Format(pages, section.Id)));
-        }        
+        }
     }
     public class NotebookPage
-    {
-        private string html;
+    {        
         public string Html
         {
-            get { return html; }
-            set
+            get
             {
-                var xDoc = XDocument.Parse(value);
-                var elements = xDoc.Descendants().Where(d => d.Name.LocalName == "img");
-                Context.maxElements = elements.Count();
-                Context.currentElements = 0;
+                var xDoc = XDocument.Parse(OriginalHtml);
+                var elements = xDoc.Descendants().Where(d => d.Name.LocalName == "img");                
                 foreach (var img in elements)
-                {
-                    Context.currentElements++;
+                {                    
                     var source = img.Attribute("src").Value;
                     var wc = new WebClient();
                     wc.Headers.Add("Authorization", string.Format("Bearer {0}", Token));
@@ -181,22 +95,38 @@ namespace SandRibbon.Pages.Conversations.Models
                     };
                     img.SetAttributeValue("src", securedUpload.Uri.AbsoluteUri);
                 }
-                html = xDoc.ToString();
-            }
+                return xDoc.ToString();
+            }            
         }
+        public string OriginalHtml { get; set; }
         public string Title { get; set; }
-        public string Token { get; set; }
-        public OneNoteConfiguration Context { get; set; }
+        public string Token { get; set; }        
     }
-    public class NotebookSection
+    public class NotebookSection : DependencyObject
     {
         public string Name { get; set; }
         public string Id { get; set; }
-        public ObservableCollection<NotebookPage> Pages { get; set; } = new ObservableCollection<NotebookPage>();
+
+        public ObservableCollection<NotebookPage> Pages
+        {
+            get { return (ObservableCollection<NotebookPage>)GetValue(PagesProperty); }
+            set { SetValue(PagesProperty, value); }
+        }
+
+        public static readonly DependencyProperty PagesProperty =
+            DependencyProperty.Register("Pages", typeof(ObservableCollection<NotebookPage>), typeof(NotebookSection), new PropertyMetadata(new ObservableCollection<NotebookPage>()));
     }
-    public class Notebook
+    public class Notebook : DependencyObject
     {
         public string Name { get; set; }
-        public ObservableCollection<NotebookSection> Sections { get; set; } = new ObservableCollection<NotebookSection>();
+
+        public ObservableCollection<NotebookSection> Sections
+        {
+            get { return (ObservableCollection<NotebookSection>)GetValue(SectionsProperty); }
+            set { SetValue(SectionsProperty, value); }
+        }
+
+        public static readonly DependencyProperty SectionsProperty =
+            DependencyProperty.Register("Sections", typeof(ObservableCollection<NotebookSection>), typeof(Notebook), new PropertyMetadata(new ObservableCollection<NotebookSection>()));
     }
 }
