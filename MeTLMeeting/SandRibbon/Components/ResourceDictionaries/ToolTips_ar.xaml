@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:resources="clr-namespace:SandRibbon.Components.ResourceDictionaries">
+    <resources:MeTLImageToolTip x:Key="LaunchDiagnosticWindowToolTip" 
+                                        TitleText="Display Diagnostics"
+                                        ContentText="ARABIC - Open a window with diagnostic information which may be of interest to technical support teams."/>
     <resources:MeTLImageToolTip x:Key="ResetPenToDefaultToolTip" 
                                         TitleText="Reset pen"
                                         ContentText="ARABIC - Return this pen to its original colour and width."/>

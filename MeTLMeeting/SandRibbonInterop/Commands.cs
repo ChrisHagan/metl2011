@@ -310,6 +310,11 @@ namespace SandRibbon
         public static RoutedCommand PostHighlightFriend = new RoutedCommand();
         public static RoutedCommand HighlightUser = new RoutedCommand();
         public static RoutedCommand PostHighlightUser = new RoutedCommand();
+
+        public static DefaultableCompositeCommand LaunchDiagnosticWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticMessage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticGaugeUpdated = new DefaultableCompositeCommand();
+
         #endregion
         Commands()
         {

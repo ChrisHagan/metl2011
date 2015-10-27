@@ -149,6 +149,7 @@ namespace SandRibbon
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
             Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
+            Commands.LaunchDiagnosticWindow.RegisterCommandToDispatcher(new DelegateCommand<object>(launchDiagnosticWindow));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
             AddWindowEffect(null);
@@ -262,6 +263,11 @@ namespace SandRibbon
         {
             System.Diagnostics.Process.Start(Properties.Settings.Default.DescriptionUrl);
         }
+        private void launchDiagnosticWindow(object _unused)
+        {
+            App.diagnosticWindow.Show();
+        }
+
         #endregion
         private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
         {

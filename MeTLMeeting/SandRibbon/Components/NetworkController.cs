@@ -11,19 +11,27 @@ namespace SandRibbon.Components
 {
     public class NetworkController
     {
+        protected DiagnosticGauge gauge = new DiagnosticGauge("networkController startup", "connection", DateTime.Now);
         public IClientBehaviour client { get; protected set; }
         private Action deregister;
         public MetlConfiguration config { get; protected set; }
         public Credentials credentials { get; protected set; }
         public NetworkController(MetlConfiguration _config)
         {
+            Commands.DiagnosticGaugeUpdated.Execute(gauge);
             config = _config;
-            App.mark(String.Format("NetworkController instantiating: {0}", config));
+            gauge.update(GaugeStatus.InProgress);
+            Commands.DiagnosticGaugeUpdated.Execute(gauge);
+            //App.mark(String.Format("NetworkController instantiating: {0}", config));
         }
         public IClientBehaviour connect(Credentials _creds) {
+            gauge.update(GaugeStatus.InProgress);
+            Commands.DiagnosticGaugeUpdated.Execute(gauge);
             credentials = _creds;
             client = buildServerSpecificClient(config,_creds);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
+            gauge.update(GaugeStatus.InProgress);
+            Commands.DiagnosticGaugeUpdated.Execute(gauge);
             checkValidity = (sender,e)=>{
                 if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
                 {
@@ -40,7 +48,11 @@ namespace SandRibbon.Components
                     }
                 }
             };
+            gauge.update(GaugeStatus.InProgress);
+            Commands.DiagnosticGaugeUpdated.Execute(gauge);
             client.events.StatusChanged += checkValidity;
+            gauge.update(GaugeStatus.Completed);
+            Commands.DiagnosticGaugeUpdated.Execute(gauge);
             return client;
         }       
         private ClientConnection buildServerSpecificClient(MetlConfiguration config,Credentials creds)

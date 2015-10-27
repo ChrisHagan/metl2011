@@ -64,6 +64,7 @@
                     <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
                     <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" Command="ApplicationCommands.Help" />
                     <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
+                    <sr:MenuItem Text="Diagnostics" Command="{x:Static api:Commands.LaunchDiagnosticWindow}" ToolTip="{StaticResource LaunchDiagnosticWindowToolTip}" />
                     <sr:MenuItem Text="Logout and Exit" ToolTip="{StaticResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
                 </sr:ApplicationPopup>
             </sr:Ribbon.ApplicationPopup>
