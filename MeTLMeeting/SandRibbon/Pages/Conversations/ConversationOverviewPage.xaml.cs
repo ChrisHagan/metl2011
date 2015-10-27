@@ -51,7 +51,7 @@ namespace SandRibbon.Pages.Collaboration
             processing.Maximum = conversation.Locations.Count;
             foreach (var slide in conversation.Locations)
             {
-                ServerContext.controller.client.getHistoryProvider().Retrieve<PreParser>(
+                ServerContext.controller.client.historyProvider.Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>

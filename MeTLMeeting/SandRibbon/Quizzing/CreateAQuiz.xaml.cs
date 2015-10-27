@@ -55,7 +55,7 @@ namespace SandRibbon.Quizzing
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
             var creationTimeAndId = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", Globals.me, question.Text, new List<Option>());
+            var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", ServerContext.controller.creds.name, question.Text, new List<Option>());
             quiz.Url = url;
             foreach (object obj in quizQuestions.Items)
             {
@@ -162,7 +162,7 @@ namespace SandRibbon.Quizzing
                 var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption));
                 if (container != null) container.Opacity = 0.5;
             }
-            Commands.RequerySuggested();
+            AppCommands.RequerySuggested();
         }
         private void RemoveQuizAnswer(object sender, RoutedEventArgs e)
         {
@@ -189,7 +189,7 @@ namespace SandRibbon.Quizzing
                             {
                                 Dispatcher.adopt(() =>
                                 {
-                                    Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
+                                    AppCommands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
                                     
                                     url = ServerContext.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                     var image = new Image();
@@ -208,8 +208,8 @@ namespace SandRibbon.Quizzing
                                 });
 
                             });
-            Commands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
-            Commands.GenerateScreenshot.Execute(new ScreenshotDetails
+            AppCommands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
+            AppCommands.GenerateScreenshot.Execute(new ScreenshotDetails
                                                     {
                                                         time = SandRibbonObjects.DateTimeFactory.Now().Ticks,
                                                         message = ""
@@ -237,7 +237,7 @@ namespace SandRibbon.Quizzing
         private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             refreshCollection();
-            Commands.UnblockInput.ExecuteAsync(null);
+            AppCommands.UnblockInput.ExecuteAsync(null);
         }
 
         private void createAQuiz_Loaded(object sender, RoutedEventArgs e)

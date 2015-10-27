@@ -27,14 +27,14 @@ namespace SandRibbon.Components.Sandpit
         }
         public static void SetPedagogyLevel(PedagogyLevel level)
         {
-            if (Commands.SetPedagogyLevel.CanExecute(level))
+            if (AppCommands.SetPedagogyLevel.CanExecute(level))
             {
                 instance.pedagogies.SelectedItem = level;
             }
         }
         private static void doSetPedagogyLevel(PedagogyLevel level)
         {
-            Commands.SetPedagogyLevel.ExecuteAsync(level);
+            AppCommands.SetPedagogyLevel.ExecuteAsync(level);
         }
         public static void SetPedagogyLevel(PedagogyCode code)
         {

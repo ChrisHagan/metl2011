@@ -9,13 +9,13 @@ namespace MeTLLib
     class CommandParameterProvider
     {
         public static Dictionary<CompositeCommand, object> parameters = new Dictionary<CompositeCommand, object>();
-        public CommandParameterProvider(Commands commands) 
+        public CommandParameterProvider(ClientCommands commands) 
         {
             RegisterToAllCommands(commands);
         }
-        public void RegisterToAllCommands(Commands commands)
+        public void RegisterToAllCommands(ClientCommands commands)
         {
-            var applicationCommands = typeof(Commands)
+            var applicationCommands = typeof(ClientCommands)
                 .GetFields()
                 .Where(f=>f.FieldType == typeof(CompositeCommand))
                 .Select(f=>f.GetValue(commands))

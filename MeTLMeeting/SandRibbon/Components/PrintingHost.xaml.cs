@@ -12,11 +12,12 @@ namespace SandRibbon.Components
 {
     public partial class PrintingHost : UserControl
     {
+        public MeTLLib.MetlConfiguration backend;
         public static int THUMBNAIL_WIDTH = 512;
         public PrintingHost()
         {
             InitializeComponent();
-            Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
+            AppCommands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
         }
         private void QuizResultsGenerated(UnscaledThumbnailData quizData)
         {
@@ -29,13 +30,13 @@ namespace SandRibbon.Components
             stream.Close();
             string path = QuizPath(quizData.id);
             saveUnscaledBitmapToDisk(path, frombitmap);
-            Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
+            AppCommands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
         }
         public string QuizPath(int id)
         {
             if (!Directory.Exists("quizzes"))
                 Directory.CreateDirectory("quizzes");
-            var fullPath = string.Format("quizzes\\{0}", Globals.me);
+            var fullPath = string.Format("quizzes\\{0}", App.getContextFor(backend).controller.creds.name);
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             int quiznumber = 0;

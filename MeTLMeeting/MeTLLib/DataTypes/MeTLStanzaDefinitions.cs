@@ -24,7 +24,7 @@ namespace MeTLLib.DataTypes
     public class MeTLStanzasConstructor
     {
         //Any new metlStanzas need to be instantiated here to ensure that the xml parser registers them.
-        public MeTLStanzasConstructor(Commands commands)
+        public MeTLStanzasConstructor(ClientCommands commands)
         {
             new CommandParameterProvider(commands);
             new MeTLStanzas.Ink();

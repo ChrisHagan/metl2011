@@ -9,7 +9,7 @@ namespace SandRibbon.Tabs.Groups
         public EditingOptions()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            AppCommands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
         }
         private void SetLayer(string mode)
         {

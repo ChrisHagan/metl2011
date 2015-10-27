@@ -12,6 +12,7 @@
 
     public static class FrameworkElementExtensions
     {
+        public static MeTLLib.MetlConfiguration backend;
         private const double PUBLIC_OPACITY = 1.0;
         private const double PRIVATE_OPACITY = 0.7;
 
@@ -22,7 +23,7 @@
 
         public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy)
         {
-            if ((!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor) || (target == "notepad"))
+            if ((!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor(App.getContextFor(backend).controller.creds.name)) || (target == "notepad"))
             {
                 element.RemovePrivacyStyling(contentBuffer); 
                 return;

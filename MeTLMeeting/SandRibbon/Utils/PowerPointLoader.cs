@@ -116,7 +116,7 @@ namespace SandRibbon.Utils
         private const MsoTriState FALSE = MsoTriState.msoFalse;
         private const MsoTriState TRUE = MsoTriState.msoTrue;
         private static int resource = 1;
-        private MeTLLib.ClientConnection clientConnection;
+        private MeTLLib.IClientBehaviour clientConnection;
         private string currentConversation = null;
         public enum PowerpointImportType
         {
@@ -128,7 +128,7 @@ namespace SandRibbon.Utils
         public PowerPointLoader(MetlConfiguration _backend)
         {
             backend = _backend;
-            Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
+            App.getContextFor(backend).controller.commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             clientConnection = App.getContextFor(backend).controller.client;
         }
         private class PowerpointLoadTracker {
@@ -141,16 +141,16 @@ namespace SandRibbon.Utils
                 target = _target;
                 backend = _backend;
                 conversationJid = _conversation;
-                Commands.ReceiveImage.RegisterCommand(cancel);
-                Commands.ReceiveTextBox.RegisterCommand(cancel);
+                App.getContextFor(backend).controller.commands.ReceiveImage.RegisterCommand(cancel);
+                App.getContextFor(backend).controller.commands.ReceiveTextBox.RegisterCommand(cancel);
             }
             public void increment() {
                 Interlocked.Increment(ref slidesUploaded);
                 if (slidesUploaded == target)
                 {
                     // completed the import
-                    Commands.ReceiveImage.UnregisterCommand(cancel);
-                    Commands.ReceiveTextBox.UnregisterCommand(cancel);
+                    App.getContextFor(backend).controller.commands.ReceiveImage.UnregisterCommand(cancel);
+                    App.getContextFor(backend).controller.commands.ReceiveTextBox.UnregisterCommand(cancel);
 
                     // join successfully created conversation 
                     App.getContextFor(backend).controller.commands.JoinConversation.Execute(conversationJid);
@@ -203,9 +203,9 @@ namespace SandRibbon.Utils
         }
         public void CreateBlankConversation()
         {
-            var details = new ConversationDetails(ConversationDetails.DefaultName(Globals.me), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
-            Commands.HideConversationSearchBox.Execute(null);
-            Commands.CreateConversation.ExecuteAsync(details);
+            var details = new ConversationDetails(ConversationDetails.DefaultName(App.getContextFor(backend).controller.creds.name), "", App.getContextFor(backend).controller.creds.name, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
+            AppCommands.HideConversationSearchBox.Execute(null);
+            AppCommands.CreateConversation.ExecuteAsync(details);
         }
         public void ImportPowerpoint(Window owner)
         {
@@ -227,7 +227,7 @@ namespace SandRibbon.Utils
             catch (Exception)
             {
                 MeTLMessage.Error("MeTL requires Microsoft PowerPoint to be installed to import a presentation");
-                Commands.HideProgressBlocker.ExecuteAsync(null);
+                AppCommands.HideProgressBlocker.ExecuteAsync(null);
             }
 
             return null;
@@ -249,7 +249,7 @@ namespace SandRibbon.Utils
             if (conversation.Tag == null)
                 conversation.Tag = "unTagged";
             currentConversation = conversation.Jid;
-            conversation.Author = Globals.me;
+            conversation.Author = App.getContextFor(backend).controller.creds.name;
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
             var thumbnailStartId = conversation.Slides.First().id;
@@ -318,7 +318,7 @@ namespace SandRibbon.Utils
             }
             catch (COMException e)
             {
-                Commands.Mark.Execute(e.Message);
+                AppCommands.Mark.Execute(e.Message);
             }
             finally
             {
@@ -326,7 +326,7 @@ namespace SandRibbon.Utils
             }
             var startingId = conversation.Slides.First().id;
             var index = 0;
-            conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+            conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++, App.getContextFor(backend).controller.creds.name, MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
             var updatedConversation = App.getContextFor(backend).controller.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
@@ -354,28 +354,28 @@ namespace SandRibbon.Utils
                 });
             }
         }
-        public static string getThumbnailPath(string jid, int id)
+        public string getThumbnailPath(string jid, int id)
         {
             string fullPath = createThumbnailFileStructure(jid);
             var path = string.Format("{0}{1}.png", fullPath, id);
             return path;
         }
-        private static string createThumbnailFileStructure(string jid)
+        private string createThumbnailFileStructure(string jid)
         {
-            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
+            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", App.getContextFor(backend).controller.creds.name, jid });
             return fullPath;
         }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
+        private void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
         {
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId));
+            AppCommands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId));
         }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides) 
+        private void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides) 
         {
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
+            AppCommands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
         }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalSlides, string imageSource)
+        private void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalSlides, string imageSource)
         {
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
+            AppCommands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
         }
         public void LoadPowerpoint(PowerPoint.Application app, string file, ConversationDetails conversation)
         {
@@ -388,7 +388,7 @@ namespace SandRibbon.Utils
                 if (conversation.Tag == null)
                     conversation.Tag = "unTagged";
                 currentConversation = conversation.Jid;
-                conversation.Author = Globals.me;
+                conversation.Author = App.getContextFor(backend).controller.creds.name;
                 try
                 {
                     foreach (var slide in ppt.Slides)
@@ -399,13 +399,13 @@ namespace SandRibbon.Utils
                     var startingId = conversation.Slides.First().id;
                     var index = 0;
                     conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide
-                    (startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+                    (startingId++, App.getContextFor(backend).controller.creds.name, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
                     provider.UpdateConversationDetails(conversation);
                     UploadFromXml(convDescriptor);
                 }
                 catch (COMException e)
                 {
-                    Commands.Mark.Execute(e.Message);
+                    AppCommands.Mark.Execute(e.Message);
                 }
                 finally
                 {
@@ -413,14 +413,14 @@ namespace SandRibbon.Utils
                 }
             }
             catch (Exception e) {
-                Commands.Mark.Execute(e.Message);
+                AppCommands.Mark.Execute(e.Message);
             }
         }
         
         private void sendSlide(int id, XElement slide, ConversationDescriptor conversationDescriptor)
         {
             bool hasPrivate = conversationDescriptor.HasPrivateContent; 
-            var privateRoom = string.Format("{0}{1}", id, Globals.me);
+            var privateRoom = string.Format("{0}{1}", id, App.getContextFor(backend).controller.creds.name);
             if(hasPrivate) 
                 clientConnection.SneakInto(privateRoom);
             clientConnection.SneakInto(id.ToString());
@@ -439,7 +439,7 @@ namespace SandRibbon.Utils
                 var content = text.Attribute("content").Value;
                 var x = Double.Parse(text.Attribute("x").Value);
                 var y = Double.Parse(text.Attribute("y").Value);
-                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me + shapeCount++;
+                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + App.getContextFor(backend).controller.creds.name + shapeCount++;
                 var font = text.Descendants("font").ElementAt(0);
                 var privacy = (Privacy)Enum.Parse(typeof(Privacy), text.Attribute("privacy").Value, true);
                 var family = font.Attribute("family").Value;
@@ -447,7 +447,7 @@ namespace SandRibbon.Utils
                 var color = (font.Attribute("color").Value).ToString();
                 var tag = new TextTag
                     {
-                        author = Globals.me,
+                        author = App.getContextFor(backend).controller.creds.name,
                         id = textBoxIdentity,
                         privacy = privacy
                     };
@@ -461,7 +461,7 @@ namespace SandRibbon.Utils
         }
         private void sneakilySendShapes(int id, IEnumerable<XElement> shapes) { 
             int shapeCount = 0;
-            var me = Globals.me;
+            var me = App.getContextFor(backend).controller.creds.name;
             var target = "presentationSpace";
             foreach (var shape in shapes)
             {

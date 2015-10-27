@@ -14,12 +14,13 @@ namespace SandRibbon.Components.Sandpit
     }
     public class BoardManager
     {
+        protected static MeTLLib.MetlConfiguration backend;
         public static double DISPLAY_WIDTH { get { return 80; } }
         public static double DISPLAY_HEIGHT { get { return 60; } }
         public static double AVATAR_HEIGHT { get { return 120; } }
         public static double AVATAR_WIDTH { get { return 60; } }
         static BoardManager() {
-            Commands.ReceivePong.RegisterCommand(new DelegateCommand<string>(ReceivePong));
+            App.getContextFor(backend).controller.commands.ReceivePong.RegisterCommand(new DelegateCommand<string>(ReceivePong));
         }
         public static void ReceivePong(string who){
             foreach(var room in boards.Values){

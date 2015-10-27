@@ -104,7 +104,7 @@ namespace SandRibbon.Quizzing
 
             InitializeComponent();
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
+            AppCommands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
 
             question.Options.CollectionChanged += UpdateOptionError;
             //QuestionError = false;
@@ -125,7 +125,7 @@ namespace SandRibbon.Quizzing
         void ViewEditAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             CloseEdit(null, null);
-            Commands.UnblockInput.Execute(null);
+            AppCommands.UnblockInput.Execute(null);
         }
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -133,7 +133,7 @@ namespace SandRibbon.Quizzing
             if (!question.IsInEditMode)
             {
                 var selection = ((Option)e.AddedItems[0]);
-                App.getContextFor(backend).controller.commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
+                App.getContextFor(backend).controller.commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, App.getContextFor(backend).controller.creds.name, selection.name, DateTime.Now.Ticks));
                 Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
@@ -154,7 +154,7 @@ namespace SandRibbon.Quizzing
                 using (var context = dv.RenderOpen())
                     context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
                 bitmap.Render(dv);
-                Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+                AppCommands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
             }
             finally
             {
@@ -284,7 +284,7 @@ namespace SandRibbon.Quizzing
             {
                 question.Options.Add(newOption);
             }
-            Commands.RequerySuggested();
+            AppCommands.RequerySuggested();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SandRibbon.Components
         public PrivateNotepadSpace()
         {
             InitializeComponent();
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
         }
 

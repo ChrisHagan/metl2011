@@ -52,12 +52,12 @@ namespace SandRibbon.Components
                     case "SetInkCanvasMode":
                         //This should come in the format of "SetInkCanvas:Ink"
                         if (parts.Count() < 2 || String.IsNullOrEmpty(parts[1]) || !(new []{"Ink","EraseByStroke","Select","None"}.Contains(parts[1]))) return;
-                        Commands.SetInkCanvasMode.Execute(parts[1]);
+                        AppCommands.SetInkCanvasMode.Execute(parts[1]);
                         break;                    
                     case "SetLayer":
                         //This should come in the format of "SetLayer:Sketch"
                         if (parts.Count() < 2 || String.IsNullOrEmpty(parts[1]) || !(new []{"Sketch","Text","Insert","View"}.Contains(parts[1]))) return;
-                        Commands.SetLayer.Execute(parts[1]);
+                        AppCommands.SetLayer.Execute(parts[1]);
                         break;
                 }
             }

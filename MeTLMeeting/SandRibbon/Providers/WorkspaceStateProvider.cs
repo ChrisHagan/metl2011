@@ -11,6 +11,7 @@ namespace SandRibbon.Providers
 {
     public class WorkspaceStateProvider
     {
+        protected static MetlConfiguration backend;
         private static readonly string WORKSPACE_DIRECTORY = LocalFileProvider.getUserFolder("Workspace");
         private static readonly string WORKSPACE_SAVE_FILE = LocalFileProvider.getUserFile(new string[]{"Workspace"},"state.xml");
         private static readonly string WORKSPACE_ROOT_ELEMENT = "workspace";
@@ -18,9 +19,9 @@ namespace SandRibbon.Providers
         public static readonly string WORKSPACE_COMMAND_ATTRIBUTE = "command";
         public static readonly string WORKSPACE_PARAMETER_ELEMENT = "parameter";
         private static readonly IEnumerable<CompositeCommand> workspaceCommands = new CompositeCommand[]{
-            Commands.SetPedagogyLevel,
-            Commands.SetIdentity,
-            Commands.RegisterPowerpointSourceDirectoryPreference
+            AppCommands.SetPedagogyLevel,
+            //App.getContextFor(backend).controller.commands.SetIdentity,
+            AppCommands.RegisterPowerpointSourceDirectoryPreference
         };
         public static bool savedStateExists()
         {
@@ -28,7 +29,7 @@ namespace SandRibbon.Providers
             var xml = XElement.Load(WORKSPACE_SAVE_FILE);
             return workspaceCommands.Take(2).All(c=>xml.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(node=>{
                 var preference = node.Attribute(WORKSPACE_COMMAND_ATTRIBUTE);
-                return preference != null && preference.Value == Commands.which(c);
+                return preference != null && preference.Value == AppCommands.which(c);
             }).Count() > 0);
         }
         public static void ensureWorkspaceDirectoryExists() { 
@@ -62,10 +63,10 @@ namespace SandRibbon.Providers
                 switch (which) { 
                     case "SetPedagogyLevel":
                         var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
-                        Commands.SetPedagogyLevel.DefaultValue = level;
+                        AppCommands.SetPedagogyLevel.DefaultValue = level;
                     break;
                     case "RegisterPowerpointSourceDirectoryPreference":
-                        Commands.RegisterPowerpointSourceDirectoryPreference.Execute(param.Value);
+                        AppCommands.RegisterPowerpointSourceDirectoryPreference.Execute(param.Value);
                     break;
                 }
             }
@@ -77,7 +78,7 @@ namespace SandRibbon.Providers
             foreach (var command in workspaceCommands)
             {
                 XElement commandState = null;
-                var commandName = Commands.which(command);
+                var commandName = AppCommands.which(command);
                 var currentState = doc.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(e => 
                     e.Attribute(WORKSPACE_COMMAND_ATTRIBUTE).Value == commandName);
                 if(currentState.Count() == 1)
@@ -98,15 +99,15 @@ namespace SandRibbon.Providers
                             break;
                         case "SetIdentity":
                             commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
-                                new XAttribute("authentication", Crypto.encrypt(string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password)))));
+                                new XAttribute("authentication", Crypto.encrypt(string.Format(@"{0}:{1}", App.getContextFor(backend).controller.creds.name, App.getContextFor(backend).controller.creds.password)))));
                             break;
                         case "RegisterPowerpointSourceDirectoryPreference":
                             if (Globals.rememberMe)
                             {
-                                if (!Commands.RegisterPowerpointSourceDirectoryPreference.IsInitialised)
+                                if (!AppCommands.RegisterPowerpointSourceDirectoryPreference.IsInitialised)
                                     commandState.Remove();
                                 else
-                                    commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Commands.RegisterPowerpointSourceDirectoryPreference.LastValue()));
+                                    commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, AppCommands.RegisterPowerpointSourceDirectoryPreference.LastValue()));
                             }
                             break;
                     }

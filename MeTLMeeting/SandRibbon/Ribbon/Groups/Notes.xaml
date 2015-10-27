@@ -16,6 +16,6 @@
         <sr:GroupVariant Variant="Collapsed" Priority="4"/>
     </sr:RibbonGroup.Variants>
     <dict:RibbonPanel>
-        <dict:Button Text="Notes" Icon="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" ToolTip="{DynamicResource NotesToolTip}"/>
+        <dict:Button Text="Notes" Icon="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:AppCommands.ToggleScratchPadVisibility}" ToolTip="{DynamicResource NotesToolTip}"/>
     </dict:RibbonPanel>
 </sr:RibbonGroup>           

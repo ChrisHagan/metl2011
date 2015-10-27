@@ -19,23 +19,23 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.PreviewKeyDown += KeyPressed;
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            Commands.SetSync.Execute(false);
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            AppCommands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
+            AppCommands.SetSync.Execute(false);
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.PageUp || e.Key == Key.Up)
             {
-                if(Commands.MoveToPrevious.CanExecute(null))
-                  Commands.MoveToPrevious.Execute(null);
+                if(AppCommands.MoveToPrevious.CanExecute(null))
+                  AppCommands.MoveToPrevious.Execute(null);
                 e.Handled = true;
             }
             if (e.Key == Key.PageDown || e.Key == Key.Down)
             {
-                if(Commands.MoveToNext.CanExecute(null))
-                  Commands.MoveToNext.Execute(null);
+                if(AppCommands.MoveToNext.CanExecute(null))
+                  AppCommands.MoveToNext.Execute(null);
                 e.Handled = true;
             }
         }
@@ -46,9 +46,9 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 nav.Visibility = Visibility.Visible;
-                if (details.Author == Globals.me)
+                if (details.Author == App.getContextFor(backend).controller.creds.name)
                 {
-                    Commands.SetSync.Execute(true);
+                    AppCommands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;
                     syncButton.Visibility = Visibility.Collapsed;
                 }
@@ -70,7 +70,7 @@ namespace SandRibbon.Components
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
-                    if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
+                    if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
                         App.getContextFor(backend).controller.commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException){ }
@@ -85,7 +85,7 @@ namespace SandRibbon.Components
         {
             var synch = !Globals.synched;
             System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
-            Commands.SetSync.Execute(synch);
+            AppCommands.SetSync.Execute(synch);
         }
 
     }

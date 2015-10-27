@@ -25,9 +25,10 @@ namespace SandRibbon.Pages.Conversations
 {
     public class VisibleToAuthor : IValueConverter
     {
+        protected MeTLLib.MetlConfiguration backend;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Globals.me == ((ConversationDetails)value).Author) ? Visibility.Visible : Visibility.Hidden;
+            return (App.getContextFor(backend).controller.creds.name == ((ConversationDetails)value).Author) ? Visibility.Visible : Visibility.Hidden;
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -51,7 +52,7 @@ namespace SandRibbon.Pages.Conversations
             SearchResults.ItemsSource = searchResultsObserver;
             typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
-            FillSearchResults(Globals.me);            
+            FillSearchResults(ServerContext.controller.creds.name);            
         }       
                       
 
@@ -93,7 +94,7 @@ namespace SandRibbon.Pages.Conversations
             var search = new BackgroundWorker();
             search.DoWork += (object sender, DoWorkEventArgs e) =>
             {
-                Commands.BlockSearch.ExecuteAsync(null);
+                AppCommands.BlockSearch.ExecuteAsync(null);
                 var bw = sender as BackgroundWorker;
                 Dispatcher.adopt(delegate
                 {
@@ -103,7 +104,7 @@ namespace SandRibbon.Pages.Conversations
 
             search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
             {
-                Commands.UnblockSearch.ExecuteAsync(null);
+                AppCommands.UnblockSearch.ExecuteAsync(null);
                 if (e.Error == null)
                 {
                     var conversations = e.Result as List<SearchConversationDetails>;
@@ -154,9 +155,9 @@ namespace SandRibbon.Pages.Conversations
                 return;
             RefreshSortedConversationsList();
         }
-        private static bool shouldShowConversation(ConversationDetails conversation)
+        private bool shouldShowConversation(ConversationDetails conversation)
         {
-            return conversation.UserHasPermission(Globals.credentials);
+            return conversation.UserHasPermission(ServerContext.controller.creds);
         }
         private void RefreshSortedConversationsList()
         {
@@ -172,12 +173,12 @@ namespace SandRibbon.Pages.Conversations
             if (conversation.isDeleted)
                 return false;
             var author = conversation.Author;
-            if (author != Globals.me && onlyMyConversations.IsChecked.Value)
+            if (author != ServerContext.controller.creds.name && onlyMyConversations.IsChecked.Value)
                 return false;
             var title = conversation.Title.ToLower();
             var searchField = new[] { author.ToLower(), title };
             var searchQuery = SearchInput.Text.ToLower().Trim();
-            if (searchQuery.Length == 0 && author == Globals.me)
+            if (searchQuery.Length == 0 && author == ServerContext.controller.creds.name)
             {//All my conversations show up in an empty search
                 return true;
             }
@@ -207,7 +208,7 @@ namespace SandRibbon.Pages.Conversations
         {
             var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
             var conversation = ServerContext.controller.client.DetailsOf(requestedConversation.Jid);
-            if (conversation.UserHasPermission(Globals.credentials))
+            if (conversation.UserHasPermission(ServerContext.controller.creds))
             {
                 ServerContext.controller.commands.JoinConversation.ExecuteAsync(conversation.Jid);
                 NavigationService.Navigate(new ConversationOverviewPage(ServerConfig,conversation));

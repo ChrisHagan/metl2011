@@ -67,7 +67,7 @@ namespace SandRibbon.Pages.Analytics
                 outputs.Add(output);
                 foreach (var slide in conversation.Locations)
                 {
-                    App.getContextFor(backend).controller.client.getHistoryProvider().Retrieve<PreParser>(
+                    App.getContextFor(backend).controller.client.historyProvider.Retrieve<PreParser>(
                                         null,
                                         null,
                                         (parser) =>

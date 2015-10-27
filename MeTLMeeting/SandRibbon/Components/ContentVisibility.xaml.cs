@@ -97,17 +97,18 @@ namespace SandRibbon.Components
 
         public event PropertyChangedEventHandler PropertyChanged;
         public static readonly DependencyProperty IsConversationOwnerProperty =
-            DependencyProperty.Register("IsConversationOwner", typeof(bool), typeof(ContentVisibility)); 
+            DependencyProperty.Register("IsConversationOwner", typeof(bool), typeof(ContentVisibility));
 
+        public MeTLLib.MetlConfiguration backend;
         public ContentVisibility()
         {
             DataContext = this;
 
             InitializeComponent();
 
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
-            Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<ContentVisibilityEnum>(UpdateContentVisibility));
-            Commands.SetContentVisibility.DefaultValue = ContentVisibilityEnum.AllVisible;
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
+            AppCommands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<ContentVisibilityEnum>(UpdateContentVisibility));
+            AppCommands.SetContentVisibility.DefaultValue = ContentVisibilityEnum.AllVisible;
         }
     
         private void NotifyPropertyChanged(string info)
@@ -178,7 +179,7 @@ namespace SandRibbon.Components
             flags |= MyPublicVisible ? ContentVisibilityEnum.MyPublicVisible : ContentVisibilityEnum.NoneVisible;
 
             // if the owner then ignore owner flag and only use mine flag
-            if (Globals.isAuthor)
+            if (Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
             {
                 flags = flags.ClearFlag(ContentVisibilityEnum.OwnerVisible);
             }
@@ -188,7 +189,7 @@ namespace SandRibbon.Components
 
         private void UpdateConversationDetails()
         {
-            IsConversationOwner = Globals.isAuthor;
+            IsConversationOwner = Globals.isAuthor(App.getContextFor(backend).controller.creds.name);
         }
 
         private void UpdateContentVisibility(ContentVisibilityEnum contentVisibility)
@@ -211,7 +212,7 @@ namespace SandRibbon.Components
 
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {
-            Commands.SetContentVisibility.Execute(GetCurrentVisibility());
+            AppCommands.SetContentVisibility.Execute(GetCurrentVisibility());
         }
     }
 }

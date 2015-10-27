@@ -13,7 +13,7 @@ namespace SandRibbon.Chrome
         public ToolBar()
         {
             InitializeComponent();
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel));
+            AppCommands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel));
         }
         private void clearUI()
         {

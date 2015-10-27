@@ -19,24 +19,28 @@
         </ResourceDictionary>
     </Window.Resources>
     <Controls:MetroWindow.InputBindings>
-        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
-        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+        <!--
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:AppCommands.Undo}" />
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:AppCommands.Redo}" />
+        -->
         <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
         <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
         <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
-        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
-        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
-        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
-        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
-        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
-        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
-        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
-        <KeyBinding Key="Up" Command="{x:Static api:Commands.MoveToPrevious}" />
-        <KeyBinding Key="PageUp" Command="{x:Static api:Commands.MoveToPrevious}" />
-        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
-        <KeyBinding Key="Down" Command="{x:Static api:Commands.MoveToNext}" />
-        <KeyBinding Key="PageDown" Command="{x:Static api:Commands.MoveToNext}" />
-        <KeyBinding Key="Delete" Command="{x:Static api:Commands.DeleteSelectedItems}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:AppCommands.PrintConversation}"/>
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:AppCommands.ToggleBold}"/>
+        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:AppCommands.ToggleItalic}"/>
+        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:AppCommands.ToggleUnderline}"/>
+        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:AppCommands.ZoomIn}"/>
+        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:AppCommands.ZoomOut}"/>
+        <KeyBinding Key="Prior" Command="{x:Static api:AppCommands.MoveToPrevious}" />
+        <KeyBinding Key="Up" Command="{x:Static api:AppCommands.MoveToPrevious}" />
+        <KeyBinding Key="PageUp" Command="{x:Static api:AppCommands.MoveToPrevious}" />
+        <KeyBinding Key="Next" Command="{x:Static api:AppCommands.MoveToNext}" />
+        <KeyBinding Key="Down" Command="{x:Static api:AppCommands.MoveToNext}" />
+        <KeyBinding Key="PageDown" Command="{x:Static api:AppCommands.MoveToNext}" />
+        <!--
+        <KeyBinding Key="Delete" Command="{x:Static api:AppCommands.DeleteSelectedItems}"/>
+        -->
     </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
@@ -47,7 +51,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
-            <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=Backend}">
+            <Button Command="{x:Static api:AppCommands.BrowseOneNote}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=Backend}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_office_onenote}" />

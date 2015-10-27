@@ -8,7 +8,7 @@
     <!--xmlns:objects="clr-namespace:SandRibbonObjects;assembly=SandRibbonObjects"
     -->
     <UserControl.CommandBindings>
-        <CommandBinding Command="{x:Static api:Commands.ProxyJoinConversation}" Executed="doJoinConversation" CanExecute="canJoinConversation" />
+        <CommandBinding Command="{x:Static api:AppCommands.ProxyJoinConversation}" Executed="doJoinConversation" CanExecute="canJoinConversation" />
     </UserControl.CommandBindings>
     <UserControl.Resources>
          <Style TargetType="{x:Type ListBoxItem}" x:Key="separatorStyle">
@@ -26,7 +26,7 @@
             </Setter>
         </Style>
         <DataTemplate DataType="{x:Type objects:ConversationDetails}">
-            <Button Command="{x:Static api:Commands.ProxyJoinConversation}" CommandParameter="{Binding Path=Jid}">
+            <Button Command="{x:Static api:AppCommands.ProxyJoinConversation}" CommandParameter="{Binding Path=Jid}">
                 <TextBlock Text="{Binding Converter={x:Static my:Converters.conversationNameExtractor}}" 
                        HorizontalAlignment="Left" />
                        <!--ToolTip="{Binding Converter={x:Static my:Converters.conversationTooltipExtractor}}" /> -->

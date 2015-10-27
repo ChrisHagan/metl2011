@@ -26,7 +26,7 @@ namespace SandRibbon.Tabs.Groups
             InitializeComponent();
             DataContext = this;
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
         }
         private void updateConversationDetails(ConversationDetails details)
         {
@@ -41,7 +41,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void joinConversation(object obj)
         {
-            this.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+            this.Visibility = Globals.isAuthor(App.getContextFor(backend).controller.creds.name) ? Visibility.Visible : Visibility.Collapsed;
             NavigationIsLocked = Globals.conversationDetails.Permissions.NavigationLocked;
         }
     }

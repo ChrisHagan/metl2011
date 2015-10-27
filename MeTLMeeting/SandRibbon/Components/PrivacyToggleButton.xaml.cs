@@ -10,6 +10,7 @@ namespace SandRibbon.Components
 {
     public partial class PrivacyToggleButton : UserControl
     {
+        protected MeTLLib.MetlConfiguration backend;
         public PrivacyToggleButton(PrivacyToggleButtonInfo mode, Rect bounds)
         {
             InitializeComponent();
@@ -25,7 +26,7 @@ namespace SandRibbon.Components
 
             if (mode.AdornerTarget == "presentationSpace")
             {
-                if ((!Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.blacklist.Contains(Globals.me)) && !Globals.isAuthor)
+                if ((!Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.blacklist.Contains(App.getContextFor(backend).controller.creds.name)) && !Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
                 {
                     showButton.Visibility = Visibility.Collapsed;
                     hideButton.Visibility = Visibility.Collapsed;
@@ -60,7 +61,7 @@ namespace SandRibbon.Components
                 hideButton.Visibility = Visibility.Collapsed;
             }
 
-            if (Globals.IsBanhammerActive && Globals.isAuthor)
+            if (Globals.IsBanhammerActive && Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
                 banhammerButton.Visibility = Visibility.Visible;
             else
                 banhammerButton.Visibility = Visibility.Collapsed;
@@ -68,24 +69,24 @@ namespace SandRibbon.Components
 
         private void showContent(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacyOfItems.ExecuteAsync(Privacy.Public);
+            AppCommands.SetPrivacyOfItems.ExecuteAsync(Privacy.Public);
         }
         private void hideContent(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacyOfItems.ExecuteAsync(Privacy.Private);
+            AppCommands.SetPrivacyOfItems.ExecuteAsync(Privacy.Private);
         }
         private void deleteContent(object sender, RoutedEventArgs e)
         {
-            Commands.DeleteSelectedItems.ExecuteAsync(null);
+            App.getContextFor(backend).controller.commands.DeleteSelectedItems.ExecuteAsync(null);
         }
 
         private void visualizeContent(object sender, RoutedEventArgs e)
         {
-            Commands.VisualizeContent.Execute(null);
+            App.getContextFor(backend).controller.commands.VisualizeContent.Execute(null);
         }
         private void banhammerContent(object sender, RoutedEventArgs e)
         {
-            Commands.BanhammerSelectedItems.Execute(null);
+            App.getContextFor(backend).controller.commands.BanhammerSelectedItems.Execute(null);
         }
         public class PrivacyToggleButtonInfo
         {

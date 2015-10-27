@@ -11,9 +11,9 @@ namespace SandRibbon.Tabs.Groups
         public ToolBox()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            AppCommands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
-            Commands.ChangeTextMode.RegisterCommand(new DelegateCommand<string>(changeTextMode));
+            AppCommands.ChangeTextMode.RegisterCommand(new DelegateCommand<string>(changeTextMode));
 
         }
         private void changeTextMode(string mode)
@@ -27,12 +27,12 @@ namespace SandRibbon.Tabs.Groups
                     select.IsChecked = true;
                     break;
             }
-            Commands.SetTextCanvasMode.Execute(mode);
+            AppCommands.SetTextCanvasMode.Execute(mode);
         }
         private void joinConversation(object obj)
         {
             type.IsChecked = true;
-            Commands.SetTextCanvasMode.Execute("None");
+            AppCommands.SetTextCanvasMode.Execute("None");
         }
         private void SetLayer(string layer)
         {
@@ -42,15 +42,15 @@ namespace SandRibbon.Tabs.Groups
             {
                 case "Text":
                     TextOptions.Visibility = Visibility.Visible;
-                    Commands.TogglePens.ExecuteAsync(false);
+                    AppCommands.TogglePens.ExecuteAsync(false);
                     break;
                 case "Insert":
                     ImageOptions.Visibility = Visibility.Visible;
-                    Commands.TogglePens.ExecuteAsync(false);
+                    AppCommands.TogglePens.ExecuteAsync(false);
                     break;
                 default:
                     this.Visibility = Visibility.Collapsed;
-                    Commands.TogglePens.ExecuteAsync(true);
+                    AppCommands.TogglePens.ExecuteAsync(true);
                     //InkOptions.Visibility = Visibility.Visible;
                     break;
             }

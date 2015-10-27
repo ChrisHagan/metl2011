@@ -17,6 +17,6 @@ xmlns:core="clr-namespace:System;assembly=mscorlib"
         <sr:GroupVariant Variant="Collapsed" Priority="3"/>
     </sr:RibbonGroup.Variants>
     <dict:RibbonPanel>
-        <dict:Button x:Name="ShowFriendsButton" ToolTip="{DynamicResource FriendsToolTip}" Text="Friends" Icon="\Resources\friendsplaceholder.png" Command="{x:Static api:Commands.ToggleFriendsVisibility}" />
+        <dict:Button x:Name="ShowFriendsButton" ToolTip="{DynamicResource FriendsToolTip}" Text="Friends" Icon="\Resources\friendsplaceholder.png" Command="{x:Static api:AppCommands.ToggleFriendsVisibility}" />
     </dict:RibbonPanel>
 </sr:RibbonGroup>           

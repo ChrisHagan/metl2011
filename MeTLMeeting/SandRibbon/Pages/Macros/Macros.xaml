@@ -28,21 +28,21 @@
         </macro:Appearance>
     </Grid>
     <!-- Slide navigation -->
-    <Button x:Key="conversation_overview" Command="{x:Static api:Commands.MoveToOverview}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="conversation_overview" Command="{x:Static api:AppCommands.MoveToOverview}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_diagram" />
             </Viewbox>
         </macro:Appearance>
     </Button>
-    <Button x:Key="slide_next" Command="{x:Static api:Commands.MoveToNext}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="slide_next" Command="{x:Static api:AppCommands.MoveToNext}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_chevron_right" />
             </Viewbox>
         </macro:Appearance>
     </Button>
-    <Button x:Key="slide_prev" Command="{x:Static api:Commands.MoveToPrevious}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="slide_prev" Command="{x:Static api:AppCommands.MoveToPrevious}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_chevron_left" />
@@ -50,7 +50,7 @@
         </macro:Appearance>
     </Button>
     <!-- Image insert -->
-    <Button x:Key="image_more_options" Command="{x:Static api:Commands.MoreImageOptions}" Style="{StaticResource macro}">
+    <Button x:Key="image_more_options" Command="{x:Static api:AppCommands.MoreImageOptions}" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_image" />
@@ -58,49 +58,49 @@
         </macro:Appearance>
     </Button>
     <!-- Keyboarding -->
-    <Button x:Key="font_more_options" Command="{x:Static api:Commands.MoreTextOptions}" Style="{StaticResource macro}">
+    <Button x:Key="font_more_options" Command="{x:Static api:AppCommands.MoreTextOptions}" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_serif" />
             </Viewbox>
         </macro:Appearance>
     </Button>
-    <ToggleButton x:Key="font_toggle_underline" Command="{x:Static api:Commands.ToggleUnderline}" Style="{StaticResource macroToggle}">
+    <ToggleButton x:Key="font_toggle_underline" Command="{x:Static api:AppCommands.ToggleUnderline}" Style="{StaticResource macroToggle}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_underline" />
             </Viewbox>
         </macro:Appearance>
     </ToggleButton>
-    <ToggleButton x:Key="font_toggle_italic" Command="{x:Static api:Commands.ToggleItalic}" Style="{StaticResource macroToggle}">
+    <ToggleButton x:Key="font_toggle_italic" Command="{x:Static api:AppCommands.ToggleItalic}" Style="{StaticResource macroToggle}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_italic" />
             </Viewbox>
         </macro:Appearance>
     </ToggleButton>
-    <ToggleButton x:Key="font_toggle_bold" Command="{x:Static api:Commands.ToggleBold}" Style="{StaticResource macroToggle}">
+    <ToggleButton x:Key="font_toggle_bold" Command="{x:Static api:AppCommands.ToggleBold}" Style="{StaticResource macroToggle}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_bold" />
             </Viewbox>
         </macro:Appearance>
     </ToggleButton>
-    <ToggleButton x:Key="font_toggle_strikethrough" Command="{x:Static api:Commands.ToggleStrikethrough}" Style="{StaticResource macroToggle}">
+    <ToggleButton x:Key="font_toggle_strikethrough" Command="{x:Static api:AppCommands.ToggleStrikethrough}" Style="{StaticResource macroToggle}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_strikethrough" />
             </Viewbox>
         </macro:Appearance>
     </ToggleButton>
-    <Button x:Key="font_size_increase" Command="{x:Static api:Commands.IncreaseFontSize}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="font_size_increase" Command="{x:Static api:AppCommands.IncreaseFontSize}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_size_plus" />
             </Viewbox>
         </macro:Appearance>
     </Button>
-    <Button x:Key="font_size_decrease" Command="{x:Static api:Commands.IncreaseFontSize}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="font_size_decrease" Command="{x:Static api:AppCommands.IncreaseFontSize}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_text_size_minus" />
@@ -108,7 +108,7 @@
         </macro:Appearance>
     </Button>
     <!-- Pen colors-->
-    <Button x:Key="pen_red" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="pen_red" Command="{x:Static api:AppCommands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
         <Button.CommandParameter>
             <DrawingAttributes Color="Red" IsHighlighter="False"/>
         </Button.CommandParameter>
@@ -118,7 +118,7 @@
             </Grid>
         </macro:Appearance>
     </Button>
-    <Button x:Key="pen_blue" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="pen_blue" Command="{x:Static api:AppCommands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
         <Button.CommandParameter>
             <DrawingAttributes Color="Blue" IsHighlighter="False"/>
         </Button.CommandParameter>
@@ -128,7 +128,7 @@
             </Grid>
         </macro:Appearance>
     </Button>
-    <Button x:Key="pen_black" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="pen_black" Command="{x:Static api:AppCommands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
         <Button.CommandParameter>
             <DrawingAttributes Color="Black" IsHighlighter="False"/>
         </Button.CommandParameter>
@@ -138,7 +138,7 @@
             </Grid>
         </macro:Appearance>
     </Button>
-    <Button x:Key="pen_green" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="pen_green" Command="{x:Static api:AppCommands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
         <Button.CommandParameter>
             <DrawingAttributes Color="Green" IsHighlighter="False"/>
         </Button.CommandParameter>
@@ -149,7 +149,7 @@
         </macro:Appearance>
     </Button>
     <!-- Highlighters-->
-    <Button x:Key="pen_yellow_highlighter" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="pen_yellow_highlighter" Command="{x:Static api:AppCommands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
         <Button.CommandParameter>
             <DrawingAttributes Color="Yellow" IsHighlighter="True"/>
         </Button.CommandParameter>
@@ -159,7 +159,7 @@
             </Grid>
         </macro:Appearance>
     </Button>
-    <Button x:Key="pen_orange_highlighter" Command="{x:Static api:Commands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
+    <Button x:Key="pen_orange_highlighter" Command="{x:Static api:AppCommands.SetDrawingAttributes}" x:Shared="False" Style="{StaticResource macro}">
         <Button.CommandParameter>
             <DrawingAttributes Color="Orange" IsHighlighter="True"/>
         </Button.CommandParameter>
@@ -190,14 +190,14 @@
         </macro:Appearance>
     </Grid>
     <!-- Selection modification-->
-    <Button x:Key="select_mode" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="Select" Style="{StaticResource macro}">
+    <Button x:Key="select_mode" Command="{x:Static api:AppCommands.SetInkCanvasMode}" CommandParameter="Select" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_image_ants" />
             </Viewbox>
         </macro:Appearance>
     </Button>
-    <Button x:Key="participants_toggle" Command="{x:Static api:Commands.ModifySelection}" Style="{StaticResource macro}">
+    <Button x:Key="participants_toggle" Command="{x:Static api:AppCommands.ModifySelection}" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                 <macros:IconControl Content="appbar_cog" />

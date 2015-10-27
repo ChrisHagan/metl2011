@@ -21,11 +21,11 @@ namespace SandRibbon.Tabs
         public ConversationManagement()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
-            Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
+            App.getContextFor(backend).controller.commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+            AppCommands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
         }
 
         private void viewBannedContent(object _obj)
@@ -34,7 +34,7 @@ namespace SandRibbon.Tabs
             bannedContent.Owner = Window.GetWindow(this);
             bannedContent.Show();
             banContent.IsChecked = false;
-            Commands.BanhammerActive.Execute(false);
+            AppCommands.BanhammerActive.Execute(false);
             ManageBannedContent.Execute(null, null);
         }
 
@@ -55,8 +55,8 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+            editConversation.Visibility = details.Author == App.getContextFor(backend).controller.creds.name ? Visibility.Visible : Visibility.Collapsed;
+            banContent.Visibility = Globals.isAuthor(App.getContextFor(backend).controller.creds.name) ? Visibility.Visible : Visibility.Collapsed;
             bannedContentManagement.Visibility = banContent.Visibility;
         }
 
@@ -73,7 +73,7 @@ namespace SandRibbon.Tabs
             if (!IHaveThisSubmission(submission))
             {
                 submissionList.Add(submission);
-                Commands.RequerySuggested(Commands.ViewBannedContent);
+                AppCommands.RequerySuggested(AppCommands.ViewBannedContent);
             }
         }
 
@@ -87,10 +87,10 @@ namespace SandRibbon.Tabs
         private void OnBanContentchanged(object sender, ExecutedRoutedEventArgs e)
         {
             var banMode = banContent.IsChecked ?? false;
-            Commands.BanhammerActive.Execute(banMode);
+            AppCommands.BanhammerActive.Execute(banMode);
             if (banMode)
             {
-                Commands.SetInkCanvasMode.Execute("Select");
+                AppCommands.SetInkCanvasMode.Execute("Select");
             }
         }
     }

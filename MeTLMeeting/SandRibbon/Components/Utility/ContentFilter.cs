@@ -18,13 +18,15 @@ namespace SandRibbon.Components.Utility
         {
             get
             {
-                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+                return AppCommands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)AppCommands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
             }
         }
     }
 
     public abstract class ContentFilter<C, T> where C : class, ICollection<T>, new() 
     {
+        protected MeTLLib.MetlConfiguration backend;
+
         protected C contentCollection;
 
         public ContentFilter()
@@ -225,13 +227,13 @@ namespace SandRibbon.Components.Utility
                 comparer.Add((elementAuthor, _unused) => elementAuthor == conversationAuthor);
 
             if (contentVisibility.HasFlag(ContentVisibilityEnum.TheirsVisible))
-                comparer.Add((elementAuthor, _unused) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
+                comparer.Add((elementAuthor, _unused) => (elementAuthor != App.getContextFor(backend).controller.creds.name && elementAuthor != conversationAuthor));
 
             if (contentVisibility.HasFlag(ContentVisibilityEnum.MyPrivateVisible))
-                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Private);
+                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == App.getContextFor(backend).controller.creds.name && elementPrivacy == Privacy.Private);
 
             if (contentVisibility.HasFlag(ContentVisibilityEnum.MyPublicVisible))
-                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Public);
+                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == App.getContextFor(backend).controller.creds.name && elementPrivacy == Privacy.Public);
 
             return comparer;
         }

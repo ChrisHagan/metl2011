@@ -26,7 +26,7 @@ namespace SandRibbon.Components
         public ScrollBar()
         {
             InitializeComponent();
-            Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
+            AppCommands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
 
             updateScrollBarButtonDistances();
             VScroll.SmallChange = 10;
@@ -55,7 +55,7 @@ namespace SandRibbon.Components
         private void ExtendBoth(object _unused)
         {
             var canvas = (FrameworkElement)ScrollViewer.Content;
-            Commands.ExtendCanvasBySize.Execute(new SizeWithTarget(canvas.ActualWidth * 1.2, canvas.ActualHeight * 1.2, Target));
+            AppCommands.ExtendCanvasBySize.Execute(new SizeWithTarget(canvas.ActualWidth * 1.2, canvas.ActualHeight * 1.2, Target));
         }
 
         private void VScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

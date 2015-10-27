@@ -84,14 +84,14 @@ namespace MeTLLib.DataTypes
             return cd;
         }
 
-        public static SearchConversationDetails HydrateFromServer(ClientConnection conn, ConversationDetails conv)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn, ConversationDetails conv)
         {
             if (conv == null)
                 throw new ArgumentNullException();
 
             return HydrateFromServer(conn,new SearchConversationDetails(conv));
         }
-        public static SearchConversationDetails HydrateFromServer(ClientConnection conn,SearchConversationDetails scd)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn,SearchConversationDetails scd)
         {
             if (scd == null)
                 throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");

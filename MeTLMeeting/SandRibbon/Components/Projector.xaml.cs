@@ -48,7 +48,7 @@ namespace SandRibbon.Components
                 value.Closed += (_sender, _args) =>
                 {
                     windowProperty = null;
-                    Commands.RequerySuggested(Commands.MirrorPresentationSpace);
+                    AppCommands.RequerySuggested(AppCommands.MirrorPresentationSpace);
                 };
             }
         }
@@ -62,10 +62,10 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Loaded += Projector_Loaded;
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
+            AppCommands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            AppCommands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             App.getContextFor(backend).controller.commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
             App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
         }
@@ -82,7 +82,7 @@ namespace SandRibbon.Components
             if (details.IsEmpty) return;
             conversationLabel.Text = generateTitle(details);
             
-            if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
+            if (((details.isDeleted || App.getContextFor(backend).controller.creds.authorizedGroups.Where(g=>g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
             {
                 shutdown(null);
             }
@@ -99,7 +99,7 @@ namespace SandRibbon.Components
             //when you change pedagogy all the commands are deregistered this will restart the projector
             if(Window != null)
                 Window.Close();
-            Commands.CheckExtendedDesktop.Execute(null);
+            AppCommands.CheckExtendedDesktop.Execute(null);
         }
 
         private void moveTo(object obj)
@@ -116,7 +116,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                App.getContextFor(ToolableSpaceModel.backend).controller.client.getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
+                App.getContextFor(ToolableSpaceModel.backend).controller.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
             }
             catch (Exception)
             {

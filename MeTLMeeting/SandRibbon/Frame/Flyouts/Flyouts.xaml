@@ -17,7 +17,7 @@
     <Grid x:Key="moreImageOptions" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
         <Label Content="Image options" />
-        <Button Command="{x:Static api:Commands.PickImages}" CommandParameter="{Binding}">
+        <Button Command="{x:Static api:AppCommands.PickImages}" CommandParameter="{Binding}">
             <Label Content="Choose images to add" Style="{DynamicResource medium}"/>
         </Button>
         <DataGrid ItemsSource="{Binding Path=Files}" Margin="{DynamicResource clearTop}" CanUserDeleteRows="True" CanUserAddRows="False"
@@ -87,7 +87,7 @@
                                         <ItemsControl ItemsSource="{Binding Path=Pages}" Margin="{DynamicResource inset}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Button Command="{x:Static api:Commands.MoveToNotebookPage}" CommandParameter="{Binding}" HorizontalAlignment="Right">
+                                                    <Button Command="{x:Static api:AppCommands.MoveToNotebookPage}" CommandParameter="{Binding}" HorizontalAlignment="Right">
                                                         <Label Style="{DynamicResource medium}" Content="{Binding Path=Title}" />
                                                     </Button>
                                                 </DataTemplate>

@@ -51,7 +51,7 @@ namespace SandRibbon.Components
         }
         private void UpdateDialogBoxAppearance()
         {
-            var suggestedName = ConversationDetails.DefaultName(Globals.me);
+            var suggestedName = ConversationDetails.DefaultName(App.getContextFor(backend).controller.creds.name);
             switch (dialogMode)
             {
                 case ConversationConfigurationMode.CREATE:
@@ -60,7 +60,7 @@ namespace SandRibbon.Components
                     CommitButton.Content = "Create";
                     if (details == null)
                         details = new ConversationDetails
-                        (suggestedName,"",Globals.me,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
+                        (suggestedName,"", App.getContextFor(backend).controller.creds.name, new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
                     break;
                 case ConversationConfigurationMode.EDIT:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -80,7 +80,7 @@ namespace SandRibbon.Components
                     LowQualityPowerpointListBoxItem.IsChecked = true;
                     CommitButton.Content = "Create";
                     details = new ConversationDetails
-                    (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
+                    (suggestedName, "", App.getContextFor(backend).controller.creds.name, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
                     break;
             }
         }
@@ -91,9 +91,9 @@ namespace SandRibbon.Components
         private void doBrowseFiles()
         {
             string initialDirectory = "\\";
-            if (Commands.RegisterPowerpointSourceDirectoryPreference.IsInitialised)
+            if (AppCommands.RegisterPowerpointSourceDirectoryPreference.IsInitialised)
             {
-                initialDirectory = (string)Commands.RegisterPowerpointSourceDirectoryPreference.LastValue();
+                initialDirectory = (string)AppCommands.RegisterPowerpointSourceDirectoryPreference.LastValue();
             }
             else
             {
@@ -122,7 +122,7 @@ namespace SandRibbon.Components
                 var file = new FileInfo(fileBrowser.FileName);
                 if (Globals.rememberMe)
                 {
-                    Commands.RegisterPowerpointSourceDirectoryPreference.Execute(System.IO.Path.GetDirectoryName(fileBrowser.FileName));
+                    AppCommands.RegisterPowerpointSourceDirectoryPreference.Execute(System.IO.Path.GetDirectoryName(fileBrowser.FileName));
                     WorkspaceStateProvider.SaveCurrentSettings();
                 }
             }
@@ -156,7 +156,7 @@ namespace SandRibbon.Components
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = dialogMode == ConversationConfigurationMode.EDIT ? true :
                 (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
-            var IAmTheAuthor = (details.Author == Globals.me);
+            var IAmTheAuthor = (details.Author == App.getContextFor(backend).controller.creds.name);
             string ErrorText = "";
             if (!thisIsAValidTitle) { ErrorText += "Invalid conversation title.  "; }
             if (!thisTitleIsNotTaken) { ErrorText += "Conversation title already used.  "; }
@@ -213,7 +213,7 @@ namespace SandRibbon.Components
                         }
                         finally
                         {
-                            Commands.PowerpointFinished.ExecuteAsync(null);
+                            AppCommands.PowerpointFinished.ExecuteAsync(null);
                         }
                     }
                     else
@@ -222,19 +222,19 @@ namespace SandRibbon.Components
                     }
                     break;
                 case ConversationConfigurationMode.CREATE:
-                    Commands.CreateConversation.ExecuteAsync(details);
-                    Commands.PowerpointFinished.ExecuteAsync(null);
+                    AppCommands.CreateConversation.ExecuteAsync(details);
+                    AppCommands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
                     App.getContextFor(backend).controller.client.UpdateConversationDetails(details);
-                    Commands.PowerpointFinished.ExecuteAsync(null);
+                    AppCommands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.DELETE:
                     App.getContextFor(backend).controller.client.UpdateConversationDetails(details);
-                    Commands.PowerpointFinished.ExecuteAsync(null);
+                    AppCommands.PowerpointFinished.ExecuteAsync(null);
                     break;
             }
-            Commands.PowerpointFinished.ExecuteAsync(null);
+            AppCommands.PowerpointFinished.ExecuteAsync(null);
             return null;
         }
         private void Create(object sender, ExecutedRoutedEventArgs e)
@@ -247,7 +247,7 @@ namespace SandRibbon.Components
         }
         private void Close(object sender, RoutedEventArgs e)
         {
-            Commands.PowerpointFinished.ExecuteAsync(null);
+            AppCommands.PowerpointFinished.ExecuteAsync(null);
             this.Close();
         }
         private void startingContentListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -313,7 +313,7 @@ namespace SandRibbon.Components
         }
         private void createConversation_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Commands.PowerpointFinished.ExecuteAsync(null);
+            AppCommands.PowerpointFinished.ExecuteAsync(null);
         }
         private void selectAll(object sender, RoutedEventArgs e)
         {
@@ -323,7 +323,7 @@ namespace SandRibbon.Components
         {
             if (dialogMode == ConversationConfigurationMode.IMPORT)
             {
-                conversationNameTextBox.Text = ConversationDetails.DefaultName(Globals.me);
+                conversationNameTextBox.Text = ConversationDetails.DefaultName(App.getContextFor(backend).controller.creds.name);
                 doBrowseFiles();
             }
         }
@@ -333,9 +333,9 @@ namespace SandRibbon.Components
             if (importFile == null) return null;
              dialogMode = ConversationConfigurationMode.IMPORT;
              importType = myImportType;
-             var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
+             var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(App.getContextFor(backend).controller.creds.name), importFile );
              details = new ConversationDetails
-                    (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
+                    (suggestedName, "", App.getContextFor(backend).controller.creds.name, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
             if (checkConversation(details))
                 return handleConversationDialogueCompletion();
             return null;

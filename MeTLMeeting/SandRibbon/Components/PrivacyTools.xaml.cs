@@ -13,6 +13,7 @@ namespace SandRibbon.Components
 {
     public partial class PrivacyTools
     {
+        protected MetlConfiguration backend;
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
@@ -20,30 +21,30 @@ namespace SandRibbon.Components
         public PrivacyTools()
         {
             InitializeComponent();
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
+            AppCommands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
             try
             {
                 if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
                 {
-                    Commands.SetPrivacy.ExecuteAsync("Private");
+                    AppCommands.SetPrivacy.ExecuteAsync("Private");
                 }
                 else
                 {
-                    if (Globals.isAuthor)
-                        Commands.SetPrivacy.ExecuteAsync("public");
+                    if (Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
+                        AppCommands.SetPrivacy.ExecuteAsync("public");
                     else
-                        Commands.SetPrivacy.ExecuteAsync("private");
+                        AppCommands.SetPrivacy.ExecuteAsync("private");
                     settingEnabledModes(Globals.conversationDetails);
                     settingSelectedMode(Globals.privacy);
                 }
             }
             catch (NotSetException)
             {
-                Commands.SetPrivacy.ExecuteAsync("Private");
+                AppCommands.SetPrivacy.ExecuteAsync("Private");
             }
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
+            AppCommands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            AppCommands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
             DataContext = this;
         }
 
@@ -52,7 +53,7 @@ namespace SandRibbon.Components
             if (info.Target == "presentationSpace")
             {
                 string setPrivacy = info.IsPrivate ? "private" : "public";
-                Commands.SetPrivacy.ExecuteAsync(setPrivacy);
+                AppCommands.SetPrivacy.ExecuteAsync(setPrivacy);
             }           
         }
 
@@ -66,10 +67,10 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
+                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(App.getContextFor(backend).controller.creds.name)) || Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
                                       {
                                           publicMode.IsEnabled = true;
-                                          var privacy = Globals.isAuthor ? Globals.PUBLIC : Globals.PRIVATE;
+                                          var privacy = Globals.isAuthor(App.getContextFor(backend).controller.creds.name) ? Globals.PUBLIC : Globals.PRIVATE;
                                           SetPrivacy(privacy);
                                       }
 
@@ -92,7 +93,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                return (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
+                return (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == App.getContextFor(backend).controller.creds.name);
             }
             catch (Exception)
             {
@@ -104,7 +105,7 @@ namespace SandRibbon.Components
             try
             {
                 return privacy != (string)GetValue(PrivateProperty)
-                && ((Globals.conversationDetails.Permissions.studentCanPublish && !Globals.conversationDetails.blacklist.Contains(Globals.me)) || Globals.conversationDetails.Author == Globals.me);
+                && ((Globals.conversationDetails.Permissions.studentCanPublish && !Globals.conversationDetails.blacklist.Contains(App.getContextFor(backend).controller.creds.name)) || Globals.conversationDetails.Author == App.getContextFor(backend).controller.creds.name);
             }
             catch (Exception)
             {
@@ -118,7 +119,7 @@ namespace SandRibbon.Components
                                           settingSelectedMode(p);
                                           //WorkPubliclyButton.IsChecked = p == "public";
                                           SetValue(PrivateProperty, p);
-                                          Commands.RequerySuggested(Commands.SetPrivacy);
+                                          AppCommands.RequerySuggested(AppCommands.SetPrivacy);
                                       });
         }
 
@@ -146,7 +147,7 @@ namespace SandRibbon.Components
         }
         private void privacyChange(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacy.Execute(((FrameworkElement)sender).Tag.ToString());
+            AppCommands.SetPrivacy.Execute(((FrameworkElement)sender).Tag.ToString());
         }
     }
     class PrivacyToolsAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
@@ -171,7 +172,7 @@ namespace SandRibbon.Components
         }
         public void SetValue(string value)
         {
-            Commands.SetPrivacy.ExecuteAsync(value);
+            AppCommands.SetPrivacy.ExecuteAsync(value);
         }
         public string Value
         {

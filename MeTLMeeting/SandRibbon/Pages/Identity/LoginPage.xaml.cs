@@ -31,8 +31,8 @@ namespace SandRibbon.Pages.Login
         {
             InitializeComponent();
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-            Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
+            //ServerContext.controller.commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
+            //ServerContext.controller.commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             ResetWebBrowser(null);
         }
         protected Timer showTimeoutButton;
@@ -146,29 +146,33 @@ namespace SandRibbon.Pages.Login
                         try
                         {
                             ServerContext.initController(credentials);
-                            Commands.Mark.Execute("Login");
+                            AppCommands.Mark.Execute("Login");
                             if (ServerContext.controller.client.Connect(credentials))
                             {
-                                Commands.LoginFailed.Execute(null);
+                                ResetWebBrowser(null);
+                                //ServerContext.controller.commands.LoginFailed.Execute(null);
                             }
                             else
                             {
                                 loginAttempted = true;
-                                Commands.SetIdentity.Execute(credentials);
+                                SetIdentity(credentials);
+                                //ServerContext.controller.commands.SetIdentity.Execute(credentials);
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
                         {
-                            Commands.Mark.Execute("Internet not found");
-                            Commands.LoginFailed.Execute(null);
-                            Commands.NoNetworkConnectionAvailable.Execute(null);
+                            AppCommands.Mark.Execute("Internet not found");
+                            ResetWebBrowser(null);
+                            //ServerContext.controller.commands.LoginFailed.Execute(null);
+                            AppCommands.NoNetworkConnectionAvailable.Execute(null);
                         }
+                        if (NavigationService != null)
                         NavigationService.Navigate(new ProfileSelectorPage(ServerConfig,Globals.profiles));
                     }                    
                 }
                 catch (Exception e)
                 {
-                    Commands.Mark.Execute(e.Message);                    
+                    AppCommands.Mark.Execute(e.Message);                    
                 }
 
             };
@@ -207,11 +211,11 @@ namespace SandRibbon.Pages.Login
         
         private void SetIdentity(Credentials identity)
         {
-            Commands.RemoveWindowEffect.ExecuteAsync(null);
+            AppCommands.RemoveWindowEffect.ExecuteAsync(null);
             var options = ServerContext.controller.client.UserOptionsFor(identity.name);
-            Commands.SetUserOptions.Execute(options);
+            AppCommands.SetUserOptions.Execute(options);
             Globals.loadProfiles(identity);            
-            Commands.Mark.Execute("Identity is established");
+            AppCommands.Mark.Execute("Identity is established");
         }
     }
 }

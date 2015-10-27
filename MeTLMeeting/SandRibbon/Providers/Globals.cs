@@ -72,27 +72,26 @@ namespace SandRibbon.Providers
         public static readonly string PRIVATE = "private";
         public static readonly string PROJECTOR = "projector";
 
-        public static string generateId()
+        public static string generateId(string me)
         {
-            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
+            return string.Format("{0}:{1}", me, DateTimeFactory.Now().Ticks);
         }
-        public static string generateId(string seed)
+        public static string generateId(string me,string seed)
         {
-            return string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now().Ticks, seed);
+            return string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, seed);
         }
-        public static bool isAuthor
+        
+        public static bool isAuthor(string me)
         {
-            get
-            {
                 if (me == null || conversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
                 return me == conversationDetails.Author;
-            }
         }
+        
         public static UserOptions UserOptions
         {
             get
             {
-                return SandRibbon.Commands.SetUserOptions.IsInitialised ? (UserOptions)SandRibbon.Commands.SetUserOptions.LastValue() : UserOptions.DEFAULT;
+                return SandRibbon.AppCommands.SetUserOptions.IsInitialised ? (UserOptions)SandRibbon.AppCommands.SetUserOptions.LastValue() : UserOptions.DEFAULT;
             }
         }
         public static string MeTLType
@@ -101,7 +100,7 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                    return Commands.MeTLType.LastValue().ToString();
+                    return AppCommands.MeTLType.LastValue().ToString();
                 }
                 catch (Exception)
                 {
@@ -140,7 +139,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (PedagogyLevel)Commands.SetPedagogyLevel.LastValue();
+                return (PedagogyLevel)AppCommands.SetPedagogyLevel.LastValue();
             }
         }
         public static Location location
@@ -155,7 +154,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var value = ((ConversationDetails)Commands.UpdateConversationDetails.LastValue());
+                var value = ((ConversationDetails)App.getContextFor(backend).controller.commands.UpdateConversationDetails.LastValue());
                 if (value != null)
                     return value.Slides;
                 else throw new NotSetException("Slides not set");
@@ -165,14 +164,14 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : null;
+                return App.getContextFor(backend).controller.commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)App.getContextFor(backend).controller.commands.UpdateConversationDetails.LastValue() : null;
             }
         }
         public static ContentVisibilityEnum contentVisibility
         {
             get
             {
-                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+                return AppCommands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)AppCommands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
             }
         }
         public static MeTLLib.DataTypes.QuizData quiz
@@ -182,13 +181,16 @@ namespace SandRibbon.Providers
                 return quizData;
             }
         }        
+        /*
         public static MeTLLib.DataTypes.Credentials credentials
         {
             get
             {
-                return (Credentials)Commands.SetIdentity.LastValue();
+                return (Credentials)App.getContextFor(backend).controller.commands.SetIdentity.LastValue();
             }
         }
+        */
+        /*
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
         {
             get
@@ -203,18 +205,20 @@ namespace SandRibbon.Providers
                 return authorizedGroups.Select(g => g.groupKey).ToList();
             }
         }
+        */
         public static bool synched
         {
             get
             {
-                return (bool)Commands.SetSync.LastValue();
+                return (bool)AppCommands.SetSync.LastValue();
             }
         }
+        public static bool SynchronizationPolicy;
         public static int teacherSlide
         {
             get
             {
-                return (int)Commands.SyncedMoveRequested.LastValue();
+                return (int)App.getContextFor(backend).controller.commands.SyncedMoveRequested.LastValue();
             }
         }
         private static MeTLLib.MetlConfiguration backend;
@@ -227,6 +231,7 @@ namespace SandRibbon.Providers
                 return ctx != null && ctx.controller != null && ctx.controller.commands.MoveToCollaborationPage.IsInitialised ? (int)App.getContextFor(backend).controller.commands.MoveToCollaborationPage.LastValue() : -1;
             }
         }
+        /*
         public static string me
         {
             get
@@ -234,28 +239,32 @@ namespace SandRibbon.Providers
                 return credentials.name;
             }
         }
+        */
         public static string privacy
         {
             get
             {
-                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : "public");
+                return (AppCommands.SetPrivacy.IsInitialised ? (string)AppCommands.SetPrivacy.LastValue() : "public");
             }
         }
-        public static Policy policy
+        /*
+        public static Policy policy(bool isAuthor)
         {
             get { return new Policy(isAuthor, false); }
         }
-
+        */
+        /*
         public static UserInformation userInformation
         {
             get { return new UserInformation(credentials, location, policy); }
         }
+        */
 
         public static bool IsBanhammerActive
         {
             get
             {
-                return (bool)(Commands.BanhammerActive.IsInitialised ? Commands.BanhammerActive.LastValue() : false);
+                return (bool)(AppCommands.BanhammerActive.IsInitialised ? AppCommands.BanhammerActive.LastValue() : false);
             }
         }
 
@@ -263,7 +272,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (bool)Commands.RememberMe.LastValue();
+                return (bool)AppCommands.RememberMe.LastValue();
             }
         }
 

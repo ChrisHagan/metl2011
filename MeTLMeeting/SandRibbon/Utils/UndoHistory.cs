@@ -34,8 +34,8 @@ namespace SandRibbon.Utils
         public UndoHistory(MetlConfiguration _backend)
         {
             backend = _backend;
-            Commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
-            Commands.Redo.RegisterCommand(new DelegateCommand<object>(Redo, CanRedo));
+            App.getContextFor(backend).controller.commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
+            App.getContextFor(backend).controller.commands.Redo.RegisterCommand(new DelegateCommand<object>(Redo, CanRedo));
             App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(
                 i =>
                 {
@@ -62,7 +62,7 @@ namespace SandRibbon.Utils
         }
         private void RaiseQueryHistoryChanged()
         {
-            Commands.RequerySuggested(Commands.Undo, Commands.Redo);
+            App.getContextFor(backend).controller.commands.RequerySuggested(App.getContextFor(backend).controller.commands.Undo, App.getContextFor(backend).controller.commands.Redo);
         }
         private bool CanUndo(object _param) 
         { 
@@ -75,7 +75,7 @@ namespace SandRibbon.Utils
             try
             {
                 // content has been modified, so make sure "my" content is visible
-                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
+                AppCommands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
             }
             catch (Exception)
             {

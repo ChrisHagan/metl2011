@@ -22,11 +22,11 @@ namespace MeTLLib.Providers.Connection
     {
         public MetlConfiguration metlServerAddress { get; protected set; }
         public ITimerFactory timerFactory { get; protected set; }
-        public Commands commands { get; protected set; }
+        public ClientCommands commands { get; protected set; }
         public ProductionProviderMonitor(
             MetlConfiguration _metlServerAddress,
             ITimerFactory _timerFactory,
-            Commands _commands
+            ClientCommands _commands
             )
         {
             metlServerAddress = _metlServerAddress;

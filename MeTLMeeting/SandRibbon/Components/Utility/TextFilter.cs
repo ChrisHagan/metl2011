@@ -56,14 +56,14 @@ namespace SandRibbon.Components.Utility
         private void possiblyReEnableMyContent<T>(T element){
             if (element is UIElement){
                 var boxAuthor = AuthorFromTag(element as UIElement);
-                if (compareStringContents(boxAuthor, Globals.me))
+                if (compareStringContents(boxAuthor, App.getContextFor(backend).controller.creds.name))
                 {
                     var boxPrivacy = PrivacyFromTag(element as UIElement);
                     if (boxPrivacy == Privacy.Private)
                     {
                         if (!ContentVisibilityUtils.getMyPrivateVisible(CurrentContentVisibility))
                         {
-                            Commands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPrivateVisible(CurrentContentVisibility, true));
+                            AppCommands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPrivateVisible(CurrentContentVisibility, true));
                             // turn on visibilty of myPrivate
                         }
                     }
@@ -71,7 +71,7 @@ namespace SandRibbon.Components.Utility
                     {
                         if (!ContentVisibilityUtils.getMyPublicVisible(CurrentContentVisibility))
                         {
-                            Commands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPublicVisible(CurrentContentVisibility, true));
+                            AppCommands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPublicVisible(CurrentContentVisibility, true));
                             // turn on visibility of myPublic
                         }
                     }

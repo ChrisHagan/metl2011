@@ -35,7 +35,7 @@ namespace SandRibbon.Utils.Connection
             IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,
             HttpResourceProvider httpResourceProvider,
-            MeTLLib.Commands _commands)
+            MeTLLib.ClientCommands _commands)
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_commands)
         {
         }
@@ -138,7 +138,7 @@ namespace SandRibbon.Utils.Connection
     public class Printer
     {
         public MetlConfiguration backend { get; protected set; }
-        protected ClientConnection client;
+        protected IClientBehaviour client;
         public Printer(MetlConfiguration _backend)
         {
             backend = _backend;
@@ -169,7 +169,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var slide in conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
-                client.getHistoryProvider().Retrieve<PrintParser>(
+                client.historyProvider.Retrieve<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
@@ -192,12 +192,12 @@ namespace SandRibbon.Utils.Connection
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
-                client.getHistoryProvider().Retrieve<PrintParser>(
+                client.historyProvider.Retrieve<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
                                 room.ToString());
-                client.getHistoryProvider().RetrievePrivateContent<PrintParser>(
+                client.historyProvider.RetrievePrivateContent<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
@@ -209,16 +209,16 @@ namespace SandRibbon.Utils.Connection
         private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog, int room)
         {
             parsers++;
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
+            AppCommands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
             if (PrinterInfo.parsers.ContainsKey(room.ToString()))
             {
                 var Merged = PrinterInfo.parsers[room.ToString()].merge(parser);
-                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
+                AppCommands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
                 PrinterInfo.parsers[room.ToString()] = Merged;
             }
             else
             {
-                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
+                AppCommands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
                 PrinterInfo.parsers.Add(room.ToString(), parser);
             }
             if (PrinterInfo.parsers.Count() == targetPageCount && parsers == targetParserCount)
@@ -282,7 +282,7 @@ namespace SandRibbon.Utils.Connection
                       }
                       printer.PrintDocument(myDocument.DocumentPaginator, "A document");
                   }
-                  Commands.HideProgressBlocker.Execute(null);
+                  AppCommands.HideProgressBlocker.Execute(null);
               });
         }
         private MeTLInkCanvas visuallyAdjustedVisual(MeTLInkCanvas visual)

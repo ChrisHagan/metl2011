@@ -22,12 +22,12 @@ namespace SandRibbon.Tabs
         public Quizzes()
         {
             InitializeComponent();
-            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
-            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            App.getContextFor(backend).controller.commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
+            App.getContextFor(backend).controller.commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
+            AppCommands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = Globals.quiz.activeQuizzes;
             SetupUI();
         }
@@ -38,7 +38,7 @@ namespace SandRibbon.Tabs
                 {
                     try
                     {
-                        if (Globals.isAuthor)
+                        if (Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
                             amAuthor();
                         else
                             amRespondent();
@@ -74,7 +74,7 @@ namespace SandRibbon.Tabs
             if (details.IsEmpty) return;
             try
             {
-                if (Globals.isAuthor)
+                if (Globals.isAuthor(App.getContextFor(backend).controller.creds.name))
                 {
                     amAuthor();            
                 }
@@ -161,7 +161,7 @@ namespace SandRibbon.Tabs
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
-            Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
+            AppCommands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
                 var quizDialog = new CreateAQuiz(Globals.quiz.activeQuizzes.Count);
@@ -172,7 +172,7 @@ namespace SandRibbon.Tabs
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
-            Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
+            AppCommands.BlockInput.ExecuteAsync("Answering a Quiz.");
 
             var viewEditAQuiz = new ViewEditAQuiz(thisQuiz);
             viewEditAQuiz.Owner = Window.GetWindow(this);
@@ -183,8 +183,8 @@ namespace SandRibbon.Tabs
             DelegateCommand<PreParser> onPreparserAvailable = null;
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
             {
-                Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                Commands.ImageDropped.ExecuteAsync(new ImageDrop
+                App.getContextFor(backend).controller.commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
+                AppCommands.ImageDropped.ExecuteAsync(new ImageDrop
                 {
                     Filename = filename,
                     Point = new Point(0,0),
@@ -193,8 +193,8 @@ namespace SandRibbon.Tabs
                     Target = "presentationSpace"
                 });
             });
-            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.ExecuteAsync(null);
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
+            AppCommands.AddSlide.ExecuteAsync(null);
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -202,7 +202,7 @@ namespace SandRibbon.Tabs
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
-            Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
+            AppCommands.BlockInput.ExecuteAsync("Viewing a quiz.");
             var viewQuizResults = new ViewQuizResults(Globals.quiz.answers, Globals.quiz.activeQuizzes);
             viewQuizResults.Owner = Window.GetWindow(this);
             viewQuizResults.ShowDialog();

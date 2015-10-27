@@ -28,7 +28,7 @@ namespace SandRibbon.Quizzing
         }
         void ViewQuizResults_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Commands.UnblockInput.Execute(null);
+            AppCommands.UnblockInput.Execute(null);
         }
         public ViewQuizResults(Dictionary<long, ObservableCollection<QuizAnswer>> answers, ObservableCollection<QuizQuestion> Quizes): this()
         {
@@ -86,7 +86,7 @@ namespace SandRibbon.Quizzing
                 context.DrawRectangle(new VisualBrush(quiz.SnapshotHost), null, dimensions);
             bitmap.Render(dv);
             quiz.TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            AppCommands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
 
             RestoreAfterRender();
 

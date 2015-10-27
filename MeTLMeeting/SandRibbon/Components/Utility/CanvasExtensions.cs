@@ -24,6 +24,7 @@ namespace SandRibbon.Components.Utility
         CommandBinding undoBinding;
         CommandBinding redoBinding;
 
+        protected MeTLLib.MetlConfiguration backend;
         public MeTLTextBox()
         {
             UndoLimit = 1;
@@ -48,13 +49,14 @@ namespace SandRibbon.Components.Utility
         private void UndoExecuted(object sender, ExecutedRoutedEventArgs args)
         {
             ApplicationCommands.Undo.Execute(null, Application.Current.MainWindow);
-            Commands.Undo.Execute(null);
+            App.getContextFor(backend).controller.commands.Undo.Execute(null);
         }
 
         private void RedoExecuted(object sender, ExecutedRoutedEventArgs args)
         {
             ApplicationCommands.Redo.Execute(null, Application.Current.MainWindow);
-            Commands.Redo.Execute(null);
+            //AppCommands.Redo.Execute(null);
+            App.getContextFor(backend).controller.commands.Undo.Execute(null);
         }
 
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
@@ -244,17 +246,17 @@ namespace SandRibbon.Components.Utility
 
         private void HandleCut(ExecutedRoutedEventArgs args)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Cut);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Cut);
         }
 
         private void HandleCopy(ExecutedRoutedEventArgs args)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Copy);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Copy);
         }
 
         private void HandlePaste(ExecutedRoutedEventArgs args)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

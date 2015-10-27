@@ -136,17 +136,17 @@ namespace SandRibbon.Components
             InitializeComponent();
             DataContext = this;
             slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
-            Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
+            App.getContextFor(backend).controller.commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
             App.getContextFor(backend).controller.commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
-            Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
-            Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
-            Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
-            Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
+            AppCommands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
+            AppCommands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
+            AppCommands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
+            AppCommands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); }));
-            Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
-            Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
+            App.getContextFor(backend).controller.commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); }));
+            AppCommands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
+            AppCommands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             App.getContextFor(backend).controller.commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             var paste = new CompositeCommand();
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
@@ -180,19 +180,19 @@ namespace SandRibbon.Components
 
         private void HandlePaste(object obj)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
 
         private static void KeyPressed(object sender, KeyEventArgs e)
         {
-            if ((e.Key == Key.PageUp || e.Key == Key.Up) && Commands.MoveToPrevious.CanExecute(null))
+            if ((e.Key == Key.PageUp || e.Key == Key.Up) && AppCommands.MoveToPrevious.CanExecute(null))
             {
-                Commands.MoveToPrevious.Execute(null);
+                AppCommands.MoveToPrevious.Execute(null);
                 e.Handled = true;
             }
-            if ((e.Key == Key.PageDown || e.Key == Key.Down) && Commands.MoveToNext.CanExecute(null))
+            if ((e.Key == Key.PageDown || e.Key == Key.Down) && AppCommands.MoveToNext.CanExecute(null))
             {
-                Commands.MoveToNext.Execute(null);
+                AppCommands.MoveToNext.Execute(null);
                 e.Handled = true;
             }
         }
@@ -228,7 +228,7 @@ namespace SandRibbon.Components
 
         private bool calculateNavigationLocked()
         {
-            return !Globals.isAuthor &&
+            return !Globals.isAuthor(App.getContextFor(backend).controller.creds.name) &&
                    Globals.conversationDetails.Permissions.NavigationLocked &&
                    Globals.AuthorOnline(Globals.conversationDetails.Author) &&
                    Globals.AuthorInRoom(Globals.conversationDetails.Author, Globals.conversationDetails.Jid);
@@ -248,8 +248,8 @@ namespace SandRibbon.Components
         {
             var details = Globals.conversationDetails;
             if (details.ValueEquals(ConversationDetails.Empty)) return false;
-            if (String.IsNullOrEmpty(Globals.me)) return false;
-            return (details.Permissions.studentCanPublish || details.Author == Globals.me);
+            if (String.IsNullOrEmpty(App.getContextFor(backend).controller.creds.name)) return false;
+            return (details.Permissions.studentCanPublish || details.Author == App.getContextFor(backend).controller.creds.name);
         }
         private void addSlide(object _slide)
         {
@@ -293,7 +293,7 @@ namespace SandRibbon.Components
 
         private void MoveToTeacher(int where)
         {
-            if (Globals.isAuthor) return;
+            if (Globals.isAuthor(App.getContextFor(backend).controller.creds.name)) return;
             if (!Globals.synched) return;
             if (where == Globals.slide) return; // don't move if we're already on the slide requested
             TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
@@ -330,7 +330,7 @@ namespace SandRibbon.Components
         private bool isNext(object _object)
         {
             var normalNav = slides != null && slides.SelectedIndex < thumbnailList.Count() - 1;
-            var slideLockNav = Globals.isAuthor || ((IsNavigationLocked && slides.SelectedIndex < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex) || !IsNavigationLocked));
+            var slideLockNav = Globals.isAuthor(App.getContextFor(backend).controller.creds.name) || ((IsNavigationLocked && slides.SelectedIndex < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex) || !IsNavigationLocked));
             var canNav = normalNav && slideLockNav;
             return canNav;
         }
@@ -361,8 +361,8 @@ namespace SandRibbon.Components
         }
         public void checkMovementLimits()
         {
-            Commands.RequerySuggested(Commands.MoveToNext);
-            Commands.RequerySuggested(Commands.MoveToPrevious);
+            AppCommands.RequerySuggested(AppCommands.MoveToNext);
+            AppCommands.RequerySuggested(AppCommands.MoveToPrevious);
         }
         public void EditConversation(object _obj)
         {
@@ -374,7 +374,7 @@ namespace SandRibbon.Components
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
                 return;
-            if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
+            if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(App.getContextFor(backend).controller.creds))
             {
                 thumbnailList.Clear();
                 return;
@@ -448,7 +448,7 @@ namespace SandRibbon.Components
 
         public static void SendSyncMove(int currentSlideId,MetlConfiguration backend)
         {
-            if (Globals.isAuthor && Globals.synched)
+            if (Globals.isAuthor(App.getContextFor(backend).controller.creds.name) && Globals.synched)
             {
                 App.getContextFor(backend).controller.commands.SendSyncMove.ExecuteAsync(currentSlideId);
             }

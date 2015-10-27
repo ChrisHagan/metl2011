@@ -22,7 +22,10 @@ namespace SandRibbon.Pages.Collaboration
                 },
                 profile = Globals.currentProfile
             };
-            ServerContext.controller.commands.MoveToCollaborationPage.Execute(slide);            
+            Loaded += (sender, args) =>
+            {
+                ServerContext.controller.commands.MoveToCollaborationPage.Execute(slide);
+            };
         }
         
         private void ButtonWidthChanged(object sender, Itschwabing.Libraries.ResourceChangeEvent.ResourceChangeEventArgs e)

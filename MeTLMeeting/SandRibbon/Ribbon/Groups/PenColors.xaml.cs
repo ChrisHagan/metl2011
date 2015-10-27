@@ -51,7 +51,7 @@ namespace SandRibbon.Tabs.Groups
                 if (currentDrawingAttributes != null && currentDrawingAttributes.Color != value.Color)
                 {
                     currentdrawingattributes = value;
-                    Commands.SetDrawingAttributes.ExecuteAsync(value);
+                    AppCommands.SetDrawingAttributes.ExecuteAsync(value);
                 }
                 else currentdrawingattributes = value;
                 internalUpdating = true;
@@ -398,15 +398,15 @@ namespace SandRibbon.Tabs.Groups
 
             //this.DataContext = currentColourValues;
             this.DataContext = this;
-            Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return StateHelper.mustBeInConversation(); }));
+            AppCommands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return StateHelper.mustBeInConversation(); }));
             SetupPreviousColoursWithDefaults();
-            Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
-            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
+            AppCommands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
+            AppCommands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
-            Commands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
+            AppCommands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
 
-            Commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
-            Commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));
+            App.getContextFor(backend).controller.commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
+            App.getContextFor(backend).controller.commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));
 
             InvokeAlteredPreset(2);
         }
@@ -478,15 +478,15 @@ namespace SandRibbon.Tabs.Groups
                 //ChangeColour(ColourChooser, null);
                 //ChangeColorFromPreset(defaultColours, null);
 
-                Commands.SetInkCanvasMode.ExecuteAsync(penMode);
-                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+                AppCommands.SetInkCanvasMode.ExecuteAsync(penMode);
+                AppCommands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
             }
         }
 
         private void checkDraw()
         {
             drawRadio.IsChecked = true;
-            Commands.SetInkCanvasMode.ExecuteAsync("Ink");
+            AppCommands.SetInkCanvasMode.ExecuteAsync("Ink");
         }
         private void JoinConversation(object obj)
         {
@@ -507,7 +507,7 @@ namespace SandRibbon.Tabs.Groups
         {
             if (layer == "Sketch")
             {
-                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+                AppCommands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
             }
             else
                 Visibility = Visibility.Collapsed;
@@ -585,7 +585,7 @@ namespace SandRibbon.Tabs.Groups
                 var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
                 var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
                 currentAttributes = drawingAttributes;
-                Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
+                AppCommands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
                 var msg = String.Format("Pen selected, Pen {0}, Colour {1}, Size {2}, isHighlighter {3}", IndexNumber.ToString(), drawingAttributes.Color.ToString(), drawingAttributes.Height.ToString(), drawingAttributes.IsHighlighter.ToString());
                 Trace.TraceInformation(msg);
                 e.Handled = true;
@@ -643,7 +643,7 @@ namespace SandRibbon.Tabs.Groups
             defaultColours.SelectedItem = defaultColours.Items[index];
             var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[index])).Attributes);
             currentAttributes = drawingAttributes;
-            Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
+            AppCommands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
             ColourSettingPopup.IsOpen = false;
         }
         private void ResetToDefault(object sender, RoutedEventArgs e)

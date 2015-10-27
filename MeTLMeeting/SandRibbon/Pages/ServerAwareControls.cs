@@ -110,7 +110,7 @@ namespace SandRibbon
 
         private void ServerAwarePage_GotFocus(object sender, RoutedEventArgs e)
         {
-            Commands.BackendSelected.Execute(ServerConfig);
+            AppCommands.BackendSelected.Execute(ServerConfig);
         }
 
         public ServerAwarePage(MetlConfiguration config) : base()
@@ -121,7 +121,7 @@ namespace SandRibbon
             this.Resources.Add("serverContext", ServerContext);
             this.Loaded += (sender, args) =>
             {
-                Commands.BackendSelected.Execute(config);
+                AppCommands.BackendSelected.Execute(config);
             };
         }
     }

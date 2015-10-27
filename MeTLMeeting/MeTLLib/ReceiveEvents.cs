@@ -130,8 +130,8 @@ namespace MeTLLib
 
     class ProductionReceiveEvents : IReceiveEvents
     {
-        public Commands commands { get;  protected set; }
-        public ProductionReceiveEvents(Commands _commands)
+        public ClientCommands commands { get;  protected set; }
+        public ProductionReceiveEvents(ClientCommands _commands)
         {
             commands = _commands;
             this.PresenceAvailable += (sender, args) => { } ;

@@ -95,7 +95,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             var t = new DispatcherTimer();
             t.Interval = new System.TimeSpan(0, 0, 5);
             t.Tick += delegate {
-                Commands.ReceiveStrokes.Execute(Enumerable.Range(0,new Random().Next(50)).Select(i => new TargettedStroke(
+                ServerContext.controller.commands.ReceiveStrokes.Execute(Enumerable.Range(0,new Random().Next(50)).Select(i => new TargettedStroke(
                     0,"","",Privacy.NotSet,"",0,null,0.0
                     )).ToList());
             };

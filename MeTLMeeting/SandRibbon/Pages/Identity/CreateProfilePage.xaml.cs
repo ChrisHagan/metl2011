@@ -16,7 +16,7 @@ namespace SandRibbon.Pages.Identity
             InitializeComponent();
             DataContext = new Profile
             {
-                ownerName = Globals.me,
+                ownerName = ServerContext.controller.creds.name,
                 logicalName = "",
                 castBars = new[] {
                     new Bar(8)

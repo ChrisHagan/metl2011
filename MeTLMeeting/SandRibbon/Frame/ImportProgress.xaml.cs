@@ -19,12 +19,12 @@ namespace SandRibbon
         {
             InitializeComponent();
             from.ItemsSource = fromStack;
-            Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
+            AppCommands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>(PreParserAvailable));
-            Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.HideProgressBlocker.RegisterCommandToDispatcher(new DelegateCommand<object>(HideProgressBlocker));
+            AppCommands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>(PreParserAvailable));
+            AppCommands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            AppCommands.HideProgressBlocker.RegisterCommandToDispatcher(new DelegateCommand<object>(HideProgressBlocker));
         }
         private void HideProgressBlocker(object _arg) {
             Visibility = Visibility.Collapsed;
@@ -62,7 +62,7 @@ namespace SandRibbon
             setProgress(100);
         }
         private void PreParserAvailable(object _arg) {
-            Commands.RequerySuggested();
+            AppCommands.RequerySuggested();
             Visibility = Visibility.Collapsed;
         }
         private int slidesExtracted;

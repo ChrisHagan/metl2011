@@ -75,7 +75,7 @@ namespace MeTLLib.Providers.Connection
             IReceiveEvents _receiveEvents,
             IWebClientFactory _clientFactory,
             HttpResourceProvider _resourceProvider,
-            Commands _commands)
+            ClientCommands _commands)
         {
             metlServerAddress = _config;
             credentials = _credentials;
@@ -99,7 +99,7 @@ namespace MeTLLib.Providers.Connection
         public IReceiveEvents receiveEvents { get; protected set; }
         public IWebClientFactory clientFactory { get; protected set; }
         public HttpResourceProvider resourceProvider { get; protected set; }
-        public Commands commands { get; protected set; }
+        public ClientCommands commands { get; protected set; }
         private JabberWire instance;
         private static object instanceLock = new object();
         public JabberWire wire()
@@ -197,8 +197,8 @@ namespace MeTLLib.Providers.Connection
             //Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public Commands commands { get; protected set; }
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active,Commands _commands)
+        public ClientCommands commands { get; protected set; }
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active,ClientCommands _commands)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;

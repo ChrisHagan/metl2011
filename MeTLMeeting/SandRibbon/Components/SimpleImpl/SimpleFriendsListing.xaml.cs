@@ -118,7 +118,7 @@ namespace SandRibbon.Components
         {
             foreach (var friend in friendsList)
                 friend.Background =  Brushes.White;
-            Commands.HighlightFriend.Execute(null, this);
+            AppCommands.HighlightFriend.Execute(null, this);
         }
     }
 }

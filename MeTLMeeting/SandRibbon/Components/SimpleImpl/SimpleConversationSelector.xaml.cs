@@ -25,9 +25,9 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(joinConversation));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>(SetIdentity));
+            App.getContextFor(backend).controller.commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            App.getContextFor(backend).controller.commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>(SetIdentity));
         }
         private void SetIdentity(object obj)
         {
@@ -112,7 +112,7 @@ namespace SandRibbon.Components
         {
             var conversationJid = e.Parameter as string;
             var details = App.getContextFor(backend).controller.client.DetailsOf(conversationJid);
-            if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
+            if (details.isDeleted || !details.UserHasPermission(App.getContextFor(backend).controller.creds))
             {
                 // remove the conversation from the menu list
                 UpdateConversationDetails(details);

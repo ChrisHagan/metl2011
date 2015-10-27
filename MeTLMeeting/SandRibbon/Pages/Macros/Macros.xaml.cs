@@ -31,6 +31,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
     }
     public partial class Macros
     {
+        protected MeTLLib.MetlConfiguration backend;
         public void WormLoaded(object sender, RoutedEventArgs e)
         {
             var worm = sender as OxyPlot.Wpf.PlotView;
@@ -54,7 +55,7 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             wormModel.Series.Add(wormSerie);
             worm.Model = wormModel;
             var activityCount = 0;
-            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<List<TargettedStroke>>(ts => activityCount += ts.Count));
+            App.getContextFor(backend).controller.commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<List<TargettedStroke>>(ts => activityCount += ts.Count));
             var dispatcherTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 500) };
             dispatcherTimer.Tick += delegate
             {

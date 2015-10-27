@@ -15,12 +15,12 @@ namespace SandRibbon.Tabs
         public ClassManagement()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            manageBlackList.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
+            manageBlackList.Visibility = details.Author == App.getContextFor(backend).controller.creds.name ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)

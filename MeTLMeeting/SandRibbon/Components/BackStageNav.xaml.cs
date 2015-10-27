@@ -17,13 +17,13 @@ namespace SandRibbon.Components
         public BackStageNav()
         {
             InitializeComponent();
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
-            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
+            AppCommands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
+            App.getContextFor(backend).controller.commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
         }
         private void setMyConversationVisibility()
         {
-            mine.Visibility = App.getContextFor(backend).controller.client.ConversationsFor(Globals.me, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+            mine.Visibility = App.getContextFor(backend).controller.client.ConversationsFor(App.getContextFor(backend).controller.creds.name, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == App.getContextFor(backend).controller.creds.name && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }
@@ -40,12 +40,12 @@ namespace SandRibbon.Components
             // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
             if (details.IsJidEqual(Globals.location.activeConversation))
             {
-                if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
+                if (details.isDeleted || (!details.UserHasPermission(App.getContextFor(backend).controller.creds)))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
                     separator2.Visibility = Visibility.Collapsed;
-                    Commands.ShowConversationSearchBox.Execute("find");
+                    AppCommands.ShowConversationSearchBox.Execute("find");
                 }
             }
             //setMyConversationVisibility();
@@ -104,11 +104,11 @@ namespace SandRibbon.Components
         private void mode_Checked(object sender, RoutedEventArgs e)
         {
             var mode = ((FrameworkElement)sender).Name;
-            Commands.BackstageModeChanged.ExecuteAsync(mode);
+            AppCommands.BackstageModeChanged.ExecuteAsync(mode);
         }
         private void current_Click(object sender, RoutedEventArgs e)
         {
-            Commands.HideConversationSearchBox.Execute(null);
+            AppCommands.HideConversationSearchBox.Execute(null);
         }
 
         private void HelpCanExecute(object sender, CanExecuteRoutedEventArgs e)

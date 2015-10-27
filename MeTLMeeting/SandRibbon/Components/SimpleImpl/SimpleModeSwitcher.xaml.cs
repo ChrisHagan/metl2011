@@ -31,9 +31,9 @@ namespace SandRibbon.Components.SimpleImpl
         {
             InitializeComponent();
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
-            Commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));
+            AppCommands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            App.getContextFor(backend).controller.commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
+            App.getContextFor(backend).controller.commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));
         }
 
         private void SaveUIState(object parameter)
@@ -81,7 +81,7 @@ namespace SandRibbon.Components.SimpleImpl
                         break;
                 }
             }
-            Commands.SetLayer.ExecuteAsync(inputMode);
+            AppCommands.SetLayer.ExecuteAsync(inputMode);
         }
 
         private void SetLayer(string layer)
@@ -104,7 +104,7 @@ namespace SandRibbon.Components.SimpleImpl
         }
         private void JoinConversation(object obj)
         {
-            Commands.SetLayer.ExecuteAsync("Sketch");
+            AppCommands.SetLayer.ExecuteAsync("Sketch");
             Pen.IsChecked = true;
         }
 
@@ -114,17 +114,17 @@ namespace SandRibbon.Components.SimpleImpl
         }
         private void CutButtonClick(object sender, RoutedEventArgs e)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Cut);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Cut);
         }
 
         private void PasteClick(object sender, RoutedEventArgs e)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
 
         private void CopyClick(object sender, RoutedEventArgs e)
         {
-            Commands.ClipboardManager.Execute(ClipboardAction.Copy);
+            AppCommands.ClipboardManager.Execute(ClipboardAction.Copy);
         }
     }
 }

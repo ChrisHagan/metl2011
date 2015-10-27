@@ -19,7 +19,7 @@ namespace SandRibbon.Pages.ServerSelection
             var selection = e.AddedItems[0] as MetlConfiguration;
             //App.SetBackend(selection);
             //var backend = App.controller.client.server;
-            Commands.BackendSelected.Execute(selection);
+            AppCommands.BackendSelected.Execute(selection);
             NavigationService.Navigate(new LoginPage(selection));
         }
     }

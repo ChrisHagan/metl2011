@@ -25,13 +25,15 @@ namespace SandRibbon
         {
             config = _config;
             oneNoteConfiguration = new OneNoteConfiguration(config);
+            controller = new DisconnectedNetworkController();
         }
         public void initController(Credentials creds)
         {
             controller = new NetworkController(config, creds);
             undoHistory = new UndoHistory(config);
+            //controller.commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
-        public NetworkController controller { get; protected set; }
+        public INetworkController controller { get; protected set; }
         public OneNoteConfiguration oneNoteConfiguration { get; protected set; }
         public readonly static MetlContext empty = new MetlContext(MetlConfiguration.empty);
         public UndoHistory undoHistory;
@@ -126,8 +128,8 @@ namespace SandRibbon
         {
             //MeTLConfiguration.Load();            
             base.OnStartup(e);
-            Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
-            Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
+            AppCommands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
+            AppCommands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
@@ -166,7 +168,7 @@ namespace SandRibbon
         var msg = e.Exception.Message;
         if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
         {
-            Commands.Mark.Execute(string.Format("Unhandled exception: {0}", msg));
+            AppCommands.Mark.Execute(string.Format("Unhandled exception: {0}", msg));
             e.Handled = true;
         }
     }

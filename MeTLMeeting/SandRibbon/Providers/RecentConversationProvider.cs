@@ -15,7 +15,7 @@ namespace SandRibbon.Providers
     public class RecentConversationProvider
     {
         public MetlConfiguration backend;
-        public ClientConnection conversationProvider;
+        public IClientBehaviour conversationProvider;
         public RecentConversationProvider(MetlConfiguration _backend) {
             backend = _backend;
             conversationProvider = App.getContextFor(backend).controller.client;

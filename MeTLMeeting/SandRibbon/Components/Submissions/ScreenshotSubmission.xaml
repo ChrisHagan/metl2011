@@ -10,7 +10,7 @@
                 Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
                 Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                                   ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
-        <dict:Button x:Name="viewSubmission" Command="{x:Static api:Commands.ViewSubmissions}" 
+        <dict:Button x:Name="viewSubmission" Command="{x:Static api:AppCommands.ViewSubmissions}" 
                                   Text="View Submissions" Icon="\Resources\ViewSubmission.png"
                                   IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                                   ToolTip="{DynamicResource ViewSubmissionToolTip}"/>

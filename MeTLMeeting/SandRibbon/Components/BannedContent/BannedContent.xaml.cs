@@ -120,9 +120,9 @@ namespace SandRibbon.Components.BannedContent
         public BannedContent(MetlConfiguration _backend) : base(_backend)
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
+            App.getContextFor(_backend).controller.commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
             App.getContextFor(_backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(JoinConversation));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            AppCommands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
         }
 
         private void closeMe(object obj)
@@ -259,7 +259,7 @@ namespace SandRibbon.Components.BannedContent
         {
             try
             {
-                var emailAddress = new MailAddress(Globals.credentials.mail);
+                var emailAddress = new MailAddress(ServerContext.controller.creds.mail);
                 const string subject = "MeTL Banned Content Report";
                 string body = report;
 
@@ -270,7 +270,7 @@ namespace SandRibbon.Components.BannedContent
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(emailAddress.Address, Globals.credentials.password)
+                    Credentials = new NetworkCredential(emailAddress.Address, ServerContext.controller.creds.password)
                 };
 
                 using (var message = new MailMessage(emailAddress, emailAddress)

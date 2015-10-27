@@ -18,9 +18,9 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Submissions.ItemsSource = submissions;
-            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
+            App.getContextFor(backend).controller.commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(close));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(close));
+            AppCommands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(close));
         }
         
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
@@ -44,7 +44,7 @@ namespace SandRibbon.Components.Submissions
             DelegateCommand<PreParser> onPreparserAvailable = null;
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
                {
-                   Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
+                   App.getContextFor(backend).controller.commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
                    var imagesToDrop = new List<ImageDrop>();
                    var height = 0;
                    foreach(var elem in items)
@@ -60,10 +60,10 @@ namespace SandRibbon.Components.Submissions
                            });
                        height += 540;
                    }
-                   Commands.ImagesDropped.ExecuteAsync(imagesToDrop);
+                   AppCommands.ImagesDropped.ExecuteAsync(imagesToDrop);
                });
-            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.ExecuteAsync(null);
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
+            AppCommands.AddSlide.ExecuteAsync(null);
         }
         private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)
         {            

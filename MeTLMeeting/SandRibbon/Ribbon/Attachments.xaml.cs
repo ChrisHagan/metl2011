@@ -40,11 +40,11 @@ namespace SandRibbon.Tabs
             InitializeComponent();
             files = new ObservableCollection<FileInfo>();
             attachments.ItemsSource = files;
-            Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
+            App.getContextFor(backend).controller.commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>((_unused) => { UploadFile(); }));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            AppCommands.FileUpload.RegisterCommand(new DelegateCommand<object>((_unused) => { UploadFile(); }));
         }
         protected MetlConfiguration backend = MetlConfiguration.empty; //This needs to be threaded in, when we get around to making this a flyout, as we'll have to.
         private void UpdateConversationDetails(ConversationDetails details)

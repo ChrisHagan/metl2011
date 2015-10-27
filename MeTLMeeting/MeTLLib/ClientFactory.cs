@@ -12,7 +12,7 @@ namespace MeTLLib
 {
     public class ClientFactory
     {
-        public static ClientConnection Connection(MetlConfiguration config,Credentials creds,Commands commands)
+        public static ClientConnection Connection(MetlConfiguration config,Credentials creds,ClientCommands commands)
         {
 
             var webCreds = new NetworkCredential(config.resourceUsername, config.resourcePassword);

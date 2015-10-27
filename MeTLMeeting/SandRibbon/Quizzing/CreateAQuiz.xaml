@@ -14,14 +14,14 @@
     Loaded="createAQuiz_Loaded"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static SandRibbon:Commands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
+        <CommandBinding Command="{x:Static SandRibbon:AppCommands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
     </Window.CommandBindings>
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="quizCommitButton" Content="Create" Command="{x:Static SandRibbon:Commands.CreateQuizStructure}"/>
+                        <Button x:Name="quizCommitButton" Content="Create" Command="{x:Static SandRibbon:AppCommands.CreateQuizStructure}"/>
                         <Button Click="Close" Content="Cancel"/>
                     </StackPanel>
                 </Grid>

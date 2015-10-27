@@ -12,12 +12,12 @@ namespace SandRibbon.Chrome
         public StatusBar()
         {
             InitializeComponent();
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
+            AppCommands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => SetIdentity()));
-            Commands.BanhammerActive.RegisterCommandToDispatcher(new DelegateCommand<bool>((_unused) => BanhammerActive()));
-            Commands.BackendSelected.RegisterCommandToDispatcher(new DelegateCommand<MetlConfiguration>(updateBackend));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            App.getContextFor(backend).controller.commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => SetIdentity()));
+            AppCommands.BanhammerActive.RegisterCommandToDispatcher(new DelegateCommand<bool>((_unused) => BanhammerActive()));
+            AppCommands.BackendSelected.RegisterCommandToDispatcher(new DelegateCommand<MetlConfiguration>(updateBackend));
         }
         protected MetlConfiguration backend = MetlConfiguration.empty;
         protected void updateBackend(MetlConfiguration _backend)
@@ -55,7 +55,7 @@ namespace SandRibbon.Chrome
                 {
                     var details = Globals.conversationDetails;
                     var status = "";
-                    if (details.UserIsBlackListed(Globals.me))
+                    if (details.UserIsBlackListed(App.getContextFor(backend).controller.creds.name))
                     {
                         status = "Banned for inappropriate content: public exposure has been disabled";
                     }
@@ -69,11 +69,11 @@ namespace SandRibbon.Chrome
                              "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
                              Globals.privacy,
                              MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
-                             details.Subject, Globals.me);
+                             details.Subject, App.getContextFor(backend).controller.creds.name);
                     }
 #if DEBUG
                     var activeStack = backend;
-                    status += String.Format(" | ({0}) Connected to [{1}]", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
+                    status += String.Format(" | ({0}) Connected to [{1}]", String.IsNullOrEmpty(App.getContextFor(backend).controller.creds.name) ? "Unknown" : App.getContextFor(backend).controller.creds.name, 
                         activeStack.name);
 #endif
                     StatusLabel.Text = status;

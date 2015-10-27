@@ -43,7 +43,7 @@ namespace SandRibbon
         {
             InitializeComponent();
             DoConstructor();
-            Commands.AllStaticCommandsAreRegistered();
+            AppCommands.AllStaticCommandsAreRegistered();
             mainFrame.Navigate(new ServerSelectorPage(App.getAvailableServers()));
             App.CloseSplashScreen();
         }
@@ -72,7 +72,7 @@ namespace SandRibbon
             logs.Add(new LogMessage
             {
                 content = message,
-                user = Globals.me,
+                user = App.getContextFor(backend).controller.creds.name,
                 slide = Globals.location.currentSlide,
                 timestamp = DateTime.Now.Ticks
             });
@@ -80,56 +80,55 @@ namespace SandRibbon
 
         private void DoConstructor()
         {
-            Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
-            Commands.BackendSelected.RegisterCommand(new DelegateCommand<MetlConfiguration>(backendSelected));
-            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-            Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
-            Commands.MeTLType.DefaultValue = Globals.METL;
+            AppCommands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
+            AppCommands.BackendSelected.RegisterCommand(new DelegateCommand<MetlConfiguration>(backendSelected));
+            //App.getContextFor(backend).controller.commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            AppCommands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
+            AppCommands.MeTLType.DefaultValue = Globals.METL;
             Title = Strings.Global_ProductName;
             //create
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation, mustBeLoggedIn));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
-            Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => openOneNoteConfiguration(o)));
-            Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
+            AppCommands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
+            AppCommands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            AppCommands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation, mustBeLoggedIn));
+            AppCommands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
+            AppCommands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            AppCommands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            AppCommands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => openOneNoteConfiguration(o)));
+            AppCommands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
             //conversation movement
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
-            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
-            Commands.MoveToOverview.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => MoveToOverview(o), mustBeInConversation));
-            Commands.MoveToNext.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => Shift(o,1), mustBeInConversation));
-            Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => Shift(o,-1), mustBeInConversation));
-            Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
+            AppCommands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
+            AppCommands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
+            AppCommands.MoveToOverview.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => MoveToOverview(o), mustBeInConversation));
+            AppCommands.MoveToNext.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => Shift(o,1), mustBeInConversation));
+            AppCommands.MoveToPrevious.RegisterCommand(new DelegateCommand<MetlConfiguration>(o => Shift(o,-1), mustBeInConversation));
+            AppCommands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
 
-            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            AppCommands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            //AppCommands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            //AppCommands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
 
-            Commands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
-            Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
+            AppCommands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
+            AppCommands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
 
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
+            AppCommands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
 
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
-            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
+            AppCommands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            //App.getContextFor(backend).controller.commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            AppCommands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
+            AppCommands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
 
-            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
-            Commands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
+            AppCommands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
+            AppCommands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
 
-            Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
-            Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
+            AppCommands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
+            AppCommands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
-            Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
-            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
+            AppCommands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
+            AppCommands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
-            Commands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
+            AppCommands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
 
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
@@ -290,13 +289,13 @@ namespace SandRibbon
 
 
                     if (Projector.Window == null && screenCount > 1)
-                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                        AppCommands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
                     else if (Projector.Window != null && screenCount == 1)
                         Projector.Window.Close();
                     else if (Projector.Window != null && screenCount > 1)
                     {
                         // Case 3.
-                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                        AppCommands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
                     }
                 }
                 finally
@@ -328,7 +327,7 @@ namespace SandRibbon
         {
             try
             {
-                Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
+                AppCommands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
             }
             catch (Exception e)
             {
@@ -407,9 +406,9 @@ namespace SandRibbon
         private void PrintConversation(object _arg)
         {
             if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer(backend).PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(backend).PrintPrivate(Globals.conversationDetails.Jid, App.getContextFor(backend).controller.creds.name);
             else
-                new Printer(backend).PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(backend).PrintHandout(Globals.conversationDetails.Jid, App.getContextFor(backend).controller.creds.name);
         }
         private void SetUserOptions(UserOptions options)
         {
@@ -419,7 +418,7 @@ namespace SandRibbon
         private void SaveUserOptions(UserOptions options)
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
-            App.getContextFor(backend).controller.client.SaveUserOptions(Globals.me, options);
+            App.getContextFor(backend).controller.client.SaveUserOptions(App.getContextFor(backend).controller.creds.name, options);
         }        
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -436,20 +435,20 @@ namespace SandRibbon
                     var details = Globals.conversationDetails;
                     if (details == null || details.Equals(ConversationDetails.Empty))
                     {
-                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                        App.getContextFor(backend).controller.commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                     }
                     else
                     {
                         var jid = Globals.conversationDetails.Jid;
-                        Commands.UpdateConversationDetails.Execute(App.getContextFor(backend).controller.client.DetailsOf(jid));
+                        App.getContextFor(backend).controller.commands.UpdateConversationDetails.Execute(App.getContextFor(backend).controller.client.DetailsOf(jid));
                         App.getContextFor(backend).controller.commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
                         SlideDisplay.SendSyncMove(Globals.location.currentSlide,backend);
-                        App.getContextFor(backend).controller.client.getHistoryProvider().Retrieve<PreParser>(
+                        App.getContextFor(backend).controller.client.historyProvider.Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>
                                     {
-                                        Commands.PreParserAvailable.Execute(parser);                 
+                                        App.getContextFor(backend).controller.commands.PreParserAvailable.Execute(parser);                 
                                     },
                                     jid);
                     }
@@ -457,12 +456,12 @@ namespace SandRibbon
                 catch (NotSetException e)
                 {
                     Log(string.Format("Reconnecting: {0}",e.Message));
-                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                    App.getContextFor(backend).controller.commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
                 {
                     Log(string.Format("Reconnecting: {0}", e.Message));
-                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                    App.getContextFor(backend).controller.commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
             }
             else
@@ -503,7 +502,7 @@ namespace SandRibbon
         }
         private bool mustBeLoggedIn(object _arg)
         {
-            var v = !Globals.credentials.ValueEquals(Credentials.Empty);
+            var v = !App.getContextFor(backend).controller.creds.ValueEquals(Credentials.Empty);
             return v;
         }                
         private bool mustBeInConversationAndBeAuthor(object _arg)
@@ -514,16 +513,17 @@ namespace SandRibbon
         {
             var details = Globals.conversationDetails;
             if (!details.IsValid)
-                if (Globals.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
-            var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
+                if (App.getContextFor(backend).controller.creds.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
+            var validGroups = App.getContextFor(backend).controller.creds.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
             validGroups.Add("unrestricted");
             if (!details.isDeleted && validGroups.Contains(details.Subject.ToLower())) return true;
             return false;
         }
         private bool mustBeAuthor(object _arg)
         {
-            return Globals.isAuthor;
+            return Globals.isAuthor(App.getContextFor(backend).controller.creds.name);
         }
+        /*
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
@@ -539,6 +539,7 @@ namespace SandRibbon
                                      }
                                  });
         }
+        */
         private void UpdateTitle(ConversationDetails details)
         {
             if (Globals.conversationDetails != null && mustBeInConversation(null))
@@ -556,20 +557,20 @@ namespace SandRibbon
         private void applyPermissions(Permissions permissions)
         {
             if (canOpenFriendsOverride != null)
-                Commands.ToggleFriendsVisibility.UnregisterCommand(canOpenFriendsOverride);
+                AppCommands.ToggleFriendsVisibility.UnregisterCommand(canOpenFriendsOverride);
             canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
-            Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
+            AppCommands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
         }
         
         private void createConversation(object detailsObject)
         {
             var details = (ConversationDetails)detailsObject;
             if (details == null) return;
-            if (Commands.CreateConversation.CanExecute(details))
+            if (AppCommands.CreateConversation.CanExecute(details))
             {
                 if (details.Tag == null)
                     details.Tag = "unTagged";
-                details.Author = Globals.userInformation.credentials.name;
+                details.Author = App.getContextFor(backend).controller.creds.name;
                 var connection = App.getContextFor(backend).controller.client;
                 details = connection.CreateConversation(details);
                 CommandManager.InvalidateRequerySuggested();
@@ -579,7 +580,7 @@ namespace SandRibbon
         }
         private void setSync(object _obj)
         {
-            Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
+            Globals.SynchronizationPolicy = !Globals.SynchronizationPolicy;
         }
      
       
@@ -617,7 +618,7 @@ namespace SandRibbon
         }
         private bool CanSetConversationPermissions(object _style)
         {
-            return Globals.isAuthor;
+            return Globals.isAuthor(App.getContextFor(backend).controller.creds.name);
         }
 
         private void sleep(object _obj)
@@ -646,7 +647,7 @@ namespace SandRibbon
             }
             else
             {
-                Commands.CloseApplication.Execute(null);
+                AppCommands.CloseApplication.Execute(null);
                 Application.Current.Shutdown();
             }
         }

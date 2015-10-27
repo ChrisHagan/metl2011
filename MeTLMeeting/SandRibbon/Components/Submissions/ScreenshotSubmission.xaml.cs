@@ -28,11 +28,11 @@ namespace SandRibbon.Components.Submissions
         public ScreenshotSubmission()
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(detailsChanged));
+            App.getContextFor(backend).controller.commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
+            App.getContextFor(backend).controller.commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(detailsChanged));
             App.getContextFor(backend).controller.commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
-            Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
+            App.getContextFor(backend).controller.commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+            AppCommands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
             conversationChanged(null);
         }
         private void viewSubmissions(object _obj)
@@ -55,7 +55,7 @@ namespace SandRibbon.Components.Submissions
             if (ConversationDetails.Empty.Equals(details)) return;
             try
             {
-                if (Globals.conversationDetails.Author == Globals.me)
+                if (Globals.conversationDetails.Author == App.getContextFor(backend).controller.creds.name)
                     amTeacher();
                 else
                     amStudent();
@@ -72,7 +72,7 @@ namespace SandRibbon.Components.Submissions
                                                     try
                                                     {
                                                         submissionList = new List<TargettedSubmission>();
-                                                        if (Globals.conversationDetails.Author == Globals.me)
+                                                        if (Globals.conversationDetails.Author == App.getContextFor(backend).controller.creds.name)
                                                             amTeacher();
                                                         else
                                                             amStudent();
@@ -102,7 +102,7 @@ namespace SandRibbon.Components.Submissions
             if (!IHaveThisSubmission(submission))
             {
                 submissionList.Add(submission);
-                Commands.RequerySuggested(Commands.ViewSubmissions);
+                AppCommands.RequerySuggested(AppCommands.ViewSubmissions);
             }
         }
         private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
@@ -118,16 +118,16 @@ namespace SandRibbon.Components.Submissions
             DelegateCommand<string> sendScreenshot = null;
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
-                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
+                                 AppCommands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  App.getContextFor(backend).controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                                 (App.getContextFor(backend).controller.client.location.currentSlide,Globals.me,"submission",Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                                 (App.getContextFor(backend).controller.client.location.currentSlide, App.getContextFor(backend).controller.creds.name, "submission",Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
                                  MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                              });
-            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
-            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
+            AppCommands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
+            AppCommands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
                                                     {
                                                         time = time,
-                                                        message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
+                                                        message = string.Format("Submission by {1} at {0}", new DateTime(time), App.getContextFor(backend).controller.creds.name),
                                                         showPrivate = true
                                                     });
         }

@@ -52,9 +52,9 @@ namespace SandRibbon.Components
             privacyOverlay.Freeze();
             InitializeComponent();
             var a = this.DataContext;
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
-            Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => App.getContextFor(backend).controller.commands.Undo.Execute(null)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => App.getContextFor(backend).controller.commands.Redo.Execute(null)));
+            App.getContextFor(backend).controller.commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Loaded += (sender, args) =>
                {
                    var contextCommands = App.getContextFor(backend).controller.commands;
@@ -65,16 +65,16 @@ namespace SandRibbon.Components
                };
 
 
-            Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
-            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
-            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
-            Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
-            Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
-            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
-            Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));
-            Commands.AllStaticCommandsAreRegistered();
+            App.getContextFor(backend).controller.commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
+            App.getContextFor(backend).controller.commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
+            AppCommands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
+            App.getContextFor(backend).controller.commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
+            App.getContextFor(backend).controller.commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
+            AppCommands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
+            App.getContextFor(backend).controller.commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
+            AppCommands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
+            AppCommands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));
+            AppCommands.AllStaticCommandsAreRegistered();
             inConversation = true;
         }
 
@@ -95,12 +95,12 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var author in authorList)
             {
-                if (author != Globals.me && !details.blacklist.Contains(author))
+                if (author != App.getContextFor(backend).controller.creds.name && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
             App.getContextFor(ToolableSpaceModel.backend).controller.client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
-            Commands.DeleteSelectedItems.ExecuteAsync(null);
+            App.getContextFor(backend).controller.commands.DeleteSelectedItems.ExecuteAsync(null);
         }
 
         private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
@@ -109,14 +109,14 @@ namespace SandRibbon.Components
             DelegateCommand<string> sendScreenshot = null;
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
-                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
+                                 AppCommands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = App.getContextFor(ToolableSpaceModel.backend).controller.client;
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, App.getContextFor(backend).controller.creds.name, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
                              });
-            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
-            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
+            AppCommands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
+            AppCommands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
                 message = string.Format("Banned content submission at {0}", new DateTime(time)),
@@ -132,7 +132,7 @@ namespace SandRibbon.Components
             if (slide == Globals.slide) return;
             try
             {
-                if (Globals.conversationDetails.Author == Globals.me) return;
+                if (Globals.conversationDetails.Author == App.getContextFor(backend).controller.creds.name) return;
                 if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
                 Dispatcher.adoptAsync((Action)delegate
                             {
@@ -158,7 +158,7 @@ namespace SandRibbon.Components
         }
         private void SendScreenShot(ScreenshotDetails details)
         {
-            Commands.ScreenshotGenerated.Execute(generateScreenshot(details));
+            AppCommands.ScreenshotGenerated.Execute(generateScreenshot(details));
         }
         private string generateScreenshot(ScreenshotDetails details)
         {
@@ -177,7 +177,7 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
+                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, App.getContextFor(backend).controller.creds.name);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);
@@ -243,9 +243,9 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != Globals.slide || window.author != Globals.me) return;
+            if (window.slide != Globals.slide || window.author != App.getContextFor(backend).controller.creds.name) return;
             window.visualSource = stack;
-            Commands.DugPublicSpace.ExecuteAsync(window);
+            App.getContextFor(backend).controller.commands.DugPublicSpace.ExecuteAsync(window);
         }
         private void InitiateDig(object _param)
         {
@@ -256,8 +256,8 @@ namespace SandRibbon.Components
             App.Now("GrabZoom pressed");
             withDragMarquee(marquee =>
             {
-                Commands.EndGrabZoom.ExecuteAsync(null);
-                Commands.SetZoomRect.ExecuteAsync(marquee);
+                AppCommands.EndGrabZoom.ExecuteAsync(null);
+                AppCommands.SetZoomRect.ExecuteAsync(marquee);
             });
         }
         private void withDragMarquee(Action<Rect> doWithRect)
@@ -310,7 +310,7 @@ namespace SandRibbon.Components
             canvas.MouseLeave += (_sender, _args) =>
             {
                 adornerLayer.Remove(adorner);
-                Commands.EndGrabZoom.ExecuteAsync(null);
+                AppCommands.EndGrabZoom.ExecuteAsync(null);
             };
             adornerLayer.Add(adorner);
         }
@@ -326,7 +326,7 @@ namespace SandRibbon.Components
 
             var origin = rect.Location;
             App.getContextFor(backend).controller.commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0),
+            (Globals.slide, App.getContextFor(backend).controller.creds.name, marquee, origin, new Point(0, 0),
             App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
@@ -444,7 +444,7 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            App.getContextFor(ToolableSpaceModel.backend).controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), App.getContextFor(backend).controller.creds.name).ToString();
         }
         private FrameworkElement clonePublicOnly()
         {
@@ -462,7 +462,7 @@ namespace SandRibbon.Components
                     {
                         var image = (Image)child;
                         var e = viewFor((FrameworkElement)child);
-                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 2);
+                        Panel.SetZIndex(e, image.tag().author == App.getContextFor(backend).controller.creds.name ? 3 : 2);
                         clone.Children.Add(e);
                     }
                     else
@@ -490,7 +490,7 @@ namespace SandRibbon.Components
                 {
                     var image = (Image)child;
                     var e = viewFor(image);
-                    Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
+                    Panel.SetZIndex(e, image.tag().author == App.getContextFor(backend).controller.creds.name ? 3 : 1);
                     clone.Children.Add(e);
                 }
                 else

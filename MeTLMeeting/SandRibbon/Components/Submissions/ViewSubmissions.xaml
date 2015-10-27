@@ -8,12 +8,12 @@
     x:Name="viewSubmissions"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static api:Commands.ImportSubmissions}" Executed="importAllSubmissionsInBucket"/>
+        <CommandBinding Command="{x:Static api:AppCommands.ImportSubmissions}" Executed="importAllSubmissionsInBucket"/>
     </Window.CommandBindings>
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
-                <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmissions}" HorizontalAlignment="Right">Insert selected submissions as a new slide</Button>
+                <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:AppCommands.ImportSubmissions}" HorizontalAlignment="Right">Insert selected submissions as a new slide</Button>
             </StackPanel>
             <ListBox Grid.Column="1" x:Name="Submissions" SelectionMode="Multiple" Background ="Transparent" 
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">

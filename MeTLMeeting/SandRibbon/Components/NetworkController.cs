@@ -9,17 +9,33 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
-    public class NetworkController
+    public interface INetworkController
     {
-        public ClientConnection client { get; protected set; }
+        IClientBehaviour client { get; }
+        MetlConfiguration config { get; }
+        Credentials creds { get; }
+        MeTLLib.ClientCommands commands { get; }
+    }
+    public class DisconnectedNetworkController : INetworkController
+    {
+        private static readonly ClientCommands DisconnectedClientCommands = new ClientCommands();
+        private static readonly DisconnectedClientConnection DisconnectedClient = new DisconnectedClientConnection();
+        public IClientBehaviour client { get { return DisconnectedClient; } }
+        public MetlConfiguration config { get { return MetlConfiguration.empty; } }
+        public Credentials creds { get { return Credentials.Empty; } }
+        public MeTLLib.ClientCommands commands { get { return DisconnectedClientCommands; } }
+    }
+    public class NetworkController : INetworkController
+    {
+        public IClientBehaviour client { get; protected set; }
         public MetlConfiguration config { get; protected set; }
         public Credentials creds { get; protected set; }
-        public MeTLLib.Commands commands { get; protected set; }
+        public MeTLLib.ClientCommands commands { get; protected set; }
         public NetworkController(MetlConfiguration _config,Credentials _creds)
         {
             config = _config;
             creds = _creds;
-            commands = new MeTLLib.Commands();
+            commands = new MeTLLib.ClientCommands();
             commands.Mark.Execute(String.Format("NetworkController instantiating: {0}",config));
             client = buildServerSpecificClient(config,creds,commands);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
@@ -41,7 +57,7 @@ namespace SandRibbon.Components
             };
             client.events.StatusChanged += checkValidity;
         }       
-        private ClientConnection buildServerSpecificClient(MetlConfiguration c,Credentials creds,MeTLLib.Commands cmds)
+        private ClientConnection buildServerSpecificClient(MetlConfiguration c,Credentials creds,MeTLLib.ClientCommands cmds)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
             return MeTLLib.ClientFactory.Connection(c,creds,cmds);
@@ -107,7 +123,7 @@ namespace SandRibbon.Components
         private void JoinConversation(string jid)
         {
             client.JoinConversation(jid);
-            commands.CheckExtendedDesktop.ExecuteAsync(null);
+            //ApiCommands.CheckExtendedDesktop.ExecuteAsync(null);
         }
         private void MoveTo(int slide)
         {
@@ -252,12 +268,12 @@ namespace SandRibbon.Components
         }
         private void teacherStatusRequest(object sender, TeacherStatusRequestEventArgs e)
         {
-            if(e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor)
+            if(e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor(creds.name))
             {
                 client.SendTeacherStatus(new TeacherStatus
                                              {
                                                  Joining = true,
-                                                 Teacher = Globals.me,
+                                                 Teacher = creds.name,
                                                  Conversation = Globals.conversationDetails.Jid,
                                                  Slide = Globals.location.currentSlide.ToString()
                                              });
@@ -276,7 +292,7 @@ namespace SandRibbon.Components
 
         private void slideCollectionChanged(object sender, SlideCollectionUpdatedEventArgs e)
         {
-            commands.UpdateNewSlideOrder.Execute(e.Conversation);
+            AppCommands.UpdateNewSlideOrder.Execute(e.Conversation);
         }
         private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
         {

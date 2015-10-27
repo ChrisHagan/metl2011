@@ -6,7 +6,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
     <UserControl.CommandBindings>
-        <CommandBinding Command="{x:Static api:Commands.PostHighlightUser}" Executed="HighlightUser" /> 
+        <CommandBinding Command="{x:Static api:AppCommands.PostHighlightUser}" Executed="HighlightUser" /> 
     </UserControl.CommandBindings>
     <UserControl.Resources>
         <ColorAnimation From="White" To="Red" Duration="300" AutoReverse="true" x:Key="pulser" x:Shared="false"/>
