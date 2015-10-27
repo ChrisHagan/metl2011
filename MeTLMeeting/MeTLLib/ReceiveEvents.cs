@@ -36,9 +36,15 @@ namespace MeTLLib
         public delegate void ConversationDetailsAvailableEventHandler(object sender, ConversationDetailsAvailableEventArgs e);
         public delegate void CommandAvailableEventHandler(object sender, CommandAvailableEventArgs e);
         public delegate void SyncMoveRequestedEventHandler(object sender, SyncMoveRequestedEventArgs e);
+        public delegate void HandlePongEventHandler(object sender, HandlePongEventArgs e);
+        public delegate void ServersDownEventHandler(object sender, ServersDownEventArgs e);
+        public delegate void AllContentSentEventHandler(object sender, AllContentSentEventArgs e);
     }
     #endregion
     #region EventArgs
+    public class HandlePongEventArgs : EventArgs { public string[] parts; }
+    public class AllContentSentEventArgs : EventArgs { public int slide; }
+    public class ServersDownEventArgs : EventArgs { public Uri uri; }
     public class QuizzesAvailableEventArgs : EventArgs { public List<QuizInfo> quizzes; }
     public class AttachmentsAvailableEventArgs : EventArgs { public List<TargettedFile> attachments; }
     public class SingleQuizAvailableEventArgs : EventArgs { public QuizInfo quiz; }
@@ -66,6 +72,9 @@ namespace MeTLLib
     #endregion
     public interface IReceiveEvents
     {
+        void serversDown(Uri url);
+        void allContentSent(int slide);
+        void handlePong(string[] parts);
         void receivePresence(MeTLPresence presence);
         void receiveSubmission(TargettedSubmission ts);
         void receivesubmissions(PreParser parser);
@@ -126,6 +135,9 @@ namespace MeTLLib
         event MeTLLibEventHandlers.ConversationDetailsAvailableEventHandler ConversationDetailsAvailable;
         event MeTLLibEventHandlers.CommandAvailableEventHandler CommandAvailable;
         event MeTLLibEventHandlers.SyncMoveRequestedEventHandler SyncMoveRequested;
+        event MeTLLibEventHandlers.ServersDownEventHandler ServersDown;
+        event MeTLLibEventHandlers.HandlePongEventHandler HandlePong;
+        event MeTLLibEventHandlers.AllContentSentEventHandler AllContentSent;
     }
 
     class ProductionReceiveEvents : IReceiveEvents
@@ -158,13 +170,22 @@ namespace MeTLLib
             this.TeacherStatusRequest += (sender, args) => { };
             this.TeacherStatusReceived += (sender, args)=> { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
-            Commands.ServersDown.RegisterCommand(new DelegateCommand<String>(ServersDown));
+            this.ServersDown += (sender, args) => { };
         }
-        private void ServersDown(string url){
-            Trace.TraceError("CRASH: (Fixed) MeTLLib::ProductionReceiveEvents:ServersDown {0}", url);
+        void IReceiveEvents.serversDown(Uri u)
+        {
+            Trace.TraceError("CRASH: (Fixed) MeTLLib::ProductionReceiveEvents:ServersDown {0}", u);
             statusChanged(false, null);
+            ServersDown(this, new ServersDownEventArgs { uri = u });
         }
-
+        void IReceiveEvents.handlePong(string[] p)
+        {
+            HandlePong(this, new HandlePongEventArgs { parts = p });
+        }
+        void IReceiveEvents.allContentSent(int currentSlide)
+        {
+            AllContentSent(this,new AllContentSentEventArgs {slide = currentSlide });
+        }
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
             SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
@@ -310,9 +331,6 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
         public event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         public event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
-
-        #region Events
-
         public event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
         public event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
@@ -339,8 +357,23 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.CommandAvailableEventHandler CommandAvailable;
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyLiveWindowAvailable;
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyAutoShapeAvailable;
-        #endregion Events
+        public event MeTLLibEventHandlers.ServersDownEventHandler ServersDown;
+        public event MeTLLibEventHandlers.HandlePongEventHandler HandlePong;
+        public event MeTLLibEventHandlers.AllContentSentEventHandler AllContentSent;
+
         #region VirtualEventSubscribers
+        protected virtual void onServersDown(ServersDownEventArgs e)
+        {
+            ServersDown(this, e);
+        }
+        protected virtual void onHandlePong(HandlePongEventArgs e)
+        {
+            HandlePong(this, e);
+        }
+        protected virtual void onAllContentSent(AllContentSentEventArgs e)
+        {
+            AllContentSent(this, e);
+        }
         protected virtual void onPresenceAvailable(PresenceAvailableEventArgs e)
         { PresenceAvailable(this, e); }
         protected virtual void onSubmissionAvailable(SubmissionAvailableEventArgs e)

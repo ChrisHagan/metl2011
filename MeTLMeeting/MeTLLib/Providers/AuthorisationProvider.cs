@@ -7,7 +7,7 @@ using MeTLLib;
 using System.DirectoryServices;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 using System.Text;
 using System.Xml.Linq;
 using System.Threading;
@@ -35,7 +35,7 @@ namespace MeTLLib.Providers
                 {
                     var eligibleGroups = token.groups;
                     var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups, token.mail);
-                    Globals.credentials = credentials;
+                    //Globals.credentials = credentials;
                     return credentials;
                 }
             }

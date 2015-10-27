@@ -3,23 +3,20 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Collections.Generic;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers
 {
     class Crypto
     {
-        [Inject]
-        protected MetlConfiguration metlServer;
-//        private static readonly byte[] Key = Encoding.UTF8.GetBytes(MeTLConfiguration.Config.Crypto.Key);
- //       private static readonly byte[] IV = Encoding.UTF8.GetBytes(MeTLConfiguration.Config.Crypto.IV);
-//        private static Encoding encoding = Encoding.UTF8;
+        public MetlConfiguration metlServer { get; protected set; }
         private readonly Encoding encoding = Encoding.UTF8;
         private readonly byte[] Key;
         private readonly byte[] IV;
 
-        public Crypto()
+        public Crypto(MetlConfiguration _metlServer)
         {
+            metlServer = _metlServer;
             Key = encoding.GetBytes(metlServer.cryptoKey);
             encoding.GetBytes(metlServer.cryptoIV);
         }

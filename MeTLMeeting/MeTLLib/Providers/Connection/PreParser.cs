@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -45,7 +45,8 @@ namespace MeTLLib.Providers.Connection
                 cache, 
                 receiveEvents, 
                 webClientFactory, 
-                resourceProvider);
+                resourceProvider
+                );
             foreach (var parser in new[] { otherParser, this})
             {
                 foreach (var moveDelta in parser.moveDeltas)
@@ -103,7 +104,7 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveLiveWindow(window);
             foreach (var file in files)
                 receiveEvents.receiveFileResource(file);
-            Commands.AllContentSent.Execute(location.currentSlide);
+            receiveEvents.allContentSent(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
         public override void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)

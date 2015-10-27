@@ -9,53 +9,20 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
-    /*
-    public class ExternalServerAddress : MeTLServerAddress
-    {
-        public ExternalServerAddress()
-        {
-            var conf = MeTLConfiguration.Config;
-
-            Name = conf.External.Name;
-            stagingUri = new Uri(conf.External.Host, UriKind.Absolute);
-            productionUri = new Uri(conf.External.Host, UriKind.Absolute);
-        }
-    }
-
-    public class StagingSearchAddress : MeTLGenericAddress
-    {
-        public StagingSearchAddress()
-        {
-            Uri = new Uri(MeTLConfiguration.Config.Staging.MeggleUrl, UriKind.Absolute);
-        }
-    }
-
-    public class ProductionSearchAddress : MeTLGenericAddress
-    {
-        public ProductionSearchAddress()
-        {
-            Uri = new Uri(MeTLConfiguration.Config.Production.MeggleUrl, UriKind.Absolute);
-        }
-    }
-
-    public class ExternalSearchAddress : MeTLGenericAddress
-    {
-        public ExternalSearchAddress()
-        {
-            Uri = new Uri(MeTLConfiguration.Config.External.MeggleUrl, UriKind.Absolute);
-        }
-    }
-    */
     public class NetworkController
     {
-        protected ClientConnection client;
+        public IClientBehaviour client { get; protected set; }
         private Action deregister;
         public MetlConfiguration config { get; protected set; }
+        public Credentials credentials { get; protected set; }
         public NetworkController(MetlConfiguration _config)
         {
             config = _config;
-            App.mark(String.Format("NetworkController instantiating: {0}",config));
-            client = buildServerSpecificClient(_config);
+            App.mark(String.Format("NetworkController instantiating: {0}", config));
+        }
+        public IClientBehaviour connect(Credentials _creds) {
+            credentials = _creds;
+            client = buildServerSpecificClient(config,_creds);
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{
                 if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
@@ -74,11 +41,12 @@ namespace SandRibbon.Components
                 }
             };
             client.events.StatusChanged += checkValidity;
+            return client;
         }       
-        private ClientConnection buildServerSpecificClient(MetlConfiguration config)
+        private ClientConnection buildServerSpecificClient(MetlConfiguration config,Credentials creds)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
-            return MeTLLib.ClientFactory.Connection(config);
+            return MeTLLib.ClientFactory.Connection(config,creds);
             /*
             ClientConnection result;
             switch (mode)
@@ -347,7 +315,7 @@ namespace SandRibbon.Components
         
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == ClientFactory.Connection().location.activeConversation.GetHashCode())
+            if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == client.location.activeConversation.GetHashCode())
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else 
             {

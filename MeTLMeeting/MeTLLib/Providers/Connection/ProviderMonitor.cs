@@ -10,7 +10,7 @@ using agsXMPP;
 using System.Timers;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -18,12 +18,20 @@ namespace MeTLLib.Providers.Connection
     {
         void HealthCheck(Action healthyBehaviour);
     }
-    public partial class ProductionProviderMonitor : IProviderMonitor
+    public class ProductionProviderMonitor : IProviderMonitor
     {
-        [Inject]
-        public MetlConfiguration metlServerAddress { private get; set; }
-        [Inject]
-        public ITimerFactory timerFactory { private get; set; }
+        public MetlConfiguration metlServerAddress { get; protected set; }
+        public ITimerFactory timerFactory { get; protected set; }
+        public IReceiveEvents receiveEvents { get; protected set; }
+        public ProductionProviderMonitor(
+            MetlConfiguration _metlServerAddress,
+            ITimerFactory _timerFactory,
+            IReceiveEvents _receiveEvents
+            )
+        {
+            metlServerAddress = _metlServerAddress;
+            timerFactory = _timerFactory;
+        }
         public void HealthCheck (Action healthyBehaviour){
             HealthCheck(healthyBehaviour,0);
         }
@@ -49,7 +57,7 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck could not ping {0}", uri);
                     if (attempts >= maximum)
                     {
-                        Commands.ServersDown.Execute(uri.Host);
+                        receiveEvents.serversDown(uri);
                     }
                     else
                     {

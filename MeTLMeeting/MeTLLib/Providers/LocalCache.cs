@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using MeTLLib.Providers.Connection;
-using Ninject;
+//using Ninject;
 using System.Xml;
 using System.Diagnostics;
 

@@ -34,7 +34,7 @@ namespace SandRibbon.Components
         }
         private void joinConversation(string jid)
         {
-            var details = ClientFactory.Connection().DetailsOf(jid);
+            var details = App.controller.client.DetailsOf(jid);
             details.LastAccessed = DateTime.Now;
             if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
                 recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
@@ -106,7 +106,7 @@ namespace SandRibbon.Components
         private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
         {
             var conversationJid = e.Parameter as string;
-            var details = ClientFactory.Connection().DetailsOf(conversationJid);
+            var details = App.controller.client.DetailsOf(conversationJid);
             if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
             {
                 // remove the conversation from the menu list

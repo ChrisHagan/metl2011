@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ninject;
+//using Ninject;
 using MeTLLib.Providers.Connection;
 using System.Xml.Linq;
 

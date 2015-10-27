@@ -73,8 +73,9 @@ namespace SandRibbon
         {
             try
             {
-                App.mark("start network controller and log in");                          
-                if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
+                App.mark("start network controller and log in");
+                controller.connect(credentials);
+                if (!controller.client.Connect(credentials))
                 {
                     Commands.LoginFailed.Execute(null);
                 }
@@ -166,7 +167,7 @@ namespace SandRibbon
             try
             {
                 Commands.LeaveAllRooms.Execute(null);
-                MeTLLib.ClientFactory.Connection().Disconnect();         
+                controller.client.Disconnect();         
             }
             catch (Exception) { }
         }

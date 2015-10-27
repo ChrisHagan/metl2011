@@ -75,7 +75,7 @@ namespace SandRibbon.Components
                 if (author != Globals.me && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.controller.client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
             Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
@@ -87,7 +87,7 @@ namespace SandRibbon.Components
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = MeTLLib.ClientFactory.Connection();
+                                 var conn = App.controller.client;
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
@@ -357,7 +357,7 @@ namespace SandRibbon.Components
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
             (Globals.slide, Globals.me, marquee, origin, new Point(0, 0),
-            MeTLLib.ClientFactory.Connection().UploadResourceToPath(
+            App.controller.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",
@@ -478,7 +478,7 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            App.controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
         }
         private FrameworkElement clonePublicOnly()
         {

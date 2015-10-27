@@ -209,7 +209,7 @@ namespace SandRibbon.Components
             {
                 Commands.BlockSearch.ExecuteAsync(null);
                 var bw = sender as BackgroundWorker;
-                e.Result = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+                e.Result = App.controller.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
             };
 
             search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
@@ -438,7 +438,7 @@ namespace SandRibbon.Components
             else
             {
                 // Check that the permissions have not changed since user searched for the conversation
-                var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(requestedJid);
+                var conversation = App.controller.client.DetailsOf(requestedJid);
                 if (conversation.UserHasPermission(Globals.credentials))
                     Commands.JoinConversation.ExecuteAsync(requestedJid);
                 else
@@ -451,7 +451,7 @@ namespace SandRibbon.Components
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var details = context(e.OriginalSource);
-                MeTLLib.ClientFactory.Connection().DeleteConversation(details);
+                App.controller.client.DeleteConversation(details);
 
             }
             FillSearchResultsFromInput();
@@ -524,12 +524,12 @@ namespace SandRibbon.Components
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             editInProgress = false;
-            var details = SearchConversationDetails.HydrateFromServer(context(sender));
+            var details = SearchConversationDetails.HydrateFromServer(App.controller.client,context(sender));
 
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
-                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                App.controller.client.UpdateConversationDetails(details);
                 originalContext = null;
                 assignTemplate("viewing", sender);
             }

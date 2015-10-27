@@ -86,7 +86,7 @@ namespace SandRibbon.Providers
             if (shouldPaintThumb) {
                 paintThumb(image);
             } else {
-                var server = ClientFactory.Connection().server;
+                var server = App.controller.config;
                 var host = server.name;
                 var url = string.Format(server.thumbnailUrl + "{0}/{1}",host,internalSlideId);
                 //Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));

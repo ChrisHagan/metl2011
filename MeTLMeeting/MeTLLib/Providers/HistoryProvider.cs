@@ -13,11 +13,11 @@ using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers
 {
-    interface IHistoryProvider
+    public interface IHistoryProvider
     {
         void Retrieve<T>(
             Action retrievalBeginning,
@@ -35,20 +35,26 @@ namespace MeTLLib.Providers
     }
     public abstract class BaseHistoryProvider : IHistoryProvider
     {
-        [Inject]
-        public HttpHistoryProvider historyProvider { protected get; set; }
-        [Inject]
-        public HttpResourceProvider resourceProvider { protected get; set; }
-        [Inject]
-        public JabberWireFactory jabberWireFactory { protected get; set; }
-        [Inject]
-        public MetlConfiguration serverAddress { protected get; set; }
+        protected HttpResourceProvider resourceProvider;
+        protected JabberWireFactory jabberWireFactory;
+        protected MetlConfiguration serverAddress;
+        public BaseHistoryProvider(
+                HttpResourceProvider _resourceProvider,
+                JabberWireFactory _jabberWireFactory,
+                MetlConfiguration _serverAddress
+        )
+        {
+            resourceProvider = _resourceProvider;
+            jabberWireFactory = _jabberWireFactory;
+            serverAddress = _serverAddress;
+
+        }
         public abstract void Retrieve<T>(
-            Action retrievalBeginning,
-            Action<int, int> retrievalProceeding,
-            Action<T> retrievalComplete,
-            string room
-        ) where T : PreParser;
+                Action retrievalBeginning,
+                Action<int, int> retrievalProceeding,
+                Action<T> retrievalComplete,
+                string room
+            ) where T : PreParser;
         public void RetrievePrivateContent<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
@@ -62,6 +68,18 @@ namespace MeTLLib.Providers
     }
     public class CachedHistoryProvider : BaseHistoryProvider
     {
+        protected HttpHistoryProvider historyProvider;
+        
+        public CachedHistoryProvider(
+                HttpHistoryProvider _historyProvider,
+                HttpResourceProvider _resourceProvider,
+                JabberWireFactory _jabberWireFactory,
+                MetlConfiguration _serverAddress
+        ) : base(_resourceProvider,_jabberWireFactory,_serverAddress)
+        {
+            historyProvider = _historyProvider;
+        }
+
         private Dictionary<string, PreParser> cache = new Dictionary<string, PreParser>();
         private int measure<T>(int acc, T item)
         {
@@ -143,6 +161,13 @@ namespace MeTLLib.Providers
     }
     public class HttpHistoryProvider : BaseHistoryProvider
     {
+        public HttpHistoryProvider(
+                HttpResourceProvider _resourceProvider,
+                JabberWireFactory _jabberWireFactory,
+                MetlConfiguration _serverAddress
+        ) : base(_resourceProvider,_jabberWireFactory,_serverAddress)
+        {
+        }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));

@@ -149,7 +149,7 @@ namespace SandRibbon.Utils.Connection
         public void PrintHandout(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
-            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
+            var conversation = App.controller.client.DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             targetParserCount = targetPageCount;
             PrinterInfo = new PrinterInformation
@@ -161,7 +161,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var slide in conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
-                ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
+                App.controller.client.historyProvider.Retrieve<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
@@ -171,7 +171,7 @@ namespace SandRibbon.Utils.Connection
         public void PrintPrivate(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
-            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
+            var conversation = App.controller.client.DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s => s.type == Slide.TYPE.SLIDE).Count();
             targetParserCount = targetPageCount * 2;
             PrinterInfo = new PrinterInformation
@@ -184,12 +184,12 @@ namespace SandRibbon.Utils.Connection
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
-                ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
+                App.controller.client.historyProvider.Retrieve<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
                                 room.ToString());
-                ClientFactory.Connection().getHistoryProvider().RetrievePrivateContent<PrintParser>(
+                App.controller.client.historyProvider.RetrievePrivateContent<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),

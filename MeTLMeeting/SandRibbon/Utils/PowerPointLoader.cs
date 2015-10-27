@@ -116,7 +116,7 @@ namespace SandRibbon.Utils
         private const MsoTriState FALSE = MsoTriState.msoFalse;
         private const MsoTriState TRUE = MsoTriState.msoTrue;
         private static int resource = 1;
-        private MeTLLib.ClientConnection clientConnection;
+        private MeTLLib.IClientBehaviour clientConnection;
         private string currentConversation = null;
         public enum PowerpointImportType
         {
@@ -127,7 +127,7 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
-            clientConnection = MeTLLib.ClientFactory.Connection();
+            clientConnection = App.controller.client;
         }
         private class PowerpointLoadTracker {
             private int slidesUploaded = 0;
@@ -165,7 +165,7 @@ namespace SandRibbon.Utils
             if (app == null)
                 return;
             
-            var conversation = ClientFactory.Connection().CreateConversation(spec.Details);
+            var conversation = App.controller.client.CreateConversation(spec.Details);
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
                 {
@@ -194,7 +194,7 @@ namespace SandRibbon.Utils
                     }
                     catch (Exception)
                     {
-                        ClientFactory.Connection().DeleteConversation(conversation);
+                        App.controller.client.DeleteConversation(conversation);
                     }
                 }));
             worker.SetApartmentState(ApartmentState.STA);
@@ -326,7 +326,7 @@ namespace SandRibbon.Utils
             var startingId = conversation.Slides.First().id;
             var index = 0;
             conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-            var updatedConversation = ClientFactory.Connection().UpdateConversationDetails(conversation);
+            var updatedConversation = App.controller.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
                 Trace.TraceInformation("PowerpointImport: Failed to update conversation");
@@ -381,7 +381,7 @@ namespace SandRibbon.Utils
             try
             {
                 var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
-                var provider = ClientFactory.Connection();
+                var provider = App.controller.client;
                 var convDescriptor = new ConversationDescriptor(conversation, new XElement("presentation"));
                 convDescriptor.Xml.Add(new XAttribute("name", conversation.Title));
                 if (conversation.Tag == null)
@@ -486,7 +486,7 @@ namespace SandRibbon.Utils
         }
         private XElement uploadXmlUrls(int slide, XElement doc)
         {
-            var conn = MeTLLib.ClientFactory.Connection();
+            var conn = App.controller.client;
             var shapeCount = doc.Descendants("shape").Count();
             for (var i = 0; i < shapeCount; i++)
             {

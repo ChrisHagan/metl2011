@@ -4,7 +4,7 @@ using System.Linq;
 using System;
 using System.Threading;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -110,16 +110,6 @@ namespace MeTLLib.Providers.Connection
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
     }
-    /*
-    public class MeTLCredentials : NetworkCredential
-    {
-        [Inject]
-        protected MetlConfiguration server;
-        private string USERNAME { get {return server.resourceUsername; } }// MeTLConfiguration.Config.ResourceCredential.Username;
-        private string PASSWORD { get {return server.resourcePassword; } }// MeTLConfiguration.Config.ResourceCredential.Password;
-        public MeTLCredentials() : base(USERNAME, PASSWORD) { }
-    }
-    */
     public class HttpFileUploadResultArgs
     {
         public byte[] Result { get; set; }
@@ -152,7 +142,7 @@ namespace MeTLLib.Providers.Connection
         //private static readonly string MonashCertificateSubject = "CN=my.monash.edu.au, OU=ITS, O=Monash University, L=Clayton, S=Victoria, C=AU";
         //private static readonly string MonashCertificateIssuer = "E=premium-server@thawte.com, CN=Thawte Premium Server CA, OU=Certification Services Division, O=Thawte Consulting cc, L=Cape Town, S=Western Cape, C=ZA";
         //private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
-        private ICredentials credentials;
+        protected ICredentials credentials;
         public WebClientFactory(ICredentials credentials)
         {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);

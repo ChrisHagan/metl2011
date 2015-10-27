@@ -2011,7 +2011,7 @@ namespace SandRibbon.Components
                 worker.DoWork += (s, e) =>
                  {
                      File.Copy(unMangledFilename, filename);
-                     MeTLLib.ClientFactory.Connection().UploadAndSendFile(
+                     App.controller.client.UploadAndSendFile(
                          new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(filename)));
                      File.Delete(filename);
                  };
@@ -2079,7 +2079,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
                     if (!fileName.StartsWith("http"))
-                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
+                        App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
                     else
                         sendImage(translatedImage);
 
@@ -2864,7 +2864,7 @@ namespace SandRibbon.Components
                 if (File.Exists(tmpFile))
                 {
                     var uri =
-                        MeTLLib.ClientFactory.Connection().NoAuthUploadResource(
+                        App.controller.client.NoAuthUploadResource(
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new MeTLImage
                                     {

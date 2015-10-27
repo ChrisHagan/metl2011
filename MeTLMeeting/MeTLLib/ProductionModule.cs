@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ninject.Modules;
+//using Ninject.Modules;
 using MeTLLib.Providers.Connection;
 using System.Net;
 using MeTLLib.Providers;
@@ -78,6 +78,7 @@ namespace MeTLLib
         }
     }
     */
+    /*
     public class ProductionModule : NinjectModule
     {
         public override void Load()
@@ -96,6 +97,7 @@ namespace MeTLLib
             Bind<UserOptionsProvider>().To<UserOptionsProvider>().InSingletonScope();
         }
     }
+    */
     /*
     public class StagingModule : ProductionModule
     {

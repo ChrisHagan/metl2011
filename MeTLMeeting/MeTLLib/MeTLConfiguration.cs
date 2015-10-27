@@ -80,6 +80,7 @@
         {
             get { return "global@" + muc; }
         }
+        public static readonly MetlConfiguration empty = new MetlConfiguration("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
     }
     public abstract class MetlConfigurationManager
     {

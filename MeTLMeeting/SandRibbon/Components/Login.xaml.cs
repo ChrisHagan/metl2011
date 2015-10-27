@@ -173,7 +173,7 @@ namespace SandRibbon.Components
 
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.authenticationUrl;
+            var loginUri = App.controller.config.authenticationUrl;
             DestroyWebBrowser(null);
             DeleteCookieForUrl(new Uri(loginUri));
             logonBrowser = new WebBrowser();
@@ -243,7 +243,7 @@ namespace SandRibbon.Components
             {
                 var uri = new Uri(url);
                 browseHistory.Add(uri);
-                var authenticationUri = new Uri(ClientFactory.Connection().server.authenticationUrl);
+                var authenticationUri = new Uri(App.controller.config.authenticationUrl);
                 return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
             }
             catch (Exception e)
@@ -310,7 +310,7 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(() =>
             {
                 logonBrowserContainer.Visibility = Visibility.Collapsed;
-                var options = ClientFactory.Connection().UserOptionsFor(identity.name);
+                var options = App.controller.client.UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
                 DestroyWebBrowser(null);
