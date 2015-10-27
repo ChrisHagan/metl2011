@@ -11,29 +11,31 @@ using System.Windows;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
+    public class Participation : DependencyObject
+    {
+        public ObservableCollection<LocatedActivity> Activity
+        {
+            get { return (ObservableCollection<LocatedActivity>)GetValue(ActivityProperty); }
+            set { SetValue(ActivityProperty, value); }
+        }
+        public static readonly DependencyProperty ActivityProperty =
+            DependencyProperty.Register("Activity", typeof(ObservableCollection<LocatedActivity>), typeof(Participation), new PropertyMetadata(new ObservableCollection<LocatedActivity>()));
+
+        public ILookup<string, LocatedActivity> Participants { get; internal set; }
+    }
     public class VmSlide : DependencyObject
     {
         public ConversationRelevance Relevance { get; set; }
         public Slide Slide { get; set; }
         public ConversationDetails Details { get; set; }
 
-        public int Activity
+        public Participation Participation
         {
-            get { return (int)GetValue(ActivityProperty); }
-            set { SetValue(ActivityProperty, value); }
+            get { return (Participation)GetValue(ParticipationProperty); }
+            set { SetValue(ParticipationProperty, value); }
         }
-
-        public static readonly DependencyProperty ActivityProperty =
-            DependencyProperty.Register("Activity", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
-
-        public int Voices
-        {
-            get { return (int)GetValue(VoicesProperty); }
-            set { SetValue(VoicesProperty, value); }
-        }
-
-        public static readonly DependencyProperty VoicesProperty =
-            DependencyProperty.Register("Voices", typeof(int), typeof(VmSlide), new PropertyMetadata(0));
+        public static readonly DependencyProperty ParticipationProperty =
+            DependencyProperty.Register("Participation", typeof(Participation), typeof(VmSlide), new PropertyMetadata(null));
     }
     public enum ConversationRelevance
     {
@@ -108,13 +110,12 @@ namespace SandRibbon.Pages.Conversations.Models
                                         {
                                             user.index = slide.Slide.index;
                                             Participation.Add(user);
-                                            var grouped = Participation.GroupBy(cp => cp.index)
-                                            .ToDictionary(g => g.Key, g =>
+                                            var localParticipation = Participation.Where(p => p.slide == slide.Slide.id);
+                                            slide.Participation = new Participation
                                             {
-                                                return new LocatedActivity("", g.Key, g.Select(u => u.activityCount).Sum(), g.Count());
-                                            });
-                                            slide.Activity = grouped[slide.Slide.index]?.activityCount ?? 0;
-                                            slide.Voices = grouped[slide.Slide.index]?.voices ?? 0;
+                                                Participants = localParticipation.ToLookup(p => p.username),
+                                                Activity = new ObservableCollection<LocatedActivity>(localParticipation)
+                                            };
                                         }
                                     },
                                     slide.Slide.id.ToString());

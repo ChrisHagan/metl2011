@@ -6,8 +6,6 @@ using System.Windows.Controls;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.Providers.Connection;
-using System.IO;
-using System.Windows.Ink;
 using Iveonik.Stemmers;
 
 namespace SandRibbon.Components

@@ -202,7 +202,7 @@ namespace MeTLLib.Providers
                     }
                 };
             worker.RunWorkerAsync(null);
-        }
+        }        
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time

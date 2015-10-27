@@ -83,7 +83,7 @@
                                             </Border.BorderBrush>
                                             <Label Content="{Binding Path=Slide.index}" HorizontalAlignment="Center"/>
                                         </Border>
-                                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Activity}" />
+                                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Participation.Activity.Count}" />
                                         <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
@@ -93,7 +93,7 @@
                                                 </Rectangle.Fill>
                                             </Rectangle>
                                         </Viewbox>
-                                        <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Voices}" />
+                                        <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Participation.Participants.Count}" />
                                         <Viewbox Grid.Row="2" Grid.Column="1" 
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
