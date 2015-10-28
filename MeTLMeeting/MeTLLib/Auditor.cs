@@ -76,35 +76,6 @@ namespace MeTLLib
             when = _when;
         }
     }
-    public class DiagnosticDisplay : DependencyObject
-    {
-        public readonly ObservableCollection<DiagnosticGauge> gauges = new ObservableCollection<DiagnosticGauge>();
-        public readonly ObservableCollection<DiagnosticMessage> messages = new ObservableCollection<DiagnosticMessage>();
-        public void addMessage(DiagnosticMessage message)
-        {
-            Dispatcher.adopt(delegate
-            {
-                messages.Add(message);
-            });
-        }
-        public void updateGauge(DiagnosticGauge gauge)
-        {
-            Dispatcher.adopt(delegate
-            {
-                try
-                {
-                    var old = gauges.First(g => g.equals(gauge));
-                    old.update(gauge);
-                    gauges.Remove(old);
-                    gauges.Add(old);
-                }
-                catch
-                {
-                    gauges.Add(gauge);
-                }
-            });
-        }
-    }
 
     public interface IAuditor
     {
@@ -131,7 +102,8 @@ namespace MeTLLib
             var gauge = new DiagnosticGauge(name, category, DateTime.Now);
             gpf(gauge);
             T result = default(T);
-            try {
+            try
+            {
                 result = action((gs) =>
                 {
                     gauge.update(gs);

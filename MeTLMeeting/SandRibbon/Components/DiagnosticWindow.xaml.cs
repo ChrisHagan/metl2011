@@ -15,9 +15,45 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {
+    public class DiagnosticDisplay : DependencyObject
+    {
+        public DiagnosticDisplay()
+        {
+        }
+        public readonly ObservableCollection<DiagnosticGauge> gauges = new ObservableCollection<DiagnosticGauge>();
+        public readonly ObservableCollection<DiagnosticMessage> messages = new ObservableCollection<DiagnosticMessage>();
+        public void addMessage(DiagnosticMessage message)
+        {
+            Dispatcher.adopt(delegate
+            {
+                messages.Add(message);
+            });
+        }
+        public void updateGauge(DiagnosticGauge gauge)
+        {
+            Commands.DiagnosticGaugeUpdated.ExecuteAsync(gauge);
+            Dispatcher.adopt(delegate
+            {
+                var old = gauges.FirstOrDefault(g => g.equals(gauge));
+                if (old != default(DiagnosticGauge))
+                {
+                    old.update(gauge);
+                    gauges.Remove(old);
+                    gauges.Add(old);
+                }
+                else
+                {
+                    gauges.Add(gauge);
+
+                }
+            });
+        }
+    }
+
     public partial class DiagnosticWindow : Window
     {
         protected double refreshInterval = 5 * 1000;
@@ -27,25 +63,12 @@ namespace SandRibbon.Components
             var thisProc = Process.GetCurrentProcess();
             gauges.ItemsSource = App.dd.gauges;
             messages.ItemsSource = App.dd.messages;
-            Commands.DiagnosticMessage.RegisterCommand(new DelegateCommand<MeTLLib.DiagnosticMessage>((m) =>
-            {
-                Dispatcher.adopt(delegate
-                {
-                    App.dd.addMessage(m);
-                });
-            }));
-            Commands.DiagnosticGaugeUpdated.RegisterCommand(new DelegateCommand<MeTLLib.DiagnosticGauge>((m) =>
-            {
-                Dispatcher.adopt(delegate
-                {
-                    App.dd.updateGauge(m);
-                });
-            }));
             var timer = new Timer(refreshInterval);
             this.Closing += (sender, args) =>
             {
-                App.diagnosticWindow = new DiagnosticWindow();
                 timer.Stop();
+                timer.Close();
+                timer.Dispose();
             };
             timer.Elapsed += (s, a) =>
             {

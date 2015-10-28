@@ -1,0 +1,26 @@
+﻿<Grid x:Class="SandRibbon.Components.SystemHealthSummary"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SandRibbon.Components"
+        mc:Ignorable="d"
+        >
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="20"/>
+        <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+    <Label x:Name="failureCount" Grid.Column="0"/>
+    <ItemsControl x:Name="inProgress" Grid.Column="1">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border CornerRadius="10" Height="20" Width="20" Background="Orange"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</Grid>

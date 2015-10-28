@@ -238,7 +238,7 @@ namespace SandRibbon.Components
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
                 checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
                 {
-                    Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
+                    App.dd.addMessage(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
                     logonBrowserContainer.Visibility = Visibility.Collapsed;
                     logonBrowserContainer.IsHitTestVisible = false;
                     maintainKeysTimer.Change(maintainKeysTimerTimeout, Timeout.Infinite);

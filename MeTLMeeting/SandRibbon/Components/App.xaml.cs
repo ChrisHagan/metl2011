@@ -49,7 +49,6 @@ namespace SandRibbon
         public static bool isStaging = false;
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-        public static DiagnosticWindow diagnosticWindow = new DiagnosticWindow();
         public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
 
 #if DEBUG
@@ -60,21 +59,21 @@ namespace SandRibbon
         private static SplashScreen splashScreen;
         public static void ShowSplashScreen()
         {
-            Commands.DiagnosticMessage.Execute(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
+            App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
             splashScreen = new SplashScreen("resources/splashScreen.png");
             splashScreen.Show(false);
         }
         public static void CloseSplashScreen()
         {
-            Commands.DiagnosticMessage.Execute(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
+            App.dd.addMessage(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
             splashScreen.Close(TimeSpan.Zero);
         }
 
         public static void SetBackend(MetlConfiguration configuration)
         {
-            Commands.DiagnosticMessage.Execute(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
+            App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
             controller = new NetworkController(configuration);
-            Commands.DiagnosticMessage.Execute(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
+            App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
 //            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
         }
         public static List<MetlConfiguration> availableServers()
@@ -92,17 +91,17 @@ namespace SandRibbon
         {
             try
             {
-                Commands.DiagnosticMessage.Execute(new DiagnosticMessage("network controller connecting: " + controller.config.name, "connection", DateTime.Now));
+                App.dd.addMessage(new DiagnosticMessage("network controller connecting: " + controller.config.name, "connection", DateTime.Now));
                 //App.mark("start network controller and log in");
                 controller.connect(credentials);
-                Commands.DiagnosticMessage.Execute(new DiagnosticMessage("network controller connected: " + controller.config.name, "connection", DateTime.Now));
+                App.dd.addMessage(new DiagnosticMessage("network controller connected: " + controller.config.name, "connection", DateTime.Now));
                 if (!controller.client.Connect(credentials))
                 {
-                    Commands.DiagnosticMessage.Execute(new DiagnosticMessage("credentials failed: " + controller.config.name, "connection", DateTime.Now));
+                    App.dd.addMessage(new DiagnosticMessage("credentials failed: " + controller.config.name, "connection", DateTime.Now));
                     Commands.LoginFailed.Execute(null);
                 }
                 else {
-                    Commands.DiagnosticMessage.Execute(new DiagnosticMessage("identity set: " + controller.config.name, "connection", DateTime.Now));
+                    App.dd.addMessage(new DiagnosticMessage("identity set: " + controller.config.name, "connection", DateTime.Now));
                     Commands.SetIdentity.Execute(credentials);
                 }
                 //App.mark("finished logging in");

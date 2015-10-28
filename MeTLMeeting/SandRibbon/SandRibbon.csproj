@@ -190,6 +190,9 @@
     <Compile Include="Components\Participants.xaml.cs">
       <DependentUpon>Participants.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\SystemHealthSummary.xaml.cs">
+      <DependentUpon>SystemHealthSummary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Utility\ContentFilter.cs" />
     <Compile Include="Components\Utility\FrameworkElementExtensions.cs" />
     <Compile Include="Components\Utility\PrinterMoveDeltaProcessor.cs" />
@@ -361,6 +364,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Participants.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SystemHealthSummary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

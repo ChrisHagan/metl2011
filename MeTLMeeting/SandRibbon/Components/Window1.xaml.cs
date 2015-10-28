@@ -265,7 +265,7 @@ namespace SandRibbon
         }
         private void launchDiagnosticWindow(object _unused)
         {
-            App.diagnosticWindow.Show();
+            new DiagnosticWindow().Show();
         }
 
         #endregion
