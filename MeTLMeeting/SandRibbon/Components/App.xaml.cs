@@ -12,6 +12,8 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -28,8 +30,20 @@ namespace SandRibbon
             Logger.Log(message);
         }
     }
+
     public partial class App : Application
     {
+        public static DiagnosticDisplay dd = new DiagnosticDisplay();
+        public static IAuditor auditor = new FuncAuditor((g) =>
+        {
+            //Commands.DiagnosticGaugeUpdated.Execute(g);
+            App.dd.updateGauge(g);
+        }, (m) =>
+        {
+            //Commands.DiagnosticGaugeUpdated.Execute(m);
+            App.dd.addMessage(m);
+        });
+
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
         public static NetworkController controller;
         public static bool isStaging = false;
@@ -116,8 +130,15 @@ namespace SandRibbon
         {
             Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
         }
+        public static readonly StringWriter errorWriter = new StringWriter();
+        public static readonly StringWriter outputWriter = new StringWriter();
+
+        public static Process proc;
         static App()
         {
+            proc = Process.GetCurrentProcess();
+            Console.SetError(errorWriter);
+            Console.SetOut(outputWriter);
             App.mark("App static constructor runs");
             setDotNetPermissionState();
         }

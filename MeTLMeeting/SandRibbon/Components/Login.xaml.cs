@@ -80,6 +80,9 @@ namespace SandRibbon.Components
         }
         protected Timer showTimeoutButton;
         protected int loginTimeout = 5 * 1000;
+
+        protected Timer maintainKeysTimer;
+        protected int maintainKeysTimerTimeout = 30 * 1000;
         protected void restartLoginProcess(object sender, RoutedEventArgs e)
         {
             ResetWebBrowser(null);
@@ -96,7 +99,7 @@ namespace SandRibbon.Components
         {
             loadingImage.Visibility = Visibility.Collapsed;
             hideResetButton();
-            logonBrowserContainer.Visibility = Visibility.Visible;            
+            logonBrowserContainer.Visibility = Visibility.Visible;
             logonBrowserContainer.IsHitTestVisible = true;
         }
         protected void showResetButton()
@@ -170,13 +173,25 @@ namespace SandRibbon.Components
         {
             return (uri.Scheme == "res");
         }
-
+        protected LoadCompletedEventHandler loginCheckingAction;
+        protected LoadCompletedEventHandler keyMaintainAction;
         protected void ResetWebBrowser(object _unused)
         {
             var loginUri = App.controller.config.authenticationUrl;
             DestroyWebBrowser(null);
             DeleteCookieForUrl(new Uri(loginUri));
             logonBrowser = new WebBrowser();
+            logonBrowser.Navigating += (sender, args) => {
+                var gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+                Commands.DiagnosticGaugeUpdated.Execute(gauge);
+                NavigatedEventHandler finalized = null;
+                finalized = new NavigatedEventHandler((s, a) => {
+                    gauge.update(GaugeStatus.Completed);
+                    Commands.DiagnosticGaugeUpdated.Execute(gauge);
+                    logonBrowser.Navigated -= finalized;
+                });
+                logonBrowser.Navigated += finalized;
+            };
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.Navigating += (sender, args) =>
             {
@@ -189,7 +204,7 @@ namespace SandRibbon.Components
                 catch (Exception e)
                 {
                 }
-                Console.WriteLine(String.Format("{0} => {1}",args.Uri.ToString(),cookie));
+                Console.WriteLine(String.Format("{0} => {1}", args.Uri.ToString(), cookie));
                 if (detectIEErrors(args.Uri))
                 {
                     if (browseHistory.Last() != null)
@@ -202,12 +217,38 @@ namespace SandRibbon.Components
                     }
                 }
             };
-            logonBrowser.LoadCompleted += (sender, args) =>
+            loginCheckingAction = new LoadCompletedEventHandler((sender, args) =>
+             {
+                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
+                 checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
+                 {
+                     Commands.AddWindowEffect.ExecuteAsync(null);
+                     App.Login(credentials);
+                     logonBrowser.LoadCompleted -= loginCheckingAction;
+                     if (maintainKeysTimer != null)
+                     {
+                         logonBrowser.LoadCompleted += keyMaintainAction;
+                         maintainKeysTimer.Change(maintainKeysTimerTimeout, Timeout.Infinite);
+                     }
+
+                 }, () => { });
+             });
+            keyMaintainAction = new LoadCompletedEventHandler((sender, args) =>
             {
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
-                checkWhetherWebBrowserAuthenticationSucceeded(doc);
-                
-            };
+                checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
+                {
+                    Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
+                    logonBrowserContainer.Visibility = Visibility.Collapsed;
+                    logonBrowserContainer.IsHitTestVisible = false;
+                    maintainKeysTimer.Change(maintainKeysTimerTimeout, Timeout.Infinite);
+                }, () =>
+                {
+                    showBrowser();
+                });
+            });
+
+            logonBrowser.LoadCompleted += loginCheckingAction;
             if (showTimeoutButton != null)
             {
                 showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
@@ -219,6 +260,14 @@ namespace SandRibbon.Components
                 Dispatcher.adoptAsync(delegate
                 {
                     showResetButton();
+                });
+            }, null, Timeout.Infinite, Timeout.Infinite);
+            maintainKeysTimer = new System.Threading.Timer((s) =>
+            {
+                Dispatcher.adopt(delegate
+                {
+                    logonBrowser.LoadCompleted -= loginCheckingAction;
+                    logonBrowser.Navigate(loginUri);
                 });
             }, null, Timeout.Infinite, Timeout.Infinite);
             logonBrowser.Navigate(loginUri);
@@ -253,7 +302,7 @@ namespace SandRibbon.Components
             }
         }
 
-        protected bool checkWhetherWebBrowserAuthenticationSucceeded(HTMLDocument doc)
+        protected void checkWhetherWebBrowserAuthenticationSucceeded(HTMLDocument doc, Action<bool, Credentials> onSuccess, Action onFailure)
         {
             if (doc != null && checkUri(doc.url))
             {
@@ -262,9 +311,17 @@ namespace SandRibbon.Components
                     try
                     {
                         var authDataContainer = doc.getElementById("authData");
-                        if (authDataContainer == null) return false;
+                        if (authDataContainer == null)
+                        {
+                            onFailure();
+                            return;
+                        }
                         var html = authDataContainer.innerHTML;
-                        if (html == null) return false;
+                        if (html == null)
+                        {
+                            onFailure();
+                            return;
+                        }
                         var xml = XDocument.Parse(html).Elements().ToList();
                         var authData = getElementsByTag(xml, "authdata");
                         var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
@@ -282,25 +339,24 @@ namespace SandRibbon.Components
                         var credentials = new Credentials(username, "", authGroups, emailAddress);
                         if (authenticated)
                         {
-                            Commands.AddWindowEffect.ExecuteAsync(null);
-                            App.Login(credentials);
+                            onSuccess(true, credentials);
                         }
-                        return authenticated;
+                        else onFailure();
                     }
                     catch (Exception e)
                     {
                         System.Console.WriteLine("exception in checking auth response data: " + e.Message);
-                        return false;
+                        onFailure();
                     }
                 }
                 else
                 {
-                    return false;
+                    onFailure();
                 }
             }
             else
             {
-                return false;
+                onFailure();
             }
         }
 
@@ -313,9 +369,10 @@ namespace SandRibbon.Components
                 var options = App.controller.client.UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
-                DestroyWebBrowser(null);
+                //DestroyWebBrowser(null);
                 this.Visibility = Visibility.Collapsed;
             });
+            startMaintainingKeys();
             App.mark("Login knows identity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
@@ -324,15 +381,17 @@ namespace SandRibbon.Components
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
-        
+        protected void startMaintainingKeys()
+        {
+        }
         private void SetBackend(object sender, RoutedEventArgs e)
         {
             serversContainer.Visibility = Visibility.Collapsed;
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             var backend = servers.SelectedItem as MetlConfiguration;
             //var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
-            App.SetBackend(backend);            
-            ResetWebBrowser(null);           
+            App.SetBackend(backend);
+            ResetWebBrowser(null);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

@@ -38,16 +38,18 @@ namespace MeTLLib.Providers
         protected HttpResourceProvider resourceProvider;
         protected JabberWireFactory jabberWireFactory;
         protected MetlConfiguration serverAddress;
+        protected IAuditor auditor;
         public BaseHistoryProvider(
                 HttpResourceProvider _resourceProvider,
                 JabberWireFactory _jabberWireFactory,
-                MetlConfiguration _serverAddress
+                MetlConfiguration _serverAddress,
+                IAuditor _auditor
         )
         {
             resourceProvider = _resourceProvider;
             jabberWireFactory = _jabberWireFactory;
             serverAddress = _serverAddress;
-
+            auditor = _auditor;
         }
         public abstract void Retrieve<T>(
                 Action retrievalBeginning,
@@ -69,13 +71,14 @@ namespace MeTLLib.Providers
     public class CachedHistoryProvider : BaseHistoryProvider
     {
         protected HttpHistoryProvider historyProvider;
-        
+
         public CachedHistoryProvider(
                 HttpHistoryProvider _historyProvider,
                 HttpResourceProvider _resourceProvider,
                 JabberWireFactory _jabberWireFactory,
-                MetlConfiguration _serverAddress
-        ) : base(_resourceProvider,_jabberWireFactory,_serverAddress)
+                MetlConfiguration _serverAddress,
+                IAuditor _auditor
+        ) : base(_resourceProvider, _jabberWireFactory, _serverAddress, _auditor)
         {
             historyProvider = _historyProvider;
         }
@@ -164,8 +167,9 @@ namespace MeTLLib.Providers
         public HttpHistoryProvider(
                 HttpResourceProvider _resourceProvider,
                 JabberWireFactory _jabberWireFactory,
-                MetlConfiguration _serverAddress
-        ) : base(_resourceProvider,_jabberWireFactory,_serverAddress)
+                MetlConfiguration _serverAddress,
+                IAuditor _auditor
+        ) : base(_resourceProvider, _jabberWireFactory, _serverAddress, _auditor)
         {
         }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
@@ -175,59 +179,63 @@ namespace MeTLLib.Providers
             accumulatingParser.unOrderedMessages.Clear();
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
-                                 {
-                                     var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
-                                     //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
-                                     var directoryExists = resourceProvider.exists(new Uri(directoryUri));
-                                     if (!directoryExists)
-                                         return;
-
-                                     try
-                                     {
-                                         var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
-                                         if (zipData.Count() == 0)
-                                         {
-                                             return;
-                                         }
-                                         var zip = ZipFile.Read(zipData);
-                                         var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
-                                         for (int i = 0; i < days.Count(); i++)
-                                         {
-                                             using (var stream = new MemoryStream())
-                                             {
-                                                 days[i].Extract(stream);
-                                                 parseHistoryItem(stream, accumulatingParser);
-                                             }
-                                             if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
-                                         }
-                                     }
-                                     catch (WebException e)
-                                     {
-                                         Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
-                                         //Nothing to do if it's a 404.  There is no history to obtain.
-                                     }
-                                 };
-            if (retrievalComplete != null)
-                worker.RunWorkerCompleted += (_sender, _args) =>
                 {
-                    try
+                    auditor.wrapTask((g =>
                     {
+                        var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
+                        //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
+                        var directoryExists = resourceProvider.exists(new Uri(directoryUri));
+                        if (!directoryExists)
+                            return false;
 
-                        accumulatingParser.ReceiveAndSortMessages();
-                        /*sortedMessages = SortOnTimestamp(unSortedMessages);
-                        foreach(Node message in sortedMessages)
+                        try
                         {
-                            accumulatingParser.ReceivedMessage(message, MessageOrigin.History);
-                        }*/
-                        retrievalComplete((T)accumulatingParser);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Exception on the retrievalComplete section: " + ex.Message.ToString());
-                    }
+                            var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
+                            if (zipData.Count() == 0)
+                            {
+                                return false;
+                            }
+                            var zip = ZipFile.Read(zipData);
+                            var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
+                            for (int i = 0; i < days.Count(); i++)
+                            {
+                                using (var stream = new MemoryStream())
+                                {
+                                    days[i].Extract(stream);
+                                    parseHistoryItem(stream, accumulatingParser);
+                                }
+                                if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
+                            }
+                        }
+                        catch (WebException e)
+                        {
+                            Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
+                            //Nothing to do if it's a 404.  There is no history to obtain.
+                        }
+                        return true;
+                    }), "retrieveWorker: " + room.ToString(), "historyProvider");
                 };
-            worker.RunWorkerAsync(null);
-        }
+                if (retrievalComplete != null)
+                    worker.RunWorkerCompleted += (_sender, _args) =>
+                    {
+                        try
+                        {
+
+                            accumulatingParser.ReceiveAndSortMessages();
+                            /*sortedMessages = SortOnTimestamp(unSortedMessages);
+                            foreach(Node message in sortedMessages)
+                            {
+                                accumulatingParser.ReceivedMessage(message, MessageOrigin.History);
+                            }*/
+                            retrievalComplete((T)accumulatingParser);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("Exception on the retrievalComplete section: " + ex.Message.ToString());
+                        }
+                    };
+                worker.RunWorkerAsync(null);
+            }
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time

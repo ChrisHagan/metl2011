@@ -25,8 +25,8 @@ namespace MeTLLib.Providers.Connection
         public List<MeTLStanzas.DirtyImage> dirtyImage = new List<MeTLStanzas.DirtyImage>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider) 
-            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider,false)
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider,IAuditor _auditor) 
+            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider,false,_auditor)
         {
             if (this.location == null)
                 this.location = new Location("0",1,new List<int>{1});
@@ -35,51 +35,66 @@ namespace MeTLLib.Providers.Connection
         }
         public T merge<T>(T otherParser) where T : PreParser
         {
-            var returnParser = (T)Activator.CreateInstance(typeof(T), 
-                credentials, 
-                location.currentSlide, 
-                conversationDetailsProvider, 
-                historyProvider, 
-                cachedHistoryProvider, 
-                metlServerAddress, 
-                cache, 
-                receiveEvents, 
-                webClientFactory, 
-                resourceProvider
-                );
-            foreach (var parser in new[] { otherParser, this})
+            return auditor.wrapTask((g =>
             {
-                foreach (var moveDelta in parser.moveDeltas)
-                    returnParser.actOnMoveDelta(new MeTLStanzas.MoveDeltaStanza(moveDelta));
+                var returnParser = (T)Activator.CreateInstance(typeof(T),
+                    credentials,
+                    location.currentSlide,
+                    conversationDetailsProvider,
+                    historyProvider,
+                    cachedHistoryProvider,
+                    metlServerAddress,
+                    cache,
+                    receiveEvents,
+                    webClientFactory,
+                    resourceProvider,
+                    auditor
+                    );
+                foreach (var parser in new[] { otherParser, this })
+                {
+                    g(GaugeStatus.InProgress);
+                    foreach (var moveDelta in parser.moveDeltas)
+                        returnParser.actOnMoveDelta(new MeTLStanzas.MoveDeltaStanza(moveDelta));
                     //returnParser.moveDeltas.Add(moveDelta);
-                foreach (var i in parser.dirtyImage)
-                    returnParser.actOnDirtyImageReceived(i);
-                foreach (var i in parser.dirtyText)
-                    returnParser.actOnDirtyTextReceived(i);
-                foreach (var i in parser.dirtyInk)
-                    returnParser.actOnDirtyStrokeReceived(i); 
-                foreach (var i in parser.ink)
-                    returnParser.actOnStrokeReceived(i);       
-                //returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));
-                returnParser.quizzes.AddRange(parser.quizzes);
-                returnParser.quizAnswers.AddRange(parser.quizAnswers);
-                //returnParser.dirtyImage.AddRange(parser.dirtyImage);
-                //returnParser.dirtyInk.AddRange(parser.dirtyInk);
-                //returnParser.dirtyText.AddRange(parser.dirtyText);
-                foreach (var kv in parser.text)
-                    returnParser.actOnTextReceived(kv.Value);
+                    g(GaugeStatus.InProgress);
+                    foreach (var i in parser.dirtyImage)
+                        returnParser.actOnDirtyImageReceived(i);
+                    g(GaugeStatus.InProgress);
+                    foreach (var i in parser.dirtyText)
+                        returnParser.actOnDirtyTextReceived(i);
+                    g(GaugeStatus.InProgress);
+                    foreach (var i in parser.dirtyInk)
+                        returnParser.actOnDirtyStrokeReceived(i);
+                    g(GaugeStatus.InProgress);
+                    foreach (var i in parser.ink)
+                        returnParser.actOnStrokeReceived(i);
+                    //returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));
+                    g(GaugeStatus.InProgress);
+                    returnParser.quizzes.AddRange(parser.quizzes);
+                    g(GaugeStatus.InProgress);
+                    returnParser.quizAnswers.AddRange(parser.quizAnswers);
+                    //returnParser.dirtyImage.AddRange(parser.dirtyImage);
+                    //returnParser.dirtyInk.AddRange(parser.dirtyInk);
+                    //returnParser.dirtyText.AddRange(parser.dirtyText);
+                    g(GaugeStatus.InProgress);
+                    foreach (var kv in parser.text)
+                        returnParser.actOnTextReceived(kv.Value);
                     /*if (!returnParser.text.ContainsKey(kv.Key))
                         returnParser.text.Add(kv.Key, kv.Value);*/
-                foreach (var kv in parser.images)
-                    returnParser.actOnImageReceived(kv.Value);
+                    g(GaugeStatus.InProgress);
+                    foreach (var kv in parser.images)
+                        returnParser.actOnImageReceived(kv.Value);
                     /*if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);*/
-                
-                foreach (var kv in parser.liveWindows)
-                    if (!returnParser.liveWindows.ContainsKey(kv.Key))
-                        returnParser.liveWindows.Add(kv.Key, kv.Value);
-            }
-            return returnParser;
+
+                    g(GaugeStatus.InProgress);
+                    foreach (var kv in parser.liveWindows)
+                        if (!returnParser.liveWindows.ContainsKey(kv.Key))
+                            returnParser.liveWindows.Add(kv.Key, kv.Value);
+                }
+                return returnParser;
+
+            }), "mergeParser", "preParser");
         }
         public void Regurgitate()
         {

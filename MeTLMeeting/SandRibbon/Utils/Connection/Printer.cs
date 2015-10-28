@@ -34,8 +34,9 @@ namespace SandRibbon.Utils.Connection
             ResourceCache cache,
             IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,
-            HttpResourceProvider httpResourceProvider)
-            : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider)
+            HttpResourceProvider httpResourceProvider,
+            IAuditor _auditor)
+            : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
         {
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.

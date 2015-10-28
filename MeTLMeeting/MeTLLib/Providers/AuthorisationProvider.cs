@@ -18,8 +18,8 @@ namespace MeTLLib.Providers
     {
         private MetlConfiguration server;
         private IWebClientFactory webclientFactory;
-        public AuthorisationProvider(IWebClientFactory factory, MetlConfiguration server)
-            : base(factory)
+        public AuthorisationProvider(IWebClientFactory factory, MetlConfiguration server, IAuditor auditor)
+            : base(factory,auditor)
         {
             this.webclientFactory = factory;
             this.server = server;

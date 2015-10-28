@@ -11,76 +11,48 @@ namespace SandRibbon.Components
 {
     public class NetworkController
     {
-        protected DiagnosticGauge gauge = new DiagnosticGauge("networkController startup", "connection", DateTime.Now);
         public IClientBehaviour client { get; protected set; }
         private Action deregister;
         public MetlConfiguration config { get; protected set; }
         public Credentials credentials { get; protected set; }
         public NetworkController(MetlConfiguration _config)
         {
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
             config = _config;
-            gauge.update(GaugeStatus.InProgress);
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
-            //App.mark(String.Format("NetworkController instantiating: {0}", config));
         }
-        public IClientBehaviour connect(Credentials _creds) {
-            gauge.update(GaugeStatus.InProgress);
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
-            credentials = _creds;
-            client = buildServerSpecificClient(config,_creds);
-            MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
-            gauge.update(GaugeStatus.InProgress);
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
-            checkValidity = (sender,e)=>{
-                if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
+        public IClientBehaviour connect(Credentials _creds)
+        {
+            return App.auditor.wrapTask((g) =>
+            {
+                credentials = _creds;
+                client = buildServerSpecificClient(config, _creds);
+                g(GaugeStatus.InProgress);
+                MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
+                checkValidity = (sender, e) =>
                 {
-                    registerCommands();
-                    attachToClient();
-                    Commands.AllStaticCommandsAreRegistered();
-                    client.events.StatusChanged -= checkValidity;
-                }
-                else
-                {
-                    if (WorkspaceStateProvider.savedStateExists())
+                    if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
                     {
-                        Commands.LogOut.Execute(true);
+                        registerCommands();
+                        attachToClient();
+                        Commands.AllStaticCommandsAreRegistered();
+                        client.events.StatusChanged -= checkValidity;
                     }
-                }
-            };
-            gauge.update(GaugeStatus.InProgress);
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
-            client.events.StatusChanged += checkValidity;
-            gauge.update(GaugeStatus.Completed);
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
-            return client;
-        }       
-        private ClientConnection buildServerSpecificClient(MetlConfiguration config,Credentials creds)
+                    else
+                    {
+                        if (WorkspaceStateProvider.savedStateExists())
+                        {
+                            Commands.LogOut.Execute(true);
+                        }
+                    }
+                };
+                client.events.StatusChanged += checkValidity;
+                g(GaugeStatus.InProgress);
+                return client;
+            }, "networkController connect", "backend");
+        }
+        private ClientConnection buildServerSpecificClient(MetlConfiguration config, Credentials creds)
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
-            return MeTLLib.ClientFactory.Connection(config,creds);
-            /*
-            ClientConnection result;
-            switch (mode)
-            {
-                case MeTLServerAddress.serverMode.EXTERNAL:
-                    {
-                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.EXTERNAL, new ExternalSearchAddress());
-                    }
-                    break;
-                case MeTLServerAddress.serverMode.STAGING:
-                    {
-                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING, new StagingSearchAddress());
-                    }
-                    break;
-                default:
-                    {
-                        result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
-                    }
-                    break;
-            }            
-            return result;
-            */
+            return MeTLLib.ClientFactory.Connection(config, creds, App.auditor);
         }
         #region commands
         private void registerCommands()
@@ -288,26 +260,26 @@ namespace SandRibbon.Components
         }
         private void teacherStatusRequest(object sender, TeacherStatusRequestEventArgs e)
         {
-            if(e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor)
+            if (e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor)
             {
                 client.SendTeacherStatus(new TeacherStatus
-                                             {
-                                                 Joining = true,
-                                                 Teacher = Globals.me,
-                                                 Conversation = Globals.conversationDetails.Jid,
-                                                 Slide = Globals.location.currentSlide.ToString()
-                                             });
+                {
+                    Joining = true,
+                    Teacher = Globals.me,
+                    Conversation = Globals.conversationDetails.Jid,
+                    Slide = Globals.location.currentSlide.ToString()
+                });
             }
         }
         private void presenceAvailable(object sender, PresenceAvailableEventArgs e)
         {
-           Commands.ReceiveTeacherStatus.Execute(new TeacherStatus
-           {
-               Conversation = e.presence.Where,
-               Joining = e.presence.Joining,
-               Slide = e.presence.Where,
-               Teacher = e.presence.Who
-           });
+            Commands.ReceiveTeacherStatus.Execute(new TeacherStatus
+            {
+                Conversation = e.presence.Where,
+                Joining = e.presence.Joining,
+                Slide = e.presence.Where,
+                Teacher = e.presence.Who
+            });
         }
 
         private void slideCollectionChanged(object sender, SlideCollectionUpdatedEventArgs e)
@@ -324,12 +296,12 @@ namespace SandRibbon.Components
         private void commandAvailable(object sender, CommandAvailableEventArgs e)
         {
         }
-        
+
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
             if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == client.location.activeConversation.GetHashCode())
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
-            else 
+            else
             {
                 Application.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
             }

@@ -33,8 +33,8 @@ namespace MeTLLib.Providers.Structure
         }
         private IResourceUploader resourceUploader;
         public Credentials credentials { get; protected set; }
-        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader,Credentials creds)
-            : base(factory)
+        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader,Credentials creds,IAuditor auditor)
+            : base(factory,auditor)
         {
             server = _server;
             resourceUploader = uploader;

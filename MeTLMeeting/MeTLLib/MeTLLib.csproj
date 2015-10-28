@@ -92,6 +92,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auditor.cs" />
     <Compile Include="BaseModule.cs" />
     <Compile Include="DataTypes\MeTLImage.cs" />
     <Compile Include="DataTypes\QuizData.cs" />
