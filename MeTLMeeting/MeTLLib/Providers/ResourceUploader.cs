@@ -44,7 +44,7 @@ namespace MeTLLib.Providers.Connection
         protected HttpResourceProvider _httpResourceProvider;
         public ProductionResourceUploader(MetlConfiguration _metlServerAddress,HttpResourceProvider provider)
         {
-            _metlServerAddress = metlServerAddress;
+            metlServerAddress = _metlServerAddress;
             _httpResourceProvider = provider;
         }
         private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{0}/{1}", metlServerAddress.resourceUrl, metlServerAddress.uploadPath); } }

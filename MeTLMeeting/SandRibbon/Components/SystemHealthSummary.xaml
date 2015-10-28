@@ -19,7 +19,9 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Border CornerRadius="10" Height="20" Width="20" Background="Orange"/>
+                <Border CornerRadius="10" Height="20" Width="20" Background="Orange">
+                    <!--<ProgressBar Value="{Binding Value}" Minimum="0" Maximum="{Binding Path=Value,Converter={}}"-->
+                </Border>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

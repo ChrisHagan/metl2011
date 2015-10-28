@@ -74,7 +74,11 @@ namespace SandRibbon.Components
             {
                 Dispatcher.adopt(delegate
                 {
-                    nics.ItemsSource = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                    nics.ItemsSource = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces().Where(nic => {
+                        return nic.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up;
+                    }).Select(nic => {
+                        return nic.GetIPv4Statistics();
+                        });
                     procs.ItemsSource = Process.GetProcessesByName(thisProc.ProcessName).Union(Process.GetProcessesByName(App.proc.ProcessName));
                     errors.Text = App.errorWriter.ToString();
                     console.Text = App.outputWriter.ToString();
