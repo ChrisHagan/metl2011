@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MeTLLib;
 using System.Collections.Concurrent;
+using Akka.Actor;
 
 namespace SandRibbon.Components
 {
@@ -26,21 +27,23 @@ namespace SandRibbon.Components
         protected List<DiagnosticMessage> messages = new List<DiagnosticMessage>();
         protected readonly object gaugeLocker = new object();
         protected readonly object messageLocker = new object();
+
         public void addMessage(DiagnosticMessage message)
         {
-            Commands.DiagnosticMessage.Execute(message);
+            //            Commands.DiagnosticMessage.Execute(message);
             lock (messageLocker)
             {
                 messages.Add(message);
-                Commands.DiagnosticMessagesUpdated.Execute(messages.ToList());
+                //               Commands.DiagnosticMessagesUpdated.Execute(messages.ToList());
             }
         }
         public void updateGauge(DiagnosticGauge gauge)
         {
-            Commands.DiagnosticGaugeUpdated.Execute(gauge);
+            //Commands.DiagnosticGaugeUpdated.Execute(gauge);
             lock (gaugeLocker)
             {
-                if (gauge.status == GaugeStatus.Started) {
+                if (gauge.status == GaugeStatus.Started)
+                {
                     gauges.Push(gauge);
                 }
                 else
@@ -50,7 +53,7 @@ namespace SandRibbon.Components
                     while (!found && gauges.Count > 0)
                     {
                         var candidate = gauges.Pop();
-                        if (candidate.equals(gauge))
+                        if (candidate == gauge)
                         {
                             candidate.update(gauge);
                             gauges.Push(candidate);
@@ -70,7 +73,7 @@ namespace SandRibbon.Components
                         gauges.Push(gauge);
                     }
                 }
-                Commands.DiagnosticGaugesUpdated.Execute(gauges.ToList());
+                //                Commands.DiagnosticGaugesUpdated.Execute(gauges.ToList());
             }
         }
     }
@@ -108,13 +111,104 @@ namespace SandRibbon.Components
         }
     }
     */
+    public class DiagnosticsCollector : ReceiveActor
+    {
+        protected IActorRef target = App.actorSystem.ActorOf<DiagnosticWindowReceiver>("diagnosticWindowReceiver");
+        public DiagnosticModel store = new DiagnosticModel();
+        public DiagnosticsCollector()
+        {
+            Receive<DiagnosticMessage>(m =>
+            {
+                target.Tell(m);
+                store.addMessage(m);
+            });
+            Receive<DiagnosticGauge>(g =>
+            {
+                target.Tell(g);
+                store.updateGauge(g);
+            });
+
+        }
+    }
+    public class DiagnosticWindowReceiver : ReceiveActor
+    {
+        public DiagnosticWindowReceiver()
+        {
+            Receive<DiagnosticMessage>(m =>
+            {
+                if (App.diagnosticWindow != null)
+                {
+                    App.diagnosticWindow.Dispatcher.adopt(delegate
+                    {
+                        App.diagnosticWindow.messageSource.Add(m);
+                    });
+
+                }
+            });
+            Receive<DiagnosticGauge>(g =>
+            {
+                if (App.diagnosticWindow != null)
+                {
+                    App.diagnosticWindow.Dispatcher.adopt(delegate
+                    {
+                        var oldFromTotal = App.diagnosticWindow.gaugeSource.FirstOrDefault(eg => eg.Equals(g));
+                        if (oldFromTotal != default(DiagnosticGauge))
+                            App.diagnosticWindow.gaugeSource.Remove(oldFromTotal);
+                        App.diagnosticWindow.gaugeSource.Add(g);
+                        var old = App.diagnosticWindow.inProgressSource.FirstOrDefault(eg => eg.Equals(g));
+                        switch (g.status)
+                        {
+                            case GaugeStatus.Started:
+                                App.diagnosticWindow.inProgressSource.Add(g);
+                                break;
+                            case GaugeStatus.InProgress:
+                                //
+                                //{
+                                if (old != default(DiagnosticGauge))
+                                    App.diagnosticWindow.inProgressSource.Remove(old);
+                                App.diagnosticWindow.inProgressSource.Add(g);
+                                //old.update(m);
+                                //inProgressSource.Remove(old);
+                                //inProgressSource.Add(old.update(g));
+                                //}
+                                //else
+                                //{
+                                //    inProgressSource.Add(m);
+                                //}
+                                break;
+                            case GaugeStatus.Completed:
+                                if (old != default(DiagnosticGauge))
+                                    App.diagnosticWindow.inProgressSource.Remove(old);
+                                break;
+                            case GaugeStatus.Failed:
+                                if (old != default(DiagnosticGauge))
+                                    App.diagnosticWindow.inProgressSource.Remove(old);
+                                //failedCount += 1;
+                                //failureCount.Content = failedCount;
+                                break;
+                        }
+
+                    });
+                }
+            });
+        }
+    }
     public partial class DiagnosticWindow : Window
     {
+        public ObservableCollection<DiagnosticGauge> gaugeSource = new ObservableCollection<DiagnosticGauge>();
+        public ObservableCollection<DiagnosticGauge> inProgressSource = new ObservableCollection<DiagnosticGauge>();
+        public ObservableCollection<DiagnosticMessage> messageSource = new ObservableCollection<DiagnosticMessage>();
+        //public IActorRef diagDisplayReceiver = App.actorSystem.ActorOf<DiagnosticWindowReceiver>("diagnosticWindow");
         protected double refreshInterval = 5 * 1000;
-       // protected DiagnosticDisplay dd = new DiagnosticDisplay();
+        //protected DiagnosticReceiver receiver = new DiagnosticReceiver((m) => { }, (g) => { });
+        // protected DiagnosticDisplay dd = new DiagnosticDisplay();
         public DiagnosticWindow()
         {
             InitializeComponent();
+            gauges.ItemsSource = gaugeSource;
+            messages.ItemsSource = messageSource;
+            inProgress.ItemsSource = inProgressSource;
+            /*
             Commands.DiagnosticGaugesUpdated.RegisterCommand(new DelegateCommand<List<DiagnosticGauge>>(gs => {
                 Dispatcher.adoptAsync(delegate
                 {
@@ -132,6 +226,7 @@ namespace SandRibbon.Components
                     messages.ItemsSource = orig.GetRange(0, Math.Min(origCnt,messageListSize)); //orig.GetRange(Math.Max(0,ms.Count - messageListSize),ms.Count);
                 });
             }));
+            */
             /*
             Dispatcher.adopt(delegate
             {

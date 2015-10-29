@@ -193,8 +193,8 @@ namespace SandRibbon.Components
                 {
                     if (browseHistory.Last() != null)
                     {
-                        gauge.update(GaugeStatus.Completed, 100);
-                        App.dd.updateGauge(gauge);
+                        App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, 100));
+                        //App.diagnosticModelActor.Tell();
                         gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
                         gaugeProgress = 0;
                         logonBrowser.Navigate(browseHistory.Last());
@@ -202,19 +202,21 @@ namespace SandRibbon.Components
                     else
                     {
                         gauge.update(GaugeStatus.Completed, 100);
-                        App.dd.updateGauge(gauge);
+                        App.auditor.updateGauge(gauge);
                         ResetWebBrowser(null);
                     }
+                } else
+                {
+                    gaugeProgress += 1;
+                    gauge.update(GaugeStatus.InProgress, gaugeProgress);
                 }
             };
             logonBrowser.Navigating += (sender, args) => {
                 gaugeProgress = gaugeProgress + ((100 - gaugeProgress) / 2);
-                gauge.update(GaugeStatus.Completed, gaugeProgress);
-                App.dd.updateGauge(gauge);
+                App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, gaugeProgress));
                 NavigatedEventHandler finalized = null;
                 finalized = new NavigatedEventHandler((s, a) => {
-                    gauge.update(GaugeStatus.Completed, 100);
-                    App.dd.updateGauge(gauge);
+                    App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, 100));
                     gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
                     gaugeProgress = 0;
                     logonBrowser.Navigated -= finalized;

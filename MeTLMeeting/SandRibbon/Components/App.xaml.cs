@@ -14,8 +14,11 @@ using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using Akka;
+using System.Threading.Tasks;
+using Akka.Actor;
 
-[assembly: UIPermission(SecurityAction.RequestMinimum)]
+//[assembly: UIPermission(SecurityAction.RequestMinimum)]
 
 namespace SandRibbon
 {
@@ -33,13 +36,18 @@ namespace SandRibbon
 
     public partial class App : Application
     {
-        public static DiagnosticModel dd = new DiagnosticModel();
+        public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
+        public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
+        //public static DiagnosticModel dd = new DiagnosticModel();
+        public static DiagnosticWindow diagnosticWindow = null;
         public static IAuditor auditor = new FuncAuditor((g) =>
         {
-           dd.updateGauge(g);
+            diagnosticModelActor.Tell(g);
+           //dd.updateGauge(g);
         }, (m) =>
         {
-           dd.addMessage(m);
+            diagnosticModelActor.Tell(m);
+           //dd.addMessage(m);
         });
 
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
@@ -57,21 +65,21 @@ namespace SandRibbon
         private static SplashScreen splashScreen;
         public static void ShowSplashScreen()
         {
-            App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
+            //App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
             splashScreen = new SplashScreen("resources/splashScreen.png");
             splashScreen.Show(false);
         }
         public static void CloseSplashScreen()
         {
-            App.dd.addMessage(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
+            //App.dd.addMessage(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
             splashScreen.Close(TimeSpan.Zero);
         }
 
         public static void SetBackend(MetlConfiguration configuration)
         {
-            App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
+            //App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
             controller = new NetworkController(configuration);
-            App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
+            //App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
 //            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
         }
         public static List<MetlConfiguration> availableServers()
@@ -89,17 +97,17 @@ namespace SandRibbon
         {
             try
             {
-                App.dd.addMessage(new DiagnosticMessage("network controller connecting: " + controller.config.name, "connection", DateTime.Now));
+                //App.dd.addMessage(new DiagnosticMessage("network controller connecting: " + controller.config.name, "connection", DateTime.Now));
                 //App.mark("start network controller and log in");
                 controller.connect(credentials);
-                App.dd.addMessage(new DiagnosticMessage("network controller connected: " + controller.config.name, "connection", DateTime.Now));
+                //App.dd.addMessage(new DiagnosticMessage("network controller connected: " + controller.config.name, "connection", DateTime.Now));
                 if (!controller.client.Connect(credentials))
                 {
-                    App.dd.addMessage(new DiagnosticMessage("credentials failed: " + controller.config.name, "connection", DateTime.Now));
+                //    App.dd.addMessage(new DiagnosticMessage("credentials failed: " + controller.config.name, "connection", DateTime.Now));
                     Commands.LoginFailed.Execute(null);
                 }
                 else {
-                    App.dd.addMessage(new DiagnosticMessage("identity set: " + controller.config.name, "connection", DateTime.Now));
+                //    App.dd.addMessage(new DiagnosticMessage("identity set: " + controller.config.name, "connection", DateTime.Now));
                     Commands.SetIdentity.Execute(credentials);
                 }
                 //App.mark("finished logging in");
@@ -195,6 +203,10 @@ namespace SandRibbon
                 controller.client.Disconnect();         
             }
             catch (Exception) { }
+            if (App.diagnosticWindow != null)
+            {
+                diagnosticWindow.Close();
+            }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {

@@ -39,8 +39,8 @@ namespace SandRibbon.Components
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            //Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
@@ -94,12 +94,12 @@ namespace SandRibbon.Components
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
-                                                    {
-                                                        time = time,
-                                                        message = string.Format("Banned content submission at {0}", new DateTime(time)),
-                                                        showPrivate = false,
-                                                        dimensions = new Size(1024, 768)
-                                                    });
+            {
+                time = time,
+                message = string.Format("Banned content submission at {0}", new DateTime(time)),
+                showPrivate = false,
+                dimensions = new Size(1024, 768)
+            });
         }
 
         private void setUpSyncDisplay(int slide)
@@ -165,7 +165,7 @@ namespace SandRibbon.Components
                 using (var context = dv.RenderOpen())
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
-                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);                  
+                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
@@ -178,18 +178,32 @@ namespace SandRibbon.Components
             });
             return file;
         }
+        private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            BeginInit();
-            stack.ReceiveStrokes(parser.ink);
-            stack.ReceiveImages(parser.images.Values);
-            foreach (var text in parser.text.Values)
-                stack.DoText(text);
-            /*foreach (var moveDelta in parser.moveDeltas)
-                stack.ReceiveMoveDelta(moveDelta, processHistory: true);
-            */
-            stack.RefreshCanvas();
-            EndInit();
+            lock (preParserRenderingLock)
+            {
+                App.auditor.wrapAction(a =>
+                {
+                    Dispatcher.adopt(delegate
+                    {
+                        BeginInit();
+                        a(GaugeStatus.InProgress, 25);
+                        stack.ReceiveStrokes(parser.ink);
+                        a(GaugeStatus.InProgress, 50);
+                        stack.ReceiveImages(parser.images.Values);
+                        a(GaugeStatus.InProgress, 75);
+                        foreach (var text in parser.text.Values)
+                            stack.DoText(text);
+                        /*foreach (var moveDelta in parser.moveDeltas)
+                            stack.ReceiveMoveDelta(moveDelta, processHistory: true);
+                        */
+                        stack.RefreshCanvas();
+                        EndInit();
+
+                    });
+                }, "renderCanvas", "frontend");
+            }
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
@@ -379,9 +393,9 @@ namespace SandRibbon.Components
                 using (DrawingContext dc = dv.RenderOpen())
                 {
                     var vb = new VisualBrush(adornee)
-                                 {
-                                     Viewbox = new Rect(origin, new Size(marquee.ActualWidth, marquee.ActualHeight))
-                                 };
+                    {
+                        Viewbox = new Rect(origin, new Size(marquee.ActualWidth, marquee.ActualHeight))
+                    };
                     dc.DrawRectangle(vb, null, new Rect(origin, new Point(marquee.ActualWidth, marquee.ActualHeight)));
                 }
                 rtb.Render(dv);

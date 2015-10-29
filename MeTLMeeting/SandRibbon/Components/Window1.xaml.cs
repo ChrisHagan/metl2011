@@ -265,20 +265,29 @@ namespace SandRibbon
         }
         private void launchDiagnosticWindow(object _unused)
         {
-            Thread newDiagnosticThread = new Thread(new ThreadStart(() => {
-                SynchronizationContext.SetSynchronizationContext(
-                    new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
-                var window = new DiagnosticWindow();
-                window.Closed += (s, a) =>
+            if (App.diagnosticWindow != null) {
+                App.diagnosticWindow.Activate();
+            }
+            else
+            {
+                Thread newDiagnosticThread = new Thread(new ThreadStart(() =>
                 {
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
-                };
-                window.Show();
-                System.Windows.Threading.Dispatcher.Run();
-            }));
-            newDiagnosticThread.SetApartmentState(ApartmentState.STA);
-            newDiagnosticThread.IsBackground = true;
-            newDiagnosticThread.Start();
+                    SynchronizationContext.SetSynchronizationContext(
+                        new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
+                    var window = new DiagnosticWindow();
+                    App.diagnosticWindow = window;
+                    window.Closed += (s, a) =>
+                    {
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
+                        App.diagnosticWindow = null;
+                    };
+                    window.Show();
+                    System.Windows.Threading.Dispatcher.Run();
+                }));
+                newDiagnosticThread.SetApartmentState(ApartmentState.STA);
+                newDiagnosticThread.IsBackground = true;
+                newDiagnosticThread.Start();
+            }
         }
 
         #endregion
