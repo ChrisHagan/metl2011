@@ -71,6 +71,7 @@ namespace SandRibbon
 
         public static DefaultableCompositeCommand BrowseOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ManuallyConfigureOneNote = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SerializeConversationToOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RequestMeTLUserInformations = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToNotebookPage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveMeTLUserInformations = new DefaultableCompositeCommand();

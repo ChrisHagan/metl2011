@@ -29,6 +29,9 @@ using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using Awesomium.Core;
+using System.Windows.Navigation;
+using SandRibbon.Pages.Conversations;
+using SandRibbon.Pages.Integration;
 
 namespace SandRibbon
 {
@@ -80,6 +83,7 @@ namespace SandRibbon
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
             Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
+            Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<object>(serializeConversationToOneNote, mustBeInConversation));
             //conversation movement
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -115,11 +119,17 @@ namespace SandRibbon
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
             Commands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
+            Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(synchronizeToOneNote));
 
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
+        }
+
+        private void serializeConversationToOneNote(object obj)
+        {
+            mainFrame.Navigate(new ConversationSearchPage());
         }
 
         private void PickImages(PickContext context)
@@ -153,7 +163,42 @@ namespace SandRibbon
         {
             mainFrame.Navigate(new OneNotePage(page));
         }
-
+        private void synchronizeToOneNote(OneNoteSynchronizationSet sync) {            
+            var w = new WebControl();
+            var config = sync.config;
+            DocumentReadyEventHandler ready = null;
+            ready = (s, e) =>
+            {
+                var queryPart = e.Url.AbsoluteUri.Split('#');
+                if (queryPart.Length > 1)
+                {
+                    var ps = HttpUtility.ParseQueryString(queryPart[1]);
+                    var token = ps["access_token"];
+                    if (token != null)
+                    {
+                        w.DocumentReady -= ready;
+                        sync.token = token;
+                        flyout.IsOpen = false;
+                        mainFrame.Navigate(new OneNoteSynchronizationPage(sync));
+                    }
+                }
+            };
+            w.DocumentReady += ready;
+            flyout.Content = w;
+            flyout.Width = 600;
+            flyout.IsOpen = true;
+            var scope = "office.onenote_update";
+            var responseType = "token";
+            var clientId = config.apiKey;
+            var redirectUri = "https://login.live.com/oauth20_desktop.srf";
+            var req = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type={2}&redirect_uri={3}";
+            var uri = new Uri(String.Format(req,
+                config.apiKey,
+                scope,
+                responseType,
+                redirectUri));
+            w.Source = uri;
+        }
         private void browseOneNote(OneNoteConfiguration config)
         {
             var w = new WebControl();

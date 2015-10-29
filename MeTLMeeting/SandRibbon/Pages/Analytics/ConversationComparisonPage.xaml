@@ -48,7 +48,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Click="SlideSelected" ToolTip="{Binding Path=Participation.Participants, Converter={StaticResource participantsEnumerator}}" >
-                                        <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="3">
+                                        <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="4">
                                             <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
                                             BorderThickness="0 0 0 1">
                                                 <Border.BorderBrush>
@@ -67,7 +67,7 @@
                                                 </Rectangle>
                                             </Viewbox>
                                             <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Participation.Participants.Count}" />
-                                                <Viewbox Grid.Row="2" Grid.Column="1" 
+                                            <Viewbox Grid.Row="2" Grid.Column="1" 
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
                                                 <Rectangle Width="200" Height="200" Margin="50">
@@ -76,6 +76,7 @@
                                                     </Rectangle.Fill>
                                                 </Rectangle>
                                             </Viewbox>
+                                            <Image Grid.ColumnSpan="2" Source="{Binding Path=Slide.id, Converter={StaticResource renderer}}" />
                                         </Grid>
                                     </Button>
                                 </DataTemplate>

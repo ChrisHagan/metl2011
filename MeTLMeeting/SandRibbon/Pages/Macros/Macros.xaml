@@ -204,4 +204,20 @@
             </Viewbox>
         </macro:Appearance>
     </Button>
+    <!-- OneNote synchronization-->
+    <Button x:Key="serialize_conversation_to_onenote" Command="{x:Static api:Commands.SerializeConversationToOneNote}" Style="{StaticResource macro}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <macros:IconControl Content="appbar_archive" />
+            </Viewbox>
+        </macro:Appearance>
+    </Button>
+    <!-- Submissions-->
+    <Button x:Key="view_submissions" Command="{x:Static api:Commands.ViewSubmissions}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <macros:IconControl Content="appbar_image_multiple" />
+            </Viewbox>
+        </macro:Appearance>
+    </Button>
 </ResourceDictionary>

@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using MeTLLib;
 using SandRibbon.Utils;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -58,7 +57,6 @@ namespace SandRibbon.Providers
                       {
                           if (cache.ContainsKey(internalSlide.id))
                           {
-                              //Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
                               image.Source = cache[internalSlide.id].image;
                           }
                       }

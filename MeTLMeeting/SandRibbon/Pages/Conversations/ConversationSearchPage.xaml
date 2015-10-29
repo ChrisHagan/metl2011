@@ -26,9 +26,14 @@
             <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
                           Unchecked="onlyMyConversations_Checked"/>
         </StackPanel>
-        <Button Click="AnalyzeSelectedConversations" HorizontalAlignment="Left">
-            <Label Content="Analyze selected conversations" Style="{StaticResource medium}" />
-        </Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Click="AnalyzeSelectedConversations">
+                <Label Content="Analyze selected conversations" Style="{StaticResource medium}" />
+            </Button>
+            <Button Click="SynchronizeToOneNote">
+                <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
+            </Button>
+        </StackPanel>
         <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                                    Margin="{StaticResource space}">
             <DataGrid.Columns>

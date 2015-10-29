@@ -41,6 +41,12 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                     }
                 },
                 new MacroGroup {
+                    Label="Submissions management",
+                    Macros = new[] {
+                        new Macro("view_submissions")
+                    }
+                },
+                new MacroGroup {
                     Label="Image",
                     Macros=new[] {
                         new Macro("image_more_options")                        
@@ -85,7 +91,13 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                     Macros=new[] {
                         new Macro("participants_toggle")
                     }
-                }
+                },
+                new MacroGroup {
+                    Label="Content sharing with other systems",
+                    Macros=new[] {
+                        new Macro("serialize_conversation_to_onenote")
+                    }
+                }                
             };            
             SimulateFeedback();            
         }

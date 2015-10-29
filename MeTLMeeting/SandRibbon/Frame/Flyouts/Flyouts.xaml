@@ -3,8 +3,7 @@
                     xmlns:layout="clr-namespace:SandRibbon.Layout"
                     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"   
                     xmlns:osm="http://schemas.awesomium.com/winfx"
-                    xmlns:viewModel="clr-namespace:SandRibbon.Pages.Conversations.Models"                    
-                   >
+                    xmlns:viewModel="clr-namespace:SandRibbon.Pages.Conversations.Models">
     <Grid x:Key="diagnostics" x:Shared="False"
           layout:GridLayout.ItemsPerRow="1">
         <Label Content="Diagnostic logging" />

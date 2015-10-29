@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Xml.Linq;
 using System.Windows;
+using MeTLLib.DataTypes;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
@@ -22,9 +25,11 @@ namespace SandRibbon.Pages.Conversations.Models
         public string apiKey { get; set; }
         public string apiSecret { get; set; }
 
-        static string notebooks = "https://www.onenote.com/api/v1.0/me/notes/notebooks?expand=sections";
-        static string pages = "https://www.onenote.com/api/v1.0/me/notes/sections/{0}/pages";
-        
+        public static string notebooks = "https://www.onenote.com/api/v1.0/me/notes/notebooks?expand=sections";
+        public static string sections = "https://www.onenote.com/api/v1.0/me/notes/notebooks/{0}/sections";
+        public static string pages = "https://www.onenote.com/api/v1.0/me/notes/sections/{0}/pages";
+        public static string pages_delete = "https://www.onenote.com/api/v1.0/me/notes/pages/{0}/";
+
         public void LoadNotebooks(string token)
         {
             var wc = new WebClient();
@@ -36,7 +41,8 @@ namespace SandRibbon.Pages.Conversations.Models
             {
                 var book = new Notebook
                 {
-                    Name = j["name"].Value<string>()
+                    Name = j["name"].Value<string>(),
+                    Id = j["id"].Value<string>()
                 };
                 Books.Add(book);
                 foreach (var s in j["sections"].Children<JObject>())
@@ -44,7 +50,8 @@ namespace SandRibbon.Pages.Conversations.Models
                     var section = new NotebookSection
                     {
                         Name = s["name"].Value<string>(),
-                        Id = s["id"].Value<string>()
+                        Id = s["id"].Value<string>(),
+                        PagesUrl = s["pagesUrl"].Value<string>()
                     };                    
                     book.Sections.Add(section);
                     LoadPages(token, section);
@@ -62,16 +69,39 @@ namespace SandRibbon.Pages.Conversations.Models
                 foreach (var j in remotePages)
                 {
                     var title = j["title"].Value<string>();
-                    section.Pages.Add(new NotebookPage
+                    try
                     {
-                        Token = token,
-                        OriginalHtml = wc.DownloadString(j["contentUrl"].Value<string>()),
-                        Title = title
-                    });
+                        section.Pages.Add(new NotebookPage
+                        {
+                            Token = token,
+                            OriginalHtml = wc.DownloadString(j["contentUrl"].Value<string>()),
+                            Title = title,
+                            Id = j["id"].Value<string>()
+                        });
+                    }
+                    catch (WebException ex) {
+                        Trace.TraceError("OneNoteConfiguration LoadPages {0}",ex.Message);                           
+                    }
                 }
             };
             wc.DownloadStringAsync(new Uri(string.Format(pages, section.Id)));
-        }
+        }                
+    }
+    public class OneNoteSynchronizationSet {
+        public string token { get; set; }
+        public OneNoteConfiguration config { get; set; }
+        public IEnumerable<OneNoteSynchronization> conversations { get; set; }
+    }
+    public class OneNoteSynchronization : DependencyObject {
+        public ConversationDetails Conversation { get; set; }
+
+        public int Progress
+        {
+            get { return (int)GetValue(ProgressProperty); }
+            set { SetValue(ProgressProperty, value); }
+        }        
+        public static readonly DependencyProperty ProgressProperty =
+            DependencyProperty.Register("Progress", typeof(int), typeof(OneNoteSynchronization), new PropertyMetadata(0));        
     }
     public class NotebookPage
     {        
@@ -100,12 +130,14 @@ namespace SandRibbon.Pages.Conversations.Models
         }
         public string OriginalHtml { get; set; }
         public string Title { get; set; }
-        public string Token { get; set; }        
+        public string Token { get; set; }   
+        public string Id { get; set; }     
     }
     public class NotebookSection : DependencyObject
     {
         public string Name { get; set; }
         public string Id { get; set; }
+        public string PagesUrl { get; set; }        
 
         public ObservableCollection<NotebookPage> Pages
         {
@@ -119,6 +151,7 @@ namespace SandRibbon.Pages.Conversations.Models
     public class Notebook : DependencyObject
     {
         public string Name { get; set; }
+        public string Id { get; set; }
 
         public ObservableCollection<NotebookSection> Sections
         {

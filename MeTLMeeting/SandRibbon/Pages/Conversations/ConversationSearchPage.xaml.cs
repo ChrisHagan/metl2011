@@ -20,6 +20,7 @@ using System.Windows.Automation;
 using SandRibbon.Pages.Collaboration;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Pages.Analytics;
+using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Pages.Conversations
 {
@@ -51,9 +52,8 @@ namespace SandRibbon.Pages.Conversations
             SearchResults.ItemsSource = searchResultsObserver;
             typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
-            FillSearchResults(Globals.me);            
-        }       
-                      
+            FillSearchResults(Globals.me);
+        }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
@@ -75,7 +75,7 @@ namespace SandRibbon.Pages.Conversations
                 if (String.IsNullOrEmpty(trimmedSearchInput))
                 {
 
-                    searchResultsObserver.Clear();                    
+                    searchResultsObserver.Clear();
                     RefreshSortedConversationsList();
                     return;
                 }
@@ -187,7 +187,7 @@ namespace SandRibbon.Pages.Conversations
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             RestartRefreshTimer();
-        }        
+        }
 
         private void EditConversation(object sender, RoutedEventArgs e)
         {
@@ -218,6 +218,18 @@ namespace SandRibbon.Pages.Conversations
             if (SearchResults.SelectedItems.Count > 0)
             {
                 NavigationService.Navigate(new ConversationComparisonPage(SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+            }
+        }
+
+        private void SynchronizeToOneNote(object sender, RoutedEventArgs e)
+        {
+            var cs = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
+            if (cs.Count() > 0)
+            {
+                Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet {
+                    config = Globals.OneNoteConfiguration,
+                    conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
+                });
             }
         }
     }
