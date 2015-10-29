@@ -8,7 +8,7 @@ using System.Windows;
 namespace MeTLLib
 {
     public enum GaugeStatus { Started, InProgress, Completed, Failed }
-    public class DiagnosticGauge : DependencyObject
+    public class DiagnosticGauge
     {
 
         public string GaugeName { get; protected set; }
@@ -22,12 +22,11 @@ namespace MeTLLib
             status = GaugeStatus.Started;
             value = 0;
         }
-        public DiagnosticGauge(string _name, string _category, DateTime _started, int _target) : this(_name, _category, _started)
-        {
-            target = _target;
-        }
-        public int target { get; protected set; }
         public DateTime started { get; protected set; }
+        public double soFar { get
+            {
+                return status != GaugeStatus.Completed && status != GaugeStatus.Failed ? DateTime.Now.Subtract(started).TotalSeconds : duration;
+            } }
         public DateTime finished { get; protected set; }
         public GaugeStatus status { get; protected set; }
         public int value { get; protected set; }
@@ -36,27 +35,28 @@ namespace MeTLLib
             get
             {
                 var diff = finished.Subtract(started);
-                return diff.TotalSeconds;// + "." + diff.TotalMilliseconds;
+                return diff.TotalSeconds;
             }
         }
-        public void update(GaugeStatus _status)
+        public void update(GaugeStatus _status, int progress)
         {
             status = _status;
-            value += 1;
+            value = progress;
         }
         public void update(DiagnosticGauge other)
         {
             if (other.GaugeName == GaugeName && other.GaugeCategory == GaugeCategory)
             {
-                status = other.status;
-                value = other.value;
-                if (status != GaugeStatus.Failed || status != GaugeStatus.Completed)
+                if (status != GaugeStatus.Failed && status != GaugeStatus.Completed)
                 {
-                    if (other.status == GaugeStatus.Failed || other.status == GaugeStatus.Completed)
-                    {
-                        finished = DateTime.Now;
-                    }
+                    value = other.value;
                 }
+                else
+                {
+                    value = 100;
+                    finished = DateTime.Now;
+                }
+                status = other.status;
             }
         }
         public bool equals(DiagnosticGauge other)
@@ -64,7 +64,7 @@ namespace MeTLLib
             return other.GaugeName == GaugeName && other.GaugeCategory == GaugeCategory && other.started == started;
         }
     }
-    public class DiagnosticMessage : DependencyObject
+    public class DiagnosticMessage
     {
         public string message { get; protected set; }
         public string category { get; protected set; }
@@ -79,12 +79,14 @@ namespace MeTLLib
 
     public interface IAuditor
     {
-        T wrapTask<T>(Func<Action<GaugeStatus>, T> action, string name, string category);
+        T wrapFunction<T>(Func<Action<GaugeStatus, int>, T> function, string name, string category);
+        void wrapAction(Action<Action<GaugeStatus, int>> action, string name, string category);
         T note<T>(Func<T> action, string name, string category);
     }
     public class NoAuditor : IAuditor
     {
-        public T wrapTask<T>(Func<Action<GaugeStatus>, T> action, string name, string category) { return action((gs) => { }); }
+        public T wrapFunction<T>(Func<Action<GaugeStatus, int>, T> action, string name, string category) { return action((gs, v) => { }); }
+        public void wrapAction(Action<Action<GaugeStatus, int>> action, string name, string category) { action((gs, v) => { }); }
         public T note<T>(Func<T> action, string name, string category) { return action(); }
 
     }
@@ -97,25 +99,46 @@ namespace MeTLLib
             gpf = gaugeProgressFunc;
             mf = messageFunc;
         }
-        public T wrapTask<T>(Func<Action<GaugeStatus>, T> action, string name, string category)
+        public void wrapAction(Action<Action<GaugeStatus, int>> action, string name, string category)
+        {
+            var gauge = new DiagnosticGauge(name, category, DateTime.Now);
+            gpf(gauge);
+            try
+            {
+                action((gs, v) =>
+                {
+                    gauge.update(gs, v);
+                    gpf(gauge);
+                });
+                gauge.update(GaugeStatus.Completed, 100);
+                gpf(gauge);
+            }
+            catch (Exception e)
+            {
+                gauge.update(GaugeStatus.Failed, 100);
+                gpf(gauge);
+                throw e;
+            }
+        }
+        public T wrapFunction<T>(Func<Action<GaugeStatus, int>, T> action, string name, string category)
         {
             var gauge = new DiagnosticGauge(name, category, DateTime.Now);
             gpf(gauge);
             T result = default(T);
             try
             {
-                result = action((gs) =>
+                result = action((gs, v) =>
                 {
-                    gauge.update(gs);
+                    gauge.update(gs, v);
                     gpf(gauge);
                 });
-                gauge.update(GaugeStatus.Completed);
+                gauge.update(GaugeStatus.Completed, 100);
                 gpf(gauge);
                 return result;
             }
             catch (Exception e)
             {
-                gauge.update(GaugeStatus.Failed);
+                gauge.update(GaugeStatus.Failed, 100);
                 gpf(gauge);
                 throw e;
             }

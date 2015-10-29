@@ -124,9 +124,9 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveScreenshotSubmission = new DefaultableCompositeCommand();
-        public static RoutedCommand ImportSubmission = new RoutedCommand();
-        public static RoutedCommand ImportSubmissions = new RoutedCommand();
-        public static RoutedCommand SaveFile = new RoutedCommand();
+        public static DefaultableCompositeCommand ImportSubmission = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ImportSubmissions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SaveFile = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
 
@@ -314,6 +314,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand LaunchDiagnosticWindow = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DiagnosticMessage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DiagnosticGaugeUpdated = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticMessagesUpdated = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticGaugesUpdated = new DefaultableCompositeCommand();
 
         #endregion
         Commands()

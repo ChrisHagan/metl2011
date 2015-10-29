@@ -14,14 +14,24 @@
     <ItemsControl x:Name="inProgress" Grid.Column="1">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <WrapPanel Orientation="Horizontal"/>
+                <StackPanel/>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Border CornerRadius="10" Height="20" Width="20" Background="Orange">
-                    <!--<ProgressBar Value="{Binding Value}" Minimum="0" Maximum="{Binding Path=Value,Converter={}}"-->
-                </Border>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar Grid.Column="0" Height="25" Width="100" Value="{Binding value, Mode=OneWay}" Minimum="0" Maximum="100"/>
+                    <Label Grid.Column="1" Content="{Binding soFar, Mode=OneWay}"/>
+                    <Label Grid.Column="2" Content="{Binding GaugeCategory, Mode=OneWay}"/>
+                    <Label Grid.Column="3" Content="{Binding GaugeName, Mode=OneWay}"/>
+                    <Label Grid.Column="4" Content="{Binding status, Mode=OneWay}"/>
+                </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

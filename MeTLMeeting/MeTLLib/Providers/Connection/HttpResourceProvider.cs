@@ -189,56 +189,56 @@ namespace MeTLLib.Providers.Connection
         }
         public bool exists(Uri resource)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return client().exists(resource);
             }), "exists: " + resource.ToString(), "httpResourceProvider");
         }
         public long getSize(System.Uri resource)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return client().getSize(resource);
             }), "getSize: " + resource.ToString(), "httpResourceProvider");
         }
         public string secureGetString(System.Uri resource)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return client().downloadString(resource);
             }), "secureGetString: " + resource.ToString(), "httpResourceProvider");
         }
         public string secureGetBytesAsString(System.Uri resource)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return System.Text.Encoding.UTF8.GetString(client().downloadData(resource));
             }), "secureGetBytesAsString: " + resource.ToString(), "httpResourceProvider");
         }
         public string insecureGetString(System.Uri resource)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return client().downloadString(resource);
             }), "insecureGetString: " + resource.ToString(), "httpResourceProvider");
         }
         public string securePutData(System.Uri uri, byte[] data)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return client().uploadData(uri, data);
             }), "securePutData: " + uri.ToString(), "httpResourceProvider");
         }
         public byte[] secureGetData(System.Uri resource)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return client().downloadData(resource);
             }), "secureGetData: " + resource.ToString(), "httpResourceProvider");
         }
         public string securePutFile(System.Uri uri, string filename)
         {
-            return _auditor.wrapTask(((g) =>
+            return _auditor.wrapFunction(((g) =>
             {
                 return decode(client().uploadFile(uri, filename));
             }), "securePutFile: " + uri.ToString(), "httpResourceProvider");

@@ -26,40 +26,49 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
 
-            var inProgressSource = new ObservableCollection<MeTLLib.DiagnosticGauge>();
-            inProgress.ItemsSource = inProgressSource;
-            
-            Commands.DiagnosticGaugeUpdated.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DiagnosticGauge>((m) =>
-            {
-                switch (m.status)
+            //var inProgressSource = new ObservableCollection<MeTLLib.DiagnosticGauge>();
+            //inProgress.ItemsSource = inProgressSource;
+            Commands.DiagnosticGaugesUpdated.RegisterCommand(new DelegateCommand<List<DiagnosticGauge>>(gs => {
+                Dispatcher.adoptAsync(delegate
                 {
-                    case GaugeStatus.Started:
-                        inProgressSource.Add(m);
-                        break;
-                    case GaugeStatus.InProgress:
-                        inProgressSource.Select(o =>
-                        {
-                            if (o.equals(m))
+                    inProgress.ItemsSource = gs.Where(g => g.status != GaugeStatus.Completed);
+                });
+            }));
+            /*
+            Commands.DiagnosticGaugeUpdated.RegisterCommand(new DelegateCommand<MeTLLib.DiagnosticGauge>((m) =>
+            {
+                this.Dispatcher.adoptAsync(delegate
+                {
+                    switch (m.status)
+                    {
+                        case GaugeStatus.Started:
+                            inProgressSource.Add(m);
+                            break;
+                        case GaugeStatus.InProgress:
+                            var old = inProgressSource.FirstOrDefault(g => g.equals(m));
+                            if (old != default(DiagnosticGauge))
                             {
-                                o.update(m);
-                                return o;
+                                old.update(m);
+                                inProgressSource.Remove(old);
+                                inProgressSource.Add(old);
                             }
                             else
                             {
-                                return o;
+                                inProgressSource.Add(m);
                             }
-                        });
-                        break;
-                    case GaugeStatus.Completed:
-                        inProgressSource.Remove(m);
-                        break;
-                    case GaugeStatus.Failed:
-                        inProgressSource.Remove(m);
-                        failedCount += 1;
-                        failureCount.Content = failedCount;
-                        break;
-                }
+                            break;
+                        case GaugeStatus.Completed:
+                            inProgressSource.Remove(m);
+                            break;
+                        case GaugeStatus.Failed:
+                            inProgressSource.Remove(m);
+                            failedCount += 1;
+                            failureCount.Content = failedCount;
+                            break;
+                    }
+                });
             }));
+            */
         }
     }
 }

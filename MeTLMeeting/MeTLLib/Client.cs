@@ -99,7 +99,7 @@ namespace MeTLLib
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return DisconnectedUri; }
         public void LeaveConversation(string conversation) { }
         public void UpdateSlideCollection(Int32 conversationJid) { }
-        public void AskForTeachersStatus(string teacher, string where) {}
+        public void AskForTeachersStatus(string teacher, string where) { }
         public bool Connect(Credentials credentials) { return false; }
         public bool Disconnect() { return false; }
         public void SendTextBox(TargettedTextBox textbox) { }
@@ -161,7 +161,8 @@ namespace MeTLLib
         public UserOptionsProvider userOptionsProvider { get; protected set; }
         public HttpResourceProvider resourceProvider { get; protected set; }
         //public IUserInformationProvider userInformationProvider { private get; set; }
-        
+        public IAuditor auditor { get; protected set; }
+
         public ClientConnection(
             MetlConfiguration address,
             IReceiveEvents _events,
@@ -172,7 +173,8 @@ namespace MeTLLib
             JabberWireFactory _jabberWireFactory,
             IWebClientFactory _downloaderFactory,
             UserOptionsProvider _userOptionsProvider,
-            HttpResourceProvider _resourceProvider
+            HttpResourceProvider _resourceProvider,
+            IAuditor _auditor
             )
         {
             server = address;
@@ -185,6 +187,7 @@ namespace MeTLLib
             downloaderFactory = _downloaderFactory;
             userOptionsProvider = _userOptionsProvider;
             resourceProvider = _resourceProvider;
+            auditor = _auditor;
         }
         #region fields
         private JabberWire wire;
@@ -348,17 +351,22 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                try
+                auditor.wrapAction((a =>
                 {
-                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
-                    if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
-                    UploadAndSendSubmission(lii);
-                }
+                    try
+                    {
+                        var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
+                        a(GaugeStatus.InProgress,33);
+                        wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
+                        a(GaugeStatus.InProgress, 66);
+                        if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
+                        UploadAndSendSubmission(lii);
+                    }
+                }), "uploadAndSendSubmission", "clientConnection");
             };
             tryIfConnected(work);
         }
@@ -419,7 +427,8 @@ namespace MeTLLib
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
 
                     MeTLImage newImage = lii.image;
-                    newImage.Dispatcher.adopt(() => {
+                    newImage.Dispatcher.adopt(() =>
+                    {
                         newImage.tag(lii.image.tag());
                         newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
                         wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, lii.image.tag().timestamp));
@@ -505,19 +514,25 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (String.IsNullOrEmpty(conversation)) return;
-                Trace.TraceInformation("JoinConversation {0}", conversation);
-                var cd = conversationDetailsProvider.DetailsOf(conversation);
-                location.activeConversation = cd.Jid;
-                location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                if (location.availableSlides.Count > 0)
-                    location.currentSlide = location.availableSlides[0];
-                else
+                auditor.wrapAction((a =>
                 {
-                    Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
-                }
-                wire.JoinConversation();
-                events.receiveConversationDetails(cd);
+                    if (String.IsNullOrEmpty(conversation)) return;
+//                    Trace.TraceInformation("JoinConversation {0}", conversation);
+                    var cd = conversationDetailsProvider.DetailsOf(conversation);
+                    a(GaugeStatus.InProgress, 25);
+                    location.activeConversation = cd.Jid;
+                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+                    if (location.availableSlides.Count > 0)
+                        location.currentSlide = location.availableSlides[0];
+                    else
+                    {
+                        Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
+                    }
+                    a(GaugeStatus.InProgress, 50);
+                    wire.JoinConversation();
+                    a(GaugeStatus.InProgress, 75);
+                    events.receiveConversationDetails(cd);
+                }), "joinConversation: " + conversation, "clientConnection");
             };
             tryIfConnected(work);
         }

@@ -68,14 +68,7 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             servers.ItemsSource = App.availableServers();
-            /*            
-            servers.ItemsSource = new Dictionary<String, MeTLServerAddress.serverMode> {
-                { "StackableRegiments.com", MeTLServerAddress.serverMode.EXTERNAL },
-                { "Saint Leo University", MeTLServerAddress.serverMode.PRODUCTION },
-                { "MeTL Demo Server (this houses data in Amazon)", MeTLServerAddress.serverMode.STAGING }
-            };
-            */
-            servers.SelectedIndex = 1;
+            servers.SelectedIndex = 0;
             Commands.AddWindowEffect.ExecuteAsync(null);
         }
         protected Timer showTimeoutButton;
@@ -181,17 +174,8 @@ namespace SandRibbon.Components
             DestroyWebBrowser(null);
             DeleteCookieForUrl(new Uri(loginUri));
             logonBrowser = new WebBrowser();
-            logonBrowser.Navigating += (sender, args) => {
-                var gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
-                Commands.DiagnosticGaugeUpdated.Execute(gauge);
-                NavigatedEventHandler finalized = null;
-                finalized = new NavigatedEventHandler((s, a) => {
-                    gauge.update(GaugeStatus.Completed);
-                    Commands.DiagnosticGaugeUpdated.Execute(gauge);
-                    logonBrowser.Navigated -= finalized;
-                });
-                logonBrowser.Navigated += finalized;
-            };
+            var gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+            var gaugeProgress = 0;
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.Navigating += (sender, args) =>
             {
@@ -209,13 +193,34 @@ namespace SandRibbon.Components
                 {
                     if (browseHistory.Last() != null)
                     {
+                        gauge.update(GaugeStatus.Completed, 100);
+                        App.dd.updateGauge(gauge);
+                        gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+                        gaugeProgress = 0;
                         logonBrowser.Navigate(browseHistory.Last());
                     }
                     else
                     {
+                        gauge.update(GaugeStatus.Completed, 100);
+                        App.dd.updateGauge(gauge);
                         ResetWebBrowser(null);
                     }
                 }
+            };
+            logonBrowser.Navigating += (sender, args) => {
+                gaugeProgress = gaugeProgress + ((100 - gaugeProgress) / 2);
+                gauge.update(GaugeStatus.Completed, gaugeProgress);
+                App.dd.updateGauge(gauge);
+                NavigatedEventHandler finalized = null;
+                finalized = new NavigatedEventHandler((s, a) => {
+                    gauge.update(GaugeStatus.Completed, 100);
+                    App.dd.updateGauge(gauge);
+                    gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+                    gaugeProgress = 0;
+                    logonBrowser.Navigated -= finalized;
+                });
+                logonBrowser.Navigated -= finalized;
+                logonBrowser.Navigated += finalized;
             };
             loginCheckingAction = new LoadCompletedEventHandler((sender, args) =>
              {
@@ -238,7 +243,7 @@ namespace SandRibbon.Components
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
                 checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
                 {
-                    App.dd.addMessage(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
+                    Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
                     logonBrowserContainer.Visibility = Visibility.Collapsed;
                     logonBrowserContainer.IsHitTestVisible = false;
                     maintainKeysTimer.Change(maintainKeysTimerTimeout, Timeout.Infinite);

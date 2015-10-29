@@ -21,11 +21,11 @@ namespace SandRibbon.Components
         }
         public IClientBehaviour connect(Credentials _creds)
         {
-            return App.auditor.wrapTask((g) =>
+            return App.auditor.wrapFunction((g) =>
             {
                 credentials = _creds;
                 client = buildServerSpecificClient(config, _creds);
-                g(GaugeStatus.InProgress);
+                g(GaugeStatus.InProgress,33);
                 MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
                 checkValidity = (sender, e) =>
                 {
@@ -45,7 +45,7 @@ namespace SandRibbon.Components
                     }
                 };
                 client.events.StatusChanged += checkValidity;
-                g(GaugeStatus.InProgress);
+                g(GaugeStatus.InProgress,66);
                 return client;
             }, "networkController connect", "backend");
         }

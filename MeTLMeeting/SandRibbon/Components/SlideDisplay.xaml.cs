@@ -158,7 +158,9 @@ namespace SandRibbon.Components
             {
                 var id = context[i].id;
                 var container = generator.ContainerFromIndex(i);
-                ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                try {
+                    ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                } catch { }
             }
         }
 

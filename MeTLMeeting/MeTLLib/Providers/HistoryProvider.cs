@@ -180,28 +180,36 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                 {
-                    auditor.wrapTask((g =>
+                    auditor.wrapAction((g =>
                     {
                         var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
                         //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
                         var directoryExists = resourceProvider.exists(new Uri(directoryUri));
                         if (!directoryExists)
-                            return false;
-
+                            return;
+                        g(GaugeStatus.InProgress, 10);
                         try
                         {
                             var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
+                            g(GaugeStatus.InProgress, 20);
                             if (zipData.Count() == 0)
                             {
-                                return false;
+                                return;
                             }
                             var zip = ZipFile.Read(zipData);
+                            g(GaugeStatus.InProgress, 30);
                             var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
+                            var inc = 70 / days.Count();
+                            var currentVal = 30; 
                             for (int i = 0; i < days.Count(); i++)
                             {
                                 using (var stream = new MemoryStream())
                                 {
+                                    currentVal += inc / 2;
+                                    g(GaugeStatus.InProgress, currentVal);
                                     days[i].Extract(stream);
+                                    currentVal += inc / 2;
+                                    g(GaugeStatus.InProgress, currentVal);
                                     parseHistoryItem(stream, accumulatingParser);
                                 }
                                 if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
@@ -212,7 +220,6 @@ namespace MeTLLib.Providers
                             Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
                             //Nothing to do if it's a 404.  There is no history to obtain.
                         }
-                        return true;
                     }), "retrieveWorker: " + room.ToString(), "historyProvider");
                 };
                 if (retrievalComplete != null)

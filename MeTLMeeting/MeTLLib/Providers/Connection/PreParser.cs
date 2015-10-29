@@ -35,7 +35,7 @@ namespace MeTLLib.Providers.Connection
         }
         public T merge<T>(T otherParser) where T : PreParser
         {
-            return auditor.wrapTask((g =>
+            return auditor.wrapFunction((a =>
             {
                 var returnParser = (T)Activator.CreateInstance(typeof(T),
                     credentials,
@@ -52,42 +52,42 @@ namespace MeTLLib.Providers.Connection
                     );
                 foreach (var parser in new[] { otherParser, this })
                 {
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,10);
                     foreach (var moveDelta in parser.moveDeltas)
                         returnParser.actOnMoveDelta(new MeTLStanzas.MoveDeltaStanza(moveDelta));
                     //returnParser.moveDeltas.Add(moveDelta);
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,20);
                     foreach (var i in parser.dirtyImage)
                         returnParser.actOnDirtyImageReceived(i);
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,30);
                     foreach (var i in parser.dirtyText)
                         returnParser.actOnDirtyTextReceived(i);
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,40);
                     foreach (var i in parser.dirtyInk)
                         returnParser.actOnDirtyStrokeReceived(i);
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,50);
                     foreach (var i in parser.ink)
                         returnParser.actOnStrokeReceived(i);
                     //returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,60);
                     returnParser.quizzes.AddRange(parser.quizzes);
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,70);
                     returnParser.quizAnswers.AddRange(parser.quizAnswers);
                     //returnParser.dirtyImage.AddRange(parser.dirtyImage);
                     //returnParser.dirtyInk.AddRange(parser.dirtyInk);
                     //returnParser.dirtyText.AddRange(parser.dirtyText);
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,80);
                     foreach (var kv in parser.text)
                         returnParser.actOnTextReceived(kv.Value);
                     /*if (!returnParser.text.ContainsKey(kv.Key))
                         returnParser.text.Add(kv.Key, kv.Value);*/
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,90);
                     foreach (var kv in parser.images)
                         returnParser.actOnImageReceived(kv.Value);
                     /*if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);*/
 
-                    g(GaugeStatus.InProgress);
+                    a(GaugeStatus.InProgress,95);
                     foreach (var kv in parser.liveWindows)
                         if (!returnParser.liveWindows.ContainsKey(kv.Key))
                             returnParser.liveWindows.Add(kv.Key, kv.Value);
