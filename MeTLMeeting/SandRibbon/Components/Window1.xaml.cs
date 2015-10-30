@@ -466,7 +466,7 @@ namespace SandRibbon
             }
 
             throw new ArgumentException(string.Format("Specified target {0} does not match a declared ViewBox", targetName));
-        }
+        }        
 
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {

@@ -30,6 +30,8 @@ using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 using MeTLLib.Providers;
+using System.Windows.Documents;
+using System.Globalization;
 
 namespace SandRibbon.Components
 {
@@ -147,7 +149,7 @@ namespace SandRibbon.Components
 
             return timedActions.Dequeue();
         }
-    }
+    }    
 
     public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
@@ -245,7 +247,7 @@ namespace SandRibbon.Components
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             pos = e.GetPosition(this);
-        }
+        }        
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -318,9 +320,9 @@ namespace SandRibbon.Components
 
             //For development
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
-                UndoHistory.ShowVisualiser(Window.GetWindow(this));
+                UndoHistory.ShowVisualiser(Window.GetWindow(this));         
         }
-
+        
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue == true)
@@ -1116,7 +1118,7 @@ namespace SandRibbon.Components
             Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, allElementsCount != 0, Work.GetSelectionBounds(), _target));
         }
         private void ClearAdorners()
-        {
+        {            
             if (me != Globals.PROJECTOR)
                 Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
         }
@@ -1226,7 +1228,7 @@ namespace SandRibbon.Components
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
+                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));                
             }
         }
 

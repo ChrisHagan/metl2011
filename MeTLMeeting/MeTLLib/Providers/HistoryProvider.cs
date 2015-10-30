@@ -152,13 +152,17 @@ namespace MeTLLib.Providers
             worker.DoWork += (_sender, _args) =>
                                  {
                                      var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
+                                     /*
                                      var directoryExists = resourceProvider.exists(new Uri(directoryUri));
                                      if (!directoryExists)
                                          return;
-
+                                         */
                                      try
                                      {
+                                         var start = DateTime.Now.Ticks;
+                                         Console.WriteLine("Retrieving {0} at {1}", directoryUri, start);
                                          var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
+                                         Console.WriteLine(string.Format("Retrieved {2} in {0} ticks, contains {1} bytes", DateTime.Now.Ticks - start, zipData.Count(), directoryUri));
                                          if (zipData.Count() == 0)
                                          {
                                              return;
@@ -177,7 +181,7 @@ namespace MeTLLib.Providers
                                      }
                                      catch (WebException e)
                                      {
-                                         Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
+                                         Trace.TraceWarning("HistoryProvider WebException in Retrieve {1}: {0}", e.Message, room);
                                          //Nothing to do if it's a 404.  There is no history to obtain.
                                      }
                                  };

@@ -9,11 +9,12 @@ using Ninject;
 namespace MeTLLib.Providers.Connection
 {
     public class WebClientWithTimeout : WebClient
-    {
+    {        
         protected override WebRequest GetWebRequest(Uri address)
         {
             //Permissions failure appeared here.
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
+            HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
+            request.KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
         }
@@ -24,7 +25,7 @@ namespace MeTLLib.Providers.Connection
         public MeTLWebClient(ICredentials credentials)
         {
             this.client = new WebClientWithTimeout();
-            this.client.Credentials = credentials;
+            this.client.Credentials = credentials;            
             this.client.Proxy = null;
         }
         public long getSize(Uri resource)
@@ -48,6 +49,7 @@ namespace MeTLLib.Providers.Connection
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = client.Credentials;
             request.Method = "HEAD";
+            request.KeepAlive = false;
             // use the default timeout
             //request.Timeout = 5 * 1000;
             try
