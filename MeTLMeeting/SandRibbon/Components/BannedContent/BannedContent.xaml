@@ -57,7 +57,8 @@
             </Grid>
             <StackPanel Grid.Column="2">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Margin="5" FontWeight="Bold">Conversation Banned Participants</TextBlock>
+                    <TextBlock DockPanel.Dock="Top" Margin="5" FontWeight="Bold">Conversation Banned 
+                    </TextBlock>
                     <ListView DockPanel.Dock="Bottom" x:Name="bannedUsernames" Margin="5,0" ItemsSource="{Binding Path=blackList}" SelectedIndex="0" 
                               MinHeight="30" Height="Auto">
                         <ListView.ItemTemplate>

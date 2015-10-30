@@ -67,13 +67,16 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));            
-            servers.ItemsSource = new Dictionary<String, MeTLServerAddress.serverMode> {
+            var backends = new Dictionary<String, MeTLServerAddress.serverMode> {
                 { "StackableRegiments.com", MeTLServerAddress.serverMode.EXTERNAL },
                 { "Saint Leo University", MeTLServerAddress.serverMode.PRODUCTION },
                 { "MeTL Demo Server (this houses data in Amazon)", MeTLServerAddress.serverMode.STAGING }
             };
+            servers.ItemsSource = backends;
             servers.SelectedIndex = 1;
             Commands.AddWindowEffect.ExecuteAsync(null);
+            doSetBackend(MeTLServerAddress.serverMode.EXTERNAL);
+            
         }
         protected Timer showTimeoutButton;
         protected int loginTimeout = 5 * 1000;
@@ -324,11 +327,15 @@ namespace SandRibbon.Components
         
         private void SetBackend(object sender, RoutedEventArgs e)
         {
+            var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>)servers.SelectedItem).Value;
+            doSetBackend(backend);            
+        }
+
+        private void doSetBackend(MeTLServerAddress.serverMode backend) {
             serversContainer.Visibility = Visibility.Collapsed;
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
-            App.SetBackend(backend);            
-            ResetWebBrowser(null);           
+            App.SetBackend(backend);
+            ResetWebBrowser(null);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

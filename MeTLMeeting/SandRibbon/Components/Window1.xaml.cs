@@ -622,6 +622,7 @@ namespace SandRibbon
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             applyPermissions(thisDetails.Permissions);
             Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
+            ParticipantsTabItem.Visibility = thisDetails.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
@@ -745,7 +746,7 @@ namespace SandRibbon
             if (canOpenFriendsOverride != null)
                 Commands.ToggleFriendsVisibility.UnregisterCommand(canOpenFriendsOverride);
             canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
-            Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
+            Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);            
         }
         private void showPowerPointProgress(string progress)
         {

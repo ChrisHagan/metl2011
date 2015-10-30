@@ -126,35 +126,10 @@
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray" x:Name="ConversationSearchFooter" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Bottom">
             <Grid>
                 <StackPanel>
-                    <Image HorizontalAlignment="Left" Stretch="None" Source="\Resources\MonashLogo.jpg"/>
                     <StackPanel Orientation="Horizontal" >
                         <Label Content="Version" FontWeight="bold"/>
                         <Label x:Name="versionNumber" Content="{Binding}"/>
                     </StackPanel>
-                </StackPanel>
-                <StackPanel HorizontalAlignment="Right">
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=ContactUrl, Mode=OneWay}">Contact us</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=DescriptionUrl, Mode=OneWay}">What is MeTL?</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=StudentUsagePolicyUrl, Mode=OneWay}">Acceptable use of information technology facilities by students policy</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=StaffUsagePolicyUrl, Mode=OneWay}">IT Use policy for staff and other authorised users</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                                    Copyright © 2012
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=CompanyUrl, Mode=OneWay}">Monash University</Hyperlink>
-                                    -
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=LegalsUrl, Mode=OneWay}">Caution</Hyperlink>
-                                    -
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=PrivacyUrl, Mode=OneWay}">Privacy Policy</Hyperlink>
-                                    -
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=LicenceUrl, Mode=OneWay}">Licenses</Hyperlink>
-                    </TextBlock>
                 </StackPanel>
             </Grid>
         </Border>
