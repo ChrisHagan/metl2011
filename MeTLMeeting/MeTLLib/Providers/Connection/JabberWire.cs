@@ -940,6 +940,10 @@ namespace MeTLLib.Providers.Connection
             SendCollection<TargettedImage>(images, i => SendImage(i));
         }
 
+        public void SendAttendance(string target, Attendance attendance)
+        {
+            stanza(target, new MeTLStanzas.Attendance(attendance));
+        }
         public void SendStroke(TargettedStroke stroke)
         {
             stanza(stroke.slide.ToString(), new MeTLStanzas.Ink(stroke));
@@ -1265,6 +1269,8 @@ namespace MeTLLib.Providers.Connection
                 stroke.tag(new StrokeTag(stroke.tag(), timestampedElement.timestamp));
                 actOnStrokeReceived(targettedStroke);
             }
+            foreach (var attendance in timestampedElement.element.SelectElements<MeTLStanzas.Attendance>(true))
+                actOnAttendance(attendance);
             foreach (var submission in timestampedElement.element.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
                 actOnScreenshotSubmission(submission.injectDependencies(metlServerAddress).parameters);
             foreach (var box in timestampedElement.element.SelectElements<MeTLStanzas.TextBox>(true))
@@ -1294,7 +1300,10 @@ namespace MeTLLib.Providers.Connection
                 actOnFileResource(file.injectDependencies(metlServerAddress));
 
         }
-
+        public virtual void actOnAttendance(MeTLStanzas.Attendance attendance)
+        {
+            receiveEvents.attendanceReceived(attendance.attendance);
+        }
         public virtual void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
         {
             receiveEvents.teacherStatusRecieved(status.status);

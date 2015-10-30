@@ -15,6 +15,7 @@ namespace MeTLLib.Providers.Connection
     {
         public Dictionary<string, TargettedImage> images = new Dictionary<string, TargettedImage>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
+        public List<Attendance> attendances = new List<Attendance>();
         public List<QuizQuestion> quizzes = new List<QuizQuestion>();
         public List<TargettedFile> files = new List<TargettedFile>();
         public List<TargettedSubmission> submissions = new List<TargettedSubmission>();
@@ -53,6 +54,8 @@ namespace MeTLLib.Providers.Connection
                 foreach (var parser in new[] { otherParser, this })
                 {
                     a(GaugeStatus.InProgress,10);
+                    foreach (var attendance in parser.attendances)
+                        returnParser.actOnAttendance(new MeTLStanzas.Attendance(attendance));
                     foreach (var moveDelta in parser.moveDeltas)
                         returnParser.actOnMoveDelta(new MeTLStanzas.MoveDeltaStanza(moveDelta));
                     //returnParser.moveDeltas.Add(moveDelta);
@@ -119,6 +122,8 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveLiveWindow(window);
             foreach (var file in files)
                 receiveEvents.receiveFileResource(file);
+            foreach (var attendance in attendances)
+                receiveEvents.attendanceReceived(attendance);
             receiveEvents.allContentSent(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
@@ -131,6 +136,10 @@ namespace MeTLLib.Providers.Connection
         }
         public override void ReceiveCommand(string message){//Preparsers don't care about commands, they're not a valid part of history.
             return;
+        }
+        public override void actOnAttendance(MeTLStanzas.Attendance attendance)
+        {
+            attendances.Add(attendance.attendance);
         }
         public override void actOnMoveDelta(MeTLStanzas.MoveDeltaStanza moveDelta) 
         {

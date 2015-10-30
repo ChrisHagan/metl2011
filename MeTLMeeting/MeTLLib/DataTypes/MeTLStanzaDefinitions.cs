@@ -47,6 +47,7 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.TextBoxIdentityStanza();
             new MeTLStanzas.InkIdentityStanza();
             new MeTLStanzas.ImageIdentityStanza();
+            new MeTLStanzas.Attendance();
         }
     }
 
@@ -1867,6 +1868,41 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
+        public class Attendance : MeTLElement
+        {
+            static Attendance()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Attendance));
+            }
+            public static string TAG = "attendance";
+            public static string LOCATION = "location";
+            public static string AUTHOR = "author";
+            public static string PRESENT = "present";
+            public Attendance() : base()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public Attendance(MeTLLib.DataTypes.Attendance attendance) : this(){
+                this.attendance = attendance;
+            }
+            public MeTLLib.DataTypes.Attendance attendance
+            {
+                get
+                {
+                    return new MeTLLib.DataTypes.Attendance(GetTag(AUTHOR), GetTag(LOCATION), bool.Parse(GetTag(PRESENT)),TimeStampedMessage.getTimestamp(this));
+                }
+                set
+                {
+                    SetTag(LOCATION, value.location);
+                    SetTag(AUTHOR, value.author);
+                    SetTag(PRESENT, value.present);
+                    SetTag(timestampTag, -1L);
+                }
+            }
+        }
+
+
         public class LiveWindow : Element
         {
             static LiveWindow()
@@ -1916,6 +1952,7 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
+
         public class Image : Element
         {
             private IWebClient downloader;
@@ -2273,4 +2310,20 @@ namespace MeTLLib.DataTypes
             return (T)elem;
         }
     }
+    public static class MeTLElementExtensions
+    {
+        public static T timestamp<T>(this MeTLStanzas.MeTLElement elem, long timestamp) where T : MeTLStanzas.MeTLElement
+        {
+            elem.timestamp = timestamp;
+            return (T)elem;
+        }
+        /*
+        public static T audiences<T>(this MeTLStanzas.MeTLElement elem, Audiences audiences) where T : MeTLStanzas.MeTLElement
+        {
+            elem.audiences = audiences;
+            return (T)elem;
+        }
+        */
+    }
+
 }

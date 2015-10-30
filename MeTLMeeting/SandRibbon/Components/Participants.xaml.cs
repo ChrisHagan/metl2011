@@ -119,6 +119,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
             //Commands.ReceiveTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(ReceivePresence));
+            Commands.ReceiveAttendance.RegisterCommand(new DelegateCommand<Attendance>(ReceivePresence));
         }
         private void JoinConversation(string newJid)
         {
@@ -157,21 +158,21 @@ namespace SandRibbon.Components
                 }
             }
         }
-        protected void ReceivePresence(TeacherStatus presence)
+        protected void ReceivePresence(Attendance presence)
         {
-            if (/*Providers.Globals.conversationDetails.Jid == presence.Conversation || */ Providers.Globals.conversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.Slide))
+            if (/*Providers.Globals.conversationDetails.Jid == presence.location || */ Providers.Globals.conversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.location))
             {
                 Dispatcher.adopt(delegate
                 {
-                    constructPersonFromUsername(presence.Teacher);
-                    var user = people[presence.Teacher];
-                    if (presence.Joining)
+                    constructPersonFromUsername(presence.author);
+                    var user = people[presence.author];
+                    if (presence.present)
                     {
-                        user.slideLocation.Add(presence.Slide);
+                        user.slideLocation.Add(presence.location);
                     }
                     else
                     {
-                        user.slideLocation.Remove(presence.Slide);
+                        user.slideLocation.Remove(presence.location);
                     }
                 });
             }

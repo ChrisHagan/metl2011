@@ -38,6 +38,7 @@ namespace MeTLLib
         public delegate void SyncMoveRequestedEventHandler(object sender, SyncMoveRequestedEventArgs e);
         public delegate void HandlePongEventHandler(object sender, HandlePongEventArgs e);
         public delegate void ServersDownEventHandler(object sender, ServersDownEventArgs e);
+        public delegate void AttendanceAvailableEventHandler(object sender, AttendanceAvailableEventArgs e);
         public delegate void AllContentSentEventHandler(object sender, AllContentSentEventArgs e);
     }
     #endregion
@@ -68,6 +69,7 @@ namespace MeTLLib
     public class ChatAvailableEventArgs : EventArgs { public TargettedTextBox chat;}
     public class ConversationDetailsAvailableEventArgs : EventArgs { public ConversationDetails conversationDetails;}
     public class CommandAvailableEventArgs : EventArgs { public string command;}
+    public class AttendanceAvailableEventArgs : EventArgs { public Attendance attendance;  }
     public class SyncMoveRequestedEventArgs: EventArgs {public int where;}
     #endregion
     public interface IReceiveEvents
@@ -105,6 +107,7 @@ namespace MeTLLib
         void receieveQuizzes(PreParser finishedParser);
         void receieveAttachments(PreParser finishedParser);
         void receieveQuiz(PreParser finishedParser, long id);
+        void attendanceReceived(Attendance attendance);
         event MeTLLibEventHandlers.AttachmentsAvailableRequestEventHandler AttachmentsAvailable;
         event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
         event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
@@ -137,6 +140,7 @@ namespace MeTLLib
         event MeTLLibEventHandlers.SyncMoveRequestedEventHandler SyncMoveRequested;
         event MeTLLibEventHandlers.ServersDownEventHandler ServersDown;
         event MeTLLibEventHandlers.HandlePongEventHandler HandlePong;
+        event MeTLLibEventHandlers.AttendanceAvailableEventHandler AttendanceAvailable;
         event MeTLLibEventHandlers.AllContentSentEventHandler AllContentSent;
     }
 
@@ -170,7 +174,12 @@ namespace MeTLLib
             this.TeacherStatusRequest += (sender, args) => { };
             this.TeacherStatusReceived += (sender, args)=> { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
+            this.AttendanceAvailable += (sender, args) => { };
             this.ServersDown += (sender, args) => { };
+        }
+        void IReceiveEvents.attendanceReceived(Attendance attendance)
+        {
+            AttendanceAvailable(this, new AttendanceAvailableEventArgs { attendance = attendance });
         }
         void IReceiveEvents.serversDown(Uri u)
         {
@@ -259,6 +268,10 @@ namespace MeTLLib
         void IReceiveEvents.receivePreParser(PreParser pp)
         {
             PreParserAvailable(this, new PreParserAvailableEventArgs { parser = pp });
+        }
+        public void attendanceAvailable(Attendance att)
+        {
+            AttendanceAvailable(this, new AttendanceAvailableEventArgs { attendance = att });
         }
         public void receiveChat(TargettedTextBox ttb)
         {
@@ -359,6 +372,7 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyAutoShapeAvailable;
         public event MeTLLibEventHandlers.ServersDownEventHandler ServersDown;
         public event MeTLLibEventHandlers.HandlePongEventHandler HandlePong;
+        public event MeTLLibEventHandlers.AttendanceAvailableEventHandler AttendanceAvailable;
         public event MeTLLibEventHandlers.AllContentSentEventHandler AllContentSent;
 
         #region VirtualEventSubscribers

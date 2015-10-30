@@ -108,7 +108,22 @@ namespace MeTLLib.DataTypes
         }
     }
 
-    public class ConversationDetails : INotifyPropertyChanged
+    public class Attendance
+    {
+        public bool present { get; protected set; }
+        public string author { get; protected set; }
+        public string location { get; protected set; }
+        public long timestamp { get; protected set; }
+        public Attendance(string _author, string _location, bool _present,long _timestamp)
+        {
+            author = _author;
+            location = _location;
+            present = _present;
+            timestamp = _timestamp;
+        }
+    }
+
+        public class ConversationDetails : INotifyPropertyChanged
     {
         public bool isDeleted
         {

@@ -152,6 +152,11 @@ namespace SandRibbon
         public static DefaultableCompositeCommand BanhammerSelectedItems= new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand VisualizeContent = new DefaultableCompositeCommand();
 
+        #region Attendance
+        public static DefaultableCompositeCommand SendAttendance = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveAttendance = new DefaultableCompositeCommand();
+        #endregion
+
         //public static DefaultableCompositeCommand Relogin = new DefaultableCompositeCommand();
         #region Quizzing
         public static DefaultableCompositeCommand SendWormMove = new DefaultableCompositeCommand(); 

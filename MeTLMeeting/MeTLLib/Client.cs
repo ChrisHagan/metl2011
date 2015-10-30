@@ -48,6 +48,7 @@ namespace MeTLLib
         void SendMoveDelta(TargettedMoveDelta tmd);
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
+        void SendAttendance(string where, Attendance att);
         void SendQuizAnswer(QuizAnswer qa);
         void SendQuizQuestion(QuizQuestion qq);
         void SendFile(TargettedFile tf);
@@ -114,6 +115,7 @@ namespace MeTLLib
         public void SendMoveDelta(TargettedMoveDelta tmd) { }
         public void GetAllSubmissionsForConversation(string conversationJid) { }
         public void SendStanza(string where, Element stanza) { }
+        public void SendAttendance(string where, Attendance att) { }
         public void SendQuizAnswer(QuizAnswer qa) { }
         public void SendQuizQuestion(QuizQuestion qq) { }
         public void SendFile(TargettedFile tf) { }
@@ -324,6 +326,14 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void SendAttendance(string where, Attendance att) {
+            Action work = delegate
+            {
+                wire.SendAttendance(where, att);
+            };
+            tryIfConnected(work);
+        }
+
         public void SendDirtyVideo(TargettedDirtyElement tde)
         {
             Action work = delegate

@@ -83,6 +83,7 @@ namespace SandRibbon.Components
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
+            Commands.SendAttendance.RegisterCommand(new DelegateCommand<Attendance>(SendAttendance));
         }
         /*
         private void RequestUserInformations(List<string> usernames)
@@ -115,11 +116,14 @@ namespace SandRibbon.Components
         private void JoinConversation(string jid)
         {
             client.JoinConversation(jid);
+            client.SendAttendance("global", new Attendance(Globals.me, Globals.conversationDetails.Jid, true, -1L));
             Commands.CheckExtendedDesktop.ExecuteAsync(null);
         }
         private void MoveTo(int slide)
         {
             client.MoveTo(slide);
+            if (Globals.conversationDetails.Slides.Exists(s => s.id == slide))
+                client.SendAttendance(Globals.conversationDetails.Jid, new Attendance(Globals.me, Globals.slide.ToString(), true, -1L));
         }
         private void SendChatMessage(object _obj)
         {
@@ -130,6 +134,13 @@ namespace SandRibbon.Components
         private void SendDirtyImage(TargettedDirtyElement tde)
         {
             client.SendDirtyImage(tde);
+        }
+        private void SendAttendance(Attendance att)
+        {
+            if (Globals.conversationDetails.Jid == att.location)
+                client.SendAttendance("global", att);
+            else if (Globals.conversationDetails.Slides.Exists(s => att.location == s.id.ToString()))
+                client.SendAttendance(Globals.conversationDetails.Jid, att);
         }
         private void SendDirtyLiveWindow(TargettedDirtyElement tde)
         {
@@ -176,6 +187,11 @@ namespace SandRibbon.Components
         private void LeaveLocation(object _unused)
         {
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            if (!Globals.conversationDetails.IsEmpty)
+            {
+                client.SendAttendance("global", new Attendance(Globals.me, Globals.conversationDetails.Jid, false, -1L));
+                client.SendAttendance(Globals.conversationDetails.Jid, new Attendance(Globals.me, Globals.slide.ToString(), false, -1L));
+            }
             client.LeaveLocation();
         }
         private void SendTextBox(TargettedTextBox ttb)
@@ -224,6 +240,7 @@ namespace SandRibbon.Components
             client.events.SyncMoveRequested += syncMoveRequested;
             client.events.StatusChanged += statusChanged;
             client.events.SlideCollectionUpdated += slideCollectionChanged;
+            client.events.AttendanceAvailable += attendanceAvailable;
         }
 
         private void detachFromClient()
@@ -253,6 +270,11 @@ namespace SandRibbon.Components
             client.events.SyncMoveRequested -= syncMoveRequested;
             client.events.StatusChanged -= statusChanged;
             client.events.SlideCollectionUpdated -= slideCollectionChanged;
+            client.events.AttendanceAvailable -= attendanceAvailable;
+        }
+        private void attendanceAvailable(object sender, AttendanceAvailableEventArgs e)
+        {
+            Commands.ReceiveAttendance.Execute(e.attendance);
         }
         private void teacherStatusReceived(object sender, TeacherStatusRequestEventArgs e)
         {
