@@ -68,7 +68,7 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             servers.ItemsSource = App.availableServers();
-            servers.SelectedIndex = 0;
+            //servers.SelectedIndex = 0;
             Commands.AddWindowEffect.ExecuteAsync(null);
         }
         protected Timer showTimeoutButton;
@@ -170,11 +170,11 @@ namespace SandRibbon.Components
         protected LoadCompletedEventHandler keyMaintainAction;
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = App.controller.config.authenticationUrl;
+            var loginUri = App.getCurrentServer.authenticationEndpoint;// App.controller.config.authenticationUrl;
             DestroyWebBrowser(null);
-            DeleteCookieForUrl(new Uri(loginUri));
+            DeleteCookieForUrl(loginUri);
             logonBrowser = new WebBrowser();
-            var gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+            var gauge = new DiagnosticGauge(loginUri.ToString(), "embedded browser http request", DateTime.Now);
             var gaugeProgress = 0;
             logonBrowserContainer.Children.Add(logonBrowser);
             logonBrowser.Navigating += (sender, args) =>
@@ -194,8 +194,7 @@ namespace SandRibbon.Components
                     if (browseHistory.Last() != null)
                     {
                         App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, 100));
-                        //App.diagnosticModelActor.Tell();
-                        gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+                        gauge = new DiagnosticGauge(loginUri.ToString(), "embedded browser http request", DateTime.Now);
                         gaugeProgress = 0;
                         logonBrowser.Navigate(browseHistory.Last());
                     }
@@ -217,7 +216,7 @@ namespace SandRibbon.Components
                 NavigatedEventHandler finalized = null;
                 finalized = new NavigatedEventHandler((s, a) => {
                     App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, 100));
-                    gauge = new DiagnosticGauge(loginUri, "embedded browser http request", DateTime.Now);
+                    gauge = new DiagnosticGauge(loginUri.ToString(), "embedded browser http request", DateTime.Now);
                     gaugeProgress = 0;
                     logonBrowser.Navigated -= finalized;
                 });
@@ -230,6 +229,13 @@ namespace SandRibbon.Components
                  checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
                  {
                      Commands.AddWindowEffect.ExecuteAsync(null);
+                     var config = App.metlConfigManager.parseConfig(App.getCurrentServer,doc).FirstOrDefault();
+                     if (config == default(MetlConfiguration))
+                     {
+                         MessageBox.Show("No server found at the supplied address.  Please verify the address and restart MeTL.");
+                         Application.Current.Shutdown();
+                     }
+                     App.SetBackend(config);
                      App.Login(credentials);
                      logonBrowser.LoadCompleted -= loginCheckingAction;
                      if (maintainKeysTimer != null)
@@ -299,7 +305,7 @@ namespace SandRibbon.Components
             {
                 var uri = new Uri(url);
                 browseHistory.Add(uri);
-                var authenticationUri = new Uri(App.controller.config.authenticationUrl);
+                var authenticationUri = App.getCurrentServer.authenticationEndpoint;
                 return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
             }
             catch (Exception e)
@@ -379,7 +385,6 @@ namespace SandRibbon.Components
                 //DestroyWebBrowser(null);
                 this.Visibility = Visibility.Collapsed;
             });
-            startMaintainingKeys();
             App.mark("Login knows identity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
@@ -388,16 +393,22 @@ namespace SandRibbon.Components
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
-        protected void startMaintainingKeys()
-        {
-        }
         private void SetBackend(object sender, RoutedEventArgs e)
         {
             serversContainer.Visibility = Visibility.Collapsed;
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var backend = servers.SelectedItem as MetlConfiguration;
+            var server = (sender as Button).DataContext as MeTLConfigurationProxy;
+            //var backend = App.metlConfigManager.getConfigFor(server);
+            //var backend = servers.SelectedItem as MetlConfiguration;
             //var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
-            App.SetBackend(backend);
+            //App.SetBackend(backend);
+            App.SetBackendProxy(server);
+            ResetWebBrowser(null);
+        }
+        private void SetCustomServer(object sender, RoutedEventArgs e)
+        {
+            var server = new MeTLConfigurationProxy(customServer.Text, new Uri(customServer.Text+"/static/images/server.png"), new Uri(customServer.Text + "/authenticationState"));
+            App.SetBackendProxy(server);
             ResetWebBrowser(null);
         }
 

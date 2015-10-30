@@ -100,8 +100,8 @@ namespace SandRibbon.Tabs
                 backgroundWorker.DoWork += (s, a) =>
                                                {
                                                    var stream = saveFile.OpenFile();
-                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential(App.getCurrentServer.resourceUsername,
-                                                       App.getCurrentServer.resourcePassword) }.DownloadData(file.url);
+                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential(App.getCurrentBackend.resourceUsername,
+                                                       App.getCurrentBackend.resourcePassword) }.DownloadData(file.url);
                                                    stream.Write(sourceBytes, 0, sourceBytes.Count());
                                                    stream.Close();
                                                };

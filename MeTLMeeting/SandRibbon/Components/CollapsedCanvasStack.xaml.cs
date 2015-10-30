@@ -1831,12 +1831,12 @@ namespace SandRibbon.Components
                     {
                     }
                 var fileBrowser = new OpenFileDialog
-                                             {
-                                                 InitialDirectory = initialDirectory,
-                                                 Filter = filter,
-                                                 FilterIndex = 1,
-                                                 RestoreDirectory = true
-                                             };
+                {
+                    InitialDirectory = initialDirectory,
+                    Filter = filter,
+                    FilterIndex = 1,
+                    RestoreDirectory = true
+                };
                 DisableDragDrop();
                 var dialogResult = fileBrowser.ShowDialog(Window.GetWindow(this));
                 EnableDragDrop();
@@ -2380,10 +2380,10 @@ namespace SandRibbon.Components
             box.FontSize = 24;
             box.Foreground = Brushes.Black;
             var info = new TextInformation
-                           {
-                               Family = box.FontFamily,
-                               Size = box.FontSize,
-                           };
+            {
+                Family = box.FontFamily,
+                Size = box.FontSize,
+            };
             Commands.TextboxFocused.ExecuteAsync(info);
             sendTextWithoutHistory(box, box.tag().privacy);
         }
@@ -2469,15 +2469,15 @@ namespace SandRibbon.Components
                 strikethrough = box.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
             }
             return new TextInformation
-                       {
-                           Bold = box.FontWeight == FontWeights.Bold,
-                           Italics = box.FontStyle == FontStyles.Italic,
-                           Size = box.FontSize,
-                           Underline = underline,
-                           Strikethrough = strikethrough,
-                           Family = box.FontFamily,
-                           Color = ((SolidColorBrush)box.Foreground).Color
-                       };
+            {
+                Bold = box.FontWeight == FontWeights.Bold,
+                Italics = box.FontStyle == FontStyles.Italic,
+                Size = box.FontSize,
+                Underline = underline,
+                Strikethrough = strikethrough,
+                Family = box.FontFamily,
+                Color = ((SolidColorBrush)box.Foreground).Color
+            };
         }
 
         private void sendBox(MeTLTextBox box, bool localOnly = false)
@@ -2779,11 +2779,11 @@ namespace SandRibbon.Components
             box.offsetX = contentBuffer.logicalX;
             box.offsetY = contentBuffer.logicalY;
             box.tag(new TextTag
-                        {
-                            author = Globals.me,
-                            privacy = currentPrivacy,
-                            id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
-                        });
+            {
+                author = Globals.me,
+                privacy = currentPrivacy,
+                id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
+            });
 
             //setting the currentfamily, currentsize, currentcolor, style whenever there is a new box created
             _currentColor = Globals.currentTextInfo.Color;
@@ -2867,12 +2867,12 @@ namespace SandRibbon.Components
                         App.controller.client.NoAuthUploadResource(
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new MeTLImage
-                                    {
-                                        Source = new BitmapImage(uri),
-                                        Width = imageSource.Width,
-                                        Height = imageSource.Height,
-                                        Stretch = Stretch.Fill
-                                    };
+                    {
+                        Source = new BitmapImage(uri),
+                        Width = imageSource.Width,
+                        Height = imageSource.Height,
+                        Stretch = Stretch.Fill
+                    };
                     image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, -1)); // ZIndex was -1, timestamp is -1L
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
@@ -3040,11 +3040,17 @@ namespace SandRibbon.Components
             //text 
             var selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements()).ToList();
             var selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select((s => s.Clone())).ToList();
-            string selectedText = selectedText = myTextBox.SelectedText;
+            string selectedText = null;
+            if (myTextBox != null)
+                selectedText = myTextBox.SelectedText;
 
             // copy previously was an undoable action, ie restore the clipboard to what it previously was
             var images = HandleImageCopyRedo(selectedElements);
-            var text = HandleTextCopyRedo(selectedElements, selectedText);
+            var text = new List<string>();
+            if (selectedText != null)
+            {
+                text = HandleTextCopyRedo(selectedElements, selectedText);
+            }
             var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes.Select(s => s as Stroke).ToList());
             Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(text, images, copiedStrokes));
         }

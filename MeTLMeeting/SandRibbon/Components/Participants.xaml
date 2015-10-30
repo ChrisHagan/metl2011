@@ -15,6 +15,7 @@
                     <DataGridTextColumn Header="User" Binding="{Binding Path=username}" />
                     <DataGridTextColumn Header="Activity" Binding="{Binding Path=activityCount}" />
                     <DataGridTextColumn Header="Submissions" Binding="{Binding Path=submissionCount}" />
+                    <!--<DataGridTextColumn Header="Slides" Binding="{Binding Path=slideLocation, Converter={x:Static components:Participants.slideCollectionDescriber}}"/>-->
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>

@@ -65,9 +65,12 @@ namespace SandRibbon.Chrome
                              details.Subject, Globals.me);
                     }
 #if DEBUG
-                //var activeStack = //MeTLConfiguration.Config.ActiveStack;
+                    //var activeStack = //MeTLConfiguration.Config.ActiveStack;
+                    var currentServerName = "";
+                    if (App.getCurrentServer != null)
+                        currentServerName = App.getCurrentServer.name;
                 status += String.Format(" | ({0}) Connected to [{1}]", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me,
-                    App.getCurrentServer.name);
+                    currentServerName);
 #endif
                     StatusLabel.Text = status;
                 });

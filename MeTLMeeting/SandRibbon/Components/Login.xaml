@@ -50,14 +50,29 @@
             </Grid>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
                 <TextBlock>Please select a server against which to work.</TextBlock>
-                <ListBox x:Name="servers">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="customServer"/>
+                    <Button x:Name="customServerAccept" Click="SetCustomServer" Content="Login to custom server"/>
+                </StackPanel>
+                <ItemsControl x:Name="servers">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                            <!--<UniformGrid></UniformGrid>-->
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=name}" />
+                            <Button Click="SetBackend" DataContext="{Binding}" Height="200">
+                                <Grid>
+                                    <Image Grid.Row="0" Source="{Binding Path=imageUrl}"/>
+                                    <TextBlock Grid.Row="1" Text="{Binding Path=name}" />
+                                </Grid>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
-                </ListBox>
-                <Button x:Name="connect" Content="Connect" Click="SetBackend" />
+                </ItemsControl>
+                <!--<Button x:Name="connect" Content="Connect" Click="SetBackend" />-->
             </StackPanel>
         </Grid>
     </DockPanel>

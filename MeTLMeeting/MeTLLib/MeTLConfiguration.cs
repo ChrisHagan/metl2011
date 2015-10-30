@@ -1,11 +1,29 @@
 ﻿namespace MeTLLib
 {
+    using mshtml;
     using System;
     using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
     using System.Linq;
+    using System.Xml.Linq;
 
+    public class MeTLConfigurationProxy
+    {
+        public MeTLConfigurationProxy(
+            string _name,
+            Uri _imageUrl,
+            Uri _authenticationEndpoint
+        )
+        {
+            name = _name;
+            imageUrl = _imageUrl;
+            authenticationEndpoint = _authenticationEndpoint;
+        }
+        public string name { get; protected set; }
+        public Uri imageUrl { get; protected set; }
+        public Uri authenticationEndpoint { get; protected set; }
+    }
     public class MetlConfiguration
     {
         public MetlConfiguration(
@@ -86,26 +104,84 @@
     {
         public MetlConfigurationManager()
         {
-            loadConfigs();
+            reload();
         }
-        public List<MetlConfiguration> Configs
+        public MetlConfiguration getConfigFor(MeTLConfigurationProxy server)
         {
-            get;
-            protected set;
+            return internalGetConfigFor(server);
         }
-        protected abstract void loadConfigs();
+        public List<MeTLConfigurationProxy> servers { get; protected set; }
+        protected abstract MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server);
+        protected abstract void internalGetServers();
         public void reload()
         {
-            loadConfigs();
+            internalGetServers();
         }
+        protected List<XElement> getElementsByTag(List<XElement> x, String tagName)
+        {
+            // it's not recursive!
+            var children = x.Select(xel => { return getElementsByTag(xel.Elements().ToList(), tagName); });
+            var root = x.FindAll((xel) =>
+            {
+                return xel.Name.LocalName.ToString().Trim().ToLower() == tagName.Trim().ToLower();
+            });
+            foreach (List<XElement> child in children)
+            {
+                root.AddRange(child);
+            }
+            return root;
+        }
+        public List<MetlConfiguration> parseConfig(MeTLConfigurationProxy server, HTMLDocument doc)
+        {
+            var authDataContainer = doc.getElementById("authData");
+            if (authDataContainer == null)
+            {
+                return new List<MetlConfiguration>();
+            }
+            var html = authDataContainer.innerHTML;
+            if (html == null)
+            {
+                return new List<MetlConfiguration>();
+            }
+            var xml = XDocument.Parse(html).Elements().ToList();
+            var cc = getElementsByTag(xml,"clientConfig");
+            var xmppHost = getElementsByTag(cc, "xmppHost").First().Value;
+            var xmppPort = getElementsByTag(cc, "xmppPort").First().Value;
+            var xmppDomain = getElementsByTag(cc, "xmppDomain").First().Value;
+            var xmppUsername = getElementsByTag(cc, "xmppUsername").First().Value;
+            var xmppPassword = getElementsByTag(cc, "xmppPassword").First().Value;
+            var conversationSearchUrl = getElementsByTag(cc, "conversationSearchUrl").First().Value;
+            var webAuthenticationUrl = getElementsByTag(cc, "webAuthenticationUrl").First().Value;
+            var thumbnailUrl = getElementsByTag(cc, "thumbnailUrl").First().Value;
+            var resourceUrl = getElementsByTag(cc, "resourceUrl").First().Value;
+            var historyUrl = getElementsByTag(cc, "historyUrl").First().Value;
+            var httpUsername = getElementsByTag(cc, "httpUsername").First().Value;
+            var httpPassword = getElementsByTag(cc, "httpPassword").First().Value;
+            var structureDirectory = getElementsByTag(cc, "structureDirectory").First().Value;
+            var resourceDirectory = getElementsByTag(cc, "resourceDirectory").First().Value;
+            var uploadPath = getElementsByTag(cc, "uploadPath").First().Value;
+            var primaryKeyGenerator = getElementsByTag(cc, "primaryKeyGenerator").First().Value;
+            var cryptoKey = getElementsByTag(cc, "cryptoKey").First().Value;
+            var cryptoIV = getElementsByTag(cc, "cryptoIV").First().Value;
+            return new List<MetlConfiguration>
+            {
+                new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppHost,xmppPort,xmppDomain,xmppUsername,xmppPassword,conversationSearchUrl,webAuthenticationUrl,thumbnailUrl,resourceUrl,historyUrl,httpUsername,httpPassword,structureDirectory,resourceDirectory,uploadPath,primaryKeyGenerator,cryptoKey,cryptoIV)
+            };
+        }
+    }
+    public class RemoteAppMeTLConfigurationManager : MetlConfigurationManager
+    {
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server) { throw new NotImplementedException(); }
+        override protected void internalGetServers() { throw new NotImplementedException(); }
     }
     public class LocalAppMeTLConfigurationManager : MetlConfigurationManager
     {
-        override protected void loadConfigs()
+        protected Dictionary<MeTLConfigurationProxy, MetlConfiguration> internalConfigs = new Dictionary<MeTLConfigurationProxy, MetlConfiguration>();
+        override protected void internalGetServers()
         {
             deprecatedLib.MeTLConfiguration.Load();
             var config = deprecatedLib.MeTLConfiguration.Config;
-            Configs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf =>
+            internalConfigs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf =>
               {
                   return new MetlConfiguration(
                       conf.Name,
@@ -129,9 +205,22 @@
                           config.Crypto.Key,
                           config.Crypto.IV
                       );
-              }).ToList();
+              }).ToDictionary<MetlConfiguration, MeTLConfigurationProxy>(mc =>
+              {
+                  return new MeTLConfigurationProxy(
+                      mc.name,
+                      new Uri(mc.imageUrl),
+                      new Uri(mc.authenticationUrl)
+                      );
+              });
+            servers = internalConfigs.Keys.ToList();
+        }
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server)
+        {
+            return internalConfigs[server];
         }
     }
+
 }
 
 namespace deprecatedLib

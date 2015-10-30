@@ -75,6 +75,10 @@ namespace SandRibbon
             splashScreen.Close(TimeSpan.Zero);
         }
 
+        public static void SetBackendProxy(MeTLConfigurationProxy server)
+        {
+            getCurrentServer = server;
+        }
         public static void SetBackend(MetlConfiguration configuration)
         {
             //App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
@@ -82,11 +86,16 @@ namespace SandRibbon
             //App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
 //            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
         }
-        public static List<MetlConfiguration> availableServers()
+        public static List<MeTLConfigurationProxy> availableServers()
         {
-            return metlConfigManager.Configs;
+            return metlConfigManager.servers;
         }
-        public static MetlConfiguration getCurrentServer
+        public static MeTLConfigurationProxy getCurrentServer
+        {
+            get;
+            protected set;
+        }
+        public static MetlConfiguration getCurrentBackend
         {
             get {
                 return controller.config;
@@ -200,7 +209,8 @@ namespace SandRibbon
             try
             {
                 Commands.LeaveAllRooms.Execute(null);
-                controller.client.Disconnect();         
+                if (controller != null && controller.client != null)
+                    controller.client.Disconnect();         
             }
             catch (Exception) { }
             if (App.diagnosticWindow != null)

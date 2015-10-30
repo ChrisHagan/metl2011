@@ -9,13 +9,34 @@ using MeTLLib.Providers.Connection;
 using System.IO;
 using System.Windows.Ink;
 using Iveonik.Stemmers;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace SandRibbon.Components
 {
+    public class SlideCollectionDescriber : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is List<string>)
+            {
+                return (value as List<string>).Aggregate("", (acc, item) => (acc == "" ? item : acc + ", " + item));
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     public class MeTLUser : DependencyObject
     {
         public string username { private set; get; }
-        public Dictionary<string, int> usages = new Dictionary<string, int>();        
+        public Dictionary<string, int> usages = new Dictionary<string, int>();
         public HashSet<String> words
         {
             get
@@ -56,9 +77,25 @@ namespace SandRibbon.Components
 
         public static readonly DependencyProperty submissionCountProperty = DependencyProperty.Register("submissionCount", typeof(int), typeof(MeTLUser), new UIPropertyMetadata(0));
 
+        public List<string> slideLocation
+        {
+            get
+            {
+                return (List<string>)GetValue(slideLocationProperty);
+            }
+            set
+            {
+                SetValue(slideLocationProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty slideLocationProperty = DependencyProperty.Register("slideLocation", typeof(List<string>), typeof(MeTLUser), new UIPropertyMetadata(new List<string>()));
+
+
         public MeTLUser(string user)
         {
             username = user;
+            slideLocation = new List<string>();
             activityCount = 0;
             submissionCount = 0;
         }
@@ -66,6 +103,7 @@ namespace SandRibbon.Components
 
     public partial class Participants : UserControl
     {
+        public static SlideCollectionDescriber slideCollectionDescriber = new SlideCollectionDescriber();
         public Dictionary<string, MeTLUser> people = new Dictionary<string, MeTLUser>();
         public HashSet<String> seen = new HashSet<string>();
         public IStemmer stemmer = new EnglishStemmer();
@@ -80,6 +118,7 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
+            //Commands.ReceiveTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(ReceivePresence));
         }
         private void JoinConversation(string newJid)
         {
@@ -116,6 +155,25 @@ namespace SandRibbon.Components
                         constructPersonFromUsername(bannedUsername);
                     });
                 }
+            }
+        }
+        protected void ReceivePresence(TeacherStatus presence)
+        {
+            if (/*Providers.Globals.conversationDetails.Jid == presence.Conversation || */ Providers.Globals.conversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.Slide))
+            {
+                Dispatcher.adopt(delegate
+                {
+                    constructPersonFromUsername(presence.Teacher);
+                    var user = people[presence.Teacher];
+                    if (presence.Joining)
+                    {
+                        user.slideLocation.Add(presence.Slide);
+                    }
+                    else
+                    {
+                        user.slideLocation.Remove(presence.Slide);
+                    }
+                });
             }
         }
 
@@ -170,12 +228,15 @@ namespace SandRibbon.Components
             foreach (var s in p.submissions)
                 ReceiveSubmission(s);
         }
-        private void Ensure(string key, Dictionary<String,List<String>> dict) {
-            if (!dict.ContainsKey(key)) {
+        private void Ensure(string key, Dictionary<String, List<String>> dict)
+        {
+            if (!dict.ContainsKey(key))
+            {
                 dict[key] = new List<String>();
             }
         }
-        private List<string> Filter(List<string> words) {
+        private List<string> Filter(List<string> words)
+        {
             return words.Where(w => w.Count() > 3).Select(w => stemmer.Stem(w)).ToList();
         }
 

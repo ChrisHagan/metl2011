@@ -14,6 +14,7 @@ namespace MeTLLib.Providers.Connection
         {
             //Permissions failure appeared here.
             WebRequest request = (WebRequest)base.GetWebRequest(address);
+            (request as HttpWebRequest).KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
         }
@@ -31,6 +32,7 @@ namespace MeTLLib.Providers.Connection
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = client.Credentials;
+            request.KeepAlive = false;
             request.Method = "HEAD";
             request.Timeout = 3000;
             try
@@ -47,6 +49,7 @@ namespace MeTLLib.Providers.Connection
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = client.Credentials;
+            request.KeepAlive = false;
             request.Method = "HEAD";
             // use the default timeout
             //request.Timeout = 5 * 1000;
