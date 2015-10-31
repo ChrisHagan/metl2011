@@ -569,23 +569,28 @@ namespace MeTLLib.Providers.Connection
         public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
         {
             var rooms = new List<Jid>();
-            if (!stayInGlobal)
-            {
-                rooms.Add(new Jid(metlServerAddress.globalMuc));
-            }
-            rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
-
-            if (!stayInActiveConversation)
-            {
-                rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
-            }
-
             if (location != null)
+            {
                 rooms.AddRange(
                     new[]{
                         new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                         new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
                     });
+                if (location.currentSlide != 1 && location.activeConversation != "0" && location.availableSlides.Exists(s => s == location.currentSlide))
+                    SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), false, -1L));
+            }
+            if (!stayInActiveConversation)
+            {
+                rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
+                if (location != null && location.activeConversation != null && location.activeConversation != "0")
+                SendAttendance(metlServerAddress.globalMuc, new Attendance(credentials.name, location.activeConversation, false, -1L));
+            }
+            if (!stayInGlobal)
+            {
+                rooms.Add(new Jid(metlServerAddress.globalMuc));
+                //rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
+            }
+
             foreach (var room in rooms)
             {
                 leaveRoom(room);
@@ -617,21 +622,22 @@ namespace MeTLLib.Providers.Connection
             if (isLocationValid())
             {
                 var rooms = new List<Jid>();
+                if (!alreadyInConversation)
+                {
+                    rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
+                }
                 rooms.AddRange(new[]
                 {
                     //new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
                     new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
                 });
-
-                if (!alreadyInConversation)
-                {
-                    rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
-                }
                 foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
                 {
                     joinRoom(room);
                 }
+                SendAttendance(metlServerAddress.globalMuc, new Attendance(credentials.name, location.activeConversation, true, -1L));
+                SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), true, -1L));
             }
         }
         private void joinRoom(Jid room)
@@ -730,7 +736,7 @@ namespace MeTLLib.Providers.Connection
                     {
                         try
                         {
-                            return webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "/serverStatus")).Trim().ToLower() == "ok";
+                            return webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "serverStatus")).Trim().ToLower() == "ok";
                         }
                         catch (Exception e)
                         {
@@ -787,8 +793,10 @@ namespace MeTLLib.Providers.Connection
                     a(GaugeStatus.InProgress,12);
                     leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
                     a(GaugeStatus.InProgress,24);
+                    /*
                     new MucManager(conn).LeaveRoom(
                         new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
+                        */
                     a(GaugeStatus.InProgress,36);
                     var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
                     location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
@@ -1270,7 +1278,12 @@ namespace MeTLLib.Providers.Connection
                 actOnStrokeReceived(targettedStroke);
             }
             foreach (var attendance in timestampedElement.element.SelectElements<MeTLStanzas.Attendance>(true))
+            {
+                var att = attendance.attendance;
+                att.timestamp = attendance.timestamp;
+                attendance.attendance = att;
                 actOnAttendance(attendance);
+            }
             foreach (var submission in timestampedElement.element.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
                 actOnScreenshotSubmission(submission.injectDependencies(metlServerAddress).parameters);
             foreach (var box in timestampedElement.element.SelectElements<MeTLStanzas.TextBox>(true))

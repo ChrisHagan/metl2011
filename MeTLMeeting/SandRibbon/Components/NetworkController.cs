@@ -115,15 +115,12 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(string jid)
         {
-            client.JoinConversation(jid);
-            client.SendAttendance("global", new Attendance(Globals.me, Globals.conversationDetails.Jid, true, -1L));
             Commands.CheckExtendedDesktop.ExecuteAsync(null);
+            client.JoinConversation(jid);
         }
         private void MoveTo(int slide)
         {
             client.MoveTo(slide);
-            if (Globals.conversationDetails.Slides.Exists(s => s.id == slide))
-                client.SendAttendance(Globals.conversationDetails.Jid, new Attendance(Globals.me, Globals.slide.ToString(), true, -1L));
         }
         private void SendChatMessage(object _obj)
         {
@@ -187,11 +184,6 @@ namespace SandRibbon.Components
         private void LeaveLocation(object _unused)
         {
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-            if (!Globals.conversationDetails.IsEmpty)
-            {
-                client.SendAttendance("global", new Attendance(Globals.me, Globals.conversationDetails.Jid, false, -1L));
-                client.SendAttendance(Globals.conversationDetails.Jid, new Attendance(Globals.me, Globals.slide.ToString(), false, -1L));
-            }
             client.LeaveLocation();
         }
         private void SendTextBox(TargettedTextBox ttb)

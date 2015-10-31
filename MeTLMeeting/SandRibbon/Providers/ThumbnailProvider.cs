@@ -88,7 +88,7 @@ namespace SandRibbon.Providers
             } else {
                 var server = App.controller.config;
                 var host = server.name;
-                var url = string.Format(server.thumbnailUrl + "{0}/{1}",host,internalSlideId);
+                var url = string.Format("{0}{1}", server.thumbnailUrl,internalSlideId);
                 //Console.WriteLine(String.Format("Thumbnailing: {0} {1}", internalSlideId, url));
                 WebThreadPool.QueueUserWorkItem(delegate
                 {

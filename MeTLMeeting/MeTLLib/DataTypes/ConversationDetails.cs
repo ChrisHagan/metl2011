@@ -113,7 +113,7 @@ namespace MeTLLib.DataTypes
         public bool present { get; protected set; }
         public string author { get; protected set; }
         public string location { get; protected set; }
-        public long timestamp { get; protected set; }
+        public long timestamp { get; set; }
         public Attendance(string _author, string _location, bool _present,long _timestamp)
         {
             author = _author;

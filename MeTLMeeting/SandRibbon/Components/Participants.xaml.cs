@@ -168,11 +168,11 @@ namespace SandRibbon.Components
                     var user = people[presence.author];
                     if (presence.present)
                     {
-                        user.slideLocation.Add(presence.location);
+                        user.slideLocation = user.slideLocation.Union(new List<string> { presence.location }).Distinct().ToList();
                     }
                     else
                     {
-                        user.slideLocation.Remove(presence.location);
+                        user.slideLocation = user.slideLocation.Where(sl => sl != presence.location).ToList();
                     }
                 });
             }
@@ -228,6 +228,8 @@ namespace SandRibbon.Components
                 ReceiveImage(i);
             foreach (var s in p.submissions)
                 ReceiveSubmission(s);
+            foreach (var a in p.attendances)
+                ReceivePresence(a);
         }
         private void Ensure(string key, Dictionary<String, List<String>> dict)
         {

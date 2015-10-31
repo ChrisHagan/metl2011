@@ -13,10 +13,10 @@ namespace SandRibbon.Components.Utility
         {
             return Application.Current.MainWindow;
         }
-        
+
         private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, Window owner)
         {
-            return DisplayMessage(message, image, MessageBoxButton.OK, owner); 
+            return DisplayMessage(message, image, MessageBoxButton.OK, owner);
         }
 
         private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, MessageBoxButton button, Window owner)
@@ -31,14 +31,15 @@ namespace SandRibbon.Components.Utility
             else
             {
                 // calling from non-ui thread
-                Application.Current.Dispatcher.adoptAsync(() =>
-                {
-                    dialogOwner = GetMainWindow();
-                    result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
-                });
+                if (Application.Current != null && Application.Current.Dispatcher != null)
+                    Application.Current.Dispatcher.adoptAsync(() =>
+                    {
+                        dialogOwner = GetMainWindow();
+                        result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+                    });
             }
 
-            return result; 
+            return result;
         }
 
         public static MessageBoxResult Error(string message, Window owner = null)
