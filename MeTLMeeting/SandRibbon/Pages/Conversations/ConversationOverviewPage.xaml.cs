@@ -1,9 +1,6 @@
 ﻿using MeTLLib;
 using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
-using SandRibbon.Components;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Linq;
@@ -15,17 +12,35 @@ using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public class LocatedActivity : MeTLUser
+    public class LocatedActivity : DependencyObject
     {
+        public string name { get; set; }
         public int slide { get; set; }
         public int index { get; set; }
-        public int voices { get; set; }
-        public LocatedActivity(string name, int slide, int activityCount, int voiceCount) : base(name)
+        public LocatedActivity(string name, int slide, int activityCount, int voices)
         {
+            this.name = name;
             this.slide = slide;
             this.activityCount = activityCount;
-            this.voices = voiceCount;
+            this.voices = voices;
         }
+
+        public int activityCount
+        {
+            get { return (int)GetValue(activityCountProperty); }
+            set { SetValue(activityCountProperty, value); }
+        }        
+        public static readonly DependencyProperty activityCountProperty =
+            DependencyProperty.Register("activityCount", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
+
+        public int voices
+        {
+            get { return (int)GetValue(voicesProperty); }
+            set { SetValue(voicesProperty, value); }
+        }
+        
+        public static readonly DependencyProperty voicesProperty =
+            DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
     };
     public partial class ConversationOverviewPage : Page
     {

@@ -13,14 +13,7 @@ namespace SandRibbon.Pages.Conversations.Models
 {
     public class Participation : DependencyObject
     {
-        public ObservableCollection<LocatedActivity> Activity
-        {
-            get { return (ObservableCollection<LocatedActivity>)GetValue(ActivityProperty); }
-            set { SetValue(ActivityProperty, value); }
-        }
-        public static readonly DependencyProperty ActivityProperty =
-            DependencyProperty.Register("Activity", typeof(ObservableCollection<LocatedActivity>), typeof(Participation), new PropertyMetadata(new ObservableCollection<LocatedActivity>()));
-
+        public ObservableCollection<LocatedActivity> Activity { get; set; } = new ObservableCollection<LocatedActivity>();        
         public ILookup<string, LocatedActivity> Participants { get; internal set; }
     }
     public class VmSlide : DependencyObject
@@ -28,6 +21,15 @@ namespace SandRibbon.Pages.Conversations.Models
         public ConversationRelevance Relevance { get; set; }
         public Slide Slide { get; set; }
         public ConversationDetails Details { get; set; }
+
+
+        public LocatedActivity Aggregate
+        {
+            get { return (LocatedActivity)GetValue(AggregateProperty); }
+            set { SetValue(AggregateProperty, value); }
+        }        
+        public static readonly DependencyProperty AggregateProperty =
+            DependencyProperty.Register("Aggregate", typeof(LocatedActivity), typeof(VmSlide), new PropertyMetadata(null));
 
         public Participation Participation
         {
@@ -97,26 +99,32 @@ namespace SandRibbon.Pages.Conversations.Models
         }
 
         public void AnalyzeLocations()
-        {
+        {            
             foreach (var slide in Locations)
             {
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>
-                                    {
+                                    {                                        
                                         LocationAnalyzed?.Invoke();
-                                        foreach (var user in process(parser))
+                                        var users = process(parser);
+                                        var aggregate = new LocatedActivity("",slide.Slide.id,0,0);
+                                        foreach (var user in users)
                                         {
                                             user.index = slide.Slide.index;
                                             Participation.Add(user);
                                             var localParticipation = Participation.Where(p => p.slide == slide.Slide.id);
-                                            slide.Participation = new Participation
+                                            if (slide.Participation == null) slide.Participation = new Participation();
+                                            slide.Participation.Participants = localParticipation.ToLookup(p => p.name);
+                                            foreach (var p in localParticipation)
                                             {
-                                                Participants = localParticipation.ToLookup(p => p.username),
-                                                Activity = new ObservableCollection<LocatedActivity>(localParticipation)
-                                            };
+                                                slide.Participation.Activity.Add(p);
+                                            }
+                                            aggregate.activityCount += user.activityCount;
+                                            aggregate.voices += 1;
                                         }
+                                        slide.Aggregate = aggregate;
                                     },
                                     slide.Slide.id.ToString());
             }
@@ -137,19 +145,23 @@ namespace SandRibbon.Pages.Conversations.Models
         private IEnumerable<LocatedActivity> process(PreParser p)
         {
             var tallies = new Dictionary<string, int>();
+            var authors = new HashSet<string>();
             foreach (var s in p.ink)
             {
                 inc(tallies, s.author);
+                authors.Add(s.author);
             }
             foreach (var t in p.text.Values)
             {
                 inc(tallies, t.author);
+                authors.Add(t.author);
             }
             foreach (var i in p.images.Values)
             {
                 inc(tallies, i.author);
-            }
-            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, 0));
+                authors.Add(i.author);
+            }            
+            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, authors.Count));
         }
     }
 

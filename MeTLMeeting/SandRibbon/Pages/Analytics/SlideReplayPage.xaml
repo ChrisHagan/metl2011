@@ -1,0 +1,17 @@
+﻿<Page x:Class="SandRibbon.Pages.Analytics.SlideReplayPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
+      xmlns:local="clr-namespace:SandRibbon.Pages.Analytics"      
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
+      xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"   
+      xmlns:components="clr-namespace:SandRibbon.Components"
+      Title="SlideReplayPage">
+    <Grid layout:GridLayout.ItemsPerRow="1">
+        <Label Content="When did interesting things happen?" Margin="{StaticResource clearBottom}" />
+        <Slider Minimum="0" x:Name="shuttle" />
+        <Viewbox>
+            <components:CollapsedCanvasStack x:Name="stack" />
+        </Viewbox>
+    </Grid>
+</Page>

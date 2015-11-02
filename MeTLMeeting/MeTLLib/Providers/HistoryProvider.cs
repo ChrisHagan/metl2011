@@ -151,12 +151,7 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
-                                     //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
-                                     var directoryExists = resourceProvider.exists(new Uri(directoryUri));
-                                     if (!directoryExists)
-                                         return;
-
+                                     var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);                                     
                                      try
                                      {
                                          var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
@@ -188,12 +183,7 @@ namespace MeTLLib.Providers
                     try
                     {
 
-                        accumulatingParser.ReceiveAndSortMessages();
-                        /*sortedMessages = SortOnTimestamp(unSortedMessages);
-                        foreach(Node message in sortedMessages)
-                        {
-                            accumulatingParser.ReceivedMessage(message, MessageOrigin.History);
-                        }*/
+                        accumulatingParser.ReceiveAndSortMessages();                        
                         retrievalComplete((T)accumulatingParser);
                     }
                     catch (Exception ex)
@@ -210,9 +200,7 @@ namespace MeTLLib.Providers
 
             parser.OnStreamElement += ((_sender, node) =>
                                            {
-                                               wire.unOrderedMessages.Add(wire.ContructElement(node));
-                                               //unSortedMessages.Add(node);
-                                               //wire.ReceivedMessage(node, MessageOrigin.History);
+                                               wire.unOrderedMessages.Add(wire.ContructElement(node));                                               
                                            });
 
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);

@@ -271,6 +271,12 @@
     <Compile Include="Components\Utility\TimedAction.cs" />
     <Compile Include="Layout\ConstrainingStackPanel.cs" />
     <Compile Include="Layout\Grid.cs" />
+    <Compile Include="Pages\Analytics\EmbeddedSummariesPage.xaml.cs">
+      <DependentUpon>EmbeddedSummariesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Analytics\SlideReplayPage.xaml.cs">
+      <DependentUpon>SlideReplayPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Collaboration\Layout\CastBarFrame.xaml.cs">
       <DependentUpon>CastBarFrame.xaml</DependentUpon>
     </Compile>
@@ -346,6 +352,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\ResourceDictionaries\Client\SaintLeoUniversity.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Frame\Flyouts\Flyouts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -393,6 +403,14 @@
     <Page Include="Components\CommandBridge.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\Analytics\EmbeddedSummariesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Analytics\SlideReplayPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Collaboration\Layout\CastBarFrame.xaml">
       <SubType>Designer</SubType>
