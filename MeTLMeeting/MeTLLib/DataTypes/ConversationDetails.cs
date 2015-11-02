@@ -325,6 +325,17 @@ namespace MeTLLib.DataTypes
         private static readonly string DEFAULT_WIDTH = "defaultWidth";
         private static readonly string DEFAULT_HEIGHT = "defaultHeight";
         private static readonly string BLACKLIST_TAG = "blacklist";
+
+        private static readonly string GROUP_SET_TAG = "groupSet";
+        private static readonly string GROUP_SET_ID_TAG = "id";
+        private static readonly string GROUP_SET_LOCATION_TAG = "location";
+        private static readonly string GROUP_SET_SIZE_TAG = "groupSize";
+        private static readonly string GROUP_SET_GROUPS_TAG = "groups";
+        private static readonly string GROUP_TAG = "group";
+        private static readonly string GROUP_ID_TAG = "id";
+        private static readonly string GROUP_LOCATION_TAG = "location";
+        private static readonly string GROUP_MEMBERS_TAG = "members";
+        private static readonly string GROUP_MEMBER_TAG = "member";
         public static ConversationDetails ReadXml(XElement doc)
         {
             var Title = doc.Element(TITLE_TAG).Value;
@@ -349,7 +360,20 @@ namespace MeTLLib.DataTypes
                 Int32.Parse(d.Element(INDEX_TAG).Value),
                 d.Element(DEFAULT_WIDTH) != null ? float.Parse(d.Element(DEFAULT_WIDTH).Value) : 720,
                 d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
-                d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
+                d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true,
+                d.Element(GROUP_SET_TAG) != null ? d.Descendants(GROUP_SET_TAG).Select(gs => new GroupSet(
+                    gs.Element(GROUP_SET_ID_TAG).Value,
+                    gs.Element(GROUP_SET_LOCATION_TAG).Value,
+                    Int32.Parse(gs.Element(GROUP_SET_SIZE_TAG).Value),
+                    gs.Element(GROUP_SET_GROUPS_TAG).Descendants(GROUP_TAG).Select(g => new Group(
+                            g.Element(GROUP_ID_TAG).Value,
+                            g.Element(GROUP_LOCATION_TAG).Value,
+                            g.Descendants(GROUP_MEMBERS_TAG).Select(gm =>
+                                gm.Element(GROUP_MEMBER_TAG).Value
+                            ).ToList()
+                        )
+                    ).ToList()
+                )).ToList() : new List<GroupSet>()
             )).ToList();
             var blacklistElements = doc.Elements(BLACKLIST_TAG);
             var blacklist = new List<string>();
@@ -376,8 +400,18 @@ namespace MeTLLib.DataTypes
                     new XElement(DEFAULT_HEIGHT, s.defaultHeight),
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
-                    new XElement(TYPE_TAG, s.type.ToString())))
-                    , blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
+                    new XElement(TYPE_TAG, s.type.ToString()),
+                    s.GroupSets.Select(gs => new XElement(GROUP_SET_TAG,
+                        new XElement(GROUP_SET_ID_TAG,gs.id),
+                        new XElement(GROUP_SET_LOCATION_TAG,gs.location),
+                        new XElement(GROUP_SET_SIZE_TAG,gs.groupSize.ToString()),
+                        new XElement(GROUP_SET_GROUPS_TAG,gs.Groups.Select(g => new XElement(GROUP_TAG,
+                            new XElement(GROUP_ID_TAG,g.id),
+                            new XElement(GROUP_LOCATION_TAG,g.location),
+                            new XElement(GROUP_MEMBERS_TAG,g.GroupMembers.Select(gm => new XElement(GROUP_MEMBER_TAG, gm)))
+                        ))))
+                ))),
+                blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -491,6 +525,48 @@ namespace MeTLLib.DataTypes
                 new XElement(ALLSYNC, usersAreCompulsorilySynced));
         }
     }
+    public class Group : INotifyPropertyChanged
+    {
+        public string id;
+        public string location;
+        public List<string> GroupMembers;
+        public Group(string _id, string _location, List<string> _members)
+        {
+            id = _id;
+            location = _location;
+            GroupMembers = _members;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refreshMembers()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("GroupMembers"));
+        }
+    }
+    public class GroupSet : INotifyPropertyChanged
+    {
+        public string id;
+        public string location;
+        public int groupSize;
+        public List<Group> Groups;
+        public GroupSet(string _id, string _location, int _groupSize, List<Group> _groups) {
+            id = _id;
+            location = _location;
+            groupSize = _groupSize;
+            Groups = _groups;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refreshSize()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("groupSize"));
+        }
+        public void refreshGroups()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("Groups"));
+        }
+    }
     public class Slide : INotifyPropertyChanged
     {
         public override bool Equals(object obj)
@@ -523,15 +599,13 @@ namespace MeTLLib.DataTypes
             defaultWidth = newDefaultWidth;
             defaultHeight = newDefaultHeight;
         }
-        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed)
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed) : this(newId,newAuthor,newType,newIndex,newDefaultWidth,newDefaultHeight)
         {
-            id = newId;
-            author = newAuthor;
-            type = newType;
-            index = newIndex;
-            defaultWidth = newDefaultWidth;
-            defaultHeight = newDefaultHeight;
             exposed = newExposed;
+        }
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed,List<GroupSet> newGroups) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight,newExposed)
+        {
+            GroupSets = newGroups;
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void refresh()
@@ -569,6 +643,7 @@ namespace MeTLLib.DataTypes
         public int index { get; set; }
         public TYPE type;
         public bool exposed;
+        public List<GroupSet> GroupSets = new List<GroupSet>();
     }
     public class ApplicationLevelInformation
     {
