@@ -84,8 +84,8 @@ namespace MeTLLib.Providers.Connection
             configurationProvider = _configurationProvider;
             resourceProvider = _resourceProvider;
             resourceUploader = _resourceUploader;
-            historyProvider = new HttpHistoryProvider(resourceProvider, this, metlServerAddress,_auditor);
-            cachedHistoryProvider = new CachedHistoryProvider(historyProvider, resourceProvider, this, metlServerAddress,_auditor);
+            historyProvider = new HttpHistoryProvider(resourceProvider, this, metlServerAddress, _auditor);
+            cachedHistoryProvider = new CachedHistoryProvider(historyProvider, resourceProvider, this, metlServerAddress, _auditor);
             cache = _cache;
             receiveEvents = _receiveEvents;
             clientFactory = _clientFactory;
@@ -121,7 +121,7 @@ namespace MeTLLib.Providers.Connection
                         cache,
                         receiveEvents,
                         clientFactory,
-                        resourceProvider, true,auditor);
+                        resourceProvider, true, auditor);
                     instance.openConnection();
                 }
                 return instance;
@@ -137,7 +137,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache, receiveEvents, clientFactory, resourceProvider,auditor);
+                cache, receiveEvents, clientFactory, resourceProvider, auditor);
         }
         public T preParser<T>(int room) where T : PreParser
         {
@@ -583,7 +583,7 @@ namespace MeTLLib.Providers.Connection
             {
                 rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
                 if (location != null && location.activeConversation != null && location.activeConversation != "0")
-                SendAttendance(metlServerAddress.globalMuc, new Attendance(credentials.name, location.activeConversation, false, -1L));
+                    SendAttendance("global", new Attendance(credentials.name, location.activeConversation, false, -1L));
             }
             if (!stayInGlobal)
             {
@@ -636,7 +636,7 @@ namespace MeTLLib.Providers.Connection
                 {
                     joinRoom(room);
                 }
-                SendAttendance(metlServerAddress.globalMuc, new Attendance(credentials.name, location.activeConversation, true, -1L));
+                SendAttendance("global", new Attendance(credentials.name, location.activeConversation, true, -1L));
                 SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), true, -1L));
             }
         }
@@ -728,29 +728,18 @@ namespace MeTLLib.Providers.Connection
         }
         public bool IsConnected()
         {
-            return auditor.wrapFunction((a) =>
+            try
             {
-                try
-                {
-                    Func<Boolean> checkPing = delegate
-                    {
-                        try
-                        {
-                            return webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "serverStatus")).Trim().ToLower() == "ok";
-                        }
-                        catch (Exception e)
-                        {
-                            return e is WebException && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound;
-                        }
-                    };
-                    return conn.Authenticated && checkPing();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
-                    return false;
-                }
-            }, "healthCheck", "xmpp");
+                return auditor.wrapFunction((a) => {
+                    return conn.Authenticated && webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "serverStatus")).Trim().ToLower() == "ok";
+                }, "healthCheck", "xmpp");
+            }
+            catch (Exception e)
+            {
+                //remove the webexception clause and return only false, when all the server have their serverStatus endpoint enabled on their yaws and apache pages
+                Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
+                return (e is WebException && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound);
+            }
         }
         public void GetHistory(int where)
         {
@@ -790,14 +779,14 @@ namespace MeTLLib.Providers.Connection
 
                 try
                 {
-                    a(GaugeStatus.InProgress,12);
+                    a(GaugeStatus.InProgress, 12);
                     leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
-                    a(GaugeStatus.InProgress,24);
+                    a(GaugeStatus.InProgress, 24);
                     /*
                     new MucManager(conn).LeaveRoom(
                         new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
                         */
-                    a(GaugeStatus.InProgress,36);
+                    a(GaugeStatus.InProgress, 36);
                     var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
                     location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
                     var oldLocation = location.currentSlide.ToString();
@@ -805,11 +794,11 @@ namespace MeTLLib.Providers.Connection
                     //Globals.conversationDetails = currentDetails;
                     //Globals.slide = where;
                     joinRooms(fastJoin: true, alreadyInConversation: true);
-                    a(GaugeStatus.InProgress,48);
+                    a(GaugeStatus.InProgress, 48);
                     cachedHistoryProvider.ClearCache(oldLocation);
-                    a(GaugeStatus.InProgress,60);
+                    a(GaugeStatus.InProgress, 60);
                     cachedHistoryProvider.ClearCache(where.ToString());
-                    a(GaugeStatus.InProgress,72);
+                    a(GaugeStatus.InProgress, 72);
                     historyProvider.Retrieve<PreParser>(
                         onStart,
                         onProgress,
@@ -819,7 +808,7 @@ namespace MeTLLib.Providers.Connection
                             cachedHistoryProvider.PopulateFromHistory(finishedParser);
                         },
                         location.currentSlide.ToString());
-                    a(GaugeStatus.InProgress,84);
+                    a(GaugeStatus.InProgress, 84);
                     historyProvider.RetrievePrivateContent<PreParser>(
                         onStart,
                         onProgress,

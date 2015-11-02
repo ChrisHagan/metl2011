@@ -215,7 +215,9 @@ namespace SandRibbon
             catch (Exception) { }
             if (App.diagnosticWindow != null)
             {
-                diagnosticWindow.Close();
+                diagnosticWindow.Dispatcher.adopt(delegate {
+                    diagnosticWindow.Close();
+                });
             }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

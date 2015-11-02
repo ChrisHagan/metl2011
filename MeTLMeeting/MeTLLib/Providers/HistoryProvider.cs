@@ -184,11 +184,9 @@ namespace MeTLLib.Providers
                     {
                         var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
                         //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
-                        /*
                         var directoryExists = resourceProvider.exists(new Uri(directoryUri));
                         if (!directoryExists)
                             return;
-                            */
                         g(GaugeStatus.InProgress, 10);
                         try
                         {
