@@ -229,7 +229,15 @@ namespace SandRibbon.Components
                  checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
                  {
                      Commands.AddWindowEffect.ExecuteAsync(null);
-                     var config = App.metlConfigManager.parseConfig(App.getCurrentServer,doc).FirstOrDefault();
+                     var config = default(MetlConfiguration);
+                     if (App.availableServers().Contains(App.getCurrentServer))
+                     {
+                         config = App.metlConfigManager.getConfigFor(App.getCurrentServer);
+                     }
+                     else
+                     {
+                         config = App.metlConfigManager.parseConfig(App.getCurrentServer, doc).FirstOrDefault();
+                     }
                      if (config == default(MetlConfiguration))
                      {
                          MessageBox.Show("No server found at the supplied address.  Please verify the address and restart MeTL.");
