@@ -43,25 +43,17 @@ namespace SandRibbon.Components.Utility
             }
         }
 
-        public ContentVisibilityEnum CurrentContentVisibility
-        {
-            get
-            {
-                return ContentFilterVisibility.CurrentContentVisibility;
-            }
-        }
-
-        public List<PrivateAwareStroke> FilteredStrokes(ContentVisibilityEnum contentVisibility)
+        public List<PrivateAwareStroke> FilteredStrokes(List<ContentVisibilityDefinition> contentVisibility)
         {
             return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility);
         }
 
-        public IEnumerable<UIElement> FilteredTextBoxes(ContentVisibilityEnum contentVisibility)
+        public IEnumerable<UIElement> FilteredTextBoxes(List<ContentVisibilityDefinition> contentVisibility)
         {
             return textFilter.FilteredContent(contentVisibility);
         }
 
-        public IEnumerable<UIElement> FilteredImages(ContentVisibilityEnum contentVisibility)
+        public IEnumerable<UIElement> FilteredImages(List<ContentVisibilityDefinition> contentVisibility)
         {
             return imageFilter.FilteredContent(contentVisibility);
         }

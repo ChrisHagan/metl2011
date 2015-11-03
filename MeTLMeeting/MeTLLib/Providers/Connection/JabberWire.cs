@@ -738,7 +738,7 @@ namespace MeTLLib.Providers.Connection
             {
                 //remove the webexception clause and return only false, when all the server have their serverStatus endpoint enabled on their yaws and apache pages
                 Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
-                return (e is WebException && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound);
+                return (e is WebException && (e as WebException).Response != null && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound);
             }
         }
         public void GetHistory(int where)

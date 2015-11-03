@@ -9,29 +9,22 @@
     VerticalContentAlignment="Center"
     HorizontalAlignment="Center"
     AutomationProperties.AutomationId="contentVisibility">
-    <UserControl.Resources>
-        <sr:BoolToVisibilityWithHidden x:Key="BooleanToVisibilityConverter" Collapse="True" Negate="True"/>
-    </UserControl.Resources>
     <dict:RibbonPanel x:Name="contentCheckBoxes">
-        <CheckBox x:Name="myPublicContent" ToolTip="{DynamicResource MyPublicContentToolTip}" Content="My public" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
-            <CheckBox.IsChecked>
-                <Binding ElementName="contentVisibility" Path="MyPublicVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
-            </CheckBox.IsChecked>
-        </CheckBox>
-        <CheckBox x:Name="myPrivateContent" ToolTip="{DynamicResource MyPrivateContentToolTip}" Content="My private" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
-            <CheckBox.IsChecked>
-                <Binding ElementName="contentVisibility" Path="MyPrivateVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
-            </CheckBox.IsChecked>
-        </CheckBox>
-        <CheckBox x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner's" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
-            <CheckBox.IsChecked>
-                <Binding ElementName="contentVisibility" Path="OwnerVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
-            </CheckBox.IsChecked>
-        </CheckBox>
-        <CheckBox x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Everyone else" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
-            <CheckBox.IsChecked>
-                <Binding ElementName="contentVisibility" Path="TheirsVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
-            </CheckBox.IsChecked>
-        </CheckBox>
+        <ItemsControl x:Name="contentVisibilitySelectors">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox ToolTip="{Binding Description}" Content="{Binding Label}">
+                        <CheckBox.IsChecked>
+                            <Binding Path="Subscribed" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
+                        </CheckBox.IsChecked>
+                    </CheckBox> 
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </dict:RibbonPanel>
 </UserControl>

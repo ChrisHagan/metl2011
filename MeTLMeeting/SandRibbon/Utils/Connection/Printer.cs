@@ -53,10 +53,10 @@ namespace SandRibbon.Utils.Connection
         private void ResizeCanvas(MeTLInkCanvas canvas, ContentBuffer contentBuffer)
         {
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(canvas, contentBuffer, ContentVisibilityEnum.AllVisible);
+            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible);
         }
 
-        private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, ContentVisibilityEnum contentVisibility)
+        private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, List<ContentVisibilityDefinition> contentVisibility)
         {
             canvas.Strokes.Clear();
             canvas.Strokes.Add(new StrokeCollection(contentBuffer.FilteredStrokes(contentVisibility).Select(s => s as Stroke)));

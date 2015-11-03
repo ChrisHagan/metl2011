@@ -9,16 +9,100 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Utils;
+using System.ComponentModel;
 
 namespace SandRibbon.Components.Utility
 {
+    public class ContentVisibilityDefinition : INotifyPropertyChanged
+    {
+        public string Description { get; protected set; }
+        public string Label { get; protected set; }
+        protected bool _subscribed;
+        public bool Subscribed {
+            get {
+                return _subscribed;
+            }
+            set {
+                _subscribed = value;
+                ContentFilterVisibility.refreshVisibilities();
+            }
+        }
+        public string GroupId { get; protected set; }
+        //= (author, privacy, conversation, slide) => false;
+        public Func<string, Privacy, ConversationDetails, Slide, bool> Comparer { get; protected set; }
+        public ContentVisibilityDefinition(string label, string description, string groupId, bool subscribed, Func<string, Privacy, ConversationDetails, Slide, bool> comparer)
+        {
+            Label = label;
+            Description = description;
+            _subscribed = subscribed;
+            Comparer = comparer;
+            GroupId = groupId;
+            PropertyChanged += (s, a) => {
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void RefreshSubscription()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs("Subscribed"));
+        }
+    }
+
     public static class ContentFilterVisibility
     {
-        public static ContentVisibilityEnum CurrentContentVisibility
+        public static readonly ContentVisibilityDefinition myPublic = new ContentVisibilityDefinition("My public", "", "", true, (a, p, c, s) => a == Globals.me && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition myPrivate = new ContentVisibilityDefinition("My private", "", "", true, (a, p, c, s) => a == Globals.me && p == Privacy.Private);
+        public static readonly ContentVisibilityDefinition ownersPublic = new ContentVisibilityDefinition("Owner's", "", "", true, (a, p, c, s) => a == c.Author && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition peersPublic = new ContentVisibilityDefinition("Everyone else's", "", "", true, (a, p, c, s) => a != Globals.me && p == Privacy.Public);
+        public static readonly List<ContentVisibilityDefinition> defaultVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
+        public static readonly List<ContentVisibilityDefinition> defaultGroupVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
+
+        public static List<ContentVisibilityDefinition> allVisible = Globals.contentVisibility.ToArray().ToList().Select(cvd => { cvd.Subscribed = true; return cvd; }).ToList();
+        public static void refreshVisibilities()
+        {
+            Commands.SetContentVisibility.Execute(CurrentContentVisibility);
+        }
+        public static void reEnableMyPublic()
+        {
+            if (!myPublic.Subscribed)
+            {
+                myPublic.Subscribed = true;
+                refreshVisibilities();
+            }
+        }
+        public static void reEnableMyPrivate()
+        {
+            if (!myPrivate.Subscribed)
+            {
+                myPrivate.Subscribed = true;
+                refreshVisibilities();
+            }
+        }
+        public static void reEnableAll()
+        {
+            CurrentContentVisibility.ForEach(cv => cv.Subscribed = true);
+            refreshVisibilities();
+        }
+
+        public static bool isGroupSlide
         {
             get
             {
-                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+                try
+                {
+                    return Globals.conversationDetails.Slides.Find(s => s.id == Globals.slide).type == Slide.TYPE.GROUPSLIDE;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+        public static List<ContentVisibilityDefinition> CurrentContentVisibility
+        {
+            get
+            {
+                return Commands.SetContentVisibility.IsInitialised ? (List<ContentVisibilityDefinition>)Commands.SetContentVisibility.LastValue() : defaultVisibilities;
             }
         }
     }
@@ -118,20 +202,12 @@ namespace SandRibbon.Components.Utility
             catch (ArgumentException) { }
         }
 
-        protected ContentVisibilityEnum CurrentContentVisibility
-        {
-            get
-            {
-                return ContentFilterVisibility.CurrentContentVisibility;
-            }
-        }
-
         public void Clear()
         {
             contentCollection.Clear();
         }
         
-        public C FilteredContent(ContentVisibilityEnum contentVisibility)
+        public C FilteredContent(List<ContentVisibilityDefinition> contentVisibility)
         {
             return FilterContent(contentCollection, contentVisibility);
         }
@@ -158,6 +234,7 @@ namespace SandRibbon.Components.Utility
             Clear();
             modifyVisibleContainer();
         }
+        public List<ContentVisibilityDefinition> CurrentContentVisibility { get { return Globals.contentVisibility; } }
         public void Add(T element, Action<T> modifyVisibleContainer)
         {
             Add(element);
@@ -194,17 +271,18 @@ namespace SandRibbon.Components.Utility
             modifyVisibleContainer(FilterContent(elements, CurrentContentVisibility));
         }
 
-        public T FilterContent(T element, ContentVisibilityEnum contentVisibility)
+        public T FilterContent(T element, List<ContentVisibilityDefinition> contentVisibility)
         {
-            var comparer = BuildComparer(contentVisibility);
-            return comparer.Any((comp) => comp(AuthorFromTag(element), PrivacyFromTag(element))) ? element : default(T);
+            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(AuthorFromTag(element), PrivacyFromTag(element),Globals.conversationDetails,Globals.slideDetails)) ? element : default(T);
         }
 
-        public C FilterContent(C elements, ContentVisibilityEnum contentVisibility)
+        public C FilterContent(C elements, List<ContentVisibilityDefinition> contentVisibility)
         {
-            var comparer = BuildComparer(contentVisibility);
             var tempList = new C();
-            var matchedElements = elements.Where(elem => comparer.Any((comp) => comp(AuthorFromTag(elem), PrivacyFromTag(elem))));
+            var enabledContentVisibilities = contentVisibility.Where(cv => cv.Subscribed);
+            var matchedElements = elements.Where(elem => enabledContentVisibilities.Any(cv => {
+                return cv.Subscribed && cv.Comparer(AuthorFromTag(elem), PrivacyFromTag(elem), Globals.conversationDetails, Globals.slideDetails);
+            }));
 
             foreach (var elem in matchedElements)
             {
@@ -213,29 +291,5 @@ namespace SandRibbon.Components.Utility
             
             return tempList;
         }
-
-        #region Helpers
-
-        private List<Func<string, Privacy, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
-        {
-            var comparer = new List<Func<string, Privacy, bool>>();
-            var conversationAuthor = Globals.conversationDetails.Author;
-
-            if (contentVisibility.HasFlag(ContentVisibilityEnum.OwnerVisible))
-                comparer.Add((elementAuthor, _unused) => elementAuthor == conversationAuthor);
-
-            if (contentVisibility.HasFlag(ContentVisibilityEnum.TheirsVisible))
-                comparer.Add((elementAuthor, _unused) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
-
-            if (contentVisibility.HasFlag(ContentVisibilityEnum.MyPrivateVisible))
-                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Private);
-
-            if (contentVisibility.HasFlag(ContentVisibilityEnum.MyPublicVisible))
-                comparer.Add((elementAuthor, elementPrivacy) => elementAuthor == Globals.me && elementPrivacy == Privacy.Public);
-
-            return comparer;
-        }
-
-        #endregion
     }
 }

@@ -273,7 +273,7 @@ namespace SandRibbon.Components
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
 
 #if TOGGLE_CONTENT
-            Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
+            Commands.SetContentVisibility.RegisterCommandToDispatcher<List<ContentVisibilityDefinition>>(new DelegateCommand<List<ContentVisibilityDefinition>>(SetContentVisibility));
 #endif
 
             Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(new DelegateCommand<SizeWithTarget>(extendCanvasBySize));
@@ -1187,7 +1187,7 @@ namespace SandRibbon.Components
             });
         }
 
-        public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
+        public void SetContentVisibility(List<ContentVisibilityDefinition> contentVisibility)
         {
             if (_target == "notepad")
                 return;
@@ -1206,7 +1206,7 @@ namespace SandRibbon.Components
                 refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
         }
 
-        private void ReAddFilteredContent(ContentVisibilityEnum contentVisibility)
+        private void ReAddFilteredContent(List<ContentVisibilityDefinition> contentVisibility)
         {
             Work.Strokes.Clear();
             Work.Strokes.Add(new StrokeCollection(contentBuffer.FilteredStrokes(contentVisibility).Select(s => s as Stroke)));
@@ -1526,7 +1526,7 @@ namespace SandRibbon.Components
             Work.Strokes.Clear();
 
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(contentBuffer.CurrentContentVisibility);
+            ReAddFilteredContent(Globals.contentVisibility);//contentBuffer.CurrentContentVisibility);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
