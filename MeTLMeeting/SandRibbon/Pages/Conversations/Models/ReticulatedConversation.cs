@@ -1,12 +1,14 @@
 ﻿using MeTLLib;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
+using Newtonsoft.Json.Linq;
 using SandRibbon.Components;
 using SandRibbon.Pages.Collaboration;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Windows;
 
 namespace SandRibbon.Pages.Conversations.Models
@@ -99,7 +101,7 @@ namespace SandRibbon.Pages.Conversations.Models
         }
 
         public void AnalyzeLocations()
-        {            
+        {        
             foreach (var slide in Locations)
             {
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
@@ -107,7 +109,6 @@ namespace SandRibbon.Pages.Conversations.Models
                                     null,
                                     (parser) =>
                                     {                                        
-                                        LocationAnalyzed?.Invoke();
                                         var users = process(parser);
                                         var aggregate = new LocatedActivity("",slide.Slide.id,0,0);
                                         foreach (var user in users)
@@ -123,8 +124,9 @@ namespace SandRibbon.Pages.Conversations.Models
                                             }
                                             aggregate.activityCount += user.activityCount;
                                             aggregate.voices += 1;
-                                        }
+                                        }         
                                         slide.Aggregate = aggregate;
+                                        LocationAnalyzed?.Invoke();
                                     },
                                     slide.Slide.id.ToString());
             }

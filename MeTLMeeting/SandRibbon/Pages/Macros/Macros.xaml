@@ -170,6 +170,13 @@
         </macro:Appearance>
     </Button>
     <!-- Activity monitoring -->
+    <Button Command="{x:Static api:Commands.WordCloud}" x:Key="wordcloud" x:Shared="False"  Style="{StaticResource macro}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <macros:IconControl Content="appbar_column_three" />
+            </Viewbox>
+        </macro:Appearance>
+    </Button>
     <Grid  x:Key="worm" x:Shared="False">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource SensorWidth}" Height="{DynamicResource ButtonHeight}">
@@ -190,6 +197,13 @@
         </macro:Appearance>
     </Grid>
     <!-- Selection modification-->
+    <ToggleButton x:Key="publish_brush" Command="{x:Static api:Commands.PublishBrush}" x:Shared="False" Style="{StaticResource macroToggle}">
+        <macro:Appearance>
+            <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                <macros:IconControl Content="appbar_eye" />
+            </Viewbox>
+        </macro:Appearance>
+    </ToggleButton>
     <Button x:Key="select_mode" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="Select" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">

@@ -373,6 +373,9 @@ namespace SandRibbon.Providers
         }.ToList();
         }
         public static Profile currentProfile = profiles[0];
+        public static Slide slideObject() {
+            return slides.Where(s => s.id == location.currentSlide).First();
+        }
 
         public static event CanvasClipboardFocusChangedHandler CanvasClipboardFocusChanged;
         public static string CurrentCanvasClipboardFocus

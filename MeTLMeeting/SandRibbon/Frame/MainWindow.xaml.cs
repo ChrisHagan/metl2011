@@ -32,6 +32,7 @@ using Awesomium.Core;
 using System.Windows.Navigation;
 using SandRibbon.Pages.Conversations;
 using SandRibbon.Pages.Integration;
+using SandRibbon.Pages.Analytics;
 
 namespace SandRibbon
 {
@@ -93,6 +94,8 @@ namespace SandRibbon
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
             Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
 
+            Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
+
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -125,6 +128,11 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
+        }
+
+        private void WordCloud(object obj)
+        {
+            mainFrame.Navigate(new TagCloudPage(Globals.slideObject()));
         }
 
         private void serializeConversationToOneNote(object obj)

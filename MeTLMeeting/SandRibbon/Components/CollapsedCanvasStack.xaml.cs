@@ -154,6 +154,7 @@ namespace SandRibbon.Components
         private bool underline = false;
         private bool italic = false;
         private bool strikethrough = false;
+        private bool publishBrush = false;
         private FontFamily family = new FontFamily("Arial");
         private Color color = Colors.Black;
         private float size = 24.0f;
@@ -244,6 +245,7 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.PublishBrush.RegisterCommand(new DelegateCommand<object>(TogglePublishBrush));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute));
@@ -274,6 +276,10 @@ namespace SandRibbon.Components
             //For development
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
+        }
+        public void TogglePublishBrush(object unused) {
+            setInkCanvasMode("Select");
+            publishBrush = !publishBrush;
         }
         private void ToggleBold(object o)
         {
@@ -676,6 +682,9 @@ namespace SandRibbon.Components
                 moveMetrics.SetContentBounds(ContentBuffer.getLogicalBoundsOfContent(newImages, newBoxes, newStrokes));
             }
             moveMetrics.Update(e.OldRectangle, e.NewRectangle);
+            if (publishBrush) {
+                Commands.SetPrivacyOfItems.Execute(Privacy.Public);
+            }
         }
 
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<MeTLImage> endingElements, List<MeTLImage> startingElements)

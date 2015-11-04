@@ -69,6 +69,7 @@ namespace SandRibbon
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand();
 
+        public static DefaultableCompositeCommand WordCloud = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BrowseOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ManuallyConfigureOneNote = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SerializeConversationToOneNote = new DefaultableCompositeCommand();
@@ -133,6 +134,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
 
+        public static DefaultableCompositeCommand PublishBrush = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ModifySelection = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand TogglePens = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetPedagogyLevel = new DefaultableCompositeCommand();

@@ -277,6 +277,9 @@
     <Compile Include="Pages\Analytics\SlideReplayPage.xaml.cs">
       <DependentUpon>SlideReplayPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Analytics\TagCloudPage.xaml.cs">
+      <DependentUpon>TagCloudPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Collaboration\Layout\CastBarFrame.xaml.cs">
       <DependentUpon>CastBarFrame.xaml</DependentUpon>
     </Compile>
@@ -409,6 +412,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Analytics\SlideReplayPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Analytics\TagCloudPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

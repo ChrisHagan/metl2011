@@ -35,6 +35,12 @@ namespace SandRibbon.Pages.Collaboration.Palettes
             };
             Resources["ToolSets"] = new[] {
                 new MacroGroup {
+                    Label="Analysis",
+                    Macros=new[] {
+                        new Macro("wordcloud")
+                    }
+                },
+                new MacroGroup {
                     Label="Navigation",                    
                     Macros=new[] {
                         new Macro("conversation_overview")
@@ -71,6 +77,13 @@ namespace SandRibbon.Pages.Collaboration.Palettes
                         new Macro("pen_blue"),
                         new Macro("pen_black"),
                         new Macro("pen_green")
+                    }
+                },
+                new MacroGroup {
+                    Label="Selection",
+                    Macros=new[] {
+                        new Macro("publish_brush"),
+                        new Macro("select_mode")
                     }
                 },
                 new MacroGroup {
