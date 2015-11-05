@@ -10,7 +10,7 @@
             <sr:Label x:Name="StatusLabel" ToolTip="Current Mode"/>
         </StackPanel>
         <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>
-        <components:ZoomControls HorizontalAlignment="Right" Margin="0 0 25 0"/> 
+        <!--<components:ZoomControls HorizontalAlignment="Right" Margin="0 0 25 0"/> -->
         <components:CommandBridge HorizontalAlignment ="Right" Height="25" Width="25"/>
     </Grid>
 </sr:StatusBar>

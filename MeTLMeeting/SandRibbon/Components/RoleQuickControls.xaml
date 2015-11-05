@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="SandRibbon.Components.RoleQuickControls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+             xmlns:local="clr-namespace:SandRibbon.Components"
+             xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+             xmlns:tabs="clr-namespace:SandRibbon.Tabs"
+             mc:Ignorable="d" 
+             Height="Auto" MaxWidth="200"
+             >
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <StackPanel x:Name="ownerQuickControls">
+                <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
+                <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
+                <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
+                <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
+
+            </StackPanel>
+            <StackPanel x:Name="participantQuickControls">
+                <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>
+                <dict:Button x:Name="submitSubmission" 
+                Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
+                Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                                  ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
+
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

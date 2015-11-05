@@ -9,8 +9,8 @@
         <core:String x:Key="preferredDisplayIndex">1</core:String>
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Small" Priority="9"/>
         <sr:GroupVariant Variant="Medium" Priority="8"/>
+        <sr:GroupVariant Variant="Small" Priority="9"/>
         <sr:GroupVariant Variant="Collapsed" Priority="10"/>
     </sr:RibbonGroup.Variants>
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot" >

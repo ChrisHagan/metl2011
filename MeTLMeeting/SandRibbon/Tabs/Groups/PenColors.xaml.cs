@@ -419,10 +419,12 @@ namespace SandRibbon.Tabs.Groups
             saveState.CurrentColorValues = currentColourValues;
             
             var penMode = PenMode.Draw;
+            /*
             if (drawRadio.IsChecked ?? false)
                 penMode = PenMode.Draw;
             if (selectRadio.IsChecked ?? false)
                 penMode = PenMode.Select;
+                */
             if (eraseRadio.IsChecked ?? false)
                 penMode = PenMode.Erase;
 
@@ -450,12 +452,12 @@ namespace SandRibbon.Tabs.Groups
                 {
                     case PenMode.Draw:
                         penMode = "Ink";
-                        drawRadio.IsChecked = true;
+                        //drawRadio.IsChecked = true;
                         break;
                 
                     case PenMode.Select:
                         penMode = "Select";
-                        selectRadio.IsChecked = true;
+                        //selectRadio.IsChecked = true;
                         break;
                 
                     case PenMode.Erase:
@@ -465,7 +467,7 @@ namespace SandRibbon.Tabs.Groups
                     
                     default:
                         penMode = "Ink";
-                        drawRadio.IsChecked = true;
+                        //drawRadio.IsChecked = true;
                         break;
                 }
 
@@ -484,7 +486,8 @@ namespace SandRibbon.Tabs.Groups
 
         private void checkDraw()
         {
-            drawRadio.IsChecked = true;
+            //drawRadio.IsChecked = true;
+            eraseRadio.IsChecked = false;
             Commands.SetInkCanvasMode.ExecuteAsync("Ink");
         }
         private void JoinConversation(object obj)

@@ -52,6 +52,82 @@ namespace SandRibbon.Components
         }
     }
 
+
+    class ServerDisplay : INotifyPropertyChanged
+    {
+        public ServerDisplay(MeTLConfigurationProxy server)
+        {
+            imageUrl = server.imageUrl;
+            name = server.name;
+            authenticationEndpoint = server.authenticationEndpoint;
+            config = server;
+        }
+        protected bool _networkReady = false;
+        public bool NetworkReady
+        {
+            get { return _networkReady; }
+            set
+            {
+                _networkReady = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("NetworkReady"));
+                PropertyChanged(this, new PropertyChangedEventArgs("ShouldBlockInput"));
+            }
+        }
+        public bool ShouldBlockInput
+        {
+            get { return !_networkReady; }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Uri imageUrl { get; protected set; }
+        public string name { get; protected set; }
+        public Uri authenticationEndpoint { get; protected set; }
+        public MeTLConfigurationProxy config { get; protected set; }
+    }
+    /*
+        class ServerDisplay : DependencyObject
+        {
+            public ServerDisplay(MeTLConfigurationProxy server)
+            {
+                imageUrl = server.imageUrl;
+                name = server.name;
+                authenticationEndpoint = server.authenticationEndpoint;
+                config = server;
+            }
+            public bool NetworkReady
+            {
+                get { return (bool)GetValue(NetworkReadyProperty); }
+                set
+                {
+                    SetValue(ShouldBlockInputProperty, !value);
+                    SetValue(NetworkReadyProperty, value);
+                }
+            }
+
+            // Using a DependencyProperty as the backing store for NetworkReady.  This enables animation, styling, binding, etc...
+            public static readonly DependencyProperty NetworkReadyProperty =
+                DependencyProperty.Register("NetworkReady", typeof(bool), typeof(ServerDisplay), new PropertyMetadata(false));
+            public bool ShouldBlockInput
+            {
+                get { return (bool)GetValue(ShouldBlockInputProperty); }
+                set
+                {
+                    SetValue(ShouldBlockInputProperty, value);
+                    SetValue(NetworkReadyProperty, !value);
+                }
+            }
+
+            // Using a DependencyProperty as the backing store for NetworkReady.  This enables animation, styling, binding, etc...
+            public static readonly DependencyProperty ShouldBlockInputProperty =
+                DependencyProperty.Register("ShouldBlockInput", typeof(bool), typeof(ServerDisplay), new PropertyMetadata(true));
+
+            public Uri imageUrl { get; protected set; }
+            public string name { get; protected set; }
+            public Uri authenticationEndpoint { get; protected set; }
+            public MeTLConfigurationProxy config { get; protected set; }
+        }
+        */
     public partial class Login : UserControl
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
@@ -59,6 +135,7 @@ namespace SandRibbon.Components
         public string Version { get; private set; }
         protected WebBrowser logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
+        ObservableWithPropertiesCollection<ServerDisplay> serverConfigs = new ObservableWithPropertiesCollection<ServerDisplay>();
         public Login()
         {
             InitializeComponent();
@@ -67,10 +144,38 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
-            servers.ItemsSource = App.availableServers();
+            //var configs = App.availableServers().Select(s => new ServerDisplay(s));
+            servers.ItemsSource = serverConfigs;
+            App.availableServers().ForEach(s => serverConfigs.Add(new ServerDisplay(s)));
             //servers.SelectedIndex = 0;
             Commands.AddWindowEffect.ExecuteAsync(null);
+            pollServers = new System.Threading.Timer((s) =>
+            {
+                var wc = new WebClient();
+                //var replacements = new List<ServerDisplay>();
+                foreach (ServerDisplay server in serverConfigs)
+                {
+                    var success = false;
+                    try
+                    {
+                        var newUri = new Uri(server.authenticationEndpoint, new Uri("/serverStatus",UriKind.Relative));
+                        wc.DownloadData(newUri);
+                        success = true;
+                    }
+                    catch
+                    {
+                        success = false;
+                    }
+                    //success = (new Random((int)DateTime.Now.Ticks).Next(1, 5) > 3);
+                    Dispatcher.adopt(delegate
+                    {
+                        server.NetworkReady = success;
+                    });
+                }
+            }, null, 0, pollServersTimeout);
         }
+        protected Timer pollServers;
+        protected int pollServersTimeout = 5 * 1000;
         protected Timer showTimeoutButton;
         protected int loginTimeout = 5 * 1000;
 
@@ -204,17 +309,20 @@ namespace SandRibbon.Components
                         App.auditor.updateGauge(gauge);
                         ResetWebBrowser(null);
                     }
-                } else
+                }
+                else
                 {
                     gaugeProgress += 1;
                     gauge.update(GaugeStatus.InProgress, gaugeProgress);
                 }
             };
-            logonBrowser.Navigating += (sender, args) => {
+            logonBrowser.Navigating += (sender, args) =>
+            {
                 gaugeProgress = gaugeProgress + ((100 - gaugeProgress) / 2);
                 App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, gaugeProgress));
                 NavigatedEventHandler finalized = null;
-                finalized = new NavigatedEventHandler((s, a) => {
+                finalized = new NavigatedEventHandler((s, a) =>
+                {
                     App.auditor.updateGauge(gauge.update(GaugeStatus.Completed, 100));
                     gauge = new DiagnosticGauge(loginUri.ToString(), "embedded browser http request", DateTime.Now);
                     gaugeProgress = 0;
@@ -390,8 +498,8 @@ namespace SandRibbon.Components
                 var options = App.controller.client.UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
-                //DestroyWebBrowser(null);
-                this.Visibility = Visibility.Collapsed;
+            //DestroyWebBrowser(null);
+            this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
@@ -404,8 +512,15 @@ namespace SandRibbon.Components
         private void SetBackend(object sender, RoutedEventArgs e)
         {
             serversContainer.Visibility = Visibility.Collapsed;
+            if (pollServers != null)
+            {
+                pollServers.Change(Timeout.Infinite, Timeout.Infinite);
+                pollServers.Dispose();
+                pollServers = null;
+            }
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var server = (sender as Button).DataContext as MeTLConfigurationProxy;
+            var serverDisplay = (sender as Button).DataContext as ServerDisplay;
+            var server = serverDisplay.config;
             //var backend = App.metlConfigManager.getConfigFor(server);
             //var backend = servers.SelectedItem as MetlConfiguration;
             //var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
@@ -415,7 +530,15 @@ namespace SandRibbon.Components
         }
         private void SetCustomServer(object sender, RoutedEventArgs e)
         {
-            var server = new MeTLConfigurationProxy(customServer.Text, new Uri(customServer.Text+"/static/images/server.png"), new Uri(customServer.Text + "/authenticationState"));
+            serversContainer.Visibility = Visibility.Collapsed;
+            if (pollServers != null)
+            {
+                pollServers.Change(Timeout.Infinite, Timeout.Infinite);
+                pollServers.Dispose();
+                pollServers = null;
+            }
+            Commands.RemoveWindowEffect.ExecuteAsync(null);
+            var server = new MeTLConfigurationProxy(customServer.Text, new Uri(customServer.Text + "/static/images/server.png"), new Uri(customServer.Text + "/authenticationState"));
             App.SetBackendProxy(server);
             ResetWebBrowser(null);
         }

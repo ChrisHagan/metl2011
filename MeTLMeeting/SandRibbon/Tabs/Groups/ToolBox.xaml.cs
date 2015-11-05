@@ -19,17 +19,17 @@ namespace SandRibbon.Tabs.Groups
             switch (mode.ToLower())
             {
                 case "none":
-                    type.IsChecked = true;
+                    //type.IsChecked = true;
                     break;
                 default:
-                    select.IsChecked = true;
+                    //select.IsChecked = true;
                     break;
             }
             Commands.SetTextCanvasMode.Execute(mode);
         }
         private void joinConversation(object obj)
         {
-            type.IsChecked = true;
+            //type.IsChecked = true;
             Commands.SetTextCanvasMode.Execute("None");
         }
         private void SetLayer(string layer)
@@ -39,7 +39,7 @@ namespace SandRibbon.Tabs.Groups
             switch (layer)
             {
                 case "Text":
-                    TextOptions.Visibility = Visibility.Visible;
+                    //TextOptions.Visibility = Visibility.Visible;
                     Commands.TogglePens.ExecuteAsync(false);
                     break;
                 case "Insert":
@@ -55,7 +55,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void hideAll()
         {
-            TextOptions.Visibility = Visibility.Collapsed;
+            //TextOptions.Visibility = Visibility.Collapsed;
             ImageOptions.Visibility = Visibility.Collapsed;
         }
     }

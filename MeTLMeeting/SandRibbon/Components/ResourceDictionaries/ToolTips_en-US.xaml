@@ -281,6 +281,10 @@
                                         TitleText="Remove Friend"
                                         ImageSource="\Resources\AnonHead.png" 
                                         ContentText="Remove a particular participant of MeTL from your friends console."/>
+    <resources:MeTLImageToolTip x:Key="ViewToolTip" 
+                                        TitleText="View"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="In this mode, you can navigate the content without drawing on it."/>
     <resources:MeTLImageToolTip x:Key="PenToolTip" 
                                         TitleText="Draw Digital Ink"
                                         ImageSource="\Resources\RedPenShiny.png" 

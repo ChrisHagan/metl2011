@@ -17,6 +17,8 @@ namespace SandRibbon.Tabs.Groups
             this.Visibility = Visibility.Visible;
             switch (mode)
             {
+                case "Select":
+                    break;
                 case "Sketch":
                     penColors.Visibility = Visibility.Visible;
                     Header = "Ink Tools";
@@ -32,7 +34,6 @@ namespace SandRibbon.Tabs.Groups
                     break;
                 case "View":
                     Header = "View Tools";
-                    this.Visibility = Visibility.Collapsed;
                     break;
             }
         }

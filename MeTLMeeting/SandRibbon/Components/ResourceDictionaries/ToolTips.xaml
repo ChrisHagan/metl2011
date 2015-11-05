@@ -298,6 +298,10 @@
                                         TitleText="Remove Friend"
                                         ImageSource="\Resources\AnonHead.png" 
                                         ContentText="Remove a particular participant of MeTL from your friends console."/>
+    <resources:MeTLImageToolTip x:Key="ViewToolTip" 
+                                        TitleText="View"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="In this mode, you can navigate the content without drawing on it."/>
     <resources:MeTLImageToolTip x:Key="PenToolTip" 
                                         TitleText="Draw Digital Ink"
                                         ImageSource="\Resources\RedPenShiny.png" 
@@ -311,9 +315,9 @@
                                         ImageSource="\Resources\SelectText.png" 
                                         ContentText="Move or resize your text containers."/>
     <resources:MeTLImageToolTip x:Key="SelectToolTip" 
-                                        TitleText="Select Digital Ink"
+                                        TitleText="Select"
                                         ImageSource="\Resources\SelectInk.png" 
-                                        ContentText="Circle your ink to select it."/>
+                                        ContentText="Circle your content to select it."/>
     <resources:MeTLImageToolTip x:Key="FriendsToolTip" 
                                         TitleText="Open Friends"
                                         ImageSource="\Resources\friendsplaceholder.png" 

@@ -197,6 +197,9 @@
     <Compile Include="Components\Participants.xaml.cs">
       <DependentUpon>Participants.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\RoleQuickControls.xaml.cs">
+      <DependentUpon>RoleQuickControls.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\SystemHealthSummary.xaml.cs">
       <DependentUpon>SystemHealthSummary.xaml</DependentUpon>
     </Compile>
@@ -339,6 +342,10 @@
     <Page Include="Components\ResourceDictionaries\ToolTips_en-US.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\RoleQuickControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\SlideDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>

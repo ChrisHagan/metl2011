@@ -5,6 +5,9 @@
     xmlns:utility="clr-namespace:SandRibbon.Components.Utility"
     xmlns:p="clr-namespace:SandRibbon.Properties"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
     <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray">
             <Grid>
@@ -57,18 +60,21 @@
                 <ItemsControl x:Name="servers">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel/>
+                            <WrapPanel Orientation="Horizontal"/>
                             <!--<UniformGrid></UniformGrid>-->
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Click="SetBackend" DataContext="{Binding}" Height="200">
-                                <Grid>
-                                    <Image Grid.Row="0" Source="{Binding Path=imageUrl}"/>
-                                    <TextBlock Grid.Row="1" Text="{Binding Path=name}" />
-                                </Grid>
-                            </Button>
+                            <Grid Height="200" Width="400">
+                                <Button Click="SetBackend" DataContext="{Binding}" IsEnabled="{Binding NetworkReady}">
+                                    <Grid>
+                                        <Image Grid.Row="0" Source="{Binding Path=imageUrl}"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding Path=name}" />
+                                    </Grid>
+                                </Button>
+                                <Image Source="\Resources\WarningIconMine.png" Visibility="{Binding ShouldBlockInput, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

@@ -353,6 +353,12 @@ namespace SandRibbon.Components
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.ResetSyncTimer();
+            /*
+            if (Work.EditingMode == InkCanvasEditingMode.GestureOnly && !e.InAir)
+            {
+                e.
+            }
+            */
         }
 
         private void mouseMove(object sender, MouseEventArgs e)
@@ -406,6 +412,16 @@ namespace SandRibbon.Components
             if (me.ToLower() == Globals.PROJECTOR) return;
             switch (newLayer)
             {
+                case "Select":
+                    Work.EditingMode = InkCanvasEditingMode.Select;
+                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                    Work.Cursor = Cursors.Arrow;
+                    break;
+                case "View":
+                    Work.EditingMode = InkCanvasEditingMode.GestureOnly;
+                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                    Work.Cursor = Cursors.Hand;
+                    break;
                 case "Text":
                     Work.EditingMode = InkCanvasEditingMode.None;
                     Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
@@ -416,6 +432,7 @@ namespace SandRibbon.Components
                     Work.Cursor = Cursors.Arrow;
                     break;
                 case "Sketch":
+                    Work.EditingMode = InkCanvasEditingMode.Ink;
                     Work.UseCustomCursor = true;
                     break;
             }
@@ -1927,11 +1944,12 @@ namespace SandRibbon.Components
                 MeTLMessage.Information("Cannot drop this onto the canvas");
                 return;
             }
+            
             Commands.SetLayer.ExecuteAsync("Insert");
             var pos = e.GetPosition(this);
             var origin = new Point(pos.X, pos.Y);
             var maxHeight = 0d;
-
+            
             Func<Image, Point, int, Point> positionUpdate = (source, offset, count) =>
                 {
                     if (count == 0)

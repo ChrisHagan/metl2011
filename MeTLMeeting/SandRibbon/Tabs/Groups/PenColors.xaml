@@ -25,8 +25,10 @@
             </DrawingBrush>
         </StackPanel.Resources>
         <dict:RibbonPanel>
+            <!--
             <dict:RadioButton x:Name="drawRadio" Visibility="Collapsed" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
             <dict:RadioButton x:Name="selectRadio" ToolTip="{DynamicResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+            -->
             <dict:RadioButton x:Name="eraseRadio" ToolTip="{DynamicResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
         </dict:RibbonPanel>
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>

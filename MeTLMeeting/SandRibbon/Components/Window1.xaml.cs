@@ -132,7 +132,7 @@ namespace SandRibbon
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
+            //Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
 
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.SetLayer.ExecuteAsync("Sketch");
@@ -450,6 +450,7 @@ namespace SandRibbon
                 showReconnectingDialog();
             }
         }
+        /*
         private void ToggleFriendsVisibility(object unused)
         {
             if (chatGridsplitter.Visibility == Visibility.Visible)
@@ -467,6 +468,7 @@ namespace SandRibbon
                 LHSDrawerDefinition.Width = new GridLength((columns.ActualWidth - rightDrawer.ActualWidth) / 4);
             }
         }
+        */
         private bool LessThan(double val1, double val2, double tolerance)
         {
             var difference = val2 * tolerance;
