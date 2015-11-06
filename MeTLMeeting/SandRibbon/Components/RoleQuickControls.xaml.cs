@@ -33,6 +33,12 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdatedConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
             Commands.SetSync.Execute(false);
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>((obj) => {
+                Commands.RequerySuggested(
+                    Commands.DuplicateConversation,
+                    Commands.DuplicateSlide
+                    );        
+            }));
         }
 
         private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)

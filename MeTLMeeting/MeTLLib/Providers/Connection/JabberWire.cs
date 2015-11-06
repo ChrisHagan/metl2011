@@ -308,6 +308,7 @@ namespace MeTLLib.Providers.Connection
                 conn.OnRegisterError -= ElementError;
                 conn.OnStreamError -= ElementError;
                 conn.OnClose -= OnClose;
+                conn.OnIq -= OnIq;
 #if DEBUG
                 conn.OnReadXml -= ReadXml;
                 conn.OnWriteXml -= WriteXml;
@@ -327,6 +328,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
             conn.OnClose += OnClose;
+            conn.OnIq += OnIq;
 #if DEBUG
             conn.OnReadXml += ReadXml;
             conn.OnWriteXml += WriteXml;
@@ -401,6 +403,17 @@ namespace MeTLLib.Providers.Connection
         {
             if (message.To.Resource == jid.Resource)
                 ReceivedMessage(message, MessageOrigin.Live);
+        }
+        private void OnIq(object sender, IQ iq)
+        {
+            if (iq.FirstChild.Namespace == "urn:xmpp:ping")
+            {
+                //var pongId = iq.Id;
+                var pong = new agsXMPP.protocol.component.IQ(IqType.result,iq.To,iq.From);
+                pong.Id = iq.Id;
+//5                    var pong = new agsXMPP.protocol.extensions.ping.PingIq(iq.From, iq.To);
+                conn.Send(pong);
+            }
         }
         private void HandlerError(object sender, Exception ex)
         {

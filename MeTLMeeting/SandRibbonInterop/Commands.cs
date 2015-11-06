@@ -282,6 +282,9 @@ namespace SandRibbon
         public static DefaultableCompositeCommand CreateBlankConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ShowEditSlidesDialog = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand CreateConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DuplicateSlide = new DefaultableCompositeCommand(new KeyValuePair<ConversationDetails,Slide>(ConversationDetails.Empty,Slide.Empty));
+        public static DefaultableCompositeCommand DuplicateConversation = new DefaultableCompositeCommand(ConversationDetails.Empty);
+        public static DefaultableCompositeCommand CreateGrouping = new DefaultableCompositeCommand();
         //public static DefaultableCompositeCommand PreEditConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand EditConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BlockInput = new DefaultableCompositeCommand();

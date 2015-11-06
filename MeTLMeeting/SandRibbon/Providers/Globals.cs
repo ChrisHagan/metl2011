@@ -172,6 +172,13 @@ namespace SandRibbon.Providers
                 return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : null;
             }
         }
+        public static KeyValuePair<ConversationDetails,Slide> slideDetailsInConversationDetails
+        {
+            get
+            {
+                return new KeyValuePair<ConversationDetails, Slide>(conversationDetails, slideDetails);
+            }
+        }
         public static List<ContentVisibilityDefinition> contentVisibility
         {
             get

@@ -4,16 +4,25 @@ using System.Linq;
 using System;
 using System.Threading;
 using System.Diagnostics;
+using MeTLLib.DataTypes;
 //using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
     public class WebClientWithTimeout : WebClient
     {
+        protected Credentials metlCreds;
+        public WebClientWithTimeout(Credentials _metlCreds)
+        {
+            metlCreds = _metlCreds;
+        }
         protected override WebRequest GetWebRequest(Uri address)
         {
             //Permissions failure appeared here.
             WebRequest request = (WebRequest)base.GetWebRequest(address);
+            if (metlCreds.cookie != "") {
+                request.Headers.Add("Cookie", metlCreds.cookie);
+            }
             (request as HttpWebRequest).KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
@@ -22,9 +31,9 @@ namespace MeTLLib.Providers.Connection
     public class MeTLWebClient : IWebClient
     {
         WebClientWithTimeout client;
-        public MeTLWebClient(ICredentials credentials)
+        public MeTLWebClient(ICredentials credentials,Credentials metlCreds)
         {
-            this.client = new WebClientWithTimeout();
+            this.client = new WebClientWithTimeout(metlCreds);
             this.client.Credentials = credentials;
             this.client.Proxy = null;
         }
@@ -147,11 +156,13 @@ namespace MeTLLib.Providers.Connection
         //private static readonly string MonashCertificateIssuer = "E=premium-server@thawte.com, CN=Thawte Premium Server CA, OU=Certification Services Division, O=Thawte Consulting cc, L=Cape Town, S=Western Cape, C=ZA";
         //private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
         protected ICredentials credentials;
-        public WebClientFactory(ICredentials credentials, IAuditor auditor)
+        protected Credentials metlCreds;
+        public WebClientFactory(ICredentials credentials, IAuditor auditor,Credentials _metlCreds)
         {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+            this.metlCreds = _metlCreds;
             /*Ssl3 is not compatible with modern servers and IE*/
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
             /*This would be a workaround but is not required.  We permit engine to select algorithm.*/
@@ -160,7 +171,7 @@ namespace MeTLLib.Providers.Connection
         }
         public IWebClient client()
         {
-            return new MeTLWebClient(this.credentials);
+            return new MeTLWebClient(this.credentials,metlCreds);
         }
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
              xmlns:local="clr-namespace:SandRibbon.Components"
+             xmlns:providers="clr-namespace:SandRibbon.Providers"
              xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
              xmlns:tabs="clr-namespace:SandRibbon.Tabs"
              mc:Ignorable="d" 
@@ -12,21 +13,22 @@
              >
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel>
-            <StackPanel x:Name="ownerQuickControls">
+            <WrapPanel x:Name="ownerQuickControls">
                 <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
                 <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
                 <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-
-            </StackPanel>
-            <StackPanel x:Name="participantQuickControls">
+                <dict:Button Text="DuplicateSlide" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
+                <dict:Button Text="DuplicateConversation" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
+            </WrapPanel>
+            <WrapPanel x:Name="participantQuickControls">
                 <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>
                 <dict:Button x:Name="submitSubmission" 
-                Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
-                                  ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
+                    Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
+                    Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                    ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
 
-            </StackPanel>
+            </WrapPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

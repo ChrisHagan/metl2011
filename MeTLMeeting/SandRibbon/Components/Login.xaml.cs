@@ -393,6 +393,7 @@ namespace SandRibbon.Components
             }, null, Timeout.Infinite, Timeout.Infinite);
             maintainKeysTimer = new System.Threading.Timer((s) =>
             {
+                App.controller.credentials.cookie = Application.GetCookie(loginUri);
                 Dispatcher.adopt(delegate
                 {
                     logonBrowser.LoadCompleted -= loginCheckingAction;

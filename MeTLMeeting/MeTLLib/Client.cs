@@ -70,6 +70,8 @@ namespace MeTLLib
         ConversationDetails UpdateConversationDetails(ConversationDetails details);
         ConversationDetails CreateConversation(ConversationDetails details);
         ConversationDetails DeleteConversation(ConversationDetails details);
+        ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide);
+        ConversationDetails DuplicateConversation(ConversationDetails conversation);
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
@@ -138,6 +140,8 @@ namespace MeTLLib
         public ConversationDetails CreateConversation(ConversationDetails details) { return ConversationDetails.Empty; }
         public ConversationDetails DeleteConversation(ConversationDetails details) { return ConversationDetails.Empty; }
         public ConversationDetails DetailsOf(String jid) { return ConversationDetails.Empty; }
+        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) { return ConversationDetails.Empty; }
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
         public void SneakInto(string room) { }
         public void SneakOutOf(string room) { }
         public Uri NoAuthUploadResource(Uri file, int Room) { return DisconnectedUri; }
@@ -625,6 +629,23 @@ namespace MeTLLib
             }
 
             return ConversationDetails.Empty;
+        }
+        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) {
+            return tryUntilConnected<ConversationDetails>(() =>
+            {
+                var newConv = conversationDetailsProvider.DuplicateSlide(details, slide);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
+        }
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation) {
+            return tryUntilConnected<ConversationDetails>(() =>
+            {
+                var newConv = conversationDetailsProvider.DuplicateConversation(conversation);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
+
         }
         public ConversationDetails AppendSlide(string Jid)
         {

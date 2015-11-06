@@ -73,8 +73,9 @@ namespace MeTLLib.Providers.Structure
             }
             try
             {
+                var url = new System.Uri(new Uri(server.conversationsUrl, UriKind.Absolute), new Uri(String.Format("/details/{0}", conversationJid),UriKind.Relative));
 //                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
-                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
+//                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
                 Console.WriteLine("Details of: {0}", url);
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
@@ -203,6 +204,41 @@ namespace MeTLLib.Providers.Structure
             Update(details);
             return details;
         }
+        public ConversationDetails DuplicateSlide(ConversationDetails conversation, Slide slide)
+        {
+            try
+            {
+                var duplicateSlideUri = new Uri(String.Format("/duplicateSlide/{0}/{1}", slide.id.ToString(), conversation.Jid.ToString()), UriKind.Relative);
+                var convUri = new Uri(server.conversationsUrl, UriKind.Absolute);
+                var uri = new Uri(convUri,duplicateSlideUri);
+                Console.WriteLine("DuplicateSlide: {0}", uri);
+                var data = insecureGetString(uri);
+                return SearchConversationDetails.ReadXML(XElement.Parse(data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(String.Format("FileConversationDetailsProvider:DuplicateSlide {0}", e.Message));
+                return ConversationDetails.Empty;
+            }
+        }
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation)
+        {
+            try
+            {
+                var duplicateSlideUri = new Uri(String.Format("/duplicateConversation/{0}", conversation.Jid.ToString()), UriKind.Relative);
+                var convUri = new Uri(server.conversationsUrl, UriKind.Absolute);
+                var uri = new Uri(convUri, duplicateSlideUri);
+                Console.WriteLine("DuplicateConversation: {0}", uri);
+                var data = insecureGetString(uri);
+                return SearchConversationDetails.ReadXML(XElement.Parse(data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(String.Format("FileConversationDetailsProvider:DuplicateConversation {0}", e.Message));
+                return ConversationDetails.Empty;
+            }
+        }
+
         public ApplicationLevelInformation GetApplicationLevelInformation()
         {
             return new ApplicationLevelInformation(Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))));

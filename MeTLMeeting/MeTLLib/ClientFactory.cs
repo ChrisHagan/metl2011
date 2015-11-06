@@ -19,7 +19,7 @@ namespace MeTLLib
                 var webCreds = new NetworkCredential(config.resourceUsername, config.resourcePassword);
                 auditAction(GaugeStatus.InProgress,7);
                 //var jabberCreds = new Credentials(config.xmppUsername, config.xmppPassword,new List<AuthorizedGroup>(),"");
-                var wcf = new WebClientFactory(webCreds,auditor);
+                var wcf = new WebClientFactory(webCreds,auditor,creds);
                 auditAction(GaugeStatus.InProgress,14);
                 var receiveEvents = new ProductionReceiveEvents();
                 auditAction(GaugeStatus.InProgress,21);

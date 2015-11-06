@@ -150,6 +150,18 @@ namespace SandRibbon
             Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
             Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
             Commands.LaunchDiagnosticWindow.RegisterCommandToDispatcher(new DelegateCommand<object>(launchDiagnosticWindow));
+            Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
+            {
+                duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
+            }, (kvp) => {
+                try {
+                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
+                } catch {
+                    return false;
+                }
+                }));
+            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation,userMayAdministerConversation));
+            Commands.CreateGrouping.RegisterCommand(new DelegateCommand<object>(createGrouping,(o) => mustBeInConversationAndBeAuthor(o)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
             AddWindowEffect(null);
@@ -740,6 +752,32 @@ namespace SandRibbon
         {
             return Globals.isAuthor;
         }
+
+        private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp) {
+            var kvp = new KeyValuePair<ConversationDetails,Slide>(Globals.conversationDetails, Globals.slideDetails);
+            if (kvp.Key.UserHasPermission(Globals.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
+            {
+                App.controller.client.DuplicateSlide(kvp.Key,kvp.Value);
+            }
+        }
+        private void duplicateConversation(ConversationDetails _conversationToDuplicate) {
+            var conversationToDuplicate = Globals.conversationDetails;
+            if (conversationToDuplicate.UserHasPermission(Globals.credentials))
+            {
+                App.controller.client.DuplicateConversation(conversationToDuplicate);
+            }
+        }
+        private bool userMayAdministerConversation(ConversationDetails _conversation)
+        {
+            var conversation = Globals.conversationDetails;
+            if (conversation == null)
+            {
+                return false;
+            }
+            return conversation.UserHasPermission(Globals.credentials);
+        }
+        private void createGrouping(object groupingDefinition) {
+        }  
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;

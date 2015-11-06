@@ -75,6 +75,14 @@
                                         TitleText="Add Page"
                                         ImageSource="\Resources\NewSlide.png" 
                                         ContentText="Add a new page after the current page."/>
+    <resources:MeTLImageToolTip x:Key="DuplicateSlideToolTip" 
+                                        TitleText="Duplicate Page"
+                                        ImageSource="\Resources\NewSlide.png" 
+                                        ContentText="Add a new page after the current page, which has the author's public and private content copied onto it."/>
+    <resources:MeTLImageToolTip x:Key="DuplicateConversationToolTip" 
+                                        TitleText="Duplicate Conversation"
+                                        ImageSource="\Resources\NewSlide.png" 
+                                        ContentText="Create a copy of this conversation, including the author's public and private content and quizzes."/>
     <resources:MeTLImageToolTip x:Key="SyncToolTip" 
                                         TitleText="Synchronize"
                                         ImageSource="\Resources\SyncShiny.png" 
