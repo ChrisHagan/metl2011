@@ -10,6 +10,8 @@ using SandRibbonObjects;
 using SandRibbon.Profiles;
 using SandRibbon.Pages.Collaboration.Palettes;
 using SandRibbon.Pages.Conversations.Models;
+using Awesomium.Windows.Controls;
+using Awesomium.Core;
 
 namespace SandRibbon.Providers
 {
@@ -307,7 +309,7 @@ namespace SandRibbon.Providers
             profiles = new[] {
             new Profile {
                 ownerName = name,
-                logicalName = string.Format("{0} as an observer",name)                    
+                logicalName = string.Format("{0} as an observer",name)
             },
             new Profile {
                 ownerName = name,
@@ -340,7 +342,8 @@ namespace SandRibbon.Providers
                         new Macro("pen_blue"),
                         new Macro("pen_black"),
                         new Macro("pen_yellow_highlighter"),
-                        new Macro("select_mode")
+                        new Macro("select_mode"),
+                        new Macro("wordcloud")
                     })
                 {
                     VerticalAlignment = System.Windows.VerticalAlignment.Top,
@@ -373,6 +376,8 @@ namespace SandRibbon.Providers
         }.ToList();
         }
         public static Profile currentProfile = profiles[0];
+        public  static WebSession authenticatedWebSession;
+
         public static Slide slideObject() {
             return slides.Where(s => s.id == location.currentSlide).First();
         }
@@ -395,6 +400,6 @@ namespace SandRibbon.Providers
                     }
                 }
             }
-        }
+        }        
     }
 }

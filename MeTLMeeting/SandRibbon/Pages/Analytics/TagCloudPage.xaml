@@ -5,5 +5,4 @@
       xmlns:local="clr-namespace:SandRibbon.Pages.Analytics"  
       xmlns:osm="http://schemas.awesomium.com/winfx"
       Title="TagCloudPage">
-    <osm:WebControl x:Name="wc" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></osm:WebControl>
 </Page>

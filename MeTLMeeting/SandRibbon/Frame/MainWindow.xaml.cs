@@ -132,7 +132,7 @@ namespace SandRibbon
 
         private void WordCloud(object obj)
         {
-            mainFrame.Navigate(new TagCloudPage(Globals.slideObject()));
+            mainFrame.Navigate(new TagCloudPage());
         }
 
         private void serializeConversationToOneNote(object obj)

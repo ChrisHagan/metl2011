@@ -156,6 +156,7 @@ namespace SandRibbon.Pages.Login
                             {
                                 loginAttempted = true;
                                 Commands.SetIdentity.Execute(credentials);
+                                Globals.authenticatedWebSession = logonBrowser.WebSession;
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
