@@ -146,6 +146,7 @@ namespace SandRibbon.Components
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             //var configs = App.availableServers().Select(s => new ServerDisplay(s));
             servers.ItemsSource = serverConfigs;
+            serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost",new Uri("http://localhost:8080/static/images/puppet.jpg"),new Uri("http://localhost:8080/authenticationState"))));
             App.availableServers().ForEach(s => serverConfigs.Add(new ServerDisplay(s)));
             //servers.SelectedIndex = 0;
             Commands.AddWindowEffect.ExecuteAsync(null);

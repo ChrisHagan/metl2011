@@ -316,6 +316,7 @@ namespace MeTLLib.Providers.Connection
             }
             this.conn = new XmppClientConnection(jid.Server);
             conn.ConnectServer = metlServerAddress.xmppHost;
+            conn.UseStartTLS = true;
             conn.UseSSL = false;
             conn.AutoAgents = false;
             conn.OnAuthError += OnAuthError;
@@ -406,7 +407,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void OnIq(object sender, IQ iq)
         {
-            if (iq.FirstChild.Namespace == "urn:xmpp:ping")
+            if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping")
             {
                 //var pongId = iq.Id;
                 var pong = new agsXMPP.protocol.component.IQ(IqType.result,iq.To,iq.From);
@@ -744,7 +745,8 @@ namespace MeTLLib.Providers.Connection
             try
             {
                 return auditor.wrapFunction((a) => {
-                    return conn.Authenticated && webClientFactory.client().downloadString(new System.Uri(metlServerAddress.resourceUrl + "serverStatus")).Trim().ToLower() == "ok";
+//                    return conn.Authenticated && webClientFactory.client().downloadString(new System.Uri( metlServerAddress.resourceUrl + "serverStatus")).Trim().ToLower() == "ok";
+                    return conn.Authenticated && webClientFactory.client().downloadString(new System.Uri(new System.Uri(metlServerAddress.authenticationUrl,UriKind.Absolute),new System.Uri("/serverStatus",UriKind.Relative))).Trim().ToLower() == "ok";
                 }, "healthCheck", "xmpp");
             }
             catch (Exception e)

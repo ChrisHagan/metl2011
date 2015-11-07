@@ -13,6 +13,7 @@ using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using System.Xml.Linq;
 //using Ninject;
 
 namespace MeTLLib.Providers
@@ -182,6 +183,11 @@ namespace MeTLLib.Providers
                 {
                     auditor.wrapAction((g =>
                     {
+                        var directoryUri = "http://localhost:8080/getHistory?source=" + room;
+                        var xmlString = resourceProvider.secureGetString(new Uri(directoryUri));
+                        var xml = XDocument.Parse(xmlString);
+
+                        /*
                         var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
                         //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
                         var directoryExists = resourceProvider.exists(new Uri(directoryUri));
@@ -220,6 +226,7 @@ namespace MeTLLib.Providers
                             Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
                             //Nothing to do if it's a 404.  There is no history to obtain.
                         }
+                        */
                     }), "retrieveWorker: " + room.ToString(), "historyProvider");
                 };
                 if (retrievalComplete != null)
