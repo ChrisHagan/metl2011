@@ -131,6 +131,8 @@ namespace MeTLLib.Providers.Structure
         }
         private bool DetailsAreAccurate(ConversationDetails details)
         {
+            return details.ValueEquals(DetailsOf(details.Jid));
+            /*
             var url = string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
             var currentServerString = secureGetBytesAsString(new System.Uri(url));
             var currentServerCD = ConversationDetails.ReadXml(XElement.Parse(currentServerString));
@@ -138,6 +140,7 @@ namespace MeTLLib.Providers.Structure
                 return true;
             else
                 return false;
+                */
         }
         public ConversationDetails Update(ConversationDetails details)
         {

@@ -402,7 +402,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void OnMessage(object sender, Message message)
         {
-            if (message.To.Resource == jid.Resource)
+            //if (message.To.Resource == jid.Resource)
                 ReceivedMessage(message, MessageOrigin.Live);
         }
         private void OnIq(object sender, IQ iq)

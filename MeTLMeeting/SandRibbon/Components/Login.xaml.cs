@@ -353,6 +353,10 @@ namespace SandRibbon.Components
                          Application.Current.Shutdown();
                      }
                      App.SetBackend(config);
+                     if (App.controller != null && App.controller.credentials != null)
+                     {
+                         App.controller.credentials.cookie = credentials.cookie;
+                     }
                      App.Login(credentials);
                      logonBrowser.LoadCompleted -= loginCheckingAction;
                      if (maintainKeysTimer != null)
@@ -368,6 +372,9 @@ namespace SandRibbon.Components
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
                 checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
                 {
+                    if (App.controller != null)
+                        App.controller.credentials.cookie = credentials.cookie;
+
                     Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
                     logonBrowserContainer.Visibility = Visibility.Collapsed;
                     logonBrowserContainer.IsHitTestVisible = false;
@@ -468,6 +475,7 @@ namespace SandRibbon.Components
                             emailAddress = emailAddressNode.Attribute("name").Value.ToString();
                         }
                         var credentials = new Credentials(username, "", authGroups, emailAddress);
+                        credentials.cookie = Application.GetCookie(App.getCurrentServer.authenticationEndpoint);
                         if (authenticated)
                         {
                             onSuccess(true, credentials);

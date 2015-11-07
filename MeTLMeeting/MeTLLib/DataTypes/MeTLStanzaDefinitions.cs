@@ -17,7 +17,7 @@ using MeTLLib.Providers.Connection;
 using System.Diagnostics;
 using MeTLLib.Utilities;
 using System.Collections.ObjectModel;
-
+using System.Xml.Linq;
 
 namespace MeTLLib.DataTypes
 {
@@ -111,6 +111,26 @@ namespace MeTLLib.DataTypes
             identity = Identity;
             timestamp = Timestamp;
         }
+        /*
+        public static TargettedElement fromXml(XElement elemXml)
+        {
+            TargettedElement result = null;
+            var elemType = elemXml.Name.LocalName;
+            var timestamp = elemXml.
+            switch ()
+            {
+                case "attendance":
+                    new Attendance()
+                    break;
+                case "ink":
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
+        */
+
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedElement)) return false;

@@ -18,6 +18,7 @@ using System.Xml.Linq;
 
 namespace MeTLLib.Providers
 {
+
     public interface IHistoryProvider
     {
         void Retrieve<T>(
@@ -66,7 +67,7 @@ namespace MeTLLib.Providers
             string room
         ) where T : PreParser
         {
-            this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{0}/{1}", author, room));
+            this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{1}{0}", author, room));
         }
     }
     public class CachedHistoryProvider : BaseHistoryProvider
@@ -183,10 +184,12 @@ namespace MeTLLib.Providers
                 {
                     auditor.wrapAction((g =>
                     {
-                        var directoryUri = "http://localhost:8080/getHistory?source=" + room;
+                        var directoryUri = "http://localhost:8080/fullClientHistory?source=" + room;
                         var xmlString = resourceProvider.secureGetString(new Uri(directoryUri));
-                        var xml = XDocument.Parse(xmlString);
-
+                        //var xml = XDocument.Parse(xmlString);
+                        using (var stream = GenerateStreamFromString(xmlString)) {
+                            parseHistoryItem(stream, accumulatingParser);
+                        }
                         /*
                         var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
                         //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
@@ -251,6 +254,15 @@ namespace MeTLLib.Providers
                 worker.RunWorkerAsync(null);
             }
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
+        protected MemoryStream GenerateStreamFromString(string s)
+        {
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
+        }
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time
             var parser = new StreamParser();
