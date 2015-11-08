@@ -33,11 +33,12 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdatedConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
             Commands.SetSync.Execute(false);
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>((obj) => {
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>((obj) =>
+            {
                 Commands.RequerySuggested(
                     Commands.DuplicateConversation,
                     Commands.DuplicateSlide
-                    );        
+                    );
             }));
         }
 
@@ -57,19 +58,22 @@ namespace SandRibbon.Components
         }
         protected void UpdatedConversationDetails(ConversationDetails conv)
         {
-            if (Globals.isAuthor)
+            Dispatcher.adopt(delegate
             {
-                ownerQuickControls.Visibility = Visibility.Visible;
-                participantQuickControls.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                ownerQuickControls.Visibility = Visibility.Collapsed;
-                participantQuickControls.Visibility = Visibility.Visible;
+                if (Globals.isAuthor)
+                {
+                    ownerQuickControls.Visibility = Visibility.Visible;
+                    participantQuickControls.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ownerQuickControls.Visibility = Visibility.Collapsed;
+                    participantQuickControls.Visibility = Visibility.Visible;
 
-            }
-            studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanPublish;
-            studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
+                }
+                studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanPublish;
+                studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
+            }); ;
         }
         private void SetSync(bool sync)
         {

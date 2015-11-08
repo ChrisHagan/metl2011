@@ -402,11 +402,15 @@ namespace MeTLLib.Providers.Connection
         }
         private void OnMessage(object sender, Message message)
         {
-            //if (message.To.Resource == jid.Resource)
+            if (message.To.Resource == jid.Resource)
                 ReceivedMessage(message, MessageOrigin.Live);
         }
         private void OnIq(object sender, IQ iq)
         {
+            if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:ietf:params:xml:ns:xmpp-bind")
+            {
+                jid = iq.FirstChild.GetTagJid("jid"); ;
+            }
             if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping")
             {
                 //var pongId = iq.Id;

@@ -2036,7 +2036,9 @@ namespace MeTLLib.DataTypes
             }
             public MeTLImage forceEvaluation()
             {
-                var sourceString = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(sourceTag)));
+                //fix this guy!  this needs to contact the metlx server
+                //var sourceString = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(sourceTag)));
+                var sourceString = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/proxy/{0}/{1}", GetTag(slideTag), GetTag(identityTag)), UriKind.Relative));
 
                 //var sourceString = string.Format("{3}://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)), server.protocol);
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
@@ -2099,15 +2101,19 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
+                    /*
                     var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
                     var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
                     var path = server.resourceUrl + stemmedRelativePath;
-//                    var path = string.Format("{3}://{0}:{1}{2}", server.host, server.port, stemmedRelativePath,server.protocol);
-                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
+                    */
+                //                    var path = string.Format("{3}://{0}:{1}{2}", server.host, server.port, stemmedRelativePath,server.protocol);
+                var path = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/proxy/{0}/{1}", GetTag(slideTag), GetTag(identityTag)), UriKind.Relative));
+
+                    var bytes = provider.secureGetData(path);//new Uri(path, UriKind.RelativeOrAbsolute));
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);
                     image.BeginInit();
-                    image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                    image.UriSource = path;//new Uri(path, UriKind.RelativeOrAbsolute);
                     image.StreamSource = stream;
                     image.EndInit();
                     image.Freeze();//Going to be handed back to the dispatcher

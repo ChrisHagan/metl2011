@@ -365,7 +365,7 @@ namespace MeTLLib.DataTypes
                 d.Element(GROUP_SET_TAG) != null ? d.Descendants(GROUP_SET_TAG).Select(gs => new GroupSet(
                     gs.Element(GROUP_SET_ID_TAG).Value,
                     gs.Element(GROUP_SET_LOCATION_TAG).Value,
-                    Int32.Parse(gs.Element(GROUP_SET_SIZE_TAG).Value),
+                    0,//Int32.Parse(gs.Element(GROUP_SET_SIZE_TAG).Value),
                     gs.Element(GROUP_SET_GROUPS_TAG).Descendants(GROUP_TAG).Select(g => new Group(
                             g.Element(GROUP_ID_TAG).Value,
                             g.Element(GROUP_LOCATION_TAG).Value,

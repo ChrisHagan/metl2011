@@ -196,6 +196,8 @@ namespace SandRibbon.Components
         }
         protected void showBrowser()
         {
+            
+            //this entire control is presently collapsed, I think - I'll need to fix that.
             loadingImage.Visibility = Visibility.Collapsed;
             hideResetButton();
             logonBrowserContainer.Visibility = Visibility.Visible;
