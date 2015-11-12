@@ -2083,6 +2083,7 @@ namespace SandRibbon.Components
                 }
                 InkCanvas.SetLeft(image, imagePos.X);
                 InkCanvas.SetTop(image, imagePos.Y);
+                //image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
                 image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
                 var currentSlide = Globals.slide;
                 var translatedImage = OffsetNegativeCartesianImageTranslate(image);
@@ -2585,7 +2586,7 @@ namespace SandRibbon.Components
                 RemoveTextBoxWithMatchingId(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id, box.tag().timestamp));
         }
-
+        /*
         public void sendImageWithoutHistory(MeTLImage image, Privacy thisPrivacy)
         {
             sendImageWithoutHistory(image, thisPrivacy, Globals.slide);
@@ -2600,7 +2601,7 @@ namespace SandRibbon.Components
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
-
+        */
         private void box_PreviewTextInput(object sender, KeyEventArgs e)
         {
             _originalText = ((MeTLTextBox)sender).Text;

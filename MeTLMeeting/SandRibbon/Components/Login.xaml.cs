@@ -146,7 +146,7 @@ namespace SandRibbon.Components
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             //var configs = App.availableServers().Select(s => new ServerDisplay(s));
             servers.ItemsSource = serverConfigs;
-            serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost",new Uri("http://localhost:8080/static/images/puppet.jpg"),new Uri("http://localhost:8080/authenticationState"))));
+            serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new Uri("http://localhost:8080/authenticationState"))));
             App.availableServers().ForEach(s => serverConfigs.Add(new ServerDisplay(s)));
             //servers.SelectedIndex = 0;
             Commands.AddWindowEffect.ExecuteAsync(null);
@@ -159,7 +159,7 @@ namespace SandRibbon.Components
                     var success = false;
                     try
                     {
-                        var newUri = new Uri(server.authenticationEndpoint, new Uri("/serverStatus",UriKind.Relative));
+                        var newUri = new Uri(server.authenticationEndpoint, new Uri("/serverStatus", UriKind.Relative));
                         wc.DownloadData(newUri);
                         success = true;
                     }
@@ -196,7 +196,7 @@ namespace SandRibbon.Components
         }
         protected void showBrowser()
         {
-            
+
             //this entire control is presently collapsed, I think - I'll need to fix that.
             loadingImage.Visibility = Visibility.Collapsed;
             hideResetButton();
@@ -374,8 +374,10 @@ namespace SandRibbon.Components
                 var doc = ((sender as WebBrowser).Document as HTMLDocument);
                 checkWhetherWebBrowserAuthenticationSucceeded(doc, (authenticated, credentials) =>
                 {
+                    this.Visibility = Visibility.Collapsed;
                     if (App.controller != null)
-                        App.controller.credentials.cookie = credentials.cookie;
+                        App.controller.credentials.update(credentials);
+                        //App.controller.credentials.cookie = credentials.cookie;
 
                     Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
                     logonBrowserContainer.Visibility = Visibility.Collapsed;
@@ -383,7 +385,23 @@ namespace SandRibbon.Components
                     maintainKeysTimer.Change(maintainKeysTimerTimeout, Timeout.Infinite);
                 }, () =>
                 {
-                    showBrowser();
+                    try
+                    {
+                        if (doc.url == App.getCurrentServer.authenticationEndpoint.ToString())
+                        {
+                            showBrowser();
+                            this.Visibility = Visibility.Visible;
+                        } else
+                        {
+                            maintainKeysTimer.Change(100, Timeout.Infinite);
+                        }
+                    }
+                    catch
+                    {
+                        maintainKeysTimer.Change(100, Timeout.Infinite);
+
+                    }
+
                 });
             });
 
@@ -471,12 +489,19 @@ namespace SandRibbon.Components
                         var username = usernameNode.Value.ToString();
                         var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
                         var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
+                        var xmppPassword = "";
+                        try {
+                            xmppPassword = getElementsByTag(authData, "xmppPassword").First().Value.ToString();
+                        } catch
+                        {
+                            Console.WriteLine("couldn't fetch xmpp credentials from authenticationState page");
+                        }
                         var emailAddress = "";
                         if (emailAddressNode != null)
                         {
                             emailAddress = emailAddressNode.Attribute("name").Value.ToString();
                         }
-                        var credentials = new Credentials(username, "", authGroups, emailAddress);
+                        var credentials = new Credentials(username, xmppPassword, authGroups, emailAddress);
                         credentials.cookie = Application.GetCookie(App.getCurrentServer.authenticationEndpoint);
                         if (authenticated)
                         {
@@ -510,8 +535,8 @@ namespace SandRibbon.Components
                 var options = App.controller.client.UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
-            //DestroyWebBrowser(null);
-            this.Visibility = Visibility.Collapsed;
+                //DestroyWebBrowser(null);
+                this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);

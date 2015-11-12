@@ -18,6 +18,7 @@ using System.Diagnostics;
 using MeTLLib.Utilities;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using System.Web;
 
 namespace MeTLLib.DataTypes
 {
@@ -1820,9 +1821,8 @@ namespace MeTLLib.DataTypes
                 string url = HasTag(URL) ? GetTag(URL) : "none";
                 if (url.ToLower() != "none")
                 {
-                    url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
-
-     //               url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
+                    url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(GetTag(URL),UriKind.Relative)).ToString();
+                    //url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/quizProxy/{0}/{1}",GetTag(""),GetTag(ID)), UriKind.Relative)).ToString();
                 }
                 return url;
             }
@@ -2036,11 +2036,7 @@ namespace MeTLLib.DataTypes
             }
             public MeTLImage forceEvaluation()
             {
-                //fix this guy!  this needs to contact the metlx server
-                //var sourceString = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(sourceTag)));
-                var sourceString = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/proxy/{0}/{1}", GetTag(slideTag), GetTag(identityTag)), UriKind.Relative));
-
-                //var sourceString = string.Format("{3}://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)), server.protocol);
+                var sourceString = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{1}", GetTag(slideTag), HttpUtility.UrlEncode(GetTag(identityTag))), UriKind.Relative));
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
                 MeTLImage image = new MeTLImage
                     {
@@ -2101,19 +2097,13 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
-                    /*
-                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
-                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                    var path = server.resourceUrl + stemmedRelativePath;
-                    */
-                //                    var path = string.Format("{3}://{0}:{1}{2}", server.host, server.port, stemmedRelativePath,server.protocol);
-                var path = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/proxy/{0}/{1}", GetTag(slideTag), GetTag(identityTag)), UriKind.Relative));
+                  var path = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{1}", GetTag(slideTag), HttpUtility.UrlEncode(GetTag(identityTag))), UriKind.Relative));
 
-                    var bytes = provider.secureGetData(path);//new Uri(path, UriKind.RelativeOrAbsolute));
+                    var bytes = provider.secureGetData(path);
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);
                     image.BeginInit();
-                    image.UriSource = path;//new Uri(path, UriKind.RelativeOrAbsolute);
+                    image.UriSource = path;
                     image.StreamSource = stream;
                     image.EndInit();
                     image.Freeze();//Going to be handed back to the dispatcher

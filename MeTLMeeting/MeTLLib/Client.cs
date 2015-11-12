@@ -12,6 +12,7 @@ using System.Diagnostics;
 using agsXMPP.Xml.Dom;
 using System.Net;
 using System.Xml.Linq;
+using System.Web;
 
 namespace MeTLLib
 {
@@ -369,7 +370,7 @@ namespace MeTLLib
                 {
                     try
                     {
-                        var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
+                        var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
                         a(GaugeStatus.InProgress,33);
                         wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                         a(GaugeStatus.InProgress, 66);
@@ -438,14 +439,17 @@ namespace MeTLLib
             {
                 try
                 {
-                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
+                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
 
                     MeTLImage newImage = lii.image;
+                    var previousTag = newImage.tag();
+                    previousTag.id = newPath;
+                    lii.image.tag(previousTag);
+
                     newImage.Dispatcher.adopt(() =>
                     {
                         newImage.tag(lii.image.tag());
-                        newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, lii.image.tag().timestamp));
+                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newPath/*lii.image.tag().id*/, newImage, lii.image.tag().timestamp));
                     });
                 }
                 catch (Exception e)
@@ -461,7 +465,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.overwrite);
+                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.file);
                 wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, lfi.identity, lfi.timestamp, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);
@@ -469,10 +473,9 @@ namespace MeTLLib
         public Uri UploadResource(Uri file, string muc)
         {
             System.Uri returnValue = new System.Uri(server.resourceUrl);
-            //System.Uri returnValue = server.uri;
             Action work = delegate
             {
-                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
+                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString));
             };
             tryIfConnected(work);
             return returnValue;
@@ -727,16 +730,19 @@ namespace MeTLLib
         #region noAuth
         public Uri NoAuthUploadResource(Uri file, int Room)
         {
-            return new System.Uri(resourceUploader.uploadResource(Room.ToString(), file.ToString(), false));
+            return resourceUri(resourceUploader.uploadResource(Room.ToString(), file.ToString(), file.ToString()));
         }
         public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
         {
-            var resultantPathString = resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload);
-            return new System.Uri(resultantPathString, UriKind.Absolute);
+            return resourceUri(resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload));
+        }
+        protected Uri resourceUri(string identity)
+        {
+            return new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{0}", HttpUtility.UrlEncode(identity)), UriKind.Relative));
         }
         public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
         {
-            return new System.Uri(resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false));
+            return resourceUri(resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false));
         }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults)
         {

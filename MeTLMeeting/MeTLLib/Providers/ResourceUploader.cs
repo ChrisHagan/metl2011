@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using System.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers;
 using System.Diagnostics;
@@ -31,10 +32,11 @@ namespace MeTLLib.Providers.Connection
     public interface IResourceUploader
     {
         string uploadResource(string path, string file);
-        string uploadResource(string path, string file, bool overwrite);
+        //string uploadResource(string path, string file, bool overwrite);
         string uploadResourceToPath(byte[] data, string file, string name);
         string uploadResourceToPath(byte[] data, string file, string name, bool overwrite);
         string uploadResourceToPath(string localFile, string remotePath, string name);
+        string uploadResource(string jid, string preferredFilename, string file);
         string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite);
         string getStemmedPathForResource(string path, string name);
     }
@@ -50,18 +52,23 @@ namespace MeTLLib.Providers.Connection
         private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{0}/{1}", metlServerAddress.resourceUrl, metlServerAddress.uploadPath); } }
         public string uploadResource(string path, string file)
         {
-            return uploadResource(path, file, false);
+            return uploadResource(new Uri(path), file, false);
         }
-        public string uploadResource(string path, string file, bool overwrite)
+        public string uploadResource(string jid, string preferredFilename,string file)
         {
-            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path", "Argument cannot be null");
+            var fullPath = new Uri(new Uri(metlServerAddress.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/upload?filename={0}&jid={1}", "imageUpload",jid), UriKind.Relative));
+            return uploadResource(fullPath, file,false);
+        }
+        protected string uploadResource(Uri path, string file, bool overwrite)
+        {
+            //if (string.IsNullOrEmpty(path) throw new ArgumentNullException("path", "Argument cannot be null");
             if (string.IsNullOrEmpty(file)) throw new ArgumentNullException("file", "Argument cannot be null");
             try
             {
-                var fullPath = string.Format("{0}?path=Resource/{1}/{2}&overwrite={3}&filename={4}", RESOURCE_SERVER_UPLOAD, INodeFix.Stem(path), path, overwrite, Uri.EscapeUriString(Path.GetFileName(file)));
-                var res = _httpResourceProvider.securePutFile(new System.Uri(fullPath), file);
-                var url = XElement.Parse(res).Attribute("url").Value;
-                return "https://" + url.Split(new[] { "://" }, System.StringSplitOptions.None)[1];
+                var fullPath = path;
+                var res = _httpResourceProvider.securePutData(fullPath, File.ReadAllBytes(file));//  securePutFile(fullPath, file);
+                return XElement.Parse(res).Value;
+                //return "https://" + url.Split(new[] { "://" }, System.StringSplitOptions.None)[1];
             }
             catch (WebException e)
             {
