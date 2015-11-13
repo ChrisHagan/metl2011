@@ -285,7 +285,7 @@ namespace MeTLLib.DataTypes
             if (obj == null || !(obj is ConversationDetails)) return false;
             var foreignConversationDetails = ((ConversationDetails)obj);
             return ((foreignConversationDetails.Author == Author)
-                && (foreignConversationDetails.Created == Created)
+                //&& (foreignConversationDetails.Created == Created)
                 && (foreignConversationDetails.IsValid == IsValid)
                 && (foreignConversationDetails.Jid == Jid)
                 && (foreignConversationDetails.LastAccessed.ToString() == LastAccessed.ToString())

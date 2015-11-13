@@ -67,7 +67,7 @@ namespace MeTLLib.Providers
             string room
         ) where T : PreParser
         {
-            this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{1}{0}", author, room));
+            this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{0}/{1}", author, room));
         }
     }
     public class CachedHistoryProvider : BaseHistoryProvider
@@ -180,56 +180,16 @@ namespace MeTLLib.Providers
             if (retrievalBeginning != null) retrievalBeginning();
             accumulatingParser.unOrderedMessages.Clear();
             var worker = new BackgroundWorker();
+            var roomJid = room.Contains("/") ? room.Split('/').Reverse().Aggregate("", (acc, item) => acc + item) : room;
             worker.DoWork += (_sender, _args) =>
                 {
                     auditor.wrapAction((g =>
                     {
                         var directoryUri = "http://localhost:8080/fullClientHistory?source=" + room;
                         var xmlString = resourceProvider.secureGetString(new Uri(directoryUri));
-                        //var xml = XDocument.Parse(xmlString);
                         using (var stream = GenerateStreamFromString(xmlString)) {
                             parseHistoryItem(stream, accumulatingParser);
                         }
-                        /*
-                        var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);
-                        //var directoryUri = string.Format("{3}://{0}:1749/{1}/{2}/", serverAddress.host, INodeFix.Stem(room), room, serverAddress.protocol);
-                        var directoryExists = resourceProvider.exists(new Uri(directoryUri));
-                        if (!directoryExists)
-                            return;
-                        g(GaugeStatus.InProgress, 10);
-                        try
-                        {
-                            var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
-                            g(GaugeStatus.InProgress, 20);
-                            if (zipData.Count() == 0)
-                            {
-                                return;
-                            }
-                            var zip = ZipFile.Read(zipData);
-                            g(GaugeStatus.InProgress, 30);
-                            var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
-                            var inc = 70 / days.Count();
-                            var currentVal = 30; 
-                            for (int i = 0; i < days.Count(); i++)
-                            {
-                                using (var stream = new MemoryStream())
-                                {
-                                    currentVal += inc / 2;
-                                    g(GaugeStatus.InProgress, currentVal);
-                                    days[i].Extract(stream);
-                                    currentVal += inc / 2;
-                                    g(GaugeStatus.InProgress, currentVal);
-                                    parseHistoryItem(stream, accumulatingParser);
-                                }
-                                if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
-                            }
-                        }
-                        catch (WebException e)
-                        {
-                            Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
-                            //Nothing to do if it's a 404.  There is no history to obtain.
-                        }
-                        */
                     }), "retrieveWorker: " + room.ToString(), "historyProvider");
                 };
                 if (retrievalComplete != null)
@@ -239,11 +199,6 @@ namespace MeTLLib.Providers
                         {
 
                             accumulatingParser.ReceiveAndSortMessages();
-                            /*sortedMessages = SortOnTimestamp(unSortedMessages);
-                            foreach(Node message in sortedMessages)
-                            {
-                                accumulatingParser.ReceivedMessage(message, MessageOrigin.History);
-                            }*/
                             retrievalComplete((T)accumulatingParser);
                         }
                         catch (Exception ex)
@@ -270,8 +225,6 @@ namespace MeTLLib.Providers
             parser.OnStreamElement += ((_sender, node) =>
                                            {
                                                wire.unOrderedMessages.Add(wire.ContructElement(node));
-                                               //unSortedMessages.Add(node);
-                                               //wire.ReceivedMessage(node, MessageOrigin.History);
                                            });
 
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);

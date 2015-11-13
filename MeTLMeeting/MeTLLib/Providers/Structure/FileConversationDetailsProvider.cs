@@ -125,14 +125,17 @@ namespace MeTLLib.Providers.Structure
         }
         private bool DetailsAreAccurate(ConversationDetails details)
         {
-            return details.ValueEquals(DetailsOf(details.Jid));
+            var newDetails = DetailsOf(details.Jid);
+            return details.ValueEquals(newDetails);
         }
         public ConversationDetails Update(ConversationDetails details)
         {
-            var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
-            securePutData(new System.Uri(url), details.GetBytes());
+            //var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
+            var url = new System.Uri(new Uri(server.conversationsUrl, UriKind.Absolute), new Uri(String.Format("/updateConversation/{0}", details.Jid), UriKind.Relative));
+            var response = securePutData(url, details.GetBytes());
+            var responseDetails = ConversationDetails.ReadXml(XElement.Parse(response));
             wire.SendDirtyConversationDetails(details.Jid);
-            if (!DetailsAreAccurate(details))
+            if (!DetailsAreAccurate(responseDetails))
                 Trace.TraceInformation("CRASH: ConversationDetails not successfully uploaded");
             return details;
         }
