@@ -1293,7 +1293,7 @@ namespace MeTLLib.DataTypes
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? (Privacy)GetTagEnum(privacyTag, typeof(Privacy)) : Privacy.Public;
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     //var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
@@ -1627,7 +1627,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
 //                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
@@ -1821,7 +1821,7 @@ namespace MeTLLib.DataTypes
                 string url = HasTag(URL) ? GetTag(URL) : "none";
                 if (url.ToLower() != "none")
                 {
-                    url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(GetTag(URL),UriKind.Relative)).ToString();
+                    url = new Uri(server.host, new Uri(GetTag(URL),UriKind.Relative)).ToString();
                     //url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/quizProxy/{0}/{1}",GetTag(""),GetTag(ID)), UriKind.Relative)).ToString();
                 }
                 return url;
@@ -2097,7 +2097,7 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
-                  var path = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{1}", GetTag(slideTag), HttpUtility.UrlEncode(GetTag(identityTag))), UriKind.Relative));
+                  var path = server.getResource(GetTag(identityTag));
 
                     var bytes = provider.secureGetData(path);
                     if (bytes.Length == 0) return null;

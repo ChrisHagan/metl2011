@@ -472,7 +472,7 @@ namespace MeTLLib
         }
         public Uri UploadResource(Uri file, string muc)
         {
-            System.Uri returnValue = new System.Uri(server.resourceUrl);
+            System.Uri returnValue = server.host;
             Action work = delegate
             {
                 returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString));
@@ -483,7 +483,7 @@ namespace MeTLLib
 
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
-            System.Uri returnValue = new System.Uri(server.resourceUrl);// server.uri;
+            System.Uri returnValue = server.host;
             Action work = delegate
             {
                 returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
@@ -738,7 +738,7 @@ namespace MeTLLib
         }
         protected Uri resourceUri(string identity)
         {
-            return new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{0}", HttpUtility.UrlEncode(identity)), UriKind.Relative));
+            return server.getResource(identity);//
         }
         public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
         {

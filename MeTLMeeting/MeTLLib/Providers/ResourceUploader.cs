@@ -38,7 +38,7 @@ namespace MeTLLib.Providers.Connection
         string uploadResourceToPath(string localFile, string remotePath, string name);
         string uploadResource(string jid, string preferredFilename, string file);
         string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite);
-        string getStemmedPathForResource(string path, string name);
+        //string getStemmedPathForResource(string path, string name);
     }
     public class ProductionResourceUploader : IResourceUploader
     {
@@ -49,14 +49,14 @@ namespace MeTLLib.Providers.Connection
             metlServerAddress = _metlServerAddress;
             _httpResourceProvider = provider;
         }
-        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{0}/{1}", metlServerAddress.resourceUrl, metlServerAddress.uploadPath); } }
+        //private string RESOURCE_SERVER_UPLOAD { get { return string.Format("{0}/{1}", metlServerAddress.host, metlServerAddress.uploadPath); } }
         public string uploadResource(string path, string file)
         {
             return uploadResource(new Uri(path), file, false);
         }
         public string uploadResource(string jid, string preferredFilename,string file)
         {
-            var fullPath = new Uri(new Uri(metlServerAddress.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/upload?filename={0}&jid={1}", "imageUpload",jid), UriKind.Relative));
+            var fullPath = metlServerAddress.uploadResource(preferredFilename, jid);
             return uploadResource(fullPath, file,false);
         }
         protected string uploadResource(Uri path, string file, bool overwrite)
@@ -82,32 +82,39 @@ namespace MeTLLib.Providers.Connection
         }
         public string uploadResourceToPath(byte[] resourceData, string path, string name, bool overwrite)
         {
+            /*
             if (resourceData == null || resourceData.Length == 0) throw new ArgumentNullException("resourceData", "Argument cannot be null"); 
             if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path", "Argument cannot be null");
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Argument cannot be null");
             var url = string.Format("{0}?path={1}/{2}&overwrite={3}&filename={4}", RESOURCE_SERVER_UPLOAD, INodeFix.Stem(path),path, overwrite.ToString().ToLower(), name);
             var res = _httpResourceProvider.securePutData(new System.Uri(url), resourceData);
             return XElement.Parse(res).Attribute("url").Value;
+            */
+            return "";
         }
+        /*
         public string getStemmedPathForResource(string path, string name)
         {
             return string.Format("{0}/{1}/{2}/{3}", metlServerAddress.resourceUrl, metlServerAddress.resourceDirectory, INodeFix.Stem(path), path, name);
 
 //            return string.Format("{5}://{0}:{1}/{2}/{3}/{4}", metlServerAddress.host, metlServerAddress.port, INodeFix.Stem(path), path, name, metlServerAddress.protocol);
         }
-
+        */
         public string uploadResourceToPath(string localFile, string remotePath, string name)
         {
             return uploadResourceToPath(localFile, remotePath, name, true);
         }
         public string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite)
         {
+            return "";
+            /*
             if (string.IsNullOrEmpty(localFile)) throw new ArgumentNullException("localFile", "Argument cannot be null");
             if (string.IsNullOrEmpty(remotePath)) throw new ArgumentNullException("remotePath", "Argument cannot be null");
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Argument cannot be null");
             var url = string.Format("{0}?path=Resource/{1}/{2}&overwrite={3}&filename={4}", RESOURCE_SERVER_UPLOAD, INodeFix.Stem(remotePath),remotePath, overwrite.ToString().ToLower(), name);
             var res = _httpResourceProvider.securePutFile(new System.Uri(url), localFile);
             return XElement.Parse(res).Attribute("url").Value;
+            */
         }
         /*
          * \Resources

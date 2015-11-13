@@ -23,14 +23,17 @@ namespace MeTLLib.Providers.Connection
         public MetlConfiguration metlServerAddress { get; protected set; }
         public ITimerFactory timerFactory { get; protected set; }
         public IReceiveEvents receiveEvents { get; protected set; }
+        public IWebClient client { get; protected set; }
         public ProductionProviderMonitor(
             MetlConfiguration _metlServerAddress,
             ITimerFactory _timerFactory,
-            IReceiveEvents _receiveEvents
+            IReceiveEvents _receiveEvents,
+            IWebClient _webCleint
             )
         {
             metlServerAddress = _metlServerAddress;
             timerFactory = _timerFactory;
+            client = _webCleint;
         }
         public void HealthCheck (Action healthyBehaviour){
             HealthCheck(healthyBehaviour,0);
@@ -45,10 +48,8 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceError("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
                     return;
                 }
-                var uri = new System.Uri(metlServerAddress.resourceUrl);
-                var ping = new System.Net.NetworkInformation.Ping();
-                var reply = ping.Send(uri.Host,2000);
-                if (reply != null && reply.Status == IPStatus.Success)
+                var uri = metlServerAddress.serverStatus;
+                if (client.downloadString(uri).Trim().ToLower() == "ok")
                 {
                     healthyBehaviour();
                 }

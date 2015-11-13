@@ -17,8 +17,8 @@ namespace MeTLLib.Providers
         public Crypto(MetlConfiguration _metlServer)
         {
             metlServer = _metlServer;
-            Key = encoding.GetBytes(metlServer.cryptoKey);
-            encoding.GetBytes(metlServer.cryptoIV);
+            Key = encoding.GetBytes("01234567");
+            encoding.GetBytes("01234567");
         }
 
         public string decrypt(string input)

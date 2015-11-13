@@ -16,7 +16,7 @@ namespace MeTLLib
         {
             return auditor.wrapFunction(((auditAction) =>
             {
-                var webCreds = new NetworkCredential(config.resourceUsername, config.resourcePassword);
+                var webCreds = new NetworkCredential(creds.name, creds.password);
                 auditAction(GaugeStatus.InProgress,7);
                 //var jabberCreds = new Credentials(config.xmppUsername, config.xmppPassword,new List<AuthorizedGroup>(),"");
                 var wcf = new WebClientFactory(webCreds,auditor,creds);

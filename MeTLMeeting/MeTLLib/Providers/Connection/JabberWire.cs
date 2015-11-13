@@ -749,8 +749,7 @@ namespace MeTLLib.Providers.Connection
             try
             {
                 return auditor.wrapFunction((a) => {
-//                    return conn.Authenticated && webClientFactory.client().downloadString(new System.Uri( metlServerAddress.resourceUrl + "serverStatus")).Trim().ToLower() == "ok";
-                    return conn.Authenticated && webClientFactory.client().downloadString(new System.Uri(new System.Uri(metlServerAddress.authenticationUrl,UriKind.Absolute),new System.Uri("/serverStatus",UriKind.Relative))).Trim().ToLower() == "ok";
+                    return conn.Authenticated && webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok";
                 }, "healthCheck", "xmpp");
             }
             catch (Exception e)

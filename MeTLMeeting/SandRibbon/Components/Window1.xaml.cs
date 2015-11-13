@@ -656,16 +656,21 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
-            EnsureConversationTabSelected();
+            try {
+                EnsureConversationTabSelected();
 
-            if (ribbon.SelectedTab != null)
-                ribbon.SelectedTab = ribbon.Tabs[0];
-            var thisDetails = App.controller.client.DetailsOf(title);
-            App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
-            applyPermissions(thisDetails.Permissions);
-            Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
-            Commands.RequerySuggested(Commands.SetConversationPermissions);
-            Commands.SetLayer.ExecuteAsync("Sketch");
+                if (ribbon.SelectedTab != null)
+                    ribbon.SelectedTab = ribbon.Tabs[0];
+                var thisDetails = App.controller.client.DetailsOf(title);
+                App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
+                applyPermissions(thisDetails.Permissions);
+                Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
+                Commands.RequerySuggested(Commands.SetConversationPermissions);
+                Commands.SetLayer.ExecuteAsync("Sketch");
+            } catch
+            {
+                Console.WriteLine("couldn't join conversation: " + title);
+            }
         }
         private string messageFor(ConversationDetails details)
         {

@@ -58,7 +58,7 @@ namespace MeTLLib.Providers.Structure
             }
             try
             {
-                var url = new System.Uri(new Uri(server.conversationsUrl, UriKind.Absolute), new Uri(String.Format("/details/{0}", conversationJid),UriKind.Relative));
+                var url = server.conversationDetails(conversationJid);
                 Console.WriteLine("Details of: {0}", url);
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
@@ -94,7 +94,7 @@ namespace MeTLLib.Providers.Structure
             }
             try
             {
-                var url = new System.Uri(new Uri(server.conversationsUrl, UriKind.Absolute), new Uri(String.Format("/addSlideAtIndex/{0}/{1}", jid,currentSlideId), UriKind.Relative));
+                var url = server.addSlideAtIndex(jid,currentSlideId);
                 Console.WriteLine("Details of: {0}", url);
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
                 wire.SendDirtyConversationDetails(jid);
@@ -131,7 +131,7 @@ namespace MeTLLib.Providers.Structure
         public ConversationDetails Update(ConversationDetails details)
         {
             //var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
-            var url = new System.Uri(new Uri(server.conversationsUrl, UriKind.Absolute), new Uri(String.Format("/updateConversation/{0}", details.Jid), UriKind.Relative));
+            var url = server.updateConversation(details.Jid);
             var response = securePutData(url, details.GetBytes());
             var responseDetails = ConversationDetails.ReadXml(XElement.Parse(response));
             wire.SendDirtyConversationDetails(details.Jid);
@@ -165,7 +165,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", server.conversationsUrl, query)), UriKind.RelativeOrAbsolute);
+                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}/search?query={1}", server.host, HttpUtility.UrlEncode(query))), UriKind.RelativeOrAbsolute);
                 Console.WriteLine("ConversationsFor: {0}", uri);
                 var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
@@ -187,9 +187,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var createConvUri = new Uri(String.Format("/createConversation/{0}", HttpUtility.UrlEncode(details.Title.ToString())), UriKind.Relative);
-                var convUri = new Uri(server.conversationsUrl, UriKind.Absolute);
-                var uri = new Uri(convUri, createConvUri);
+                var uri = server.createConversation(details.Title.ToString());
                 Console.WriteLine("createConvUri: {0}", uri);
                 var data = insecureGetString(uri);
                 return SearchConversationDetails.ReadXML(XElement.Parse(data));
@@ -204,9 +202,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var duplicateSlideUri = new Uri(String.Format("/duplicateSlide/{0}/{1}", slide.id.ToString(), conversation.Jid.ToString()), UriKind.Relative);
-                var convUri = new Uri(server.conversationsUrl, UriKind.Absolute);
-                var uri = new Uri(convUri,duplicateSlideUri);
+                var uri = server.duplicateSlide(slide.id, conversation.Jid.ToString());
                 Console.WriteLine("DuplicateSlide: {0}", uri);
                 var data = insecureGetString(uri);
                 return SearchConversationDetails.ReadXML(XElement.Parse(data));
@@ -221,9 +217,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var duplicateSlideUri = new Uri(String.Format("/duplicateConversation/{0}", conversation.Jid.ToString()), UriKind.Relative);
-                var convUri = new Uri(server.conversationsUrl, UriKind.Absolute);
-                var uri = new Uri(convUri, duplicateSlideUri);
+                var uri = server.duplicateConversation(conversation.Jid.ToString());
                 Console.WriteLine("DuplicateConversation: {0}", uri);
                 var data = insecureGetString(uri);
                 return SearchConversationDetails.ReadXML(XElement.Parse(data));

@@ -59,7 +59,7 @@ namespace SandRibbon.Components
         {
             imageUrl = server.imageUrl;
             name = server.name;
-            authenticationEndpoint = server.authenticationEndpoint;
+            host = server.host;
             config = server;
         }
         protected bool _networkReady = false;
@@ -82,52 +82,10 @@ namespace SandRibbon.Components
 
         public Uri imageUrl { get; protected set; }
         public string name { get; protected set; }
-        public Uri authenticationEndpoint { get; protected set; }
+        public Uri host { get; protected set; }
+        public Uri serverStatus { get { return config.serverStatus; } }
         public MeTLConfigurationProxy config { get; protected set; }
     }
-    /*
-        class ServerDisplay : DependencyObject
-        {
-            public ServerDisplay(MeTLConfigurationProxy server)
-            {
-                imageUrl = server.imageUrl;
-                name = server.name;
-                authenticationEndpoint = server.authenticationEndpoint;
-                config = server;
-            }
-            public bool NetworkReady
-            {
-                get { return (bool)GetValue(NetworkReadyProperty); }
-                set
-                {
-                    SetValue(ShouldBlockInputProperty, !value);
-                    SetValue(NetworkReadyProperty, value);
-                }
-            }
-
-            // Using a DependencyProperty as the backing store for NetworkReady.  This enables animation, styling, binding, etc...
-            public static readonly DependencyProperty NetworkReadyProperty =
-                DependencyProperty.Register("NetworkReady", typeof(bool), typeof(ServerDisplay), new PropertyMetadata(false));
-            public bool ShouldBlockInput
-            {
-                get { return (bool)GetValue(ShouldBlockInputProperty); }
-                set
-                {
-                    SetValue(ShouldBlockInputProperty, value);
-                    SetValue(NetworkReadyProperty, !value);
-                }
-            }
-
-            // Using a DependencyProperty as the backing store for NetworkReady.  This enables animation, styling, binding, etc...
-            public static readonly DependencyProperty ShouldBlockInputProperty =
-                DependencyProperty.Register("ShouldBlockInput", typeof(bool), typeof(ServerDisplay), new PropertyMetadata(true));
-
-            public Uri imageUrl { get; protected set; }
-            public string name { get; protected set; }
-            public Uri authenticationEndpoint { get; protected set; }
-            public MeTLConfigurationProxy config { get; protected set; }
-        }
-        */
     public partial class Login : UserControl
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
@@ -144,22 +102,19 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
-            //var configs = App.availableServers().Select(s => new ServerDisplay(s));
             servers.ItemsSource = serverConfigs;
             serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new Uri("http://localhost:8080/authenticationState"))));
             App.availableServers().ForEach(s => serverConfigs.Add(new ServerDisplay(s)));
-            //servers.SelectedIndex = 0;
             Commands.AddWindowEffect.ExecuteAsync(null);
             pollServers = new System.Threading.Timer((s) =>
             {
                 var wc = new WebClient();
-                //var replacements = new List<ServerDisplay>();
                 foreach (ServerDisplay server in serverConfigs)
                 {
                     var success = false;
                     try
                     {
-                        var newUri = new Uri(server.authenticationEndpoint, new Uri("/serverStatus", UriKind.Relative));
+                        var newUri = server.serverStatus;
                         wc.DownloadData(newUri);
                         success = true;
                     }
@@ -278,7 +233,7 @@ namespace SandRibbon.Components
         protected LoadCompletedEventHandler keyMaintainAction;
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = App.getCurrentServer.authenticationEndpoint;// App.controller.config.authenticationUrl;
+            var loginUri = new Uri(App.getCurrentServer.host, new Uri("/authenticationState",UriKind.Relative));// App.controller.config.authenticationUrl;
             DestroyWebBrowser(null);
             DeleteCookieForUrl(loginUri);
             logonBrowser = new WebBrowser();
@@ -387,7 +342,7 @@ namespace SandRibbon.Components
                 {
                     try
                     {
-                        if (doc.url == App.getCurrentServer.authenticationEndpoint.ToString())
+                        if (doc.url == new Uri(App.getCurrentServer.host,new Uri("/authenticationState",UriKind.Relative)).ToString())
                         {
                             showBrowser();
                             this.Visibility = Visibility.Visible;
@@ -450,7 +405,7 @@ namespace SandRibbon.Components
             {
                 var uri = new Uri(url);
                 browseHistory.Add(uri);
-                var authenticationUri = App.getCurrentServer.authenticationEndpoint;
+                var authenticationUri = new Uri(App.getCurrentServer.host,new Uri("authenticationState",UriKind.Relative));
                 return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
             }
             catch (Exception e)
@@ -502,7 +457,7 @@ namespace SandRibbon.Components
                             emailAddress = emailAddressNode.Attribute("name").Value.ToString();
                         }
                         var credentials = new Credentials(username, xmppPassword, authGroups, emailAddress);
-                        credentials.cookie = Application.GetCookie(App.getCurrentServer.authenticationEndpoint);
+                        credentials.cookie = Application.GetCookie(App.getCurrentServer.host);
                         if (authenticated)
                         {
                             onSuccess(true, credentials);
