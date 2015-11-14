@@ -62,6 +62,10 @@
         {
             return new Uri(host, new Uri(String.Format("/resourceProxy/{0}", HttpUtility.UrlEncode(identity)), UriKind.Relative));
         }
+        public Uri getImage(string jid, string url)
+        {
+            return new Uri(host, new Uri(String.Format("/proxyImageUrl/{0}?source={1}", jid, HttpUtility.UrlEncode(url)),UriKind.Relative));
+        }
         public Uri authenticationUrl
         {
             get {

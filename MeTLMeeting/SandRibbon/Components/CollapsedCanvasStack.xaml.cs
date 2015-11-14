@@ -1682,7 +1682,7 @@ namespace SandRibbon.Components
         private void sendImage(MeTLImage newImage)
         {
             newImage.UpdateLayout();
-            Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().timestamp));
+            Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().resourceIdentity, newImage.tag().timestamp));
         }
         private void dirtyImage(MeTLImage imageToDirty)
         {
@@ -2084,7 +2084,7 @@ namespace SandRibbon.Components
                 InkCanvas.SetLeft(image, imagePos.X);
                 InkCanvas.SetTop(image, imagePos.Y);
                 //image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
-                image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
+                image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L,""));
                 var currentSlide = Globals.slide;
                 var translatedImage = OffsetNegativeCartesianImageTranslate(image);
 
@@ -2887,12 +2887,12 @@ namespace SandRibbon.Components
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new MeTLImage
                     {
-                        Source = new BitmapImage(uri),
+                        Source = new BitmapImage(App.controller.config.getImage(currentPrivacy == Privacy.Public ? Globals.slide.ToString() : Globals.slide.ToString() + Globals.me,uri)),
                         Width = imageSource.Width,
                         Height = imageSource.Height,
                         Stretch = Stretch.Fill
                     };
-                    image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, -1)); // ZIndex was -1, timestamp is -1L
+                    image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, uri.ToString(),-1)); // ZIndex was -1, timestamp is -1L
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
                     images.Add(image);
@@ -2903,7 +2903,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<MeTLImage> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image, image.tag().timestamp));
+                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image, image.tag().resourceIdentity, image.tag().timestamp));
         }
         private void HandleImagePasteUndo(List<MeTLImage> selectedImages)
         {

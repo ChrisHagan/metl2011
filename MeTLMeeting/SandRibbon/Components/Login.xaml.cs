@@ -103,7 +103,7 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             servers.ItemsSource = serverConfigs;
-            serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new Uri("http://localhost:8080/authenticationState"))));
+            serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new Uri("http://localhost:8080"))));
             App.availableServers().ForEach(s => serverConfigs.Add(new ServerDisplay(s)));
             Commands.AddWindowEffect.ExecuteAsync(null);
             pollServers = new System.Threading.Timer((s) =>
@@ -115,8 +115,7 @@ namespace SandRibbon.Components
                     try
                     {
                         var newUri = server.serverStatus;
-                        wc.DownloadData(newUri);
-                        success = true;
+                        success = wc.DownloadString(newUri).Trim().ToLower() == "ok";
                     }
                     catch
                     {
@@ -513,10 +512,6 @@ namespace SandRibbon.Components
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             var serverDisplay = (sender as Button).DataContext as ServerDisplay;
             var server = serverDisplay.config;
-            //var backend = App.metlConfigManager.getConfigFor(server);
-            //var backend = servers.SelectedItem as MetlConfiguration;
-            //var backend = ((KeyValuePair<String, MeTLServerAddress.serverMode>) servers.SelectedItem).Value;
-            //App.SetBackend(backend);
             App.SetBackendProxy(server);
             ResetWebBrowser(null);
         }

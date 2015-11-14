@@ -469,14 +469,16 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedImage : TargettedElement
     {
-        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, MeTLImage Image, long Timestamp)
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, MeTLImage Image, string Source, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
+            source = Source;
             image = Image;
         }
         public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, MeTLStanzas.Image ImageSpecification, string Identity, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
+            source = ImageSpecification.source;
             imageSpecification = ImageSpecification;
         }
 
@@ -504,6 +506,7 @@ namespace MeTLLib.DataTypes
         }
 
         public MeTLImage imageProperty;
+        public string source;
         public MeTLStanzas.Image imageSpecification;
         public MetlConfiguration server;
         private IWebClient downloader;
@@ -537,7 +540,7 @@ namespace MeTLLib.DataTypes
                         identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
                     }
                 }
-                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground,value.tag().timestamp));
+                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground,value.tag().timestamp,source));
                 imageProperty = value;
             }
         }
@@ -2053,11 +2056,11 @@ namespace MeTLLib.DataTypes
                     ThreadPool.UnsafeQueueUserWorkItem(delegate
                     {
                         if (image == null) return;//This might have been GCed if they moved conversations
-                        var newSource = asynchronouslyLoadImageData();
                         image.Dispatcher.Invoke((Action)delegate
                         {
                             try
                             {
+                                var newSource = asynchronouslyLoadImageData();
                                 var oldTag = image.Tag;
                                 if (oldTag.ToString().StartsWith("NOT_LOADED"))
                                     image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
@@ -2097,7 +2100,7 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
-                  var path = server.getResource(GetTag(identityTag));
+                  var path = server.getImage(GetTag(slideTag),GetTag(sourceTag));
 
                     var bytes = provider.secureGetData(path);
                     if (bytes.Length == 0) return null;
@@ -2137,6 +2140,7 @@ namespace MeTLLib.DataTypes
                     SetTag(slideTag, value.slide);
                     SetTag(identityTag, value.identity);
                     SetTag(timestampTag, value.timestamp);
+                    //SetTag(sourceTag, value.source);
                 }
             }
 
@@ -2160,7 +2164,8 @@ namespace MeTLLib.DataTypes
                 else
                     relativePath = uri.ToString();
                 SetTag(tagTag, imageCtrl.Tag.ToString());
-                SetTag(sourceTag, relativePath);
+                //SetTag(sourceTag, relativePath);
+                SetTag(sourceTag, targettedImage.source);
                 var width = imageCtrl.Width;
                 SetTag(widthTag, Double.IsNaN(width) ? imageCtrl.ActualWidth.ToString() : width.ToString());
                 var height = imageCtrl.Height;
@@ -2183,6 +2188,11 @@ namespace MeTLLib.DataTypes
             }
 
             protected static readonly string sourceTag = "source";
+            public string source
+            {
+                get { return GetTag(sourceTag); }
+                set { SetTag(sourceTag, value); }
+            }
             protected static readonly string heightTag = "height";
             protected static readonly string widthTag = "width";
             public string tag

@@ -76,9 +76,9 @@ namespace MeTLLib
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
-        Uri NoAuthUploadResource(Uri file, int Room);
-        Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
-        Uri NoAuthUploadResource(byte[] data, string filename, int Room);
+        string NoAuthUploadResource(Uri file, int Room);
+        string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
+        string NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
         List<SearchConversationDetails> ConversationsFor(String query, int maxResults);
         UserOptions UserOptionsFor(string username);
@@ -145,9 +145,9 @@ namespace MeTLLib
         public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
         public void SneakInto(string room) { }
         public void SneakOutOf(string room) { }
-        public Uri NoAuthUploadResource(Uri file, int Room) { return DisconnectedUri; }
-        public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return DisconnectedUri; }
-        public Uri NoAuthUploadResource(byte[] data, string filename, int Room) { return DisconnectedUri; }
+        public string NoAuthUploadResource(Uri file, int Room) { return ""; }
+        public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return ""; }
+        public string NoAuthUploadResource(byte[] data, string filename, int Room) { return ""; }
         public void SaveUserOptions(string username, UserOptions options) { }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults) { return new List<SearchConversationDetails>(); }
         public UserOptions UserOptionsFor(string username) { return UserOptions.DEFAULT; }
@@ -443,13 +443,13 @@ namespace MeTLLib
 
                     MeTLImage newImage = lii.image;
                     var previousTag = newImage.tag();
-                    previousTag.id = newPath;
+                    previousTag.resourceIdentity = newPath;
                     lii.image.tag(previousTag);
 
                     newImage.Dispatcher.adopt(() =>
                     {
                         newImage.tag(lii.image.tag());
-                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newPath/*lii.image.tag().id*/, newImage, lii.image.tag().timestamp));
+                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, newPath, lii.image.tag().timestamp));
                     });
                 }
                 catch (Exception e)
@@ -728,21 +728,17 @@ namespace MeTLLib
         }
         #endregion
         #region noAuth
-        public Uri NoAuthUploadResource(Uri file, int Room)
+        public string NoAuthUploadResource(Uri file, int Room)
         {
-            return resourceUri(resourceUploader.uploadResource(Room.ToString(), file.ToString(), file.ToString()));
+            return resourceUploader.uploadResource(Room.ToString(), file.ToString(), file.ToString());
         }
-        public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
+        public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
         {
-            return resourceUri(resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload));
+            return resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload);
         }
-        protected Uri resourceUri(string identity)
+        public string NoAuthUploadResource(byte[] data, string filename, int Room)
         {
-            return server.getResource(identity);//
-        }
-        public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
-        {
-            return resourceUri(resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false));
+            return resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false);
         }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults)
         {
