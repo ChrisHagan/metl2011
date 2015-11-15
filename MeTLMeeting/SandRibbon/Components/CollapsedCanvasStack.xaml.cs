@@ -236,6 +236,7 @@ namespace SandRibbon.Components
             Work.AllowDrop = true;
             Work.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
             Work.Drop += ImagesDrop;
+            Work.MouseMove += mouseMove;
             Loaded += (a, b) =>
             {
                 MouseUp += (c, args) => placeCursor(this, args);
@@ -361,11 +362,20 @@ namespace SandRibbon.Components
             */
         }
 
+        protected Point lastPosition = new Point(0, 0);
         private void mouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.ResetSyncTimer();
+                if (currentMode == InkCanvasEditingMode.None || currentMode == InkCanvasEditingMode.GestureOnly)
+                {
+                    var newPos = e.GetPosition(Work);
+                    var newX = newPos.X - lastPosition.X;
+                    var newY = newPos.Y - lastPosition.Y;
+                    Commands.MoveCanvasByDelta.Execute(new Point(newX,newY));
+                    lastPosition = new Point(newPos.X, newPos.Y);
+                }
             }
         }
 

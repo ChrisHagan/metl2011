@@ -166,6 +166,7 @@
             var xmppDomain = getElementsByTag(cc, "xmppDomain").First().Value;
             var xmppUsername = getElementsByTag(cc, "xmppUsername").First().Value;
             var xmppPassword = getElementsByTag(cc, "xmppPassword").First().Value;
+            var imageUrl = getElementsByTag(cc, "imageUrl").First().Value;
             return new List<MetlConfiguration>
             {
                 new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppDomain,xmppUsername,xmppPassword,server.host)
