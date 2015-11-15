@@ -185,8 +185,8 @@ namespace MeTLLib.Providers
                 {
                     auditor.wrapAction((g =>
                     {
-                        var directoryUri = "http://localhost:8080/fullClientHistory?source=" + room;
-                        var xmlString = resourceProvider.secureGetString(new Uri(directoryUri));
+                        var directoryUri = serverAddress.getRoomHistory(room); 
+                        var xmlString = resourceProvider.secureGetString(directoryUri);
                         using (var stream = GenerateStreamFromString(xmlString)) {
                             parseHistoryItem(stream, accumulatingParser);
                         }

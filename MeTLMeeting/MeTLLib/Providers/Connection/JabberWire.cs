@@ -405,19 +405,30 @@ namespace MeTLLib.Providers.Connection
             if (message.To.Resource == jid.Resource)
                 ReceivedMessage(message, MessageOrigin.Live);
         }
+        protected List<String> unrespondedPings = new List<String>();
         private void OnIq(object sender, IQ iq)
         {
             if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:ietf:params:xml:ns:xmpp-bind")
             {
                 jid = iq.FirstChild.GetTagJid("jid"); ;
             }
-            if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping")
+            if (iq.Type == IqType.result && unrespondedPings.Contains(iq.Id))
             {
-                //var pongId = iq.Id;
-                var pong = new agsXMPP.protocol.component.IQ(IqType.result,iq.To,iq.From);
-                pong.Id = iq.Id;
-//5                    var pong = new agsXMPP.protocol.extensions.ping.PingIq(iq.From, iq.To);
-                conn.Send(pong);
+                unrespondedPings.RemoveAll(s => s == iq.Id);
+                Console.WriteLine("result ping IQ received: " + iq.ToString());
+            }
+            if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping" )
+            {
+                if (iq.Type == IqType.error)
+                {
+                    Console.WriteLine("error ping IQ received: " + iq.ToString());
+                }               
+                else
+                {
+                    var pong = new agsXMPP.protocol.component.IQ(IqType.result, iq.To, iq.From);
+                    pong.Id = iq.Id;
+                    conn.Send(pong);
+                }
             }
         }
         private void HandlerError(object sender, Exception ex)
@@ -681,6 +692,7 @@ namespace MeTLLib.Providers.Connection
         protected virtual void send(Message message)
         {
             conn.Send(message);
+            refreshPingTimer();
         }
         private bool compareString(string a, string b)
         {
@@ -996,6 +1008,22 @@ namespace MeTLLib.Providers.Connection
                 if (fileConversation != location.activeConversation)
                     leaveRoom(fileConversationJid);
             }
+        }
+        protected int pingTimeout = 30 * 1000; // 30 seconds
+        protected Timer pingTimer = null;
+        protected void refreshPingTimer()
+        {
+            if (pingTimer == null)
+            {
+                pingTimer = new Timer((_state) => {
+                    var pingIq = new IQ(IqType.get, jid, new Jid(metlServerAddress.xmppDomain));
+                    pingIq.AddChild(new agsXMPP.protocol.extensions.ping.Ping());
+                    pingIq.GenerateId();
+                    unrespondedPings.Add(pingIq.Id);
+                    conn.Send(pingIq);// new agsXMPP.protocol.extensions.ping.PingIq(new Jid(metlServerAddress.xmppDomain),jid));
+                }, null, Timeout.Infinite, Timeout.Infinite);
+            }
+            pingTimer.Change(pingTimeout, pingTimeout);
         }
         public void SendStanza(string where, Element what)
         {

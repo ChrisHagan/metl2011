@@ -104,6 +104,10 @@
         {
             get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
         }
+        public Uri getRoomHistory(string jid)
+        {
+            return new Uri(host, new Uri("/fullClientHistory?source=" + HttpUtility.UrlEncode(jid), UriKind.Relative));
+        }
         public string muc
         {
             get { return "conference." + xmppDomain; }
