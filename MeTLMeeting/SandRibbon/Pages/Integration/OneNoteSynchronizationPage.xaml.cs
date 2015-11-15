@@ -77,14 +77,13 @@ namespace SandRibbon.Pages.Integration
                     .Select((s, i) => new { s, i })
                     .GroupBy(g => g.i / bucketSize, g => g.s))
                 {
-                    var server = ClientFactory.Connection().server;
-                    var host = server.name;
+                    var server = App.getCurrentBackend;
                     var content = new MultipartFormDataContent();
                     var images = new List<XElement>();
                     foreach (var slide in bucket)
                     {
                         var blockName = string.Format("IMAGE{0}", slide.id);
-                        var url = string.Format(server.thumbnailUrl + "{0}/{1}", host, slide.id);
+                        var url = server.thumbnailUri(slide.id.ToString());
                         var t = await httpClient.GetAsync(url);
                         var data = await t.Content.ReadAsByteArrayAsync();
                         var dataContent = new ByteArrayContent(data);

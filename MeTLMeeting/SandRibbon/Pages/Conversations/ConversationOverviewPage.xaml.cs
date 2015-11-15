@@ -51,7 +51,7 @@ namespace SandRibbon.Pages.Collaboration
             DataContext = conversation = new ReticulatedConversation
             {
                 PresentationPath = presentationPath,
-                RelatedMaterial = new List<string>{}.Select(jid => ClientFactory.Connection().DetailsOf(jid)).ToList()
+                RelatedMaterial = new List<string>{}.Select(jid => App.controller.client.DetailsOf(jid)).ToList()
 
             };
             conversation.CalculateLocations();            

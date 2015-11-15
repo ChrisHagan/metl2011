@@ -1,4 +1,5 @@
-﻿using Awesomium.Windows.Controls;
+﻿using Awesomium.Core;
+using Awesomium.Windows.Controls;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -10,6 +11,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -21,14 +23,50 @@ using System.Xml.Linq;
 namespace SandRibbon.Pages.Login
 {
 
+    public class CookieTrackingMeTLResourceInterceptor : IResourceInterceptor
+    {
+        protected List<Uri> uriWatchList = new List<Uri>();
+        protected Action<Uri, String> onCookie = (u, c) => { };
+        public CookieTrackingMeTLResourceInterceptor(List<Uri> cookiesToWatch, Action<Uri, String> onCookieDetect)
+        {
+            onCookie = onCookieDetect;
+            uriWatchList = cookiesToWatch;
+        }
+        bool IResourceInterceptor.OnFilterNavigation(NavigationRequest request)
+        {
+            return false;
+            //throw new NotImplementedException();
+        }
+
+        ResourceResponse IResourceInterceptor.OnRequest(ResourceRequest request)
+        {
+            if (uriWatchList.Exists(u => u.Host == request.Url.Host))
+            {
+                var wq = request.ToWebRequest((HttpWebRequest)HttpWebRequest.Create(request.Url), new CookieContainer());
+                wq.GetResponse(); //I feel bad about making the request twice, just to get the cookie.
+                foreach (var uri in uriWatchList)
+                {
+                    if (wq.SupportsCookieContainer && wq.CookieContainer != null)
+                    {
+                        foreach (var cookie in wq.CookieContainer.GetCookies(uri))
+                        {
+                            onCookie(uri, (cookie as Cookie).Value);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
     public partial class LoginPage : Page
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
-        public MetlConfiguration backend { get; set; }
+        public MeTLConfigurationProxy backend { get; set; }
         protected WebControl logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
-        public LoginPage(MetlConfiguration _backend)
+        public LoginPage(MeTLConfigurationProxy _backend)
         {
             backend = _backend;
             InitializeComponent();
@@ -68,39 +106,6 @@ namespace SandRibbon.Pages.Login
             restartLoginProcessContainer.Visibility = Visibility.Collapsed;
             showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
         }
-        protected List<String> updatedCookieKeys = new List<String> { "expires", "path", "domain" };
-        protected void DeleteCookieForUrl(Uri uri)
-        {
-            try
-            {
-                DateTime expiration = DateTime.UtcNow - TimeSpan.FromDays(1);
-                var newCookie = Application.GetCookie(uri);
-                var finalCookies = newCookie.Split(';').Where(cps => cps.Contains('=')).Select(cps =>
-                {
-                    var parts = cps.Split('=');
-                    return new KeyValuePair<String, String>(parts[0], parts[1]);
-                });
-                foreach (var cp in finalCookies)
-                {
-                    try
-                    {
-                        var replacementCookie = String.Format(@"{0}={1}; Expires={2}; Path=/; Domain={3}", cp.Key, cp.Value, expiration.ToString("R"), uri.Host);
-                        Application.SetCookie(uri, replacementCookie);
-                        Application.SetCookie(new Uri("http://" + uri.Host + "/"), replacementCookie);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Console.WriteLine("Failed to delete cookie for: " + uri.ToString());
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                if (e.Message.ToLower().Contains("no more data")) { }
-                else
-                    System.Console.WriteLine("Failed to read cookie prior to deletion for: " + uri.ToString());
-            }
-        }
         class UriHostComparer : IEqualityComparer<System.Uri>
         {
 
@@ -113,12 +118,31 @@ namespace SandRibbon.Pages.Login
             {
                 return obj.Host.GetHashCode();
             }
-        }        
+        }
+        protected string CookieValue = "";
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = ClientFactory.Connection().server.authenticationUrl;            
-            DeleteCookieForUrl(loginUri);
+            var loginUri = backend.authenticationUrl;
+            CookieValue = "";
+            WebCore.Initialize(WebConfig.Default, true);
+            WebCore.ResourceInterceptor = new CookieTrackingMeTLResourceInterceptor(new List<Uri> { App.getCurrentServer.authenticationUrl }, (uri, cookieValue) =>
+            {
+                    CookieValue = cookieValue;
+            });
             logonBrowser = new WebControl();
+            logonBrowser.ShowContextMenu += (s, a) =>
+            {
+                a.Handled = true;
+            };
+            logonBrowser.ShowPopupMenu += (s, a) =>
+            {
+                a.Cancel = true;
+                a.Handled = true;
+            };
+            logonBrowser.TargetURLChanged += (s, a) =>
+            {
+                Console.WriteLine("target url changed: " + a.Url.ToString());
+            };
             logonBrowserContainer.Children.Add(logonBrowser);
             var loginAttempted = false;
             logonBrowser.DocumentReady += (sender, args) =>
@@ -135,20 +159,24 @@ namespace SandRibbon.Pages.Login
                     var infoGroupsNodes = getElementsByTag(authData, "infoGroup");
                     var username = usernameNode.Value.ToString();
                     var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
-                    var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";                    
+                    var authenticated = getElementsByTag(authData, "authenticated").First().Value.ToString().Trim().ToLower() == "true";
                     var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
                     var emailAddress = "";
                     if (emailAddressNode != null)
                     {
                         emailAddress = emailAddressNode.Attribute("name").Value.ToString();
                     }
-                    var credentials = new Credentials(username, "", authGroups, emailAddress);
                     if (authenticated)
                     {
                         try
                         {
                             Commands.Mark.Execute("Login");
-                            if (!MeTLLib.ClientFactory.Connection().Connect(credentials))
+                            var newServer = App.metlConfigManager.parseConfig(backend, authData.First()).First();
+                            App.SetBackend(newServer);
+                            var credentials = new Credentials(newServer.xmppUsername, newServer.xmppPassword, authGroups, emailAddress);
+                            credentials.cookie = CookieValue;
+                            App.controller.connect(credentials);
+                            if (!App.controller.client.Connect(credentials))
                             {
                                 Commands.LoginFailed.Execute(null);
                             }
@@ -157,6 +185,8 @@ namespace SandRibbon.Pages.Login
                                 loginAttempted = true;
                                 Commands.SetIdentity.Execute(credentials);
                                 Globals.authenticatedWebSession = logonBrowser.WebSession;
+                                logonBrowser.Stop();
+                                logonBrowser.Dispose();
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
@@ -166,11 +196,11 @@ namespace SandRibbon.Pages.Login
                             Commands.NoNetworkConnectionAvailable.Execute(null);
                         }
                         NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
-                    }                    
+                    }
                 }
                 catch (Exception e)
                 {
-                    Commands.Mark.Execute(e.Message);                    
+                    Commands.Mark.Execute(e.Message);
                 }
 
             };
@@ -206,13 +236,13 @@ namespace SandRibbon.Pages.Login
             }
             return root;
         }
-        
+
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var options = ClientFactory.Connection().UserOptionsFor(identity.name);
+            var options = App.controller.client.UserOptionsFor(identity.name);
             Commands.SetUserOptions.Execute(options);
-            Globals.loadProfiles(identity);            
+            Globals.loadProfiles(identity);
             Commands.Mark.Execute("Identity is established");
         }
     }

@@ -118,7 +118,7 @@ namespace SandRibbon.Pages.Conversations.Models
                     wc.Headers.Add("Authorization", string.Format("Bearer {0}", Token));
                     var oneNoteData = wc.DownloadData(source);
                     var alias = string.Format("{0}.png", Guid.NewGuid().ToString());
-                    var upload = MeTLLib.ClientFactory.Connection().UploadResourceToPath(oneNoteData, "onenote", alias, false);
+                    var upload = App.controller.client.UploadResourceToPath(oneNoteData, "onenote", alias, false);
                     var securedUpload = new UriBuilder(upload)
                     {
                         Scheme = "https"

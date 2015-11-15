@@ -104,7 +104,7 @@ namespace SandRibbon.Pages.Conversations.Models
         {        
             foreach (var slide in Locations)
             {
-                ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                App.controller.client.historyProvider.Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>

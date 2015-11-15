@@ -449,7 +449,7 @@ namespace SandRibbon
         private void SaveUserOptions(UserOptions options)
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
-            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+            App.controller.client.SaveUserOptions(Globals.me, options);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -471,10 +471,10 @@ namespace SandRibbon
                     else
                     {
                         var jid = Globals.conversationDetails.Jid;
-                        Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
+                        Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
                         Commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
                         SlideDisplay.SendSyncMove(Globals.location.currentSlide);
-                        ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                        App.controller.client.historyProvider.Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>
@@ -600,7 +600,7 @@ namespace SandRibbon
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 details.Author = Globals.userInformation.credentials.name;
-                var connection = ClientFactory.Connection();
+                var connection = App.controller.client;
                 details = connection.CreateConversation(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
@@ -624,7 +624,7 @@ namespace SandRibbon
             if (details == null)
                 return;
             details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.controller.client.UpdateConversationDetails(details);
         }
         private void SetConversationPermissions(object obj)
         {
@@ -638,7 +638,7 @@ namespace SandRibbon
                     details.Permissions.applyLectureStyle();
                 else
                     details.Permissions.applyTuteStyle();
-                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                App.controller.client.UpdateConversationDetails(details);
             }
             catch (NotSetException)
             {

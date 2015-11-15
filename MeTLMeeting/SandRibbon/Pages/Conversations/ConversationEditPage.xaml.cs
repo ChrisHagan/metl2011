@@ -63,18 +63,18 @@ namespace SandRibbon.Pages.Conversations
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var details = (ConversationDetails)e.OriginalSource;
-                MeTLLib.ClientFactory.Connection().DeleteConversation(details);
+                App.controller.client.DeleteConversation(details);
 
             }
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            var details = SearchConversationDetails.HydrateFromServer((ConversationDetails)sender);
+            var details =  SearchConversationDetails.HydrateFromServer(App.controller.client,(ConversationDetails)sender);
 
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
-                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                App.controller.client.UpdateConversationDetails(details);
             }
             else
             {

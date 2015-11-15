@@ -20,7 +20,7 @@ namespace SandRibbon.Pages.Analytics
         }
         public void loadParser()
         {
-            ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+            App.controller.client.historyProvider.Retrieve<PreParser>(
                                         null,
                                         null,
                                         (parser) =>

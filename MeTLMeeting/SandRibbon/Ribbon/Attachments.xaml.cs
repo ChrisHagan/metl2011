@@ -99,10 +99,13 @@ namespace SandRibbon.Tabs
                 var backgroundWorker = new BackgroundWorker();
                 backgroundWorker.DoWork += (s, a) =>
                                                {
+                                                   //fix uploading attachments
+                                                   /*
                                                    var stream = saveFile.OpenFile();
                                                    var sourceBytes = new WebClient { Credentials = new NetworkCredential( App.getCurrentServer.resourceUsername,App.getCurrentServer.resourcePassword) }.DownloadData(file.url);
                                                    stream.Write(sourceBytes, 0, sourceBytes.Count());
                                                    stream.Close();
+                                                   */
                                                };
                 backgroundWorker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
                                                                                    (Action)(() => MeTLMessage.Information(string.Format("Finished downloading {0}.", saveFile.FileName))));

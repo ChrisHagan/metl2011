@@ -383,7 +383,7 @@ namespace MeTLLib.Providers.Connection
                 }
                 StartConnectionTimeoutTimer();
                 a(GaugeStatus.InProgress, 66);
-                conn.Open(jid.User, credentials.password, resource, 1);// MeTLConfiguration.Config.XmppCredential.Password, resource, 1);
+                conn.Open(jid.User, credentials.password, resource, 1);
             }, "openConnection", "xmpp");
         }
 

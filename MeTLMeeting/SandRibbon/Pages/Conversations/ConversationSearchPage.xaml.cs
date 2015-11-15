@@ -95,7 +95,7 @@ namespace SandRibbon.Pages.Conversations
             {
                 Commands.BlockSearch.ExecuteAsync(null);
                 var bw = sender as BackgroundWorker;
-                e.Result = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+                e.Result = App.controller.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
             };
 
             search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
@@ -203,7 +203,7 @@ namespace SandRibbon.Pages.Conversations
         private void JoinConversation(object sender, RoutedEventArgs e)
         {
             var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            var conversation = ClientFactory.Connection().DetailsOf(requestedConversation.Jid);
+            var conversation = App.controller.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(Globals.credentials))
             {
                 Commands.JoinConversation.ExecuteAsync(conversation.Jid);

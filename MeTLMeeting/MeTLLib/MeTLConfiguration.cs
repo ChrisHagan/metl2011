@@ -28,7 +28,13 @@
         {
             get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
         }
-
+        public Uri authenticationUrl
+        {
+            get
+            {
+                return new Uri(host, new Uri("/authenticationState", UriKind.Relative));
+            }
+        }
     }
     public class MetlConfiguration
     {
@@ -65,6 +71,10 @@
         public Uri getImage(string jid, string url)
         {
             return new Uri(host, new Uri(String.Format("/proxyImageUrl/{0}?source={1}", jid, HttpUtility.UrlEncode(url)),UriKind.Relative));
+        }
+        public Uri thumbnailUri(string jid)
+        {
+            return new Uri(host, new Uri(String.Format("/thumbnail/{0}", jid),UriKind.Relative));
         }
         public Uri authenticationUrl
         {
@@ -167,6 +177,18 @@
             var xmppUsername = getElementsByTag(cc, "xmppUsername").First().Value;
             var xmppPassword = getElementsByTag(cc, "xmppPassword").First().Value;
             var imageUrl = getElementsByTag(cc, "imageUrl").First().Value;
+            return new List<MetlConfiguration>
+            {
+                new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppDomain,xmppUsername,xmppPassword,server.host)
+            };
+        }
+        public List<MetlConfiguration> parseConfig(MeTLConfigurationProxy server, XElement doc)
+        {
+            var cc = doc.Descendants("clientconfig");
+            var xmppDomain = cc.Descendants("xmppdomain").First().Value;
+            var xmppUsername = cc.Descendants("xmppusername").First().Value;
+            var xmppPassword = cc.Descendants("xmpppassword").First().Value;
+            var imageUrl = cc.Descendants("imageurl").First().Value;
             return new List<MetlConfiguration>
             {
                 new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppDomain,xmppUsername,xmppPassword,server.host)
