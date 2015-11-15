@@ -124,11 +124,17 @@ namespace SandRibbon.Pages.Login
         {
             var loginUri = backend.authenticationUrl;
             CookieValue = "";
-            WebCore.Initialize(WebConfig.Default, true);
-            WebCore.ResourceInterceptor = new CookieTrackingMeTLResourceInterceptor(new List<Uri> { App.getCurrentServer.authenticationUrl }, (uri, cookieValue) =>
+            try
             {
+                WebCore.Initialize(WebConfig.Default, true);
+                WebCore.ResourceInterceptor = new CookieTrackingMeTLResourceInterceptor(new List<Uri> { App.getCurrentServer.authenticationUrl }, (uri, cookieValue) =>
+                {
                     CookieValue = cookieValue;
-            });
+                });
+            }
+            catch {
+                //this can only be fired once, but I'm not sure yet where to put it.
+            }
             logonBrowser = new WebControl();
             logonBrowser.ShowContextMenu += (s, a) =>
             {
