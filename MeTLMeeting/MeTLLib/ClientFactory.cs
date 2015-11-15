@@ -2,56 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ninject;
 using System.Net;
-
+using MeTLLib.Providers;
+using MeTLLib.Providers.Connection;
+using MeTLLib.Providers.Structure;
+using MeTLLib.DataTypes;
 namespace MeTLLib
 {
     public class ClientFactory
     {
-        protected static Dictionary<MetlConfiguration,ClientConnection> configCache = new Dictionary<MetlConfiguration,ClientConnection>();
-        public static StandardKernel kernel = new StandardKernel(new BaseModule(), new ProductionModule());
-
-        public static ClientConnection Connection(MetlConfiguration config)
+        public static ClientConnection Connection(MetlConfiguration config,Credentials creds,IAuditor auditor)
         {
-            var cc = new ClientConnection(config, new ProductionReceiveEvents());
-            configCache.Remove(config);
-            configCache.Add(config, cc);
-            kernel.Unbind<IReceiveEvents>();
-            kernel.Bind<IReceiveEvents>().ToConstant(cc.events);//<ProductionReceiveEvents>().InSingletonScope();
-            kernel.Unbind<MetlConfiguration>();
-            kernel.Bind<MetlConfiguration>().ToConstant(config);//<MetlConfiguration>().InSingletonScope();
-            kernel.Unbind<ICredentials>();
-            kernel.Bind<ICredentials>().ToConstant(new NetworkCredential(config.resourceUsername, config.resourcePassword));//<MeTLCredentials>().InSingletonScope();
-            kernel.Unbind<ClientConnection>();
-            kernel.Bind<ClientConnection>().ToConstant(cc);
-            
-            /*
-            kernel.Get<MeTLServerAddress>().setMode(serverMode);
-            Console.WriteLine("ClientFactory::Connection {0}", serverMode);
-            kernel.Unbind<MeTLServerAddress>();
-            switch (serverMode)
+            return auditor.wrapFunction(((auditAction) =>
             {
-                case MeTLServerAddress.serverMode.PRODUCTION:
-                    kernel.Bind<MeTLServerAddress>().To<ProductionServerAddress>().InSingletonScope();
-                    break;
-                case MeTLServerAddress.serverMode.STAGING:
-                    kernel.Bind<MeTLServerAddress>().To<StagingServerAddress>().InSingletonScope();
-                    break;
-                case MeTLServerAddress.serverMode.EXTERNAL:
-                    kernel.Bind<MeTLServerAddress>().To<ExternalServerAddress>().InSingletonScope();
-                    break;
-            }
-
-            kernel.Unbind<MeTLGenericAddress>();
-            kernel.Bind<MeTLGenericAddress>().To(searchAddress.GetType()).InSingletonScope();
-            */
-            //return cc;
-            return kernel.Get<ClientConnection>();
-        }
-        public static ClientConnection Connection()
-        {
-            return kernel.Get<ClientConnection>();
+                var webCreds = new NetworkCredential(creds.name, creds.password);
+                auditAction(GaugeStatus.InProgress,7);
+                //var jabberCreds = new Credentials(config.xmppUsername, config.xmppPassword,new List<AuthorizedGroup>(),"");
+                var wcf = new WebClientFactory(webCreds,auditor,creds);
+                auditAction(GaugeStatus.InProgress,14);
+                var receiveEvents = new ProductionReceiveEvents();
+                auditAction(GaugeStatus.InProgress,21);
+                var authProvider = new AuthorisationProvider(wcf, config,auditor);
+                auditAction(GaugeStatus.InProgress,28);
+                var httpProvider = new HttpResourceProvider(wcf,auditor);
+                auditAction(GaugeStatus.InProgress,35);
+                var resourceUploaderFactory = new ProductionResourceUploaderFactory(config, httpProvider);
+                auditAction(GaugeStatus.InProgress,42);
+                var resourceUploader = resourceUploaderFactory.get();
+                auditAction(GaugeStatus.InProgress,49);
+                var resourceCache = new ResourceCache();
+                auditAction(GaugeStatus.InProgress,56);
+                var configurationProvider = new ConfigurationProvider(wcf,auditor);
+                auditAction(GaugeStatus.InProgress,63);
+                auditAction(GaugeStatus.InProgress,70);
+                var jabberWireFactory = new JabberWireFactory(config, creds, configurationProvider,resourceUploader,resourceCache, receiveEvents, wcf, httpProvider,auditor);
+                auditAction(GaugeStatus.InProgress,77);
+                var userOptionsProvider = new UserOptionsProvider(config, httpProvider, resourceUploader);
+                auditAction(GaugeStatus.InProgress,84);
+                var cc = new ClientConnection(config, receiveEvents, authProvider, resourceUploader, jabberWireFactory.conversationDetailsProvider, resourceCache, jabberWireFactory, wcf, userOptionsProvider, httpProvider,auditor);
+                auditAction(GaugeStatus.InProgress, 91);
+                return cc;
+            }), "create client connection", "backend");
         }
     }
 }

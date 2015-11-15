@@ -56,7 +56,7 @@ namespace SandRibbon.Components
                         break;                    
                     case "SetLayer":
                         //This should come in the format of "SetLayer:Sketch"
-                        if (parts.Count() < 2 || String.IsNullOrEmpty(parts[1]) || !(new []{"Sketch","Text","Insert","View"}.Contains(parts[1]))) return;
+                        if (parts.Count() < 2 || String.IsNullOrEmpty(parts[1]) || !(new []{"Select","Sketch","Text","Insert","View"}.Contains(parts[1]))) return;
                         Commands.SetLayer.Execute(parts[1]);
                         break;
                 }

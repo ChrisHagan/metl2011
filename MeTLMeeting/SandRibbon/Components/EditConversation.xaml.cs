@@ -47,7 +47,7 @@ namespace SandRibbon.Components
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
 
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.controller.client.UpdateConversationDetails(details);
             Commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
             Close();
         }
@@ -78,9 +78,9 @@ namespace SandRibbon.Components
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var id = value.ToString();
-            var server = ClientFactory.Connection().server;
+            var server = App.controller.config;
             var host = server.name;
-            return new BitmapImage(new Uri(string.Format(server.thumbnailUrl + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
+            return new BitmapImage(new Uri(string.Format(server.host + "/thumbnail" + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

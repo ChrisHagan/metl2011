@@ -13,7 +13,8 @@ namespace SandRibbon.Components.SimpleImpl
         Pen,
         Image,
         Text,
-        View
+        View,
+        Select
     }
 
     public class SimpleModeSwitcherUIState
@@ -46,6 +47,8 @@ namespace SandRibbon.Components.SimpleImpl
                 saveState.CurrentInputMode = InputMode.Text;
             if (View.IsChecked ?? false)
                 saveState.CurrentInputMode = InputMode.View;
+            if (Select.IsChecked ?? false)
+                saveState.CurrentInputMode = InputMode.Select;
 
             Globals.StoredUIState.SimpleModeSwitcherUIState = saveState; 
         }
@@ -58,6 +61,10 @@ namespace SandRibbon.Components.SimpleImpl
             {
                 switch (saveState.CurrentInputMode)
                 {
+                    case InputMode.Select:
+                        inputMode = "Select";
+                        break;
+
                     case InputMode.Pen:
                         inputMode = "Sketch";
                         break;
@@ -86,6 +93,9 @@ namespace SandRibbon.Components.SimpleImpl
         {
             switch(layer)
             {
+                case "Select":
+                    Select.IsChecked = true;
+                    break;
                 case "Insert":
                     Image.IsChecked = true;
                     break;

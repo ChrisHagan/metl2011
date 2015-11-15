@@ -8,113 +8,33 @@ using MeTLLib.DataTypes;
 using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 using agsXMPP.Xml.Dom;
 using System.Net;
 using System.Xml.Linq;
+using System.Web;
 
 namespace MeTLLib
 {
-    /*
-    public abstract class MeTLGenericAddress
-    {
-        public Uri Uri { get; protected set; }
-    }
-
-    public abstract class MeTLServerAddress
-    {
-        public string Name { get; set; }
-        public Uri productionUri { get; set; }
-        public Uri stagingUri { get; set; }
-        public Uri externalUri { get; set; }
-        public Uri webAuthenticationEndpoint { get; set; }
-        public enum serverMode { PRODUCTION, STAGING, EXTERNAL };
-        private serverMode mode;
-        public void setMode(serverMode mode)
-        {
-            this.mode = mode;
-        }
-        public Uri uri
-        {
-            get
-            {
-                switch (mode)
-                {
-                    case serverMode.PRODUCTION:
-                        return productionUri;
-                    case serverMode.STAGING:
-                        return stagingUri;
-                    case serverMode.EXTERNAL:
-                        return externalUri;
-                    default:
-                        return stagingUri;
-                }
-            }
-        }
-        protected Uri BootstrapUrl(string bootstrapUrl)
-        {
-            try
-            {
-                //This is pre-dependency injection.  That means I can't inject a more specific webclient, and I hope that this cheap standard webclient doesn't have side-effects that will hurt us later.
-                var serverString = XElement.Parse(new WebClient().DownloadString(bootstrapUrl)).Value;
-                return new Uri("http://" + serverString, UriKind.Absolute);
-            }
-            catch (WebException e)
-            {
-                throw new TriedToStartMeTLWithNoInternetException(e);
-            }
-        }
-
-        protected Uri LoadServerAddress(bool useBootstrapUrl, string url)
-        {
-            if (useBootstrapUrl)
-            {
-                return BootstrapUrl(url);
-            }
-            else
-            {
-                return new Uri(url, UriKind.Absolute);
-            }
-        }
-        public string protocol
-        {
-            get;
-            set;
-        }
-        public string host
-        {
-            get
-            {
-                return uri.Host;
-            }
-        }
-        public String port
-        {
-            get;
-            set;
-        }
-        public String uploadEndpoint { get; set; }
-        public String thumbnail { get; set; }
-        public string xmppServiceName { get; set; }
-        public string muc
-        {
-            get
-            {
-                return "conference." + xmppServiceName;
-            }
-        }
-        public agsXMPP.Jid global
-        {
-            get
-            {
-                return new agsXMPP.Jid("global@" + muc);
-            }
-        }
-    }
-*/
     public interface IClientBehaviour
     {
+        MetlConfiguration server { get; }
+        IReceiveEvents events { get; }
+        AuthorisationProvider authorisationProvider { get; }
+        IResourceUploader resourceUploader { get; }
+        IHistoryProvider historyProvider { get; }
+        IConversationDetailsProvider conversationDetailsProvider { get; }
+        ResourceCache cache { get; }
+        JabberWireFactory jabberWireFactory { get; }
+        IWebClientFactory downloaderFactory { get; }
+        UserOptionsProvider userOptionsProvider { get; }
+        HttpResourceProvider resourceProvider { get; }
         void AskForTeachersStatus(string teacher, string where);
+        Location location { get; }
+        void LeaveAllRooms();
+        Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
+        void LeaveConversation(string conversation);
+        void UpdateSlideCollection(Int32 conversationJid);
         bool Connect(Credentials credentials);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
@@ -129,6 +49,7 @@ namespace MeTLLib
         void SendMoveDelta(TargettedMoveDelta tmd);
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
+        void SendAttendance(string where, Attendance att);
         void SendQuizAnswer(QuizAnswer qa);
         void SendQuizQuestion(QuizQuestion qq);
         void SendFile(TargettedFile tf);
@@ -151,47 +72,134 @@ namespace MeTLLib
         ConversationDetails UpdateConversationDetails(ConversationDetails details);
         ConversationDetails CreateConversation(ConversationDetails details);
         ConversationDetails DeleteConversation(ConversationDetails details);
+        ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide);
+        ConversationDetails DuplicateConversation(ConversationDetails conversation);
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
-        Uri NoAuthUploadResource(Uri file, int Room);
-        Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
-        Uri NoAuthUploadResource(byte[] data, string filename, int Room);
+        string NoAuthUploadResource(Uri file, int Room);
+        string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
+        string NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
+        List<SearchConversationDetails> ConversationsFor(String query, int maxResults);
         UserOptions UserOptionsFor(string username);
         //List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
     }
+    public class DisconnectedClientConnection : IClientBehaviour
+    {
+        public MetlConfiguration server { get; }
+        public IReceiveEvents events { get; }
+        public AuthorisationProvider authorisationProvider { get; }
+        public IResourceUploader resourceUploader { get; }
+        public IHistoryProvider historyProvider { get; }
+        public IConversationDetailsProvider conversationDetailsProvider { get; }
+        public ResourceCache cache { get; }
+        public JabberWireFactory jabberWireFactory { get; }
+        public IWebClientFactory downloaderFactory { get; }
+        public UserOptionsProvider userOptionsProvider { get; }
+        public HttpResourceProvider resourceProvider { get; }
+        protected static readonly Uri DisconnectedUri = new Uri("noscheme://not.a.uri");
+        public Location location { get { return Location.Empty; } }
+        public void LeaveAllRooms() { }
+        public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return DisconnectedUri; }
+        public void LeaveConversation(string conversation) { }
+        public void UpdateSlideCollection(Int32 conversationJid) { }
+        public void AskForTeachersStatus(string teacher, string where) { }
+        public bool Connect(Credentials credentials) { return false; }
+        public bool Disconnect() { return false; }
+        public void SendTextBox(TargettedTextBox textbox) { }
+        public void SendStroke(TargettedStroke stroke) { }
+        public void SendImage(TargettedImage image) { }
+        public void SendDirtyTextBox(TargettedDirtyElement tde) { }
+        public void SendDirtyStroke(TargettedDirtyElement tde) { }
+        public void SendDirtyImage(TargettedDirtyElement tde) { }
+        public void SendDirtyVideo(TargettedDirtyElement tde) { }
+        public void SendSubmission(TargettedSubmission ts) { }
+        public void SendTeacherStatus(TeacherStatus status) { }
+        public void SendMoveDelta(TargettedMoveDelta tmd) { }
+        public void GetAllSubmissionsForConversation(string conversationJid) { }
+        public void SendStanza(string where, Element stanza) { }
+        public void SendAttendance(string where, Attendance att) { }
+        public void SendQuizAnswer(QuizAnswer qa) { }
+        public void SendQuizQuestion(QuizQuestion qq) { }
+        public void SendFile(TargettedFile tf) { }
+        public void SendSyncMove(int slide) { }
+        public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii) { }
+        public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi) { }
+        public Uri UploadResource(Uri uri, string slideId) { return DisconnectedUri; }
+        public void AsyncRetrieveHistoryOf(int room) { }
+        public void MoveTo(int slide) { }
+        public void JoinConversation(string conversation) { }
+        public void LeaveLocation() { }
+        public void LoadQuiz(int convesationJid, long quizId) { }
+        public void LoadQuizzes(string conversationJid) { }
+        public void LoadAttachments(string conversationJid) { }
+        public void UploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii) { }
+        public ConversationDetails AppendSlide(string Jid) { return ConversationDetails.Empty; }
+        public ConversationDetails AppendSlideAfter(int slide, string Jid) { return ConversationDetails.Empty; }
+        public ConversationDetails AppendSlideAfter(int slide, string Jid, Slide.TYPE type) { return ConversationDetails.Empty; }
+        public ConversationDetails UpdateConversationDetails(ConversationDetails details) { return ConversationDetails.Empty; }
+        public ConversationDetails CreateConversation(ConversationDetails details) { return ConversationDetails.Empty; }
+        public ConversationDetails DeleteConversation(ConversationDetails details) { return ConversationDetails.Empty; }
+        public ConversationDetails DetailsOf(String jid) { return ConversationDetails.Empty; }
+        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) { return ConversationDetails.Empty; }
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
+        public void SneakInto(string room) { }
+        public void SneakOutOf(string room) { }
+        public string NoAuthUploadResource(Uri file, int Room) { return ""; }
+        public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return ""; }
+        public string NoAuthUploadResource(byte[] data, string filename, int Room) { return ""; }
+        public void SaveUserOptions(string username, UserOptions options) { }
+        public List<SearchConversationDetails> ConversationsFor(String query, int maxResults) { return new List<SearchConversationDetails>(); }
+        public UserOptions UserOptionsFor(string username) { return UserOptions.DEFAULT; }
+
+        public void WatchRoom(string slide)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ClientConnection : IClientBehaviour
     {
-        //[Inject]
+        public MetlConfiguration server { get; protected set; }
         public IReceiveEvents events { get; protected set; }
-        [Inject]
-        public AuthorisationProvider authorisationProvider { private get; set; }
-        [Inject]
-        public IResourceUploader resourceUploader { private get; set; }
-        [Inject]
-        public HttpHistoryProvider historyProvider { private get; set; }
-        [Inject]
-        public IConversationDetailsProvider conversationDetailsProvider { private get; set; }
-        [Inject]
-        public ResourceCache cache { private get; set; }
-        [Inject]
-        public JabberWireFactory jabberWireFactory { private get; set; }
-        [Inject]
-        public IWebClientFactory downloaderFactory { private get; set; }
-        [Inject]
-        public UserOptionsProvider userOptionsProvider { private get; set; }
-        [Inject]
-        public HttpResourceProvider resourceProvider { private get; set; }
-        [Inject]
+        public AuthorisationProvider authorisationProvider { get; protected set; }
+        public IResourceUploader resourceUploader { get; protected set; }
+        public IHistoryProvider historyProvider { get { return jabberWireFactory.cachedHistoryProvider; } }
+        public IConversationDetailsProvider conversationDetailsProvider { get; protected set; }
+        public ResourceCache cache { get; protected set; }
+        public JabberWireFactory jabberWireFactory { get; protected set; }
+        public IWebClientFactory downloaderFactory { get; protected set; }
+        public UserOptionsProvider userOptionsProvider { get; protected set; }
+        public HttpResourceProvider resourceProvider { get; protected set; }
         //public IUserInformationProvider userInformationProvider { private get; set; }
-        public MetlConfiguration server { private set; get; }
+        public IAuditor auditor { get; protected set; }
 
-
-        public ClientConnection(MetlConfiguration address,IReceiveEvents _events)
+        public ClientConnection(
+            MetlConfiguration address,
+            IReceiveEvents _events,
+            AuthorisationProvider _authProvider,
+            IResourceUploader _resourceUploader,
+            IConversationDetailsProvider _conversationDetailsProvider,
+            ResourceCache _resourceCache,
+            JabberWireFactory _jabberWireFactory,
+            IWebClientFactory _downloaderFactory,
+            UserOptionsProvider _userOptionsProvider,
+            HttpResourceProvider _resourceProvider,
+            IAuditor _auditor
+            )
         {
             server = address;
             events = _events;
+            authorisationProvider = _authProvider;
+            resourceUploader = _resourceUploader;
+            conversationDetailsProvider = _conversationDetailsProvider;
+            cache = _resourceCache;
+            jabberWireFactory = _jabberWireFactory;
+            downloaderFactory = _downloaderFactory;
+            userOptionsProvider = _userOptionsProvider;
+            resourceProvider = _resourceProvider;
+            auditor = _auditor;
         }
         #region fields
         private JabberWire wire;
@@ -220,7 +228,7 @@ namespace MeTLLib
             }
         }
         #endregion
-        public HttpHistoryProvider getHistoryProvider()
+        public IHistoryProvider getHistoryProvider()
         {
             return historyProvider;
         }
@@ -253,7 +261,7 @@ namespace MeTLLib
         {
             if (credentials != null && credentials.isValid)
             {
-                jabberWireFactory.credentials = credentials;
+                //jabberWireFactory.credentials = credentials;
                 wire = jabberWireFactory.wire();
                 return true;
             }
@@ -328,6 +336,14 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void SendAttendance(string where, Attendance att) {
+            Action work = delegate
+            {
+                wire.SendAttendance(where, att);
+            };
+            tryIfConnected(work);
+        }
+
         public void SendDirtyVideo(TargettedDirtyElement tde)
         {
             Action work = delegate
@@ -355,17 +371,22 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                try
+                auditor.wrapAction((a =>
                 {
-                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
-                    if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
-                    UploadAndSendSubmission(lii);
-                }
+                    try
+                    {
+                        var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
+                        a(GaugeStatus.InProgress,33);
+                        wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
+                        a(GaugeStatus.InProgress, 66);
+                        if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
+                        UploadAndSendSubmission(lii);
+                    }
+                }), "uploadAndSendSubmission", "clientConnection");
             };
             tryIfConnected(work);
         }
@@ -423,13 +444,17 @@ namespace MeTLLib
             {
                 try
                 {
-                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
+                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
 
                     MeTLImage newImage = lii.image;
-                    newImage.Dispatcher.adopt(() => {
+                    var previousTag = newImage.tag();
+                    previousTag.resourceIdentity = newPath;
+                    lii.image.tag(previousTag);
+
+                    newImage.Dispatcher.adopt(() =>
+                    {
                         newImage.tag(lii.image.tag());
-                        newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, lii.image.tag().timestamp));
+                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, newPath, lii.image.tag().timestamp));
                     });
                 }
                 catch (Exception e)
@@ -445,18 +470,18 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.overwrite);
+                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.file);
                 wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, lfi.identity, lfi.timestamp, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);
         }
         public Uri UploadResource(Uri file, string muc)
         {
-            System.Uri returnValue = new System.Uri(server.resourceUrl);
-            //System.Uri returnValue = server.uri;
+
+            System.Uri returnValue = server.host;
             Action work = delegate
             {
-                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
+                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString));
             };
             tryIfConnected(work);
             return returnValue;
@@ -464,7 +489,8 @@ namespace MeTLLib
 
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
-            System.Uri returnValue = new System.Uri(server.resourceUrl);// server.uri;
+
+            System.Uri returnValue = server.host;
             Action work = delegate
             {
                 returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
@@ -519,19 +545,25 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (String.IsNullOrEmpty(conversation)) return;
-                Trace.TraceInformation("JoinConversation {0}", conversation);
-                var cd = conversationDetailsProvider.DetailsOf(conversation);
-                location.activeConversation = cd.Jid;
-                location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                if (location.availableSlides.Count > 0)
-                    location.currentSlide = location.availableSlides[0];
-                else
+                auditor.wrapAction((a =>
                 {
-                    Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
-                }
-                wire.JoinConversation();
-                events.receiveConversationDetails(cd);
+                    if (String.IsNullOrEmpty(conversation)) return;
+//                    Trace.TraceInformation("JoinConversation {0}", conversation);
+                    var cd = conversationDetailsProvider.DetailsOf(conversation);
+                    a(GaugeStatus.InProgress, 25);
+                    location.activeConversation = cd.Jid;
+                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+                    if (location.availableSlides.Count > 0)
+                        location.currentSlide = location.availableSlides[0];
+                    else
+                    {
+                        Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
+                    }
+                    a(GaugeStatus.InProgress, 50);
+                    wire.JoinConversation();
+                    a(GaugeStatus.InProgress, 75);
+                    events.receiveConversationDetails(cd);
+                }), "joinConversation: " + conversation, "clientConnection");
             };
             tryIfConnected(work);
         }
@@ -615,6 +647,23 @@ namespace MeTLLib
 
             return ConversationDetails.Empty;
         }
+        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) {
+            return tryUntilConnected<ConversationDetails>(() =>
+            {
+                var newConv = conversationDetailsProvider.DuplicateSlide(details, slide);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
+        }
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation) {
+            return tryUntilConnected<ConversationDetails>(() =>
+            {
+                var newConv = conversationDetailsProvider.DuplicateConversation(conversation);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
+
+        }
         public ConversationDetails AppendSlide(string Jid)
         {
             return tryUntilConnected<ConversationDetails>(() =>
@@ -693,18 +742,17 @@ namespace MeTLLib
         }
         #endregion
         #region noAuth
-        public Uri NoAuthUploadResource(Uri file, int Room)
+        public string NoAuthUploadResource(Uri file, int Room)
         {
-            return new System.Uri(resourceUploader.uploadResource(Room.ToString(), file.ToString(), false));
+            return resourceUploader.uploadResource(Room.ToString(), file.ToString(), file.ToString());
         }
-        public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
+        public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
         {
-            var resultantPathString = resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload);
-            return new System.Uri(resultantPathString, UriKind.Absolute);
+            return resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload);
         }
-        public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
+        public string NoAuthUploadResource(byte[] data, string filename, int Room)
         {
-            return new System.Uri(resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false));
+            return resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false);
         }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults)
         {

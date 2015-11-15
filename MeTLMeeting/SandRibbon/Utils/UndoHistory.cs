@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Providers;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Utils
 {
@@ -70,8 +71,9 @@ namespace SandRibbon.Utils
             #if TOGGLE_CONTENT
             try
             {
+                new List<ContentVisibilityDefinition> { ContentFilterVisibility.myPrivate, ContentFilterVisibility.myPrivate }.ForEach(cvd => cvd.Subscribed = true);
                 // content has been modified, so make sure "my" content is visible
-                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
+                Commands.SetContentVisibility.Execute(Globals.contentVisibility);//.Select(cvd =>  Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
             }
             catch (Exception)
             {

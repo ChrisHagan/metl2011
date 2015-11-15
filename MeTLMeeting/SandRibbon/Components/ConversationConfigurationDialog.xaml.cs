@@ -65,7 +65,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
-                    details = MeTLLib.ClientFactory.Connection().DetailsOf(conversationJid);
+                    details = App.controller.client.DetailsOf(conversationJid);
                     PopulateFields();
                     if (details == null)
                     {
@@ -225,11 +225,11 @@ namespace SandRibbon.Components
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
-                    MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                    App.controller.client.UpdateConversationDetails(details);
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.DELETE:
-                    MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                    App.controller.client.UpdateConversationDetails(details);
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
             }

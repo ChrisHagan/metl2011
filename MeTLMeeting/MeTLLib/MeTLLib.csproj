@@ -72,18 +72,18 @@
     <Reference Include="Ionic.Zip">
       <HintPath>lib\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Practices.Composite">
       <HintPath>lib\Microsoft.Practices.Composite.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Composite.Presentation">
       <HintPath>lib\Microsoft.Practices.Composite.Presentation.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SandRibbon\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -100,6 +100,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auditor.cs" />
     <Compile Include="BaseModule.cs" />
     <Compile Include="DataTypes\MeTLImage.cs" />
     <Compile Include="DataTypes\QuizData.cs" />
@@ -114,8 +115,6 @@
     <Compile Include="ReceiveEvents.cs" />
     <Compile Include="ClientFactory.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="Commands\CommandParameterProvider.cs" />
-    <Compile Include="Commands\Commands.cs" />
     <Compile Include="DataTypes\Button.cs" />
     <Compile Include="DataTypes\ConnectionExtensions.cs" />
     <Compile Include="DataTypes\ConversationDetails.cs" />

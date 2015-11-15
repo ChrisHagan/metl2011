@@ -8,210 +8,104 @@ using System.Windows.Automation.Provider;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 using System.ComponentModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
-    [Flags]
-    public enum ContentVisibilityEnum
+    public partial class ContentVisibility
     {
-        NoneVisible = 0,
-        OwnerVisible = 1 << 0,
-        TheirsVisible = 1 << 1,
-        MyPrivateVisible = 1 << 2,
-        MyPublicVisible = 1 << 3,
-        AllVisible = OwnerVisible | TheirsVisible | MyPrivateVisible | MyPublicVisible
-    }
-    public static class ContentVisibilityUtils
-    {
-        private static ContentVisibilityEnum setFlag(ContentVisibilityEnum input, ContentVisibilityEnum flag, bool value){
-            return input |= value ? flag : ContentVisibilityEnum.NoneVisible;
-        }
-        private static bool getFlag(ContentVisibilityEnum input, ContentVisibilityEnum flag){
-            return (input & flag) == flag; 
-        }
-       public static bool getMyPublicVisible(ContentVisibilityEnum e){
-           return getFlag(e,ContentVisibilityEnum.MyPublicVisible);
-        }
-        public static ContentVisibilityEnum setMyPublicVisible(ContentVisibilityEnum e, bool b){
-            return setFlag(e,ContentVisibilityEnum.MyPublicVisible,b);
-        }
-        public static bool getMyPrivateVisible(ContentVisibilityEnum e){
-            return getFlag(e,ContentVisibilityEnum.MyPrivateVisible);
-        }
-        public static ContentVisibilityEnum setMyPrivateVisible(ContentVisibilityEnum e, bool b){
-            return setFlag(e,ContentVisibilityEnum.MyPrivateVisible,b);
-        }
-        public static bool getPeersVisible(ContentVisibilityEnum e){
-            return getFlag(e,ContentVisibilityEnum.TheirsVisible);
-        }
-        public static ContentVisibilityEnum setPeersVisible(ContentVisibilityEnum e, bool b){
-            return setFlag(e,ContentVisibilityEnum.TheirsVisible,b);
-        }
-        public static bool getOwnerVisible(ContentVisibilityEnum e){
-            return getFlag(e,ContentVisibilityEnum.OwnerVisible);
-        }
-        public static ContentVisibilityEnum setOwnerVisible(ContentVisibilityEnum e, bool b){
-            return setFlag(e,ContentVisibilityEnum.OwnerVisible,b);
-        }
-        public static bool getAllVisible(ContentVisibilityEnum e){
-            return e == ContentVisibilityEnum.AllVisible;
-        }
-        public static bool getNoneVisible(ContentVisibilityEnum e){
-            return e == ContentVisibilityEnum.NoneVisible;
-        }
-        public static ContentVisibilityEnum toContentVisibilityEnum(bool myPrivateVisible,bool myPublicVisible,bool peersVisible,bool ownerVisible){
-            var flags = ownerVisible ? ContentVisibilityEnum.OwnerVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= peersVisible ? ContentVisibilityEnum.TheirsVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= myPrivateVisible ? ContentVisibilityEnum.MyPrivateVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= myPublicVisible ? ContentVisibilityEnum.MyPublicVisible : ContentVisibilityEnum.NoneVisible;
-            return flags;
-        }
-    }
-
-
-    public static class ContentVisibilityExtensions
-    {
-        // .NET 4.0 has this method in the framework
-        public static bool HasFlag(this ContentVisibilityEnum contentVisibility, ContentVisibilityEnum flag)
-        {
-            return (contentVisibility & flag) == flag;
-        }
-
-        public static ContentVisibilityEnum SetFlag(this ContentVisibilityEnum contentVisibility, ContentVisibilityEnum flag)
-        {
-            return contentVisibility | flag;
-        }
-
-        public static ContentVisibilityEnum ClearFlag(this ContentVisibilityEnum contentVisibility, ContentVisibilityEnum flag)
-        {
-            return contentVisibility & ~flag;
-        }
-    }
-    
-    public partial class ContentVisibility : INotifyPropertyChanged
-    {
-        private bool ownerVisible = true;
-        private bool theirsVisible = true;
-        private bool myPrivateVisible = true; 
-        private bool myPublicVisible = true; 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public static readonly DependencyProperty IsConversationOwnerProperty =
-            DependencyProperty.Register("IsConversationOwner", typeof(bool), typeof(ContentVisibility)); 
-
+        public ObservableCollection<ContentVisibilityDefinition> visibilities = new ObservableCollection<ContentVisibilityDefinition>();
         public ContentVisibility()
         {
             DataContext = this;
 
             InitializeComponent();
-
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
-            Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<ContentVisibilityEnum>(UpdateContentVisibility));
-            Commands.SetContentVisibility.DefaultValue = ContentVisibilityEnum.AllVisible;
-        }
-    
-        private void NotifyPropertyChanged(string info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            contentVisibilitySelectors.ItemsSource = visibilities;
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((cd) => { UpdateConversationDetails(cd); }));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((loc) => { MoveTo(loc); }));
+            Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
+            Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
         }
 
-        public bool OwnerVisible
+        protected int slide = -1;
+        protected ConversationDetails conversation = ConversationDetails.Empty;
+        protected List<GroupSet> groupSets = new List<GroupSet>();
+        protected void MoveTo(int s)
         {
-            get { return ownerVisible; }
-            set
+            slide = s;
+            potentiallyRefresh();
+        }
+        protected void UpdateConversationDetails(ConversationDetails cd)
+        {
+            conversation = cd;
+            potentiallyRefresh();
+        }
+
+        protected void potentiallyRefresh()
+        {
+            var thisSlide = conversation.Slides.Find(s => s.id == slide);
+            if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
             {
-                if (value != ownerVisible)
+                var oldGroupSets = groupSets;
+                var currentState = new Dictionary<string, bool>();
+                foreach (var vis in visibilities)
                 {
-                    ownerVisible = value;
-                    NotifyPropertyChanged("OwnerVisible");
+                    if (vis.GroupId != "")
+                    {
+                        currentState.Add(vis.GroupId, vis.Subscribed);
+                    }
+                }
+                var newSlide = conversation.Slides.Find(s => s.id == slide);
+                if (newSlide != null)
+                {
+                    groupSets = newSlide.GroupSets;
+                    var newGroupDefs = new List<ContentVisibilityDefinition>();
+                    groupSets.ForEach(gs =>
+                    {
+                        var oldGroupSet = oldGroupSets.Find(oldGroup => oldGroup.id == gs.id);
+                        gs.Groups.ForEach(g =>
+                        {
+                            var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
+                            var wasSubscribed = currentState[g.id];
+                            if (Globals.isAuthor || g.GroupMembers.Contains(Globals.me))
+                            {
+                                var groupDescription = Globals.isAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                newGroupDefs.Add(
+                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (a, p, c, s) => g.GroupMembers.Contains(a))
+                                );
+                            }
+                        });
+                    });
+                    Dispatcher.adopt(delegate
+                    {
+                        visibilities.Clear();
+                        foreach (var nv in newGroupDefs.Concat(ContentFilterVisibility.defaultGroupVisibilities))
+                        {
+                            visibilities.Add(nv);
+                        }
+                    });
                 }
             }
-        }
-
-        public bool TheirsVisible
-        {
-            get { return theirsVisible; } 
-            set
+            else
             {
-                if (value != theirsVisible)
+                Dispatcher.adopt(delegate
                 {
-                    theirsVisible = value;
-                    NotifyPropertyChanged("TheirsVisible");
-                }
-            }
-        }
+                    visibilities.Clear();
+                    foreach (var nv in ContentFilterVisibility.defaultVisibilities)
+                    {
+                        visibilities.Add(nv);
+                    }
+                }); 
 
-        public bool MyPrivateVisible
-        {
-            get { return myPrivateVisible; } 
-            set
-            {
-                if (value != myPrivateVisible)
-                {
-                    myPrivateVisible = value;
-                    NotifyPropertyChanged("MyPrivateVisible");
-                }
-            }
-        }
-
-        public bool MyPublicVisible
-        {
-            get { return myPublicVisible; } 
-            set
-            {
-                if (value != myPublicVisible)
-                {
-                    myPublicVisible = value;
-                    NotifyPropertyChanged("MyPublicVisible");
-                }
-            }
-        }
-
-        private ContentVisibilityEnum GetCurrentVisibility()
-        {
-            var flags = OwnerVisible ? ContentVisibilityEnum.OwnerVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= TheirsVisible ? ContentVisibilityEnum.TheirsVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= MyPrivateVisible ? ContentVisibilityEnum.MyPrivateVisible : ContentVisibilityEnum.NoneVisible;
-            flags |= MyPublicVisible ? ContentVisibilityEnum.MyPublicVisible : ContentVisibilityEnum.NoneVisible;
-
-            // if the owner then ignore owner flag and only use mine flag
-            if (Globals.isAuthor)
-            {
-                flags = flags.ClearFlag(ContentVisibilityEnum.OwnerVisible);
             }
 
-            return flags;
         }
-
-        private void UpdateConversationDetails()
-        {
-            IsConversationOwner = Globals.isAuthor;
-        }
-
-        private void UpdateContentVisibility(ContentVisibilityEnum contentVisibility)
-        {
-            OwnerVisible = contentVisibility.HasFlag(ContentVisibilityEnum.OwnerVisible);
-            TheirsVisible = contentVisibility.HasFlag(ContentVisibilityEnum.TheirsVisible);
-            MyPrivateVisible = contentVisibility.HasFlag(ContentVisibilityEnum.MyPrivateVisible);
-            MyPublicVisible = contentVisibility.HasFlag(ContentVisibilityEnum.MyPublicVisible); 
-        }
-
-        public bool IsConversationOwner
-        {
-            get { return (bool)GetValue(IsConversationOwnerProperty); }
-            set 
-            { 
-                SetValue(IsConversationOwnerProperty, value); 
-                NotifyPropertyChanged("IsConversationOwner");
-            }
-        }
-
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {
-            Commands.SetContentVisibility.Execute(GetCurrentVisibility());
+            Commands.SetContentVisibility.Execute(visibilities);
         }
     }
 }

@@ -2,6 +2,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:resources="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     >
+    <resources:MeTLImageToolTip x:Key="LaunchDiagnosticWindowToolTip" 
+                                        TitleText="Display Diagnostics"
+                                        ContentText="Open a window with diagnostic information which may be of interest to technical support teams."/>
     <resources:MeTLImageToolTip x:Key="ResetPenToDefaultToolTip" 
                                         TitleText="Reset pen"
                                         ContentText="Return this pen to its original colour and width."/>
@@ -72,6 +75,14 @@
                                         TitleText="Add Page"
                                         ImageSource="\Resources\NewSlide.png" 
                                         ContentText="Add a new page after the current page."/>
+    <resources:MeTLImageToolTip x:Key="DuplicateSlideToolTip" 
+                                        TitleText="Duplicate Page"
+                                        ImageSource="\Resources\NewSlide.png" 
+                                        ContentText="Add a new page after the current page, which has the author's public and private content copied onto it."/>
+    <resources:MeTLImageToolTip x:Key="DuplicateConversationToolTip" 
+                                        TitleText="Duplicate Conversation"
+                                        ImageSource="\Resources\NewSlide.png" 
+                                        ContentText="Create a copy of this conversation, including the author's public and private content and quizzes."/>
     <resources:MeTLImageToolTip x:Key="SyncToolTip" 
                                         TitleText="Synchronize"
                                         ImageSource="\Resources\SyncShiny.png" 
@@ -295,6 +306,10 @@
                                         TitleText="Remove Friend"
                                         ImageSource="\Resources\AnonHead.png" 
                                         ContentText="Remove a particular participant of MeTL from your friends console."/>
+    <resources:MeTLImageToolTip x:Key="ViewToolTip" 
+                                        TitleText="View"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="In this mode, you can navigate the content without drawing on it."/>
     <resources:MeTLImageToolTip x:Key="PenToolTip" 
                                         TitleText="Draw Digital Ink"
                                         ImageSource="\Resources\RedPenShiny.png" 
@@ -308,9 +323,9 @@
                                         ImageSource="\Resources\SelectText.png" 
                                         ContentText="Move or resize your text containers."/>
     <resources:MeTLImageToolTip x:Key="SelectToolTip" 
-                                        TitleText="Select Digital Ink"
+                                        TitleText="Select"
                                         ImageSource="\Resources\SelectInk.png" 
-                                        ContentText="Circle your ink to select it."/>
+                                        ContentText="Circle your content to select it."/>
     <resources:MeTLImageToolTip x:Key="FriendsToolTip" 
                                         TitleText="Open Friends"
                                         ImageSource="\Resources\friendsplaceholder.png" 

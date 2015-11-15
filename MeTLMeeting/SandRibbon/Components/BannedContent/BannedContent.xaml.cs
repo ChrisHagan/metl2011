@@ -348,7 +348,7 @@ namespace SandRibbon.Components.BannedContent
                     }
                 }
             }
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.controller.client.UpdateConversationDetails(details);
         }
     }
 }

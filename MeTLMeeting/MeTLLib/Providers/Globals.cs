@@ -8,6 +8,7 @@ using MeTLLib.DataTypes;
 
 namespace MeTLLib.Providers
 {
+    /*
     class Globals
     {
         public static ConversationDetails conversationDetails
@@ -79,4 +80,5 @@ namespace MeTLLib.Providers
             }
         }
     }
+    */
 }

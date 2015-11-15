@@ -1,0 +1,83 @@
+﻿<Window x:Class="SandRibbon.Components.DiagnosticWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SandRibbon.Components"
+        mc:Ignorable="d"
+        x:Name="diagnosticWindow"
+        Title="MeTL Diagnostics" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DataGrid x:Name="messages" Grid.Row="0" Grid.Column="0" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="message" Binding="{Binding message, Mode=OneTime}"/>
+                <DataGridTextColumn Header="category" Binding="{Binding category, Mode=OneTime}"/>
+                <DataGridTextColumn Header="when" Binding="{Binding when, Mode=OneTime}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="gauges" Grid.Row="0" Grid.Column="1" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="name" Binding="{Binding GaugeName, Mode=OneTime}"/>
+                <DataGridTextColumn Header="category" Binding="{Binding GaugeCategory, Mode=OneTime}"/>
+                <DataGridTextColumn Header="status" Binding="{Binding status, Mode=OneTime}"/>
+                <DataGridTextColumn Header="value" Binding="{Binding value, Mode=OneTime}"/>
+                <DataGridTextColumn Header="started" Binding="{Binding started, Mode=OneTime}"/>
+                <DataGridTextColumn Header="finished" Binding="{Binding finished, Mode=OneTime}"/>
+                <DataGridTextColumn Header="duration" Binding="{Binding duration, Mode=OneTime}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="nics" Grid.Row="1" Grid.Column="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="OutputQueueLength " Binding="{Binding OutputQueueLength , Mode=OneTime}"/>
+                <DataGridTextColumn Header="OutgoingPacketsWithErrors " Binding="{Binding OutgoingPacketsWithErrors , Mode=OneTime}"/>
+                <DataGridTextColumn Header="IncomingPacketsWithErrors" Binding="{Binding IncomingPacketsWithErrors, Mode=OneTime}"/>
+                <DataGridTextColumn Header="OutgoingPacketsDiscarded " Binding="{Binding OutgoingPacketsDiscarded , Mode=OneTime}"/>
+                <DataGridTextColumn Header="IncomingPacketsDiscarded " Binding="{Binding IncomingPacketsDiscarded , Mode=OneTime}"/>
+                <DataGridTextColumn Header="UnicastPacketsSent " Binding="{Binding UnicastPacketsSent , Mode=OneTime}"/>
+                <DataGridTextColumn Header="UnicastPacketsReceived " Binding="{Binding UnicastPacketsReceived , Mode=OneTime}"/>
+                <DataGridTextColumn Header="BytesSent " Binding="{Binding BytesReceived, Mode=OneTime}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="procs" Grid.Row="1" Grid.Column="1" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ProcessName" Binding="{Binding Responding, Mode=OneTime}"/>
+                <DataGridTextColumn Header="Responding" Binding="{Binding ProcessName, Mode=OneTime}"/>
+                <DataGridTextColumn Header="Threads" Binding="{Binding Threads, Mode=OneTime}"/>
+                <DataGridTextColumn Header="WorkingSet64" Binding="{Binding WorkingSet64, Mode=OneTime}"/>
+                <DataGridTextColumn Header="PeakWorkingSet64" Binding="{Binding PeakWorkingSet64, Mode=OneTime}"/>
+                <DataGridTextColumn Header="UserProcessorTime" Binding="{Binding UserProcessorTime, Mode=OneTime}"/>
+                <DataGridTextColumn Header="TotalProcessorTime" Binding="{Binding TotalProcessorTime, Mode=OneTime}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBox x:Name="console" Grid.Row="0" Grid.Column="2" />
+        <ItemsControl x:Name="inProgress" Grid.Row="1" Grid.Column="2">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <StackPanel Height="25" Orientation="Horizontal">
+                            <ProgressBar Width="100" Value="{Binding value, Mode=OneWay}" Minimum="0" Maximum="100"/>
+                            <Label Content="{Binding soFar, Mode=OneWay}"/>
+                            <Label Content="{Binding GaugeCategory, Mode=OneWay}"/>
+                            <Label Content="{Binding GaugeName, Mode=OneWay}"/>
+                            <Label Content="{Binding status, Mode=OneWay}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>

@@ -71,6 +71,8 @@ namespace SandRibbon.Providers
         }
         public static void thumbnail(Image image, int slideId)
         {
+            if (image == null)
+                return;
             var slide = (Slide)image.DataContext;
             var internalSlideId = slide.id;
             bool shouldPaintThumb = false;
@@ -84,30 +86,42 @@ namespace SandRibbon.Providers
             if (shouldPaintThumb) {
                 paintThumb(image);
             } else {
-                var server = ClientFactory.Connection().server;
+                var server = App.controller.config;
                 var host = server.name;
-                var url = string.Format(server.thumbnailUrl + "{0}/{1}",host,internalSlideId);                
+                var url = string.Format("{0}/thumbnail/{1}/{2}", server.host, host,internalSlideId);
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
                     try
                     {
-                        using (var client = new WebClient())
-                        {
-                            BitmapImage bitmap = null;
-                            using (var stream = new MemoryStream(client.DownloadData(url)))
+                        App.auditor.wrapAction(g => { 
+                            using (var client = new WebClient())
                             {
-                                bitmap = new BitmapImage();
-                                bitmap.BeginInit();
-                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                bitmap.StreamSource = stream;
-                                bitmap.EndInit();
-                                bitmap.Freeze();
-                                stream.Close();
-                                addToCache(slideId, new CachedThumbnail(bitmap));
+                                BitmapImage bitmap = null;
+                                g(GaugeStatus.InProgress, 10);
+                                using (var stream = new MemoryStream(client.DownloadData(url)))
+                                {
+                                    g(GaugeStatus.InProgress, 20);
+                                    bitmap = new BitmapImage();
+                                    g(GaugeStatus.InProgress, 30);
+                                    bitmap.BeginInit();
+                                    g(GaugeStatus.InProgress, 40);
+                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    g(GaugeStatus.InProgress, 50);
+                                    bitmap.StreamSource = stream;
+                                    g(GaugeStatus.InProgress, 60);
+                                    bitmap.EndInit();
+                                    g(GaugeStatus.InProgress, 70);
+                                    bitmap.Freeze();
+                                    g(GaugeStatus.InProgress, 80);
+                                    stream.Close();
+                                    g(GaugeStatus.InProgress, 85);
+                                    addToCache(slideId, new CachedThumbnail(bitmap));
+                                    g(GaugeStatus.InProgress, 90);
 
+                                }
+                                paintThumb(image);
                             }
-                            paintThumb(image);
-                        }
+                        }, "paintThumb", "frontend");
                     }
                     catch (Exception e)
                     {

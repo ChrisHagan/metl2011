@@ -1,0 +1,25 @@
+﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.ZoomControlsHost"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    ShowDialogLauncher="False" Header="Zoom" Image="\Resources\MagnifyingGlassShiny.png">
+    <sr:RibbonGroup.Resources>
+        <core:String x:Key="preferredDisplayIndex">6</core:String>
+    </sr:RibbonGroup.Resources>
+    <sr:RibbonGroup.Variants>
+        <sr:GroupVariant Variant="Small" Priority="5"/>
+        <sr:GroupVariant Variant="Medium" Priority="3"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="7"/>
+    </sr:RibbonGroup.Variants>
+    <dict:RibbonPanel>
+        <dict:Button AutomationProperties.AutomationId="OriginalView" Command="{x:Static api:Commands.OriginalView}" Text="Show page" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
+        <dict:Button AutomationProperties.AutomationId="FitToView" Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
+        <dict:Button AutomationProperties.AutomationId="ExtendPage" Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Page" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
+        <dict:Button AutomationProperties.AutomationId="ZoomOut" x:Name="ZoomOut" Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" />
+        <dict:Button AutomationProperties.AutomationId="ZoomIn" x:Name="ZoomIn" Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}" />
+        <dict:Button x:Name="InitiateGrabZoom" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}" InternalButtonSize="Large"/>
+    </dict:RibbonPanel>
+</sr:RibbonGroup>           

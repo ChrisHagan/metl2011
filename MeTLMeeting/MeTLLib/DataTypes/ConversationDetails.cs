@@ -84,19 +84,19 @@ namespace MeTLLib.DataTypes
             return cd;
         }
 
-        public static SearchConversationDetails HydrateFromServer(ConversationDetails con)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn, ConversationDetails conv)
         {
-            if (con == null)
+            if (conv == null)
                 throw new ArgumentNullException();
 
-            return HydrateFromServer(new SearchConversationDetails(con));
+            return HydrateFromServer(conn,new SearchConversationDetails(conv));
         }
-        public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn,SearchConversationDetails scd)
         {
             if (scd == null)
                 throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");
 
-            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(scd.Jid);
+            var conversation = conn.DetailsOf(scd.Jid);
 
             scd.blacklist = conversation.blacklist;
             scd.CreatedAsTicks = conversation.CreatedAsTicks;
@@ -108,7 +108,22 @@ namespace MeTLLib.DataTypes
         }
     }
 
-    public class ConversationDetails : INotifyPropertyChanged
+    public class Attendance
+    {
+        public bool present { get; protected set; }
+        public string author { get; protected set; }
+        public string location { get; protected set; }
+        public long timestamp { get; set; }
+        public Attendance(string _author, string _location, bool _present,long _timestamp)
+        {
+            author = _author;
+            location = _location;
+            present = _present;
+            timestamp = _timestamp;
+        }
+    }
+
+        public class ConversationDetails : INotifyPropertyChanged
     {
         public bool isDeleted
         {
@@ -265,7 +280,8 @@ namespace MeTLLib.DataTypes
 
         public bool UserHasPermission(Credentials credentials)
         {
-            if (!(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
+            if (!(credentials.name == Author)
+                && !(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
                 && Subject.ToLower() != "Unrestricted".ToLower()
                 && !(String.IsNullOrEmpty(Subject))
                 && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower()))) return false;
@@ -281,7 +297,7 @@ namespace MeTLLib.DataTypes
             if (obj == null || !(obj is ConversationDetails)) return false;
             var foreignConversationDetails = ((ConversationDetails)obj);
             return ((foreignConversationDetails.Author == Author)
-                && (foreignConversationDetails.Created == Created)
+                //&& (foreignConversationDetails.Created == Created)
                 && (foreignConversationDetails.IsValid == IsValid)
                 && (foreignConversationDetails.Jid == Jid)
                 && (foreignConversationDetails.LastAccessed.ToString() == LastAccessed.ToString())
@@ -322,6 +338,17 @@ namespace MeTLLib.DataTypes
         private static readonly string DEFAULT_WIDTH = "defaultWidth";
         private static readonly string DEFAULT_HEIGHT = "defaultHeight";
         private static readonly string BLACKLIST_TAG = "blacklist";
+
+        private static readonly string GROUP_SET_TAG = "groupSet";
+        private static readonly string GROUP_SET_ID_TAG = "id";
+        private static readonly string GROUP_SET_LOCATION_TAG = "location";
+        private static readonly string GROUP_SET_SIZE_TAG = "groupSize";
+        private static readonly string GROUP_SET_GROUPS_TAG = "groups";
+        private static readonly string GROUP_TAG = "group";
+        private static readonly string GROUP_ID_TAG = "id";
+        private static readonly string GROUP_LOCATION_TAG = "location";
+        private static readonly string GROUP_MEMBERS_TAG = "members";
+        private static readonly string GROUP_MEMBER_TAG = "member";
         public static ConversationDetails ReadXml(XElement doc)
         {
             var Title = doc.Element(TITLE_TAG).Value;
@@ -346,7 +373,20 @@ namespace MeTLLib.DataTypes
                 Int32.Parse(d.Element(INDEX_TAG).Value),
                 d.Element(DEFAULT_WIDTH) != null ? float.Parse(d.Element(DEFAULT_WIDTH).Value) : 720,
                 d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
-                d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
+                d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true,
+                d.Element(GROUP_SET_TAG) != null ? d.Descendants(GROUP_SET_TAG).Select(gs => new GroupSet(
+                    gs.Element(GROUP_SET_ID_TAG).Value,
+                    gs.Element(GROUP_SET_LOCATION_TAG).Value,
+                    0,//Int32.Parse(gs.Element(GROUP_SET_SIZE_TAG).Value),
+                    gs.Element(GROUP_SET_GROUPS_TAG).Descendants(GROUP_TAG).Select(g => new Group(
+                            g.Element(GROUP_ID_TAG).Value,
+                            g.Element(GROUP_LOCATION_TAG).Value,
+                            g.Descendants(GROUP_MEMBERS_TAG).Select(gm =>
+                                gm.Element(GROUP_MEMBER_TAG).Value
+                            ).ToList()
+                        )
+                    ).ToList()
+                )).ToList() : new List<GroupSet>()
             )).ToList();
             var blacklistElements = doc.Elements(BLACKLIST_TAG);
             var blacklist = new List<string>();
@@ -373,8 +413,18 @@ namespace MeTLLib.DataTypes
                     new XElement(DEFAULT_HEIGHT, s.defaultHeight),
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
-                    new XElement(TYPE_TAG, s.type.ToString())))
-                    , blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
+                    new XElement(TYPE_TAG, s.type.ToString()),
+                    s.GroupSets.Select(gs => new XElement(GROUP_SET_TAG,
+                        new XElement(GROUP_SET_ID_TAG,gs.id),
+                        new XElement(GROUP_SET_LOCATION_TAG,gs.location),
+                        new XElement(GROUP_SET_SIZE_TAG,gs.groupSize.ToString()),
+                        new XElement(GROUP_SET_GROUPS_TAG,gs.Groups.Select(g => new XElement(GROUP_TAG,
+                            new XElement(GROUP_ID_TAG,g.id),
+                            new XElement(GROUP_LOCATION_TAG,g.location),
+                            new XElement(GROUP_MEMBERS_TAG,g.GroupMembers.Select(gm => new XElement(GROUP_MEMBER_TAG, gm)))
+                        ))))
+                ))),
+                blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -488,6 +538,48 @@ namespace MeTLLib.DataTypes
                 new XElement(ALLSYNC, usersAreCompulsorilySynced));
         }
     }
+    public class Group : INotifyPropertyChanged
+    {
+        public string id;
+        public string location;
+        public List<string> GroupMembers;
+        public Group(string _id, string _location, List<string> _members)
+        {
+            id = _id;
+            location = _location;
+            GroupMembers = _members;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refreshMembers()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("GroupMembers"));
+        }
+    }
+    public class GroupSet : INotifyPropertyChanged
+    {
+        public string id;
+        public string location;
+        public int groupSize;
+        public List<Group> Groups;
+        public GroupSet(string _id, string _location, int _groupSize, List<Group> _groups) {
+            id = _id;
+            location = _location;
+            groupSize = _groupSize;
+            Groups = _groups;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refreshSize()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("groupSize"));
+        }
+        public void refreshGroups()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("Groups"));
+        }
+    }
     public class Slide : INotifyPropertyChanged
     {
         public override bool Equals(object obj)
@@ -520,15 +612,13 @@ namespace MeTLLib.DataTypes
             defaultWidth = newDefaultWidth;
             defaultHeight = newDefaultHeight;
         }
-        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed)
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed) : this(newId,newAuthor,newType,newIndex,newDefaultWidth,newDefaultHeight)
         {
-            id = newId;
-            author = newAuthor;
-            type = newType;
-            index = newIndex;
-            defaultWidth = newDefaultWidth;
-            defaultHeight = newDefaultHeight;
             exposed = newExposed;
+        }
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed,List<GroupSet> newGroups) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight,newExposed)
+        {
+            GroupSets = newGroups;
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void refresh()
@@ -553,7 +643,7 @@ namespace MeTLLib.DataTypes
             var sId = id.ToString();
             return Int32.Parse(string.Format("{0}400", sId.Substring(0, sId.Length - 3)));
         }
-        public enum TYPE { SLIDE, POLL, THOUGHT };
+        public enum TYPE { SLIDE, POLL, THOUGHT, GROUPSLIDE };
 
         public float defaultWidth;
         public float defaultHeight;
@@ -566,6 +656,7 @@ namespace MeTLLib.DataTypes
         public int index { get; set; }
         public TYPE type;
         public bool exposed;
+        public List<GroupSet> GroupSets = new List<GroupSet>();
     }
     public class ApplicationLevelInformation
     {

@@ -11,7 +11,7 @@ namespace MeTLLib.Providers
 {
     public class ConfigurationProvider : HttpResourceProvider
     {
-        public ConfigurationProvider(IWebClientFactory factory) : base(factory) {}
+        public ConfigurationProvider(IWebClientFactory factory,IAuditor auditor) : base(factory,auditor) {}
 
         public string getMeTLType()
         {

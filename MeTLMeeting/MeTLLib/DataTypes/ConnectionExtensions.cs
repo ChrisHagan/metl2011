@@ -27,6 +27,16 @@ namespace MeTLLib.DataTypes
         public string password;
         public List<AuthorizedGroup> authorizedGroups;
         public string mail;
+        public string cookie = "";
+
+        public void update(Credentials other)
+        {
+            name = other.name;
+            password = other.password;
+            authorizedGroups = other.authorizedGroups;
+            mail = other.mail;
+            cookie = other.cookie;
+        }
         public static Credentials Empty
         {
             get

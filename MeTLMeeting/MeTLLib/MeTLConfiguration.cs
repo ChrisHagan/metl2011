@@ -1,80 +1,113 @@
 ﻿namespace MeTLLib
 {
+    using mshtml;
     using System;
     using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
     using System.Linq;
+    using System.Web;
+    using System.Xml.Linq;
 
+    public class MeTLConfigurationProxy
+    {
+        public MeTLConfigurationProxy(
+            string _name,
+            Uri _imageUrl,
+            Uri _host
+        )
+        {
+            name = _name;
+            imageUrl = _imageUrl;
+            host = _host;
+        }
+        public string name { get; protected set; }
+        public Uri imageUrl { get; protected set; }
+        public Uri host { get; protected set; }
+        public Uri serverStatus
+        {
+            get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
+        }
+
+    }
     public class MetlConfiguration
     {
         public MetlConfiguration(
             string _name,
             string _imageUrl,
-            string _xmppHost,
-            string _xmppPort,
             string _xmppDomain,
             string _xmppUsername,
             string _xmppPassword,
-            string _conversationsUrl,
-            string _authenticationUrl,
-            string _thumbnailUrl,
-            string _resourceUrl,
-            string _historyUrl,
-            string _resourceUsername,
-            string _resourcePassword,
-            string _structureDirectory,
-            string _resourceDirectory,
-            string _uploadPath,
-            string _primaryKeyGenerator,
-            string _cryptoKey,
-            string _cryptoIV,
-            int _displayIndex
+            Uri _host
        )
         {
             name = _name;
             imageUrl = _imageUrl;
-            xmppHost = _xmppHost;
-            xmppPort = _xmppPort;
             xmppDomain = _xmppDomain;
             xmppUsername = _xmppUsername;
             xmppPassword = _xmppPassword;
-            conversationsUrl = _conversationsUrl;
-            authenticationUrl = _authenticationUrl;
-            thumbnailUrl = _thumbnailUrl;
-            resourceUrl = _resourceUrl;
-            historyUrl = _historyUrl;
-            resourceUsername = _resourceUsername;
-            resourcePassword = _resourcePassword;
-            structureDirectory = _structureDirectory;
-            resourceDirectory = _resourceDirectory;
-            uploadPath = _uploadPath;
-            primaryKeyGenerator = _primaryKeyGenerator;
-            cryptoKey = _cryptoKey;
-            cryptoIV = _cryptoIV;
-            displayIndex = _displayIndex;
+            host = _host;
         }
         public string name { get; protected set; }
         public string imageUrl { get; protected set; }
-        public string xmppHost { get; protected set; }
-        public string xmppPort { get; protected set; }
         public string xmppDomain { get; protected set; }
         public string xmppUsername { get; protected set; }
         public string xmppPassword { get; protected set; }
-        public string conversationsUrl { get; protected set; }
-        public string authenticationUrl { get; protected set; }
-        public string thumbnailUrl { get; protected set; }
-        public string resourceUrl { get; protected set; }
-        public string historyUrl { get; protected set; }
-        public string resourceUsername { get; protected set; }
-        public string resourcePassword { get; protected set; }
-        public string resourceDirectory { get; protected set; }
-        public string structureDirectory { get; protected set; }
-        public string uploadPath { get; protected set; }
-        public string primaryKeyGenerator { get; protected set; }
-        public string cryptoKey { get; protected set; }
-        public string cryptoIV { get; protected set; }
-        public int displayIndex { get; protected set; }
+        public Uri host { get; protected set; }
+        public string xmppHost
+        {
+            get { return host.Host; }
+        }
+        public Uri getResource(string identity)
+        {
+            return new Uri(host, new Uri(String.Format("/resourceProxy/{0}", HttpUtility.UrlEncode(identity)), UriKind.Relative));
+        }
+        public Uri getImage(string jid, string url)
+        {
+            return new Uri(host, new Uri(String.Format("/proxyImageUrl/{0}?source={1}", jid, HttpUtility.UrlEncode(url)),UriKind.Relative));
+        }
+        public Uri authenticationUrl
+        {
+            get {
+                return new Uri(host, new Uri("/authenticationState", UriKind.Relative));
+            }
+        }
+        public Uri conversationDetails(string jid)
+        {
+            return new System.Uri(host, new Uri(String.Format("/details/{0}", jid), UriKind.Relative));
+        }
+        public Uri uploadResource(string preferredFilename,string jid)
+        {
+            return new Uri(host, new Uri(String.Format("/upload?filename={0}&jid={1}", preferredFilename, jid), UriKind.Relative));
+        }
+        public Uri addSlideAtIndex(string jid, int currentSlideId)
+        {
+            return new System.Uri(host, new Uri(String.Format("/addSlideAtIndex/{0}/{1}", jid, currentSlideId), UriKind.Relative));
+        }
+        public Uri duplicateSlide(int slideId, string conversationJid)
+        {
+            return new Uri(host,new Uri(String.Format("/duplicateSlide/{0}/{1}", slideId.ToString(), conversationJid), UriKind.Relative));
+        }
+        public Uri duplicateConversation(string conversationJid)
+        {
+            return new Uri(host,new Uri(String.Format("/duplicateConversation/{0}", conversationJid), UriKind.Relative));
+        }
+        public Uri updateConversation(string conversationJid)
+        {
+            return new System.Uri(host, new Uri(String.Format("/updateConversation/{0}", conversationJid), UriKind.Relative));
+        }
+        public Uri createConversation(string title)
+        {
+            return new Uri(host,new Uri(String.Format("/createConversation/{0}", HttpUtility.UrlEncode(title)), UriKind.Relative));
+        }
+        public Uri serverStatus
+        {
+            get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
+        }
+        public Uri getRoomHistory(string jid)
+        {
+            return new Uri(host, new Uri("/fullClientHistory?source=" + HttpUtility.UrlEncode(jid), UriKind.Relative));
+        }
         public string muc
         {
             get { return "conference." + xmppDomain; }
@@ -83,56 +116,98 @@
         {
             get { return "global@" + muc; }
         }
+        public static readonly MetlConfiguration empty = new MetlConfiguration("", "", "", "", "", new Uri("http://localhost:8080/"));
     }
     public abstract class MetlConfigurationManager
     {
         public MetlConfigurationManager()
         {
-            loadConfigs();
+            reload();
         }
-        public List<MetlConfiguration> Configs
+        public MetlConfiguration getConfigFor(MeTLConfigurationProxy server)
         {
-            get;
-            protected set;
+            return internalGetConfigFor(server);
         }
-        protected abstract void loadConfigs();
+        public List<MeTLConfigurationProxy> servers { get; protected set; }
+        protected abstract MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server);
+        protected abstract void internalGetServers();
         public void reload()
         {
-            loadConfigs();
+            internalGetServers();
         }
+        protected List<XElement> getElementsByTag(List<XElement> x, String tagName)
+        {
+            // it's not recursive!
+            var children = x.Select(xel => { return getElementsByTag(xel.Elements().ToList(), tagName); });
+            var root = x.FindAll((xel) =>
+            {
+                return xel.Name.LocalName.ToString().Trim().ToLower() == tagName.Trim().ToLower();
+            });
+            foreach (List<XElement> child in children)
+            {
+                root.AddRange(child);
+            }
+            return root;
+        }
+        public List<MetlConfiguration> parseConfig(MeTLConfigurationProxy server, HTMLDocument doc)
+        {
+            var authDataContainer = doc.getElementById("authData");
+            if (authDataContainer == null)
+            {
+                return new List<MetlConfiguration>();
+            }
+            var html = authDataContainer.innerHTML;
+            if (html == null)
+            {
+                return new List<MetlConfiguration>();
+            }
+            var xml = XDocument.Parse(html).Elements().ToList();
+            var cc = getElementsByTag(xml,"clientConfig");
+            var xmppDomain = getElementsByTag(cc, "xmppDomain").First().Value;
+            var xmppUsername = getElementsByTag(cc, "xmppUsername").First().Value;
+            var xmppPassword = getElementsByTag(cc, "xmppPassword").First().Value;
+            var imageUrl = getElementsByTag(cc, "imageUrl").First().Value;
+            return new List<MetlConfiguration>
+            {
+                new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppDomain,xmppUsername,xmppPassword,server.host)
+            };
+        }
+    }
+    public class RemoteAppMeTLConfigurationManager : MetlConfigurationManager
+    {
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server) { throw new NotImplementedException(); }
+        override protected void internalGetServers() { throw new NotImplementedException(); }
     }
     public class LocalAppMeTLConfigurationManager : MetlConfigurationManager
     {
-        override protected void loadConfigs()
+        protected Dictionary<MeTLConfigurationProxy, MetlConfiguration> internalConfigs = new Dictionary<MeTLConfigurationProxy, MetlConfiguration>();
+        override protected void internalGetServers()
         {
             deprecatedLib.MeTLConfiguration.Load();
             var config = deprecatedLib.MeTLConfiguration.Config;
-            Configs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf =>
+            internalConfigs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf =>
               {
                   return new MetlConfiguration(
                       conf.Name,
                       conf.Image,
-                          conf.Host,
-                          conf.XmppPort,
                           conf.xmppServiceName,
                           config.XmppCredential.Username,
                           config.XmppCredential.Password,
-                          conf.MeggleUrl,
-                          conf.WebAuthenticationEndpoint,
-                          conf.Thumbnail,
-                          String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.ResourcePort),
-                          String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.HistoryPort),
-                          config.ResourceCredential.Username,
-                          config.ResourceCredential.Password,
-                          "Structure",
-                          "Resources",
-                          conf.UploadEndpoint,
-                          "primarykey.yaws",
-                          config.Crypto.Key,
-                          config.Crypto.IV,
-                          conf.DisplayIndex
+                          new Uri(String.Format("{0}://{1}:{2}",conf.Protocol,conf.Host,conf.HistoryPort))
                       );
-              }).ToList();
+              }).ToDictionary<MetlConfiguration, MeTLConfigurationProxy>(mc =>
+              {
+                  return new MeTLConfigurationProxy(
+                      mc.name,
+                      new Uri(mc.imageUrl),
+                      mc.authenticationUrl
+                      );
+              });
+            servers = internalConfigs.Keys.ToList();
+        }
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server)
+        {
+            return internalConfigs[server];
         }
     }
 }

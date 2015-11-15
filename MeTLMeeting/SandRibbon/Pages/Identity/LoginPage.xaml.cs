@@ -117,7 +117,7 @@ namespace SandRibbon.Pages.Login
         protected void ResetWebBrowser(object _unused)
         {
             var loginUri = ClientFactory.Connection().server.authenticationUrl;            
-            DeleteCookieForUrl(new Uri(loginUri));
+            DeleteCookieForUrl(loginUri);
             logonBrowser = new WebControl();
             logonBrowserContainer.Children.Add(logonBrowser);
             var loginAttempted = false;
@@ -189,7 +189,7 @@ namespace SandRibbon.Pages.Login
             }, null, Timeout.Infinite, Timeout.Infinite);
             logonBrowser.NativeViewInitialized += delegate
             {
-                logonBrowser.Source = new Uri(loginUri);
+                logonBrowser.Source = loginUri;
             };
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName)

@@ -833,7 +833,7 @@ namespace SandRibbon.Utils
             public DelegateWrapper(Dispatcher dispatcher, TEvent handler)
             {
                 this.dispatcher = dispatcher;
-                this.handler = handler;
+                this.handler = handler;                
             }
 
             public void invoke(object sender, TArgs args)

@@ -7,10 +7,10 @@ using SandRibbon.Components.Pedagogicometry;
 using System.Drawing;
 using TextInformation = SandRibbon.Components.TextInformation;
 using SandRibbonObjects;
+using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Profiles;
 using SandRibbon.Pages.Collaboration.Palettes;
-using SandRibbon.Pages.Conversations.Models;
-using Awesomium.Windows.Controls;
 using Awesomium.Core;
 
 namespace SandRibbon.Providers
@@ -160,6 +160,20 @@ namespace SandRibbon.Providers
                 else throw new NotSetException("Slides not set");
             }
         }
+        public static Slide slideDetails
+        {
+            get
+            {
+                try
+                {
+                    return conversationDetails.Slides.Find(s => s.id == slide);
+                }
+                catch
+                {
+                    return Slide.Empty;
+                }
+            }
+        }
         public static ConversationDetails conversationDetails
         {
             get
@@ -167,11 +181,18 @@ namespace SandRibbon.Providers
                 return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : null;
             }
         }
-        public static ContentVisibilityEnum contentVisibility
+        public static KeyValuePair<ConversationDetails,Slide> slideDetailsInConversationDetails
         {
             get
             {
-                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+                return new KeyValuePair<ConversationDetails, Slide>(conversationDetails, slideDetails);
+            }
+        }
+        public static List<ContentVisibilityDefinition> contentVisibility
+        {
+            get
+            {
+                return Commands.SetContentVisibility.IsInitialised ? (List<ContentVisibilityDefinition>)Commands.SetContentVisibility.LastValue() : new List<ContentVisibilityDefinition>();
             }
         }
         public static MeTLLib.DataTypes.QuizData quiz

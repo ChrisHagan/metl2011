@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="SandRibbon.Tabs.Groups.ToolBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries">
+    <StackPanel Orientation="Horizontal">
+        <!--
+        <dict:RibbonPanel x:Name="TextOptions" >-->
+            <!--<dict:RadioButton x:Name="select"  ToolTip="{DynamicResource SelectTextBoxToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />-->
+            <!--<dict:RadioButton x:Name="type" ToolTip="{DynamicResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Type" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>-->
+        <!--</dict:RibbonPanel>
+    -->
+        <dict:RibbonPanel x:Name="ImageOptions">
+            <dict:Button ToolTip="{DynamicResource AddImageToolTip}"  x:Name="addMedia" Icon="\Resources\AddImage.png" Text="Add Picture" Command="api:Commands.AddImage"/>
+            <!--<dict:Button x:Name="presentVideo" Icon="\Resources\LewMouthOpenHead.png" Text="Present Video" Command="api:Commands.PresentVideo"/>-->
+        </dict:RibbonPanel>
+        
+    </StackPanel>
+</UserControl>

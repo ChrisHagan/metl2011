@@ -197,6 +197,17 @@ namespace SandRibbon.Components
                 _lastFocusedTextBox = value;
             }
         }
+        
+        private Privacy currentPrivacy
+        {
+            get { return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true)); }
+        }                
+
+        void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            pos = e.GetPosition(this);
+        }
+
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -229,7 +240,7 @@ namespace SandRibbon.Components
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
 
 #if TOGGLE_CONTENT
-            Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
+            Commands.SetContentVisibility.RegisterCommandToDispatcher<List<ContentVisibilityDefinition>>(new DelegateCommand<List<ContentVisibilityDefinition>>(SetContentVisibility));
 #endif
 
             Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(new DelegateCommand<SizeWithTarget>(extendCanvasBySize));
@@ -309,12 +320,7 @@ namespace SandRibbon.Components
             }
             else
                 return _defaultPrivacy;
-        }
-
-        private Privacy currentPrivacy
-        {
-            get { return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true)); }
-        }
+        }        
 
         private Point pos = new Point(15, 15);
         private void wireInPublicHandlers()
@@ -335,13 +341,7 @@ namespace SandRibbon.Components
             {
                 MouseUp += (c, args) => placeCursor(this, args);
             };
-        }
-
-        void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            pos = e.GetPosition(this);
-        }
-
+        }        
 
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -375,13 +375,28 @@ namespace SandRibbon.Components
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.ResetSyncTimer();
+            /*
+            if (Work.EditingMode == InkCanvasEditingMode.GestureOnly && !e.InAir)
+            {
+                e.
+            }
+            */
         }
 
+        protected Point lastPosition = new Point(0, 0);
         private void mouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.ResetSyncTimer();
+                if (currentMode == InkCanvasEditingMode.None || currentMode == InkCanvasEditingMode.GestureOnly)
+                {
+                    var newPos = e.GetPosition(Work);
+                    var newX = newPos.X - lastPosition.X;
+                    var newY = newPos.Y - lastPosition.Y;
+                    Commands.MoveCanvasByDelta.Execute(new Point(newX,newY));
+                    lastPosition = new Point(newPos.X, newPos.Y);
+                }
             }
         }
 
@@ -428,6 +443,16 @@ namespace SandRibbon.Components
             if (me.ToLower() == Globals.PROJECTOR) return;
             switch (newLayer)
             {
+                case "Select":
+                    Work.EditingMode = InkCanvasEditingMode.Select;
+                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                    Work.Cursor = Cursors.Arrow;
+                    break;
+                case "View":
+                    Work.EditingMode = InkCanvasEditingMode.GestureOnly;
+                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                    Work.Cursor = Cursors.Hand;
+                    break;
                 case "Text":
                     Work.EditingMode = InkCanvasEditingMode.None;
                     Work.UseCustomCursor = false;
@@ -438,6 +463,7 @@ namespace SandRibbon.Components
                     Work.Cursor = Cursors.Arrow;
                     break;
                 case "Sketch":
+                    Work.EditingMode = InkCanvasEditingMode.Ink;
                     Work.UseCustomCursor = true;
                     break;
             }
@@ -1211,7 +1237,7 @@ namespace SandRibbon.Components
             });
         }
 
-        public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
+        public void SetContentVisibility(List<ContentVisibilityDefinition> contentVisibility)
         {
             if (_target == "notepad")
                 return;
@@ -1230,7 +1256,7 @@ namespace SandRibbon.Components
                 refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
         }
 
-        private void ReAddFilteredContent(ContentVisibilityEnum contentVisibility)
+        private void ReAddFilteredContent(List<ContentVisibilityDefinition> contentVisibility)
         {
             Work.Strokes.Clear();
             Work.Strokes.Add(new StrokeCollection(contentBuffer.FilteredStrokes(contentVisibility).Select(s => s as Stroke)));
@@ -1548,7 +1574,7 @@ namespace SandRibbon.Components
             Work.Strokes.Clear();
 
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(contentBuffer.CurrentContentVisibility);
+            ReAddFilteredContent(Globals.contentVisibility);//contentBuffer.CurrentContentVisibility);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
@@ -1687,7 +1713,7 @@ namespace SandRibbon.Components
         private void sendImage(MeTLImage newImage)
         {
             newImage.UpdateLayout();
-            Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().timestamp));
+            Commands.SendImage.Execute(new TargettedImage(Globals.slide, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().resourceIdentity, newImage.tag().timestamp));
         }
         private void dirtyImage(MeTLImage imageToDirty)
         {
@@ -1942,11 +1968,12 @@ namespace SandRibbon.Components
                 MeTLMessage.Information("Cannot drop this onto the canvas");
                 return;
             }
+            
             Commands.SetLayer.ExecuteAsync("Insert");
             var pos = e.GetPosition(this);
             var origin = new Point(pos.X, pos.Y);
             var maxHeight = 0d;
-
+            
             Func<Image, Point, int, Point> positionUpdate = (source, offset, count) =>
                 {
                     if (count == 0)
@@ -2026,7 +2053,7 @@ namespace SandRibbon.Components
                 worker.DoWork += (s, e) =>
                  {
                      File.Copy(unMangledFilename, filename);
-                     MeTLLib.ClientFactory.Connection().UploadAndSendFile(
+                     App.controller.client.UploadAndSendFile(
                          new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(filename)));
                      File.Delete(filename);
                  };
@@ -2080,7 +2107,8 @@ namespace SandRibbon.Components
                 }
                 InkCanvas.SetLeft(image, imagePos.X);
                 InkCanvas.SetTop(image, imagePos.Y);
-                image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
+                //image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
+                image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L,""));
                 var currentSlide = Globals.slide;
                 var translatedImage = OffsetNegativeCartesianImageTranslate(image);
 
@@ -2094,7 +2122,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
                     if (!fileName.StartsWith("http"))
-                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
+                        App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
                     else
                         sendImage(translatedImage);
 
@@ -2382,6 +2410,23 @@ namespace SandRibbon.Components
             UndoHistory.Queue(undo, redo, "Restored text defaults");
             redo();
         }
+        private void resetText(MeTLTextBox box)
+        {
+            box.RemovePrivacyStyling(contentBuffer);
+            box.FontWeight = FontWeights.Normal;
+            box.FontStyle = FontStyles.Normal;
+            box.TextDecorations = new TextDecorationCollection();
+            box.FontFamily = new FontFamily("Arial");
+            box.FontSize = 24;
+            box.Foreground = Brushes.Black;
+            var info = new TextInformation
+            {
+                Family = box.FontFamily,
+                Size = box.FontSize,
+            };
+            Commands.TextboxFocused.ExecuteAsync(info);
+            sendTextWithoutHistory(box, box.tag().privacy);
+        }
         private void updateStyling(TextInformation info)
         {
             var selectedTextBoxes = new List<MeTLTextBox>();
@@ -2553,7 +2598,7 @@ namespace SandRibbon.Components
                 RemoveTextBoxWithMatchingId(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, canvasAlignedPrivacy(box.tag().privacy), box.tag().id, box.tag().timestamp));
         }
-
+        /*
         public void sendImageWithoutHistory(MeTLImage image, Privacy thisPrivacy)
         {
             sendImageWithoutHistory(image, thisPrivacy, Globals.slide);
@@ -2568,7 +2613,7 @@ namespace SandRibbon.Components
             if (thisPrivacy == Privacy.Private && Globals.isAuthor && me != image.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
-
+        */
         private void box_PreviewTextInput(object sender, KeyEventArgs e)
         {
             _originalText = ((MeTLTextBox)sender).Text;
@@ -2770,6 +2815,12 @@ namespace SandRibbon.Components
                 id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
             });
 
+            /*
+            //setting the currentfamily, currentsize, currentcolor, style whenever there is a new box created
+            _currentColor = Globals.currentTextInfo.Color;
+            _currentSize = Globals.currentTextInfo.Size;
+            _currentFamily = Globals.currentTextInfo.Family;
+            */
             box.FontStyle = italic ? FontStyles.Italic : FontStyles.Normal;
             box.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
             box.TextDecorations = new TextDecorationCollection();
@@ -2842,16 +2893,16 @@ namespace SandRibbon.Components
                 if (File.Exists(tmpFile))
                 {
                     var uri =
-                        MeTLLib.ClientFactory.Connection().NoAuthUploadResource(
+                        App.controller.client.NoAuthUploadResource(
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
                     var image = new MeTLImage
                     {
-                        Source = new BitmapImage(uri),
+                        Source = new BitmapImage(App.controller.config.getImage(currentPrivacy == Privacy.Public ? Globals.slide.ToString() : Globals.slide.ToString() + Globals.me,uri)),
                         Width = imageSource.Width,
                         Height = imageSource.Height,
                         Stretch = Stretch.Fill
                     };
-                    image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, -1)); // ZIndex was -1, timestamp is -1L
+                    image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, uri.ToString(),-1)); // ZIndex was -1, timestamp is -1L
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
                     images.Add(image);
@@ -2862,7 +2913,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<MeTLImage> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image, image.tag().timestamp));
+                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, currentPrivacy, image.tag().id, image, image.tag().resourceIdentity, image.tag().timestamp));
         }
         private void HandleImagePasteUndo(List<MeTLImage> selectedImages)
         {
@@ -3018,11 +3069,17 @@ namespace SandRibbon.Components
             //text 
             var selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements()).ToList();
             var selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select((s => s.Clone())).ToList();
-            string selectedText = selectedText = myTextBox.SelectedText;
+            string selectedText = null;
+            if (myTextBox != null)
+                selectedText = myTextBox.SelectedText;
 
             // copy previously was an undoable action, ie restore the clipboard to what it previously was
             var images = HandleImageCopyRedo(selectedElements);
-            var text = HandleTextCopyRedo(selectedElements, selectedText);
+            var text = new List<string>();
+            if (selectedText != null)
+            {
+                text = HandleTextCopyRedo(selectedElements, selectedText);
+            }
             var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes.Select(s => s as Stroke).ToList());
             Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(text, images, copiedStrokes));
         }

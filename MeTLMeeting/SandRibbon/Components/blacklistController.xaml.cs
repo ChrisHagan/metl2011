@@ -24,7 +24,7 @@ namespace SandRibbon.Components
         {
             var details = Globals.conversationDetails;
             details.blacklist = blacklist;
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.controller.client.UpdateConversationDetails(details);
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {

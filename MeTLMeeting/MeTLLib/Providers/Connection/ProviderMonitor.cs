@@ -10,7 +10,7 @@ using agsXMPP;
 using System.Timers;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -18,12 +18,23 @@ namespace MeTLLib.Providers.Connection
     {
         void HealthCheck(Action healthyBehaviour);
     }
-    public partial class ProductionProviderMonitor : IProviderMonitor
+    public class ProductionProviderMonitor : IProviderMonitor
     {
-        [Inject]
-        public MetlConfiguration metlServerAddress { private get; set; }
-        [Inject]
-        public ITimerFactory timerFactory { private get; set; }
+        public MetlConfiguration metlServerAddress { get; protected set; }
+        public ITimerFactory timerFactory { get; protected set; }
+        public IReceiveEvents receiveEvents { get; protected set; }
+        public IWebClient client { get; protected set; }
+        public ProductionProviderMonitor(
+            MetlConfiguration _metlServerAddress,
+            ITimerFactory _timerFactory,
+            IReceiveEvents _receiveEvents,
+            IWebClient _webCleint
+            )
+        {
+            metlServerAddress = _metlServerAddress;
+            timerFactory = _timerFactory;
+            client = _webCleint;
+        }
         public void HealthCheck (Action healthyBehaviour){
             HealthCheck(healthyBehaviour,0);
         }
@@ -37,10 +48,8 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceError("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
                     return;
                 }
-                var uri = new System.Uri(metlServerAddress.resourceUrl);
-                var ping = new System.Net.NetworkInformation.Ping();
-                var reply = ping.Send(uri.Host,2000);
-                if (reply != null && reply.Status == IPStatus.Success)
+                var uri = metlServerAddress.serverStatus;
+                if (client.downloadString(uri).Trim().ToLower() == "ok")
                 {
                     healthyBehaviour();
                 }
@@ -49,7 +58,7 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck could not ping {0}", uri);
                     if (attempts >= maximum)
                     {
-                        Commands.ServersDown.Execute(uri.Host);
+                        receiveEvents.serversDown(uri);
                     }
                     else
                     {

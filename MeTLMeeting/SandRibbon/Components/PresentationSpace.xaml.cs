@@ -38,7 +38,8 @@ namespace SandRibbon.Components
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            //Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));           
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
@@ -72,7 +73,7 @@ namespace SandRibbon.Components
                 if (author != Globals.me && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
-            ClientFactory.Connection().UpdateConversationDetails(details);
+            App.controller.client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
             Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
@@ -84,7 +85,7 @@ namespace SandRibbon.Components
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = MeTLLib.ClientFactory.Connection();
+                                 var conn = App.controller.client;
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
@@ -159,20 +160,33 @@ namespace SandRibbon.Components
             });
             return file;
         }
+        private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            var model = DataContext as ToolableSpaceModel;
-            if (parser.location.currentSlide == model.context.Slide)
+            lock (preParserRenderingLock)
             {
-                BeginInit();
-                stack.ReceiveStrokes(parser.ink);
-                stack.ReceiveImages(parser.images.Values);
-                foreach (var text in parser.text.Values)
-                    stack.DoText(text);
-                stack.RefreshCanvas();
-                EndInit();
+                App.auditor.wrapAction(a =>
+                {
+                    Dispatcher.adopt(delegate
+                    {
+                        BeginInit();
+                        a(GaugeStatus.InProgress, 25);
+                        stack.ReceiveStrokes(parser.ink);
+                        a(GaugeStatus.InProgress, 50);
+                        stack.ReceiveImages(parser.images.Values);
+                        a(GaugeStatus.InProgress, 75);
+                        foreach (var text in parser.text.Values)
+                            stack.DoText(text);
+                        /*foreach (var moveDelta in parser.moveDeltas)
+                            stack.ReceiveMoveDelta(moveDelta, processHistory: true);
+                        */
+                        stack.RefreshCanvas();
+                        EndInit();
+
+                    });
+                }, "renderCanvas", "frontend");
             }
-        }
+        }       
         private static System.Windows.Forms.Screen getSecondaryScreen()
         {
             foreach (System.Windows.Forms.Screen s in System.Windows.Forms.Screen.AllScreens)
@@ -301,7 +315,7 @@ namespace SandRibbon.Components
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
             (Globals.slide, Globals.me, marquee, origin, new Point(0, 0),
-            MeTLLib.ClientFactory.Connection().UploadResourceToPath(
+            App.controller.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",
@@ -418,7 +432,7 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            App.controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
         }
         private FrameworkElement clonePublicOnly()
         {

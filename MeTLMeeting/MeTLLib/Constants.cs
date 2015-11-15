@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using agsXMPP;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib
 {

@@ -34,7 +34,7 @@ namespace SandRibbon.Components.Sandpit
         }
         public static ConversationDetails DEFAULT_CONVERSATION
         {
-            get { return MeTLLib.ClientFactory.Connection().DetailsOf("34000"); }
+            get { return App.controller.client.DetailsOf("34000"); }
         }
         public static int slide(int index) {
             var slides = DEFAULT_CONVERSATION.Slides;

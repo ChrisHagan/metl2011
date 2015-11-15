@@ -61,19 +61,11 @@ namespace SandRibbon.Components.Utility
                     var boxPrivacy = PrivacyFromTag(element as UIElement);
                     if (boxPrivacy == Privacy.Private)
                     {
-                        if (!ContentVisibilityUtils.getMyPrivateVisible(CurrentContentVisibility))
-                        {
-                            Commands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPrivateVisible(CurrentContentVisibility, true));
-                            // turn on visibilty of myPrivate
-                        }
+                        ContentFilterVisibility.reEnableMyPrivate();
                     }
                     else if (boxPrivacy == Privacy.Public)
                     {
-                        if (!ContentVisibilityUtils.getMyPublicVisible(CurrentContentVisibility))
-                        {
-                            Commands.SetContentVisibility.Execute(ContentVisibilityUtils.setMyPublicVisible(CurrentContentVisibility, true));
-                            // turn on visibility of myPublic
-                        }
+                        ContentFilterVisibility.reEnableMyPublic();
                     }
                 }
             }

@@ -158,7 +158,9 @@ namespace SandRibbon.Components
             {
                 var id = context[i].id;
                 var container = generator.ContainerFromIndex(i);
-                ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                try {
+                    ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                } catch { }
             }
         }
 
@@ -246,7 +248,7 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
+            App.controller.client.AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
         }
         private bool isSlideInSlideDisplay(int slide)
         {

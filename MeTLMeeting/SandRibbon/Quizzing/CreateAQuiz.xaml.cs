@@ -189,7 +189,7 @@ namespace SandRibbon.Quizzing
                                 {
                                     Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
                                     
-                                    url = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
+                                    url = App.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                     var image = new Image();
                                     BitmapImage source = new BitmapImage();
                                     source.BeginInit();

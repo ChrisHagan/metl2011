@@ -128,9 +128,9 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveScreenshotSubmission = new DefaultableCompositeCommand();
-        public static RoutedCommand ImportSubmission = new RoutedCommand();
-        public static RoutedCommand ImportSubmissions = new RoutedCommand();
-        public static RoutedCommand SaveFile = new RoutedCommand();
+        public static DefaultableCompositeCommand ImportSubmission = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ImportSubmissions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SaveFile = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
 
@@ -157,6 +157,11 @@ namespace SandRibbon
         public static DefaultableCompositeCommand DeleteSelectedItems = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BanhammerSelectedItems= new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand VisualizeContent = new DefaultableCompositeCommand();
+
+        #region Attendance
+        public static DefaultableCompositeCommand SendAttendance = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveAttendance = new DefaultableCompositeCommand();
+        #endregion
 
         //public static DefaultableCompositeCommand Relogin = new DefaultableCompositeCommand();
         #region Quizzing
@@ -294,6 +299,9 @@ namespace SandRibbon
         public static DefaultableCompositeCommand CreateBlankConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ShowEditSlidesDialog = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand CreateConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DuplicateSlide = new DefaultableCompositeCommand(new KeyValuePair<ConversationDetails,Slide>(ConversationDetails.Empty,Slide.Empty));
+        public static DefaultableCompositeCommand DuplicateConversation = new DefaultableCompositeCommand(ConversationDetails.Empty);
+        public static DefaultableCompositeCommand CreateGrouping = new DefaultableCompositeCommand();
         //public static DefaultableCompositeCommand PreEditConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand EditConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BlockInput = new DefaultableCompositeCommand();
@@ -327,6 +335,13 @@ namespace SandRibbon
         public static RoutedCommand PostHighlightFriend = new RoutedCommand();
         public static RoutedCommand HighlightUser = new RoutedCommand();
         public static RoutedCommand PostHighlightUser = new RoutedCommand();
+
+        public static DefaultableCompositeCommand LaunchDiagnosticWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticMessage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticGaugeUpdated = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticMessagesUpdated = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DiagnosticGaugesUpdated = new DefaultableCompositeCommand();
+
         #endregion
         Commands()
         {

@@ -17,7 +17,8 @@ using MeTLLib.Providers.Connection;
 using System.Diagnostics;
 using MeTLLib.Utilities;
 using System.Collections.ObjectModel;
-
+using System.Xml.Linq;
+using System.Web;
 
 namespace MeTLLib.DataTypes
 {
@@ -26,7 +27,6 @@ namespace MeTLLib.DataTypes
         //Any new metlStanzas need to be instantiated here to ensure that the xml parser registers them.
         public MeTLStanzasConstructor()
         {
-            new CommandParameterProvider();
             new MeTLStanzas.Ink();
             new MeTLStanzas.Quiz();
             new MeTLStanzas.Image();
@@ -48,6 +48,7 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.TextBoxIdentityStanza();
             new MeTLStanzas.InkIdentityStanza();
             new MeTLStanzas.ImageIdentityStanza();
+            new MeTLStanzas.Attendance();
         }
     }
 
@@ -111,6 +112,26 @@ namespace MeTLLib.DataTypes
             identity = Identity;
             timestamp = Timestamp;
         }
+        /*
+        public static TargettedElement fromXml(XElement elemXml)
+        {
+            TargettedElement result = null;
+            var elemType = elemXml.Name.LocalName;
+            var timestamp = elemXml.
+            switch ()
+            {
+                case "attendance":
+                    new Attendance()
+                    break;
+                case "ink":
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
+        */
+
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedElement)) return false;
@@ -448,14 +469,16 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedImage : TargettedElement
     {
-        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, MeTLImage Image, long Timestamp)
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, MeTLImage Image, string Source, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
+            source = Source;
             image = Image;
         }
         public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, MeTLStanzas.Image ImageSpecification, string Identity, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
+            source = ImageSpecification.source;
             imageSpecification = ImageSpecification;
         }
 
@@ -483,6 +506,7 @@ namespace MeTLLib.DataTypes
         }
 
         public MeTLImage imageProperty;
+        public string source;
         public MeTLStanzas.Image imageSpecification;
         public MetlConfiguration server;
         private IWebClient downloader;
@@ -516,7 +540,7 @@ namespace MeTLLib.DataTypes
                         identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
                     }
                 }
-                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground,value.tag().timestamp));
+                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground,value.tag().timestamp,source));
                 imageProperty = value;
             }
         }
@@ -705,13 +729,16 @@ namespace MeTLLib.DataTypes
                     return timestamp;
                 }
                 if (message.HasAttribute("timestamp"))
-                    timestamp = message.GetAttributeLong("timestamp");
-                else
                 {
-                    var metaData = message.SelectSingleElement("metlMetaData",true);
-                    if (metaData != null)
-                        timestamp = long.Parse(metaData.GetTag("timestamp", true));
-                }
+                    timestamp = message.GetAttributeLong("timestamp");
+                } else 
+                {
+                    var childElements = message.ChildNodes.ToArray().Where(cn => (cn as Node).NodeType == NodeType.Element).Select(cn => (cn as Element));
+                    if (childElements.Count() > 0)
+                    {
+                        timestamp = childElements.Select(ce => getTimestamp(ce)).Max();
+                    }
+                } 
                 return timestamp;
             }
 
@@ -960,17 +987,13 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    //var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
-                    //var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(privacyTag, typeof(Privacy)).ToString(), true), GetTag(identityTag), long.Parse(timestamp));
                     var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetPrivacyFromEnum(privacyTag), GetTag(identityTag), long.Parse(timestamp));
 
                     moveDelta.xTranslate = GetTagDouble(XTRANSLATE_TAG);
                     moveDelta.yTranslate = GetTagDouble(YTRANSLATE_TAG);
                     moveDelta.xScale = GetTagDouble(XSCALE_TAG);
                     moveDelta.yScale = GetTagDouble(YSCALE_TAG);
-                    //moveDelta.newPrivacy = (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy)).ToString(), true);
                     moveDelta.newPrivacy = GetPrivacyFromEnum(NEWPRIVACY_TAG);
-                    //moveDelta.newPrivacy = (Privacy)GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy));
                     moveDelta.isDeleted = GetTagBool(ISDELETED_TAG);
 
                     moveDelta.xOrigin = GetTagDouble(X_ORIGIN);
@@ -1024,10 +1047,16 @@ namespace MeTLLib.DataTypes
                 var elementIds = SelectSingleElement(elementTag);
                 if (elementIds != null)
                 {
+                    foreach (var elemId in elementIds.ChildNodes.ToArray().ToList().Where(n => (n as Node).NodeType == NodeType.Element && (n as Element).TagName.Length > 0))
+                    {
+                        addElem(new ElementIdentity((elemId as Element).Value));
+                    }
+                    /*
                     foreach (var elemId in elementIds.SelectElements<T>())
                     {
                         addElem(elemId.identity);
                     }
+                    */
                 }
             }
         }
@@ -1272,7 +1301,7 @@ namespace MeTLLib.DataTypes
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? (Privacy)GetTagEnum(privacyTag, typeof(Privacy)) : Privacy.Public;
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     //var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
@@ -1606,7 +1635,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
 //                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
@@ -1800,9 +1829,8 @@ namespace MeTLLib.DataTypes
                 string url = HasTag(URL) ? GetTag(URL) : "none";
                 if (url.ToLower() != "none")
                 {
-                    url = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
-
-     //               url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
+                    url = new Uri(server.host, new Uri(GetTag(URL),UriKind.Relative)).ToString();
+                    //url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/quizProxy/{0}/{1}",GetTag(""),GetTag(ID)), UriKind.Relative)).ToString();
                 }
                 return url;
             }
@@ -1868,6 +1896,41 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
+        public class Attendance : MeTLElement
+        {
+            static Attendance()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Attendance));
+            }
+            public static string TAG = "attendance";
+            public static string LOCATION = "location";
+            public static string AUTHOR = "author";
+            public static string PRESENT = "present";
+            public Attendance() : base()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public Attendance(MeTLLib.DataTypes.Attendance attendance) : this(){
+                this.attendance = attendance;
+            }
+            public MeTLLib.DataTypes.Attendance attendance
+            {
+                get
+                {
+                    return new MeTLLib.DataTypes.Attendance(GetTag(AUTHOR), GetTag(LOCATION), bool.Parse(GetTag(PRESENT)),TimeStampedMessage.getTimestamp(this));
+                }
+                set
+                {
+                    SetTag(LOCATION, value.location);
+                    SetTag(AUTHOR, value.author);
+                    SetTag(PRESENT, value.present);
+                    SetTag(timestampTag, -1L);
+                }
+            }
+        }
+
+
         public class LiveWindow : Element
         {
             static LiveWindow()
@@ -1917,6 +1980,7 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
+
         public class Image : Element
         {
             private IWebClient downloader;
@@ -1980,10 +2044,8 @@ namespace MeTLLib.DataTypes
             }
             public MeTLImage forceEvaluation()
             {
-                var sourceString = server.resourceUrl + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(sourceTag)));
-
-                //var sourceString = string.Format("{3}://{0}:{1}{2}", server.host, server.port, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)), server.protocol);
-                var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + sourceString + "::::" + this.tag;
+                //var sourceString = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{1}", GetTag(slideTag), HttpUtility.UrlEncode(GetTag(identityTag))), UriKind.Relative));
+                var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + identityTag + "::::" + this.tag;
                 MeTLImage image = new MeTLImage
                     {
                         Tag = dynamicTag,
@@ -1999,11 +2061,11 @@ namespace MeTLLib.DataTypes
                     ThreadPool.UnsafeQueueUserWorkItem(delegate
                     {
                         if (image == null) return;//This might have been GCed if they moved conversations
-                        var newSource = asynchronouslyLoadImageData();
                         image.Dispatcher.Invoke((Action)delegate
                         {
                             try
                             {
+                                var newSource = asynchronouslyLoadImageData();
                                 var oldTag = image.Tag;
                                 if (oldTag.ToString().StartsWith("NOT_LOADED"))
                                     image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
@@ -2043,15 +2105,12 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
-                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
-                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                    var path = server.resourceUrl + stemmedRelativePath;
-//                    var path = string.Format("{3}://{0}:{1}{2}", server.host, server.port, stemmedRelativePath,server.protocol);
-                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
+                  var path = server.getImage(GetTag(slideTag),GetTag(sourceTag));
+                    var bytes = provider.secureGetData(path);
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);
                     image.BeginInit();
-                    image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                    image.UriSource = path;
                     image.StreamSource = stream;
                     image.EndInit();
                     image.Freeze();//Going to be handed back to the dispatcher
@@ -2085,6 +2144,7 @@ namespace MeTLLib.DataTypes
                     SetTag(slideTag, value.slide);
                     SetTag(identityTag, value.identity);
                     SetTag(timestampTag, value.timestamp);
+                    //SetTag(sourceTag, value.source);
                 }
             }
 
@@ -2108,7 +2168,8 @@ namespace MeTLLib.DataTypes
                 else
                     relativePath = uri.ToString();
                 SetTag(tagTag, imageCtrl.Tag.ToString());
-                SetTag(sourceTag, relativePath);
+                //SetTag(sourceTag, relativePath);
+                SetTag(sourceTag, targettedImage.source);
                 var width = imageCtrl.Width;
                 SetTag(widthTag, Double.IsNaN(width) ? imageCtrl.ActualWidth.ToString() : width.ToString());
                 var height = imageCtrl.Height;
@@ -2131,6 +2192,11 @@ namespace MeTLLib.DataTypes
             }
 
             protected static readonly string sourceTag = "source";
+            public string source
+            {
+                get { return GetTag(sourceTag); }
+                set { SetTag(sourceTag, value); }
+            }
             protected static readonly string heightTag = "height";
             protected static readonly string widthTag = "width";
             public string tag
@@ -2274,4 +2340,20 @@ namespace MeTLLib.DataTypes
             return (T)elem;
         }
     }
+    public static class MeTLElementExtensions
+    {
+        public static T timestamp<T>(this MeTLStanzas.MeTLElement elem, long timestamp) where T : MeTLStanzas.MeTLElement
+        {
+            elem.timestamp = timestamp;
+            return (T)elem;
+        }
+        /*
+        public static T audiences<T>(this MeTLStanzas.MeTLElement elem, Audiences audiences) where T : MeTLStanzas.MeTLElement
+        {
+            elem.audiences = audiences;
+            return (T)elem;
+        }
+        */
+    }
+
 }

@@ -12,17 +12,38 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using Akka;
+using System.Threading.Tasks;
+using Akka.Actor;
 
-[assembly: UIPermission(SecurityAction.RequestMinimum)]
+//[assembly: UIPermission(SecurityAction.RequestMinimum)]
 
 namespace SandRibbon
-{    
+{
     public partial class App : Application
     {
+        public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
+        public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
+        //public static DiagnosticModel dd = new DiagnosticModel();
+        public static DiagnosticWindow diagnosticWindow = null;
+        public static IAuditor auditor = new FuncAuditor((g) =>
+        {
+            diagnosticModelActor.Tell(g);
+           //dd.updateGauge(g);
+        }, (m) =>
+        {
+            diagnosticModelActor.Tell(m);
+           //dd.addMessage(m);
+        });
+
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
         public static NetworkController controller;
-        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
+        public static bool isStaging = false;
+        public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
+        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
 
 #if DEBUG
         public static string OverrideUsername { get; private set; }
@@ -32,30 +53,42 @@ namespace SandRibbon
         private static SplashScreen splashScreen;
         public static void ShowSplashScreen()
         {
+            //App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
             splashScreen = new SplashScreen("resources/splashScreen.png");
             splashScreen.Show(false);
         }
         public static void CloseSplashScreen()
         {
+            //App.dd.addMessage(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
             splashScreen.Close(TimeSpan.Zero);
         }
 
-        public static void SetBackend(MetlConfiguration config)
+        public static void SetBackendProxy(MeTLConfigurationProxy server)
         {
-            controller = new NetworkController(config);
-            Commands.Mark.Execute(String.Format("Starting on backend mode {0}", config));
+            getCurrentServer = server;
         }
-        public static List<MetlConfiguration> availableServers()
+        public static void SetBackend(MetlConfiguration configuration)
         {
-            return metlConfigManager.Configs;
+            //App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
+            controller = new NetworkController(configuration);
+            //App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
+//            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
         }
-        public static MetlConfiguration getCurrentServer
+        public static List<MeTLConfigurationProxy> availableServers()
         {
-            get
-            {
+            return metlConfigManager.servers;
+        }
+        public static MeTLConfigurationProxy getCurrentServer
+        {
+            get;
+            protected set;
+        }
+        public static MetlConfiguration getCurrentBackend
+        {
+            get {
                 return controller.config;
             }
-        }
+        }        
         public static void noop(object _arg)
         {
         }
@@ -68,9 +101,19 @@ namespace SandRibbon
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, message);
             Trace.TraceInformation(s);
             return s;
-        }        
+        }
+        public static void mark(string msg)
+        {
+            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+        }
+        public static readonly StringWriter outputWriter = new StringWriter();
+
+        public static Process proc;
         static App()
-        {         
+        {
+            proc = Process.GetCurrentProcess();
+            Console.SetOut(outputWriter);
+            App.mark("App static constructor runs");
             setDotNetPermissionState();
         }
         private static void setDotNetPermissionState()
@@ -97,6 +140,11 @@ namespace SandRibbon
         protected override void OnStartup(StartupEventArgs e)
         {
             //MeTLConfiguration.Load();            
+#if DEBUG
+            isStaging = true;
+#else
+            isStaging = false;
+#endif
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
@@ -123,9 +171,16 @@ namespace SandRibbon
             try
             {
                 Commands.LeaveAllRooms.Execute(null);
-                MeTLLib.ClientFactory.Connection().Disconnect();         
+                if (controller != null && controller.client != null)
+                    controller.client.Disconnect();         
             }
             catch (Exception) { }
+            if (App.diagnosticWindow != null)
+            {
+                diagnosticWindow.Dispatcher.adopt(delegate {
+                    diagnosticWindow.Close();
+                });
+            }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {

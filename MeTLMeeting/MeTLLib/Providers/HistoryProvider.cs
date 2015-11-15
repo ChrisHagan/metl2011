@@ -13,11 +13,13 @@ using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using Ninject;
+using System.Xml.Linq;
+//using Ninject;
 
 namespace MeTLLib.Providers
 {
-    interface IHistoryProvider
+
+    public interface IHistoryProvider
     {
         void Retrieve<T>(
             Action retrievalBeginning,
@@ -35,20 +37,28 @@ namespace MeTLLib.Providers
     }
     public abstract class BaseHistoryProvider : IHistoryProvider
     {
-        [Inject]
-        public HttpHistoryProvider historyProvider { protected get; set; }
-        [Inject]
-        public HttpResourceProvider resourceProvider { protected get; set; }
-        [Inject]
-        public JabberWireFactory jabberWireFactory { protected get; set; }
-        [Inject]
-        public MetlConfiguration serverAddress { protected get; set; }
+        protected HttpResourceProvider resourceProvider;
+        protected JabberWireFactory jabberWireFactory;
+        protected MetlConfiguration serverAddress;
+        protected IAuditor auditor;
+        public BaseHistoryProvider(
+                HttpResourceProvider _resourceProvider,
+                JabberWireFactory _jabberWireFactory,
+                MetlConfiguration _serverAddress,
+                IAuditor _auditor
+        )
+        {
+            resourceProvider = _resourceProvider;
+            jabberWireFactory = _jabberWireFactory;
+            serverAddress = _serverAddress;
+            auditor = _auditor;
+        }
         public abstract void Retrieve<T>(
-            Action retrievalBeginning,
-            Action<int, int> retrievalProceeding,
-            Action<T> retrievalComplete,
-            string room
-        ) where T : PreParser;
+                Action retrievalBeginning,
+                Action<int, int> retrievalProceeding,
+                Action<T> retrievalComplete,
+                string room
+            ) where T : PreParser;
         public void RetrievePrivateContent<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
@@ -62,6 +72,19 @@ namespace MeTLLib.Providers
     }
     public class CachedHistoryProvider : BaseHistoryProvider
     {
+        protected HttpHistoryProvider historyProvider;
+
+        public CachedHistoryProvider(
+                HttpHistoryProvider _historyProvider,
+                HttpResourceProvider _resourceProvider,
+                JabberWireFactory _jabberWireFactory,
+                MetlConfiguration _serverAddress,
+                IAuditor _auditor
+        ) : base(_resourceProvider, _jabberWireFactory, _serverAddress, _auditor)
+        {
+            historyProvider = _historyProvider;
+        }
+
         private Dictionary<string, PreParser> cache = new Dictionary<string, PreParser>();
         private int measure<T>(int acc, T item)
         {
@@ -143,64 +166,65 @@ namespace MeTLLib.Providers
     }
     public class HttpHistoryProvider : BaseHistoryProvider
     {
+        public HttpHistoryProvider(
+                HttpResourceProvider _resourceProvider,
+                JabberWireFactory _jabberWireFactory,
+                MetlConfiguration _serverAddress,
+                IAuditor _auditor
+        ) : base(_resourceProvider, _jabberWireFactory, _serverAddress, _auditor)
+        {
+        }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));
             if (retrievalBeginning != null) retrievalBeginning();
             accumulatingParser.unOrderedMessages.Clear();
             var worker = new BackgroundWorker();
+            var roomJid = room.Contains("/") ? room.Split('/').Reverse().Aggregate("", (acc, item) => acc + item) : room;
             worker.DoWork += (_sender, _args) =>
-                                 {
-                                     var directoryUri = string.Format("{0}/{1}/{2}/", serverAddress.historyUrl, INodeFix.Stem(room), room);                                     
-                                     try
-                                     {
-                                         var zipData = resourceProvider.secureGetData(new Uri(directoryUri + "all.zip"));
-                                         if (zipData.Count() == 0)
-                                         {
-                                             return;
-                                         }
-                                         var zip = ZipFile.Read(zipData);
-                                         var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
-                                         for (int i = 0; i < days.Count(); i++)
-                                         {
-                                             using (var stream = new MemoryStream())
-                                             {
-                                                 days[i].Extract(stream);
-                                                 parseHistoryItem(stream, accumulatingParser);
-                                             }
-                                             if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
-                                         }
-                                     }
-                                     catch (WebException e)
-                                     {
-                                         Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
-                                         //Nothing to do if it's a 404.  There is no history to obtain.
-                                     }
-                                 };
-            if (retrievalComplete != null)
-                worker.RunWorkerCompleted += (_sender, _args) =>
                 {
-                    try
+                    auditor.wrapAction((g =>
                     {
-
-                        accumulatingParser.ReceiveAndSortMessages();                        
-                        retrievalComplete((T)accumulatingParser);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Exception on the retrievalComplete section: " + ex.Message.ToString());
-                    }
+                        var directoryUri = serverAddress.getRoomHistory(room); 
+                        var xmlString = resourceProvider.secureGetString(directoryUri);
+                        using (var stream = GenerateStreamFromString(xmlString)) {
+                            parseHistoryItem(stream, accumulatingParser);
+                        }
+                    }), "retrieveWorker: " + room.ToString(), "historyProvider");
                 };
-            worker.RunWorkerAsync(null);
-        }        
+                if (retrievalComplete != null)
+                    worker.RunWorkerCompleted += (_sender, _args) =>
+                    {
+                        try
+                        {
+
+                            accumulatingParser.ReceiveAndSortMessages();
+                            retrievalComplete((T)accumulatingParser);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("Exception on the retrievalComplete section: " + ex.Message.ToString());
+                        }
+                    };
+                worker.RunWorkerAsync(null);
+            }
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
+        protected MemoryStream GenerateStreamFromString(string s)
+        {
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
+        }
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time
             var parser = new StreamParser();
 
             parser.OnStreamElement += ((_sender, node) =>
                                            {
-                                               wire.unOrderedMessages.Add(wire.ContructElement(node));                                               
+                                               wire.unOrderedMessages.Add(wire.ContructElement(node));
                                            });
 
             parser.Push(stream.GetBuffer(), 0, (int)stream.Length);

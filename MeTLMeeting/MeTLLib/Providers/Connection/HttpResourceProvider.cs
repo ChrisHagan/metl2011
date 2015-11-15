@@ -4,16 +4,26 @@ using System.Linq;
 using System;
 using System.Threading;
 using System.Diagnostics;
-using Ninject;
+using MeTLLib.DataTypes;
+//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
     public class WebClientWithTimeout : WebClient
     {
+        protected Credentials metlCreds;
+        public WebClientWithTimeout(Credentials _metlCreds)
+        {
+            metlCreds = _metlCreds;
+        }
         protected override WebRequest GetWebRequest(Uri address)
         {
             //Permissions failure appeared here.
             WebRequest request = (WebRequest)base.GetWebRequest(address);
+            if (metlCreds.cookie != "") {
+                request.Headers.Add("Cookie", metlCreds.cookie);
+            }
+            (request as HttpWebRequest).KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
         }
@@ -21,9 +31,9 @@ namespace MeTLLib.Providers.Connection
     public class MeTLWebClient : IWebClient
     {
         WebClientWithTimeout client;
-        public MeTLWebClient(ICredentials credentials)
+        public MeTLWebClient(ICredentials credentials,Credentials metlCreds)
         {
-            this.client = new WebClientWithTimeout();
+            this.client = new WebClientWithTimeout(metlCreds);
             this.client.Credentials = credentials;
             this.client.Proxy = null;
         }
@@ -31,6 +41,7 @@ namespace MeTLLib.Providers.Connection
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = client.Credentials;
+            request.KeepAlive = false;
             request.Method = "HEAD";
             request.Timeout = 3000;
             try
@@ -47,6 +58,7 @@ namespace MeTLLib.Providers.Connection
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = client.Credentials;
+            request.KeepAlive = false;
             request.Method = "HEAD";
             // use the default timeout
             //request.Timeout = 5 * 1000;
@@ -100,7 +112,8 @@ namespace MeTLLib.Providers.Connection
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
             var safeFile = filename;
-            if (filename.StartsWith("file:///")) {
+            if (filename.StartsWith("file:///"))
+            {
                 safeFile = filename.Substring(8);
             }
             return client.UploadFile(resource.ToString(), safeFile);
@@ -110,16 +123,6 @@ namespace MeTLLib.Providers.Connection
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
     }
-    /*
-    public class MeTLCredentials : NetworkCredential
-    {
-        [Inject]
-        protected MetlConfiguration server;
-        private string USERNAME { get {return server.resourceUsername; } }// MeTLConfiguration.Config.ResourceCredential.Username;
-        private string PASSWORD { get {return server.resourcePassword; } }// MeTLConfiguration.Config.ResourceCredential.Password;
-        public MeTLCredentials() : base(USERNAME, PASSWORD) { }
-    }
-    */
     public class HttpFileUploadResultArgs
     {
         public byte[] Result { get; set; }
@@ -152,12 +155,14 @@ namespace MeTLLib.Providers.Connection
         //private static readonly string MonashCertificateSubject = "CN=my.monash.edu.au, OU=ITS, O=Monash University, L=Clayton, S=Victoria, C=AU";
         //private static readonly string MonashCertificateIssuer = "E=premium-server@thawte.com, CN=Thawte Premium Server CA, OU=Certification Services Division, O=Thawte Consulting cc, L=Cape Town, S=Western Cape, C=ZA";
         //private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
-        private ICredentials credentials;
-        public WebClientFactory(ICredentials credentials)
+        protected ICredentials credentials;
+        protected Credentials metlCreds;
+        public WebClientFactory(ICredentials credentials, IAuditor auditor,Credentials _metlCreds)
         {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+            this.metlCreds = _metlCreds;
             /*Ssl3 is not compatible with modern servers and IE*/
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
             /*This would be a workaround but is not required.  We permit engine to select algorithm.*/
@@ -166,7 +171,7 @@ namespace MeTLLib.Providers.Connection
         }
         public IWebClient client()
         {
-            return new MeTLWebClient(this.credentials);
+            return new MeTLWebClient(this.credentials,metlCreds);
         }
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
@@ -186,9 +191,11 @@ namespace MeTLLib.Providers.Connection
     public class HttpResourceProvider
     {
         IWebClientFactory _clientFactory;
-        public HttpResourceProvider(IWebClientFactory factory)
+        IAuditor _auditor;
+        public HttpResourceProvider(IWebClientFactory factory, IAuditor auditor)
         {
             _clientFactory = factory;
+            _auditor = auditor;
         }
         private IWebClient client()
         {
@@ -196,35 +203,59 @@ namespace MeTLLib.Providers.Connection
         }
         public bool exists(Uri resource)
         {
-            return client().exists(resource);
+            return _auditor.wrapFunction(((g) =>
+            {
+                return client().exists(resource);
+            }), "exists: " + resource.ToString(), "httpResourceProvider");
         }
         public long getSize(System.Uri resource)
         {
-            return client().getSize(resource);
+            return _auditor.wrapFunction(((g) =>
+            {
+                return client().getSize(resource);
+            }), "getSize: " + resource.ToString(), "httpResourceProvider");
         }
         public string secureGetString(System.Uri resource)
         {
-            return client().downloadString(resource);
+            return _auditor.wrapFunction(((g) =>
+            {
+                return client().downloadString(resource);
+            }), "secureGetString: " + resource.ToString(), "httpResourceProvider");
         }
         public string secureGetBytesAsString(System.Uri resource)
         {
-            return System.Text.Encoding.UTF8.GetString(client().downloadData(resource));
+            return _auditor.wrapFunction(((g) =>
+            {
+                return System.Text.Encoding.UTF8.GetString(client().downloadData(resource));
+            }), "secureGetBytesAsString: " + resource.ToString(), "httpResourceProvider");
         }
         public string insecureGetString(System.Uri resource)
         {
-            return client().downloadString(resource);
+            return _auditor.wrapFunction(((g) =>
+            {
+                return client().downloadString(resource);
+            }), "insecureGetString: " + resource.ToString(), "httpResourceProvider");
         }
         public string securePutData(System.Uri uri, byte[] data)
         {
-            return client().uploadData(uri, data);
+            return _auditor.wrapFunction(((g) =>
+            {
+                return client().uploadData(uri, data);
+            }), "securePutData: " + uri.ToString(), "httpResourceProvider");
         }
         public byte[] secureGetData(System.Uri resource)
         {
-            return client().downloadData(resource);
+            return _auditor.wrapFunction(((g) =>
+            {
+                return client().downloadData(resource);
+            }), "secureGetData: " + resource.ToString(), "httpResourceProvider");
         }
         public string securePutFile(System.Uri uri, string filename)
         {
-            return decode(client().uploadFile(uri, filename));
+            return _auditor.wrapFunction(((g) =>
+            {
+                return decode(client().uploadFile(uri, filename));
+            }), "securePutFile: " + uri.ToString(), "httpResourceProvider");
         }
         private string decode(byte[] bytes)
         {

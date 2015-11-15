@@ -17,8 +17,8 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.PreviewKeyDown += KeyPressed;
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            Commands.SetSync.Execute(false);
+            //Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
+            //Commands.SetSync.Execute(false);
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
@@ -46,16 +46,17 @@ namespace SandRibbon.Components
                 if (details.Author == Globals.me)
                 {
                     Commands.SetSync.Execute(true);
-                    addSlideButton.Visibility = Visibility.Visible;
-                    syncButton.Visibility = Visibility.Collapsed;
+                    //addSlideButton.Visibility = Visibility.Visible;
+                    //syncButton.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    addSlideButton.Visibility = Visibility.Collapsed;
-                    syncButton.Visibility = Visibility.Visible;
+                    //addSlideButton.Visibility = Visibility.Collapsed;
+                    //syncButton.Visibility = Visibility.Visible;
                 }
             });
         }
+        /*
         private void SetSync(bool sync)
         { 
             var synced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncRed.png");
@@ -84,6 +85,6 @@ namespace SandRibbon.Components
             System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
             Commands.SetSync.Execute(synch);
         }
-
+        */
     }
 }

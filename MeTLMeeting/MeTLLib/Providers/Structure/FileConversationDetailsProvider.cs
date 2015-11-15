@@ -9,20 +9,16 @@ using System.Xml.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using MeTLLib.Utilities;
-using Ninject;
+//using Ninject;
 
 namespace MeTLLib.Providers.Structure
 {
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
-        [Inject]
-        public MetlConfiguration server { private get; set; }
-        [Inject]
-        public JabberWireFactory jabberWireFactory { private get; set; }
-        private JabberWire _wire;
-        //[Inject]
-        ///public MeTLGenericAddress searchServer { private get; set; }
-        private static object wireLock = new object();
+        protected MetlConfiguration server;
+        protected JabberWireFactory jabberWireFactory;
+        protected JabberWire _wire;
+        protected static object wireLock = new object();
         private JabberWire wire
         {
             get 
@@ -36,30 +32,19 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private IResourceUploader resourceUploader;
-        public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader)
-            : base(factory)
+        public Credentials credentials { get; protected set; }
+        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader,Credentials creds,IAuditor auditor,JabberWireFactory _jabberWireFactory)
+            : base(factory,auditor)
         {
+            server = _server;
             resourceUploader = uploader;
-        }
-        /*
-        private string ROOT_ADDRESS
-        {
-            get { return string.Format("{2}://{0}:{1}", server.host, server.port, server.protocol); }
-        }
-        */
-
-        //private readonly string STRUCTURE = "Structure";
-        //private readonly string UPLOAD = "upload_nested.yaws";
-        private string NEXT_AVAILABLE_ID
-        {
-            //            get { return string.Format("{0}/primarykey.yaws", ROOT_ADDRESS); }
-            get { return server.resourceUrl + "/" + server.primaryKeyGenerator; }
-
+            credentials = creds;
+            jabberWireFactory = _jabberWireFactory;
         }
         private static readonly string DETAILS = "details.xml";
         public bool isAccessibleToMe(string jid)
         {
-            var myGroups = Globals.authorizedGroups.Select(g => g.groupKey.ToLower());
+            var myGroups = credentials.authorizedGroups.Select(g => g.groupKey.ToLower());
             var details = DetailsOf(jid);
             return myGroups.Contains(details.Subject.ToLower());
         }
@@ -73,8 +58,7 @@ namespace MeTLLib.Providers.Structure
             }
             try
             {
-//                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
-                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
+                var url = server.conversationDetails(conversationJid);
                 Console.WriteLine("Details of: {0}", url);
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
@@ -96,54 +80,62 @@ namespace MeTLLib.Providers.Structure
             }
             return result;
         }
-        public ConversationDetails AppendSlideAfter(int currentSlide, string title)
+        public ConversationDetails AppendSlideAfter(int currentSlide, string jid)
         {
-            return AppendSlideAfter(currentSlide, title, Slide.TYPE.SLIDE);
+            return AppendSlideAfter(currentSlide, jid, Slide.TYPE.SLIDE);
         }
-        public ConversationDetails AppendSlideAfter(int currentSlideId, string title, Slide.TYPE type)
+        public ConversationDetails AppendSlideAfter(int currentSlideId, string jid, Slide.TYPE type)
         {
-            var details = DetailsOf(title);
-            if (ConversationDetails.Empty.Equals(details)) 
-                return ConversationDetails.Empty;
-            
-            var nextSlideId = details.Slides.Select(s => s.id).Max() + 1;
-            var currentSlide = details.Slides.Where(s => s.id == currentSlideId).First();
-            if (currentSlide == null)
+            ConversationDetails result = ConversationDetails.Empty;
+            if (String.IsNullOrEmpty(jid))
             {
-                Trace.TraceInformation("CRASH: currentSlideId does not belong to the conversation");
-                return details;
+                Trace.TraceError("CRASH: Fixed: Argument cannot be null or empty - Reconnecting error that happens all the time");
+                return result;
             }
-            var slide = new Slide(nextSlideId, details.Author, type, currentSlide.index + 1, 720, 540);
-            foreach (var existingSlide in details.Slides)
-                if (existingSlide.index >= slide.index)
-                    existingSlide.index++;
-            details.Slides.Insert(slide.index, slide);
-            Update(details);
-            return details;
+            try
+            {
+                var url = server.addSlideAtIndex(jid,currentSlideId);
+                Console.WriteLine("Details of: {0}", url);
+                result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
+                wire.SendDirtyConversationDetails(jid);
+            }
+            catch (UriFormatException e)
+            {
+                Trace.TraceError("CRASH: Could not create valid Uri for DetailsOf, using conversationJid: {0}: {1}", jid, e.Message);
+            }
+            catch (XmlException e)
+            {
+                Trace.TraceError("CRASH: Could not parse retrieved details of {0}: {1}", jid, e.Message);
+            }
+            catch (WebException e)
+            {
+                Trace.TraceError("CRASH: FileConversationDetailsProvider::DetailsOf: {0}", e.Message);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("CRASH: Unknown Exception in retrieving the conversation details: {0}", e.Message);
+            }
+            return result;
         }
-        public ConversationDetails AppendSlide(string title)
+        public ConversationDetails AppendSlide(string jid)
         {
-            var details = DetailsOf(title);
-            var slideId = details.Slides.Select(s => s.id).Max() + 1;
-            details.Slides.Add(new Slide(slideId, details.Author, Slide.TYPE.SLIDE, details.Slides.Count, 720, 540));
-            return Update(details);
+            var details = DetailsOf(jid);
+            var lastSlide = details.Slides.OrderBy(s => s.index).Select(s => s.id).First();
+            return AppendSlideAfter(lastSlide, jid);
         }
         private bool DetailsAreAccurate(ConversationDetails details)
         {
-            var url = string.Format("{0}/{1}/{2}/{3}/{4}", server.resourceUrl, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
-            var currentServerString = secureGetBytesAsString(new System.Uri(url));
-            var currentServerCD = ConversationDetails.ReadXml(XElement.Parse(currentServerString));
-            if (details.ValueEquals(currentServerCD))
-                return true;
-            else
-                return false;
+            var newDetails = DetailsOf(details.Jid);
+            return details.ValueEquals(newDetails);
         }
         public ConversationDetails Update(ConversationDetails details)
         {
-            var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
-            securePutData(new System.Uri(url), details.GetBytes());
+            //var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
+            var url = server.updateConversation(details.Jid);
+            var response = securePutData(url, details.GetBytes());
+            var responseDetails = ConversationDetails.ReadXml(XElement.Parse(response));
             wire.SendDirtyConversationDetails(details.Jid);
-            if (!DetailsAreAccurate(details))
+            if (!DetailsAreAccurate(responseDetails))
                 Trace.TraceInformation("CRASH: ConversationDetails not successfully uploaded");
             return details;
         }
@@ -173,7 +165,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", server.conversationsUrl, query)), UriKind.RelativeOrAbsolute);
+                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}/search?query={1}", server.host, HttpUtility.UrlEncode(query))), UriKind.RelativeOrAbsolute);
                 Console.WriteLine("ConversationsFor: {0}", uri);
                 var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
@@ -193,19 +185,48 @@ namespace MeTLLib.Providers.Structure
         }
         public ConversationDetails Create(ConversationDetails details)
         {
-            if (details.Slides.Count == 0)
+            try
             {
-                var id = GetApplicationLevelInformation().currentId;
-                details.Jid = id.ToString();
-                details.Slides.Add(new Slide(id + 1, details.Author, Slide.TYPE.SLIDE, 0, 720, 540));
+                var uri = server.createConversation(details.Title.ToString());
+                Console.WriteLine("createConvUri: {0}", uri);
+                var data = insecureGetString(uri);
+                return SearchConversationDetails.ReadXML(XElement.Parse(data));
             }
-            details.Created = DateTimeFactory.Now();
-            Update(details);
-            return details;
+            catch (Exception e)
+            {
+                Console.WriteLine(String.Format("FileConversationDetailsProvider:CreateConversation {0}", e.Message));
+                return ConversationDetails.Empty;
+            }
         }
-        public ApplicationLevelInformation GetApplicationLevelInformation()
+        public ConversationDetails DuplicateSlide(ConversationDetails conversation, Slide slide)
         {
-            return new ApplicationLevelInformation(Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))));
+            try
+            {
+                var uri = server.duplicateSlide(slide.id, conversation.Jid.ToString());
+                Console.WriteLine("DuplicateSlide: {0}", uri);
+                var data = insecureGetString(uri);
+                return SearchConversationDetails.ReadXML(XElement.Parse(data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(String.Format("FileConversationDetailsProvider:DuplicateSlide {0}", e.Message));
+                return ConversationDetails.Empty;
+            }
+        }
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation)
+        {
+            try
+            {
+                var uri = server.duplicateConversation(conversation.Jid.ToString());
+                Console.WriteLine("DuplicateConversation: {0}", uri);
+                var data = insecureGetString(uri);
+                return SearchConversationDetails.ReadXML(XElement.Parse(data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(String.Format("FileConversationDetailsProvider:DuplicateConversation {0}", e.Message));
+                return ConversationDetails.Empty;
+            }
         }
     }
 }
