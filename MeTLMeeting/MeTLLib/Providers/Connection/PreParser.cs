@@ -26,11 +26,11 @@ namespace MeTLLib.Providers.Connection
         public List<MeTLStanzas.DirtyImage> dirtyImage = new List<MeTLStanzas.DirtyImage>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider,IAuditor _auditor) 
-            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider,false,_auditor)
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, IAuditor _auditor)
+            : base(credentials, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider, false, _auditor)
         {
             if (this.location == null)
-                this.location = new Location("0",1,new List<int>{1});
+                this.location = new Location("0", 1, new List<int> { 1 });
             this.location.currentSlide = room;
             this.receiveEvents = receiveEvents;
         }
@@ -53,44 +53,44 @@ namespace MeTLLib.Providers.Connection
                     );
                 foreach (var parser in new[] { otherParser, this })
                 {
-                    a(GaugeStatus.InProgress,10);
+                    a(GaugeStatus.InProgress, 10);
                     foreach (var attendance in parser.attendances)
                         returnParser.actOnAttendance(new MeTLStanzas.Attendance(attendance));
                     foreach (var moveDelta in parser.moveDeltas)
                         returnParser.actOnMoveDelta(new MeTLStanzas.MoveDeltaStanza(moveDelta));
                     //returnParser.moveDeltas.Add(moveDelta);
-                    a(GaugeStatus.InProgress,20);
+                    a(GaugeStatus.InProgress, 20);
                     foreach (var i in parser.dirtyImage)
                         returnParser.actOnDirtyImageReceived(i);
-                    a(GaugeStatus.InProgress,30);
+                    a(GaugeStatus.InProgress, 30);
                     foreach (var i in parser.dirtyText)
                         returnParser.actOnDirtyTextReceived(i);
-                    a(GaugeStatus.InProgress,40);
+                    a(GaugeStatus.InProgress, 40);
                     foreach (var i in parser.dirtyInk)
                         returnParser.actOnDirtyStrokeReceived(i);
-                    a(GaugeStatus.InProgress,50);
+                    a(GaugeStatus.InProgress, 50);
                     foreach (var i in parser.ink)
                         returnParser.actOnStrokeReceived(i);
                     //returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));
-                    a(GaugeStatus.InProgress,60);
+                    a(GaugeStatus.InProgress, 60);
                     returnParser.quizzes.AddRange(parser.quizzes);
-                    a(GaugeStatus.InProgress,70);
+                    a(GaugeStatus.InProgress, 70);
                     returnParser.quizAnswers.AddRange(parser.quizAnswers);
                     //returnParser.dirtyImage.AddRange(parser.dirtyImage);
                     //returnParser.dirtyInk.AddRange(parser.dirtyInk);
                     //returnParser.dirtyText.AddRange(parser.dirtyText);
-                    a(GaugeStatus.InProgress,80);
+                    a(GaugeStatus.InProgress, 80);
                     foreach (var kv in parser.text)
                         returnParser.actOnTextReceived(kv.Value);
                     /*if (!returnParser.text.ContainsKey(kv.Key))
                         returnParser.text.Add(kv.Key, kv.Value);*/
-                    a(GaugeStatus.InProgress,90);
+                    a(GaugeStatus.InProgress, 90);
                     foreach (var kv in parser.images)
                         returnParser.actOnImageReceived(kv.Value);
                     /*if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);*/
 
-                    a(GaugeStatus.InProgress,95);
+                    a(GaugeStatus.InProgress, 95);
                     foreach (var kv in parser.liveWindows)
                         if (!returnParser.liveWindows.ContainsKey(kv.Key))
                             returnParser.liveWindows.Add(kv.Key, kv.Value);
@@ -108,12 +108,12 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveTextBox(box);
             foreach (var moveDelta in moveDeltas)
                 receiveEvents.receiveMoveDelta(moveDelta);
-            foreach(var dirty in dirtyInk)                
+            foreach (var dirty in dirtyInk)
                 receiveEvents.receiveDirtyStroke(dirty.element);
             foreach (var dirty in dirtyImage)
                 receiveEvents.receiveDirtyImage(dirty.element);
             foreach (var dirty in dirtyText)
-                receiveEvents.receiveDirtyTextBox(dirty.element);                
+                receiveEvents.receiveDirtyTextBox(dirty.element);
             foreach (var quiz in quizzes)
                 receiveEvents.receiveQuiz(quiz);
             foreach (var answer in quizAnswers)
@@ -131,17 +131,19 @@ namespace MeTLLib.Providers.Connection
         {
             return; //do nothing
         }
-        public override void actOnFileResource(MeTLStanzas.FileResource resource){
+        public override void actOnFileResource(MeTLStanzas.FileResource resource)
+        {
             files.Add(resource.fileResource);
         }
-        public override void ReceiveCommand(string message){//Preparsers don't care about commands, they're not a valid part of history.
+        public override void ReceiveCommand(string message)
+        {//Preparsers don't care about commands, they're not a valid part of history.
             return;
         }
         public override void actOnAttendance(MeTLStanzas.Attendance attendance)
         {
             attendances.Add(attendance.attendance);
         }
-        public override void actOnMoveDelta(MeTLStanzas.MoveDeltaStanza moveDelta) 
+        public override void actOnMoveDelta(MeTLStanzas.MoveDeltaStanza moveDelta)
         {
             var mdp = moveDelta.parameters;
             var inksToRemove = new List<TargettedStroke>();
@@ -155,7 +157,7 @@ namespace MeTLLib.Providers.Connection
             var relevantImages = images.Values.Where(i => dirtiesThis(moveDelta, i));
             var relevantTexts = text.Values.Where(i => dirtiesThis(moveDelta, i));
 
-            double top = 0.0; 
+            double top = 0.0;
             double left = 0.0;
             bool firstItem = true;
             if (Double.IsNaN(mdp.xOrigin) || Double.IsNaN(mdp.yOrigin))
@@ -226,9 +228,9 @@ namespace MeTLLib.Providers.Connection
             foreach (var aText in relevantTexts)
             {
                 if (mdp.privacy == aText.privacy && mdp.timestamp > aText.timestamp)
-                {                  
-                    textToRemove.Add(aText.identity,aText);
-                    if(!mdp.isDeleted)
+                {
+                    textToRemove.Add(aText.identity, aText);
+                    if (!mdp.isDeleted)
                     {
                         var tSpec = aText.boxSpecification;
                         var internalX = tSpec.x - left;
@@ -236,7 +238,7 @@ namespace MeTLLib.Providers.Connection
                         var offsetX = -(internalX - (internalX * mdp.xScale));
                         var offsetY = -(internalY - (internalY * mdp.yScale));
                         var targettedText = aText.AdjustVisual(mdp.xTranslate + offsetX, mdp.yTranslate + offsetY, mdp.xScale, mdp.yScale).AlterPrivacy(mdp.newPrivacy);
-                        textToAdd.Add(targettedText.identity,targettedText);
+                        textToAdd.Add(targettedText.identity, targettedText);
                     }
                 }
             }
@@ -244,8 +246,8 @@ namespace MeTLLib.Providers.Connection
             {
                 if (mdp.privacy == aImage.privacy && mdp.timestamp > aImage.timestamp)
                 {
-                    imagesToRemove.Add(aImage.identity,aImage);
-                    if(!mdp.isDeleted)
+                    imagesToRemove.Add(aImage.identity, aImage);
+                    if (!mdp.isDeleted)
                     {
                         var iSpec = aImage.imageSpecification;
                         var internalX = iSpec.x - left;
@@ -274,7 +276,7 @@ namespace MeTLLib.Providers.Connection
         }
 
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
-        {   
+        {
             submissions.Add(submission);
         }
         public override void actOnDirtyImageReceived(MeTLStanzas.DirtyImage image)
@@ -282,7 +284,8 @@ namespace MeTLLib.Providers.Connection
             if (images.ContainsKey(image.element.identity))
             {
                 var possiblyRemovedImage = images[image.element.identity];
-                if ((possiblyRemovedImage.privacy == image.element.privacy) && (possiblyRemovedImage.timestamp <= image.element.timestamp)){
+                if ((possiblyRemovedImage.privacy == image.element.privacy) && (possiblyRemovedImage.timestamp <= image.element.timestamp))
+                {
                     images.Remove(image.element.identity);
                 }
             }
@@ -292,7 +295,7 @@ namespace MeTLLib.Providers.Connection
             if (text.ContainsKey(element.element.identity))
             {
                 var possibleRemovedText = text[element.element.identity];
-                if((possibleRemovedText.privacy == element.element.privacy) && (possibleRemovedText.timestamp <= element.element.timestamp))
+                if ((possibleRemovedText.privacy == element.element.privacy) && (possibleRemovedText.timestamp <= element.element.timestamp))
                     text.Remove(element.element.identity);
             }
         }
@@ -301,7 +304,7 @@ namespace MeTLLib.Providers.Connection
             var strokesToRemove = ink.Where(s => s.HasSameIdentity(dirtyInk.element.identity)).ToList();
             foreach (var stroke in strokesToRemove)
             {
-                if (dirtiesThis(dirtyInk,stroke))
+                if (dirtiesThis(dirtyInk, stroke))
                     ink.Remove(stroke);
             }
         }
@@ -322,12 +325,33 @@ namespace MeTLLib.Providers.Connection
 
         private bool dirtiesThis(TargettedMoveDelta moveDelta, TargettedElement elem)
         {
-            return moveDelta.inkIds.Any(i => elem.identity == i && elem.privacy == moveDelta.privacy && elem.timestamp < moveDelta.timestamp) || moveDelta.textIds.Any(i => elem.identity == i && elem.privacy == moveDelta.privacy && elem.timestamp < moveDelta.timestamp) || moveDelta.imageIds.Any(i => elem.identity == i && elem.privacy == moveDelta.privacy && elem.timestamp < moveDelta.timestamp);
+            if (elem is TargettedImage)
+            {
+                return moveDelta.imageIds.Any(i =>
+                {
+                    return elem.identity == i.Identity && elem.privacy == moveDelta.privacy && elem.timestamp < moveDelta.timestamp;
+                });
+            }
+            else if (elem is TargettedStroke)
+            {
+                return moveDelta.inkIds.Any(i =>
+                {
+                    return elem.identity == i.Identity && elem.privacy == moveDelta.privacy && elem.timestamp < moveDelta.timestamp;
+                });
+            }
+            else if (elem is TargettedTextBox)
+            {
+                return moveDelta.textIds.Any(i =>
+                {
+                    return elem.identity == i.Identity && elem.privacy == moveDelta.privacy && elem.timestamp < moveDelta.timestamp;
+                });
+            }
+            else return false;
         }
 
         private bool dirtiesThis(MeTLStanzas.MoveDeltaStanza moveDelta, TargettedElement elem)
         {
-            return dirtiesThis(moveDelta.parameters, elem);            
+            return dirtiesThis(moveDelta.parameters, elem);
         }
 
         private bool dirtiesThis(MeTLStanzas.DirtyElement dirty, TargettedElement elem)
@@ -339,7 +363,7 @@ namespace MeTLLib.Providers.Connection
         {
             return elem.identity == dirty.identity && elem.privacy == dirty.privacy && elem.timestamp < dirty.timestamp;
         }
-       
+
         public override void actOnStrokeReceived(TargettedStroke stroke)
         {
             if (!dirtyInk.Any(di => dirtiesThis(di, stroke)) && !(moveDeltas.Where(md => md.isDeleted && md.privacy == stroke.privacy && md.timestamp > stroke.timestamp).Any(md => dirtiesThis(md, stroke))))
@@ -347,7 +371,7 @@ namespace MeTLLib.Providers.Connection
                 var newStroke = moveDeltas.Where(md => dirtiesThis(md, stroke)).OrderBy(md => md.timestamp).Aggregate(stroke, (tempStroke, md) =>
                 {
                     //return tempStroke.AdjustVisual(md.xTranslate, md.yTranslate, md.xScale, md.yScale).AlterPrivacy(md.newPrivacy);                    
-                    return tempStroke.AlterPrivacy(md.newPrivacy);                    
+                    return tempStroke.AlterPrivacy(md.newPrivacy);
                 });
                 ink.Add(newStroke);
             }

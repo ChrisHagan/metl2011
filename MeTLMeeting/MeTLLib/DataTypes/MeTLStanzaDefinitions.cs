@@ -729,13 +729,16 @@ namespace MeTLLib.DataTypes
                     return timestamp;
                 }
                 if (message.HasAttribute("timestamp"))
-                    timestamp = message.GetAttributeLong("timestamp");
-                else
                 {
-                    var metaData = message.SelectSingleElement("metlMetaData",true);
-                    if (metaData != null)
-                        timestamp = long.Parse(metaData.GetTag("timestamp", true));
-                }
+                    timestamp = message.GetAttributeLong("timestamp");
+                } else 
+                {
+                    var childElements = message.ChildNodes.ToArray().Where(cn => (cn as Node).NodeType == NodeType.Element).Select(cn => (cn as Element));
+                    if (childElements.Count() > 0)
+                    {
+                        timestamp = childElements.Select(ce => getTimestamp(ce)).Max();
+                    }
+                } 
                 return timestamp;
             }
 
@@ -984,17 +987,13 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    //var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
-                    //var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(privacyTag, typeof(Privacy)).ToString(), true), GetTag(identityTag), long.Parse(timestamp));
                     var moveDelta = new TargettedMoveDelta(int.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetPrivacyFromEnum(privacyTag), GetTag(identityTag), long.Parse(timestamp));
 
                     moveDelta.xTranslate = GetTagDouble(XTRANSLATE_TAG);
                     moveDelta.yTranslate = GetTagDouble(YTRANSLATE_TAG);
                     moveDelta.xScale = GetTagDouble(XSCALE_TAG);
                     moveDelta.yScale = GetTagDouble(YSCALE_TAG);
-                    //moveDelta.newPrivacy = (Privacy)Enum.Parse(typeof(Privacy), GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy)).ToString(), true);
                     moveDelta.newPrivacy = GetPrivacyFromEnum(NEWPRIVACY_TAG);
-                    //moveDelta.newPrivacy = (Privacy)GetTagEnum(NEWPRIVACY_TAG, typeof(Privacy));
                     moveDelta.isDeleted = GetTagBool(ISDELETED_TAG);
 
                     moveDelta.xOrigin = GetTagDouble(X_ORIGIN);
@@ -1048,10 +1047,16 @@ namespace MeTLLib.DataTypes
                 var elementIds = SelectSingleElement(elementTag);
                 if (elementIds != null)
                 {
+                    foreach (var elemId in elementIds.ChildNodes.ToArray().ToList().Where(n => (n as Node).NodeType == NodeType.Element && (n as Element).TagName.Length > 0))
+                    {
+                        addElem(new ElementIdentity((elemId as Element).Value));
+                    }
+                    /*
                     foreach (var elemId in elementIds.SelectElements<T>())
                     {
                         addElem(elemId.identity);
                     }
+                    */
                 }
             }
         }
