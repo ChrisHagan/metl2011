@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>8EACCFACBA45A36A48F707F7359F1D06C111DB55</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>6E54451C4C8E474BCB64A0D18E3B606F3A96283D</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_5_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -1107,8 +1107,10 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\advent-pro.thin.ttf" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
+    <None Include="SandRibbon_5_TemporaryKey.pfx" />
     <None Include="SandRibbon_TemporaryKey.pfx" />
     <Resource Include="Resources\Entypo.ttf" />
     <None Include="Resources\Icon_" />
@@ -1172,6 +1174,7 @@
   <ItemGroup>
     <Resource Include="Resources\favicon.ico" />
     <Resource Include="Resources\onenote.png" />
+    <Resource Include="Resources\logo-metl-splash.png" />
     <Content Include="Resources\tablet-mobile-combo.svg" />
     <Content Include="Resources\tablet.svg" />
     <Content Include="Resources\tag.svg" />
@@ -1721,32 +1724,32 @@
   <ItemGroup>
     <PublishFile Include="Microsoft.Vbe.Interop">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="office">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="stdole">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
   </ItemGroup>

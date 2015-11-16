@@ -54,7 +54,7 @@ namespace SandRibbon
         public static void ShowSplashScreen()
         {
             //App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
-            splashScreen = new SplashScreen("resources/splashScreen.png");
+            splashScreen = new SplashScreen("resources/logo-metl-splash.png");
             splashScreen.Show(false);
         }
         public static void CloseSplashScreen()
