@@ -77,9 +77,9 @@ namespace SandRibbon
             Title = Strings.Global_ProductName;
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation, mustBeLoggedIn));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
+            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
@@ -95,8 +95,7 @@ namespace SandRibbon
             Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
 
             Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
-
-            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
 
@@ -105,8 +104,8 @@ namespace SandRibbon
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
 
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop));
             Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
 
@@ -394,14 +393,10 @@ namespace SandRibbon
         }
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
-            Trace.TraceInformation("UserOptionsDialog_Show");
-            if (mustBeLoggedIn(null))
-            {
+            Trace.TraceInformation("UserOptionsDialog_Show");           
                 var userOptions = new UserOptionsDialog();
                 userOptions.Owner = Window.GetWindow(this);
-                userOptions.ShowDialog();
-            }
-            else MeTLMessage.Warning("You must be logged in to edit your options");
+                userOptions.ShowDialog();                       
         }
         private void ImportPowerpoint(object obj)
         {
@@ -409,8 +404,7 @@ namespace SandRibbon
             loader.ImportPowerpoint(this);
         }
         private void createBlankConversation(object obj)
-        {
-            var element = Keyboard.FocusedElement;
+        {            
             if (loader == null) loader = new PowerPointLoader();
             loader.CreateBlankConversation();
         }
@@ -526,16 +520,7 @@ namespace SandRibbon
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-        }
-        private bool canCreateConversation(object obj)
-        {
-            return mustBeLoggedIn(obj);
-        }
-        private bool mustBeLoggedIn(object _arg)
-        {
-            var v = !Globals.credentials.ValueEquals(Credentials.Empty);
-            return v;
-        }
+        }                
         private bool mustBeInConversationAndBeAuthor(object _arg)
         {
             return mustBeInConversation(_arg) && mustBeAuthor(_arg);

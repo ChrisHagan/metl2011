@@ -13,7 +13,7 @@ namespace SandRibbon.Pages.ServerSelection
         public ServerSelectorPage()
         {
             InitializeComponent();
-            DataContext = App.availableServers()/*.OrderBy(s => s.displayIndex)*/.ToList().Concat(new List<MeTLConfigurationProxy> {
+            DataContext = App.availableServers().ToList().Concat(new List<MeTLConfigurationProxy> {
                 new MeTLConfigurationProxy("localhost",new Uri("http://localhost:8080/static/images/puppet.jpg"),new System.Uri("http://localhost:8080",UriKind.Absolute))
             });            
         }        

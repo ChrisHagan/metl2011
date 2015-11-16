@@ -18,12 +18,9 @@ namespace MeTLLib.Providers.Connection
         }
         protected override WebRequest GetWebRequest(Uri address)
         {
-            //Permissions failure appeared here.
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
-            if (metlCreds.cookie != "") {
-                request.Headers.Add("Cookie", metlCreds.cookie);
-            }
-            (request as HttpWebRequest).KeepAlive = false;
+            var request = (HttpWebRequest)base.GetWebRequest(address);                                    
+            request.Headers.Add(HttpRequestHeader.Cookie, metlCreds.cookie);
+            request.KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
         }
@@ -35,7 +32,7 @@ namespace MeTLLib.Providers.Connection
         {
             this.client = new WebClientWithTimeout(metlCreds);
             this.client.Credentials = credentials;
-            this.client.Proxy = null;
+            this.client.Proxy = null;            
         }
         public long getSize(Uri resource)
         {

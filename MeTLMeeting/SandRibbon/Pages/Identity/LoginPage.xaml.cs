@@ -6,6 +6,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using mshtml;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.Conversations;
 using SandRibbon.Pages.Identity;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
@@ -26,8 +27,8 @@ namespace SandRibbon.Pages.Login
     public class CookieTrackingMeTLResourceInterceptor : IResourceInterceptor
     {
         protected List<Uri> uriWatchList = new List<Uri>();
-        protected Action<Uri, String> onCookie = (u, c) => { };
-        public CookieTrackingMeTLResourceInterceptor(List<Uri> cookiesToWatch, Action<Uri, String> onCookieDetect)
+        protected Action<Uri, Cookie> onCookie = (u, c) => { };
+        public CookieTrackingMeTLResourceInterceptor(List<Uri> cookiesToWatch, Action<Uri, Cookie> onCookieDetect)
         {
             onCookie = onCookieDetect;
             uriWatchList = cookiesToWatch;
@@ -50,7 +51,7 @@ namespace SandRibbon.Pages.Login
                     {
                         foreach (var cookie in wq.CookieContainer.GetCookies(uri))
                         {
-                            onCookie(uri, (cookie as Cookie).Value);
+                            onCookie(uri, cookie as Cookie);
                         }
                     }
                 }
@@ -118,23 +119,10 @@ namespace SandRibbon.Pages.Login
             {
                 return obj.Host.GetHashCode();
             }
-        }
-        protected string CookieValue = "";
+        }        
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = backend.authenticationUrl;
-            CookieValue = "";
-            try
-            {
-                WebCore.Initialize(WebConfig.Default, true);
-                WebCore.ResourceInterceptor = new CookieTrackingMeTLResourceInterceptor(new List<Uri> { App.getCurrentServer.authenticationUrl }, (uri, cookieValue) =>
-                {
-                    CookieValue = cookieValue;
-                });
-            }
-            catch {
-                //this can only be fired once, but I'm not sure yet where to put it.
-            }
+            var loginUri = backend.authenticationUrl;                        
             logonBrowser = new WebControl();
             logonBrowser.ShowContextMenu += (s, a) =>
             {
@@ -176,11 +164,12 @@ namespace SandRibbon.Pages.Login
                     {
                         try
                         {
+                            var JSESSIONID = logonBrowser.ExecuteJavascriptWithResult("document.cookie");                            
                             Commands.Mark.Execute("Login");
                             var newServer = App.metlConfigManager.parseConfig(backend, authData.First()).First();
                             App.SetBackend(newServer);
                             var credentials = new Credentials(newServer.xmppUsername, newServer.xmppPassword, authGroups, emailAddress);
-                            credentials.cookie = CookieValue;
+                            credentials.cookie = JSESSIONID;
                             App.controller.connect(credentials);
                             if (!App.controller.client.Connect(credentials))
                             {
@@ -200,8 +189,8 @@ namespace SandRibbon.Pages.Login
                             Commands.Mark.Execute("Internet not found");
                             Commands.LoginFailed.Execute(null);
                             Commands.NoNetworkConnectionAvailable.Execute(null);
-                        }
-                        NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
+                        }                        
+                        NavigationService.Navigate(new ConversationSearchPage());
                     }
                 }
                 catch (Exception e)

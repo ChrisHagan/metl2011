@@ -34,6 +34,9 @@
                 <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
             </Button>
         </StackPanel>
+        <Button Command="{x:Static api:Commands.CreateBlankConversation}">
+            <Label Content="Create new conversation" Style="{StaticResource medium}"/>
+        </Button>
         <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                                    Margin="{StaticResource space}">
             <DataGrid.Columns>
