@@ -6,9 +6,8 @@
     xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
     xmlns:providers="clr-namespace:SandRibbon.Providers"
     AllowDrop="True"                          
-    Title="MeTL"
-    Icon="\Resources\favicon.ico"
-    ShowIconOnTitleBar="False"
+    Icon="\Resources\favicon-96x96.png"
+    ShowIconOnTitleBar="True"
     x:Name="ribbonWindow"
     Closing="ribbonWindow_Closing">
     <Window.Resources>

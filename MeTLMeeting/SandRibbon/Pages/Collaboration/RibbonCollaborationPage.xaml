@@ -1,0 +1,45 @@
+﻿<Page x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
+      xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration" 
+      xmlns:components="clr-namespace:SandRibbon.Components"
+      Title="Collaboration">
+    <DockPanel>
+        <Ribbon DockPanel.Dock="Top">
+            <Ribbon.ApplicationMenu>
+                <RibbonApplicationMenu>
+                    <RibbonApplicationMenuItem Header="Create new" />                    
+                    <RibbonApplicationMenuItem Header="Logout" />                    
+                </RibbonApplicationMenu>
+            </Ribbon.ApplicationMenu>
+            <RibbonTab Header="Home">
+                <RibbonGroup Header="Editing Modes">
+                    <RibbonMenuButton Label="Insert" LargeImageSource="/Resources/RedPenShiny.png">
+                        <RibbonMenuItem Header="Ink" ImageSource="/Resources/RedPenShiny.png"/>
+                        <RibbonMenuItem Header="Text" ImageSource="/Resources/TextMode.png" />
+                        <RibbonMenuItem Header="Image" ImageSource="/Resources/ImageMode.png"/>
+                    </RibbonMenuButton>
+                    <RibbonButton Label="Select" LargeImageSource="/Resources/SelectShiny.png"/>                    
+                </RibbonGroup>
+                <RibbonGroup Header="Who can see me?">
+                    <RibbonRadioButton GroupName="exposure" IsChecked="True" Label="Everybody" />
+                    <RibbonRadioButton GroupName="exposure" Label="My group" />
+                    <RibbonRadioButton GroupName="exposure" Label="Nobody" />
+                </RibbonGroup>
+                <RibbonGroup Header="View">
+                    <RibbonRadioButton GroupName="view" IsChecked="True" Label="Original size" />
+                    <RibbonRadioButton GroupName="view" Label="Size to fit" />
+                </RibbonGroup>
+                <RibbonGroup Header="Watch content">
+                    <RibbonCheckBox Label="My public" />
+                    <RibbonCheckBox Label="My private" />
+                    <RibbonCheckBox Label="Everyone else" />
+                </RibbonGroup>
+            </RibbonTab>
+        </Ribbon>
+        <Viewbox>
+                <components:PresentationSpace Height="auto" Width="auto" />
+            </Viewbox>
+    </DockPanel>
+</Page>

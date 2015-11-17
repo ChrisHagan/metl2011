@@ -51,7 +51,8 @@ namespace SandRibbon
             InitializeComponent();
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
-            mainFrame.Navigate(new ServerSelectorPage());
+            mainFrame.Navigate(new RibbonCollaborationPage(Slide.Empty));
+            //mainFrame.Navigate(new ServerSelectorPage());
             App.CloseSplashScreen();
         }
 

@@ -200,6 +200,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -288,6 +289,9 @@
     </Compile>
     <Compile Include="Pages\Analytics\ConversationComparisonPage.xaml.cs">
       <DependentUpon>ConversationComparisonPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Collaboration\RibbonCollaborationPage.xaml.cs">
+      <DependentUpon>RibbonCollaborationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Conversations\ConversationOverviewPage.xaml.cs">
       <DependentUpon>ConversationOverviewPage.xaml</DependentUpon>
@@ -425,6 +429,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\DrawerSplitter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\RibbonCollaborationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1175,6 +1183,8 @@
     <Resource Include="Resources\favicon.ico" />
     <Resource Include="Resources\onenote.png" />
     <Resource Include="Resources\logo-metl-splash.png" />
+    <Resource Include="Resources\logo-title-bar.png" />
+    <Resource Include="Resources\favicon-96x96.png" />
     <Content Include="Resources\tablet-mobile-combo.svg" />
     <Content Include="Resources\tablet.svg" />
     <Content Include="Resources\tag.svg" />

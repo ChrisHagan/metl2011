@@ -64,7 +64,7 @@ namespace SandRibbon.Pages.Collaboration
         {
             var element = sender as FrameworkElement;
             var slide = element.DataContext as VmSlide;
-            NavigationService.Navigate(new GroupCollaborationPage(slide.Slide.id));
+            NavigationService.Navigate(new RibbonCollaborationPage(slide.Slide));
         }
     }    
     public class GridLengthConverter : IValueConverter
