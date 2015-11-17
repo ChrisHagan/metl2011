@@ -50,7 +50,7 @@ namespace SandRibbon.Components
                         if (parts.Count() < 4 || String.IsNullOrEmpty(parts[2]) || String.IsNullOrEmpty(parts[3]) || !(parts[1].Contains(' '))) return;
                         var ARGBvalues = parts[1].Split(new[] { ' ' });
                         if (!(ARGBvalues.Count() == 4)) return;
-                        Commands.SetLayer.Execute("sketch");
+                        Commands.SetLayer.Execute("Sketch");
                         var color = Color.FromArgb(Byte.Parse(ARGBvalues[0]), Byte.Parse(ARGBvalues[1]), Byte.Parse(ARGBvalues[2]), Byte.Parse(ARGBvalues[3]));
                         var da = new DrawingAttributes { Color = color, Height = Double.Parse(parts[2]), Width = Double.Parse(parts[2]), IsHighlighter = Boolean.Parse(parts[3]) };
                         Commands.SetDrawingAttributes.Execute(da);
