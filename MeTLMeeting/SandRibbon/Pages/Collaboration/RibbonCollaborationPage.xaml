@@ -16,11 +16,7 @@
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Home">
                 <RibbonGroup Header="Editing Modes">
-                    <RibbonMenuButton Label="Create">
-                        <RibbonMenuButton.LargeImageSource>
-                            <ImageSource>
-                            </ImageSource>
-                        </RibbonMenuButton.LargeImageSource>
+                    <RibbonMenuButton Label="Create" LargeImageSource="/Resources/appbar.edit.add.png">
                         <RibbonMenuItem Header="Ink" ImageSource="/Resources/RedPenShiny.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
                         <RibbonMenuItem Header="Text" ImageSource="/Resources/TextMode.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
                         <RibbonMenuItem Header="Image" ImageSource="/Resources/ImageMode.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
@@ -59,7 +55,7 @@
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
-                    <components:RoleQuickControls/>
+                    <components:RoleQuickControls />
                 </Grid>
                 <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
                 <Grid Grid.Column="2">

@@ -21,10 +21,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace SandRibbon.Components
-{
-    /// <summary>
-    /// Interaction logic for RoleQuickControls.xaml
-    /// </summary>
+{    
     public partial class RoleQuickControls : UserControl
     {
         public RoleQuickControls()
