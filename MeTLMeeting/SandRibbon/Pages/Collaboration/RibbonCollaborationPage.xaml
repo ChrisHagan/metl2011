@@ -16,12 +16,16 @@
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Home">
                 <RibbonGroup Header="Editing Modes">
-                    <RibbonMenuButton Label="Insert" LargeImageSource="/Resources/RedPenShiny.png">
+                    <RibbonMenuButton Label="Create">
+                        <RibbonMenuButton.LargeImageSource>
+                            <ImageSource>
+                            </ImageSource>
+                        </RibbonMenuButton.LargeImageSource>
                         <RibbonMenuItem Header="Ink" ImageSource="/Resources/RedPenShiny.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
                         <RibbonMenuItem Header="Text" ImageSource="/Resources/TextMode.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
                         <RibbonMenuItem Header="Image" ImageSource="/Resources/ImageMode.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
                     </RibbonMenuButton>
-                    <RibbonButton Label="Select" LargeImageSource="/Resources/SelectShiny.png"/>                    
+                    <RibbonButton Label="Modify" LargeImageSource="/Resources/SelectShiny.png"/>                    
                 </RibbonGroup>
                 <RibbonGroup Header="Who can see me?">
                     <RibbonRadioButton GroupName="exposure" IsChecked="True" Label="Everybody" />
