@@ -51,8 +51,8 @@ namespace SandRibbon
             InitializeComponent();
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
-            mainFrame.Navigate(new RibbonCollaborationPage(Slide.Empty));
-            //mainFrame.Navigate(new ServerSelectorPage());
+            //mainFrame.Navigate(new RibbonCollaborationPage(Slide.Empty));
+            mainFrame.Navigate(new ServerSelectorPage());
             App.CloseSplashScreen();
         }
 
@@ -85,12 +85,12 @@ namespace SandRibbon
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
             Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
-            Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<object>(serializeConversationToOneNote, mustBeInConversation));
+            Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(serializeConversationToOneNote, mustBeInConversation));
             //conversation movement
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
-            Commands.MoveToOverview.RegisterCommand(new DelegateCommand<object>(MoveToOverview, mustBeInConversation));
+            Commands.MoveToOverview.RegisterCommand(new DelegateCommand<NetworkController>(MoveToOverview, mustBeInConversation));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
             Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
@@ -135,9 +135,9 @@ namespace SandRibbon
             mainFrame.Navigate(new TagCloudPage());
         }
 
-        private void serializeConversationToOneNote(object obj)
+        private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
         {
-            mainFrame.Navigate(new ConversationSearchPage());
+            mainFrame.Navigate(new ConversationSearchPage(obj.networkController));
         }
 
         private void PickImages(PickContext context)
@@ -252,9 +252,9 @@ namespace SandRibbon
             flyout.IsOpen = true;
         }
 
-        private void MoveToOverview(object obj)
+        private void MoveToOverview(NetworkController obj)
         {
-            mainFrame.Navigate(new ConversationOverviewPage(Globals.conversationDetails));
+            mainFrame.Navigate(new ConversationOverviewPage(obj, Globals.conversationDetails));
         }
 
         private void Shift(int direction)
