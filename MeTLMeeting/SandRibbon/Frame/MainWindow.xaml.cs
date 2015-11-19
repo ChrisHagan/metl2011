@@ -107,7 +107,7 @@ namespace SandRibbon
             Commands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
             Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
 
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<NetworkController>(PrintConversation, mustBeInConversation));
 
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop));
@@ -430,14 +430,15 @@ namespace SandRibbon
         }
         private void PrintBinding(object sender, EventArgs e)
         {
-            PrintConversation(null);
+            //not sure what to do about this yet - I partly think that this binding should be at frame level, rather than window level.
+            //PrintConversation(networkController);
         }
-        private void PrintConversation(object _arg)
+        private void PrintConversation(NetworkController networkController)
         {
             if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(networkController).PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
             else
-                new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(networkController).PrintHandout(Globals.conversationDetails.Jid, Globals.me);
         }
         private void SetUserOptions(UserOptions options)
         {

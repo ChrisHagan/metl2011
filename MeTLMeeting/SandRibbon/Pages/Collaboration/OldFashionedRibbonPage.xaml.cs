@@ -29,8 +29,10 @@ using SandRibbon.Properties;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public class OldFashionedHomeTab : RibbonTab{
-        public OldFashionedHomeTab() {
+    public class OldFashionedHomeTab : RibbonTab
+    {
+        public OldFashionedHomeTab()
+        {
             Text = "Home";
             Resources.Add("preferredDisplayIndex", "0");
         }
@@ -90,7 +92,7 @@ namespace SandRibbon.Pages.Collaboration
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
 
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<NetworkController>(PrintConversation, mustBeInConversation));
 
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
@@ -327,12 +329,15 @@ namespace SandRibbon.Pages.Collaboration
         {
             PrintConversation(null);
         }
-        private void PrintConversation(object _arg)
+        private void PrintConversation(NetworkController arg)
         {
-            if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
-            else
-                new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+            if (arg == networkController)
+            {
+                if (Globals.UserOptions.includePrivateNotesOnPrint)
+                    new Printer(networkController).PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+                else
+                    new Printer(networkController).PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+            }
         }
         private void SetUserOptions(UserOptions options)
         {
@@ -1078,7 +1083,7 @@ namespace SandRibbon.Pages.Collaboration
                             break;
                     }
                 }
-                var home = new OldFashionedHomeTab{ DataContext = scroll };
+                var home = new OldFashionedHomeTab { DataContext = scroll };
                 homeGroups.Sort(new PreferredDisplayIndexComparer());
                 foreach (var group in homeGroups)
                     home.Items.Add((RibbonGroup)group);

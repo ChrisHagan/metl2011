@@ -140,7 +140,11 @@ namespace SandRibbon.Utils.Connection
         private static int targetPageCount;
         private static int targetParserCount;
         public PrinterInformation PrinterInfo = new PrinterInformation();
-
+        protected NetworkController networkController;
+        public Printer(NetworkController _networkController)
+        {
+            networkController = _networkController;
+        }
         public class PrinterInformation
         {
             public List<Slide> slides;
@@ -150,7 +154,7 @@ namespace SandRibbon.Utils.Connection
         public void PrintHandout(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
-            var conversation = App.controller.client.DetailsOf(jid);
+            var conversation = networkController.client.DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             targetParserCount = targetPageCount;
             PrinterInfo = new PrinterInformation
@@ -162,7 +166,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var slide in conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
-                App.controller.client.historyProvider.Retrieve<PrintParser>(
+                networkController.client.historyProvider.Retrieve<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
@@ -172,7 +176,7 @@ namespace SandRibbon.Utils.Connection
         public void PrintPrivate(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
-            var conversation = App.controller.client.DetailsOf(jid);
+            var conversation = networkController.client.DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s => s.type == Slide.TYPE.SLIDE).Count();
             targetParserCount = targetPageCount * 2;
             PrinterInfo = new PrinterInformation
@@ -185,12 +189,12 @@ namespace SandRibbon.Utils.Connection
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
-                App.controller.client.historyProvider.Retrieve<PrintParser>(
+                networkController.client.historyProvider.Retrieve<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
                                 room.ToString());
-                App.controller.client.historyProvider.RetrievePrivateContent<PrintParser>(
+                networkController.client.historyProvider.RetrievePrivateContent<PrintParser>(
                                 null,
                                 null,
                                 (parser) => ReceiveParser(parser, printDocument, room),
