@@ -46,9 +46,10 @@ namespace SandRibbon.Pages.Collaboration
         private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-
-        public OldFashionedRibbonPage()
+        public NetworkController networkController;
+        public OldFashionedRibbonPage(NetworkController _networkController)
         {
+            networkController = _networkController;
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
             App.mark("Window1 constructor complete");
