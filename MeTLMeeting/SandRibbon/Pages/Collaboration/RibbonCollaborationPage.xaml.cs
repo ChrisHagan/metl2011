@@ -21,8 +21,12 @@ namespace SandRibbon.Pages.Collaboration
 {    
     public partial class RibbonCollaborationPage : Page
     {
-        public RibbonCollaborationPage(Slide slide)
+        protected NetworkController networkController;
+        protected ConversationDetails details;
+        public RibbonCollaborationPage(NetworkController _networkController, ConversationDetails _details, Slide slide)
         {
+            networkController = _networkController;
+            details = _details;
             InitializeComponent();
             DataContext = slide;
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));

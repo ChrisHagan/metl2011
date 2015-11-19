@@ -1,4 +1,5 @@
-﻿using SandRibbon.Pages.Collaboration;
+﻿using SandRibbon.Components;
+using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.Collaboration.Palettes;
 using SandRibbon.Profiles;
 using SandRibbon.Providers;
@@ -10,8 +11,10 @@ namespace SandRibbon.Pages.Identity
 {
     public partial class CreateProfilePage : Page
     {
-        public CreateProfilePage()
+        protected NetworkController networkController;
+        public CreateProfilePage(NetworkController _networkController)
         {
+            networkController = _networkController;
             InitializeComponent();
             DataContext = new Profile
             {
@@ -62,7 +65,7 @@ namespace SandRibbon.Pages.Identity
             var profile = DataContext as Profile;
             Globals.profiles.Add(profile);
             Globals.currentProfile = profile;
-            NavigationService.Navigate(new ProfileSelectorPage(Globals.profiles));
+            NavigationService.Navigate(new ProfileSelectorPage(networkController, Globals.profiles));
         }
     }
 }

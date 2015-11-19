@@ -8,6 +8,7 @@ using System.Windows;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SandRibbon.Components;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
@@ -91,6 +92,7 @@ namespace SandRibbon.Pages.Conversations.Models
         public string token { get; set; }
         public OneNoteConfiguration config { get; set; }
         public IEnumerable<OneNoteSynchronization> conversations { get; set; }
+        public NetworkController networkController { get; set; }
     }
     public class OneNoteSynchronization : DependencyObject {
         public ConversationDetails Conversation { get; set; }

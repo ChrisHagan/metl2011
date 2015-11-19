@@ -182,6 +182,7 @@ namespace SandRibbon.Pages.Login
                                 Globals.authenticatedWebSession = logonBrowser.WebSession;
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
+                                NavigationService.Navigate(new ConversationSearchPage(App.controller));
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
@@ -190,7 +191,6 @@ namespace SandRibbon.Pages.Login
                             Commands.LoginFailed.Execute(null);
                             Commands.NoNetworkConnectionAvailable.Execute(null);
                         }                        
-                        NavigationService.Navigate(new ConversationSearchPage());
                     }
                 }
                 catch (Exception e)

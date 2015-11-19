@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System;
 using System.Globalization;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Components;
 
 namespace SandRibbon.Pages.Analytics
 {
@@ -27,8 +28,10 @@ namespace SandRibbon.Pages.Analytics
     }
     public partial class ConversationComparisonPage : Page
     {
-        public ConversationComparisonPage(IEnumerable<SearchConversationDetails> cs)
+        protected NetworkController networkController;
+        public ConversationComparisonPage(NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
         {
+            networkController = _networkController;
             InitializeComponent();
             DataContext = new ConversationComparableCorpus(cs);
         }

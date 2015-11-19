@@ -50,6 +50,7 @@ namespace SandRibbon.Pages.Conversations.Models
     }
     public class ReticulatedConversation : DependencyObject
     {
+        public NetworkController networkController { get; set; }
         public ConversationDetails PresentationPath { get; set; }
         public ConversationDetails AdvancedMaterial { get; set; }
         public ConversationDetails RemedialMaterial { get; set; }
@@ -104,7 +105,7 @@ namespace SandRibbon.Pages.Conversations.Models
         {        
             foreach (var slide in Locations)
             {
-                App.controller.client.historyProvider.Retrieve<PreParser>(
+                networkController.client.historyProvider.Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>

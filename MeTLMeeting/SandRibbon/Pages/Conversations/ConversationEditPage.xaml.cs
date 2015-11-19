@@ -1,4 +1,5 @@
 ﻿using MeTLLib.DataTypes;
+using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using System;
 using System.Globalization;
@@ -27,12 +28,14 @@ namespace SandRibbon.Pages.Conversations
                 return value;
             }
         }
-        public ConversationEditPage()
+        protected NetworkController networkController;
+        public ConversationEditPage(NetworkController _networkController)
         {
+            networkController = _networkController;
             InitializeComponent();
         }
 
-        public ConversationEditPage(ConversationDetails conversation)
+        public ConversationEditPage(NetworkController _networkController, ConversationDetails conversation) : this(_networkController)
         {
             this.conversation = conversation;
         }
@@ -63,18 +66,18 @@ namespace SandRibbon.Pages.Conversations
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var details = (ConversationDetails)e.OriginalSource;
-                App.controller.client.DeleteConversation(details);
+                networkController.client.DeleteConversation(details);
 
             }
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            var details =  SearchConversationDetails.HydrateFromServer(App.controller.client,(ConversationDetails)sender);
+            var details =  SearchConversationDetails.HydrateFromServer(networkController.client,(ConversationDetails)sender);
 
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
-                App.controller.client.UpdateConversationDetails(details);
+                networkController.client.UpdateConversationDetails(details);
             }
             else
             {

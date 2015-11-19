@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System;
 using SandRibbon.Pages.Conversations.Models;
+using SandRibbon.Components;
 
 namespace SandRibbon.Pages.Collaboration
 {
@@ -45,13 +46,16 @@ namespace SandRibbon.Pages.Collaboration
     public partial class ConversationOverviewPage : Page
     {
         ReticulatedConversation conversation;
-        public ConversationOverviewPage(ConversationDetails presentationPath)
+        NetworkController networkController;
+        public ConversationOverviewPage(NetworkController _networkController, ConversationDetails presentationPath)
         {
+            networkController = _networkController;
             InitializeComponent();
             DataContext = conversation = new ReticulatedConversation
             {
+                networkController = networkController,
                 PresentationPath = presentationPath,
-                RelatedMaterial = new List<string>{}.Select(jid => App.controller.client.DetailsOf(jid)).ToList()
+                RelatedMaterial = new List<string>{}.Select(jid => networkController.client.DetailsOf(jid)).ToList()
 
             };
             conversation.CalculateLocations();            
@@ -64,7 +68,7 @@ namespace SandRibbon.Pages.Collaboration
         {
             var element = sender as FrameworkElement;
             var slide = element.DataContext as VmSlide;
-            NavigationService.Navigate(new RibbonCollaborationPage(slide.Slide));
+            NavigationService.Navigate(new RibbonCollaborationPage(networkController, slide.Details, slide.Slide));
         }
     }    
     public class GridLengthConverter : IValueConverter
