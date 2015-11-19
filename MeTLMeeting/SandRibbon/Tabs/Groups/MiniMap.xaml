@@ -1,0 +1,35 @@
+﻿<sr:RibbonGroup ShowDialogLauncher="False" sr:KeyboardAccess.Keys="M" x:Name="Minimap" Header="View"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    x:Class="SandRibbon.Tabs.Groups.MiniMap" >
+    <sr:RibbonGroup.Resources>
+        <core:String x:Key="preferredDisplayIndex">7</core:String>    
+    </sr:RibbonGroup.Resources>
+    <sr:RibbonGroup.Variants>
+        <sr:GroupVariant Variant="Collapsed" Priority="1"/>
+    </sr:RibbonGroup.Variants>
+    <StackPanel Orientation="Horizontal">
+        <Viewbox x:Name="minimapContainer" Height="65" Width="100" MouseDown="Viewbox_MouseDown" MouseMove="Viewbox_MouseMove">
+            <Grid>
+                <Rectangle Width="{Binding Content.ActualWidth}" Height="{Binding Content.ActualHeight}" x:Name="minimap">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{Binding Content}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Border BorderThickness="1" BorderBrush="Black" 
+                Background="{StaticResource MiniMapSelectionBox}"
+                Width="{Binding ViewportWidth}"
+                Height="{Binding ViewportHeight}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top">
+                    <Border.RenderTransform>
+                        <TranslateTransform X="{Binding HorizontalOffset}" Y="{Binding VerticalOffset}" x:Name="mapRegion"/>
+                    </Border.RenderTransform>
+                </Border>
+            </Grid>
+        </Viewbox>
+    </StackPanel>
+</sr:RibbonGroup>

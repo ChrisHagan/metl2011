@@ -1,0 +1,17 @@
+﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.PrivacyToolsHost"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    ShowDialogLauncher="False" Header="Exposure" Image="\Resources\Ribbon-Public.png">
+    <sr:RibbonGroup.Resources>
+        <core:String x:Key="preferredDisplayIndex">4</core:String>
+    </sr:RibbonGroup.Resources>
+    <!--sr:RibbonGroup.Variants>
+        <sr:GroupVariant Variant="Small" Priority="4"/>
+    </-->
+    <StackPanel Orientation="Horizontal" x:Name="LayoutRoot" >
+        <components:PrivacyTools x:Name="ribbonPrivacyTools" Visibility="Visible"/>   
+    </StackPanel >
+</sr:RibbonGroup>           

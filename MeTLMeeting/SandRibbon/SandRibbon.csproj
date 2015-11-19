@@ -284,6 +284,7 @@
     </Compile>
     <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
+    <Compile Include="Pages\Collaboration\OldFashionedRibbonPage.xaml.cs" />
     <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">
       <DependentUpon>OneNotePage.xaml</DependentUpon>
     </Compile>
@@ -333,6 +334,8 @@
     <Compile Include="Ribbon\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Ribbon\Groups\EditingOptions.xaml.cs" />
+    <Compile Include="Ribbon\Groups\TextTools.xaml.cs" />
     <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
@@ -416,6 +419,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Collaboration\Layout\CastBarFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\OldFashionedRibbonPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -632,15 +639,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Ribbon\Groups\EditingOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\Groups\EditingOptions.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
+    <Page Include="Ribbon\Groups\TextTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -975,9 +984,6 @@
     </Compile>
     <Compile Include="Ribbon\Groups\PrivacyToolsHost.xaml.cs">
       <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\EditingOptions.xaml.cs">
-      <DependentUpon>EditingOptions.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ribbon\Submissions.xaml.cs">
       <DependentUpon>Submissions.xaml</DependentUpon>

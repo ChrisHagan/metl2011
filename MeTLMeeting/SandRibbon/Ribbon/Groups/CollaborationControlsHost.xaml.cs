@@ -29,6 +29,7 @@ namespace SandRibbon.Tabs.Groups
         private void updateConversationDetails(ConversationDetails details)
         {
             NavigationIsLocked = details.Permissions.NavigationLocked;
+            /*
             if (details.Permissions.studentCanPublish)
             {
                 tutorialStyle.IsChecked = true;
@@ -36,6 +37,7 @@ namespace SandRibbon.Tabs.Groups
             else {
                 lectureStyle.IsChecked = true;
             }
+            */
         }
         private void joinConversation(object obj)
         {

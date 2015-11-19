@@ -4,46 +4,104 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration" 
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:components="clr-namespace:SandRibbon.Components"
       Title="Collaboration">
+    <Page.Resources>
+        <sys:Double x:Key="RibbonFontSize">14</sys:Double>
+        <Style TargetType="{x:Type RibbonButton}">
+            <Setter Property="FontSize" Value="{StaticResource RibbonFontSize}" />
+        </Style>
+        <Style TargetType="{x:Type RibbonRadioButton}">
+            <Setter Property="FontSize" Value="{StaticResource RibbonFontSize}" />
+        </Style>
+        <Style TargetType="{x:Type RibbonCheckBox}">
+            <Setter Property="FontSize" Value="{StaticResource RibbonFontSize}" />
+        </Style>
+    </Page.Resources>
     <DockPanel>
         <Ribbon DockPanel.Dock="Top">
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu>
-                    <RibbonApplicationMenuItem Header="Create new" />                    
-                    <RibbonApplicationMenuItem Header="Logout" />                    
+                    <RibbonApplicationMenuItem Header="Create new" />
+                    <RibbonApplicationMenuItem Header="Logout" />
                 </RibbonApplicationMenu>
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Home">
-                <RibbonGroup Header="Editing Modes">
-                    <RibbonMenuButton Label="Create" LargeImageSource="/Resources/appbar.edit.add.png">
-                        <RibbonMenuItem Header="Ink" ImageSource="/Resources/RedPenShiny.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
-                        <RibbonMenuItem Header="Text" ImageSource="/Resources/TextMode.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
-                        <RibbonMenuItem Header="Image" ImageSource="/Resources/ImageMode.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
-                    </RibbonMenuButton>
-                    <RibbonButton Label="Modify" LargeImageSource="/Resources/SelectShiny.png"/>                    
+                <RibbonGroup Header="Which tool are you using?">
+                    <RibbonButton Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
+                    <RibbonButton Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
+                    <RibbonButton Label="Image" LargeImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
+                    <RibbonButton Label="Select" LargeImageSource="/Resources/appbar.image.ants.png"/>
                 </RibbonGroup>
-                <RibbonGroup Header="Who can see me?">
+                <RibbonGroup Header="Who can see your work?">
                     <RibbonRadioButton GroupName="exposure" IsChecked="True" Label="Everybody" />
                     <RibbonRadioButton GroupName="exposure" Label="My group" />
                     <RibbonRadioButton GroupName="exposure" Label="Nobody" />
                 </RibbonGroup>
-                <RibbonGroup Header="View">
-                    <RibbonRadioButton GroupName="view" IsChecked="True" Label="Original size" />
-                    <RibbonRadioButton GroupName="view" Label="Size to fit" />
+                <RibbonGroup Header="How much content do you see?">
+                    <RibbonRadioButton GroupName="view" IsChecked="True" Label="All of it" />
+                    <RibbonRadioButton GroupName="view" Label="The original page" />
                 </RibbonGroup>
-                <RibbonGroup Header="Watch content">
-                    <RibbonCheckBox Label="My public" />
-                    <RibbonCheckBox Label="My private" />
-                    <RibbonCheckBox Label="Everyone else" />
+                <RibbonGroup Header="Whose content do you see?">
+                    <RibbonCheckBox Label="My public content" />
+                    <RibbonCheckBox Label="My private content" />
+                    <RibbonCheckBox Label="Everyone else's content" />
                 </RibbonGroup>
+                <RibbonGroup x:Name="inkGroup">
+                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Red" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonButton.CommandParameter>
+                            <DrawingAttributes Color="Red" />
+                        </RibbonButton.CommandParameter>
+                    </RibbonButton>
+                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Blue" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonButton.CommandParameter>
+                            <DrawingAttributes Color="Blue" />
+                        </RibbonButton.CommandParameter>
+                    </RibbonButton>
+                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Green" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonButton.CommandParameter>
+                            <DrawingAttributes Color="Green" />
+                        </RibbonButton.CommandParameter>
+                    </RibbonButton>
+                </RibbonGroup>
+                <RibbonGroup x:Name="textGroup">
+                    <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+                    <StackPanel>
+                        <StackPanel Height="30" Orientation="Horizontal">
+                            <ComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"   IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                            <ComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                        </StackPanel>
+                        <StackPanel Height="30" Orientation="Horizontal">
+                            <RibbonCheckBox x:Name="TextBoldButton" LargeImageSource="\Resources\appbar.text.bold.png" ToolTip="{DynamicResource BoldToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                            <RibbonToggleButton x:Name="TextItalicButton" LargeImageSource="\Resources\appbar.text.italic.png" ToolTip="{DynamicResource ItalicToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                            <RibbonToggleButton x:Name="TextUnderlineButton" LargeImageSource="\Resources\appbar.text.underline.png" ToolTip="{DynamicResource UnderlineToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                            <RibbonToggleButton x:Name="TextStrikethroughButton" LargeImageSource="\Resources\appbar.text.strikethrough.png" ToolTip="{DynamicResource StrikeThroughToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                            <RibbonButton ToolTip="{DynamicResource ClearFormattingToolTip}" LargeImageSource="\Resources\appbar.reset.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Click="restoreDefaults" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                            <RibbonComboBox Label="1"                   
+                  SelectionBoxWidth="62"
+                  VerticalAlignment="Center" 
+                  IsEditable="True" >
+                                <RibbonGallery SelectedValue="Green"
+                          SelectedValuePath="Content"
+                          MaxColumnCount="1">
+                                    <RibbonGalleryCategory>
+                                        <RibbonGalleryItem Content="Green" Foreground="Green" />
+                                        <RibbonGalleryItem Content="Blue" Foreground="Blue" />
+                                        <RibbonGalleryItem Content="Orange" Foreground="Orange" />
+                                    </RibbonGalleryCategory>
+                                </RibbonGallery>
+                            </RibbonComboBox>
+                        </StackPanel>
+                        <RibbonButton ToolTip="{DynamicResource IncreaseFontSizeToolTip}" LargeImageSource="\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Click="increaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                        <RibbonButton ToolTip="{DynamicResource DecreaseFontSizeToolTip}" LargeImageSource="\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Click="decreaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                    </StackPanel>
+                </RibbonGroup>
+                <RibbonGroup x:Name="imageGroup">
+                </RibbonGroup>
+                
             </RibbonTab>
-            <RibbonTab Header="Ink Tools" ContextualTabGroupHeader="Ink Tools" />
-            <RibbonTab Header="Insert Tools" ContextualTabGroupHeader="Insert Tools" />
-            <Ribbon.ContextualTabGroups>
-                <RibbonContextualTabGroup x:Name="inkGroup" Header="Ink Tools" Visibility="Collapsed" />
-                <RibbonContextualTabGroup x:Name="insertGroup" Header="Insert Tools" Visibility="Collapsed" />
-            </Ribbon.ContextualTabGroups>
+
         </Ribbon>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
@@ -80,7 +138,7 @@
                         <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>               
+                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
                     <TabControl Grid.Row="1" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
                         <TabItem Header="Pages" Width="80">
                             <components:SlideDisplay x:Name="slides" />
