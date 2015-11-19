@@ -342,7 +342,7 @@ namespace SandRibbon.Pages.Collaboration
         private void SaveUserOptions(UserOptions options)
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
-            App.controller.client.SaveUserOptions(Globals.me, options);
+            networkController.client.SaveUserOptions(Globals.me, options);
         }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
@@ -382,10 +382,10 @@ namespace SandRibbon.Pages.Collaboration
                     else
                     {
                         var jid = Globals.conversationDetails.Jid;
-                        Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
+                        Commands.UpdateConversationDetails.Execute(networkController.client.DetailsOf(jid));
                         Commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
                         SlideDisplay.SendSyncMove(Globals.location.currentSlide);
-                        App.controller.client.historyProvider.Retrieve<PreParser>(
+                        networkController.client.historyProvider.Retrieve<PreParser>(
                                     null,
                                     null,
                                     (parser) =>
@@ -611,8 +611,8 @@ namespace SandRibbon.Pages.Collaboration
 
                 if (ribbon.SelectedTab != null)
                     ribbon.SelectedTab = ribbon.Tabs[0];
-                var thisDetails = App.controller.client.DetailsOf(title);
-                App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
+                var thisDetails = networkController.client.DetailsOf(title);
+                networkController.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
                 applyPermissions(thisDetails.Permissions);
                 Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
                 Commands.RequerySuggested(Commands.SetConversationPermissions);
@@ -708,7 +708,7 @@ namespace SandRibbon.Pages.Collaboration
             var kvp = new KeyValuePair<ConversationDetails, Slide>(Globals.conversationDetails, Globals.slideDetails);
             if (kvp.Key.UserHasPermission(Globals.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
             {
-                App.controller.client.DuplicateSlide(kvp.Key, kvp.Value);
+                networkController.client.DuplicateSlide(kvp.Key, kvp.Value);
             }
         }
         private void duplicateConversation(ConversationDetails _conversationToDuplicate)
@@ -716,7 +716,7 @@ namespace SandRibbon.Pages.Collaboration
             var conversationToDuplicate = Globals.conversationDetails;
             if (conversationToDuplicate.UserHasPermission(Globals.credentials))
             {
-                App.controller.client.DuplicateConversation(conversationToDuplicate);
+                networkController.client.DuplicateConversation(conversationToDuplicate);
             }
         }
         private bool userMayAdministerConversation(ConversationDetails _conversation)
@@ -788,7 +788,7 @@ namespace SandRibbon.Pages.Collaboration
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 details.Author = Globals.userInformation.credentials.name;
-                var connection = App.controller.client;
+                var connection = networkController.client;
                 details = connection.CreateConversation(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
@@ -986,7 +986,7 @@ namespace SandRibbon.Pages.Collaboration
                 if (details == null)
                     return;
                 details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
-                App.controller.client.UpdateConversationDetails(details);
+                networkController.client.UpdateConversationDetails(details);
             }
             catch (NotSetException)
             {
@@ -1005,7 +1005,7 @@ namespace SandRibbon.Pages.Collaboration
                     details.Permissions.applyLectureStyle();
                 else
                     details.Permissions.applyTuteStyle();
-                App.controller.client.UpdateConversationDetails(details);
+                networkController.client.UpdateConversationDetails(details);
             }
             catch (NotSetException)
             {
