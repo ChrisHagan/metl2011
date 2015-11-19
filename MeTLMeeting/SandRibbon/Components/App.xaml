@@ -20,7 +20,8 @@
                 -->                
                 <ResourceDictionary Source="\Components\ResourceDictionaries\Client\SaintLeoUniversity.xaml" />                
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
-                
+
+                <ResourceDictionary Source="ResourceDictionaries\Brushes.xaml"/>
                 <ResourceDictionary Source="ResourceDictionaries\ToolTips.xaml"/>
                 <ResourceDictionary Source="ResourceDictionaries\Controls2015.xaml"/>
 

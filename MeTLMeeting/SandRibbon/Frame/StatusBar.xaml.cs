@@ -64,11 +64,6 @@ namespace SandRibbon.Chrome
                              MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
                              details.Subject, Globals.me);
                     }
-#if DEBUG
-                    var activeStack = App.getCurrentServer;
-                    status += String.Format(" | ({0}) Connected to [{1}]", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
-                        activeStack.name);
-#endif
                     StatusLabel.Text = status;
                 });
             }
