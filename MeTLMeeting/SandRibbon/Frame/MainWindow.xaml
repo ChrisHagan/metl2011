@@ -67,5 +67,14 @@
             <Controls:Flyout x:Name="flyout" Position="Right" Width="250"/>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
-    <Frame x:Name="mainFrame"/>
+    <Frame x:Name="mainFrame">
+        <!--Remove navigation options-->
+        <Frame.Template>
+            <ControlTemplate TargetType="Frame">
+                <Border>
+                    <ContentPresenter />
+                </Border>
+            </ControlTemplate>
+        </Frame.Template>
+    </Frame>
 </Controls:MetroWindow>

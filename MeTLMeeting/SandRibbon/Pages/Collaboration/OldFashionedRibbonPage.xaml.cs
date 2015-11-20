@@ -26,6 +26,7 @@ using System.Windows.Interop;
 using SandRibbon.Components.Sandpit;
 using System.Threading;
 using SandRibbon.Properties;
+using SandRibbon.Pages.Conversations;
 
 namespace SandRibbon.Pages.Collaboration
 {
@@ -51,7 +52,7 @@ namespace SandRibbon.Pages.Collaboration
         public NetworkController networkController;
         public OldFashionedRibbonPage(NetworkController _networkController)
         {
-            networkController = _networkController;
+            networkController = _networkController;            
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
             App.mark("Window1 constructor complete");
@@ -64,7 +65,6 @@ namespace SandRibbon.Pages.Collaboration
             {
                 App.mark("Window1 knows about identity");
             }));
-            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
             PreviewKeyDown += new KeyEventHandler(KeyPressed);
@@ -94,8 +94,7 @@ namespace SandRibbon.Pages.Collaboration
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<NetworkController>(PrintConversation, mustBeInConversation));
 
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));          
 
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
@@ -363,15 +362,9 @@ namespace SandRibbon.Pages.Collaboration
         }
 
         private void ShowConversationSearchBox(object _arg)
-        {
-            if (!ribbon.IsMinimized)
-                ribbon.ToggleMinimize();
-        }
-        private void HideConversationSearchBox(object _arg)
-        {
-            if (ribbon.IsMinimized)
-                ribbon.ToggleMinimize();
-        }
+        {            
+            NavigationService.Navigate(new ConversationSearchPage(networkController));
+        }        
         private void Reconnecting(bool success)
         {
             if (success)

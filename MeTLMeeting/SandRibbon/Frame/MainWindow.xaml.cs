@@ -36,6 +36,9 @@ using SandRibbon.Pages.Analytics;
 
 namespace SandRibbon
 {
+    public enum PresentationStrategy {
+        WindowCoordinating,PageCoordinating
+    }
     public partial class MainWindow : MetroWindow
     {
         private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
@@ -50,9 +53,7 @@ namespace SandRibbon
         {
             InitializeComponent();
             DoConstructor();
-            Commands.AllStaticCommandsAreRegistered();
-            //mainFrame.Navigate(new RibbonCollaborationPage(Slide.Empty));
-            //mainFrame.Navigate(new OldFashionedRibbonPage());
+            Commands.AllStaticCommandsAreRegistered();            
             mainFrame.Navigate(new ServerSelectorPage());
             App.CloseSplashScreen();
         }
@@ -92,13 +93,12 @@ namespace SandRibbon
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
             Commands.MoveToOverview.RegisterCommand(new DelegateCommand<NetworkController>(MoveToOverview, mustBeInConversation));
-            if (false)
+            if (presentationStrategy == PresentationStrategy.WindowCoordinating)
             {
                 Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
                 Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
                 Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
-            }
-
+            }            
             Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
             
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -132,6 +132,11 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
+        }
+
+        private void ShowConversationSearch(NetworkController c)
+        {
+            mainFrame.Navigate(new ConversationSearchPage(c));
         }
 
         private void WordCloud(object obj)
@@ -573,6 +578,8 @@ namespace SandRibbon
                 Title = Strings.Global_ProductName;
         }
         private DelegateCommand<object> canOpenFriendsOverride;
+        private PresentationStrategy presentationStrategy;
+
         private void applyPermissions(Permissions permissions)
         {
             if (canOpenFriendsOverride != null)

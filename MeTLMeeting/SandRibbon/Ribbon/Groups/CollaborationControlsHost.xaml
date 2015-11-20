@@ -9,18 +9,16 @@
     <sr:RibbonGroup.Resources>
         <core:String x:Key="preferredDisplayIndex">6</core:String>
     </sr:RibbonGroup.Resources>
-    <!--sr:RibbonGroup.Variants>
+    <sr:RibbonGroup.Variants>
         <sr:GroupVariant Variant="Small" Priority="5"/>
         <sr:GroupVariant Variant="Medium" Priority="3"/>
         <sr:GroupVariant Variant="Collapsed" Priority="7"/>
-    </-->
-    <!--
-    <dict:RibbonPanel>
-        <dict:RadioButton GroupName="style" x:Name="tutorialStyle" ToolTip="{DynamicResource CreateTutorialToolTip}" Text="Collaborating" Icon="\Resources\Collaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" ToolTipService.ShowDuration="10000" InternalButtonSize="Large" />
-        <dict:RadioButton GroupName="style" x:Name="lectureStyle"  ToolTip="{DynamicResource CreateLectureToolTip}" Text="Lecturing" Icon="\Resources\NoCollaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" ToolTipService.ShowDuration="10000" InternalButtonSize="Large"/>
-        <dict:RadioButton GroupName="navToggle" x:Name="navigationLock" Text="Navigation Lock" Icon="\Resources\SyncRed.png" Command="{x:Static api:Commands.ToggleNavigationLock}" IsChecked="{Binding Path=NavigationIsLocked}"/>
-    </dict:RibbonPanel>
-    -->
+        </sr:RibbonGroup.Variants>
+        <dict:RibbonPanel>
+            <dict:RadioButton GroupName="style" x:Name="tutorialStyle" ToolTip="{DynamicResource CreateTutorialToolTip}" Text="Collaborating" Icon="\Resources\Collaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" ToolTipService.ShowDuration="10000" InternalButtonSize="Large" />
+            <dict:RadioButton GroupName="style" x:Name="lectureStyle"  ToolTip="{DynamicResource CreateLectureToolTip}" Text="Lecturing" Icon="\Resources\NoCollaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" ToolTipService.ShowDuration="10000" InternalButtonSize="Large"/>
+            <dict:RadioButton GroupName="navToggle" x:Name="navigationLock" Text="Navigation Lock" Icon="\Resources\SyncRed.png" Command="{x:Static api:Commands.ToggleNavigationLock}" IsChecked="{Binding Path=NavigationIsLocked}"/>
+        </dict:RibbonPanel>
 </sr:RibbonGroup>        
     
     
