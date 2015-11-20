@@ -49,6 +49,8 @@
                     <RibbonCheckBox Label="Everyone else's content" />
                 </RibbonGroup>
                 <RibbonGroup x:Name="inkGroup">
+                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">
+                    </RibbonButton>
                     <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Red" Command="{x:Static api:Commands.SetDrawingAttributes}">
                         <RibbonButton.CommandParameter>
                             <DrawingAttributes Color="Red" />
@@ -62,6 +64,16 @@
                     <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Green" Command="{x:Static api:Commands.SetDrawingAttributes}">
                         <RibbonButton.CommandParameter>
                             <DrawingAttributes Color="Green" />
+                        </RibbonButton.CommandParameter>
+                    </RibbonButton>
+                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Black" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonButton.CommandParameter>
+                            <DrawingAttributes Color="Black" />
+                        </RibbonButton.CommandParameter>
+                    </RibbonButton>
+                    <RibbonButton LargeImageSource="/Resources/appbar.draw.marker.png" Background="Yellow" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonButton.CommandParameter>
+                            <DrawingAttributes Color="Yellow" IsHighlighter="True"/>
                         </RibbonButton.CommandParameter>
                     </RibbonButton>
                 </RibbonGroup>

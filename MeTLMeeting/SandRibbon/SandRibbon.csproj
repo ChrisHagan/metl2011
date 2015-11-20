@@ -2638,6 +2638,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Submissions.png" />
+    <Resource Include="Resources\sr-logo-large.png" />
     <Content Include="Resources\SyncGreen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
