@@ -32,7 +32,6 @@ namespace SandRibbon.Pages.Collaboration
             InitializeComponent();
             DataContext = slide;
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
-
             loadFonts();
             InitializeComponent();
             fontFamily.ItemsSource = fontList;
@@ -48,6 +47,22 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
+
+            this.Loaded += (ps, pe) =>
+            {
+                NavigationService.Navigated += (s, e) =>
+                {
+                    if ((Page)e.Content != this)
+                    {
+                        Console.WriteLine("navigatedAwayFromthis");
+                    }
+
+                };
+                //firing these, until we work out the XAML binding up and down the chain.
+                Commands.JoinConversation.Execute(details.Jid);
+                Commands.MoveToCollaborationPage.Execute(slide.id);
+                Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
+            };
         }
 
         private void SetLayer(string layer)
