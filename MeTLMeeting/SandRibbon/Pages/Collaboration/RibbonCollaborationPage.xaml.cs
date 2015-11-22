@@ -25,11 +25,16 @@ namespace SandRibbon.Pages.Collaboration
     {
         protected NetworkController networkController;
         protected ConversationDetails details;
-        public RibbonCollaborationPage(NetworkController _networkController, ConversationDetails _details, Slide slide)
+        protected string conversationJid;
+        protected Slide slide;
+        public RibbonCollaborationPage(NetworkController _networkController/*, ConversationDetails _details, Slide slide*/)
         {
             networkController = _networkController;
-            details = _details;
+            //details = _details;
+            details = ConversationDetails.Empty;
             InitializeComponent();
+            //DataContext = slide;
+            slide = Slide.Empty;
             DataContext = slide;
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             loadFonts();
@@ -48,6 +53,18 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
 
+            //adding these as a workaround while we're doing singletons of this page and re-using it
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) => conversationJid = convJid));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((convDetails) => details = convDetails));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) =>
+            {
+                var newSlide = details.Slides.Find(s => s.id == slideId);
+                if (newSlide != null)
+                {
+                    slide = newSlide;
+                    DataContext = newSlide;
+                }
+            }));
             this.Loaded += (ps, pe) =>
             {
                 NavigationService.Navigated += (s, e) =>
@@ -58,10 +75,12 @@ namespace SandRibbon.Pages.Collaboration
                     }
 
                 };
+                /*
                 //firing these, until we work out the XAML binding up and down the chain.
                 Commands.JoinConversation.Execute(details.Jid);
                 Commands.MoveToCollaborationPage.Execute(slide.id);
                 Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
+                */
             };
         }
 

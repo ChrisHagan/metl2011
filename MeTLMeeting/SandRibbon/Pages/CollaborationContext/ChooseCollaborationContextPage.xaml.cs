@@ -26,10 +26,10 @@ namespace SandRibbon.Pages.Collaboration
             switch (selection.code)
             {
                 case 1:
-                    NavigationService.Navigate(new ConversationSearchPage(selection.networkController));
+                    NavigationService.Navigate(selection.networkController.conversationSearchPage);// new ConversationSearchPage(selection.networkController));
                     break;
                 default:
-                    NavigationService.Navigate(new ConversationSearchPage(selection.networkController));
+                    NavigationService.Navigate(selection.networkController.conversationSearchPage); //new ConversationSearchPage(selection.networkController));
                     break;
             }
         }

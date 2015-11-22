@@ -362,8 +362,8 @@ namespace SandRibbon.Pages.Collaboration
         }
 
         private void ShowConversationSearchBox(object _arg)
-        {            
-            NavigationService.Navigate(new ConversationSearchPage(networkController));
+        {
+            NavigationService.Navigate(networkController.conversationSearchPage);// new ConversationSearchPage(networkController));
         }        
         private void Reconnecting(bool success)
         {

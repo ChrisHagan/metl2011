@@ -44,9 +44,13 @@
                     <RibbonRadioButton GroupName="view" Label="The original page" />
                 </RibbonGroup>
                 <RibbonGroup Header="Whose content do you see?">
+                    <components:ContentVisibility/>
+<!--                <RibbonGroup Header="Whose content do you see?" x:Name="contentVisibilityController">
+                    
                     <RibbonCheckBox Label="My public content" />
                     <RibbonCheckBox Label="My private content" />
                     <RibbonCheckBox Label="Everyone else's content" />
+                -->
                 </RibbonGroup>
                 <RibbonGroup x:Name="inkGroup">
                     <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">

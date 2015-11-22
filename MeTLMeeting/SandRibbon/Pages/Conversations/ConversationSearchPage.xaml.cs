@@ -209,7 +209,7 @@ namespace SandRibbon.Pages.Conversations
             var conversation = networkController.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(Globals.credentials))
             {
-                //Commands.JoinConversation.ExecuteAsync(conversation.Jid); //delaying this one until the RibbonCollaborationPage exists
+                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
                 NavigationService.Navigate(new ConversationOverviewPage(networkController,conversation));
             }
             else

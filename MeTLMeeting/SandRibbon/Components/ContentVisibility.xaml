@@ -9,7 +9,9 @@
     VerticalContentAlignment="Center"
     HorizontalAlignment="Center"
     AutomationProperties.AutomationId="contentVisibility">
+    <!--
     <dict:RibbonPanel x:Name="contentCheckBoxes">
+    -->
         <ItemsControl x:Name="contentVisibilitySelectors">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -18,13 +20,15 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <CheckBox ToolTip="{Binding Description}" Content="{Binding Label}">
+                    <RibbonCheckBox ToolTip="{Binding Description}" Label="{Binding Label}">
                         <CheckBox.IsChecked>
                             <Binding Path="Subscribed" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
                         </CheckBox.IsChecked>
-                    </CheckBox> 
+                    </RibbonCheckBox> 
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+    <!--
     </dict:RibbonPanel>
+    -->
 </UserControl>
