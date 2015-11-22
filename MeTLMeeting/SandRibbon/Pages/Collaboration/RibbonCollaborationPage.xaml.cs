@@ -53,6 +53,10 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
 
+            Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
+            Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
+            Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
+
             //adding these as a workaround while we're doing singletons of this page and re-using it
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) => conversationJid = convJid));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((convDetails) => details = convDetails));
@@ -363,6 +367,146 @@ namespace SandRibbon.Pages.Collaboration
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new ConversationOverviewPage(networkController, details));
+        }
+        private bool canZoomIn(object sender)
+        {
+            return !(scroll == null) && details != ConversationDetails.Empty;
+        }
+        private bool canZoomOut(object sender)
+        {
+            var result = false;
+            if (scroll == null)
+                result = false;
+            else
+            {
+                var cvHeight = adornerGrid.ActualHeight;
+                var cvWidth = adornerGrid.ActualWidth;
+                var cvRatio = cvWidth / cvHeight;
+                bool hTrue = scroll.ViewportWidth < scroll.ExtentWidth;
+                bool vTrue = scroll.ViewportHeight < scroll.ExtentHeight;
+                var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
+                if (scrollRatio > cvRatio)
+                {
+                    result = hTrue;
+                }
+                if (scrollRatio < cvRatio)
+                {
+                    result = vTrue;
+                }
+                result = (hTrue || vTrue) && details != ConversationDetails.Empty;
+            }
+            return result;
+        }
+
+        private void doZoomIn(object sender)
+        {
+            var ZoomValue = 0.9;
+            var scrollHOffset = scroll.HorizontalOffset;
+            var scrollVOffset = scroll.VerticalOffset;
+            var cvHeight = adornerGrid.ActualHeight;
+            var cvWidth = adornerGrid.ActualWidth;
+            var cvRatio = cvWidth / cvHeight;
+            double newWidth = 0;
+            double newHeight = 0;
+            double oldWidth = scroll.ActualWidth;
+            double oldHeight = scroll.ActualHeight;
+            var scrollRatio = oldWidth / oldHeight;
+            if (scrollRatio > cvRatio)
+            {
+                newWidth = scroll.ActualWidth * ZoomValue;
+                if (newWidth > scroll.ExtentWidth)
+                    newWidth = scroll.ExtentWidth;
+                scroll.Width = newWidth;
+                newHeight = newWidth / cvRatio;
+                if (newHeight > scroll.ExtentHeight)
+                    newHeight = scroll.ExtentHeight;
+                scroll.Height = newHeight;
+            }
+            if (scrollRatio < cvRatio)
+            {
+                newHeight = scroll.ActualHeight * ZoomValue;
+                if (newHeight > scroll.ExtentHeight)
+                    newHeight = scroll.ExtentHeight;
+                scroll.Height = newHeight;
+                newWidth = newHeight * cvRatio;
+                if (newWidth > scroll.ExtentWidth)
+                    newWidth = scroll.ExtentWidth;
+                scroll.Width = newWidth;
+            }
+            if (scrollRatio == cvRatio)
+            {
+                newHeight = scroll.ActualHeight * ZoomValue;
+                if (newHeight > scroll.ExtentHeight)
+                    newHeight = scroll.ExtentHeight;
+                scroll.Height = newHeight;
+                newWidth = scroll.ActualWidth * ZoomValue;
+                if (newWidth > scroll.ExtentWidth)
+                    newWidth = scroll.ExtentWidth;
+                scroll.Width = newWidth;
+            }
+            scroll.ScrollToHorizontalOffset(scrollHOffset + ((oldWidth - newWidth) / 2));
+            scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
+            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
+        }
+        private void doZoomOut(object sender)
+        {
+            var ZoomValue = 1.1;
+            var scrollHOffset = scroll.HorizontalOffset;
+            var scrollVOffset = scroll.VerticalOffset;
+            var cvHeight = adornerGrid.ActualHeight;
+            var cvWidth = adornerGrid.ActualWidth;
+            var cvRatio = cvWidth / cvHeight;
+            var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
+            double newWidth = 0;
+            double newHeight = 0;
+            double oldWidth = scroll.ActualWidth;
+            double oldHeight = scroll.ActualHeight;
+            if (scrollRatio > cvRatio)
+            {
+                newWidth = scroll.ActualWidth * ZoomValue;
+                if (newWidth > scroll.ExtentWidth)
+                    newWidth = scroll.ExtentWidth;
+                scroll.Width = newWidth;
+                newHeight = newWidth / cvRatio;
+                if (newHeight > scroll.ExtentHeight)
+                    newHeight = scroll.ExtentHeight;
+                scroll.Height = newHeight;
+            }
+            if (scrollRatio < cvRatio)
+            {
+                newHeight = scroll.ActualHeight * ZoomValue;
+                if (newHeight > scroll.ExtentHeight)
+                    newHeight = scroll.ExtentHeight;
+                scroll.Height = newHeight;
+                newWidth = newHeight * cvRatio;
+                if (newWidth > scroll.ExtentWidth)
+                    newWidth = scroll.ExtentWidth;
+                scroll.Width = newWidth;
+            }
+            if (scrollRatio == cvRatio)
+            {
+                newHeight = scroll.ActualHeight * ZoomValue;
+                if (newHeight > scroll.ExtentHeight)
+                    newHeight = scroll.ExtentHeight;
+                scroll.Height = newHeight;
+                newWidth = scroll.ActualWidth * ZoomValue;
+                if (newWidth > scroll.ExtentWidth)
+                    newWidth = scroll.ExtentWidth;
+                scroll.Width = newWidth;
+            }
+            scroll.ScrollToHorizontalOffset(scrollHOffset + ((oldWidth - newWidth) / 2));
+            scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
+            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
+        }
+        private void SetZoomRect(Rect viewbox)
+        {
+            scroll.Width = viewbox.Width;
+            scroll.Height = viewbox.Height;
+            scroll.UpdateLayout();
+            scroll.ScrollToHorizontalOffset(viewbox.X);
+            scroll.ScrollToVerticalOffset(viewbox.Y);
+            //Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
         }
     }
 }

@@ -109,6 +109,9 @@
                 </RibbonGroup>
                 <RibbonGroup x:Name="imageGroup">
                 </RibbonGroup>
+                <RibbonGroup Header="Zoom">
+                    <components:ZoomControls/>
+                </RibbonGroup>
                 
             </RibbonTab>
 
