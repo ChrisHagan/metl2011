@@ -319,7 +319,17 @@ namespace SandRibbon.Components
         }
         private bool isPrevious(object _object)
         {
-            return slides != null && slides.SelectedIndex > 0;
+            if (Globals.conversationDetails != null && Globals.conversationDetails != ConversationDetails.Empty && Globals.slideDetails != null && Globals.slideDetails != Slide.Empty)
+            {
+                var isAtStart = Globals.conversationDetails.Slides.Select(s => s.index).Min() == Globals.slideDetails.index;
+                var slideLockNav = Globals.isAuthor || ((Globals.slideDetails.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
+                var canNav = !isAtStart && slideLockNav;// normalNav && slideLockNav;
+                return canNav;
+            }
+            else return false;
+            //var normalNav = slides != null &&  slides.SelectedIndex < thumbnailList.Count() - 1;
+
+            //            return slides != null && slides.SelectedIndex > 0;
         }
         private void moveToPrevious(object _object)
         {
@@ -330,10 +340,15 @@ namespace SandRibbon.Components
         }
         private bool isNext(object _object)
         {
-            var normalNav = slides != null && slides.SelectedIndex < thumbnailList.Count() - 1;
-            var slideLockNav = Globals.isAuthor || ((IsNavigationLocked && slides.SelectedIndex < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex) || !IsNavigationLocked));
-            var canNav = normalNav && slideLockNav;
-            return canNav;
+            if (Globals.conversationDetails != null && Globals.conversationDetails != ConversationDetails.Empty && Globals.slideDetails != null && Globals.slideDetails != Slide.Empty)
+            {
+                var isAtEnd = Globals.conversationDetails.Slides.Select(s => s.index).Max() == Globals.slideDetails.index;
+                var slideLockNav = Globals.isAuthor || ((Globals.slideDetails.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
+                var canNav = !isAtEnd && slideLockNav;// normalNav && slideLockNav;
+                return canNav;
+            }
+            else return false;
+            //var normalNav = slides != null &&  slides.SelectedIndex < thumbnailList.Count() - 1;
         }
 
         public void MoveToSlide(int slideIndex)

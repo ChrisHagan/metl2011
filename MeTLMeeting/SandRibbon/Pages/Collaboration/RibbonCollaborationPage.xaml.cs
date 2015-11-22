@@ -20,7 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace SandRibbon.Pages.Collaboration
-{    
+{
     public partial class RibbonCollaborationPage : Page
     {
         protected NetworkController networkController;
@@ -48,11 +48,13 @@ namespace SandRibbon.Pages.Collaboration
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             //This is used only when a text box is selected
             //A seperate command is used because TextBoxFocused command calls updateprivacy method which is not needed when a text box is selected
-            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));            
+            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
 
+            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(fitToView, canFitToView));
+            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(originalView, canOriginalView));
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
             Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
@@ -71,6 +73,12 @@ namespace SandRibbon.Pages.Collaboration
             }));
             this.Loaded += (ps, pe) =>
             {
+                scroll.ScrollChanged += (s, e) =>
+                {
+                    Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
+                };
+                /*
+                //watching the navigation away from this page so that we can do cleanup.  This won't be necessary until we stop using a singleton on the network controller.
                 NavigationService.Navigated += (s, e) =>
                 {
                     if ((Page)e.Content != this)
@@ -79,6 +87,7 @@ namespace SandRibbon.Pages.Collaboration
                     }
 
                 };
+                */
                 /*
                 //firing these, until we work out the XAML binding up and down the chain.
                 Commands.JoinConversation.Execute(details.Jid);
@@ -90,10 +99,12 @@ namespace SandRibbon.Pages.Collaboration
 
         private void SetLayer(string layer)
         {
-            foreach (var group in new UIElement[] { inkGroup, textGroup, imageGroup }) {
+            foreach (var group in new UIElement[] { inkGroup, textGroup, imageGroup })
+            {
                 group.Visibility = Visibility.Collapsed;
             }
-            switch(layer){
+            switch (layer)
+            {
                 case "Sketch": inkGroup.Visibility = Visibility.Visible; break;
                 case "Text": textGroup.Visibility = Visibility.Visible; break;
                 case "Image": imageGroup.Visibility = Visibility.Visible; break;
@@ -164,8 +175,8 @@ namespace SandRibbon.Pages.Collaboration
             }
 
             throw new ArgumentException(string.Format("Specified target {0} does not match a declared ViewBox", targetName));
-        }       
-      
+        }
+
         private bool RemovePrivacyAdorners(string targetName)
         {
             Viewbox viewbox;
@@ -221,7 +232,7 @@ namespace SandRibbon.Pages.Collaboration
         }
 
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
-        private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };        
+        private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
         private void loadFonts()
         {
             fontList = new List<string>();
@@ -242,7 +253,7 @@ namespace SandRibbon.Pages.Collaboration
         {
             TextUnderlineButton.IsChecked = !TextUnderlineButton.IsChecked;
             sendValues();
-        }        
+        }
 
         private void update(TextInformation info)
         {
@@ -269,11 +280,11 @@ namespace SandRibbon.Pages.Collaboration
                 Bold = TextBoldButton.IsChecked == true,
                 Italics = TextItalicButton.IsChecked == true,
                 Underline = TextUnderlineButton.IsChecked == true,
-                Strikethrough = TextStrikethroughButton.IsChecked == true            
+                Strikethrough = TextStrikethroughButton.IsChecked == true
             };
             currentTextInfo = new TextInformation(info);
             Commands.UpdateTextStyling.Execute(info);
-        }        
+        }
         private void setUpTools(object sender, RoutedEventArgs e)
         {
             if (currentTextInfo != null)
@@ -336,7 +347,7 @@ namespace SandRibbon.Pages.Collaboration
         {
             if (e.AddedItems.Count == 0) return;
             sendValues();
-        }        
+        }
 
         private void valuesUpdated(object sender, RoutedEventArgs e)
         {
@@ -446,7 +457,6 @@ namespace SandRibbon.Pages.Collaboration
             }
             scroll.ScrollToHorizontalOffset(scrollHOffset + ((oldWidth - newWidth) / 2));
             scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
-            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
         }
         private void doZoomOut(object sender)
         {
@@ -496,7 +506,6 @@ namespace SandRibbon.Pages.Collaboration
             }
             scroll.ScrollToHorizontalOffset(scrollHOffset + ((oldWidth - newWidth) / 2));
             scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
-            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
         }
         private void SetZoomRect(Rect viewbox)
         {
@@ -506,7 +515,56 @@ namespace SandRibbon.Pages.Collaboration
             scroll.ScrollToHorizontalOffset(viewbox.X);
             scroll.ScrollToVerticalOffset(viewbox.Y);
             //Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
-            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
+        }
+        protected bool canFitToView(object _unused)
+        {
+            return scroll != null && (scroll.Height != double.NaN || scroll.Width != double.NaN || canvas.Height != double.NaN || canvas.Width != double.NaN);
+        }
+        protected void fitToView(object _unused)
+        {
+            if (scroll != null)
+            {
+                scroll.Height = double.NaN;
+                scroll.Width = double.NaN;
+                canvas.Height = double.NaN;
+                canvas.Width = double.NaN;
+            }
+        }
+        protected bool canOriginalView(object _unused)
+        {
+            return
+                scroll != null &&
+                details != null &&
+                details != ConversationDetails.Empty &&
+                Globals.slideDetails != null &&
+                Globals.slideDetails != Slide.Empty &&
+                scroll.Height != Globals.slideDetails.defaultHeight &&
+                scroll.Width != Globals.slideDetails.defaultWidth;
+        }
+        protected void originalView(object _unused)
+        {
+
+            if (scroll != null &&
+            details != null &&
+            details != ConversationDetails.Empty &&
+            Globals.slideDetails != null &&
+            Globals.slideDetails != Slide.Empty)
+            {
+                var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).FirstOrDefault();
+                if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
+                scroll.Width = currentSlide.defaultWidth;
+                scroll.Height = currentSlide.defaultHeight;
+                if (canvas != null && canvas.stack != null && !Double.IsNaN(canvas.stack.offsetX) && !Double.IsNaN(canvas.stack.offsetY))
+                {
+                    scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth, Math.Max(0, -canvas.stack.offsetX)));
+                    scroll.ScrollToVerticalOffset(Math.Min(scroll.ExtentHeight, Math.Max(0, -canvas.stack.offsetY)));
+                }
+                else
+                {
+                    scroll.ScrollToLeftEnd();
+                    scroll.ScrollToTop();
+                }
+            }
         }
     }
 }

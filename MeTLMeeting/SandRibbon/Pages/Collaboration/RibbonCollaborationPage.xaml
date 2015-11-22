@@ -40,8 +40,9 @@
                     <components:PrivacyTools/>
                 </RibbonGroup>
                 <RibbonGroup Header="How much content do you see?">
-                    <RibbonRadioButton GroupName="view" IsChecked="True" Label="All of it" />
-                    <RibbonRadioButton GroupName="view" Label="The original page" />
+                    <RibbonButton Label="All of it" Command="{x:Static api:Commands.FitToView}" LargeImageSource="/Resources/ShowAll.png" SmallImageSource="/Resources/ShowAll.png"/>
+                    <RibbonButton Label="The original page" Command="{x:Static api:Commands.OriginalView}" LargeImageSource="/Resources/ShowOriginal.png" SmallImageSource="/Resources/ShowOriginal.png"/>
+                    <components:ZoomControls/>
                 </RibbonGroup>
                 <RibbonGroup Header="Whose content do you see?">
                     <components:ContentVisibility/>
@@ -107,9 +108,6 @@
                     </StackPanel>
                 </RibbonGroup>
                 <RibbonGroup x:Name="imageGroup">
-                </RibbonGroup>
-                <RibbonGroup Header="Zoom">
-                    <components:ZoomControls/>
                 </RibbonGroup>
             </RibbonTab>
         </Ribbon>
