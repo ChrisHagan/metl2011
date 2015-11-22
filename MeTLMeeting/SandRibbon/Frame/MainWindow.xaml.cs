@@ -277,8 +277,9 @@ namespace SandRibbon
             if (direction >= 0 && currentIndex == end) targetIndex = 0;
             else if (direction >= 0) targetIndex = currentIndex + 1;
             else if (currentIndex == 0) targetIndex = end;
-            else targetIndex = currentIndex - 1;            
-            mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
+            else targetIndex = currentIndex - 1;
+            Commands.MoveToCollaborationPage.Execute(slides[targetIndex]);
+            //mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
         }
 
 

@@ -43,6 +43,9 @@ namespace SandRibbon.Components
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) => {
+                Commands.RequerySuggested(Commands.SetPrivacy);
+            }));
             DataContext = this;
         }
 
@@ -87,23 +90,13 @@ namespace SandRibbon.Components
             //if (!canBecomePublic())
               //  WorkPubliclyButton.IsChecked = (Globals.privacy == "private") ? false : true;
         }
-        private bool canBecomePublic()
-        {
-            try
-            {
-                return (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
         private bool canSetPrivacy(string privacy)
         {
             try
             {
-                return privacy != (string)GetValue(PrivateProperty)
+                var result = privacy != (string)GetValue(PrivateProperty)
                 && ((Globals.conversationDetails.Permissions.studentCanPublish && !Globals.conversationDetails.blacklist.Contains(Globals.me)) || Globals.conversationDetails.Author == Globals.me);
+                return result;
             }
             catch (Exception)
             {
@@ -142,10 +135,6 @@ namespace SandRibbon.Components
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new PrivacyToolsAutomationPeer(this);
-        }
-        private void privacyChange(object sender, RoutedEventArgs e)
-        {
-            Commands.SetPrivacy.Execute(((FrameworkElement)sender).Tag.ToString());
         }
     }
     class PrivacyToolsAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

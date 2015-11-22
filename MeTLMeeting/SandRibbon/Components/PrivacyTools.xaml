@@ -8,9 +8,7 @@
     AutomationProperties.AutomationId="privacyTools"
     >
     <dict:RibbonPanel>
-        <dict:Button x:Name="publicHidden" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForPrivacyTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-        <dict:Button x:Name="privateHidden" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed. It is only being used to redirect a canExecute Handler."/>
-        <dict:RadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" InternalButtonSize="Large" x:Name="publicMode" IsEnabled="{Binding ElementName=publicHidden, Path=IsEnabled}" ToolTip="{DynamicResource WorkPubliclyToolTip}" Tag="public" Text="Work publicly" Icon="\Resources\Collaborate.png" Checked="privacyChange" ></dict:RadioButton>
-        <dict:RadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" InternalButtonSize="Large"  x:Name="privateMode" IsEnabled="{Binding ElementName=privateHidden, Path=IsEnabled}" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Tag="private" Text="Work privately" Icon="\Resources\NoCollaborate.png" Checked="privacyChange"></dict:RadioButton>
-        </dict:RibbonPanel>
+        <RibbonRadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" x:Name="publicMode" ToolTip="{DynamicResource WorkPubliclyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public" Label="Work publicly" LargeImageSource="\Resources\Collaborate.png"></RibbonRadioButton>
+        <RibbonRadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" x:Name="privateMode" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private" Label="Work privately" LargeImageSource="\Resources\NoCollaborate.png"></RibbonRadioButton>
+    </dict:RibbonPanel>
 </UserControl>

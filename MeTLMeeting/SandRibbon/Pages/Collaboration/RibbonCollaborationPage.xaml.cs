@@ -355,5 +355,14 @@ namespace SandRibbon.Pages.Collaboration
         {
             Commands.RestoreTextDefaults.Execute(null);
         }
+
+        private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(networkController.conversationSearchPage);
+        }
+        private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new ConversationOverviewPage(networkController, details));
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace SandRibbon.Pages.Analytics
         {
             networkController = _networkController;
             InitializeComponent();
-            DataContext = new ConversationComparableCorpus(cs);
+            DataContext = new ConversationComparableCorpus(networkController,cs);
         }
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
@@ -71,11 +71,14 @@ namespace SandRibbon.Pages.Analytics
         public static readonly DependencyProperty SlideContextsProperty =
             DependencyProperty.Register("SlideContexts", typeof(ObservableCollection<ToolableSpaceModel>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ToolableSpaceModel>()));
 
-        public ConversationComparableCorpus(IEnumerable<SearchConversationDetails> cds)
+        public ConversationComparableCorpus(NetworkController _networkController, IEnumerable<SearchConversationDetails> cds)
         {            
             foreach (var c in cds)
             {
-                var conversation = new ReticulatedConversation{ PresentationPath = c };
+                var conversation = new ReticulatedConversation{
+                    networkController = _networkController,
+                    PresentationPath = c
+                };
                 Conversations.Add(conversation);
                 conversation.CalculateLocations();
                 conversation.AnalyzeLocations();
