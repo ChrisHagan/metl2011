@@ -136,7 +136,7 @@ namespace SandRibbon
 
         private void ShowConversationSearch(NetworkController c)
         {
-            mainFrame.Navigate(new ConversationSearchPage(c));
+            mainFrame.Navigate(c.conversationSearchPage);//new ConversationSearchPage(c));
         }
 
         private void WordCloud(object obj)
@@ -146,7 +146,7 @@ namespace SandRibbon
 
         private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
         {
-            mainFrame.Navigate(new ConversationSearchPage(obj.networkController));
+            mainFrame.Navigate(obj.networkController.conversationSearchPage);// new ConversationSearchPage(obj.networkController));
         }
 
         private void PickImages(PickContext context)
