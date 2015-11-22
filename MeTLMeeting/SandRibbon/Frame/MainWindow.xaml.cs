@@ -136,7 +136,7 @@ namespace SandRibbon
 
         private void ShowConversationSearch(NetworkController c)
         {
-            mainFrame.Navigate(new ConversationSearchPage(c));
+            mainFrame.Navigate(c.conversationSearchPage);//new ConversationSearchPage(c));
         }
 
         private void WordCloud(object obj)
@@ -146,7 +146,7 @@ namespace SandRibbon
 
         private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
         {
-            mainFrame.Navigate(new ConversationSearchPage(obj.networkController));
+            mainFrame.Navigate(obj.networkController.conversationSearchPage);// new ConversationSearchPage(obj.networkController));
         }
 
         private void PickImages(PickContext context)
@@ -277,8 +277,9 @@ namespace SandRibbon
             if (direction >= 0 && currentIndex == end) targetIndex = 0;
             else if (direction >= 0) targetIndex = currentIndex + 1;
             else if (currentIndex == 0) targetIndex = end;
-            else targetIndex = currentIndex - 1;            
-            mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
+            else targetIndex = currentIndex - 1;
+            Commands.MoveToCollaborationPage.Execute(slides[targetIndex]);
+            //mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
         }
 
 

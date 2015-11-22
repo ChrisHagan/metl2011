@@ -24,6 +24,8 @@
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu>
                     <RibbonApplicationMenuItem Header="Create new" />
+                    <RibbonApplicationMenuItem Header="Conversation overview" Click="RibbonApplicationMenuItem_ConversationOverview_Click"/>
+                    <RibbonApplicationMenuItem Header="Search conversations" Click="RibbonApplicationMenuItem_SearchConversations_Click"/>
                     <RibbonApplicationMenuItem Header="Logout" />
                 </RibbonApplicationMenu>
             </Ribbon.ApplicationMenu>
@@ -35,18 +37,14 @@
                     <RibbonButton Label="Select" LargeImageSource="/Resources/appbar.image.ants.png"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Who can see your work?">
-                    <RibbonRadioButton GroupName="exposure" IsChecked="True" Label="Everybody" />
-                    <RibbonRadioButton GroupName="exposure" Label="My group" />
-                    <RibbonRadioButton GroupName="exposure" Label="Nobody" />
+                    <components:PrivacyTools/>
                 </RibbonGroup>
                 <RibbonGroup Header="How much content do you see?">
                     <RibbonRadioButton GroupName="view" IsChecked="True" Label="All of it" />
                     <RibbonRadioButton GroupName="view" Label="The original page" />
                 </RibbonGroup>
                 <RibbonGroup Header="Whose content do you see?">
-                    <RibbonCheckBox Label="My public content" />
-                    <RibbonCheckBox Label="My private content" />
-                    <RibbonCheckBox Label="Everyone else's content" />
+                    <components:ContentVisibility/>
                 </RibbonGroup>
                 <RibbonGroup x:Name="inkGroup">
                     <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">

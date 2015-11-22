@@ -6,6 +6,8 @@ using SandRibbon.Providers;
 using Application = System.Windows.Application;
 using System.Diagnostics;
 using System.Collections.Generic;
+using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.Conversations;
 
 namespace SandRibbon.Components
 {
@@ -19,6 +21,8 @@ namespace SandRibbon.Components
         {
             config = _config;
         }
+        public RibbonCollaborationPage ribbonCollaborationPage { get; protected set; }
+        public ConversationSearchPage conversationSearchPage { get; protected set; }
         public IClientBehaviour connect(Credentials _creds)
         {
             return App.auditor.wrapFunction((g) =>
@@ -35,6 +39,7 @@ namespace SandRibbon.Components
                         attachToClient();
                         Commands.AllStaticCommandsAreRegistered();
                         client.events.StatusChanged -= checkValidity;
+                        //creating singletons of both of these, because they register to the static command system right now.
                     }
                     else
                     {
@@ -46,6 +51,12 @@ namespace SandRibbon.Components
                 };
                 client.events.StatusChanged += checkValidity;
                 g(GaugeStatus.InProgress,66);
+                //doing these here while we want them as singletons
+                App.Current.Dispatcher.adopt(delegate {
+                    ribbonCollaborationPage = new RibbonCollaborationPage(this);
+                    conversationSearchPage = new ConversationSearchPage(this);
+                    Commands.SetContentVisibility.Execute(Utility.ContentFilterVisibility.defaultVisibilities);
+                });
                 return client;
             }, "networkController connect", "backend");
         }

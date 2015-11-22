@@ -149,19 +149,25 @@ namespace SandRibbon.Components
 
         void refresherTick(object sender, EventArgs e)
         {
-            var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
-            var generator = slides.ItemContainerGenerator;
-            var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToList();
-            var top = view.VerticalOffset;
-            var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
-            for (var i = (int) Math.Floor(top); i <= bottom; i++)
+            try
             {
-                var id = context[i].id;
-                var container = generator.ContainerFromIndex(i);
-                try {
-                    ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
-                } catch { }
+                var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
+                var generator = slides.ItemContainerGenerator;
+                var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToList();
+                var top = view.VerticalOffset;
+                var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
+                for (var i = (int)Math.Floor(top); i <= bottom; i++)
+                {
+                    var id = context[i].id;
+                    var container = generator.ContainerFromIndex(i);
+                    try
+                    {
+                        ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                    }
+                    catch { }
+                }
             }
+            catch { }
         }
 
         private void OnThumbnailCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

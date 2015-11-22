@@ -185,7 +185,7 @@ namespace MeTLLib.Providers
                 {
                     auditor.wrapAction((g =>
                     {
-                        var directoryUri = serverAddress.getRoomHistory(room); 
+                        var directoryUri = serverAddress.getRoomHistory(roomJid); 
                         var xmlString = resourceProvider.secureGetString(directoryUri);
                         using (var stream = GenerateStreamFromString(xmlString)) {
                             parseHistoryItem(stream, accumulatingParser);

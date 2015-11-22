@@ -232,7 +232,7 @@ namespace SandRibbon.Pages.Login
                                 Globals.authenticatedWebSession = logonBrowser.WebSession;
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
-                                NavigationService.Navigate(new ConversationSearchPage(App.controller));
+                                NavigationService.Navigate(App.controller.conversationSearchPage);//new ConversationSearchPage(App.controller));
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
