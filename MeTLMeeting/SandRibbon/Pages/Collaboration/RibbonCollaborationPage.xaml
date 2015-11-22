@@ -76,7 +76,7 @@
                     </RibbonButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup">
-                    <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+                    <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{Binding api:Commands.DummyCommandToProcessCanExecute}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
                     <StackPanel>
                         <StackPanel Height="30" Orientation="Horizontal">
                             <ComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"   IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
@@ -92,8 +92,7 @@
                   SelectionBoxWidth="62"
                   VerticalAlignment="Center" 
                   IsEditable="True" >
-                                <RibbonGallery SelectedValue="Green"
-                          SelectedValuePath="Content"
+                                <RibbonGallery SelectedValue="Green"                          SelectedValuePath="Content"
                           MaxColumnCount="1">
                                     <RibbonGalleryCategory>
                                         <RibbonGalleryItem Content="Green" Foreground="Green" />
@@ -112,9 +111,7 @@
                 <RibbonGroup Header="Zoom">
                     <components:ZoomControls/>
                 </RibbonGroup>
-                
             </RibbonTab>
-
         </Ribbon>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
