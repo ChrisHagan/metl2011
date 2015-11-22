@@ -9,9 +9,9 @@
         <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static api:Commands.ClipboardManager}" CommandParameter="{x:Static Components:ClipboardAction.Paste}"/>
     </UserControl.InputBindings>
     <Grid>
-        <dict:RibbonPanel Orientation="Horizontal" Visibility="Hidden" x:Name="nav" HorizontalAlignment="Center" Margin="0 0 0 0">
-            <dict:Button Text="Previous" Icon="\Resources\Previous.png" x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
-            <dict:Button Text="Next" Icon="\Resources\Next.png" x:Name="moveToNext" ToolTip="{DynamicResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}" />
-        </dict:RibbonPanel>
+        <RibbonGroup x:Name="nav" HorizontalAlignment="Center" Margin="0 0 0 0">
+            <RibbonButton Label="Previous" SmallImageSource="\Resources\Previous.png" LargeImageSource="\Resources\Previous.png" x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
+            <RibbonButton Label="Next" SmallImageSource="\Resources\Next.png" LargeImageSource="\Resources\Next.png" x:Name="moveToNext" ToolTip="{DynamicResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}" />
+        </RibbonGroup>
     </Grid>
 </UserControl>

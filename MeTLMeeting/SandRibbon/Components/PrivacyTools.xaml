@@ -8,7 +8,7 @@
     AutomationProperties.AutomationId="privacyTools"
     >
     <dict:RibbonPanel>
-        <RibbonRadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" x:Name="publicMode" ToolTip="{DynamicResource WorkPubliclyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public" Label="Work publicly" LargeImageSource="\Resources\Collaborate.png"></RibbonRadioButton>
-        <RibbonRadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" x:Name="privateMode" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private" Label="Work privately" LargeImageSource="\Resources\NoCollaborate.png"></RibbonRadioButton>
+        <RibbonRadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" x:Name="publicMode" ToolTip="{DynamicResource WorkPubliclyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public" Label="Work publicly" SmallImageSource="\Resources\Collaborate.png" LargeImageSource="\Resources\Collaborate.png"></RibbonRadioButton>
+        <RibbonRadioButton VerticalAlignment="Stretch" GroupName="privacyButtons" x:Name="privateMode" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private" Label="Work privately" SmallImageSource="\Resources\NoCollaborate.png" LargeImageSource="\Resources\NoCollaborate.png"></RibbonRadioButton>
     </dict:RibbonPanel>
 </UserControl>
