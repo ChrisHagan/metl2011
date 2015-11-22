@@ -37,14 +37,17 @@ namespace SandRibbon.Pages.Collaboration
             slide = Slide.Empty;
             DataContext = slide;
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
-            loadFonts();
+            //loadFonts();
             InitializeComponent();
+            /*
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
             fontSize.SelectedIndex = 0;
             fontSize.SelectionChanged += fontSizeSelected;
             fontFamily.SelectionChanged += fontFamilySelected;
+            */
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            /*
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             //This is used only when a text box is selected
             //A seperate command is used because TextBoxFocused command calls updateprivacy method which is not needed when a text box is selected
@@ -52,7 +55,7 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
-
+            */
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(fitToView, canFitToView));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(originalView, canOriginalView));
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
@@ -239,6 +242,7 @@ namespace SandRibbon.Pages.Collaboration
             foreach (var font in System.Drawing.FontFamily.Families)
                 fontList.Add(font.Name);
         }
+        /*
         private void togglebold(object obj)
         {
             TextBoldButton.IsChecked = !TextBoldButton.IsChecked;
@@ -366,6 +370,7 @@ namespace SandRibbon.Pages.Collaboration
             sendValues();
         }
 
+        */
         private void restoreDefaults(object sender, RoutedEventArgs e)
         {
             Commands.RestoreTextDefaults.Execute(null);
@@ -518,7 +523,8 @@ namespace SandRibbon.Pages.Collaboration
         }
         protected bool canFitToView(object _unused)
         {
-            return scroll != null && (scroll.Height != double.NaN || scroll.Width != double.NaN || canvas.Height != double.NaN || canvas.Width != double.NaN);
+            return scroll != null && !(double.IsNaN(scroll.Height) && double.IsNaN(scroll.Width) && double.IsNaN(canvas.Height) && double.IsNaN(canvas.Width));
+            //return scroll != null && (scroll.Height != double.NaN || scroll.Width != double.NaN || canvas.Height != double.NaN || canvas.Width != double.NaN);
         }
         protected void fitToView(object _unused)
         {

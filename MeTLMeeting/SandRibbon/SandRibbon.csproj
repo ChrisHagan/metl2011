@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>C2FFB8D6060B10A8E6473D8AE8171D4F01D658D9</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_6_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>2730E006B67311CDD2C97BCBD79D821891FBACC8</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_8_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -1122,6 +1122,7 @@
     <None Include="SandRibbon_5_TemporaryKey.pfx" />
     <None Include="SandRibbon_6_TemporaryKey.pfx" />
     <None Include="SandRibbon_7_TemporaryKey.pfx" />
+    <None Include="SandRibbon_8_TemporaryKey.pfx" />
     <None Include="SandRibbon_TemporaryKey.pfx" />
     <Resource Include="Resources\Entypo.ttf" />
     <None Include="SandRibbon_2_TemporaryKey.pfx" />

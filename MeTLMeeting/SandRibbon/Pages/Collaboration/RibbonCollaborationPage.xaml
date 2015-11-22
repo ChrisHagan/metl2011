@@ -34,7 +34,7 @@
                     <RibbonButton Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
                     <RibbonButton Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
                     <RibbonButton Label="Image" LargeImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
-                    <RibbonButton Label="Select" LargeImageSource="/Resources/appbar.image.ants.png"/>
+                    <RibbonButton Label="Select" LargeImageSource="/Resources/appbar.image.ants.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Select"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Who can see your work?">
                     <components:PrivacyTools/>
