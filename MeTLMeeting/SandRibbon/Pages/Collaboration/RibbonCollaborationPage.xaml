@@ -31,10 +31,10 @@
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Home">
                 <RibbonGroup Header="Which tool are you using?">
-                    <RibbonButton Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
-                    <RibbonButton Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
-                    <RibbonButton Label="Image" LargeImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
-                    <RibbonButton Label="Select" LargeImageSource="/Resources/appbar.image.ants.png"/>
+                    <RibbonRadioButton GroupName="mode" Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
+                    <RibbonRadioButton GroupName="mode" Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
+                    <RibbonRadioButton GroupName="mode" Label="Image" LargeImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
+                    <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Who can see your work?">
                     <components:PrivacyTools/>
@@ -47,33 +47,33 @@
                     <components:ContentVisibility/>
                 </RibbonGroup>
                 <RibbonGroup x:Name="inkGroup">
-                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">
-                    </RibbonButton>
-                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Red" Command="{x:Static api:Commands.SetDrawingAttributes}">
-                        <RibbonButton.CommandParameter>
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">
+                    </RibbonRadioButton>
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.png" Background="Red" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonRadioButton.CommandParameter>
                             <DrawingAttributes Color="Red" />
-                        </RibbonButton.CommandParameter>
-                    </RibbonButton>
-                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Blue" Command="{x:Static api:Commands.SetDrawingAttributes}">
-                        <RibbonButton.CommandParameter>
+                        </RibbonRadioButton.CommandParameter>
+                    </RibbonRadioButton>
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.png" Background="Blue" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonRadioButton.CommandParameter>
                             <DrawingAttributes Color="Blue" />
-                        </RibbonButton.CommandParameter>
-                    </RibbonButton>
-                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Green" Command="{x:Static api:Commands.SetDrawingAttributes}">
-                        <RibbonButton.CommandParameter>
+                        </RibbonRadioButton.CommandParameter>
+                    </RibbonRadioButton>
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.png" Background="Green" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonRadioButton.CommandParameter>
                             <DrawingAttributes Color="Green" />
-                        </RibbonButton.CommandParameter>
-                    </RibbonButton>
-                    <RibbonButton LargeImageSource="/Resources/appbar.draw.pen.png" Background="Black" Command="{x:Static api:Commands.SetDrawingAttributes}">
-                        <RibbonButton.CommandParameter>
+                        </RibbonRadioButton.CommandParameter>
+                    </RibbonRadioButton>
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.png" Background="Black" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonRadioButton.CommandParameter>
                             <DrawingAttributes Color="Black" />
-                        </RibbonButton.CommandParameter>
-                    </RibbonButton>
-                    <RibbonButton LargeImageSource="/Resources/appbar.draw.marker.png" Background="Yellow" Command="{x:Static api:Commands.SetDrawingAttributes}">
-                        <RibbonButton.CommandParameter>
+                        </RibbonRadioButton.CommandParameter>
+                    </RibbonRadioButton>
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.marker.png" Background="Yellow" Command="{x:Static api:Commands.SetDrawingAttributes}">
+                        <RibbonRadioButton.CommandParameter>
                             <DrawingAttributes Color="Yellow" IsHighlighter="True"/>
-                        </RibbonButton.CommandParameter>
-                    </RibbonButton>
+                        </RibbonRadioButton.CommandParameter>
+                    </RibbonRadioButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup">
                 </RibbonGroup>

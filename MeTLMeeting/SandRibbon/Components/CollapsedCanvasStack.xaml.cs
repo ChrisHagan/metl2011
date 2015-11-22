@@ -305,7 +305,7 @@ namespace SandRibbon.Components
         private void Html_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(this);
-            html.ExecuteJavascript(string.Format("MeTLText.append({0},{1})",pos.X,pos.Y));
+            var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})",pos.X,pos.Y));
         }
 
         public void TogglePublishBrush(object unused) {

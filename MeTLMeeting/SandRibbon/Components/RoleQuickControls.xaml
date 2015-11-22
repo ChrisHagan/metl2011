@@ -15,6 +15,10 @@
         <StackPanel>
             <WrapPanel x:Name="ownerQuickControls">
                 <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
+                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can publish quizzes"></CheckBox>
+                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can create attachments"></CheckBox>
+                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can add slides"></CheckBox>
+                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can view participants list"></CheckBox>
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
                 <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
                 <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
