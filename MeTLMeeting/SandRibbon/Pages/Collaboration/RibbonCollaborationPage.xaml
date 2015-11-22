@@ -77,35 +77,6 @@
                     </RibbonButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup">
-                    <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{Binding api:Commands.DummyCommandToProcessCanExecute}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-                    <StackPanel>
-                        <StackPanel Height="30" Orientation="Horizontal">
-                            <ComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"   IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                            <ComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                        </StackPanel>
-                        <StackPanel Height="30" Orientation="Horizontal">
-                            <RibbonCheckBox x:Name="TextBoldButton" LargeImageSource="\Resources\appbar.text.bold.png" ToolTip="{DynamicResource BoldToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                            <RibbonToggleButton x:Name="TextItalicButton" LargeImageSource="\Resources\appbar.text.italic.png" ToolTip="{DynamicResource ItalicToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                            <RibbonToggleButton x:Name="TextUnderlineButton" LargeImageSource="\Resources\appbar.text.underline.png" ToolTip="{DynamicResource UnderlineToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                            <RibbonToggleButton x:Name="TextStrikethroughButton" LargeImageSource="\Resources\appbar.text.strikethrough.png" ToolTip="{DynamicResource StrikeThroughToolTip}" Click="valuesUpdated" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                            <RibbonButton ToolTip="{DynamicResource ClearFormattingToolTip}" LargeImageSource="\Resources\appbar.reset.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Click="restoreDefaults" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                            <RibbonComboBox Label="1"                   
-                  SelectionBoxWidth="62"
-                  VerticalAlignment="Center" 
-                  IsEditable="True" >
-                                <RibbonGallery SelectedValue="Green"                          SelectedValuePath="Content"
-                          MaxColumnCount="1">
-                                    <RibbonGalleryCategory>
-                                        <RibbonGalleryItem Content="Green" Foreground="Green" />
-                                        <RibbonGalleryItem Content="Blue" Foreground="Blue" />
-                                        <RibbonGalleryItem Content="Orange" Foreground="Orange" />
-                                    </RibbonGalleryCategory>
-                                </RibbonGallery>
-                            </RibbonComboBox>
-                        </StackPanel>
-                        <RibbonButton ToolTip="{DynamicResource IncreaseFontSizeToolTip}" LargeImageSource="\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Click="increaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                        <RibbonButton ToolTip="{DynamicResource DecreaseFontSizeToolTip}" LargeImageSource="\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Click="decreaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                    </StackPanel>
                 </RibbonGroup>
                 <RibbonGroup x:Name="imageGroup">
                 </RibbonGroup>
