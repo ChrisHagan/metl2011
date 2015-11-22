@@ -43,6 +43,7 @@
                     <RibbonButton Label="All of it" Command="{x:Static api:Commands.FitToView}" LargeImageSource="/Resources/ShowAll.png" SmallImageSource="/Resources/ShowAll.png"/>
                     <RibbonButton Label="The original page" Command="{x:Static api:Commands.OriginalView}" LargeImageSource="/Resources/ShowOriginal.png" SmallImageSource="/Resources/ShowOriginal.png"/>
                     <components:ZoomControls/>
+                    <components:MiniMap DataContext="{Binding ElementName=scroll}"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Whose content do you see?">
                     <components:ContentVisibility/>

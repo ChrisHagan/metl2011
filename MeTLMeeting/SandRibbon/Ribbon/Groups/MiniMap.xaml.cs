@@ -4,9 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace SandRibbon.Tabs.Groups
+namespace SandRibbon.Components
 {
-    public partial class MiniMap : Divelements.SandRibbon.RibbonGroup
+    public partial class MiniMap : UserControl
     {
         public MiniMap()
         {
@@ -14,7 +14,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var scroll = (ScrollViewer)DataContext;
+            var scroll = (ScrollViewer)((FrameworkElement)sender).DataContext;
             if (scroll == null) return;
             var pos = e.GetPosition(minimap);
             var x = (pos.X / minimap.Width) * scroll.ExtentWidth;
