@@ -5,7 +5,7 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     x:Class="SandRibbon.Components.MiniMap" >
-    <Viewbox x:Name="minimapContainer" Height="65" Width="100" MouseDown="Viewbox_MouseDown" MouseMove="Viewbox_MouseMove">
+    <Viewbox x:Name="minimapContainer" MouseDown="Viewbox_MouseDown" MouseMove="Viewbox_MouseMove">
         <Grid>
             <Rectangle Width="{Binding Content.ActualWidth}" Height="{Binding Content.ActualHeight}" x:Name="minimap">
                 <Rectangle.Fill>
