@@ -17,6 +17,9 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.PreviewKeyDown += KeyPressed;
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((i) => {
+                Commands.RequerySuggested(Commands.MoveToNext, Commands.MoveToPrevious);
+            }));
             //Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
             //Commands.SetSync.Execute(false);
         }
@@ -39,6 +42,7 @@ namespace SandRibbon.Components
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            Commands.RequerySuggested(Commands.MoveToNext, Commands.MoveToPrevious);
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
             {
