@@ -26,6 +26,8 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using Awesomium.Windows.Controls;
+using Awesomium.Core;
 
 namespace SandRibbon.Components
 {
@@ -211,6 +213,17 @@ namespace SandRibbon.Components
         public CollapsedCanvasStack()
         {
             InitializeComponent();
+
+            var url = new Uri("http://localhost:8080/textbox");
+            var session = WebCore.CreateWebSession(new WebPreferences { });
+            session.SetCookie(url, App.controller.credentials.cookie, false, true);
+            html.WebSession = session;
+            html.ProcessCreated += delegate
+            {
+                html.Source = url;
+                html.PreviewMouseUp += Html_PreviewMouseUp;
+            };            
+
             wireInPublicHandlers();
             contentBuffer = new ContentBuffer();
             contentBuffer.ElementsRepositioned += (sender, args) => { AddAdorners(); };
@@ -288,6 +301,13 @@ namespace SandRibbon.Components
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
+
+        private void Html_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var pos = e.GetPosition(this);
+            html.ExecuteJavascript(string.Format("MeTLText.append({0},{1})",pos.X,pos.Y));
+        }
+
         public void TogglePublishBrush(object unused) {
             setInkCanvasMode("Select");
             publishBrush = !publishBrush;
@@ -441,6 +461,8 @@ namespace SandRibbon.Components
         private void SetLayer(string newLayer)
         {
             if (me.ToLower() == Globals.PROJECTOR) return;
+            html.IsHitTestVisible = false;
+            Work.IsHitTestVisible = true;
             switch (newLayer)
             {
                 case "Select":
@@ -456,6 +478,8 @@ namespace SandRibbon.Components
                 case "Text":
                     Work.EditingMode = InkCanvasEditingMode.None;
                     Work.UseCustomCursor = false;
+                    html.IsHitTestVisible = true;
+                    Work.IsHitTestVisible = false;
                     break;
                 case "Insert":
                     Work.EditingMode = InkCanvasEditingMode.Select;
@@ -467,8 +491,10 @@ namespace SandRibbon.Components
                     Work.UseCustomCursor = true;
                     break;
             }
+            /*
             _focusable = newLayer == "Text";
             setLayerForTextFor(Work);
+            */
         }
         private void setLayerForTextFor(InkCanvas canvas)
         {
@@ -2200,13 +2226,17 @@ namespace SandRibbon.Components
         {
             if (Work.EditingMode != InkCanvasEditingMode.None) return;
             if (me == Globals.PROJECTOR) return;
-            var pos = e.GetPosition(this);
+
+            /*
+            var pos = e.GetPosition(this);                                    
+            var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})", pos.X, pos.Y));
             MeTLTextBox box = createNewTextbox();
             AddTextBoxToCanvas(box, true);
             InkCanvas.SetLeft(box, pos.X);
             InkCanvas.SetTop(box, pos.Y);
             myTextBox = box;
             box.Focus();
+            */
         }
         private void AddTextboxToMyCanvas(MeTLTextBox box)
         {

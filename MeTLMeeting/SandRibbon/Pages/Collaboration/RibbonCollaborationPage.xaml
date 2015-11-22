@@ -111,9 +111,7 @@
                 </RibbonGroup>
                 <RibbonGroup x:Name="imageGroup">
                 </RibbonGroup>
-                
             </RibbonTab>
-
         </Ribbon>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
