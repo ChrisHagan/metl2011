@@ -169,6 +169,7 @@ namespace SandRibbon.Pages.Collaboration
                 case "Sketch": inkGroup.Visibility = Visibility.Visible; break;
                 case "Text": textGroup.Visibility = Visibility.Visible; break;
                 case "Image": imageGroup.Visibility = Visibility.Visible; break;
+                case "Html": imageGroup.Visibility = Visibility.Visible; break;
             }
         }
 
