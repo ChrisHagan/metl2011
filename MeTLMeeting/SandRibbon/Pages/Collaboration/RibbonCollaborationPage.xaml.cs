@@ -27,6 +27,11 @@ namespace SandRibbon.Pages.Collaboration
         protected ConversationDetails details;
         protected string conversationJid;
         protected Slide slide;
+
+
+        private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
+        private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
+
         public RibbonCollaborationPage(NetworkController _networkController/*, ConversationDetails _details, Slide slide*/)
         {
             networkController = _networkController;
@@ -39,13 +44,13 @@ namespace SandRibbon.Pages.Collaboration
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             //loadFonts();
             InitializeComponent();
-            /*
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
             fontSize.SelectedIndex = 0;
-            fontSize.SelectionChanged += fontSizeSelected;
-            fontFamily.SelectionChanged += fontFamilySelected;
-            */
+
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
+            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
+            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             /*
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
@@ -99,6 +104,72 @@ namespace SandRibbon.Pages.Collaboration
                 */
             };
         }
+
+        private void restoreTextDefaults(object obj)
+        {
+            fontSize.SelectedItem = 12;
+            fontFamily.SelectedItem = "Arial";
+        }
+
+        private void update(TextInformation info)
+        {
+            fontSize.SelectedItem = info.Size;
+            fontFamily.SelectedItem = info.Family.ToString();
+            TextBoldButton.IsChecked = info.Bold;
+            TextItalicButton.IsChecked = info.Italics;
+            TextUnderlineButton.IsChecked = info.Underline;
+            TextStrikethroughButton.IsChecked = info.Strikethrough;
+        }
+
+        private void updateToolBox(string layer)
+        {
+            if (layer == "Text")
+                LayoutRoot.Visibility = Visibility.Visible;
+            else
+                LayoutRoot.Visibility = Visibility.Collapsed;
+        }
+
+        private void setUpTools(object sender, RoutedEventArgs e)
+        {
+            fontFamily.SelectedItem = "Arial";
+            fontSize.SelectedItem = 10.0;
+        }
+
+        private void decreaseFont(object sender, RoutedEventArgs e)
+        {
+            if (fontSize.ItemsSource == null) return;
+            int currentItem = fontSize.SelectedIndex;
+            if (currentItem - 1 >= 0)
+            {
+                var newSize = fontSizes[currentItem - 1];
+                fontSize.SelectedIndex = currentItem - 1;
+                Commands.FontSizeChanged.Execute(newSize);
+            }
+        }
+        private void increaseFont(object sender, RoutedEventArgs e)
+        {
+            if (fontSize.ItemsSource == null) return;
+            int currentItem = fontSize.SelectedIndex;
+            if (currentItem + 1 < fontSizes.Count())
+            {
+                var newSize = fontSizes[currentItem + 1];
+                fontSize.SelectedIndex = currentItem + 1;
+                Commands.FontSizeChanged.Execute(newSize);
+            }
+        }
+        private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (fontSize.SelectedIndex == -1) return;
+            if (e.AddedItems.Count == 0) return;
+            var size = Double.Parse(e.AddedItems[0].ToString());
+            Commands.FontSizeChanged.Execute(size);
+        }
+        private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0) return;
+            var font = new FontFamily(e.AddedItems[0].ToString());
+            Commands.FontChanged.Execute(font);
+        }   
 
         private void SetLayer(string layer)
         {
@@ -428,6 +499,10 @@ namespace SandRibbon.Pages.Collaboration
                     scroll.ScrollToTop();
                 }
             }
+        }        
+        private void TextColor_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            Commands.SetTextColor.Execute((Color)e.NewValue);
         }
     }
 }

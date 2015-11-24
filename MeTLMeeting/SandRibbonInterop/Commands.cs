@@ -223,6 +223,10 @@ namespace SandRibbon
 
         #endregion
         #region TextCanvas
+        public static DefaultableCompositeCommand FontSizeChanged = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FontChanged = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextColor = new DefaultableCompositeCommand();        
+
         public static DefaultableCompositeCommand ChangeTextMode = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand TextboxFocused = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand TextboxSelected = new DefaultableCompositeCommand();
