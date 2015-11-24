@@ -463,7 +463,7 @@ namespace SandRibbon.Components
             if (me.ToLower() == Globals.PROJECTOR) return;
             html.IsHitTestVisible = false;
             Work.IsHitTestVisible = true;
-            html.ExecuteJavascript("MeTLText.hideControls()");
+            //html.ExecuteJavascript("MeTLText.hideControls()");
             switch (newLayer)
             {
                 case "Select":

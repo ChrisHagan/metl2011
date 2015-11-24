@@ -42,7 +42,7 @@ namespace SandRibbon.Pages.Collaboration
             //DataContext = slide;
             slide = Slide.Empty;
             DataContext = slide;            
-            //loadFonts();
+                        
             InitializeComponent();
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
@@ -51,15 +51,9 @@ namespace SandRibbon.Pages.Collaboration
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            /*
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            //This is used only when a text box is selected
-            //A seperate command is used because TextBoxFocused command calls updateprivacy method which is not needed when a text box is selected
-            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
-            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
-            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
-            */
+            
+            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));            
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(fitToView, canFitToView));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(originalView, canOriginalView));
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
@@ -84,6 +78,7 @@ namespace SandRibbon.Pages.Collaboration
                 {
                     Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                 };
+                Commands.SetLayer.Execute("Sketch");
                 /*
                 //watching the navigation away from this page so that we can do cleanup.  This won't be necessary until we stop using a singleton on the network controller.
                 NavigationService.Navigated += (s, e) =>

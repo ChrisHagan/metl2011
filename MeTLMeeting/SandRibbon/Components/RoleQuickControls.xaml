@@ -1,38 +1,36 @@
 ﻿<UserControl x:Class="SandRibbon.Components.RoleQuickControls"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"              
              xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
              xmlns:local="clr-namespace:SandRibbon.Components"
              xmlns:providers="clr-namespace:SandRibbon.Providers"
              xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-             xmlns:tabs="clr-namespace:SandRibbon.Tabs"
-             mc:Ignorable="d" 
+             xmlns:tabs="clr-namespace:SandRibbon.Tabs"             
              Height="Auto" MaxWidth="200"
              >
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel>
-            <WrapPanel x:Name="ownerQuickControls">
+            <StackPanel x:Name="ownerQuickControls">
+                <Label Content="What can people do?" Style="{StaticResource medium}" />
                 <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can publish quizzes"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can create attachments"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can add slides"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can view participants list"></CheckBox>
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
-                <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
-                <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-                <dict:Button Text="DuplicateSlide" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
-                <dict:Button Text="DuplicateConversation" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
-            </WrapPanel>
-            <WrapPanel x:Name="participantQuickControls">
-                <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>
-                <dict:Button x:Name="submitSubmission" 
-                    Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                    Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
-                    ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
-
-            </WrapPanel>
+                <RibbonToggleButton LargeImageSource="/Resources/Banhammer.png" Label="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
+                <RibbonButton Content="Add Page" LargeImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
+                <RibbonButton Content="DuplicateSlide" LargeImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
+                <RibbonButton Content="DuplicateConversation" LargeImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
+            </StackPanel>
+            <StackPanel x:Name="participantQuickControls">
+                <Label Content="What do you need?" Style="{StaticResource medium}" />
+                <RibbonButton Content="Sync" LargeImageSource="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>
+                <RibbonButton x:Name="submitSubmission" 
+                    Content="Submit a screenshot" LargeImageSource="\Resources\SendSubmission.png"
+                    Click="generateScreenshot" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
