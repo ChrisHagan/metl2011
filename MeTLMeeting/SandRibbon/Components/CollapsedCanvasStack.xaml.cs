@@ -463,6 +463,7 @@ namespace SandRibbon.Components
             if (me.ToLower() == Globals.PROJECTOR) return;
             html.IsHitTestVisible = false;
             Work.IsHitTestVisible = true;
+            html.ExecuteJavascript("MeTLText.hideControls()");
             switch (newLayer)
             {
                 case "Select":
@@ -480,6 +481,7 @@ namespace SandRibbon.Components
                     Work.UseCustomCursor = false;
                     html.IsHitTestVisible = true;
                     Work.IsHitTestVisible = false;
+                    html.ExecuteJavascript("MeTLText.showControls()");
                     break;
                 case "Insert":
                     Work.EditingMode = InkCanvasEditingMode.Select;

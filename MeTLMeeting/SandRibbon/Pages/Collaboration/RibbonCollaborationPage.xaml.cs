@@ -35,8 +35,7 @@ namespace SandRibbon.Pages.Collaboration
             InitializeComponent();
             //DataContext = slide;
             slide = Slide.Empty;
-            DataContext = slide;
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            DataContext = slide;            
             //loadFonts();
             InitializeComponent();
             /*
