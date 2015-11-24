@@ -4,24 +4,16 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:SandRibbon"
-    x:Name="contentVisibility"
-    VerticalAlignment="Center"
-    VerticalContentAlignment="Center"
-    HorizontalAlignment="Center"
+    x:Name="contentVisibility"        
     AutomationProperties.AutomationId="contentVisibility">
     <ItemsControl x:Name="contentVisibilitySelectors">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <WrapPanel Orientation="Vertical" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <RibbonCheckBox ToolTip="{Binding Description}" Label="{Binding Label}">
+                <CheckBox ToolTip="{Binding Description}" Content="{Binding Label}">
                     <CheckBox.IsChecked>
                         <Binding Path="Subscribed" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
                     </CheckBox.IsChecked>
-                </RibbonCheckBox> 
+                </CheckBox> 
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

@@ -1,20 +1,19 @@
 ﻿<UserControl x:Class="SandRibbon.Components.RoleQuickControls"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"              
              xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
              xmlns:local="clr-namespace:SandRibbon.Components"
              xmlns:providers="clr-namespace:SandRibbon.Providers"
              xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
              xmlns:components="clr-namespace:SandRibbon.Components"
              xmlns:tabs="clr-namespace:SandRibbon.Tabs"
-             mc:Ignorable="d" 
              Height="Auto" MaxWidth="200"
              >
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel>
-            <WrapPanel x:Name="ownerQuickControls">
+            <StackPanel x:Name="ownerQuickControls">
+                <Label Content="What can people do?" Style="{StaticResource medium}" />
                 <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can publish quizzes"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can create attachments"></CheckBox>
@@ -25,15 +24,16 @@
                 <RibbonButton Label="Add Page" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
                 <RibbonButton Label="DuplicateSlide" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
                 <RibbonButton Label="DuplicateConversation" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
-            </WrapPanel>
-            <WrapPanel x:Name="participantQuickControls">
+            </StackPanel>
+            <StackPanel x:Name="participantQuickControls">
+                <Label Content="What do you need?" Style="{StaticResource medium}" />
                 <RibbonButton Label="Sync" LargeImageSource="\Resources\SyncGreen.png" SmallImageSource="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
                 <RibbonButton x:Name="submitSubmission" 
                     Label="Submit a screenshot" LargeImageSource="\Resources\SendSubmission.png" SmallImageSource="\Resources\SendSubmission.png"
                     Command="{x:Static api:Commands.RequestScreenshotSubmission}"
                     ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
 
-            </WrapPanel>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

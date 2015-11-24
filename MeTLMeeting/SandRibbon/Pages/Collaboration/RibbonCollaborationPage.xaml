@@ -140,11 +140,12 @@
                     <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
                     <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
                     <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
-                    <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
+                    <ColumnDefinition x:Name="RHSDrawerDefinition" Width="200" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
                     <StackPanel>
-                        <components:ContentVisibility/>
+                        <Label Content="What do you want to see?" Style="{StaticResource medium}" />
+                        <components:ContentVisibility/>                        
                         <components:RoleQuickControls />
                     </StackPanel>
                 </Grid>

@@ -1,4 +1,4 @@
-﻿using Divelements.SandRibbon;
+﻿using System.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Tabs.Groups
 {

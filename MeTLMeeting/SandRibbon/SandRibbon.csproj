@@ -1128,7 +1128,6 @@
     <None Include="SandRibbon_9_TemporaryKey.pfx" />
     <None Include="SandRibbon_TemporaryKey.pfx" />
     <Resource Include="Resources\Entypo.ttf" />
-    <None Include="SandRibbon_2_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
