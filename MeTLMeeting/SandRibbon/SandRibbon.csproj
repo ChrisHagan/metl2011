@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>B1BAC69594D9BEEDB764C35326E60435126A1353</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_9_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>E8520525710C4A573D923BD41B4BA39B3015FE54</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_10_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -1117,6 +1117,7 @@
     </None>
     <AppDesigner Include="Properties\" />
     <Resource Include="Resources\advent-pro.thin.ttf" />
+    <None Include="SandRibbon_10_TemporaryKey.pfx" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
     <None Include="SandRibbon_5_TemporaryKey.pfx" />

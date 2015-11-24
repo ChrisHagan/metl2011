@@ -43,11 +43,11 @@
                     <RibbonButton Label="All of it" Command="{x:Static api:Commands.FitToView}" LargeImageSource="/Resources/ShowAll.png" SmallImageSource="/Resources/ShowAll.png"/>
                     <RibbonButton Label="The original page" Command="{x:Static api:Commands.OriginalView}" LargeImageSource="/Resources/ShowOriginal.png" SmallImageSource="/Resources/ShowOriginal.png"/>
                     <components:ZoomControls/>
-                    <components:MiniMap DataContext="{Binding ElementName=scroll}" Height="100" Width="100" />
+                    <!--components:MiniMap DataContext="{Binding ElementName=scroll}" Height="100" Width="100" /-->
                 </RibbonGroup>
-                <RibbonGroup Header="Whose content do you see?">
+                <!--RibbonGroup Header="Whose content do you see?">
                     <components:ContentVisibility/>
-                </RibbonGroup>
+                </-->
                 <RibbonGroup x:Name="inkGroup">
                     <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">
                     </RibbonRadioButton>
@@ -78,6 +78,44 @@
                     </RibbonRadioButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup">
+                    <RibbonButton ToolTip="{StaticResource CutToolTip}" LargeImageSource="\Resources\cut.png" Label="Cut" Command="ApplicationCommands.Cut" />
+                    <RibbonButton ToolTip="{StaticResource PasteToolTip}" LargeImageSource="\Resources\paste.png" Label="Paste" Command="ApplicationCommands.Paste" />
+                    <RibbonButton ToolTip="{StaticResource CopyToolTip}" LargeImageSource="\Resources\copy.png" Label="Copy" Command="ApplicationCommands.Copy" />
+                    <RibbonComboBox ToolTip="{StaticResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"  Selector.SelectionChanged="fontFamilySelected"/>
+                    <RibbonComboBox ToolTip="{StaticResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  Selector.SelectionChanged="fontSizeSelected"/>
+                    <RibbonToggleButton x:Name="TextBoldButton" LargeImageSource="\Resources\bold.png" ToolTip="{StaticResource BoldToolTip}" Command ="{x:Static api:Commands.ToggleBold}" />
+                    <RibbonToggleButton x:Name="TextItalicButton" LargeImageSource="\Resources\italic.png" ToolTip="{StaticResource ItalicToolTip}" Command ="{x:Static api:Commands.ToggleItalic}" />
+                    <RibbonToggleButton x:Name="TextUnderlineButton" LargeImageSource="\Resources\underline.png" ToolTip="{StaticResource UnderlineToolTip}" Command ="{x:Static api:Commands.ToggleUnderline}" />
+                    <RibbonToggleButton x:Name="TextStrikethroughButton" LargeImageSource="\Resources\strikethrough.png" ToolTip="{StaticResource StrikeThroughToolTip}" Command ="{x:Static api:Commands.ToggleStrikethrough}" />
+                    <RibbonButton ToolTip="{StaticResource ClearFormattingToolTip}" LargeImageSource="\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" />
+                    <RibbonSplitButton x:Name="FontColourButton" LargeImageSource="\Resources\changeFontColour.png" ToolTip="{StaticResource FontColourToolTip}" >
+                        <RibbonGallery SelectionChanged="TextColor_SelectionChanged">
+                            <RibbonGalleryCategory>
+                                <RibbonGalleryItem Background="Black">
+                                    <RibbonGalleryItem.Content>
+                                        <Color>Black</Color>
+                                    </RibbonGalleryItem.Content>
+                                </RibbonGalleryItem>
+                                <RibbonGalleryItem Background="Green">
+                                    <RibbonGalleryItem.Content>
+                                        <Color>Green</Color>
+                                    </RibbonGalleryItem.Content>
+                                </RibbonGalleryItem>
+                                <RibbonGalleryItem Background="Red">
+                                    <RibbonGalleryItem.Content>
+                                        <Color>Red</Color>
+                                    </RibbonGalleryItem.Content>
+                                </RibbonGalleryItem>
+                                <RibbonGalleryItem Background="Blue">
+                                    <RibbonGalleryItem.Content>
+                                        <Color>Blue</Color>
+                                    </RibbonGalleryItem.Content>
+                                </RibbonGalleryItem>
+                            </RibbonGalleryCategory>
+                        </RibbonGallery>
+                    </RibbonSplitButton>
+                    <RibbonButton ToolTip="{StaticResource IncreaseFontSizeToolTip}" LargeImageSource="\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Click="increaseFont"/>
+                    <RibbonButton ToolTip="{StaticResource DecreaseFontSizeToolTip}" LargeImageSource="\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Click="decreaseFont"/>
                 </RibbonGroup>
                 <RibbonGroup x:Name="imageGroup">
                 </RibbonGroup>
@@ -93,7 +131,10 @@
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
-                    <components:RoleQuickControls />
+                    <StackPanel>
+                        <components:ContentVisibility/>
+                        <components:RoleQuickControls />
+                    </StackPanel>
                 </Grid>
                 <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
                 <Grid Grid.Column="2">
