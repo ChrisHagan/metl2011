@@ -159,7 +159,7 @@ namespace SandRibbon.Components
         private bool publishBrush = false;
         private FontFamily family = new FontFamily("Arial");
         private Color color = Colors.Black;
-        private float size = 24.0f;
+        private double size = 24.0d;
         public static TypingTimedAction TypingTimer;
         private string _originalText;
         private ContentBuffer contentBuffer;
@@ -235,10 +235,12 @@ namespace SandRibbon.Components
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
 
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(ToggleBold));
-            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(ToggleUnderline));
-            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(ToggleItalic));
-            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(ToggleStrikethrough));
+            Commands.SetTextBold.RegisterCommand(new DelegateCommand<bool>(ToggleBold,canToggleBold));
+            Commands.SetTextUnderline.RegisterCommand(new DelegateCommand<bool>(ToggleUnderline,canToggleUnderline));
+            Commands.SetTextItalic.RegisterCommand(new DelegateCommand<bool>(ToggleItalic,canToggleItalic));
+            Commands.SetTextStrikethrough.RegisterCommand(new DelegateCommand<bool>(ToggleStrikethrough,canToggleStrikethrough));
+            Commands.SetFontSize.RegisterCommand(new DelegateCommand<double>(changeFontSize, canChangeFontSize));
+            Commands.SetFont.RegisterCommand(new DelegateCommand<string>(changeFont,canChangeFont));
 
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>((image) => ReceiveImages(new[] { image })));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
@@ -312,25 +314,72 @@ namespace SandRibbon.Components
             setInkCanvasMode("Select");
             publishBrush = !publishBrush;
         }
-        private void ToggleBold(object o)
-        {
-            SetLayer("Text");
-            bold = !bold;
+        protected bool canToggleBold(bool _unused) {
+            return true;
         }
-        private void ToggleUnderline(object o)
+        private void ToggleBold(bool o)
         {
             SetLayer("Text");
-            underline = !underline;
+            var oldValue = bold;
+            bold = o;
+            if (bold != o)
+            {
+                Commands.TextBoldNotify.Execute(bold);
+            }
         }
-        private void ToggleItalic(object o)
+        protected bool canToggleUnderline(bool _unused) { return true; }
+        private void ToggleUnderline(bool o)
         {
             SetLayer("Text");
-            italic = !italic;
+            var oldValue = underline;
+            underline = o; 
+            if (oldValue != underline)
+            {
+                Commands.TextUnderlineNotify.Execute(underline);
+            }
         }
-        private void ToggleStrikethrough(object o)
+        protected bool canToggleItalic(bool _unused) { return true; }
+        private void ToggleItalic(bool o)
         {
             SetLayer("Text");
-            strikethrough = !strikethrough;
+            var oldValue = italic;
+            italic = o;
+            if (oldValue != italic)
+            {
+                Commands.TextItalicNotify.Execute(italic);
+            }
+        }
+        protected bool canToggleStrikethrough(bool _unused) { return true; }
+        private void ToggleStrikethrough(bool o)
+        {
+            SetLayer("Text");
+            var oldValue = strikethrough;
+            strikethrough = o;
+            if (oldValue != strikethrough)
+            {
+                Commands.TextStrikethroughNotify.Execute(strikethrough);
+            }
+        }
+        protected bool canChangeFontSize(double fontSize) {
+            return true;
+        }
+        protected void changeFontSize(double fontSize)
+        {
+            var oldValue = size;
+            size = fontSize;
+            if (size != oldValue)
+            {
+                Commands.FontSizeNotify.Execute(size);
+            }
+        }
+        protected bool canChangeFont(string fontFamily) { return true; }
+        protected void changeFont(string fontFamily) {
+            var oldValue = family;
+            family = new FontFamily(fontFamily);
+            if (oldValue != family)
+            {
+                Commands.FontNotify.Execute(fontFamily);
+            }
         }
         private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
         {
@@ -2445,7 +2494,7 @@ namespace SandRibbon.Components
             box.FontStyle = FontStyles.Normal;
             box.TextDecorations = new TextDecorationCollection();
             box.FontFamily = new FontFamily("Arial");
-            box.FontSize = 24;
+            box.FontSize = 24f;
             box.Foreground = Brushes.Black;
             var info = new TextInformation
             {

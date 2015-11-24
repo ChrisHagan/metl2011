@@ -29,7 +29,7 @@
             <dict:RadioButton x:Name="selectRadio" ToolTip="{DynamicResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
             <dict:RadioButton x:Name="eraseRadio" ToolTip="{DynamicResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
         </dict:RibbonPanel>
-        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static api:Commands.DummyCommandToProcessCanExecute}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static api:Commands.DummyCommandToProcessCanExecuteForTextTools}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <dict:PenColorsListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 ItemsSource="{Binding Path=currentColourValues}"

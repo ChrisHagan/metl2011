@@ -1635,7 +1635,8 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    //var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = GetTag(URL);
 //                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var submission = new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
@@ -1653,9 +1654,9 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var strippedUrl = INodeFix.StripServer(value.url);
+                    //var strippedUrl = INodeFix.StripServer(value.url);
                     SetTag(AUTHOR, value.author);
-                    SetTag(URL, strippedUrl);
+                    SetTag(URL, value.url);// strippedUrl);
                     SetTag(TITLE, value.title);
                     SetTag(targetTag, value.target);
                     SetTag(timestampTag, value.timestamp);

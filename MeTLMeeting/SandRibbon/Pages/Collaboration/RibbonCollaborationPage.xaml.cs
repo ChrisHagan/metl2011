@@ -29,10 +29,10 @@ namespace SandRibbon.Pages.Collaboration
         protected string conversationJid;
         protected Slide slide;
 
-
+        /*
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
-
+        */
         public RibbonCollaborationPage(NetworkController _networkController/*, ConversationDetails _details, Slide slide*/)
         {
             networkController = _networkController;
@@ -45,13 +45,30 @@ namespace SandRibbon.Pages.Collaboration
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             //loadFonts();
             InitializeComponent();
+            /*
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
             fontSize.SetValue(Selector.SelectedIndexProperty,0);
-
-            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
+            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
+            */
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+
+            Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
+            {
+                duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
+            }, (kvp) => {
+                try
+                {
+                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }));
+            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation));
+
             /*
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             //This is used only when a text box is selected
@@ -66,9 +83,16 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
             Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
-
+            /*
+            Commands.IncreaseFontSize.RegisterCommand(new DelegateCommand<object>(increaseFont, canIncreaseFont));
+            Commands.DecreaseFontSize.RegisterCommand(new DelegateCommand<object>(decreaseFont, canDecreaseFont));
+            Commands.TextboxSelected.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
+            */
             //adding these as a workaround while we're doing singletons of this page and re-using it
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) => conversationJid = convJid));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) => {
+                conversationJid = convJid;
+                Commands.RequerySuggested();
+            }));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((convDetails) => details = convDetails));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) =>
             {
@@ -78,6 +102,7 @@ namespace SandRibbon.Pages.Collaboration
                     slide = newSlide;
                     DataContext = newSlide;
                 }
+                Commands.RequerySuggested();
             }));
             this.Loaded += (ps, pe) =>
             {
@@ -104,14 +129,14 @@ namespace SandRibbon.Pages.Collaboration
                 */
             };
         }
-
+        /*
         private void restoreTextDefaults(object obj)
         {
             fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
             fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
         }
 
-        private void update(TextInformation info)
+        private void updateTextControls(TextInformation info)
         {
             fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
             fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
@@ -121,7 +146,11 @@ namespace SandRibbon.Pages.Collaboration
             TextStrikethroughButton.IsChecked = info.Strikethrough;
         }       
         
-        private void decreaseFont(object sender, RoutedEventArgs e)
+        protected bool canDecreaseFont(object _unused)
+        {
+            return fontSize != null;
+        }
+        private void decreaseFont(object _unused)
         {
             if (fontSize.ItemsSource == null) return;
             var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
@@ -131,8 +160,12 @@ namespace SandRibbon.Pages.Collaboration
                 fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
                 Commands.FontSizeChanged.Execute(newSize);
             }
-        }        
-        private void increaseFont(object sender, RoutedEventArgs e)
+        }   
+        protected bool canIncreaseFont(object _unused)
+        {
+            return fontSize != null;
+        }     
+        private void increaseFont(object _unused)
         {
             if (fontSize.ItemsSource == null) return;
             var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
@@ -157,6 +190,16 @@ namespace SandRibbon.Pages.Collaboration
             var font = new FontFamily(e.AddedItems[0].ToString());
             Commands.FontChanged.Execute(font);
         }   
+        */
+        private bool userMayAdministerConversation(ConversationDetails _conversation)
+        {
+            var conversation = Globals.conversationDetails;
+            if (conversation == null)
+            {
+                return false;
+            }
+            return conversation.UserHasPermission(Globals.credentials);
+        }
 
         private void SetLayer(string layer)
         {
@@ -491,6 +534,22 @@ namespace SandRibbon.Pages.Collaboration
         private void TextColor_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             Commands.SetTextColor.Execute((Color)((System.Windows.Controls.Ribbon.RibbonGalleryItem)e.NewValue).Content);
+        }
+        private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
+        {
+            var kvp = new KeyValuePair<ConversationDetails, Slide>(Globals.conversationDetails, Globals.slideDetails);
+            if (kvp.Key.UserHasPermission(Globals.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
+            {
+                App.controller.client.DuplicateSlide(kvp.Key, kvp.Value);
+            }
+        }
+        private void duplicateConversation(ConversationDetails _conversationToDuplicate)
+        {
+            var conversationToDuplicate = Globals.conversationDetails;
+            if (conversationToDuplicate.UserHasPermission(Globals.credentials))
+            {
+                App.controller.client.DuplicateConversation(conversationToDuplicate);
+            }
         }
     }
 }

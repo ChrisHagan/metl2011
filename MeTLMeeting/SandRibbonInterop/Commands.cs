@@ -62,7 +62,12 @@ namespace SandRibbon
 
         public override void RegisterCommand(ICommand command)
         {
-            base.RegisterCommand(command);
+            try {
+                base.RegisterCommand(command);
+            } catch (Exception e)
+            {
+                Console.WriteLine("exception while registering command: " + e.Message);
+            }
         }
     }
     public class Commands
@@ -124,6 +129,7 @@ namespace SandRibbon
 
         #endregion
         public static DefaultableCompositeCommand ServersDown= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RequestScreenshotSubmission = new DefaultableCompositeCommand(); 
         public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand();
@@ -131,7 +137,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ImportSubmission = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ImportSubmissions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SaveFile = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForTextTools = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand PublishBrush = new DefaultableCompositeCommand();
@@ -223,10 +229,11 @@ namespace SandRibbon
 
         #endregion
         #region TextCanvas
+        /*
         public static DefaultableCompositeCommand FontSizeChanged = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand FontChanged = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetTextColor = new DefaultableCompositeCommand();        
-
+        */
         public static DefaultableCompositeCommand ChangeTextMode = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand TextboxFocused = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand TextboxSelected = new DefaultableCompositeCommand();
@@ -246,10 +253,26 @@ namespace SandRibbon
         public static DefaultableCompositeCommand FitToPageWidth= new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UpdateTextStyling = new DefaultableCompositeCommand();
 
+        public static DefaultableCompositeCommand SetFontSize = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetFont = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextColor = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextBold = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextItalic = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextUnderline = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextStrikethrough = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FontSizeNotify = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FontNotify = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextColorNotify = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextBoldNotify = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextItalicNotify = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextUnderlineNotify = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextStrikethroughNotify = new DefaultableCompositeCommand();
+
         public static DefaultableCompositeCommand ToggleBold = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleItalic = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleUnderline = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleStrikethrough = new DefaultableCompositeCommand();
+
         public static DefaultableCompositeCommand MoreTextOptions = new DefaultableCompositeCommand();
         #endregion
         #region AppLevel
@@ -298,6 +321,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand UpdateConversationDetails = new DefaultableCompositeCommand(ConversationDetails.Empty);
         public static DefaultableCompositeCommand ReceiveDirtyConversationDetails = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetSync = new DefaultableCompositeCommand(false);
+        public static DefaultableCompositeCommand ToggleSync = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand AddSlide = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UpdateNewSlideOrder = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand CreateBlankConversation = new DefaultableCompositeCommand();
@@ -409,8 +433,13 @@ namespace SandRibbon
         {
             if (command.RegisteredCommands.Count() > 0)
             {
-                var delegateCommand = command.RegisteredCommands[0];
-                delegateCommand.GetType().InvokeMember("RaiseCanExecuteChanged", BindingFlags.InvokeMethod, null, delegateCommand, new object[] { });
+                //wrapping this in a try-catch for those commands who have non-nullable types on their canExecutes
+                try {
+                    var delegateCommand = command.RegisteredCommands[0];
+                    delegateCommand.GetType().InvokeMember ("RaiseCanExecuteChanged", BindingFlags.InvokeMethod, null, delegateCommand, new object[] { });
+                } catch (Exception e){
+                    Console.WriteLine("exception while requerying: " + e.Message);
+                }
             }
         }
     }

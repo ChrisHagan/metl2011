@@ -10,10 +10,11 @@ using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
 using ImageDrop = SandRibbon.Components.ImageDrop;
 using System.Collections.Generic;
+using System.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Tabs
 {
-    public partial class Quizzes : Divelements.SandRibbon.RibbonTab
+    public partial class Quizzes : RibbonTab
     {
         public static RoutedCommand openQuizResults = new RoutedCommand();
         public Quizzes()

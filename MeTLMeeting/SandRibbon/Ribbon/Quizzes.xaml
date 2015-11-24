@@ -1,4 +1,4 @@
-﻿<sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes"
+﻿<RibbonTab KeyTip="Q" Header="Quizzes"
     x:Class="SandRibbon.Tabs.Quizzes"
     x:Name="quizzesTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,36 +9,23 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
-    <sr:RibbonTab.Resources>
-        <core:String x:Key="preferredDisplayIndex">5</core:String>
-    </sr:RibbonTab.Resources>
+    <!--
     <sr:RibbonTab.CommandBindings>
         <CommandBinding Command="{x:Static tabs:Quizzes.openQuizResults}" CanExecute="canOpenResults" Executed="OpenResults"/>
     </sr:RibbonTab.CommandBindings>
-    <sr:RibbonGroup Header="Create" x:Name="quizRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Quizzes.png">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Small" Priority="5"/>
-            <sr:GroupVariant Variant="Medium" Priority="4"/>
-            <sr:GroupVariant Variant="Collapsed" Priority="6"/>
-        </sr:RibbonGroup.Variants>
+    -->
+    <RibbonGroup Header="Create" x:Name="quizRibbonGroup" LargeImageSource="\Resources\Quizzes.png">
         <StackPanel Orientation="Horizontal">
-            <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-            <dict:Button IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" 
+            <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static api:Commands.DummyCommandToProcessCanExecuteForTextTools}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+            <RibbonButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" 
                 Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
-                                      x:Name="createQuiz" Icon="\Resources\NewQuiz.png" Text="New"/>
+                                      x:Name="createQuiz" LargeImageSource="\Resources\NewQuiz.png" SmallImageSource="\Resources\NewQuiz.png" Label="New"/>
         </StackPanel>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Results" x:Name="results">
-        <StackPanel>
-            <dict:Button Command="{x:Static tabs:Quizzes.openQuizResults}" Icon="\Resources\Results.png" Text="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}"/>
-        </StackPanel>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Small" Priority="2"/>
-            <sr:GroupVariant Variant="Medium" Priority="1"/>
-            <sr:GroupVariant Variant="Collapsed" Priority="3"/>
-        </sr:RibbonGroup.Variants>
+    </RibbonGroup>
+    <RibbonGroup Header="Results" x:Name="results">
+        <RibbonButton Command="{x:Static tabs:Quizzes.openQuizResults}" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}"/>
+    </RibbonGroup>
+    <RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
         <dict:QuizContainer x:Name="quizzes" 
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}">
@@ -135,5 +122,5 @@
                 </ItemsPanelTemplate>
             </dict:QuizContainer.ItemsPanel>
         </dict:QuizContainer>
-    </sr:RibbonGroup>
-</sr:RibbonTab>
+    </RibbonGroup>
+</RibbonTab>

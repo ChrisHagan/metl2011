@@ -31,6 +31,7 @@ namespace SandRibbon.Components.Submissions
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
+            Commands.RequestScreenshotSubmission.RegisterCommand(new DelegateCommand<object>(generateScreenshot, canGenerateScreenshot));
             conversationChanged(null);
         }
         private void viewSubmissions(object _obj)
@@ -109,26 +110,33 @@ namespace SandRibbon.Components.Submissions
                 return true;
             return false;
         }
-        private void generateScreenshot(object sender, RoutedEventArgs e)
+        protected bool canGenerateScreenshot(object _unused)
+        {
+            return true;
+        }
+        protected void generateScreenshot(object _unused)
         {
             Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<string> sendScreenshot = null;
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
-                             {
-                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                                 (App.controller.client.location.currentSlide,Globals.me,"submission",Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
-                                 MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
-                             });
+            {
+                Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
+                App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
+            });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
-                                                    {
-                                                        time = time,
-                                                        message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
-                                                        showPrivate = true
-                                                    });
+            {
+                time = time,
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
+                showPrivate = true
+            });
         }
-     
+        private void generateScreenshot(object sender, RoutedEventArgs e)
+        {
+            generateScreenshot(null);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿<sr:RibbonTab sr:KeyboardAccess.Keys="A" Text="Attachments"
+﻿<RibbonTab KeyTip="A" Header="Attachments"
     x:Class="SandRibbon.Tabs.Attachments"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
@@ -7,8 +7,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:SandRibbon="clr-namespace:SandRibbon" >
-    <sr:RibbonTab.Resources>
-        <core:String x:Key="preferredDisplayIndex">7</core:String>
+    <RibbonTab.Resources>
         <Style x:Key="{x:Type Label}" TargetType="Label">
             <Setter Property="Template">
                 <Setter.Value>
@@ -24,12 +23,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="Uploads">
-        <dict:Button ToolTip="{DynamicResource UploadFileToolTip}" x:Name="fileUpload" Icon="\Resources\Attachment.png" Text="Upload file" Command="api:Commands.FileUpload"/>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Downloadable Items">
-        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+    </RibbonTab.Resources>
+    <RibbonGroup Header="Uploads">
+        <RibbonButton ToolTip="{DynamicResource UploadFileToolTip}" x:Name="fileUpload" LargeImageSource="\Resources\Attachment.png" Label="Upload file" Command="{x:Static api:Commands.FileUpload}"/>
+    </RibbonGroup>
+    <RibbonGroup Header="Downloadable Items">
+        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForTextTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
@@ -60,5 +59,5 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-    </sr:RibbonGroup>
-</sr:RibbonTab>
+    </RibbonGroup>
+</RibbonTab>

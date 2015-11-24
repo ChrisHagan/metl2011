@@ -24,6 +24,7 @@ namespace SandRibbon.Components.Submissions
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
         {
             submissions = new ObservableCollection<TargettedSubmission>(userSubmissions);
+            Submissions.ItemsSource = submissions;
         }
         private void close(object obj)
         {

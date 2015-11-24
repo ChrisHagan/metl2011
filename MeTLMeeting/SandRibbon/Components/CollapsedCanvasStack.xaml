@@ -47,7 +47,8 @@
         <Border x:Name="ClipboardFocus" BorderThickness="2" BorderBrush="Transparent">
             <Grid>
                 <awesomium:WebControl x:Name="html" Width="{Binding ElementName=Work, Path=ActualWidth}" Height="{Binding ElementName=Work, Path=ActualHeight}"
-                                      Background="White" ViewType="Offscreen" Visibility="Collapsed"/>
+                                      Background="White" ViewType="Offscreen" Visibility="Collapsed" IsHitTestVisible="False"/>
+                
                 <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" />                
             </Grid>
         </Border>

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Threading;
-using Divelements.SandRibbon;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -18,6 +17,7 @@ using System.Collections.Generic;
 using MeTLLib.Providers;
 using SandRibbon.Utils;
 using MeTLLib;
+using System.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Tabs
 {

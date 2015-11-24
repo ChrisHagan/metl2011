@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Divelements.SandRibbon;
+//using Divelements.SandRibbon;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -9,6 +9,7 @@ using SandRibbon.Components.BannedContent;
 using SandRibbon.Providers;
 using System.Windows.Input;
 using SandRibbon.Utils;
+using System.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Tabs
 {
@@ -28,12 +29,14 @@ namespace SandRibbon.Tabs
 
         private void viewBannedContent(object _obj)
         {
+            /*
             var bannedContent = new BannedContent(submissionList);
             bannedContent.Owner = Window.GetWindow(this);
             bannedContent.Show();
             banContent.IsChecked = false;
             Commands.BanhammerActive.Execute(false);
             ManageBannedContent.Execute(null, null);
+            */
         }
 
         private bool canViewBannedContent(object _e)

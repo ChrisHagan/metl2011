@@ -70,6 +70,7 @@ namespace SandRibbon
         public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
         public static NoCachedImageReplicator nonCachedImage = new NoCachedImageReplicator();
         public static ExtractSubmissionAuthorAndConvert ExtractSubmissionAuthor = new ExtractSubmissionAuthorAndConvert();
+        public static ConvertMeTLIdentityStringToImageSource ConvertMeTLIdentityStringToImageSource = new ConvertMeTLIdentityStringToImageSource();
     }
     public class StringTruncatorConverter : IValueConverter
     {
@@ -544,7 +545,26 @@ namespace SandRibbon
             var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
-            bitmap.UriSource = uri;
+            //bitmap.UriSource = uri;
+            bitmap.StreamSource = new System.IO.MemoryStream(App.controller.client.resourceProvider.secureGetData(uri));
+            bitmap.EndInit();
+            return bitmap;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+    public class ConvertMeTLIdentityStringToImageSource : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var uri = App.controller.config.getResource(value.ToString());
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            //bitmap.UriSource = uri;
+            bitmap.StreamSource = new System.IO.MemoryStream(App.controller.client.resourceProvider.secureGetData(uri));
             bitmap.EndInit();
             return bitmap;
         }

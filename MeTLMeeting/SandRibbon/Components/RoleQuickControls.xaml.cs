@@ -30,6 +30,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdatedConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
             Commands.SetSync.Execute(false);
+            Commands.ToggleSync.RegisterCommand(new DelegateCommand<object>(toggleSync));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<object>((obj) =>
             {
                 Commands.RequerySuggested(
@@ -92,9 +93,12 @@ namespace SandRibbon.Components
             {
                 source = new BitmapImage(deSynced);
             }
-            Dispatcher.adoptAsync(() => syncButton.Icon = source);
+            Dispatcher.adoptAsync(() => {
+                syncButton.LargeImageSource = source;
+                syncButton.SmallImageSource = source;
+            });
         }
-        private void toggleSync(object sender, RoutedEventArgs e)
+        private void toggleSync(object _unused)
         {
             var synch = !Globals.synched;
             System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);

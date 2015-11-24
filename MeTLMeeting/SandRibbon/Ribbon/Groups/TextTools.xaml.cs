@@ -9,7 +9,7 @@ using SandRibbon.Providers;
 using SandRibbonInterop.Interfaces;
 using TextInformation = SandRibbon.Components.TextInformation;
 
-namespace SandRibbon.Tabs.Groups
+namespace SandRibbon.Components
 {
     public partial class TextTools : UserControl, ITextTools
     {
@@ -19,11 +19,12 @@ namespace SandRibbon.Tabs.Groups
         {
             loadFonts();
             InitializeComponent();
-            fontFamily.ItemsSource = fontList;
-            fontSize.ItemsSource = fontSizes;
-            fontSize.SelectedIndex = 0;
-            fontSize.SelectionChanged += fontSizeSelected;
-            fontFamily.SelectionChanged += fontFamilySelected;
+            fontFamilyCollection.ItemsSource = fontList;
+            fontFamilyCollection.SelectedItem = fontList[0];
+            fontSizeCollection.ItemsSource = fontSizes;
+            fontSizeCollection.SelectedItem = fontSizes[0];// SelectedIndex = 0;
+            //fontSizeCollection.SelectionChanged += fontSizeSelected;
+            //fontFamilyCollection.SelectionChanged += fontFamilySelected;
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             //This is used only when a text box is selected
@@ -33,6 +34,19 @@ namespace SandRibbon.Tabs.Groups
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
+            Commands.IncreaseFontSize.RegisterCommand(new DelegateCommand<object>(increaseFont, canIncreaseFont));
+            Commands.DecreaseFontSize.RegisterCommand(new DelegateCommand<object>(decreaseFont, canDecreaseFont));
+            Commands.TextBoldNotify.RegisterCommand(new DelegateCommand<bool>(b => TextBoldButton.IsChecked = b));
+            Commands.TextItalicNotify.RegisterCommand(new DelegateCommand<bool>(b => TextItalicButton.IsChecked = b));
+            Commands.TextStrikethroughNotify.RegisterCommand(new DelegateCommand<bool>(b => TextStrikethroughButton.IsChecked = b));
+            Commands.TextUnderlineNotify.RegisterCommand(new DelegateCommand<bool>(b => TextUnderlineButton.IsChecked = b));
+            //Commands.TextColorNotify.RegisterCommand(new DelegateCommand<Color>(b => TextBoldButton.IsChecked = b));
+            Commands.FontNotify.RegisterCommand(new DelegateCommand<string>(b => {
+                fontFamilyCollection.SelectedItem = b;
+            }));
+            Commands.FontSizeNotify.RegisterCommand(new DelegateCommand<double>(b => {
+                fontSizeCollection.SelectedItem = b;
+            }));
         }
         private void loadFonts()
         {
@@ -42,52 +56,62 @@ namespace SandRibbon.Tabs.Groups
         }
         private void togglebold(object obj)
         {
-            TextBoldButton.IsChecked = !TextBoldButton.IsChecked;
-            sendValues();
+            Commands.SetTextBold.Execute(!TextBoldButton.IsChecked);
         }
         private void toggleItalic(object obj)
         {
-            TextItalicButton.IsChecked = !TextItalicButton.IsChecked;
-            sendValues();
+            Commands.SetTextItalic.Execute(!TextItalicButton.IsChecked);
         }
         private void toggleUnderline(object obj)
         {
-            TextUnderlineButton.IsChecked = !TextUnderlineButton.IsChecked;
-            sendValues();
+            Commands.SetTextUnderline.Execute(!TextUnderlineButton.IsChecked);
         }
-
         private void MoveTo(object obj)
         {
             if(currentTextInfo == null)
             {
                 ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black); 
-                fontSize.SelectedItem = generateDefaultFontSize();
+                fontSizeCollection.SelectedItem = generateDefaultFontSize();
             }            
         }
-
+        protected void requeryTextCommands()
+        {
+            Commands.RequerySuggested(
+                Commands.TextColorNotify,
+                Commands.TextItalicNotify,
+                Commands.TextStrikethroughNotify,
+                Commands.TextUnderlineNotify,
+                Commands.TextBoldNotify,
+                Commands.FontNotify,
+                Commands.FontSizeNotify,
+                Commands.IncreaseFontSize,
+                Commands.DecreaseFontSize
+             );
+        }
         private void update(TextInformation info)
         {
-            fontSize.SelectionChanged -= fontSizeSelected;
-            fontFamily.SelectionChanged -= fontFamilySelected;
+            //fontSizeCollection.SelectionChanged -= fontSizeSelected;
+            //fontFamilyCollection.SelectionChanged -= fontFamilySelected;
             TextBoldButton.IsChecked = info.Bold;
             TextItalicButton.IsChecked = info.Italics;
             TextUnderlineButton.IsChecked = info.Underline;
             TextStrikethroughButton.IsChecked = info.Strikethrough;
             ColourPickerBorder.BorderBrush = new SolidColorBrush(info.Color);
-            fontSize.SelectedItem = info.Size;
-            fontFamily.SelectedItem = info.Family.ToString();
-            fontSize.SelectionChanged += fontSizeSelected;
-            fontFamily.SelectionChanged += fontFamilySelected;
+            fontSizeCollection.SelectedItem = info.Size;
+            fontFamilyCollection.SelectedItem = info.Family.ToString();
+            //fontSizeCollection.SelectionChanged += fontSizeSelected;
+            //fontFamilyCollection.SelectionChanged += fontFamilySelected;
 
             currentTextInfo = new TextInformation(info);
+            requeryTextCommands();
         }
         private void sendValues()
         {
-            if (fontSize == null || fontFamily == null || fontFamily.SelectedItem == null || ColourPickerBorder == null || ColourPickerBorder.BorderBrush == null || TextBoldButton == null || TextItalicButton == null || TextUnderlineButton == null || TextStrikethroughButton == null) return;
+            if (fontSizeCollection == null || fontSizeCollection.SelectedItem == null || fontFamily == null || fontFamilyCollection.SelectedItem == null || ColourPickerBorder == null || ColourPickerBorder.BorderBrush == null || TextBoldButton == null || TextItalicButton == null || TextUnderlineButton == null || TextStrikethroughButton == null) return;
             var info = new TextInformation
             {
-                Size = (double)fontSize.SelectedItem,
-                Family = new FontFamily(fontFamily.SelectedItem.ToString()),
+                Size = (double)fontSizeCollection.SelectedItem,
+                Family = new FontFamily(fontFamilyCollection.SelectedItem.ToString()),
                 Bold =  TextBoldButton.IsChecked == true,
                 Italics = TextItalicButton.IsChecked == true,
                 Underline = TextUnderlineButton.IsChecked == true,
@@ -112,7 +136,7 @@ namespace SandRibbon.Tabs.Groups
                 update(currentTextInfo);
             }
             else
-                fontFamily.SelectedItem = "Arial";
+                fontFamilyCollection.SelectedItem = "Arial";
         }
         private const double defaultWidth = 720;
         private const double defaultFontSize = 24.0;
@@ -135,37 +159,65 @@ namespace SandRibbon.Tabs.Groups
                 return defaultFontSize;
             }
         }
-        private void decreaseFont(object sender, RoutedEventArgs e)
+        private bool canDecreaseFont(object _unused)
         {
-            if (fontSize.ItemsSource == null) return;
-            int currentItem = fontSize.SelectedIndex;
-            if (currentItem - 1 >= 0)
+            if (fontSizeCollection.Items.Count > 0 && fontSizeCollection.SelectedItem != null)
             {
-                fontSize.SelectedIndex = currentItem - 1;
-                // value is sent over the network in the selected index changed event handler 
-                //sendValues();
+                var thisCurrentItem = (double)fontSizeCollection.SelectedItem;
+                var thisElemIndex = fontSizes.IndexOf(thisCurrentItem);
+                return thisElemIndex > 1;
+            }
+            else return false;
+        }
+        private void decreaseFont(object _unused)
+        {
+            if (fontSizeCollection.Items.Count > 0)
+            {
+                var thisCurrentItem = (double)fontSizeCollection.SelectedItem;
+                var thisElemIndex = fontSizes.IndexOf(thisCurrentItem);
+                if (thisElemIndex > 1)
+                {
+                    var newItem = fontSizes.ElementAt(thisElemIndex - 1);
+                    fontSizeCollection.SelectedItem = newItem;
+                    Commands.FontSizeNotify.Execute(newItem);
+                }
             }
         }
-        private void increaseFont(object sender, RoutedEventArgs e)
+        private bool canIncreaseFont(object _unused)
         {
-            if (fontSize.ItemsSource == null) return;
-            int currentItem = fontSize.SelectedIndex;
-            if (currentItem + 1 < fontSizes.Count())
+            if (fontSizeCollection.Items.Count > 0 && fontSizeCollection.SelectedItem != null)
             {
-                fontSize.SelectedIndex = currentItem + 1;
-                // value is sent over the network in the selected index changed event handler 
-                //sendValues();
+                var thisCurrentItem = (double)fontSizeCollection.SelectedItem;
+                var thisElemIndex = fontSizes.IndexOf(thisCurrentItem);
+                return thisElemIndex < (fontSizes.Count - 1);
+            }
+            else return false;
+        }
+        private void increaseFont(object _unused)
+        {
+            if (fontSizeCollection.Items.Count > 0)
+            {
+                var thisCurrentItem = (double)fontSizeCollection.SelectedItem;
+                var thisElemIndex = fontSizes.IndexOf(thisCurrentItem);
+                if (thisElemIndex < (fontSizes.Count - 1))
+                {
+                    var newItem = fontSizes.ElementAt(thisElemIndex + 1);
+                    fontSizeCollection.SelectedItem = newItem;
+                    Commands.FontSizeNotify.Execute(newItem);
+                }
             }
         }
-        private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
+        private void fontSizeSelected(object sender, RoutedEventArgs e)
         {
-            if (fontSize.SelectedIndex == -1) return;
-            if (e.AddedItems.Count == 0) return;
+            if (fontSizeCollection.SelectedItem == null) return;
+            //if (fontSize.SelectedIndex == -1) return;
+            //if (e.AddedItems.Count == 0) return;
             sendValues();
         }
-        private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
+        private void fontFamilySelected(object sender, RoutedEventArgs e)
         {
-            if (e.AddedItems.Count == 0) return;
+            if (fontFamilyCollection.SelectedItem == null) return;
+            //if (e.AddedItems.Count == 0) return;
             sendValues();
         }
         private void textColorSelected(object sender, ColorEventArgs e)

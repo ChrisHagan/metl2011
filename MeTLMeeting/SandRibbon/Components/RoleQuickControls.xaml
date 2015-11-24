@@ -7,6 +7,7 @@
              xmlns:local="clr-namespace:SandRibbon.Components"
              xmlns:providers="clr-namespace:SandRibbon.Providers"
              xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+             xmlns:components="clr-namespace:SandRibbon.Components"
              xmlns:tabs="clr-namespace:SandRibbon.Tabs"
              mc:Ignorable="d" 
              Height="Auto" MaxWidth="200"
@@ -20,16 +21,16 @@
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can add slides"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can view participants list"></CheckBox>
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
-                <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
-                <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-                <dict:Button Text="DuplicateSlide" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
-                <dict:Button Text="DuplicateConversation" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
+                <RibbonToggleButton LargeImageSource="/Resources/Banhammer.png" SmallImageSource="/Resources/Banhammer.png" Label="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
+                <RibbonButton Label="Add Page" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
+                <RibbonButton Label="DuplicateSlide" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
+                <RibbonButton Label="DuplicateConversation" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
             </WrapPanel>
             <WrapPanel x:Name="participantQuickControls">
-                <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>
-                <dict:Button x:Name="submitSubmission" 
-                    Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                    Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                <RibbonButton Label="Sync" LargeImageSource="\Resources\SyncGreen.png" SmallImageSource="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
+                <RibbonButton x:Name="submitSubmission" 
+                    Label="Submit a screenshot" LargeImageSource="\Resources\SendSubmission.png" SmallImageSource="\Resources\SendSubmission.png"
+                    Command="{x:Static api:Commands.RequestScreenshotSubmission}"
                     ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
 
             </WrapPanel>

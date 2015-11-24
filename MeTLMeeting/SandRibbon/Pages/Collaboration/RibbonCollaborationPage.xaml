@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:components="clr-namespace:SandRibbon.Components"
+      xmlns:tabs="clr-namespace:SandRibbon.Tabs"
       Title="Collaboration">
     <Page.Resources>
         <sys:Double x:Key="RibbonFontSize">14</sys:Double>
@@ -34,7 +35,7 @@
                     <RibbonRadioButton GroupName="mode" Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
                     <RibbonRadioButton GroupName="mode" Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
                     <RibbonRadioButton GroupName="mode" Label="Image" LargeImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
-                    <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png"/>
+                    <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Select"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Who can see your work?">
                     <components:PrivacyTools/>
@@ -78,6 +79,10 @@
                     </RibbonRadioButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup">
+                    <components:TextTools/>
+                </RibbonGroup>
+                <!--
+                <RibbonGroup x:Name="textGroup">
                     <RibbonButton ToolTip="{StaticResource CutToolTip}" LargeImageSource="\Resources\cut.png" Label="Cut" Command="ApplicationCommands.Cut" />
                     <RibbonButton ToolTip="{StaticResource PasteToolTip}" LargeImageSource="\Resources\paste.png" Label="Paste" Command="ApplicationCommands.Paste" />
                     <RibbonButton ToolTip="{StaticResource CopyToolTip}" LargeImageSource="\Resources\copy.png" Label="Copy" Command="ApplicationCommands.Copy" />
@@ -114,12 +119,19 @@
                             </RibbonGalleryCategory>
                         </RibbonGallery>
                     </RibbonSplitButton>
-                    <RibbonButton ToolTip="{StaticResource IncreaseFontSizeToolTip}" LargeImageSource="\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Click="increaseFont"/>
-                    <RibbonButton ToolTip="{StaticResource DecreaseFontSizeToolTip}" LargeImageSource="\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Click="decreaseFont"/>
+                    <RibbonButton ToolTip="{StaticResource IncreaseFontSizeToolTip}" SmallImageSource="\Resources\increaseFontSize.png" LargeImageSource="\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Command="{x:Static api:Commands.IncreaseFontSize}" />
+                    <RibbonButton ToolTip="{StaticResource DecreaseFontSizeToolTip}" SmallImageSource="\Resources\decreaseFontSize.png" LargeImageSource="\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Command="{x:Static api:Commands.DecreaseFontSize}" />
                 </RibbonGroup>
+                -->
                 <RibbonGroup x:Name="imageGroup">
                 </RibbonGroup>
             </RibbonTab>
+            <tabs:Quizzes/>
+            <tabs:Submissions/>
+            <tabs:Attachments/>
+            <tabs:ConversationManagement/>
+            <tabs:Analytics/>
+            <tabs:Plugins/>
         </Ribbon>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
