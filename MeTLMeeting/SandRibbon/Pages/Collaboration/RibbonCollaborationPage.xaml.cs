@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -46,9 +47,8 @@ namespace SandRibbon.Pages.Collaboration
             InitializeComponent();
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
-            fontSize.SelectedIndex = 0;
+            fontSize.SetValue(Selector.SelectedIndexProperty,0);
 
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
@@ -107,59 +107,46 @@ namespace SandRibbon.Pages.Collaboration
 
         private void restoreTextDefaults(object obj)
         {
-            fontSize.SelectedItem = 12;
-            fontFamily.SelectedItem = "Arial";
+            fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
+            fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
         }
 
         private void update(TextInformation info)
         {
-            fontSize.SelectedItem = info.Size;
-            fontFamily.SelectedItem = info.Family.ToString();
+            fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
+            fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
             TextBoldButton.IsChecked = info.Bold;
             TextItalicButton.IsChecked = info.Italics;
             TextUnderlineButton.IsChecked = info.Underline;
             TextStrikethroughButton.IsChecked = info.Strikethrough;
-        }
-
-        private void updateToolBox(string layer)
-        {
-            if (layer == "Text")
-                LayoutRoot.Visibility = Visibility.Visible;
-            else
-                LayoutRoot.Visibility = Visibility.Collapsed;
-        }
-
-        private void setUpTools(object sender, RoutedEventArgs e)
-        {
-            fontFamily.SelectedItem = "Arial";
-            fontSize.SelectedItem = 10.0;
-        }
-
+        }       
+        
         private void decreaseFont(object sender, RoutedEventArgs e)
         {
             if (fontSize.ItemsSource == null) return;
-            int currentItem = fontSize.SelectedIndex;
+            var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
             if (currentItem - 1 >= 0)
             {
                 var newSize = fontSizes[currentItem - 1];
-                fontSize.SelectedIndex = currentItem - 1;
+                fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
                 Commands.FontSizeChanged.Execute(newSize);
             }
-        }
+        }        
         private void increaseFont(object sender, RoutedEventArgs e)
         {
             if (fontSize.ItemsSource == null) return;
-            int currentItem = fontSize.SelectedIndex;
+            var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
             if (currentItem + 1 < fontSizes.Count())
             {
                 var newSize = fontSizes[currentItem + 1];
-                fontSize.SelectedIndex = currentItem + 1;
+                fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
                 Commands.FontSizeChanged.Execute(newSize);
             }
         }
         private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (fontSize.SelectedIndex == -1) return;
+            var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
+            if(currentItem < 0) return;
             if (e.AddedItems.Count == 0) return;
             var size = Double.Parse(e.AddedItems[0].ToString());
             Commands.FontSizeChanged.Execute(size);
@@ -502,7 +489,7 @@ namespace SandRibbon.Pages.Collaboration
         }        
         private void TextColor_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            Commands.SetTextColor.Execute((Color)e.NewValue);
+            Commands.SetTextColor.Execute((Color)((System.Windows.Controls.Ribbon.RibbonGalleryItem)e.NewValue).Content);
         }
     }
 }

@@ -478,8 +478,8 @@ namespace SandRibbon.Components
                 case "Text":
                     Work.EditingMode = InkCanvasEditingMode.None;
                     Work.UseCustomCursor = false;
-                    html.IsHitTestVisible = true;
-                    Work.IsHitTestVisible = false;
+                    //html.IsHitTestVisible = true;
+                    //Work.IsHitTestVisible = false;
                     break;
                 case "Insert":
                     Work.EditingMode = InkCanvasEditingMode.Select;
@@ -490,11 +490,9 @@ namespace SandRibbon.Components
                     Work.EditingMode = InkCanvasEditingMode.Ink;
                     Work.UseCustomCursor = true;
                     break;
-            }
-            /*
+            }            
             _focusable = newLayer == "Text";
-            setLayerForTextFor(Work);
-            */
+            setLayerForTextFor(Work);            
         }
         private void setLayerForTextFor(InkCanvas canvas)
         {
@@ -2226,17 +2224,17 @@ namespace SandRibbon.Components
         {
             if (Work.EditingMode != InkCanvasEditingMode.None) return;
             if (me == Globals.PROJECTOR) return;
-
             /*
-            var pos = e.GetPosition(this);                                    
+            var pos = e.GetPosition(this);
             var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})", pos.X, pos.Y));
+            */
+            var pos = e.GetPosition(this);                                               
             MeTLTextBox box = createNewTextbox();
             AddTextBoxToCanvas(box, true);
             InkCanvas.SetLeft(box, pos.X);
             InkCanvas.SetTop(box, pos.Y);
             myTextBox = box;
-            box.Focus();
-            */
+            box.Focus();            
         }
         private void AddTextboxToMyCanvas(MeTLTextBox box)
         {
