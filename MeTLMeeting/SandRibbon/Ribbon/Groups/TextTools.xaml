@@ -17,10 +17,10 @@
                 </RibbonComboBox>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
-                <RibbonCheckBox x:Name="TextBoldButton" SmallImageSource="..\..\Resources\bold.png" LargeImageSource="..\..\Resources\bold.png" Label="B" ToolTip="{DynamicResource BoldToolTip}" Command="{x:Static api:Commands.SetTextBold}" CommandParameter="{Binding ElementName=TextBoldButton, Path=IsChecked}"/>
-                <RibbonCheckBox x:Name="TextItalicButton" SmallImageSource="..\..\Resources\italic.png" LargeImageSource="..\..\Resources\italic.png" Label="I" ToolTip="{DynamicResource ItalicToolTip}" Command="{x:Static api:Commands.SetTextItalic}" CommandParameter="{Binding ElementName=TextItalicButton, Path=IsChecked}"/>
-                <RibbonCheckBox x:Name="TextUnderlineButton" SmallImageSource="..\..\Resources\underline.png" LargeImageSource="..\..\Resources\underline.png" Label="U" ToolTip="{DynamicResource UnderlineToolTip}" Command="{x:Static api:Commands.SetTextUnderline}" CommandParameter="{Binding ElementName=TextUnderlineButton, Path=IsChecked}"/>
-                <RibbonCheckBox x:Name="TextStrikethroughButton" SmallImageSource="..\..\Resources\strikethrough.png" LargeImageSource="..\..\Resources\strikethrough.png" Label="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Command="{x:Static api:Commands.SetTextStrikethrough}" CommandParameter="{Binding ElementName=TextStrikethroughButton, Path=IsChecked}"/>
+                <RibbonCheckBox x:Name="TextBoldButton" SmallImageSource="\Resources\appbar.text.bold.png" LargeImageSource="\Resources\appbar.text.bold.png" Label="B" ToolTip="{DynamicResource BoldToolTip}" Command="{x:Static api:Commands.SetTextBold}" CommandParameter="{Binding ElementName=TextBoldButton, Path=IsChecked}"/>
+                <RibbonCheckBox x:Name="TextItalicButton" SmallImageSource="\Resources\appbar.text.italic.png" LargeImageSource="\Resources\appbar.text.italic.png" Label="I" ToolTip="{DynamicResource ItalicToolTip}" Command="{x:Static api:Commands.SetTextItalic}" CommandParameter="{Binding ElementName=TextItalicButton, Path=IsChecked}"/>
+                <RibbonCheckBox x:Name="TextUnderlineButton" SmallImageSource="\Resources\appbar.text.underline.png" LargeImageSource="\Resources\appbar.text.underline.png" Label="U" ToolTip="{DynamicResource UnderlineToolTip}" Command="{x:Static api:Commands.SetTextUnderline}" CommandParameter="{Binding ElementName=TextUnderlineButton, Path=IsChecked}"/>
+                <RibbonCheckBox x:Name="TextStrikethroughButton" SmallImageSource="\Resources\appbar.text.strikethrough.png" LargeImageSource="\Resources\appbar.text.strikethrough.png" Label="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Command="{x:Static api:Commands.SetTextStrikethrough}" CommandParameter="{Binding ElementName=TextStrikethroughButton, Path=IsChecked}"/>
                 <RibbonButton ToolTip="{DynamicResource ClearFormattingToolTip}" SmallImageSource="..\..\Resources\clearFormatting.png" LargeImageSource="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}"/>
                 <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
                     <dict:DoubleButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{DynamicResource FontColourToolTip}" InternalButtonSize="Small">
@@ -42,7 +42,7 @@
                 </Border>
             </StackPanel>
         </StackPanel>
-        <RibbonButton ToolTip="{DynamicResource IncreaseFontSizeToolTip}" SmallImageSource="..\..\Resources\increaseFontSize.png" LargeImageSource="..\..\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Command="{x:Static api:Commands.IncreaseFontSize}" />
-        <RibbonButton ToolTip="{DynamicResource DecreaseFontSizeToolTip}" SmallImageSource="..\..\Resources\decreaseFontSize.png" LargeImageSource="..\..\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Command="{x:Static api:Commands.DecreaseFontSize}" />
+        <RibbonButton ToolTip="{DynamicResource IncreaseFontSizeToolTip}" SmallImageSource="\Resources\appbar.text.size.up.png" LargeImageSource="\Resources\appbar.text.size.up.png" x:Name="IncreaseFontSizeButton" Label="Increase" Command="{x:Static api:Commands.IncreaseFontSize}" />
+        <RibbonButton ToolTip="{DynamicResource DecreaseFontSizeToolTip}" SmallImageSource="\Resources\appbar.text.size.down.png" LargeImageSource="\Resources\appbar.text.size.down.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Command="{x:Static api:Commands.DecreaseFontSize}" />
     </StackPanel>
 </UserControl>
