@@ -2,16 +2,13 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-    xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"
-    Height="{Binding ElementName=nav, Path=ActualHeight}"
+    xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"    
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Components="clr-namespace:SandRibbon.Components">
     <UserControl.InputBindings>
         <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static api:Commands.ClipboardManager}" CommandParameter="{x:Static Components:ClipboardAction.Paste}"/>
     </UserControl.InputBindings>
-    <Grid>
-        <RibbonGroup x:Name="nav" HorizontalAlignment="Center" Margin="0 0 0 0">
-            <RibbonButton Label="Previous" SmallImageSource="\Resources\Previous.png" LargeImageSource="\Resources\Previous.png" x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
-            <RibbonButton Label="Next" SmallImageSource="\Resources\Next.png" LargeImageSource="\Resources\Next.png" x:Name="moveToNext" ToolTip="{DynamicResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}" />
-        </RibbonGroup>
-    </Grid>
+    <WrapPanel x:Name="nav">
+        <RibbonButton HorizontalAlignment="Left" Label="Previous" SmallImageSource="\Resources\appbar.chevron.left.png" LargeImageSource="\Resources\appbar.chevron.left.png" x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
+        <RibbonButton HorizontalAlignment="Right" Label="Next" SmallImageSource="\Resources\appbar.chevron.right.png" LargeImageSource="\Resources\appbar.chevron.right.png" x:Name="moveToNext" ToolTip="{DynamicResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}" />
+    </WrapPanel>
 </UserControl>

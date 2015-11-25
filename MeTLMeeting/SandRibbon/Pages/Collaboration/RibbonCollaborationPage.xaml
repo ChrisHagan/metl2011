@@ -174,7 +174,7 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <components:MiniMap DataContext="{Binding ElementName=scroll}" Height="200" x:Name="LHSMiniMap"/>
-                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="1"/>
+                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="1" Width="Auto"/>
                     <TabControl Grid.Row="2" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
                         <TabItem Header="Pages" Width="80">
                             <components:SlideDisplay x:Name="slides" />

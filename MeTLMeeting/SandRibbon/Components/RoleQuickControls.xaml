@@ -12,7 +12,7 @@
              >
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel>
-            <StackPanel x:Name="ownerQuickControls">
+            <WrapPanel x:Name="ownerQuickControls">
                 <Label Content="What can people do?" Style="{StaticResource medium}" />
                 <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can publish quizzes"></CheckBox>
@@ -20,20 +20,20 @@
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can add slides"></CheckBox>
                 <CheckBox Checked="StudentsCanPublishChecked" Content="Students can view participants list"></CheckBox>
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
-                <RibbonToggleButton LargeImageSource="/Resources/Banhammer.png" SmallImageSource="/Resources/Banhammer.png" Label="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
-                <RibbonButton Label="Add Page" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-                <RibbonButton Label="DuplicateSlide" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
-                <RibbonButton Label="DuplicateConversation" LargeImageSource="/Resources/NewSlide.png" SmallImageSource="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
-            </StackPanel>
-            <StackPanel x:Name="participantQuickControls">
+                <RibbonToggleButton LargeImageSource="\Resources\appbar.crown.png" SmallImageSource="\Resources\appbar.crown.png" Label="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
+                <RibbonButton Label="Add Page" LargeImageSource="\Resources\appbar.page.add.png" SmallImageSource="\Resources\appbar.page.add.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
+                <RibbonButton Label="Duplicate Slide" LargeImageSource="\Resources\appbar.page.copy.png" SmallImageSource="\Resources\appbar.page.copy.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
+                <RibbonButton Label="Duplicate Conversation" LargeImageSource="\Resources\appbar.page.duplicate.png" SmallImageSource="\Resources\appbar.page.duplicate.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
+            </WrapPanel>
+            <WrapPanel x:Name="participantQuickControls">
                 <Label Content="What do you need?" Style="{StaticResource medium}" />
-                <RibbonButton Label="Sync" LargeImageSource="\Resources\SyncGreen.png" SmallImageSource="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
+                <RibbonButton Label="Sync" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
                 <RibbonButton x:Name="submitSubmission" 
-                    Label="Submit a screenshot" LargeImageSource="\Resources\SendSubmission.png" SmallImageSource="\Resources\SendSubmission.png"
+                    Label="Submit a screenshot" LargeImageSource="\Resources\appbar.stamp.at.png" SmallImageSource="\Resources\appbar.stamp.at.png"
                     Command="{x:Static api:Commands.RequestScreenshotSubmission}"
                     ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
 
-            </StackPanel>
+            </WrapPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

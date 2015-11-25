@@ -4,8 +4,8 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <WrapPanel>
-        <RibbonButton x:Name="ZoomOut" Command="{x:Static api:Commands.ZoomOut}" Label="Zoom Out" SmallImageSource="..\Resources\Ribbon-ZoomOut.png" LargeImageSource="..\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
-        <RibbonButton x:Name="ZoomIn" Command="{x:Static api:Commands.ZoomIn}" Label="Zoom In" SmallImageSource="..\Resources\Ribbon-ZoomIn.png" LargeImageSource="..\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
-        <RibbonButton x:Name="InitiateGrabZoom" Command="{x:Static api:Commands.InitiateGrabZoom}" Label="Grab Zoom" SmallImageSource="..\Resources\GrabZoom.png" LargeImageSource="..\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
+        <RibbonButton x:Name="ZoomOut" Command="{x:Static api:Commands.ZoomOut}" Label="Zoom Out" SmallImageSource="\Resources\appbar.magnify.add.png" LargeImageSource="\Resources\appbar.magnify.add.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
+        <RibbonButton x:Name="ZoomIn" Command="{x:Static api:Commands.ZoomIn}" Label="Zoom In" SmallImageSource="\Resources\appbar.magnify.minus.png" LargeImageSource="\Resources\appbar.magnify.minus.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
+        <RibbonButton x:Name="InitiateGrabZoom" Command="{x:Static api:Commands.InitiateGrabZoom}" Label="Grab Zoom" SmallImageSource="\Resources\appbar.magnify.browse.png" LargeImageSource="\Resources\appbar.magnify.browse.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
     </WrapPanel>
 </UserControl>

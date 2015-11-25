@@ -50,7 +50,7 @@
                                         ContentText="Show this selected content so that it is visible to everyone."/>
     <resources:MeTLImageToolTip x:Key="BanSelectedToolTip" 
                                         TitleText="Ban"
-                                        ImageSource="\Resources\banhammer.png" 
+                                        ImageSource="\Resources\appbar.crown.png" 
                                         ContentText="Ban this selected content."/>
     <resources:MeTLImageToolTip x:Key="ClosePopupToolTip" 
                                         TitleText="Close Palette"

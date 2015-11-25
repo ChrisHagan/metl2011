@@ -7,7 +7,7 @@
         <DockPanel Margin="10, 0, 0, 0" x:Name="privacyButtons"  >
             <!-- Removed features merged from whackyMeTL branch
             <dict:Button DockPanel.Dock="Bottom"  x:Name="visualiseButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon ="\Resources\visualize.png" Text="Visualize" Click="visualizeContent" InternalButtonSize="Small"/>-->
-            <dict:Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource BanSelectedToolTip}" Icon ="Resources\banhammer.png" 
+            <dict:Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource BanSelectedToolTip}" Icon ="Resources\appbar.crown.png" 
                          Text="Ban" Click="banhammerContent" InternalButtonSize="LargeIcon"/>
             <StackPanel DockPanel.Dock="Top" Orientation="Vertical" >
                 <dict:Button x:Name="deleteButton" ToolTip="{DynamicResource DeleteContentToolTip}" Icon="\Resources\sexyDelete.png" Text="Delete" Click="deleteContent" InternalButtonSize="LargeIcon"/>
