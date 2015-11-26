@@ -7,12 +7,19 @@
         <DockPanel Margin="10, 0, 0, 0" x:Name="privacyButtons"  >
             <!-- Removed features merged from whackyMeTL branch
             <dict:Button DockPanel.Dock="Bottom"  x:Name="visualiseButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon ="\Resources\visualize.png" Text="Visualize" Click="visualizeContent" InternalButtonSize="Small"/>-->
-            <dict:Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource BanSelectedToolTip}" Icon ="Resources\appbar.crown.png" 
-                         Text="Ban" Click="banhammerContent" InternalButtonSize="LargeIcon"/>
+            <Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource BanSelectedToolTip}" Click="banhammerContent">
+                <Image Source="\Resources\appbar.crown.png" />
+            </Button>
             <StackPanel DockPanel.Dock="Top" Orientation="Vertical" >
-                <dict:Button x:Name="deleteButton" ToolTip="{DynamicResource DeleteContentToolTip}" Icon="\Resources\sexyDelete.png" Text="Delete" Click="deleteContent" InternalButtonSize="LargeIcon"/>
-                <dict:Button x:Name="hideButton" ToolTip="{DynamicResource HideContentToolTip}" Icon="\Resources\Hide.png" Text="Hide" Click="hideContent" InternalButtonSize="LargeIcon"/>
-                <dict:Button x:Name="showButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon="\Resources\Show.png" Text="Show" Click="showContent" InternalButtonSize="LargeIcon"/>
+                <Button x:Name="deleteButton" ToolTip="{DynamicResource DeleteContentToolTip}" Click="deleteContent">
+                    <Image Source="\Resources\sexyDelete.png" />
+                </Button>
+                <Button x:Name="hideButton" ToolTip="{DynamicResource HideContentToolTip}" Click="hideContent">
+                    <Image Source="\Resources\Hide.png" />
+                </Button>
+                <Button x:Name="showButton" ToolTip="{DynamicResource ShowContentToolTip}" Click="showContent">
+                    <Image Source="\Resources\Show.png"/>
+                </Button>
             </StackPanel>
         </DockPanel>
     </Canvas>

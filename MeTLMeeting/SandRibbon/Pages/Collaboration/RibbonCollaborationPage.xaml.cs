@@ -73,6 +73,8 @@ namespace SandRibbon.Pages.Collaboration
             
             Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));            
             */
+            Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
+            Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<string>((s) => RemovePrivacyAdorners(s)));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(fitToView, canFitToView));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(originalView, canOriginalView));
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
@@ -274,7 +276,12 @@ namespace SandRibbon.Pages.Collaboration
                 container = privateNotes;
                 return;
             }
-
+            if (targetName == null)
+            {
+                viewbox = canvasViewBox;
+                container = canvas;
+                return;
+            }
             throw new ArgumentException(string.Format("Specified target {0} does not match a declared ViewBox", targetName));
         }
 
