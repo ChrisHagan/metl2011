@@ -81,48 +81,6 @@
                 <RibbonGroup x:Name="textGroup">
                     <components:TextTools/>
                 </RibbonGroup>
-                <!--
-                <RibbonGroup x:Name="textGroup">
-                    <RibbonButton ToolTip="{StaticResource CutToolTip}" LargeImageSource="\Resources\cut.png" Label="Cut" Command="ApplicationCommands.Cut" />
-                    <RibbonButton ToolTip="{StaticResource PasteToolTip}" LargeImageSource="\Resources\paste.png" Label="Paste" Command="ApplicationCommands.Paste" />
-                    <RibbonButton ToolTip="{StaticResource CopyToolTip}" LargeImageSource="\Resources\copy.png" Label="Copy" Command="ApplicationCommands.Copy" />
-                    <RibbonComboBox ToolTip="{StaticResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"  Selector.SelectionChanged="fontFamilySelected"/>
-                    <RibbonComboBox ToolTip="{StaticResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  Selector.SelectionChanged="fontSizeSelected"/>
-                    <RibbonToggleButton x:Name="TextBoldButton" LargeImageSource="\Resources\bold.png" ToolTip="{StaticResource BoldToolTip}" Command ="{x:Static api:Commands.ToggleBold}" />
-                    <RibbonToggleButton x:Name="TextItalicButton" LargeImageSource="\Resources\italic.png" ToolTip="{StaticResource ItalicToolTip}" Command ="{x:Static api:Commands.ToggleItalic}" />
-                    <RibbonToggleButton x:Name="TextUnderlineButton" LargeImageSource="\Resources\underline.png" ToolTip="{StaticResource UnderlineToolTip}" Command ="{x:Static api:Commands.ToggleUnderline}" />
-                    <RibbonToggleButton x:Name="TextStrikethroughButton" LargeImageSource="\Resources\strikethrough.png" ToolTip="{StaticResource StrikeThroughToolTip}" Command ="{x:Static api:Commands.ToggleStrikethrough}" />
-                    <RibbonButton ToolTip="{StaticResource ClearFormattingToolTip}" LargeImageSource="\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" />
-                    <RibbonSplitButton x:Name="FontColourButton" LargeImageSource="\Resources\changeFontColour.png" ToolTip="{StaticResource FontColourToolTip}" >
-                        <RibbonGallery SelectionChanged="TextColor_SelectionChanged">
-                            <RibbonGalleryCategory>
-                                <RibbonGalleryItem Background="Black">
-                                    <RibbonGalleryItem.Content>
-                                        <Color>Black</Color>
-                                    </RibbonGalleryItem.Content>
-                                </RibbonGalleryItem>
-                                <RibbonGalleryItem Background="Green">
-                                    <RibbonGalleryItem.Content>
-                                        <Color>Green</Color>
-                                    </RibbonGalleryItem.Content>
-                                </RibbonGalleryItem>
-                                <RibbonGalleryItem Background="Red">
-                                    <RibbonGalleryItem.Content>
-                                        <Color>Red</Color>
-                                    </RibbonGalleryItem.Content>
-                                </RibbonGalleryItem>
-                                <RibbonGalleryItem Background="Blue">
-                                    <RibbonGalleryItem.Content>
-                                        <Color>Blue</Color>
-                                    </RibbonGalleryItem.Content>
-                                </RibbonGalleryItem>
-                            </RibbonGalleryCategory>
-                        </RibbonGallery>
-                    </RibbonSplitButton>
-                    <RibbonButton ToolTip="{StaticResource IncreaseFontSizeToolTip}" SmallImageSource="\Resources\increaseFontSize.png" LargeImageSource="\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Label="Increase" Command="{x:Static api:Commands.IncreaseFontSize}" />
-                    <RibbonButton ToolTip="{StaticResource DecreaseFontSizeToolTip}" SmallImageSource="\Resources\decreaseFontSize.png" LargeImageSource="\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Command="{x:Static api:Commands.DecreaseFontSize}" />
-                </RibbonGroup>
-                -->
                 <RibbonGroup x:Name="imageGroup">
                 </RibbonGroup>
             </RibbonTab>

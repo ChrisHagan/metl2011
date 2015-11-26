@@ -2,7 +2,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     KeyTip="A" Header="Analytics" x:Name="analyticsRoot">
+    <RibbonGroup Header="Language">
+        <RibbonButton Label="Summarize conversation" Command="{x:Static api:Commands.WordCloud}"
+                      SmallImageSource="\Resources\appbar.graph.histogram.description.png" 
+                      LargeImageSource="\Resources\appbar.graph.histogram.description.png"/>
+    </RibbonGroup>
 </RibbonTab>           

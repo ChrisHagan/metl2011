@@ -207,7 +207,9 @@
         {
             deprecatedLib.MeTLConfiguration.Load();
             var config = deprecatedLib.MeTLConfiguration.Config;
-            internalConfigs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }.Select(conf =>
+            internalConfigs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }
+            .Where(conf => !String.IsNullOrEmpty(conf.Host))
+            .Select(conf =>
               {
                   return new MetlConfiguration(
                       conf.Name,

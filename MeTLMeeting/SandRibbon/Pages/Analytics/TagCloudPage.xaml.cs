@@ -62,6 +62,8 @@ namespace SandRibbon.Pages.Analytics
                 {
                     tagsRendered = true;
                     var themes = new List<String>();
+                    var count = 0;
+                    var max = Globals.slides.Count;
                     foreach (var slide in Globals.slides) {
                         ThreadPool.QueueUserWorkItem(delegate
                        {
@@ -69,9 +71,11 @@ namespace SandRibbon.Pages.Analytics
                            Dispatcher.Invoke(new Action(delegate
                            {
                                var themeCopy = new List<string>(themes);
-                               var jsFormat = "wordcloud({0})";
+                               var jsFormat = "wordcloud({0},{1},{2})";
                                wc.ExecuteJavascriptWithResult(string.Format(jsFormat,
-                                   new JArray(themeCopy.GroupBy(t => t).Select(ts => new JArray(ts.Key, ts.Count())))));
+                                   new JArray(themeCopy.GroupBy(t => t).Select(ts => new JArray(ts.Key, ts.Count()))),
+                                   ++count,
+                                   max));                               
                            }));
                            Console.WriteLine("Rendered {0}", slide.index);
                        });
