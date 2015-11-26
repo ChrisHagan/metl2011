@@ -32,26 +32,94 @@
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Home">
                 <RibbonGroup Header="Which tool are you using?">
-                    <RibbonRadioButton GroupName="mode" Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
-                    <RibbonRadioButton GroupName="mode" Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
-                    <RibbonRadioButton GroupName="mode" Label="Image" LargeImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
-                    <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Select"/>
+                    <RibbonGroup.GroupSizeDefinitions>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition IsCollapsed="True">
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                    </RibbonGroup.GroupSizeDefinitions>
+                    <RibbonRadioButton GroupName="mode" Label="Ink" LargeImageSource="/Resources/appbar.draw.pen.png" SmallImageSource="/Resources/appbar.draw.pen.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Sketch" />
+                    <RibbonRadioButton GroupName="mode" Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" SmallImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
+                    <RibbonRadioButton GroupName="mode" Label="Image" LargeImageSource="/Resources/appbar.page.image.png" SmallImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
+                    <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png" SmallImageSource="/Resources/appbar.image.ants.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Select"/>
+                    <RibbonRadioButton GroupName="mode" Label="View" LargeImageSource="/Resources/appbar.cursor.hand.png" SmallImageSource="/Resources/appbar.cursor.hand.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="View" />
                 </RibbonGroup>
-                <RibbonGroup Header="Who can see your work?">
-                    <components:PrivacyTools/>
+                <RibbonGroup Header="Edit">
+                    <RibbonGroup.GroupSizeDefinitions>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+                        </RibbonGroupSizeDefinition>
+                        <RibbonGroupSizeDefinition IsCollapsed="True">
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+                        </RibbonGroupSizeDefinition>
+                    </RibbonGroup.GroupSizeDefinitions>
+                    <RibbonButton SmallImageSource="/Resources/appbar.undo.png" LargeImageSource="/Resources/appbar.undo.png" Command="{x:Static ApplicationCommands.Undo}" Label="Undo"/>
+                    <RibbonButton SmallImageSource="/Resources/appbar.redo.png" LargeImageSource="/Resources/appbar.redo.png" Command="{x:Static ApplicationCommands.Redo}" Label="Redo"/>
+                    <RibbonButton SmallImageSource="/Resources/cut.png" LargeImageSource="/Resources/cut.png" Command="{x:Static ApplicationCommands.Cut}" Label="Cut"/>
+                    <RibbonButton SmallImageSource="/Resources/copy.png" LargeImageSource="/Resources/copy.png" Command="{x:Static ApplicationCommands.Copy}" Label="Copy"/>
+                    <RibbonButton SmallImageSource="/Resources/paste.png" LargeImageSource="/Resources/paste.png" Command="{x:Static ApplicationCommands.Paste}" Label="Paste"/>
                 </RibbonGroup>
-                <RibbonGroup Header="How much content do you see?">
-                    <RibbonButton Label="All of it" Command="{x:Static api:Commands.FitToView}" LargeImageSource="/Resources/ShowAll.png" SmallImageSource="/Resources/ShowAll.png"/>
-                    <RibbonButton Label="The original page" Command="{x:Static api:Commands.OriginalView}" LargeImageSource="/Resources/ShowOriginal.png" SmallImageSource="/Resources/ShowOriginal.png"/>
-                    <components:ZoomControls/>
+                <components:PrivacyTools Header="Who can see your work?"/>
+                <components:ZoomControls Header="How much content do you see?"/>
                     <!--components:MiniMap DataContext="{Binding ElementName=scroll}" Height="100" Width="100" /-->
-                </RibbonGroup>
                 <!--RibbonGroup Header="Whose content do you see?">
                     <components:ContentVisibility/>
                 </-->
-                <RibbonGroup x:Name="inkGroup">
-                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke">
-                    </RibbonRadioButton>
+                <RibbonGroup x:Name="inkGroup" Header="Ink options">
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke"></RibbonRadioButton>
                     <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.png" Background="Red" Command="{x:Static api:Commands.SetDrawingAttributes}">
                         <RibbonRadioButton.CommandParameter>
                             <DrawingAttributes Color="Red" />
@@ -78,10 +146,9 @@
                         </RibbonRadioButton.CommandParameter>
                     </RibbonRadioButton>
                 </RibbonGroup>
-                <RibbonGroup x:Name="textGroup">
-                    <components:TextTools/>
-                </RibbonGroup>
-                <RibbonGroup x:Name="imageGroup">
+                <components:TextTools x:Name="textGroup" />
+                <RibbonGroup x:Name="imageGroup" Header="Image options">
+                    <RibbonButton Label="Insert image" Command="{x:Static api:Commands.AddImage}" SmallImageSource="\Resources\appbar.page.image.png" LargeImageSource="\Resources\appbar.page.image.png" />
                 </RibbonGroup>
             </RibbonTab>
             <tabs:Quizzes/>
@@ -103,7 +170,7 @@
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
                     <StackPanel>
                         <Label Content="What do you want to see?" Style="{StaticResource medium}" />
-                        <components:ContentVisibility/>                        
+                        <components:ContentVisibility/>
                         <components:RoleQuickControls />
                     </StackPanel>
                 </Grid>

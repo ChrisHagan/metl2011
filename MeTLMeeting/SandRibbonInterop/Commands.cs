@@ -342,6 +342,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SendChatMessage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveChatMessage = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BanhammerActive = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ManageBannedContent = new DefaultableCompositeCommand();
+
         #endregion
         #region ppt
         public static DefaultableCompositeCommand ImportPowerpoint = new DefaultableCompositeCommand();

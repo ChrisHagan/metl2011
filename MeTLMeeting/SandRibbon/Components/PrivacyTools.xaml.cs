@@ -7,10 +7,11 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
+using System.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Components
 {
-    public partial class PrivacyTools
+    public partial class PrivacyTools : RibbonGroup
     {
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));

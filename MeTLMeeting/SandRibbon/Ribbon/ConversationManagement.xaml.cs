@@ -25,6 +25,7 @@ namespace SandRibbon.Tabs
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
+            Commands.ManageBannedContent.RegisterCommand(new DelegateCommand<object>(OnBanContentchanged, CheckManageBannedAllowed));
         }
 
         private void viewBannedContent(object _obj)
@@ -44,9 +45,9 @@ namespace SandRibbon.Tabs
             return submissionList.Count > 0;
         }
 
-        private void CheckManageBannedAllowed(object sender, CanExecuteRoutedEventArgs e)
+        private bool CheckManageBannedAllowed(object sender)
         {
-            e.CanExecute = StateHelper.mustBeInConversation();
+            return StateHelper.mustBeInConversation();
         }
 
         private void PreParserAvailable(PreParser parser)
@@ -85,7 +86,7 @@ namespace SandRibbon.Tabs
             return false;
         }
 
-        private void OnBanContentchanged(object sender, ExecutedRoutedEventArgs e)
+        private void OnBanContentchanged(object sender)
         {
             var banMode = banContent.IsChecked ?? false;
             Commands.BanhammerActive.Execute(banMode);

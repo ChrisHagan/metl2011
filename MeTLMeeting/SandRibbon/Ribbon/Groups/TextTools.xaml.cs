@@ -3,15 +3,16 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Divelements.SandRibbon;
+//using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbonInterop.Interfaces;
 using TextInformation = SandRibbon.Components.TextInformation;
+using System.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Components
 {
-    public partial class TextTools : UserControl, ITextTools
+    public partial class TextTools : RibbonGroup, ITextTools
     {
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
@@ -47,6 +48,13 @@ namespace SandRibbon.Components
             Commands.FontSizeNotify.RegisterCommand(new DelegateCommand<double>(b => {
                 fontSizeCollection.SelectedItem = b;
             }));
+            FontColourButton.ItemsSource = new List<Color> {
+                new Color { A=255, R=255, G=255, B=255 },
+                new Color { A=255, R=0, G=0, B=0 },
+                new Color { A=255, R=255, G=0, B=0 },
+                new Color { A=255, R=0, G=255, B=0 },
+                new Color { A=255, R=0, G=0, B=255 }
+            };
         }
         private void loadFonts()
         {
@@ -70,7 +78,7 @@ namespace SandRibbon.Components
         {
             if(currentTextInfo == null)
             {
-                ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black); 
+                //ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black); 
                 fontSizeCollection.SelectedItem = generateDefaultFontSize();
             }            
         }
@@ -96,7 +104,7 @@ namespace SandRibbon.Components
             TextItalicButton.IsChecked = info.Italics;
             TextUnderlineButton.IsChecked = info.Underline;
             TextStrikethroughButton.IsChecked = info.Strikethrough;
-            ColourPickerBorder.BorderBrush = new SolidColorBrush(info.Color);
+            //ColourPickerBorder.BorderBrush = new SolidColorBrush(info.Color);
             fontSizeCollection.SelectedItem = info.Size;
             fontFamilyCollection.SelectedItem = info.Family.ToString();
             //fontSizeCollection.SelectionChanged += fontSizeSelected;
@@ -107,7 +115,7 @@ namespace SandRibbon.Components
         }
         private void sendValues()
         {
-            if (fontSizeCollection == null || fontSizeCollection.SelectedItem == null || fontFamily == null || fontFamilyCollection.SelectedItem == null || ColourPickerBorder == null || ColourPickerBorder.BorderBrush == null || TextBoldButton == null || TextItalicButton == null || TextUnderlineButton == null || TextStrikethroughButton == null) return;
+            if (fontSizeCollection == null || fontSizeCollection.SelectedItem == null || fontFamily == null || fontFamilyCollection.SelectedItem == null || /*ColourPickerBorder == null || ColourPickerBorder.BorderBrush == null || */TextBoldButton == null || TextItalicButton == null || TextUnderlineButton == null || TextStrikethroughButton == null) return;
             var info = new TextInformation
             {
                 Size = (double)fontSizeCollection.SelectedItem,
@@ -116,7 +124,7 @@ namespace SandRibbon.Components
                 Italics = TextItalicButton.IsChecked == true,
                 Underline = TextUnderlineButton.IsChecked == true,
                 Strikethrough = TextStrikethroughButton.IsChecked == true,
-                Color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
+                //Color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
             };
             currentTextInfo = new TextInformation(info);
             Commands.UpdateTextStyling.Execute(info);
@@ -220,20 +228,22 @@ namespace SandRibbon.Components
             //if (e.AddedItems.Count == 0) return;
             sendValues();
         }
+        /*
         private void textColorSelected(object sender, ColorEventArgs e)
         {
-            ColourPickerBorder.BorderBrush = new SolidColorBrush(e.Color);
-            ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = false;
+            //ColourPickerBorder.BorderBrush = new SolidColorBrush(e.Color);
+            //((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = false;
             sendValues();
         }
+        */
         private void ShowColourSelector(object sender, RoutedEventArgs e)
         {
-            ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = true;
+            //((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = true;
         }
 
         private void valuesUpdated(object sender, RoutedEventArgs e)
         {
-            var clickedButton = (CheckBox)sender;
+            var clickedButton = (RibbonToggleButton)sender;
             if (clickedButton == TextStrikethroughButton)
                 if (clickedButton.IsChecked == true)
                     TextUnderlineButton.IsChecked = false;

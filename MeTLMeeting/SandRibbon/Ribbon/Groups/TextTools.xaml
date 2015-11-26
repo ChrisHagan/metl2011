@@ -1,48 +1,62 @@
-﻿<UserControl x:Class="SandRibbon.Components.TextTools"
+﻿<RibbonGroup x:Class="SandRibbon.Components.TextTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-    Loaded="setUpTools">
-    <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
-        <StackPanel>
-            <StackPanel Height="30" Orientation="Horizontal">
-                <RibbonComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily">
-                    <RibbonGallery x:Name="fontFamilyCollection" Command="{x:Static api:Commands.SetFont}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}"/>
-                </RibbonComboBox>
-                <RibbonComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize">
-                    <RibbonGallery x:Name="fontSizeCollection" Command="{x:Static api:Commands.SetFontSize}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}">
-                    </RibbonGallery>
-                </RibbonComboBox>
-            </StackPanel>
-            <StackPanel Height="30" Orientation="Horizontal">
-                <RibbonCheckBox x:Name="TextBoldButton" SmallImageSource="\Resources\appbar.text.bold.png" LargeImageSource="\Resources\appbar.text.bold.png" Label="B" ToolTip="{DynamicResource BoldToolTip}" Command="{x:Static api:Commands.SetTextBold}" CommandParameter="{Binding ElementName=TextBoldButton, Path=IsChecked}"/>
-                <RibbonCheckBox x:Name="TextItalicButton" SmallImageSource="\Resources\appbar.text.italic.png" LargeImageSource="\Resources\appbar.text.italic.png" Label="I" ToolTip="{DynamicResource ItalicToolTip}" Command="{x:Static api:Commands.SetTextItalic}" CommandParameter="{Binding ElementName=TextItalicButton, Path=IsChecked}"/>
-                <RibbonCheckBox x:Name="TextUnderlineButton" SmallImageSource="\Resources\appbar.text.underline.png" LargeImageSource="\Resources\appbar.text.underline.png" Label="U" ToolTip="{DynamicResource UnderlineToolTip}" Command="{x:Static api:Commands.SetTextUnderline}" CommandParameter="{Binding ElementName=TextUnderlineButton, Path=IsChecked}"/>
-                <RibbonCheckBox x:Name="TextStrikethroughButton" SmallImageSource="\Resources\appbar.text.strikethrough.png" LargeImageSource="\Resources\appbar.text.strikethrough.png" Label="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Command="{x:Static api:Commands.SetTextStrikethrough}" CommandParameter="{Binding ElementName=TextStrikethroughButton, Path=IsChecked}"/>
-                <RibbonButton ToolTip="{DynamicResource ClearFormattingToolTip}" SmallImageSource="..\..\Resources\clearFormatting.png" LargeImageSource="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}"/>
-                <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
-                    <dict:DoubleButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{DynamicResource FontColourToolTip}" InternalButtonSize="Small">
-                        <dict:DoubleButton.Popup>
-                            <Border x:Name="ColourSelection"  Background="{StaticResource BackgroundBlueGradient}" Visibility="Visible" Padding="2">
-                                <StackPanel>
-                                    <Label Content="Font Colour"/>
-                                    <sr:ColorPicker ColorPicked="textColorSelected" >
-                                        <Color A="255" R="255" G="255" B="255" />
-                                        <Color A="255" R="0" G="0" B="0" />
-                                        <Color A="255" R="255" G="0" B="0" />
-                                        <Color A="255" R="0" G="255" B="0" />
-                                        <Color A="255" R="0" G="0" B="255" />
-                                    </sr:ColorPicker>
-                                </StackPanel>
-                            </Border>
-                        </dict:DoubleButton.Popup>
-                    </dict:DoubleButton>
-                </Border>
-            </StackPanel>
-        </StackPanel>
-        <RibbonButton ToolTip="{DynamicResource IncreaseFontSizeToolTip}" SmallImageSource="\Resources\appbar.text.size.up.png" LargeImageSource="\Resources\appbar.text.size.up.png" x:Name="IncreaseFontSizeButton" Label="Increase" Command="{x:Static api:Commands.IncreaseFontSize}" />
-        <RibbonButton ToolTip="{DynamicResource DecreaseFontSizeToolTip}" SmallImageSource="\Resources\appbar.text.size.down.png" LargeImageSource="\Resources\appbar.text.size.down.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Command="{x:Static api:Commands.DecreaseFontSize}" />
-    </StackPanel>
-</UserControl>
+    Loaded="setUpTools" Header="Text Options">
+    <RibbonGroup.ItemsPanel>
+        <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" MaxWidth="300"></WrapPanel>
+        </ItemsPanelTemplate>
+    </RibbonGroup.ItemsPanel>
+    <RibbonGroup.GroupSizeDefinitions>
+        <RibbonGroupSizeDefinition>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False"/>
+        </RibbonGroupSizeDefinition>
+        <RibbonGroupSizeDefinition IsCollapsed="True">
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="False"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="True"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+            <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
+        </RibbonGroupSizeDefinition>
+    </RibbonGroup.GroupSizeDefinitions>
+    <RibbonComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily">
+        <RibbonGallery x:Name="fontFamilyCollection" Command="{x:Static api:Commands.SetFont}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}"/>
+    </RibbonComboBox>
+    <RibbonComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize">
+        <RibbonGallery x:Name="fontSizeCollection" Command="{x:Static api:Commands.SetFontSize}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}">
+        </RibbonGallery>
+    </RibbonComboBox>
+    <RibbonToggleButton x:Name="TextBoldButton" SmallImageSource="\Resources\appbar.text.bold.png" LargeImageSource="\Resources\appbar.text.bold.png" Label="B" ToolTip="{DynamicResource BoldToolTip}" Command="{x:Static api:Commands.SetTextBold}" CommandParameter="{Binding ElementName=TextBoldButton, Path=IsChecked}"/>
+    <RibbonToggleButton x:Name="TextItalicButton" SmallImageSource="\Resources\appbar.text.italic.png" LargeImageSource="\Resources\appbar.text.italic.png" Label="I" ToolTip="{DynamicResource ItalicToolTip}" Command="{x:Static api:Commands.SetTextItalic}" CommandParameter="{Binding ElementName=TextItalicButton, Path=IsChecked}"/>
+    <RibbonToggleButton x:Name="TextUnderlineButton" SmallImageSource="\Resources\appbar.text.underline.png" LargeImageSource="\Resources\appbar.text.underline.png" Label="U" ToolTip="{DynamicResource UnderlineToolTip}" Command="{x:Static api:Commands.SetTextUnderline}" CommandParameter="{Binding ElementName=TextUnderlineButton, Path=IsChecked}"/>
+    <RibbonToggleButton x:Name="TextStrikethroughButton" SmallImageSource="\Resources\appbar.text.strikethrough.png" LargeImageSource="\Resources\appbar.text.strikethrough.png" Label="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Command="{x:Static api:Commands.SetTextStrikethrough}" CommandParameter="{Binding ElementName=TextStrikethroughButton, Path=IsChecked}"/>
+    <RibbonButton ToolTip="{DynamicResource ClearFormattingToolTip}" SmallImageSource="..\..\Resources\clearFormatting.png" LargeImageSource="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}"/>
+    <RibbonMenuButton LargeImageSource="..\..\Resources\changeFontColour.png" SmallImageSource="..\..\Resources\changeFontColour.png" >
+        <RibbonGallery x:Name="FontColourButton"  Command="{x:Static api:Commands.SetTextColor}">
+            <RibbonGallery.ItemTemplate>
+                <DataTemplate>
+                    <RibbonGalleryItem Content="{Binding}" Foreground="{Binding}"></RibbonGalleryItem>
+                </DataTemplate>
+            </RibbonGallery.ItemTemplate>
+        </RibbonGallery>
+    </RibbonMenuButton>
+    <RibbonButton ToolTip="{DynamicResource IncreaseFontSizeToolTip}" SmallImageSource="\Resources\appbar.text.size.up.png" LargeImageSource="\Resources\appbar.text.size.up.png" x:Name="IncreaseFontSizeButton" Label="Increase" Command="{x:Static api:Commands.IncreaseFontSize}" />
+    <RibbonButton ToolTip="{DynamicResource DecreaseFontSizeToolTip}" SmallImageSource="\Resources\appbar.text.size.down.png" LargeImageSource="\Resources\appbar.text.size.down.png" x:Name="DecreaseFontSizeButton" Label="Decrease" Command="{x:Static api:Commands.DecreaseFontSize}" />
+</RibbonGroup>
