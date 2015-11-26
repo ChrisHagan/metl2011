@@ -83,7 +83,7 @@ namespace SandRibbon.Pages.Integration
                     foreach (var slide in bucket)
                     {
                         var blockName = string.Format("IMAGE{0}", slide.id);
-                        var url = server.thumbnailUri(slide.id.ToString());
+                        var url = server.renderUri(slide.id.ToString(),1024,768);
                         var t = await httpClient.GetAsync(url);
                         var data = await t.Content.ReadAsByteArrayAsync();
                         var dataContent = new ByteArrayContent(data);

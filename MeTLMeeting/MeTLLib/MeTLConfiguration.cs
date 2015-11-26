@@ -76,6 +76,10 @@
         {
             return new Uri(host, new Uri(String.Format("/thumbnail/{0}", jid),UriKind.Relative));
         }
+        public Uri renderUri(string jid,int width, int height)
+        {
+            return new Uri(host, new Uri(String.Format("/render/{0}/{1}/{2}", jid,width,height), UriKind.Relative));
+        }
         public Uri authenticationUrl
         {
             get {
