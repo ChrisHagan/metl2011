@@ -213,17 +213,7 @@ namespace SandRibbon.Components
         public CollapsedCanvasStack()
         {
             InitializeComponent();
-
-            var url = new Uri("http://localhost:8080/textbox");
-            var session = WebCore.CreateWebSession(new WebPreferences { });
-            session.SetCookie(url, App.controller.credentials.cookie, false, true);
-            html.WebSession = session;
-            html.ProcessCreated += delegate
-            {
-                html.Source = url;
-                html.PreviewMouseUp += Html_PreviewMouseUp;
-            };            
-
+            //SetupBrowser();
             wireInPublicHandlers();
             contentBuffer = new ContentBuffer();
             contentBuffer.ElementsRepositioned += (sender, args) => { AddAdorners(); };
@@ -234,6 +224,7 @@ namespace SandRibbon.Components
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
+            Commands.ToggleBrowserControls.RegisterCommand(new DelegateCommand<object>(ToggleBrowserControls));
 
             Commands.SetTextBold.RegisterCommand(new DelegateCommand<bool>(ToggleBold,canToggleBold));
             Commands.SetTextUnderline.RegisterCommand(new DelegateCommand<bool>(ToggleUnderline,canToggleUnderline));
@@ -303,12 +294,36 @@ namespace SandRibbon.Components
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
-
-        private void Html_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            var pos = e.GetPosition(this);
-            var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})",pos.X,pos.Y));
-        }
+        private bool browserControlsVisible = false;
+        private void SetupBrowser() {
+            var url = new Uri("http://localhost:8080/textbox");
+            var session = WebCore.CreateWebSession(new WebPreferences { });
+            session.SetCookie(url, App.controller.credentials.cookie, false, true);
+            html.WebSession = session;
+            html.ProcessCreated += delegate
+            {
+                html.DocumentReady += delegate
+                {
+                    html.ExecuteJavascript("MeTLText.showControls()");
+                };
+                html.Source = url;
+            };
+        }        
+        private void ToggleBrowserControls(object obj)
+        {                        
+            browserControlsVisible = !browserControlsVisible;
+            if (browserControlsVisible)
+            {
+                html.IsHitTestVisible = true;
+                Work.IsHitTestVisible = false;
+            }
+            else
+            {
+                html.IsHitTestVisible = false;
+                Work.IsHitTestVisible = true;
+            }
+            html.ExecuteJavascriptWithResult(browserControlsVisible ? "MeTLText.showControls()" : "MeTLText.hideControls()");            
+        }        
 
         public void TogglePublishBrush(object unused) {
             setInkCanvasMode("Select");
@@ -511,8 +526,7 @@ namespace SandRibbon.Components
         {
             if (me.ToLower() == Globals.PROJECTOR) return;
             html.IsHitTestVisible = false;
-            Work.IsHitTestVisible = true;
-            //html.ExecuteJavascript("MeTLText.hideControls()");
+            Work.IsHitTestVisible = true;            
             switch (newLayer)
             {
                 case "Select":
@@ -527,9 +541,7 @@ namespace SandRibbon.Components
                     break;
                 case "Text":
                     Work.EditingMode = InkCanvasEditingMode.None;
-                    Work.UseCustomCursor = false;
-                    //html.IsHitTestVisible = true;
-                    //Work.IsHitTestVisible = false;
+                    Work.UseCustomCursor = false;                    
                     break;
                 case "Insert":
                     Work.EditingMode = InkCanvasEditingMode.Select;
@@ -539,8 +551,8 @@ namespace SandRibbon.Components
                 case "Sketch":
                     Work.EditingMode = InkCanvasEditingMode.Ink;
                     Work.UseCustomCursor = true;
-                    break;
-            }            
+                    break;                                                       
+            }
             _focusable = newLayer == "Text";
             setLayerForTextFor(Work);            
         }

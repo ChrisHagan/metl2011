@@ -106,8 +106,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand RemovePrivacyAdorners = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MirrorVideo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand VideoMirrorRefreshRectangle = new DefaultableCompositeCommand();
-
-        #region Sandpit
+        
         public static DefaultableCompositeCommand AnalyzeSelectedConversations = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendWakeUp = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendSleep = new DefaultableCompositeCommand();
@@ -126,8 +125,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetZoomRect = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand Highlight = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RemoveHighlight = new DefaultableCompositeCommand();
-
-        #endregion
+        
         public static DefaultableCompositeCommand ServersDown= new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RequestScreenshotSubmission = new DefaultableCompositeCommand(); 
         public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand();
@@ -164,13 +162,10 @@ namespace SandRibbon
         public static DefaultableCompositeCommand BanhammerSelectedItems= new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand VisualizeContent = new DefaultableCompositeCommand();
 
-        #region Attendance
         public static DefaultableCompositeCommand SendAttendance = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveAttendance = new DefaultableCompositeCommand();
-        #endregion
 
         //public static DefaultableCompositeCommand Relogin = new DefaultableCompositeCommand();
-        #region Quizzing
         public static DefaultableCompositeCommand ToggleWorm = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendWormMove = new DefaultableCompositeCommand(); 
         public static DefaultableCompositeCommand ReceiveWormMove = new DefaultableCompositeCommand(); 
@@ -184,8 +179,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand QuizResultsSnapshotAvailable = new DefaultableCompositeCommand();
         //public static DefaultableCompositeCommand PlaceQuizSnapshot = new DefaultableCompositeCommand();
 
-        #endregion
-        #region InkCanvas
         public static DefaultableCompositeCommand ShowDiagnostics = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetInkCanvasMode = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetPrivacyOfItems = new DefaultableCompositeCommand();
@@ -206,8 +199,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ZoomIn = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ZoomOut = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ExtendCanvasBothWays = new DefaultableCompositeCommand();
-        #endregion
-        #region ImageCanvas
+        public static DefaultableCompositeCommand ToggleBrowser = new DefaultableCompositeCommand();        
+        public static DefaultableCompositeCommand ToggleBrowserControls = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoreImageOptions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PickImages = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ImageDropped = new DefaultableCompositeCommand();
@@ -227,8 +220,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SendFileResource = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveFileResource = new DefaultableCompositeCommand();
 
-        #endregion
-        #region TextCanvas
         /*
         public static DefaultableCompositeCommand FontSizeChanged = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand FontChanged = new DefaultableCompositeCommand();
@@ -274,8 +265,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ToggleStrikethrough = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand MoreTextOptions = new DefaultableCompositeCommand();
-        #endregion
-        #region AppLevel
         public static DefaultableCompositeCommand RegisterPowerpointSourceDirectoryPreference = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LogOut = new DefaultableCompositeCommand();
@@ -289,7 +278,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand UpdateForeignConversationDetails = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RememberMe = new DefaultableCompositeCommand(false);
         public static DefaultableCompositeCommand ClipboardManager = new DefaultableCompositeCommand();
-        #endregion
+
         public static DefaultableCompositeCommand Undo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand Redo = new DefaultableCompositeCommand();
         public static RoutedCommand ProxyJoinConversation = new RoutedCommand();
@@ -297,7 +286,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetRibbonAppearance = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SaveUIState = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RestoreUIState = new DefaultableCompositeCommand();
-        #region ConversationLevel
         /*Moving is a metaphor which implies that I am only in one location.  Watching can happen to many places.*/
         public static DefaultableCompositeCommand WatchRoom = new DefaultableCompositeCommand();
 
@@ -344,8 +332,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand BanhammerActive = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ManageBannedContent = new DefaultableCompositeCommand();
 
-        #endregion
-        #region ppt
         public static DefaultableCompositeCommand ImportPowerpoint = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UploadPowerpoint = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PowerpointFinished = new DefaultableCompositeCommand();
@@ -354,12 +340,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ReceivePing = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveFlush = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendMeTLType = new DefaultableCompositeCommand();
-        #endregion
-        #region Drawers
         public static DefaultableCompositeCommand ToggleScratchPadVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleFriendsVisibility = new DefaultableCompositeCommand();
-        #endregion
-        #region Friends
         public static DefaultableCompositeCommand ReceivePublicChat = new DefaultableCompositeCommand();
         public static RoutedCommand HighlightFriend = new RoutedCommand();
         public static RoutedCommand PostHighlightFriend = new RoutedCommand();
@@ -372,7 +354,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand DiagnosticMessagesUpdated = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DiagnosticGaugesUpdated = new DefaultableCompositeCommand();
 
-        #endregion
         Commands()
         {
             NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => false));

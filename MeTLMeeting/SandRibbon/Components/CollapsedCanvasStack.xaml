@@ -6,7 +6,7 @@
     xmlns:providers="clr-namespace:SandRibbon.Providers"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" xmlns:Components="clr-namespace:SandRibbon.Components"
     xmlns:Utility="clr-namespace:SandRibbon.Components.Utility">
-     <UserControl.Resources>
+    <UserControl.Resources>
         <providers:Globals x:Key="Globals" />
         <Style TargetType="{x:Type Utility:MeTLTextBox}">
             <Setter Property="my:AttachedInputBindings.InputBindings">
@@ -46,10 +46,8 @@
     <Grid MinHeight="540" MinWidth="720" x:Name="canvasStack" Background="White">
         <Border x:Name="ClipboardFocus" BorderThickness="2" BorderBrush="Transparent">
             <Grid>
-                <awesomium:WebControl x:Name="html" Width="{Binding ElementName=Work, Path=ActualWidth}" Height="{Binding ElementName=Work, Path=ActualHeight}"
-                                      Background="White" ViewType="Offscreen" Visibility="Collapsed" IsHitTestVisible="False"/>
-                
-                <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" />                
+                <awesomium:WebControl x:Name="html" Background="White" Visibility="Collapsed" IsHitTestVisible="False" />
+                <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" />
             </Grid>
         </Border>
     </Grid>
