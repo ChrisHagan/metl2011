@@ -282,6 +282,9 @@
     <Compile Include="Pages\Collaboration\GroupCollaborationPage.xaml.cs">
       <DependentUpon>GroupCollaborationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\Layout\KunzweilerLens.xaml.cs">
+      <DependentUpon>KunzweilerLens.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">
@@ -420,6 +423,10 @@
     <Page Include="Pages\Collaboration\Layout\CastBarFrame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\Layout\KunzweilerLens.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\Collaboration\OneNotePage.xaml">
       <SubType>Designer</SubType>

@@ -3,6 +3,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Windows.Controls.Ribbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Collaboration.Layout;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -127,70 +128,76 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.MoveToCollaborationPage.Execute(slide.id);
                 Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
                 */
+                canvas.RegionsChanged += Canvas_RegionsChanged;
             };
-        }
-        /*
-        private void restoreTextDefaults(object obj)
+        }        
+        private void Canvas_RegionsChanged(object sender, List<Layout.SignedBounds> e)
         {
-            fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
-            fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
+            lens.DataContext = e;
         }
 
-        private void updateTextControls(TextInformation info)
-        {
-            fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
-            fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
-            TextBoldButton.IsChecked = info.Bold;
-            TextItalicButton.IsChecked = info.Italics;
-            TextUnderlineButton.IsChecked = info.Underline;
-            TextStrikethroughButton.IsChecked = info.Strikethrough;
-        }       
-        
-        protected bool canDecreaseFont(object _unused)
-        {
-            return fontSize != null;
-        }
-        private void decreaseFont(object _unused)
-        {
-            if (fontSize.ItemsSource == null) return;
-            var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
-            if (currentItem - 1 >= 0)
-            {
-                var newSize = fontSizes[currentItem - 1];
-                fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
-                Commands.FontSizeChanged.Execute(newSize);
-            }
-        }   
-        protected bool canIncreaseFont(object _unused)
-        {
-            return fontSize != null;
-        }     
-        private void increaseFont(object _unused)
-        {
-            if (fontSize.ItemsSource == null) return;
-            var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-            if (currentItem + 1 < fontSizes.Count())
-            {
-                var newSize = fontSizes[currentItem + 1];
-                fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
-                Commands.FontSizeChanged.Execute(newSize);
-            }
-        }
-        private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
-        {
-            var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-            if(currentItem < 0) return;
-            if (e.AddedItems.Count == 0) return;
-            var size = Double.Parse(e.AddedItems[0].ToString());
-            Commands.FontSizeChanged.Execute(size);
-        }
-        private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 0) return;
-            var font = new FontFamily(e.AddedItems[0].ToString());
-            Commands.FontChanged.Execute(font);
-        }   
-        */
+        /*
+private void restoreTextDefaults(object obj)
+{
+   fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
+   fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
+}
+
+private void updateTextControls(TextInformation info)
+{
+   fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
+   fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
+   TextBoldButton.IsChecked = info.Bold;
+   TextItalicButton.IsChecked = info.Italics;
+   TextUnderlineButton.IsChecked = info.Underline;
+   TextStrikethroughButton.IsChecked = info.Strikethrough;
+}       
+
+protected bool canDecreaseFont(object _unused)
+{
+   return fontSize != null;
+}
+private void decreaseFont(object _unused)
+{
+   if (fontSize.ItemsSource == null) return;
+   var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
+   if (currentItem - 1 >= 0)
+   {
+       var newSize = fontSizes[currentItem - 1];
+       fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
+       Commands.FontSizeChanged.Execute(newSize);
+   }
+}   
+protected bool canIncreaseFont(object _unused)
+{
+   return fontSize != null;
+}     
+private void increaseFont(object _unused)
+{
+   if (fontSize.ItemsSource == null) return;
+   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
+   if (currentItem + 1 < fontSizes.Count())
+   {
+       var newSize = fontSizes[currentItem + 1];
+       fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
+       Commands.FontSizeChanged.Execute(newSize);
+   }
+}
+private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
+{
+   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
+   if(currentItem < 0) return;
+   if (e.AddedItems.Count == 0) return;
+   var size = Double.Parse(e.AddedItems[0].ToString());
+   Commands.FontSizeChanged.Execute(size);
+}
+private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
+{
+   if (e.AddedItems.Count == 0) return;
+   var font = new FontFamily(e.AddedItems[0].ToString());
+   Commands.FontChanged.Execute(font);
+}   
+*/
         private bool userMayAdministerConversation(ConversationDetails _conversation)
         {
             var conversation = Globals.conversationDetails;

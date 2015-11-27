@@ -28,6 +28,7 @@ using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 using Awesomium.Windows.Controls;
 using Awesomium.Core;
+using SandRibbon.Pages.Collaboration.Layout;
 
 namespace SandRibbon.Components
 {
@@ -162,7 +163,10 @@ namespace SandRibbon.Components
         private double size = 24.0d;
         public static TypingTimedAction TypingTimer;
         private string _originalText;
-        private ContentBuffer contentBuffer;
+        public ContentBuffer contentBuffer
+        {
+            get;
+        } = new ContentBuffer();
         private string _target;
         private StackMoveDeltaProcessor moveDeltaProcessor;
         private Privacy _defaultPrivacy;
@@ -215,8 +219,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             //SetupBrowser();
             wireInPublicHandlers();
-            contentBuffer = new ContentBuffer();
-            contentBuffer.ElementsRepositioned += (sender, args) => { AddAdorners(); };
+            contentBuffer.ElementsRepositioned += ContentElementsChanged;
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -294,6 +297,20 @@ namespace SandRibbon.Components
             if (_target == "presentationSpace" && me != Globals.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
+
+        private void ContentElementsChanged(object sender, EventArgs e)
+        {
+            AddAdorners();
+            BroadcastRegions(sender as ContentBuffer);
+        }
+
+        public event EventHandler<List<SignedBounds>> RegionsChanged;
+        private void BroadcastRegions(ContentBuffer buffer) {
+            var regions = new List<SignedBounds>();
+            regions.AddRange(buffer.strokes.Strokes.Select(s => s.signedBounds()));
+            RegionsChanged?.Invoke(this, regions);
+        }
+
         private bool browserControlsVisible = false;
         private void SetupBrowser() {
             var url = new Uri("http://localhost:8080/textbox");

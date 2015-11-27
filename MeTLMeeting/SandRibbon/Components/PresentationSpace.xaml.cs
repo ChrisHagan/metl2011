@@ -23,11 +23,20 @@ using SandRibbon.Quizzing;
 using System.Windows.Media.Effects;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.Collaboration.Models;
+using SandRibbon.Pages.Collaboration.Layout;
 
 namespace SandRibbon.Components
 {
     public partial class PresentationSpace
     {
+        public CollapsedCanvasStack workStack
+        {
+            get
+            {
+                return stack;
+            }
+        }
+
         private bool inConversation;
         public PresentationSpace()
         {
@@ -51,7 +60,13 @@ namespace SandRibbon.Components
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));            
             Commands.AllStaticCommandsAreRegistered();
             inConversation = true;
-        }        
+            stack.RegionsChanged += Stack_RegionsChanged;
+        }
+        public event EventHandler<List<SignedBounds>> RegionsChanged;
+        private void Stack_RegionsChanged(object sender, List<Pages.Collaboration.Layout.SignedBounds> e)
+        {
+            RegionsChanged?.Invoke(this,e);
+        }
 
         private void hideConversationSearch(object obj)
         {
@@ -159,7 +174,7 @@ namespace SandRibbon.Components
                 }
             });
             return file;
-        }
+        }        
         private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {

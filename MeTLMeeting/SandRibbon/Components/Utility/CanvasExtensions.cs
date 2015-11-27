@@ -14,6 +14,7 @@ using System.Windows.Automation.Peers;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using SandRibbonObjects;
+using SandRibbon.Pages.Collaboration.Layout;
 
 namespace SandRibbon.Components.Utility
 {
@@ -201,6 +202,13 @@ namespace SandRibbon.Components.Utility
             if (!isPrivate) return;
 
             pen.Freeze();
+        }
+
+        public SignedBounds signedBounds() {
+            return new SignedBounds {
+                username = this.tag().author,
+                bounds = this.GetBounds()
+            };
         }
 
         protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)

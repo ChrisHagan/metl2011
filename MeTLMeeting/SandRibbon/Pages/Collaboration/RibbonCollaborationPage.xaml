@@ -7,6 +7,7 @@
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:layout="clr-namespace:SandRibbon.Layout"
+      xmlns:collab="clr-namespace:SandRibbon.Pages.Collaboration.Layout"
       xmlns:tabs="clr-namespace:SandRibbon.Tabs"
       Title="Collaboration">
     <Page.Resources>
@@ -180,7 +181,10 @@
                         <Canvas x:Name="syncPageOverlay"/>
                         <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
                             <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                                <Grid>
+                                    <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                                    <collab:KunzweilerLens x:Name="lens" Width="{Binding ElementName=canvas, Path=ActualWidth}" Height="{Binding ElementName=canvas, Path=ActualHeight}" />                                        
+                                </Grid>
                             </ScrollViewer>
                         </Viewbox>
                         <Grid x:Name="dynamicContent" />
