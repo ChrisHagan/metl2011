@@ -4,7 +4,7 @@
       xmlns:local="clr-namespace:SandRibbon.Pages.ServerSelection"      
       xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
       xmlns:layout="clr-namespace:SandRibbon.Layout"
-      Title="ServerSelectorPage">
+      Title="Server selection">
     <Page.Resources>
         <Style x:Key="lowProfileButton" TargetType="{x:Type Button}">
             <Setter Property="BorderBrush" Value="Transparent" />
