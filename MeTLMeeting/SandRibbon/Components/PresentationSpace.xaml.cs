@@ -59,15 +59,9 @@ namespace SandRibbon.Components
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));            
             Commands.AllStaticCommandsAreRegistered();
-            inConversation = true;
-            stack.RegionsChanged += Stack_RegionsChanged;
+            inConversation = true;     
         }
-        public event EventHandler<List<SignedBounds>> RegionsChanged;
-        private void Stack_RegionsChanged(object sender, List<Pages.Collaboration.Layout.SignedBounds> e)
-        {
-            RegionsChanged?.Invoke(this,e);
-        }
-
+     
         private void hideConversationSearch(object obj)
         {
             inConversation = true;

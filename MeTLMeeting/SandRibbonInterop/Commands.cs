@@ -296,6 +296,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SneakIntoAndDo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PreParserAvailable = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SignedRegions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ConversationPreParserAvailable = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToOverview = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToPrevious = new DefaultableCompositeCommand();
@@ -378,7 +379,8 @@ namespace SandRibbon
                     .Where(p => p.FieldType == typeof(DefaultableCompositeCommand))
                     .Select(f => (DefaultableCompositeCommand)f.GetValue(null));
             }
-        }        
+        }
+        
 
         public static IEnumerable<ICommand> allHandlers() 
         {

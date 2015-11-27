@@ -303,12 +303,11 @@ namespace SandRibbon.Components
             AddAdorners();
             BroadcastRegions(sender as ContentBuffer);
         }
-
-        public event EventHandler<List<SignedBounds>> RegionsChanged;
+        
         private void BroadcastRegions(ContentBuffer buffer) {
             var regions = new List<SignedBounds>();
             regions.AddRange(buffer.strokes.Strokes.Select(s => s.signedBounds()));
-            RegionsChanged?.Invoke(this, regions);
+            Commands.SignedRegions.Execute(regions);
         }
 
         private bool browserControlsVisible = false;

@@ -128,12 +128,13 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.MoveToCollaborationPage.Execute(slide.id);
                 Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
                 */
-                canvas.RegionsChanged += Canvas_RegionsChanged;
+                Commands.SignedRegions.RegisterCommand(new DelegateCommand<List<SignedBounds>>(SignedRegions));
             };
-        }        
-        private void Canvas_RegionsChanged(object sender, List<Layout.SignedBounds> e)
+        }
+
+        private void SignedRegions(List<SignedBounds> bounds)
         {
-            lens.DataContext = e;
+            lens.DataContext = bounds;
         }
 
         /*
