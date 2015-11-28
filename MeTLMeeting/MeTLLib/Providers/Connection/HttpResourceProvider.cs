@@ -11,6 +11,7 @@ namespace MeTLLib.Providers.Connection
 {
     public class WebClientWithTimeout : WebClient
     {
+        protected static readonly int maxAttempts = 3;
         protected Credentials metlCreds;
         public WebClientWithTimeout(Credentials _metlCreds)
         {
@@ -23,6 +24,35 @@ namespace MeTLLib.Providers.Connection
             request.KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
+        }
+        protected override WebResponse GetWebResponse(WebRequest request)
+        {
+            return RetryingGetWebResponse(request, 1);
+            //return base.GetWebResponse(request);
+        }
+        protected WebResponse RetryingGetWebResponse(WebRequest request, int attempt = 1)
+        {
+            try
+            {
+                var response = base.GetWebResponse(request);
+                var sc = (response as HttpWebResponse).StatusCode;
+                if (sc == HttpStatusCode.InternalServerError || sc == HttpStatusCode.BadGateway || sc == HttpStatusCode.Forbidden || sc == HttpStatusCode.GatewayTimeout || sc == HttpStatusCode.HttpVersionNotSupported || sc == HttpStatusCode.NoContent || sc == HttpStatusCode.NotFound || sc == HttpStatusCode.NotImplemented || sc == HttpStatusCode.RequestTimeout || sc == HttpStatusCode.ServiceUnavailable)
+                {
+                    return RetryingGetWebResponse(request, attempt + 1);
+                } else
+                {
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                if (attempt + 1 <= maxAttempts) {
+                    return RetryingGetWebResponse(request, attempt + 1);
+                } else {
+                    throw e;
+                }
+
+            }
         }
     }
     public class MeTLWebClient : IWebClient
