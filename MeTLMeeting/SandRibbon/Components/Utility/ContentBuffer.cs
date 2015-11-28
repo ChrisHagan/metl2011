@@ -44,8 +44,6 @@ namespace SandRibbon.Components.Utility
         private ImageFilter imageDeltaCollection;
         private StrokeFilter strokeDeltaFilter;
         
-        public event EventHandler ElementsRepositioned;
-
         public ContentBuffer()
         {
             strokeFilter = new StrokeFilter();
@@ -107,8 +105,7 @@ namespace SandRibbon.Components.Utility
         {
             textFilter.TextBoxes.ForEach(t => adjustText((MeTLTextBox)t, tb => tb));
             strokeFilter.Strokes.ForEach(s => adjustStroke(s, st => st));
-            imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));
-            ElementsRepositioned?.Invoke(this, new EventArgs());
+            imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));            
         }
 
         public void Clear()
@@ -211,8 +208,6 @@ namespace SandRibbon.Components.Utility
                 reassociateImageToCanvas((MeTLImage)tImage);
             foreach (var tText in textboxes)
                 reassociateTextboxToCanvas((MeTLTextBox)tText);
-
-            ElementsRepositioned?.Invoke(this,new EventArgs());
         }
         public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {

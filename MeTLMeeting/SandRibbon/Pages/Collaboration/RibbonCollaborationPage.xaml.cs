@@ -127,16 +127,9 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.JoinConversation.Execute(details.Jid);
                 Commands.MoveToCollaborationPage.Execute(slide.id);
                 Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
-                */
-                Commands.SignedRegions.RegisterCommand(new DelegateCommand<List<SignedBounds>>(SignedRegions));
+                */                
             };
-        }
-
-        private void SignedRegions(List<SignedBounds> bounds)
-        {
-            lens.DataContext = bounds;
-        }
-
+        }        
         /*
 private void restoreTextDefaults(object obj)
 {

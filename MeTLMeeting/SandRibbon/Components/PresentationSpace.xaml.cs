@@ -36,8 +36,7 @@ namespace SandRibbon.Components
                 return stack;
             }
         }
-
-        private bool inConversation;
+        
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
@@ -56,20 +55,7 @@ namespace SandRibbon.Components
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));            
             Commands.AllStaticCommandsAreRegistered();
-            inConversation = true;     
-        }
-     
-        private void hideConversationSearch(object obj)
-        {
-            inConversation = true;
-        }
-
-        private void showConversationSearch(object obj)
-        {
-            inConversation = false;
         }
 
         private void BanHammerSelectedItems(object obj)
@@ -112,7 +98,6 @@ namespace SandRibbon.Components
         private void setUpSyncDisplay(int slide)
         {
             if (!Globals.synched) return;
-            if (!inConversation) return;
             if (slide == Globals.slide) return;
             try
             {

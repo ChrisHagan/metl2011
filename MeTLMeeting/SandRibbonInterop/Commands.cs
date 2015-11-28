@@ -30,8 +30,7 @@ namespace SandRibbon
                 isSet = true;
                 commandValue = value;
             }
-        }
-
+        }        
         public DefaultableCompositeCommand()
         {
         }
@@ -216,6 +215,12 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SendDirtyAutoShape = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveAutoShape = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveDirtyAutoShape = new DefaultableCompositeCommand();
+
+        /*These are fired after the content buffers have compensated for negative cartesian space and checked ownership*/
+        public static DefaultableCompositeCommand StrokePlaced = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ImagePlaced = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextPlaced = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ToggleLens = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand SendFileResource = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveFileResource = new DefaultableCompositeCommand();

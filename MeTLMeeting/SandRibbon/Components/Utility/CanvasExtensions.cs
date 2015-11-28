@@ -207,7 +207,8 @@ namespace SandRibbon.Components.Utility
         public SignedBounds signedBounds() {
             return new SignedBounds {
                 username = this.tag().author,
-                bounds = this.GetBounds()
+                bounds = this.GetBounds(),
+                privacy = this.tag().privacy.ToString()
             };
         }
 

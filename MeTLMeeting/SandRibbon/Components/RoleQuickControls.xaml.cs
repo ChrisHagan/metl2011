@@ -75,12 +75,9 @@ namespace SandRibbon.Components
         }
         private void SetSync(bool sync)
         {
-            var synced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncRed.png");
-            var deSynced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncGreen.png");
-            BitmapImage source;
+            syncButton.IsChecked = Globals.synched; 
             if (Globals.synched)
-            {
-                source = new BitmapImage(synced);
+            {                
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
@@ -88,15 +85,7 @@ namespace SandRibbon.Components
                         Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException) { }
-            }
-            else
-            {
-                source = new BitmapImage(deSynced);
-            }
-            Dispatcher.adoptAsync(() => {
-                syncButton.LargeImageSource = source;
-                syncButton.SmallImageSource = source;
-            });
+            }            
         }
         private void toggleSync(object _unused)
         {

@@ -218,8 +218,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             //SetupBrowser();
-            wireInPublicHandlers();
-            contentBuffer.ElementsRepositioned += ContentElementsChanged;
+            wireInPublicHandlers();            
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -1400,10 +1399,17 @@ namespace SandRibbon.Components
                 {
                     Work.Strokes.Add(st);
                     RefreshCanvas();
+                    Commands.StrokePlaced.Execute(st);
                 });
             }
             else
-                contentBuffer.AddStroke(stroke, (st) => Work.Strokes.Add(st));
+            {
+                contentBuffer.AddStroke(stroke, (st) =>
+                {
+                    Work.Strokes.Add(st);
+                    Commands.StrokePlaced.Execute(st);
+                });
+            }
         }
 
         private double ReturnPositiveValue(double x)

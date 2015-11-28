@@ -157,7 +157,7 @@
             <tabs:Attachments/>
             <!--tabs:ConversationManagement/-->
             <tabs:Analytics/>
-            <!--tabs:Plugins/-->
+            <tabs:Plugins/>
         </Ribbon>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">

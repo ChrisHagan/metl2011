@@ -43,14 +43,16 @@
                     <RibbonButton Label="Duplicate conversation" LargeImageSource="\Resources\appbar.page.duplicate.png" SmallImageSource="\Resources\appbar.page.duplicate.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
                 </WrapPanel>
             </Grid>
-            <WrapPanel x:Name="participantQuickControls">
+            <Grid layout:GridLayout.ItemsPerRow="1" x:Name="participantQuickControls">
                 <Label Content="What will you do?" Style="{StaticResource medium}" />
-                <RibbonButton Label="Follow teacher" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
-                <RibbonButton x:Name="submitSubmission" 
+                <WrapPanel>
+                    <RibbonToggleButton Label="Follow teacher" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
+                    <RibbonButton x:Name="submitSubmission" 
                     Label="Submit screenshot" LargeImageSource="\Resources\appbar.stamp.at.png" SmallImageSource="\Resources\appbar.stamp.at.png"
                     Command="{x:Static api:Commands.RequestScreenshotSubmission}"
                     ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
-            </WrapPanel>
+                </WrapPanel>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </UserControl>
