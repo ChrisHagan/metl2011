@@ -165,7 +165,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}/search?query={1}", server.host, HttpUtility.UrlEncode(query))), UriKind.RelativeOrAbsolute);
+                var uri = server.conversationQuery(query);
                 Console.WriteLine("ConversationsFor: {0}", uri);
                 var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();

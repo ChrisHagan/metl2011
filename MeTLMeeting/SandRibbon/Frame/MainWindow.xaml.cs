@@ -603,6 +603,7 @@ namespace SandRibbon
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
                     Commands.JoinConversation.ExecuteAsync(details.Jid);
+                mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
             }
         }
         private void setSync(object _obj)

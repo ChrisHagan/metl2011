@@ -24,6 +24,8 @@ namespace SandRibbon
 {
     public partial class App : Application
     {
+        
+
         public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
         public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
         //public static DiagnosticModel dd = new DiagnosticModel();
@@ -120,6 +122,13 @@ namespace SandRibbon
             Console.SetOut(outputWriter);
             App.mark("App static constructor runs");
             setDotNetPermissionState();
+            /*
+            // a test of whether training works without fixing its certs
+            //System.Net.ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback((s,ce,ch,e) => true);//bypassAllCertificateStuff);
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (s, ce, ch, e) => { return true; };//bypassAllCertificateStuff);
+            System.Net.ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls;
+            */
         }
         private static void setDotNetPermissionState()
         {

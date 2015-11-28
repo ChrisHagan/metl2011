@@ -154,17 +154,20 @@ namespace SandRibbon.Components
                 var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
                 var generator = slides.ItemContainerGenerator;
                 var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToList();
-                var top = view.VerticalOffset;
-                var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
-                for (var i = (int)Math.Floor(top); i <= bottom; i++)
+                if (view != null)
                 {
-                    var id = context[i].id;
-                    var container = generator.ContainerFromIndex(i);
-                    try
+                    var top = view.VerticalOffset;
+                    var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
+                    for (var i = (int)Math.Floor(top); i <= bottom; i++)
                     {
-                        ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                        var id = context[i].id;
+                        var container = generator.ContainerFromIndex(i);
+                        try
+                        {
+                            ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                        }
+                        catch { }
                     }
-                    catch { }
                 }
             }
             catch { }
@@ -200,11 +203,11 @@ namespace SandRibbon.Components
         private void receivedStatus(TeacherStatus status)
         {
             Globals.UpdatePresenceListing(new MeTLPresence
-                                              {
-                                                  Joining = true,
-                                                  Who = status.Teacher,
-                                                  Where = status.Conversation
-                                              });
+            {
+                Joining = true,
+                Who = status.Teacher,
+                Where = status.Conversation
+            });
             if (status.Conversation == Globals.location.activeConversation && status.Teacher == Globals.conversationDetails.Author)
             {
                 TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, status.Slide);
@@ -403,7 +406,8 @@ namespace SandRibbon.Components
                 var joined = false;
                 foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
                 {
-                    if (!joined) {
+                    if (!joined)
+                    {
                         slides.SelectedItem = slide;
                         joined = true;
                     }
