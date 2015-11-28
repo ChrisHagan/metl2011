@@ -79,7 +79,7 @@ namespace SandRibbon.Utils
     {
         public string File;
         public ConversationDetails Details;
-        public PowerPointLoader.PowerpointImportType Type;
+        public PowerpointImportType Type;
         public int Magnification;
     }
     public class PowerpointImportProgress
@@ -111,19 +111,23 @@ namespace SandRibbon.Utils
         public IMPORT_STAGE stage;
         public string slideThumbnailSource{get;set;}
     }
+    public enum PowerpointImportType
+    {
+        HighDefImage,
+        Image,
+        Shapes
+    }
+
     public class PowerPointLoader
     {
+        public static PowerpointImportType SHAPES = PowerpointImportType.Shapes;
+        public static PowerpointImportType IMAGE = PowerpointImportType.Image;
+        public static PowerpointImportType HIGHDEFIMAGE = PowerpointImportType.HighDefImage;
         private const MsoTriState FALSE = MsoTriState.msoFalse;
         private const MsoTriState TRUE = MsoTriState.msoTrue;
         private static int resource = 1;
         private MeTLLib.IClientBehaviour clientConnection;
         private string currentConversation = null;
-        public enum PowerpointImportType
-        {
-            HighDefImage,
-            Image,
-            Shapes
-        }
         public PowerPointLoader()
         {
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
@@ -171,23 +175,24 @@ namespace SandRibbon.Utils
                 {
                     try
                     {
+                        var updatedConversation = ConversationDetails.Empty;
                         progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
                         switch (spec.Type)
                         {
                             case PowerpointImportType.HighDefImage:
                                 Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
-                                LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
+                                updatedConversation = LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                                 break;
                             case PowerpointImportType.Image:
                                 Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
-                                LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
+                                updatedConversation = LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                                 break;
                             case PowerpointImportType.Shapes:
                                 Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
-                                LoadPowerpoint(app, spec.File, conversation);
+                                updatedConversation = LoadPowerpoint(app, spec.File, conversation);
                                 break;
                         }
-
+                        Commands.JoinCreatedConversation.Execute(updatedConversation);
                     }
                     catch (Exception)
                     {
@@ -203,13 +208,13 @@ namespace SandRibbon.Utils
             Commands.HideConversationSearchBox.Execute(null);
             Commands.CreateConversation.ExecuteAsync(details);
         }
-        public void ImportPowerpoint(Window owner)
+        public void ImportPowerpoint(Window owner, PowerpointImportType importType)
         {
             var configDialog = new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
             configDialog.Owner = owner;
             configDialog.ChooseFileForImport();
 
-            var spec = configDialog.Import();
+            var spec = configDialog.Import(importType);
             if (spec == null) return;
             UploadPowerpoint(spec);
         }
@@ -235,7 +240,7 @@ namespace SandRibbon.Utils
             return procList.Count() != 0;
         }
 
-        public void LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, ConversationDetails conversation, int MagnificationRating)
+        public ConversationDetails LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, ConversationDetails conversation, int MagnificationRating)
         {
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
@@ -329,6 +334,7 @@ namespace SandRibbon.Utils
                 Trace.TraceInformation("PowerpointImport: Failed to update conversation");
             }
             UploadFromXml(convDescriptor);
+            return updatedConversation;
         }
 
         private void UploadFromXml(ConversationDescriptor conversationDescriptor)
@@ -373,8 +379,9 @@ namespace SandRibbon.Utils
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
         }
-        public void LoadPowerpoint(PowerPoint.Application app, string file, ConversationDetails conversation)
+        public ConversationDetails LoadPowerpoint(PowerPoint.Application app, string file, ConversationDetails conversation)
         {
+            var resultantConversation = ConversationDetails.Empty;
             try
             {
                 var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
@@ -396,7 +403,7 @@ namespace SandRibbon.Utils
                     var index = 0;
                     conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide
                     (startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-                    provider.UpdateConversationDetails(conversation);
+                    resultantConversation = provider.UpdateConversationDetails(conversation);
                     UploadFromXml(convDescriptor);
                 }
                 catch (COMException e)
@@ -411,6 +418,7 @@ namespace SandRibbon.Utils
             catch (Exception e) {
                 Commands.Mark.Execute(e.Message);
             }
+            return resultantConversation;
         }
         
         private void sendSlide(int id, XElement slide, ConversationDescriptor conversationDescriptor)

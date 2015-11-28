@@ -341,6 +341,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ImportPowerpoint = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UploadPowerpoint = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PowerpointFinished = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand JoinCreatedConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveMove = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveJoin = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceivePing = new DefaultableCompositeCommand();

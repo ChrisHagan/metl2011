@@ -12,6 +12,7 @@
     xmlns:macros="clr-namespace:SandRibbon.Pages.Macros"
     xmlns:layout="clr-namespace:SandRibbon.Layout"
     xmlns:p="clr-namespace:SandRibbon.Properties"
+      xmlns:ppType="clr-namespace:SandRibbon.Utils"
     x:Name="root">
     <Page.Resources>
         <Thickness Top="50" x:Key="space"/>
@@ -43,8 +44,15 @@
                 <Button Command="{x:Static api:Commands.CreateBlankConversation}">
                     <Label Content="Create new conversation" Style="{StaticResource medium}"/>
                 </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}">
-                    <Label Content="Import conversation from powerpoint" Style="{StaticResource medium}"/>
+                <!--<Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerpointImportType.Image}">-->
+                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}">
+                        <Label Content="Import conversation from powerpoint" Style="{StaticResource medium}"/>
+                </Button>
+                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}">
+                    <Label Content="Import conversation from powerpoint (Flexible)" Style="{StaticResource medium}"/>
+                </Button>
+                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}">
+                    <Label Content="Import conversation from powerpoint (High Quality)" Style="{StaticResource medium}"/>
                 </Button>
             </UniformGrid>
         </Grid>
