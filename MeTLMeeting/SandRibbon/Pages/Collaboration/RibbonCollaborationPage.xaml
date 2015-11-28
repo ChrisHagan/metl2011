@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:components="clr-namespace:SandRibbon.Components"
+      xmlns:legacy="clr-namespace:SandRibbon.Tabs.Groups"
       xmlns:layout="clr-namespace:SandRibbon.Layout"
       xmlns:collab="clr-namespace:SandRibbon.Pages.Collaboration.Layout"
       xmlns:tabs="clr-namespace:SandRibbon.Tabs"
@@ -147,7 +148,8 @@
                         </RibbonRadioButton.CommandParameter>
                     </RibbonRadioButton>
                 </RibbonGroup>
-                <components:TextTools x:Name="textGroup" />
+                <RibbonGroup x:Name="textGroup"></RibbonGroup>
+                <!--<legacy:TextTools x:Name="textGroup" /-->
                 <RibbonGroup x:Name="imageGroup" Header="Image options">
                     <RibbonButton Label="Insert image" Command="{x:Static api:Commands.AddImage}" SmallImageSource="\Resources\appbar.page.image.png" LargeImageSource="\Resources\appbar.page.image.png" />
                 </RibbonGroup>

@@ -349,10 +349,14 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ToggleScratchPadVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleFriendsVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceivePublicChat = new DefaultableCompositeCommand();
+
+        public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
+
         public static RoutedCommand HighlightFriend = new RoutedCommand();
         public static RoutedCommand PostHighlightFriend = new RoutedCommand();
         public static RoutedCommand HighlightUser = new RoutedCommand();
         public static RoutedCommand PostHighlightUser = new RoutedCommand();
+
 
         public static DefaultableCompositeCommand LaunchDiagnosticWindow = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DiagnosticMessage = new DefaultableCompositeCommand();

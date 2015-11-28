@@ -29,6 +29,7 @@ using Size = System.Windows.Size;
 using Awesomium.Windows.Controls;
 using Awesomium.Core;
 using SandRibbon.Pages.Collaboration.Layout;
+using Xceed.Wpf.Toolkit;
 
 namespace SandRibbon.Components
 {
@@ -2313,13 +2314,21 @@ namespace SandRibbon.Components
             /*
             var pos = e.GetPosition(this);
             var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})", pos.X, pos.Y));
-            */
+            
             var pos = e.GetPosition(this);                                               
             MeTLTextBox box = createNewTextbox();
             AddTextBoxToCanvas(box, true);
             InkCanvas.SetLeft(box, pos.X);
             InkCanvas.SetTop(box, pos.Y);
             myTextBox = box;
+            */
+            var box = new Xceed.Wpf.Toolkit.RichTextBox();
+            RichTextBoxFormatBarManager.SetFormatBar(box, new RichTextBoxFormatBar());
+            box.Width = 250;
+            Work.Children.Add(box);
+            var pos = e.GetPosition(this);
+            InkCanvas.SetLeft(box, pos.X);
+            InkCanvas.SetTop(box, pos.Y);
             box.Focus();            
         }
         private void AddTextboxToMyCanvas(MeTLTextBox box)
