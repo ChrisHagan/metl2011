@@ -25,9 +25,10 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}">
+                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}" Visibility="{Binding Path=visible}" IsEnabled="{Binding Path=enabled}">
                         <Grid layout:GridLayout.ItemsPerRow="1">
-                            <Image Source="{Binding Path=imageUrl}" Margin="{StaticResource clearHorizontal}" Height="300"/>
+                            <Image Source="\Resources\appbar.heart.break.png" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Image Source="{Binding Path=imageUri}" Margin="{StaticResource clearHorizontal}" Height="300"/>
                             <Label HorizontalAlignment="Center" Content="{Binding Path=name}" Margin="{StaticResource clearTop}"/>
                         </Grid>
                     </Button>

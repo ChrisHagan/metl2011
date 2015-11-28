@@ -276,7 +276,7 @@ namespace SandRibbon.Pages.Collaboration
                 container = privateNotes;
                 return;
             }
-            if (targetName == null)
+            if (targetName == null) //default
             {
                 viewbox = canvasViewBox;
                 container = canvas;

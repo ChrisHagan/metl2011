@@ -14,4 +14,14 @@
         <RibbonButton Label="Manage banned content" SmallImageSource="/Resources/ban-management-icon.png" LargeImageSource="/Resources/ban-management-icon.png" x:Name="bannedContentManagement" 
                      Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>
     </RibbonGroup>
+    <RibbonGroup Header="Permissions">
+        <!--
+        <RibbonToggleButton x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></RibbonToggleButton>
+        <RibbonToggleButton Checked="StudentsCanPublishChecked" Content="Students can publish quizzes"></RibbonToggleButton>
+        <RibbonToggleButton Checked="StudentsCanPublishChecked" Content="Students can create attachments"></RibbonToggleButton>
+        <RibbonToggleButton Checked="StudentsCanPublishChecked" Content="Students can add slides"></RibbonToggleButton>
+        <RibbonToggleButton Checked="StudentsCanPublishChecked" Content="Students can view participants list"></RibbonToggleButton>
+        <RibbonToggleButton x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></RibbonToggleButton>
+        -->
+    </RibbonGroup>
 </RibbonTab>
