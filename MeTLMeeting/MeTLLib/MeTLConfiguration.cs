@@ -91,6 +91,10 @@
         {
             return new System.Uri(host, new Uri(String.Format("/details/{0}", jid), UriKind.Relative));
         }
+        public Uri conversationQuery(string query)
+        {
+            return new Uri(host, new Uri(String.Format("/search?query={0}", HttpUtility.UrlEncode(query)), UriKind.Relative));
+        }
         public Uri uploadResource(string preferredFilename,string jid)
         {
             return new Uri(host, new Uri(String.Format("/upload?filename={0}&jid={1}", preferredFilename, jid), UriKind.Relative));

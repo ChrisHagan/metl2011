@@ -300,7 +300,7 @@ namespace MeTLLib.DataTypes
                 //&& (foreignConversationDetails.Created == Created)
                 && (foreignConversationDetails.IsValid == IsValid)
                 && (foreignConversationDetails.Jid == Jid)
-                && (foreignConversationDetails.LastAccessed.ToString() == LastAccessed.ToString())
+                //&& (foreignConversationDetails.LastAccessed.ToString() == LastAccessed.ToString())
                 && (foreignConversationDetails.Permissions.ValueEquals(Permissions))
                 && (foreignConversationDetails.Slides.All(s => s.ValueEquals(Slides[foreignConversationDetails.Slides.IndexOf(s)])))
                 && (foreignConversationDetails.Subject == Subject)
