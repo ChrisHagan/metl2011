@@ -286,13 +286,10 @@ namespace SandRibbon.Utils.Connection
         {
             foreach (var box in visual.TextChildren())
             {
-                var textbox = (TextBox)box;
+                var textbox = (RichTextBox)box;
                 var testSize = new Size(textbox.ActualWidth, textbox.ActualHeight);
                 textbox.Measure(testSize);
-                textbox.Arrange(new Rect(testSize));
-                var lastCharRect = textbox.GetRectFromCharacterIndex(textbox.Text.Count());
-                if (textbox.Height < lastCharRect.Bottom)
-                    textbox.Height = lastCharRect.Bottom;
+                textbox.Arrange(new Rect(testSize));                
             }
             return visual;
         }

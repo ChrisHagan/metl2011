@@ -555,7 +555,7 @@ namespace SandRibbon.Components
             Action redo = () =>
                 {
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.isDeleted = true;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -884,7 +884,7 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(endingStrokes.Select(s => (s as Stroke).Clone())),
-                        endingTexts.Select(et => et as TextBox),
+                        endingTexts.Select(et => et as Xceed.Wpf.Toolkit.RichTextBox),
                         endingImages.Select(et => et as Image));
 
                     moveDelta.xTranslate = -thisXTrans;
@@ -914,7 +914,7 @@ namespace SandRibbon.Components
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(startingStrokes.Select(s => (s as Stroke).Clone())),
-                        startingBoxes.Select(et => et as TextBox),
+                        startingBoxes.Select(et => et as Xceed.Wpf.Toolkit.RichTextBox),
                         startingImages.Select(et => et as Image));
 
                     moveDelta.xTranslate = thisXTrans;
@@ -1486,7 +1486,7 @@ namespace SandRibbon.Components
                 {
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
                     //var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = newPrivacy;
                     var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
@@ -1503,7 +1503,7 @@ namespace SandRibbon.Components
             Action undo = () =>
                 {
                     var identity = Globals.generateId(Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as TextBox), selectedImages.Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(Globals.slide, Globals.me, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = oldPrivacy;
                     var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
@@ -2210,22 +2210,18 @@ namespace SandRibbon.Components
 
             var oldBox = textbox.box;
             // update with changes
-            box.AcceptsReturn = true;
-            box.TextWrapping = TextWrapping.WrapWithOverflow;
+            box.AcceptsReturn = true;           
             box.BorderThickness = new Thickness(0);
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
             box.tag(oldBox.tag());
             box.FontFamily = oldBox.FontFamily;
             box.FontStyle = oldBox.FontStyle;
-            box.FontWeight = oldBox.FontWeight;
-            box.TextDecorations = oldBox.TextDecorations;
+            box.FontWeight = oldBox.FontWeight;            
             box.FontSize = oldBox.FontSize;
             box.Foreground = oldBox.Foreground;
-            box.TextChanged -= SendNewText;
-            var caret = box.CaretIndex;
-            box.Text = oldBox.Text;
-            box.CaretIndex = caret;
+            box.TextChanged -= SendNewText;            
+            box.Text = oldBox.Text;            
             box.TextChanged += SendNewText;
             box.Width = oldBox.Width;
             //box.Height = OldBox.Height;
@@ -2247,8 +2243,7 @@ namespace SandRibbon.Components
             box.PreviewMouseRightButtonUp -= box_PreviewMouseRightButtonUp;
 
             box.TextChanged -= SendNewText;
-            box.AcceptsReturn = true;
-            box.TextWrapping = TextWrapping.WrapWithOverflow;
+            box.AcceptsReturn = true;            
             box.GotFocus += textboxGotFocus;
             box.LostFocus += textboxLostFocus;            
             box.TextChanged += SendNewText;
@@ -2290,8 +2285,7 @@ namespace SandRibbon.Components
             // find textbox if it exists, otherwise create it
             var box = FindOrCreateTextBoxFromId(textbox);
             box.TextChanged -= SendNewText;
-            box.Text = newText;
-            box.CaretIndex = textbox.CaretIndex;
+            box.Text = newText;            
             box.TextChanged += SendNewText;
 
             return box;
@@ -2345,132 +2339,8 @@ namespace SandRibbon.Components
                 GlobalTimers.ResetSyncTimer();
                 TypingTimer.ResetTimer();
             }
-        }
-        private void resetTextbox(object obj)
-        {
-            if (myTextBox == null && Work.GetSelectedElements().Count != 1) return;
-            if (myTextBox == null)
-                myTextBox = (MeTLTextBox)Work.GetSelectedElements().Where(b => b is MeTLTextBox).First();
-
-            var currentTextBox = filterOnlyMine<MeTLTextBox>(myTextBox);
-            if (currentTextBox == null)
-                return;
-
-            var undoInfo = getInfoOfBox(currentTextBox);
-            Action undo = () =>
-            {
-                ClearAdorners();
-                applyStylingTo(currentTextBox, undoInfo);
-                sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);                
-            };
-            Action redo = () =>
-                              {
-                                  ClearAdorners();                                  
-                              };
-            UndoHistory.Queue(undo, redo, "Restored text defaults");
-            redo();
-        }
-        private void resetText(MeTLTextBox box)
-        {
-            box.RemovePrivacyStyling(contentBuffer);
-            box.FontWeight = FontWeights.Normal;
-            box.FontStyle = FontStyles.Normal;
-            box.TextDecorations = new TextDecorationCollection();
-            box.FontFamily = new FontFamily("Arial");
-            box.FontSize = 24f;
-            box.Foreground = Brushes.Black;
-            var info = new TextInformation
-            {
-                Family = box.FontFamily,
-                Size = box.FontSize,
-            };
-            Commands.TextboxFocused.ExecuteAsync(info);
-            sendTextWithoutHistory(box, box.tag().privacy);
-        }
-        private void updateStyling(TextInformation info)
-        {
-            var selectedTextBoxes = new List<MeTLTextBox>();
-            selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
-            if (filterOnlyMine<MeTLTextBox>(myTextBox) != null)
-                selectedTextBoxes.Add(myTextBox);
-            var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
-
-            if (selectedTextBox != null)
-            {
-                // create a clone of the selected textboxes and their textinformation so we can keep a reference to something that won't be changed
-                var clonedTextBox = selectedTextBox.clone();
-                var clonedTextInfo = getInfoOfBox(selectedTextBox);
-
-                Action undo = () =>
-                  {
-                      //ClearAdorners();
-
-                      // find the textboxes on the canvas, if they've been deleted recreate and add to the canvas again
-                      var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
-                      if (activeTextbox != null)
-                      {
-                          var activeTextInfo = clonedTextInfo;
-                          activeTextbox.TextChanged -= SendNewText;
-                          applyStylingTo(activeTextbox, activeTextInfo);
-                          Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
-                          //AddAdorners();
-                          sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
-                          activeTextbox.TextChanged += SendNewText;
-                      }
-                  };
-                Action redo = () =>
-                  {
-                      //ClearAdorners();
-
-                      var activeTextbox = FindOrCreateTextBoxFromId(clonedTextBox);
-                      if (activeTextbox != null)
-                      {
-                          var activeTextInfo = info;
-                          activeTextbox.TextChanged -= SendNewText;
-                          applyStylingTo(activeTextbox, activeTextInfo);
-                          Commands.TextboxFocused.ExecuteAsync(activeTextInfo);
-                          sendTextWithoutHistory(activeTextbox, activeTextbox.tag().privacy);
-                          activeTextbox.TextChanged += SendNewText;
-                      }
-                  };
-                UndoHistory.Queue(undo, redo, "Styling of text changed");
-                redo();
-            }
-        }
-        private static void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
-        {
-            currentTextBox.FontStyle = info.Italics ? FontStyles.Italic : FontStyles.Normal;
-            currentTextBox.FontWeight = info.Bold ? FontWeights.Bold : FontWeights.Normal;
-            currentTextBox.TextDecorations = new TextDecorationCollection();
-            if (info.Underline)
-                currentTextBox.TextDecorations = TextDecorations.Underline;
-            else if (info.Strikethrough)
-                currentTextBox.TextDecorations = TextDecorations.Strikethrough;
-            currentTextBox.FontSize = info.Size;
-            currentTextBox.FontFamily = info.Family;
-            currentTextBox.Foreground = new SolidColorBrush(info.Color);
-        }
-        private static TextInformation getInfoOfBox(MeTLTextBox box)
-        {
-            var underline = false;
-            var strikethrough = false;
-            if (box.TextDecorations.Count > 0)
-            {
-                underline = box.TextDecorations.First().Location.ToString().ToLower() == "underline";
-                strikethrough = box.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
-            }
-            return new TextInformation
-            {
-                Bold = box.FontWeight == FontWeights.Bold,
-                Italics = box.FontStyle == FontStyles.Italic,
-                Size = box.FontSize,
-                Underline = underline,
-                Strikethrough = strikethrough,
-                Family = box.FontFamily,
-                Color = ((SolidColorBrush)box.Foreground).Color
-            };
-        }
-
+        }                
+        
         private void sendBox(MeTLTextBox box, bool localOnly = false)
         {
             myTextBox = box;
@@ -2786,59 +2656,7 @@ namespace SandRibbon.Components
             if (box.Text.Length > 540)
                 box.Width = 540;
             return box;
-        }
-        private void HandleTextPasteRedo(List<MeTLTextBox> selectedText, MeTLTextBox currentBox)
-        {
-            foreach (var textBox in selectedText)
-            {
-                if (currentBox != null)
-                {
-                    var caret = currentBox.CaretIndex;
-                    var redoText = currentBox.Text.Insert(currentBox.CaretIndex, textBox.Text);
-                    ClearAdorners();
-                    var box = textBoxFromId(currentBox.tag().id);
-                    if (box == null)
-                    {
-                        AddTextBoxToCanvas(currentBox, true);
-                        box = currentBox;
-                    }
-                    box.TextChanged -= SendNewText;
-                    box.Text = redoText;
-                    box.CaretIndex = caret + textBox.Text.Length;
-                    box = setWidthOf(box);
-                    sendTextWithoutHistory(box, box.tag().privacy);
-                    box.TextChanged += SendNewText;
-                    myTextBox = null;
-                }
-                else
-                {
-                    textBox.tag(new TextTag(textBox.tag().author, currentPrivacy, textBox.tag().id, textBox.tag().timestamp));
-                    var box = setWidthOf(textBox);
-                    AddTextBoxToCanvas(box, true);
-                    sendTextWithoutHistory(box, box.tag().privacy);
-                }
-            }
-        }
-        private void HandleTextPasteUndo(List<MeTLTextBox> selectedText, MeTLTextBox currentBox)
-        {
-            foreach (var text in selectedText)
-            {
-                if (currentBox != null)
-                {
-                    var undoText = currentBox.Text;
-                    var caret = currentBox.CaretIndex;
-                    var currentTextBox = currentBox.clone();
-                    var box = ((MeTLTextBox)Work.TextChildren().ToList().FirstOrDefault(c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id));
-                    box.TextChanged -= SendNewText;
-                    box.Text = undoText;
-                    box.CaretIndex = caret;
-                    sendTextWithoutHistory(box, box.tag().privacy);
-                    box.TextChanged += SendNewText;
-                }
-                else
-                    dirtyTextBoxWithoutHistory(text);
-            }
-        }
+        }        
         private List<MeTLTextBox> createPastedBoxes(List<string> selectedText)
         {
             var boxes = new List<MeTLTextBox>();
@@ -2874,16 +2692,14 @@ namespace SandRibbon.Components
                                   {
                                       ClearAdorners();
                                       HandleInkPasteUndo(ink.Select(s => s as Stroke).ToList());
-                                      HandleImagePasteUndo(images);
-                                      HandleTextPasteUndo(boxes, currentBox);
+                                      HandleImagePasteUndo(images);                
                                       AddAdorners();
                                   };
                 Action redo = () =>
                                   {
                                       ClearAdorners();
                                       HandleInkPasteRedo(ink);
-                                      HandleImagePasteRedo(images);
-                                      HandleTextPasteRedo(boxes, currentBox);
+                                      HandleImagePasteRedo(images);                                      
                                       AddAdorners();
                                   };
                 UndoHistory.Queue(undo, redo, "Pasted items");
@@ -2891,15 +2707,7 @@ namespace SandRibbon.Components
             }
             else
             {
-                if (Clipboard.ContainsText())
-                {
-                    var boxes = createPastedBoxes(new List<string> { Clipboard.GetText() });
-                    Action undo = () => HandleTextPasteUndo(boxes, currentBox);
-                    Action redo = () => HandleTextPasteRedo(boxes, currentBox);
-                    UndoHistory.Queue(undo, redo, "Pasted text");
-                    redo();
-                }
-                else if (Clipboard.ContainsImage())
+                if (Clipboard.ContainsImage())
                 {
                     Action undo = () => HandleImagePasteUndo(createImages(new List<BitmapSource> { Clipboard.GetImage() }));
                     Action redo = () => HandleImagePasteRedo(createImages(new List<BitmapSource> { Clipboard.GetImage() }));
@@ -2932,7 +2740,7 @@ namespace SandRibbon.Components
             var selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select((s => s.Clone())).ToList();
             string selectedText = null;
             if (myTextBox != null)
-                selectedText = myTextBox.SelectedText;
+                selectedText = myTextBox.Selection.Text;
 
             // copy previously was an undoable action, ie restore the clipboard to what it previously was
             var images = HandleImageCopyRedo(selectedElements);
@@ -2965,69 +2773,7 @@ namespace SandRibbon.Components
                 Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id, img.tag().timestamp));
             }
             return selectedImages.Select(i => (BitmapSource)i.Source);
-        }
-        protected void HandleTextCutUndo(IEnumerable<MeTLTextBox> selectedElements, MeTLTextBox currentTextBox)
-        {
-            if (currentTextBox != null && currentTextBox.SelectionLength > 0)
-            {
-                var text = currentTextBox.Text;
-                var start = currentTextBox.SelectionStart;
-                var length = currentTextBox.SelectionLength;
-                if (!Work.TextChildren().Select(t => ((MeTLTextBox)t).tag().id).Contains(currentTextBox.tag().id))
-                {
-                    var box = applyDefaultAttributes(currentTextBox);
-                    box.tag(new TextTag(box.tag().author, canvasAlignedPrivacy(box.tag().privacy), Globals.generateId(), box.tag().timestamp));
-                    Work.Children.Add(box);
-
-                }
-                var activeTextbox = ((MeTLTextBox)Work.TextChildren().ToList().FirstOrDefault(c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id));
-                activeTextbox.Text = text;
-                activeTextbox.CaretIndex = start + length;
-                sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
-
-            }
-            else
-            {
-                var mySelectedElements = selectedElements.Where(t => t is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
-                foreach (var box in mySelectedElements)
-                    sendBox(box);
-            }
-        }
-        protected IEnumerable<string> HandleTextCutRedo(IEnumerable<MeTLTextBox> elements, MeTLTextBox currentTextBox)
-        {
-            var clipboardText = new List<string>();
-            if (currentTextBox != null && currentTextBox.SelectionLength > 0)
-            {
-                var selection = currentTextBox.SelectedText;
-                var start = currentTextBox.SelectionStart;
-                var length = currentTextBox.SelectionLength;
-                clipboardText.Add(selection);
-                var activeTextbox = ((MeTLTextBox)Work.TextChildren().ToList().Where(c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id).FirstOrDefault());
-                if (activeTextbox == null) return clipboardText;
-                activeTextbox.Text = activeTextbox.Text.Remove(start, length);
-                activeTextbox.CaretIndex = start;
-                if (activeTextbox.Text.Length == 0)
-                {
-                    ClearAdorners();
-                    myTextBox = null;
-                    dirtyTextBoxWithoutHistory(currentTextBox);
-                }
-            }
-            else
-            {
-                var listToCut = new List<MeTLTextBox>();
-                var selectedElements = elements.Where(t => t is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
-                foreach (MeTLTextBox box in selectedElements)
-                {
-                    clipboardText.Add(box.Text);
-                    listToCut.Add(box);
-                }
-                myTextBox = null;
-                foreach (var element in listToCut)
-                    dirtyTextBoxWithoutHistory(element);
-            }
-            return clipboardText;
-        }
+        }        
         private void HandleInkCutUndo(IEnumerable<PrivateAwareStroke> strokesToCut)
         {
             foreach (var s in strokesToCut)
@@ -3053,19 +2799,17 @@ namespace SandRibbon.Components
 
             Action redo = () =>
             {
-                ClearAdorners();
-                var text = HandleTextCutRedo(selectedText, currentTextBox);
+                ClearAdorners();                
                 var images = HandleImageCutRedo(selectedImages);
                 var ink = HandleInkCutRedo(strokesToCut);
-                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(text, images, ink.Select(s => s as Stroke).ToList()));
+                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
             };
             Action undo = () =>
             {
                 ClearAdorners();
                 if (Clipboard.ContainsData(MeTLClipboardData.Type))
                 {
-                    Clipboard.GetData(MeTLClipboardData.Type);
-                    HandleTextCutUndo(selectedText, currentTextBox);
+                    Clipboard.GetData(MeTLClipboardData.Type);                    
                     HandleImageCutUndo(selectedImages);
                     HandleInkCutUndo(strokesToCut);
                 }

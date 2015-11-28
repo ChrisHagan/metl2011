@@ -103,14 +103,10 @@ namespace SandRibbon.Components.Utility
             newBox.FontStyle = box.FontStyle;
             newBox.Foreground = box.Foreground;
             newBox.Background = box.Background;
-            newBox.tag(box.tag());
-            newBox.CaretIndex = box.CaretIndex;
+            newBox.tag(box.tag());            
             newBox.Width = Double.IsNaN(box.Width) || box.Width <= 0 ? box.ActualWidth : box.Width;
             newBox.Height = Double.IsNaN(box.Height) || box.Height <= 0 ? box.ActualHeight : box.Height;
-            newBox.MaxHeight = box.MaxHeight;
-            //newBox.SelectedText = box.SelectedText;
-            newBox.SelectionLength = box.SelectionLength;
-            newBox.SelectionStart = box.SelectionStart;
+            newBox.MaxHeight = box.MaxHeight;            
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
             newBox.offsetX = box.offsetX;

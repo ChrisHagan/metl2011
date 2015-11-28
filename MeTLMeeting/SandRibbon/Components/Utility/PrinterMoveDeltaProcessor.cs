@@ -31,7 +31,7 @@
             Canvas.Children.Remove(image);
         }
 
-        protected override void RemoveText(TextBox text)
+        protected override void RemoveText(MeTLTextBox text)
         {
             Canvas.Children.Remove(text);
         }
@@ -41,7 +41,7 @@
             image.ApplyPrivacyStyling(Target, newPrivacy);
         }
 
-        protected override void ChangeTextPrivacy(TextBox text, Privacy newPrivacy)
+        protected override void ChangeTextPrivacy(MeTLTextBox text, Privacy newPrivacy)
         {
             text.ApplyPrivacyStyling(Target, newPrivacy);
         }

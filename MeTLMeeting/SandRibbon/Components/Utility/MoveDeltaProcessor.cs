@@ -29,10 +29,10 @@
 
         protected abstract void RemoveStroke(PrivateAwareStroke stroke);
         protected abstract void RemoveImage(MeTLImage image);
-        protected abstract void RemoveText(TextBox textbox);
+        protected abstract void RemoveText(MeTLTextBox textbox);
 
         protected abstract void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy);
-        protected abstract void ChangeTextPrivacy(TextBox textbox, Privacy newPrivacy);
+        protected abstract void ChangeTextPrivacy(MeTLTextBox textbox, Privacy newPrivacy);
 
         private List<String> sentDeltas = new List<String>();
 
@@ -248,7 +248,7 @@
             return moveDelta.imageIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
         }
 
-        private bool dirtiesThis(TargettedMoveDelta moveDelta, TextBox elem)
+        private bool dirtiesThis(TargettedMoveDelta moveDelta, MeTLTextBox elem)
         {
             return moveDelta.textIds.Any(i => elem.tag().id == i && elem.tag().privacy == moveDelta.privacy && elem.tag().timestamp < moveDelta.timestamp);
         }
@@ -256,7 +256,7 @@
         protected void ContentDelete(TargettedMoveDelta moveDelta)
         {
             var deadStrokes = new List<PrivateAwareStroke>();
-            var deadTextboxes = new List<TextBox>();
+            var deadTextboxes = new List<MeTLTextBox>();
             var deadImages = new List<MeTLImage>();
 
             foreach (var inkId in moveDelta.inkIds)
@@ -316,7 +316,7 @@
         protected void ContentPrivacyChange(TargettedMoveDelta moveDelta)
         {
             var privacyStrokes = new List<PrivateAwareStroke>();
-            var privacyTextboxes = new List<TextBox>();
+            var privacyTextboxes = new List<MeTLTextBox>();
             var privacyImages = new List<MeTLImage>();
 
             foreach (var inkId in moveDelta.inkIds)

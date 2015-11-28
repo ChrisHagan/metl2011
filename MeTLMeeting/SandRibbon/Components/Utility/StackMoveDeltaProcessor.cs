@@ -36,7 +36,7 @@
             ContentBuffer.RemoveImage(image, (img) => Canvas.Children.Remove(img));
         }
 
-        protected override void RemoveText(TextBox text)
+        protected override void RemoveText(MeTLTextBox text)
         {
             ContentBuffer.RemoveTextBox(text, (tb) => Canvas.Children.Remove(tb));
         }
@@ -46,7 +46,7 @@
             image.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy);
         }
 
-        protected override void ChangeTextPrivacy(TextBox text, Privacy newPrivacy)
+        protected override void ChangeTextPrivacy(MeTLTextBox text, Privacy newPrivacy)
         {
             text.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy);
         }
