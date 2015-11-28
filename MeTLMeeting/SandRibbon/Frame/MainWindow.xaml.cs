@@ -80,7 +80,7 @@ namespace SandRibbon
             Title = Strings.Global_ProductName;
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
+            //Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -127,6 +127,8 @@ namespace SandRibbon
 
             Commands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
             Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(synchronizeToOneNote));
+
+            Commands.JoinCreatedConversation.RegisterCommand(new DelegateCommand<object>(joinCreatedConversation));
 
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
@@ -411,7 +413,7 @@ namespace SandRibbon
         private void ImportPowerpoint(object obj)
         {
             if (loader == null) loader = new PowerPointLoader();
-            loader.ImportPowerpoint(this);
+            loader.ImportPowerpoint(this,(PowerpointImportType)obj);
         }
         private void createBlankConversation(object obj)
         {            
@@ -605,6 +607,16 @@ namespace SandRibbon
                     Commands.JoinConversation.ExecuteAsync(details.Jid);
                 mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
             }
+        }
+        protected void joinCreatedConversation(object detailsObject)
+        {
+            var details = (ConversationDetails)detailsObject;
+            CommandManager.InvalidateRequerySuggested();
+            if (Commands.JoinConversation.CanExecute(details.Jid))
+                Commands.JoinConversation.ExecuteAsync(details.Jid);
+            Dispatcher.adopt(delegate {
+                mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
+            });
         }
         private void setSync(object _obj)
         {

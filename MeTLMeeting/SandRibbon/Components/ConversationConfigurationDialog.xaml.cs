@@ -23,7 +23,7 @@ namespace SandRibbon.Components
         private ConversationDetails details;
         private ConversationConfigurationMode dialogMode;
         public enum ConversationConfigurationMode { CREATE, EDIT, IMPORT, DELETE }
-        private PowerPointLoader.PowerpointImportType importType;
+        private PowerpointImportType importType;
         private string importFile;
         private string conversationJid;
 
@@ -174,16 +174,16 @@ namespace SandRibbon.Components
                 case "editable":
                     dialogMode = ConversationConfigurationMode.IMPORT;
                     UpdateDialogBoxAppearance();
-                    importType = PowerPointLoader.PowerpointImportType.Shapes;
+                    importType = PowerpointImportType.Shapes;
                     break;
                 case "highquality":
                     dialogMode = ConversationConfigurationMode.IMPORT;
-                    importType = PowerPointLoader.PowerpointImportType.HighDefImage;
+                    importType = PowerpointImportType.HighDefImage;
                     UpdateDialogBoxAppearance();
                     break;
                 case "lowquality":
                     dialogMode = ConversationConfigurationMode.IMPORT;
-                    importType = PowerPointLoader.PowerpointImportType.Image;
+                    importType = PowerpointImportType.Image;
                     UpdateDialogBoxAppearance();
                     break;
             }
@@ -197,12 +197,12 @@ namespace SandRibbon.Components
                     {
                         try
                         {
-                             return new PowerpointSpec
+                            return new PowerpointSpec
                             {
                                 File = importFile,
                                 Details = details,
                                 Type = importType,
-                                Magnification = Globals.UserOptions.powerpointImportScale == 2 ? 2 : 1 
+                                Magnification = importType == PowerpointImportType.HighDefImage ? 3 : 1 // Globals.UserOptions.powerpointImportScale == 2 ? 2 : 1 
                             };
                         }
                         catch (Exception)
@@ -326,12 +326,11 @@ namespace SandRibbon.Components
                 doBrowseFiles();
             }
         }
-        internal PowerpointSpec Import()
+        internal PowerpointSpec Import(PowerpointImportType _importType)
         {
-            var myImportType = Globals.UserOptions.powerpointImportScale == 3 ? PowerPointLoader.PowerpointImportType.Shapes : PowerPointLoader.PowerpointImportType.Image;
             if (importFile == null) return null;
              dialogMode = ConversationConfigurationMode.IMPORT;
-             importType = myImportType;
+             importType = _importType;
              var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
              details = new ConversationDetails
                     (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
