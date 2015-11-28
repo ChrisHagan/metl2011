@@ -206,15 +206,24 @@
             throw new NotImplementedException();
         }
         override protected void internalGetServers() {
-            var wc = new WebClient();
-            var xml = wc.DownloadString(new Uri("http://setup.stackableregiments.com/metlServers/metlServers.xml", UriKind.Absolute));
-            var xdoc = XDocument.Parse(xml);
-            servers = xdoc.Descendants("metlServer").Select(xms => {
-            var name = xms.Descendants("name").First().Value;
-            var baseUrl = xms.Descendants("baseUrl").First().Value;
-            var imageUrl = xms.Descendants("imageUrl").First().Value;
-                return new MeTLConfigurationProxy(name, new Uri(baseUrl, UriKind.Absolute), new Uri(imageUrl, UriKind.Absolute));
-            }).ToList();
+            try {
+                var wc = new WebClient();
+                var xml = wc.DownloadString(new Uri("http://setup.stackableregiments.com/metlServers/metlServers.xml", UriKind.Absolute));
+                var xdoc = XDocument.Parse(xml);
+                servers = xdoc.Descendants("metlServer").Select(xms => {
+                    var name = xms.Descendants("name").First().Value;
+                    var baseUrl = xms.Descendants("baseUrl").First().Value;
+                    var imageUrl = xms.Descendants("imageUrl").First().Value;
+                    return new MeTLConfigurationProxy(
+                        name,
+                        new Uri(imageUrl, UriKind.Absolute),
+                        new Uri(baseUrl, UriKind.Absolute)
+                        );
+                }).ToList();
+            } catch
+            {
+                servers = new List<MeTLConfigurationProxy>();
+            }
         }
     }
     public class LocalAppMeTLConfigurationManager : MetlConfigurationManager
