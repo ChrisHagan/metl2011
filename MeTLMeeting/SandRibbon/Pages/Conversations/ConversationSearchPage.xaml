@@ -16,34 +16,41 @@
     <Page.Resources>
         <Thickness Top="50" x:Key="space"/>
     </Page.Resources>
-    <Grid layout:GridLayout.ItemsPerRow="1" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Label Content="What are you looking for?" Margin="{StaticResource clearBottom}"/>
-        <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"
+    <Grid Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
+            <Label Content="What are you looking for?" Margin="{StaticResource clearBottom}"/>
+            <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"
                  Margin="{StaticResource space}"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"/>
-        <StackPanel Orientation="Horizontal">
-            <Label Style="{StaticResource medium}" Content="Only my conversations" />
-            <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
+            <StackPanel Orientation="Horizontal">
+                <Label Style="{StaticResource medium}" Content="Only my conversations" />
+                <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
                           Unchecked="onlyMyConversations_Checked"/>
-        </StackPanel>
-        <UniformGrid HorizontalAlignment="Left" Columns="2">
-            <Button Click="AnalyzeSelectedConversations">
-                <Label Content="Analyze selected conversations" Style="{StaticResource medium}" />
-            </Button>
-            <Button Click="SynchronizeToOneNote">
-                <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
-            </Button>
-        </UniformGrid>
-        <UniformGrid HorizontalAlignment="Left" Columns="2">
-            <Button Command="{x:Static api:Commands.CreateBlankConversation}">
-                <Label Content="Create new conversation" Style="{StaticResource medium}"/>
-            </Button>
-            <Button Command="{x:Static api:Commands.ImportPowerpoint}">
-                <Label Content="Import conversation from powerpoint" Style="{StaticResource medium}"/>
-            </Button>
-        </UniformGrid>
+            </StackPanel>
+            <UniformGrid HorizontalAlignment="Left" Columns="2">
+                <Button Click="AnalyzeSelectedConversations">
+                    <Label Content="Analyze selected conversations" Style="{StaticResource medium}" />
+                </Button>
+                <Button Click="SynchronizeToOneNote">
+                    <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
+                </Button>
+            </UniformGrid>
+            <UniformGrid HorizontalAlignment="Left" Columns="2">
+                <Button Command="{x:Static api:Commands.CreateBlankConversation}">
+                    <Label Content="Create new conversation" Style="{StaticResource medium}"/>
+                </Button>
+                <Button Command="{x:Static api:Commands.ImportPowerpoint}">
+                    <Label Content="Import conversation from powerpoint" Style="{StaticResource medium}"/>
+                </Button>
+            </UniformGrid>
+        </Grid>
         <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                                   Margin="{StaticResource space}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                  Grid.Row="1"
+                  Margin="{StaticResource space}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="View" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
