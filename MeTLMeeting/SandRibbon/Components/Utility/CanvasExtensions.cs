@@ -36,6 +36,7 @@ namespace SandRibbon.Components.Utility
             CommandBindings.Add(redoBinding);
 
             CommandManager.AddPreviewCanExecuteHandler(this, canExecute);
+            TextFormatter = new XamlFormatter();
         }
 
         private void canExecute(object sender, CanExecuteRoutedEventArgs e)

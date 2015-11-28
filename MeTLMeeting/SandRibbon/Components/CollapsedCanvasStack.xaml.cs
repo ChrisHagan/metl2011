@@ -2555,7 +2555,7 @@ namespace SandRibbon.Components
         }
         public MeTLTextBox createNewTextbox()
         {
-            var box = new MeTLTextBox();
+            var box = new MeTLTextBox();            
             box.offsetX = contentBuffer.logicalX;
             box.offsetY = contentBuffer.logicalY;
             box.tag(new TextTag
