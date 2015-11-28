@@ -31,9 +31,9 @@ namespace SandRibbon.Utils
         }
     }
     public class SneakyImage : MeTLStanzas.Image{
-        public SneakyImage(String target,ImageTag tag,Uri src,double x, double y, int slide) : base(){ 
+        public SneakyImage(String target,ImageTag tag,string src,double x, double y, int slide) : base(){ 
             SetTag(MeTLStanzas.tagTag, JsonConvert.SerializeObject(tag));
-            SetTag(sourceTag, src.LocalPath);
+            SetTag(sourceTag, src);
             SetTag(MeTLStanzas.xTag, x);
             SetTag(MeTLStanzas.yTag, y);
             SetTag(MeTLStanzas.authorTag, tag.author);
@@ -470,7 +470,7 @@ namespace SandRibbon.Utils
                     privacy = (Privacy)Enum.Parse(typeof(Privacy), shape.Attribute("privacy").Value, true),
                     isBackground = isBackgroundImage
                 };
-                var uri = new Uri(shape.Attribute("uri").Value);
+                var uri =  shape.Attribute("uri").Value;
                 var x = Double.Parse(shape.Attribute("x").Value);
                 var y = Double.Parse(shape.Attribute("y").Value);
                 var stanza = new SneakyImage(target,tag,uri,x,y,id);

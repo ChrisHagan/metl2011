@@ -42,6 +42,7 @@ namespace SandRibbon.Components
             Commands.TextStrikethroughNotify.RegisterCommand(new DelegateCommand<bool>(b => TextStrikethroughButton.IsChecked = b));
             Commands.TextUnderlineNotify.RegisterCommand(new DelegateCommand<bool>(b => TextUnderlineButton.IsChecked = b));
             //Commands.TextColorNotify.RegisterCommand(new DelegateCommand<Color>(b => TextBoldButton.IsChecked = b));
+            /*
             Commands.FontNotify.RegisterCommand(new DelegateCommand<string>(b => {
                 fontFamilyCollection.SelectedItem = b;
             }));
@@ -55,6 +56,7 @@ namespace SandRibbon.Components
                 new Color { A=255, R=0, G=255, B=0 },
                 new Color { A=255, R=0, G=0, B=255 }
             };
+            */
         }
         private void loadFonts()
         {

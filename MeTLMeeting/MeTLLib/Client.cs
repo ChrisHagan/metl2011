@@ -32,7 +32,7 @@ namespace MeTLLib
         void AskForTeachersStatus(string teacher, string where);
         Location location { get; }
         void LeaveAllRooms();
-        Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
+        string UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
         void LeaveConversation(string conversation);
         void UpdateSlideCollection(Int32 conversationJid);
         bool Connect(Credentials credentials);
@@ -56,7 +56,7 @@ namespace MeTLLib
         void SendSyncMove(int slide);
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
-        Uri UploadResource(Uri uri, string slideId);
+        string UploadResource(Uri uri, string slideId);
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void WatchRoom(string slide);
@@ -101,7 +101,7 @@ namespace MeTLLib
         protected static readonly Uri DisconnectedUri = new Uri("noscheme://not.a.uri");
         public Location location { get { return Location.Empty; } }
         public void LeaveAllRooms() { }
-        public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return DisconnectedUri; }
+        public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return ""; }
         public void LeaveConversation(string conversation) { }
         public void UpdateSlideCollection(Int32 conversationJid) { }
         public void AskForTeachersStatus(string teacher, string where) { }
@@ -126,7 +126,7 @@ namespace MeTLLib
         public void SendSyncMove(int slide) { }
         public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii) { }
         public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi) { }
-        public Uri UploadResource(Uri uri, string slideId) { return DisconnectedUri; }
+        public string UploadResource(Uri uri, string slideId) { return ""; }
         public void AsyncRetrieveHistoryOf(int room) { }
         public void MoveTo(int slide) { }
         public void JoinConversation(string conversation) { }
@@ -475,25 +475,25 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public Uri UploadResource(Uri file, string muc)
+        public string UploadResource(Uri file, string muc)
         {
 
-            System.Uri returnValue = server.host;
+            string returnValue = "";
             Action work = delegate
             {
-                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString));
+                returnValue = resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString);
             };
             tryIfConnected(work);
             return returnValue;
         }
 
-        public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
+        public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
 
-            System.Uri returnValue = server.host;
+            string returnValue = "";
             Action work = delegate
             {
-                returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
+                returnValue = resourceUploader.uploadResourceToPath(data, file, name, overwrite);
             };
             tryIfConnected(work);
             return returnValue;

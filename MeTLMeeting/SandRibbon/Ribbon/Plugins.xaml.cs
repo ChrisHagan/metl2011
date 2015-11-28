@@ -18,7 +18,9 @@ namespace SandRibbon.Tabs
 
         private void Update(ConversationDetails obj)
         {
-            teacherPlugins.Visibility = (obj.Author == Globals.me) ? Visibility.Visible : Visibility.Collapsed;            
+            Dispatcher.adopt(delegate {
+                teacherPlugins.Visibility = (obj.Author == Globals.me) ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
     }
 }

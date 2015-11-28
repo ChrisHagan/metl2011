@@ -36,11 +36,12 @@
         </RibbonGroupSizeDefinition>
     </RibbonGroup.GroupSizeDefinitions>
     <RibbonComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily">
-        <RibbonGallery x:Name="fontFamilyCollection" Command="{x:Static api:Commands.SetFont}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}"/>
+        <!--<RibbonGallery x:Name="fontFamilyCollection" Command="{x:Static api:Commands.SetFont}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}"/>-->
+        <RibbonGallery x:Name="fontFamilyCollection" />
     </RibbonComboBox>
     <RibbonComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize">
-        <RibbonGallery x:Name="fontSizeCollection" Command="{x:Static api:Commands.SetFontSize}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}">
-        </RibbonGallery>
+        <!--<RibbonGallery x:Name="fontSizeCollection" Command="{x:Static api:Commands.SetFontSize}" CommandParameter="{Binding ElementName=fontSizeCollection, Path=SelectedItem}" />-->
+        <RibbonGallery x:Name="fontSizeCollection" />
     </RibbonComboBox>
     <RibbonToggleButton x:Name="TextBoldButton" SmallImageSource="\Resources\appbar.text.bold.png" LargeImageSource="\Resources\appbar.text.bold.png" Label="B" ToolTip="{DynamicResource BoldToolTip}" Command="{x:Static api:Commands.SetTextBold}" CommandParameter="{Binding ElementName=TextBoldButton, Path=IsChecked}"/>
     <RibbonToggleButton x:Name="TextItalicButton" SmallImageSource="\Resources\appbar.text.italic.png" LargeImageSource="\Resources\appbar.text.italic.png" Label="I" ToolTip="{DynamicResource ItalicToolTip}" Command="{x:Static api:Commands.SetTextItalic}" CommandParameter="{Binding ElementName=TextItalicButton, Path=IsChecked}"/>
@@ -48,7 +49,8 @@
     <RibbonToggleButton x:Name="TextStrikethroughButton" SmallImageSource="\Resources\appbar.text.strikethrough.png" LargeImageSource="\Resources\appbar.text.strikethrough.png" Label="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Command="{x:Static api:Commands.SetTextStrikethrough}" CommandParameter="{Binding ElementName=TextStrikethroughButton, Path=IsChecked}"/>
     <RibbonButton ToolTip="{DynamicResource ClearFormattingToolTip}" SmallImageSource="..\..\Resources\clearFormatting.png" LargeImageSource="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Label="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}"/>
     <RibbonMenuButton LargeImageSource="..\..\Resources\changeFontColour.png" SmallImageSource="..\..\Resources\changeFontColour.png" >
-        <RibbonGallery x:Name="FontColourButton"  Command="{x:Static api:Commands.SetTextColor}">
+        <!--<RibbonGallery x:Name="FontColourButton"  Command="{x:Static api:Commands.SetTextColor}">-->
+        <RibbonGallery x:Name="FontColourButton">
             <RibbonGallery.ItemTemplate>
                 <DataTemplate>
                     <RibbonGalleryItem Content="{Binding}" Foreground="{Binding}"></RibbonGalleryItem>

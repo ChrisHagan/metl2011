@@ -426,7 +426,7 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            App.controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            //App.controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString(); //disabled for the moment, because it appears nobody executes this command
         }
         private FrameworkElement clonePublicOnly()
         {
