@@ -77,6 +77,10 @@ namespace SandRibbon
         }
         public static List<MeTLConfigurationProxy> availableServers()
         {
+            if (metlConfigManager.servers.Count == 0)
+            {
+                metlConfigManager.reload();
+            }
             return metlConfigManager.servers;
         }
         public static MeTLConfigurationProxy getCurrentServer

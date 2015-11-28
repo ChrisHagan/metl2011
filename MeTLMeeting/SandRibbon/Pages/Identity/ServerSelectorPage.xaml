@@ -17,7 +17,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Label Content="Where are you going?" Grid.Row="0" Margin="{DynamicResource clearTop}" />
-        <ItemsControl ItemsSource="{Binding}" BorderThickness="0" Margin="{StaticResource clearTop}" Grid.Row="1">
+        <ItemsControl ItemsSource="{Binding}" BorderThickness="0" Grid.Row="1">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="{Binding Path=Count}" />
@@ -37,6 +37,10 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Grid Grid.Row="1" x:Name="internetCheckLabel" layout:GridLayout.ItemsPerRow="1" IsHitTestVisible="False">
+            <Label >No MeTL servers available.  Please check your internet connection.</Label>
+            <Image Source="\Resources\appbar.network.port.disconnect.png" Height="200"/>
+        </Grid>
     </Grid>
 </Page>
 

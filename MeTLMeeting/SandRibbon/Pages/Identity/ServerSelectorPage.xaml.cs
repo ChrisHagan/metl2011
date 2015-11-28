@@ -98,11 +98,17 @@ namespace SandRibbon.Pages.ServerSelection
             {
                 if (removed)
                 {
-                    OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Remove, s));
+                    if (Items.Contains(s))
+                    {
+                        OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Remove, s));
+                    }
                 }
                 else
                 {
-                    OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Add, s));
+                    if (!Items.Contains(s))
+                    {
+                        OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Add, s));
+                    }
                 }
             }
         }
@@ -121,45 +127,12 @@ namespace SandRibbon.Pages.ServerSelection
         //protected Timer dispatcherTimer;
         protected ServerCollection servers = new ServerCollection();
         protected List<Timer> timers = new List<Timer>();
+        protected Timer refreshTimer;
         public ServerSelectorPage()
         {
             InitializeComponent();
-            foreach (ServerChoice sc in App.availableServers().Select(server => new ServerChoice(server, true)))
-            {
-                servers.Add(sc);
-            }
             DataContext = servers;
-            timers = servers.Concat(new List<ServerChoice> {
-                new ServerChoice(new MeTLConfigurationProxy("localhost",new Uri("http://localhost:8080/static/images/puppet.jpg"),new System.Uri("http://localhost:8080",UriKind.Absolute)),false)
-            }).ToList().Select(sc => new Timer(delegate
-            {
-                var wc = new WebClient();
-                var oldState = sc.ready;
-                var newState = false;
-                try
-                {
-                    newState = wc.DownloadString(sc.server.serverStatus).Trim().ToLower() == "ok";
-                }
-                catch
-                {
-
-                }
-                sc.ready = newState;
-                if (oldState != newState && !sc.alwaysShow)
-                {
-                    Dispatcher.adopt(delegate
-                    {
-                        if (newState)
-                        {
-                            servers.Add(sc);
-                        }
-                        else
-                        {
-                            servers.Remove(sc);
-                        }
-                    });
-                }
-            }, null, Timeout.Infinite, Timeout.Infinite)).ToList();
+            var localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
             Unloaded += (s, e) =>
             {
                 timers.ForEach(t =>
@@ -169,13 +142,62 @@ namespace SandRibbon.Pages.ServerSelection
                     t = null;
                 });
                 timers.Clear();
+                refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                refreshTimer.Dispose();
+                refreshTimer = null;
             };
             Loaded += (s, e) =>
             {
-                timers.ForEach(t =>
+                foreach (ServerChoice sc in App.availableServers().Select(server => new ServerChoice(server, true)))
                 {
-                    t.Change(5000, recheckInterval);
-                });
+                    servers.Add(sc);
+                }
+                timers = servers.Concat(new List<ServerChoice> {
+                    localServer
+                }).ToList().Select(sc => new Timer(delegate
+                {
+                    var wc = new WebClient();
+                    var oldState = sc.ready;
+                    var newState = false;
+                    try
+                    {
+                        newState = wc.DownloadString(sc.server.serverStatus).Trim().ToLower() == "ok";
+                    }
+                    catch
+                    {
+
+                    }
+                    sc.ready = newState;
+                    if (oldState != newState && !sc.alwaysShow)
+                    {
+                        Dispatcher.adopt(delegate
+                        {
+                            if (newState)
+                            {
+                                if (!servers.Contains(sc))
+                                    servers.Add(sc);
+                            }
+                            else
+                            {
+                                if (servers.Contains(sc))
+                                    servers.Remove(sc);
+                            }
+                        });
+                    }
+                }, null, 0, recheckInterval)).ToList();
+                internetCheckLabel.Visibility = (servers.Count == 0 || servers.All(sc => sc == localServer)) ? Visibility.Visible : Visibility.Collapsed;
+                refreshTimer = new Timer(delegate
+                {
+                    if (servers.Count == 0 || servers.All(sc => sc == localServer))
+                    {
+                        {
+                            Dispatcher.adopt(delegate
+                            {
+                                NavigationService.Refresh();
+                            });
+                        }
+                    }
+                }, null, recheckInterval, Timeout.Infinite);
             };
         }
         private void ServerSelected(object sender, System.Windows.RoutedEventArgs e)
@@ -184,6 +206,7 @@ namespace SandRibbon.Pages.ServerSelection
             {
                 t.Change(Timeout.Infinite, Timeout.Infinite);
             });
+            refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
             var source = sender as FrameworkElement;
             var selection = source.DataContext as ServerChoice;
             App.SetBackendProxy(selection.server);
