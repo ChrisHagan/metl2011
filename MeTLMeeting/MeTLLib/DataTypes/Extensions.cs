@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Windows;
 using System.Diagnostics;
+using Xceed.Wpf.Toolkit;
 
 namespace MeTLLib.DataTypes
 {
@@ -195,7 +196,7 @@ namespace MeTLLib.DataTypes
     public static class TextExtensions
     {
         //Image and TextTags are identical, reusing imagetag
-        public static TextTag tag(this TextBox box )
+        public static TextTag tag(this Xceed.Wpf.Toolkit.RichTextBox box )
         {
             var texttag = new TextTag();
             box.Dispatcher.adopt(delegate
@@ -211,7 +212,7 @@ namespace MeTLLib.DataTypes
             });
             return texttag;
         }
-        public static TextTag tag(this TextBox box, TextTag tag)
+        public static TextTag tag(this Xceed.Wpf.Toolkit.RichTextBox box, TextTag tag)
         {
             box.Dispatcher.adopt(delegate
             {
@@ -258,7 +259,7 @@ namespace MeTLLib.DataTypes
         public static Privacy privacy(this FrameworkElement element) {
             if (element is Video) return (element as Video).tag().privacy;
             if (element is Image) return (element as Image).tag().privacy;
-            if (element is TextBox) return (element as TextBox).tag().privacy;
+            if (element is Xceed.Wpf.Toolkit.RichTextBox) return (element as Xceed.Wpf.Toolkit.RichTextBox).tag().privacy;
             throw new Exception(string.Format("Target type {0} does not support MeTL tagging", element.GetType()));
         }
     }

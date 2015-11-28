@@ -19,6 +19,7 @@ using MeTLLib.Utilities;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using System.Web;
+using Xceed.Wpf.Toolkit;
 
 namespace MeTLLib.DataTypes
 {
@@ -299,13 +300,13 @@ namespace MeTLLib.DataTypes
             return (elemIdsA == null && elemIdsB == null) || elemIdsA.SetEquals(elemIdsB);
         }
 
-        public static TargettedMoveDelta Create(int slide, string author, string target, Privacy privacy, string identity, long timestamp, IEnumerable<Stroke> moveStrokes, IEnumerable<TextBox> moveTexts, IEnumerable<Image> moveImages)
+        public static TargettedMoveDelta Create(int slide, string author, string target, Privacy privacy, string identity, long timestamp, IEnumerable<Stroke> moveStrokes, IEnumerable<Xceed.Wpf.Toolkit.RichTextBox> moveTexts, IEnumerable<Image> moveImages)
         {
             // identity is set in the MoveDeltaStanza constructor
             var targettedMoveDelta = new TargettedMoveDelta(slide, author, target, privacy, identity, timestamp);
 
             AddFromCollection<Stroke>(moveStrokes, (s) => targettedMoveDelta.AddInkId(s.tag().id));
-            AddFromCollection<TextBox>(moveTexts, (t) => targettedMoveDelta.AddTextId(t.tag().id));
+            AddFromCollection<Xceed.Wpf.Toolkit.RichTextBox>(moveTexts, (t) => targettedMoveDelta.AddTextId(t.tag().id));
             AddFromCollection<Image>(moveImages, (i) => targettedMoveDelta.AddImageId(i.tag().id));
 
             return targettedMoveDelta;
@@ -548,7 +549,7 @@ namespace MeTLLib.DataTypes
 
     public class TargettedTextBox : TargettedElement
     {
-        public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, string Identity, TextBox TextBox, long Timestamp)
+        public TargettedTextBox(int Slide, string Author, string Target, Privacy Privacy, string Identity, Xceed.Wpf.Toolkit.RichTextBox TextBox, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
         {
             box = TextBox;
@@ -592,14 +593,14 @@ namespace MeTLLib.DataTypes
             //return this;
         }
 
-        public TextBox boxProperty;
+        public Xceed.Wpf.Toolkit.RichTextBox boxProperty;
         public MeTLStanzas.TextBox boxSpecification;
-        public System.Windows.Controls.TextBox box
+        public Xceed.Wpf.Toolkit.RichTextBox box
         {
             get
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
-                System.Windows.Controls.TextBox reified = null;
+                Xceed.Wpf.Toolkit.RichTextBox reified = null;
                 reified = boxSpecification.forceEvaluation();
                 identity = reified.tag().id;
                 return reified;
@@ -1079,22 +1080,15 @@ namespace MeTLLib.DataTypes
             {
                 Box = textBox;
             }
-            public System.Windows.Controls.TextBox forceEvaluation()
+            public Xceed.Wpf.Toolkit.RichTextBox forceEvaluation()
             {
-                System.Windows.Controls.TextBox textBox = new System.Windows.Controls.TextBox
-                {
-                    FontWeight = weight,
-                    FontFamily = family,
-                    FontSize = size,
-                    FontStyle = style,
-                    Foreground = color,
-                    TextDecorations = decoration,
+                var textBox = new Xceed.Wpf.Toolkit.RichTextBox
+                {                    
                     Tag = tag,
                     Text = text,
                     Height = height,
                     Width = width,
-                    AcceptsReturn = true,
-                    TextWrapping = TextWrapping.WrapWithOverflow                    
+                    AcceptsReturn = true
                 };
                 textBox.tag(new TextTag(Box.author, Box.privacy, Box.identity, Box.timestamp));                
                 InkCanvas.SetLeft(textBox, x);                
@@ -1150,20 +1144,11 @@ namespace MeTLLib.DataTypes
                 var width = textCtrl.Width;
                 this.width = (Double.IsNaN(width) || width <= 0) ? textCtrl.ActualWidth : width;
                 var height = textCtrl.Height;
-                this.height = (Double.IsNaN(height) || height <= 0) ? textCtrl.ActualHeight : height;
-                //this.height = textCtrl.Height;
-                //this.width = textCtrl.Width;
-                this.caret = textCtrl.CaretIndex;
+                this.height = (Double.IsNaN(height) || height <= 0) ? textCtrl.ActualHeight : height;                
                 this.x = InkCanvas.GetLeft(textCtrl);
                 this.y = InkCanvas.GetTop(textCtrl);
                 this.text = textCtrl.Text;
-                this.tag = textCtrl.Tag.ToString();
-                this.style = textCtrl.FontStyle;
-                this.family = textCtrl.FontFamily;
-                this.weight = textCtrl.FontWeight;
-                this.size = textCtrl.FontSize;
-                this.decoration = textCtrl.TextDecorations;
-                this.color = textCtrl.Foreground;
+                this.tag = textCtrl.Tag.ToString();                                
             }
 
             public static readonly string widthTag = "width";

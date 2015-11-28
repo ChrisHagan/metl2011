@@ -4,21 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
+using Xceed.Wpf.Toolkit;
 using System.Windows.Automation.Peers;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using SandRibbonObjects;
 using SandRibbon.Pages.Collaboration.Layout;
+using System.Windows.Controls;
 
 namespace SandRibbon.Components.Utility
 {
-    public class MeTLTextBox : TextBox
+    public class MeTLTextBox : Xceed.Wpf.Toolkit.RichTextBox
     {
         public double offsetX = 0;
         public double offsetY = 0;
@@ -57,28 +58,6 @@ namespace SandRibbon.Components.Utility
             ApplicationCommands.Redo.Execute(null, Application.Current.MainWindow);
             Commands.Redo.Execute(null);
         }
-
-        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
-        {
-            return new MeTLTextBoxAutomationPeer(this); 
-        }
-    }
-
-    public class MeTLTextBoxAutomationPeer : TextBoxAutomationPeer
-    {
-        public MeTLTextBoxAutomationPeer(MeTLTextBox owner) : base(owner)
-        {
-        }
-
-        protected override string GetClassNameCore()
-        {
-            return "MeTLTextBox";
-        }
-
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        {
-            return base.GetAutomationControlTypeCore();
-        }
     }
 
     public static class InkCanvasExtensions
@@ -102,9 +81,9 @@ namespace SandRibbon.Components.Utility
     }
     public static class TextBoxExtensions
     {
-        public static bool IsUnder(this TextBox box, Point point)
+        public static bool IsUnder(this Xceed.Wpf.Toolkit.RichTextBox box, Point point)
         {
-            var boxOrigin = new Point(InkCanvas.GetLeft(box), InkCanvas.GetTop(box));
+            var boxOrigin = new Point(System.Windows.Controls.InkCanvas.GetLeft(box), System.Windows.Controls.InkCanvas.GetTop(box));
             var boxSize = new Size(box.ActualWidth, box.ActualHeight);
             var result = new Rect(boxOrigin, boxSize).Contains(point);
             return result;
@@ -113,14 +92,11 @@ namespace SandRibbon.Components.Utility
         {
             if (box == null) return null;
             var newBox = new MeTLTextBox();
-            newBox.AcceptsReturn = box.AcceptsReturn;
-            newBox.TextWrapping = box.TextWrapping;
+            newBox.AcceptsReturn = box.AcceptsReturn;            
             newBox.BorderThickness = box.BorderThickness;
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
-            newBox.Text = box.Text;
-            newBox.TextAlignment = box.TextAlignment;
-            newBox.TextDecorations = box.TextDecorations.Clone();
+            newBox.Text = box.Text;            
             newBox.FontFamily = box.FontFamily;
             newBox.FontSize = box.FontSize;
             newBox.FontWeight = box.FontWeight;
@@ -141,24 +117,17 @@ namespace SandRibbon.Components.Utility
             newBox.offsetY = box.offsetY;
             return newBox;
         }
-        public static MeTLTextBox toMeTLTextBox(this TextBox OldBox)
+        public static MeTLTextBox toMeTLTextBox(this Xceed.Wpf.Toolkit.RichTextBox OldBox)
         {
             var box = new MeTLTextBox(); 
             box.AcceptsReturn = true;
-            box.TextWrapping = TextWrapping.WrapWithOverflow;
             box.BorderThickness = new Thickness(0);
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
-            box.tag(OldBox.tag());
-            box.FontFamily = OldBox.FontFamily;
-            box.FontStyle = OldBox.FontStyle;
-            box.FontWeight = OldBox.FontWeight;
-            box.TextDecorations = OldBox.TextDecorations;
-            box.FontSize = OldBox.FontSize;
-            box.Foreground = OldBox.Foreground;
+            box.tag(OldBox.tag());            
             box.Text = OldBox.Text;
             box.Width = OldBox.Width;
-            //box.Height = OldBox.Height;
+            box.Height = OldBox.Height;
             InkCanvas.SetLeft(box, InkCanvas.GetLeft(OldBox));
             InkCanvas.SetTop(box, InkCanvas.GetTop(OldBox));
             return box;
