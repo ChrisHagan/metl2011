@@ -37,6 +37,7 @@
         <KeyBinding Key="PageDown" Command="{x:Static api:Commands.MoveToNext}" />
         <KeyBinding Key="Delete" Command="{x:Static api:Commands.DeleteSelectedItems}"/>
     </Controls:MetroWindow.InputBindings>
+    <!--
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Click="ShowDiagnostics">
@@ -62,13 +63,15 @@
             </Button>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
+    -->
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
             <Controls:Flyout x:Name="flyout" Position="Right" Width="250"/>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Frame x:Name="mainFrame">
-        <!--Remove navigation options-->
+        <!--Uncomment this to remove navigation options-->
+        <!--
         <Frame.Template>
             <ControlTemplate TargetType="Frame">
                 <Border>
@@ -76,5 +79,6 @@
                 </Border>
             </ControlTemplate>
         </Frame.Template>
+        -->
     </Frame>
 </Controls:MetroWindow>

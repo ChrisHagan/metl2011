@@ -3,6 +3,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Windows.Controls.Ribbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Collaboration.Layout;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -41,8 +42,8 @@ namespace SandRibbon.Pages.Collaboration
             InitializeComponent();
             //DataContext = slide;
             slide = Slide.Empty;
-            DataContext = slide;            
-                        
+            DataContext = slide;
+
             InitializeComponent();
             /*
             fontFamily.ItemsSource = fontList;
@@ -56,7 +57,8 @@ namespace SandRibbon.Pages.Collaboration
             Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
             {
                 duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
-            }, (kvp) => {
+            }, (kvp) =>
+            {
                 try
                 {
                     return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
@@ -86,7 +88,8 @@ namespace SandRibbon.Pages.Collaboration
             Commands.TextboxSelected.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
             */
             //adding these as a workaround while we're doing singletons of this page and re-using it
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) => {
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) =>
+            {
                 conversationJid = convJid;
                 Commands.RequerySuggested();
             }));
@@ -102,11 +105,11 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequerySuggested();
             }));
             this.Loaded += (ps, pe) =>
-            {
+            {        
                 scroll.ScrollChanged += (s, e) =>
-                {
-                    Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
-                };
+                    {
+                        Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
+                    };
                 Commands.SetLayer.Execute("Sketch");
                 /*
                 //watching the navigation away from this page so that we can do cleanup.  This won't be necessary until we stop using a singleton on the network controller.
@@ -124,71 +127,71 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.JoinConversation.Execute(details.Jid);
                 Commands.MoveToCollaborationPage.Execute(slide.id);
                 Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
-                */
+                */                
             };
-        }
+        }        
         /*
-        private void restoreTextDefaults(object obj)
-        {
-            fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
-            fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
-        }
+private void restoreTextDefaults(object obj)
+{
+   fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
+   fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
+}
 
-        private void updateTextControls(TextInformation info)
-        {
-            fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
-            fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
-            TextBoldButton.IsChecked = info.Bold;
-            TextItalicButton.IsChecked = info.Italics;
-            TextUnderlineButton.IsChecked = info.Underline;
-            TextStrikethroughButton.IsChecked = info.Strikethrough;
-        }       
-        
-        protected bool canDecreaseFont(object _unused)
-        {
-            return fontSize != null;
-        }
-        private void decreaseFont(object _unused)
-        {
-            if (fontSize.ItemsSource == null) return;
-            var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
-            if (currentItem - 1 >= 0)
-            {
-                var newSize = fontSizes[currentItem - 1];
-                fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
-                Commands.FontSizeChanged.Execute(newSize);
-            }
-        }   
-        protected bool canIncreaseFont(object _unused)
-        {
-            return fontSize != null;
-        }     
-        private void increaseFont(object _unused)
-        {
-            if (fontSize.ItemsSource == null) return;
-            var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-            if (currentItem + 1 < fontSizes.Count())
-            {
-                var newSize = fontSizes[currentItem + 1];
-                fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
-                Commands.FontSizeChanged.Execute(newSize);
-            }
-        }
-        private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
-        {
-            var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-            if(currentItem < 0) return;
-            if (e.AddedItems.Count == 0) return;
-            var size = Double.Parse(e.AddedItems[0].ToString());
-            Commands.FontSizeChanged.Execute(size);
-        }
-        private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 0) return;
-            var font = new FontFamily(e.AddedItems[0].ToString());
-            Commands.FontChanged.Execute(font);
-        }   
-        */
+private void updateTextControls(TextInformation info)
+{
+   fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
+   fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
+   TextBoldButton.IsChecked = info.Bold;
+   TextItalicButton.IsChecked = info.Italics;
+   TextUnderlineButton.IsChecked = info.Underline;
+   TextStrikethroughButton.IsChecked = info.Strikethrough;
+}       
+
+protected bool canDecreaseFont(object _unused)
+{
+   return fontSize != null;
+}
+private void decreaseFont(object _unused)
+{
+   if (fontSize.ItemsSource == null) return;
+   var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
+   if (currentItem - 1 >= 0)
+   {
+       var newSize = fontSizes[currentItem - 1];
+       fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
+       Commands.FontSizeChanged.Execute(newSize);
+   }
+}   
+protected bool canIncreaseFont(object _unused)
+{
+   return fontSize != null;
+}     
+private void increaseFont(object _unused)
+{
+   if (fontSize.ItemsSource == null) return;
+   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
+   if (currentItem + 1 < fontSizes.Count())
+   {
+       var newSize = fontSizes[currentItem + 1];
+       fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
+       Commands.FontSizeChanged.Execute(newSize);
+   }
+}
+private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
+{
+   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
+   if(currentItem < 0) return;
+   if (e.AddedItems.Count == 0) return;
+   var size = Double.Parse(e.AddedItems[0].ToString());
+   Commands.FontSizeChanged.Execute(size);
+}
+private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
+{
+   if (e.AddedItems.Count == 0) return;
+   var font = new FontFamily(e.AddedItems[0].ToString());
+   Commands.FontChanged.Execute(font);
+}   
+*/
         private bool userMayAdministerConversation(ConversationDetails _conversation)
         {
             var conversation = Globals.conversationDetails;
@@ -533,7 +536,7 @@ namespace SandRibbon.Pages.Collaboration
                     scroll.ScrollToTop();
                 }
             }
-        }        
+        }
         private void TextColor_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             Commands.SetTextColor.Execute((Color)((System.Windows.Controls.Ribbon.RibbonGalleryItem)e.NewValue).Content);
@@ -552,6 +555,15 @@ namespace SandRibbon.Pages.Collaboration
             if (conversationToDuplicate.UserHasPermission(Globals.credentials))
             {
                 App.controller.client.DuplicateConversation(conversationToDuplicate);
+            }
+        }
+
+        private void Ribbon_Loaded(object sender, RoutedEventArgs e)
+        {
+            Grid child = VisualTreeHelper.GetChild((DependencyObject)sender, 0) as Grid;
+            if (child != null)
+            {
+                child.RowDefinitions[0].Height = new GridLength(0);
             }
         }
     }

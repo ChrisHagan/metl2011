@@ -18,12 +18,32 @@ namespace SandRibbon.Components.Utility
         private ImageFilter imageFilter;
         private TextFilter textFilter;
 
+        public StrokeFilter strokes
+        {
+            get
+            {
+                return strokeFilter;
+            }
+        }
+        public ImageFilter images
+        {
+            get
+            {
+                return imageFilter;
+            }
+        }
+        public TextFilter texts
+        {
+            get
+            {
+                return textFilter;
+            }
+        }
+
         // used to create a snapshot for undo/redo
         private ImageFilter imageDeltaCollection;
         private StrokeFilter strokeDeltaFilter;
-
-        public event EventHandler ElementsRepositioned;
-
+        
         public ContentBuffer()
         {
             strokeFilter = new StrokeFilter();
@@ -32,15 +52,6 @@ namespace SandRibbon.Components.Utility
 
             strokeDeltaFilter = new StrokeFilter();
             imageDeltaCollection = new ImageFilter();
-        }
-
-        protected virtual void OnElementsRepositioned(EventArgs e)
-        {
-            var handler = ElementsRepositioned;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
         }
 
         public List<PrivateAwareStroke> FilteredStrokes(List<ContentVisibilityDefinition> contentVisibility)
@@ -94,7 +105,7 @@ namespace SandRibbon.Components.Utility
         {
             textFilter.TextBoxes.ForEach(t => adjustText((MeTLTextBox)t, tb => tb));
             strokeFilter.Strokes.ForEach(s => adjustStroke(s, st => st));
-            imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));
+            imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));            
         }
 
         public void Clear()
@@ -197,8 +208,6 @@ namespace SandRibbon.Components.Utility
                 reassociateImageToCanvas((MeTLImage)tImage);
             foreach (var tText in textboxes)
                 reassociateTextboxToCanvas((MeTLTextBox)tText);
-
-            OnElementsRepositioned(new EventArgs());
         }
         public PrivateAwareStroke adjustStroke(PrivateAwareStroke stroke, Func<PrivateAwareStroke, PrivateAwareStroke> adjustment)
         {

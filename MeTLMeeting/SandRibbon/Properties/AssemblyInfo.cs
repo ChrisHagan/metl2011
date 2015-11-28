@@ -8,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("MeTL Presenter")]
 [assembly: AssemblyDescription("MeTL Presenter")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Monash")]
+[assembly: AssemblyCompany("Stackable Regiments")]
 [assembly: AssemblyProduct("MeTL Presenter")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]

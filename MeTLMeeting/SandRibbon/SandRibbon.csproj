@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>C8D6AE34ABA856F7B07A5099F4707FB0F0E5C778</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_12_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>A5B10E473EBCFF3124DA60A8AF138E960DD783ED</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_13_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -52,7 +52,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>323</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>1.0.0.322</MinimumRequiredVersion>
-    <ApplicationVersion>1.0.0.322</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.323</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.323</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -89,8 +89,8 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
-    <ProductName>MeTL Teacher</ProductName>
-    <InstallUrl>http://metl.adm.monash.edu/MeTLTeacher/</InstallUrl>
+    <ProductName>MeTL Saint Leo 2016</ProductName>
+    <InstallUrl>http://setup.stackableregiments.com/windowsClients/metl2016/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu/MeTLTeacher/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
     <Prefer32Bit>false</Prefer32Bit>
@@ -282,6 +282,12 @@
     <Compile Include="Pages\Collaboration\GroupCollaborationPage.xaml.cs">
       <DependentUpon>GroupCollaborationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\Layout\KunzweilerLens.xaml.cs">
+      <DependentUpon>KunzweilerLens.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Collaboration\Layout\UserCardSmall.xaml.cs">
+      <DependentUpon>UserCardSmall.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">
@@ -418,6 +424,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Collaboration\Layout\CastBarFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Collaboration\Layout\KunzweilerLens.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\Collaboration\Layout\UserCardSmall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1120,6 +1134,7 @@
     <None Include="SandRibbon_10_TemporaryKey.pfx" />
     <None Include="SandRibbon_11_TemporaryKey.pfx" />
     <None Include="SandRibbon_12_TemporaryKey.pfx" />
+    <None Include="SandRibbon_13_TemporaryKey.pfx" />
     <None Include="SandRibbon_2_TemporaryKey.pfx" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />

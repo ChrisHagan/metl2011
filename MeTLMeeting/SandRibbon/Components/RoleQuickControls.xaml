@@ -5,35 +5,54 @@
              xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
              xmlns:local="clr-namespace:SandRibbon.Components"
              xmlns:providers="clr-namespace:SandRibbon.Providers"
+             xmlns:layout="clr-namespace:SandRibbon.Layout"
              xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
              xmlns:components="clr-namespace:SandRibbon.Components"
-             xmlns:tabs="clr-namespace:SandRibbon.Tabs"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:tabs="clr-namespace:SandRibbon.Tabs"             
              Height="Auto" MaxWidth="200"
              >
+    <UserControl.Resources>
+        <sys:Double x:Key="splitter">5</sys:Double>
+        <GridLength x:Key="splitterThickness">5</GridLength>
+    </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <StackPanel>
-            <WrapPanel x:Name="ownerQuickControls">
-                <Label Content="What can people do?" Style="{StaticResource medium}" />
-                <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish"></CheckBox>
-                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can publish quizzes"></CheckBox>
-                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can create attachments"></CheckBox>
-                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can add slides"></CheckBox>
-                <CheckBox Checked="StudentsCanPublishChecked" Content="Students can view participants list"></CheckBox>
-                <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher"></CheckBox>
-                <RibbonToggleButton LargeImageSource="\Resources\appbar.crown.png" SmallImageSource="\Resources\appbar.crown.png" Label="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
-                <RibbonButton Label="Add Page" LargeImageSource="\Resources\appbar.page.add.png" SmallImageSource="\Resources\appbar.page.add.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-                <RibbonButton Label="Duplicate Slide" LargeImageSource="\Resources\appbar.page.copy.png" SmallImageSource="\Resources\appbar.page.copy.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
-                <RibbonButton Label="Duplicate Conversation" LargeImageSource="\Resources\appbar.page.duplicate.png" SmallImageSource="\Resources\appbar.page.duplicate.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
-            </WrapPanel>
-            <WrapPanel x:Name="participantQuickControls">
-                <Label Content="What do you need?" Style="{StaticResource medium}" />
-                <RibbonButton Label="Sync" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
-                <RibbonButton x:Name="submitSubmission" 
-                    Label="Submit a screenshot" LargeImageSource="\Resources\appbar.stamp.at.png" SmallImageSource="\Resources\appbar.stamp.at.png"
+        <Grid layout:GridLayout.ItemsPerRow="1">
+            <Grid x:Name="ownerQuickControls" layout:GridLayout.ItemsPerRow="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="{StaticResource splitterThickness}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource clearBottom}">
+                    <Label Content="What can students do?" Style="{StaticResource medium}" />
+                    <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Publish content"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" Content="Publish quizzes"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" Content="Attach files"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" Content="Add slides"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" Content="List participants"></CheckBox>
+                    <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Follow teacher"></CheckBox>
+                </Grid>
+                <GridSplitter Height="{StaticResource splitter}" HorizontalAlignment="Stretch"/>
+                <WrapPanel>
+                    <RibbonToggleButton LargeImageSource="\Resources\appbar.crown.png" SmallImageSource="\Resources\appbar.crown.png" Label="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
+                    <RibbonButton Label="Manage bans" SmallImageSource="\Resources\appbar.people.checkbox.png" LargeImageSource="\Resources\appbar.people.checkbox.png" Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>
+                    <RibbonButton Label="Reorder pages" ToolTip="{DynamicResource PageReorderToolTip}" SmallImageSource="\Resources\appbar.page.arrow.png" LargeImageSource="\Resources\appbar.page.arrow.png" Command="{x:Static api:Commands.EditConversation}" />
+                    <RibbonButton Label="Add page" LargeImageSource="\Resources\appbar.page.add.png" SmallImageSource="\Resources\appbar.page.add.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
+                    <RibbonButton Label="Duplicate page" LargeImageSource="\Resources\appbar.page.copy.png" SmallImageSource="\Resources\appbar.page.copy.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}"/>
+                    <RibbonButton Label="Duplicate conversation" LargeImageSource="\Resources\appbar.page.duplicate.png" SmallImageSource="\Resources\appbar.page.duplicate.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"/>
+                </WrapPanel>
+            </Grid>
+            <Grid layout:GridLayout.ItemsPerRow="1" x:Name="participantQuickControls">
+                <Label Content="What will you do?" Style="{StaticResource medium}" />
+                <WrapPanel>
+                    <RibbonToggleButton Label="Follow teacher" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
+                    <RibbonButton x:Name="submitSubmission" 
+                    Label="Submit screenshot" LargeImageSource="\Resources\appbar.stamp.at.png" SmallImageSource="\Resources\appbar.stamp.at.png"
                     Command="{x:Static api:Commands.RequestScreenshotSubmission}"
                     ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
-
-            </WrapPanel>
-        </StackPanel>
+                </WrapPanel>
+            </Grid>
+        </Grid>
     </ScrollViewer>
 </UserControl>

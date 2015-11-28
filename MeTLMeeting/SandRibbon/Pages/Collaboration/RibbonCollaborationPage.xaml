@@ -6,6 +6,8 @@
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:components="clr-namespace:SandRibbon.Components"
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
+      xmlns:collab="clr-namespace:SandRibbon.Pages.Collaboration.Layout"
       xmlns:tabs="clr-namespace:SandRibbon.Tabs"
       Title="Collaboration">
     <Page.Resources>
@@ -21,7 +23,10 @@
         </Style>
     </Page.Resources>
     <DockPanel>
-        <Ribbon DockPanel.Dock="Top">
+        <Ribbon DockPanel.Dock="Top" Loaded="Ribbon_Loaded">
+            <Ribbon.QuickAccessToolBar>
+                <RibbonQuickAccessToolBar Visibility="Collapsed" />
+            </Ribbon.QuickAccessToolBar>
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu>
                     <RibbonApplicationMenuItem Header="Create new" />
@@ -106,18 +111,14 @@
                             <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>
                         </RibbonGroupSizeDefinition>
                     </RibbonGroup.GroupSizeDefinitions>
-                    <RibbonButton SmallImageSource="/Resources/appbar.undo.png" LargeImageSource="/Resources/appbar.undo.png" Command="{x:Static ApplicationCommands.Undo}" Label="Undo"/>
-                    <RibbonButton SmallImageSource="/Resources/appbar.redo.png" LargeImageSource="/Resources/appbar.redo.png" Command="{x:Static ApplicationCommands.Redo}" Label="Redo"/>
-                    <RibbonButton SmallImageSource="/Resources/cut.png" LargeImageSource="/Resources/cut.png" Command="{x:Static ApplicationCommands.Cut}" Label="Cut"/>
-                    <RibbonButton SmallImageSource="/Resources/copy.png" LargeImageSource="/Resources/copy.png" Command="{x:Static ApplicationCommands.Copy}" Label="Copy"/>
-                    <RibbonButton SmallImageSource="/Resources/paste.png" LargeImageSource="/Resources/paste.png" Command="{x:Static ApplicationCommands.Paste}" Label="Paste"/>
+                    <RibbonButton SmallImageSource="\Resources\appbar.undo.png" LargeImageSource="/Resources/appbar.undo.png" Command="{x:Static ApplicationCommands.Undo}" Label="Undo"/>
+                    <RibbonButton SmallImageSource="\Resources\appbar.redo.png" LargeImageSource="/Resources/appbar.redo.png" Command="{x:Static ApplicationCommands.Redo}" Label="Redo"/>
+                    <RibbonButton SmallImageSource="\Resources\appbar.clipboard.png" LargeImageSource="\Resources\appbar.clipboard.png" Command="{x:Static ApplicationCommands.Cut}" Label="Cut"/>
+                    <RibbonButton SmallImageSource="\Resources\appbar.clipboard.paper.png" LargeImageSource="\Resources\appbar.clipboard.paper.png" Command="{x:Static ApplicationCommands.Copy}" Label="Copy"/>
+                    <RibbonButton SmallImageSource="\Resources\appbar.clipboard.paste.png" LargeImageSource="\Resources\appbar.clipboard.paste.png" Command="{x:Static ApplicationCommands.Paste}" Label="Paste"/>
                 </RibbonGroup>
                 <components:PrivacyTools Header="Who can see your work?"/>
                 <components:ZoomControls Header="How much content do you see?"/>
-                    <!--components:MiniMap DataContext="{Binding ElementName=scroll}" Height="100" Width="100" /-->
-                <!--RibbonGroup Header="Whose content do you see?">
-                    <components:ContentVisibility/>
-                </-->
                 <RibbonGroup x:Name="inkGroup" Header="Ink options">
                     <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke"></RibbonRadioButton>
                     <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.png" Background="Red" Command="{x:Static api:Commands.SetDrawingAttributes}">
@@ -154,7 +155,7 @@
             <tabs:Quizzes/>
             <tabs:Submissions/>
             <tabs:Attachments/>
-            <tabs:ConversationManagement/>
+            <!--tabs:ConversationManagement/-->
             <tabs:Analytics/>
             <tabs:Plugins/>
         </Ribbon>
@@ -168,11 +169,11 @@
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="200" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
-                    <StackPanel>
+                    <Grid layout:GridLayout.ItemsPerRow="1">
                         <Label Content="What do you want to see?" Style="{StaticResource medium}" />
                         <components:ContentVisibility/>
                         <components:RoleQuickControls />
-                    </StackPanel>
+                    </Grid>
                 </Grid>
                 <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
                 <Grid Grid.Column="2">
@@ -180,7 +181,10 @@
                         <Canvas x:Name="syncPageOverlay"/>
                         <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
                             <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                                <Grid>
+                                    <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                                    <collab:KunzweilerLens x:Name="lens" Width="{Binding ElementName=canvas, Path=ActualWidth}" Height="{Binding ElementName=canvas, Path=ActualHeight}" />                                        
+                                </Grid>
                             </ScrollViewer>
                         </Viewbox>
                         <Grid x:Name="dynamicContent" />

@@ -1,6 +1,5 @@
 ﻿<RibbonGroup x:Class="SandRibbon.Components.TextTools"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"    
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"

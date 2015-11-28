@@ -28,6 +28,7 @@ using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 using Awesomium.Windows.Controls;
 using Awesomium.Core;
+using SandRibbon.Pages.Collaboration.Layout;
 
 namespace SandRibbon.Components
 {
@@ -162,7 +163,10 @@ namespace SandRibbon.Components
         private double size = 24.0d;
         public static TypingTimedAction TypingTimer;
         private string _originalText;
-        private ContentBuffer contentBuffer;
+        public ContentBuffer contentBuffer
+        {
+            get;
+        } = new ContentBuffer();
         private string _target;
         private StackMoveDeltaProcessor moveDeltaProcessor;
         private Privacy _defaultPrivacy;
@@ -213,20 +217,8 @@ namespace SandRibbon.Components
         public CollapsedCanvasStack()
         {
             InitializeComponent();
-
-            var url = new Uri("http://localhost:8080/textbox");
-            var session = WebCore.CreateWebSession(new WebPreferences { });
-            session.SetCookie(url, App.controller.credentials.cookie, false, true);
-            html.WebSession = session;
-            html.ProcessCreated += delegate
-            {
-                html.Source = url;
-                html.PreviewMouseUp += Html_PreviewMouseUp;
-            };            
-
-            wireInPublicHandlers();
-            contentBuffer = new ContentBuffer();
-            contentBuffer.ElementsRepositioned += (sender, args) => { AddAdorners(); };
+            //SetupBrowser();
+            wireInPublicHandlers();            
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -234,6 +226,7 @@ namespace SandRibbon.Components
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
+            Commands.ToggleBrowserControls.RegisterCommand(new DelegateCommand<object>(ToggleBrowserControls));
 
             Commands.SetTextBold.RegisterCommand(new DelegateCommand<bool>(ToggleBold,canToggleBold));
             Commands.SetTextUnderline.RegisterCommand(new DelegateCommand<bool>(ToggleUnderline,canToggleUnderline));
@@ -304,11 +297,48 @@ namespace SandRibbon.Components
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
-        private void Html_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private void ContentElementsChanged(object sender, EventArgs e)
         {
-            var pos = e.GetPosition(this);
-            var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})",pos.X,pos.Y));
+            AddAdorners();
+            BroadcastRegions(sender as ContentBuffer);
         }
+        
+        private void BroadcastRegions(ContentBuffer buffer) {
+            var regions = new List<SignedBounds>();
+            regions.AddRange(buffer.strokes.Strokes.Select(s => s.signedBounds()));
+            Commands.SignedRegions.Execute(regions);
+        }
+
+        private bool browserControlsVisible = false;
+        private void SetupBrowser() {
+            var url = new Uri("http://localhost:8080/textbox");
+            var session = WebCore.CreateWebSession(new WebPreferences { });
+            session.SetCookie(url, App.controller.credentials.cookie, false, true);
+            html.WebSession = session;
+            html.ProcessCreated += delegate
+            {
+                html.DocumentReady += delegate
+                {
+                    html.ExecuteJavascript("MeTLText.showControls()");
+                };
+                html.Source = url;
+            };
+        }        
+        private void ToggleBrowserControls(object obj)
+        {                        
+            browserControlsVisible = !browserControlsVisible;
+            if (browserControlsVisible)
+            {
+                html.IsHitTestVisible = true;
+                Work.IsHitTestVisible = false;
+            }
+            else
+            {
+                html.IsHitTestVisible = false;
+                Work.IsHitTestVisible = true;
+            }
+            html.ExecuteJavascriptWithResult(browserControlsVisible ? "MeTLText.showControls()" : "MeTLText.hideControls()");            
+        }        
 
         public void TogglePublishBrush(object unused) {
             setInkCanvasMode("Select");
@@ -511,8 +541,7 @@ namespace SandRibbon.Components
         {
             if (me.ToLower() == Globals.PROJECTOR) return;
             html.IsHitTestVisible = false;
-            Work.IsHitTestVisible = true;
-            //html.ExecuteJavascript("MeTLText.hideControls()");
+            Work.IsHitTestVisible = true;            
             switch (newLayer)
             {
                 case "Select":
@@ -539,8 +568,8 @@ namespace SandRibbon.Components
                 case "Sketch":
                     Work.EditingMode = InkCanvasEditingMode.Ink;
                     Work.UseCustomCursor = true;
-                    break;
-            }            
+                    break;                                                       
+            }
             _focusable = newLayer == "Text";
             setLayerForTextFor(Work);            
         }
@@ -1372,10 +1401,17 @@ namespace SandRibbon.Components
                 {
                     Work.Strokes.Add(st);
                     RefreshCanvas();
+                    Commands.StrokePlaced.Execute(st);
                 });
             }
             else
-                contentBuffer.AddStroke(stroke, (st) => Work.Strokes.Add(st));
+            {
+                contentBuffer.AddStroke(stroke, (st) =>
+                {
+                    Work.Strokes.Add(st);
+                    Commands.StrokePlaced.Execute(st);
+                });
+            }
         }
 
         private double ReturnPositiveValue(double x)
