@@ -25,7 +25,27 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
-            <Label Content="What are you looking for?" Margin="{StaticResource clearBottom}"/>
+            <Label Content="Are you starting a new conversation?" Margin="{DynamicResource clearBottom}"/>
+            <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="3">
+                <Button Command="{x:Static api:Commands.CreateBlankConversation}" Grid.Row="0" Grid.RowSpan="3"
+                        BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="1"
+                        Background="{DynamicResource AccentColorBrush2}">
+                    <Label Content="Start with a blank slide" />
+                </Button>
+                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
+                        Grid.Row="0" Grid.Column="1">
+                    <Label Content="Import a PowerPoint presentation" Style="{StaticResource medium}"/>
+                </Button>
+                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}"
+                        Grid.Row="1" Grid.Column="1">
+                    <Label Content="Import a PowerPoint in pieces" Style="{StaticResource medium}"/>
+                </Button>
+                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}"
+                        Grid.Row="2" Grid.Column="1">
+                    <Label Content="Import a PowerPoint in High Definition" Style="{StaticResource medium}"/>
+                </Button>
+            </Grid>
+            <Label Content="Are you joining an existing conversation?" Margin="{StaticResource clearTop}"/>
             <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"
                  Margin="{StaticResource space}"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"/>
@@ -34,44 +54,28 @@
                 <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
                           Unchecked="onlyMyConversations_Checked"/>
             </StackPanel>
-            <Button Click="searchConversations_Click">
-                <Label Content="Search" />
-            </Button>
-            <UniformGrid HorizontalAlignment="Left" Columns="2">
-                <Button Click="AnalyzeSelectedConversations">
-                    <Label Content="Analyze selected conversations" Style="{StaticResource medium}" />
+            <Grid layout:GridLayout.RowCount="2" layout:GridLayout.ColumnCount="2">
+                <Button Click="searchConversations_Click" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" 
+                        Background="{DynamicResource AccentColorBrush2}"
+                        BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="1">
+                    <Label Content="Search" />
                 </Button>
-                <Button Click="SynchronizeToOneNote">
-                    <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
+                <Button Click="AnalyzeSelectedConversations" Grid.Row="0" Grid.Column="1">
+                    <Label Content="Analyze selected conversations" Style="{StaticResource medium}"/>
                 </Button>
-            </UniformGrid>
-            <UniformGrid HorizontalAlignment="Left" Columns="2">
-                <Button Command="{x:Static api:Commands.CreateBlankConversation}">
-                    <Label Content="Create new conversation" Style="{StaticResource medium}"/>
-                </Button>
-                <!--<Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerpointImportType.Image}">-->
-                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}">
-                        <Label Content="Import conversation from powerpoint" Style="{StaticResource medium}"/>
-                </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}">
-                    <Label Content="Import conversation from powerpoint (Flexible)" Style="{StaticResource medium}"/>
-                </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}">
-                    <Label Content="Import conversation from powerpoint (High Quality)" Style="{StaticResource medium}"/>
-                </Button>
-            </UniformGrid>
+                    <Button Click="SynchronizeToOneNote" Grid.Row="1" Grid.Column="1">
+                        <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
+                    </Button>
+            </Grid>
         </Grid>
         <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                   Grid.Row="1"
-                  Margin="{StaticResource space}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                  Margin="{StaticResource clearTop}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Enter conversation" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="JoinConversation">
-                                <Button.Background>
-                                    <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                                </Button.Background>
+                            <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush2}">
                                 <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
                                     <macros:IconControl Content="appbar_door_enter" />
                                 </Viewbox>
