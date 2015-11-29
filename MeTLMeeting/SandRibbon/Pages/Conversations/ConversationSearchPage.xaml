@@ -1,6 +1,7 @@
 ﻿<Page x:Class="SandRibbon.Pages.Conversations.ConversationSearchPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:sr="clr-namespace:SandRibbon"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"            
     xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:components="clr-namespace:SandRibbon.Components"      
@@ -13,95 +14,120 @@
     xmlns:layout="clr-namespace:SandRibbon.Layout"
     xmlns:conversation="clr-namespace:SandRibbon.Pages.Conversations"
     xmlns:p="clr-namespace:SandRibbon.Properties"
-      xmlns:ppType="clr-namespace:SandRibbon.Utils"
+    xmlns:ppType="clr-namespace:SandRibbon.Utils"
     x:Name="root">
     <Page.Resources>
         <Thickness Top="50" x:Key="space"/>
         <conversation:VisibleToAuthor x:Key="visibleToAuthor" />
+        <sys:Double x:Key="l">40</sys:Double>
+        <sys:Double x:Key="m">22</sys:Double>
+        <sys:Double x:Key="s">18</sys:Double>
+        <Style x:Key="heading" TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="40" />            
+        </Style>
+        <Style x:Key="primaryChoice" TargetType="{x:Type Button}">
+            <Style.Setters>
+                <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="{DynamicResource m}" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Padding" Value="15" />
+            </Style.Setters>
+        </Style>
+        <Style x:Key="secondaryChoice" TargetType="{x:Type Button}">
+            <Style.Setters>
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="FontSize" Value="{DynamicResource s}" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Padding" Value="15" />
+            </Style.Setters>
+        </Style>
+        <Thickness x:Key="nearBottom" Left="0" Right="0" Bottom="15" Top="0" />
     </Page.Resources>
-    <Grid Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
-            <Label Content="Are you starting a new conversation?" Margin="{DynamicResource clearBottom}"/>
-            <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="3">
-                <Button Command="{x:Static api:Commands.CreateBlankConversation}" Grid.Row="0" Grid.RowSpan="3"
-                        BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="1"
-                        Background="{DynamicResource AccentColorBrush2}">
-                    <Label Content="Start with a blank slide" />
-                </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
-                        Grid.Row="0" Grid.Column="1">
-                    <Label Content="Import a PowerPoint presentation" Style="{StaticResource medium}"/>
-                </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}"
-                        Grid.Row="1" Grid.Column="1">
-                    <Label Content="Import a PowerPoint in pieces" Style="{StaticResource medium}"/>
-                </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}"
-                        Grid.Row="2" Grid.Column="1">
-                    <Label Content="Import a PowerPoint in High Definition" Style="{StaticResource medium}"/>
-                </Button>
-            </Grid>
-            <Label Content="Are you joining an existing conversation?" Margin="{StaticResource clearTop}"/>
-            <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"
-                 Margin="{StaticResource space}"
-                 Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"/>
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource medium}" Content="Only my conversations" />
-                <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
-                          Unchecked="onlyMyConversations_Checked"/>
-            </StackPanel>
-            <Grid layout:GridLayout.RowCount="2" layout:GridLayout.ColumnCount="2">
-                <Button Click="searchConversations_Click" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" 
-                        Background="{DynamicResource AccentColorBrush2}"
-                        BorderBrush="{DynamicResource HighlightBrush}" BorderThickness="1">
-                    <Label Content="Search" />
-                </Button>
-                <Button Click="AnalyzeSelectedConversations" Grid.Row="0" Grid.Column="1">
-                    <Label Content="Analyze selected conversations" Style="{StaticResource medium}"/>
-                </Button>
-                    <Button Click="SynchronizeToOneNote" Grid.Row="1" Grid.Column="1">
-                        <Label Content="Send selected conversations to OneNote" Style="{StaticResource medium}" />
+    <ScrollViewer>
+        <Grid Margin="50 50" layout:GridLayout.ItemsPerRow="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
+                <StackPanel Margin="{DynamicResource nearBottom}">
+                    <Label Content="New conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                    <Button Command="{x:Static api:Commands.CreateBlankConversation}" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
+                </StackPanel >
+
+                <Label Content="Import conversation" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                <WrapPanel x:Name="pptChoices" Margin="{DynamicResource clearBottom}">
+                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
+                        Style="{DynamicResource secondaryChoice}" Content="PowerPoint" Margin="15 0">
                     </Button>
+                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}"
+                        Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (flexible)" />
+                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}"
+                        Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (high quality)" />
+                </WrapPanel>
+
+                <Label Content="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
+                 Width="{Binding ElementName=pptChoices, Path=ActualWidth}"
+                 Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"
+                     Margin="{DynamicResource nearBottom}"/>
+                <StackPanel Orientation="Horizontal" Margin="{DynamicResource clearBottom}">
+                    <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
+                          Unchecked="onlyMyConversations_Checked"/>
+                    <Label Content="Only my conversations" />
+                </StackPanel>
+
+                <Label Content="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
             </Grid>
+            <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"                  
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="{DynamicResource nearBottom}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Enter conversation" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush2}">
+                                    <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                                        <macros:IconControl Content="appbar_door_enter" />
+                                    </Viewbox>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Title">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type DataGridRow}}}"/>
+                                    <Label Content="{Binding Path=Title}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="OWNER" Binding="{Binding Path=Author}" />
+                    <DataGridTextColumn Header="SLIDES" Binding="{Binding Path=Slides.Count}" />
+                    <DataGridTextColumn Header="CREATED" Binding="{Binding Path=Created}" />
+                    <DataGridTextColumn Header="IDENTITY" Binding="{Binding Path=Jid}" />
+                    <DataGridTemplateColumn Header="MODIFY" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="EditConversation" Visibility="{Binding Converter={StaticResource visibleToAuthor}}">
+                                    <Rectangle Width="20" Height="20">
+                                        <Rectangle.Fill>
+                                            <VisualBrush Visual="{StaticResource appbar_cog}" />
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Orientation="Horizontal">
+                <Button Click="AnalyzeSelectedConversations" Content="Analyze selected conversations" Style="{DynamicResource secondaryChoice}" Margin="15 0"/>
+                <Button Click="SynchronizeToOneNote" Content="Send selected conversations to OneNote" Style="{DynamicResource secondaryChoice}" Margin="15 0"/>
+            </StackPanel>
         </Grid>
-        <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                  Grid.Row="1"
-                  Margin="{StaticResource clearTop}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Enter conversation" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush2}">
-                                <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                                    <macros:IconControl Content="appbar_door_enter" />
-                                </Viewbox>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" />
-                <DataGridTextColumn Header="Owner" Binding="{Binding Path=Author}" />
-                <DataGridTextColumn Header="Slides" Binding="{Binding Path=Slides.Count}" />
-                <DataGridTextColumn Header="Created" Binding="{Binding Path=Created}" />
-                <DataGridTextColumn Header="Identity" Binding="{Binding Path=Jid}" />
-                <DataGridTemplateColumn Header="Edit" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Click="EditConversation" Visibility="{Binding Converter={StaticResource visibleToAuthor}}">
-                                <Rectangle Width="20" Height="20">
-                                    <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_cog}" />
-                                    </Rectangle.Fill>
-                                </Rectangle>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+    </ScrollViewer>
 </Page>

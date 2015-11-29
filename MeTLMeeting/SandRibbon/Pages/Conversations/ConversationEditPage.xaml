@@ -9,18 +9,21 @@
         <local:HideErrorsIfEmptyConverter x:Key="errorVisibility" />
     </Page.Resources>
     <Grid layout:GridLayout.ItemsPerRow="1">
-        <Label Content="What do you want to change about your conversation?" DockPanel.Dock="Top"/>
-        <Label Content="What its called" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
+        <Label Content="What do you want to change about your conversation?" />
+        <Label Content="Its title" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
         <TextBox Text="{Binding Path=Title}" />
         <Label Content="Who can see it" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
         <ComboBox IsEditable="False" ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" x:Name="sharing"
                       SelectedItem="{Binding Path=Subject}"/>
-        <Label Foreground="Red" Content="{Binding}" x:Name="errorDisplay" Visibility="{Binding Converter={StaticResource errorVisibility}}" />
-        <Button Click="Cancel" Height="Auto">
+        <Label Foreground="Red" Content="{Binding}" x:Name="errorDisplay" Visibility="{Binding Converter={StaticResource errorVisibility}}" />        
+        <Button Click="Cancel" Width="Auto">
             <Label Content="Cancel" />
         </Button>
-        <Button Click="saveEdit" Height="Auto">
+        <Button Click="saveEdit" Background="{DynamicResource AccentColorBrush2}" Width="Auto">
             <Label Content="Save" />
+        </Button>
+        <Button Click="deleteConversation" Background="Red" Margin="{DynamicResource clearTop}" Width="Auto">
+            <Label Content="I want to delete it" />
         </Button>
     </Grid>
 </Page>

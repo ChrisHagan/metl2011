@@ -17,6 +17,7 @@ using System.IO;
 using Akka;
 using System.Threading.Tasks;
 using Akka.Actor;
+using System.Windows.Controls;
 
 //[assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -24,7 +25,7 @@ namespace SandRibbon
 {
     public partial class App : Application
     {
-        
+
 
         public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
         public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
@@ -33,11 +34,11 @@ namespace SandRibbon
         public static IAuditor auditor = new FuncAuditor((g) =>
         {
             diagnosticModelActor.Tell(g);
-           //dd.updateGauge(g);
+            //dd.updateGauge(g);
         }, (m) =>
         {
             diagnosticModelActor.Tell(m);
-           //dd.addMessage(m);
+            //dd.addMessage(m);
         });
 
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
@@ -45,7 +46,7 @@ namespace SandRibbon
         public static bool isStaging = false;
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-//        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
+        //        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
         public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
 
 #if DEBUG
@@ -55,7 +56,7 @@ namespace SandRibbon
 
         private static SplashScreen splashScreen;
         public static void ShowSplashScreen()
-          {
+        {
             //App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
             splashScreen = new SplashScreen("resources/logo-metl-splash.png");
             splashScreen.Show(false);
@@ -75,7 +76,7 @@ namespace SandRibbon
             //App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
             controller = new NetworkController(configuration);
             //App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
-//            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
+            //            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
         }
         public static List<MeTLConfigurationProxy> availableServers()
         {
@@ -92,10 +93,11 @@ namespace SandRibbon
         }
         public static MetlConfiguration getCurrentBackend
         {
-            get {
+            get
+            {
                 return controller.config;
             }
-        }        
+        }
         public static void noop(object _arg)
         {
         }
@@ -128,7 +130,7 @@ namespace SandRibbon
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (s, ce, ch, e) => { return true; };//bypassAllCertificateStuff);
             System.Net.ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls;
-            */
+            */            
         }
         private static void setDotNetPermissionState()
         {
@@ -165,7 +167,7 @@ namespace SandRibbon
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
-            new MainWindow().Show();            
+            new MainWindow().Show();
         }
         String[] falseAlarms = new[]{
                 "Index was out of range. Must be non-negative and less than the size of the collection.",
@@ -186,12 +188,13 @@ namespace SandRibbon
             {
                 Commands.LeaveAllRooms.Execute(null);
                 if (controller != null && controller.client != null)
-                    controller.client.Disconnect();         
+                    controller.client.Disconnect();
             }
             catch (Exception) { }
             if (App.diagnosticWindow != null)
             {
-                diagnosticWindow.Dispatcher.adopt(delegate {
+                diagnosticWindow.Dispatcher.adopt(delegate
+                {
                     diagnosticWindow.Close();
                 });
             }
@@ -203,8 +206,8 @@ namespace SandRibbon
             {
                 Commands.Mark.Execute(string.Format("Unhandled exception: {0}", msg));
                 e.Handled = true;
-            }            
-        }        
+            }
+        }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
 #if DEBUG

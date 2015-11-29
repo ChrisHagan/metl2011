@@ -1198,6 +1198,8 @@
     </None>
     <AppDesigner Include="Properties\" />
     <Resource Include="Resources\advent-pro.thin.ttf" />
+    <Resource Include="Resources\advent-pro.extralight.ttf" />
+    <Resource Include="Resources\advent-pro.light.ttf" />
     <None Include="SandRibbon_10_TemporaryKey.pfx" />
     <None Include="SandRibbon_11_TemporaryKey.pfx" />
     <None Include="SandRibbon_12_TemporaryKey.pfx" />

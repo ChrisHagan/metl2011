@@ -135,15 +135,10 @@ namespace SandRibbon
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
         }
-
-        private void ShowConversationSearch(NetworkController c)
-        {
-            mainFrame.Navigate(c.conversationSearchPage);//new ConversationSearchPage(c));
-        }
-
+        
         private void WordCloud(object obj)
         {
-            mainFrame.Navigate(new TagCloudPage());
+            mainFrame.Navigate(new TagCloudPage(App.controller));
         }
 
         private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
