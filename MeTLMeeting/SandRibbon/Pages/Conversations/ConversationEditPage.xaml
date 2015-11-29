@@ -1,7 +1,26 @@
 ﻿<Page x:Class="SandRibbon.Pages.Conversations.ConversationEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"      
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
+      xmlns:local="clr-namespace:SandRibbon.Pages.Conversations"
+      xmlns:providers="clr-namespace:SandRibbon.Providers"
       Title="ConversationEdit">
     <Page.Resources>
+        <local:HideErrorsIfEmptyConverter x:Key="errorVisibility" />
     </Page.Resources>
+    <Grid layout:GridLayout.ItemsPerRow="1">
+        <Label Content="What do you want to change about your conversation?" DockPanel.Dock="Top"/>
+        <Label Content="What its called" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
+        <TextBox Text="{Binding Path=Title}" />
+        <Label Content="Who can see it" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
+        <ComboBox IsEditable="False" ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" x:Name="sharing"
+                      SelectedItem="{Binding Path=Subject}"/>
+        <Label Foreground="Red" Content="{Binding}" x:Name="errorDisplay" Visibility="{Binding Converter={StaticResource errorVisibility}}" />
+        <Button Click="Cancel" Height="Auto">
+            <Label Content="Cancel" />
+        </Button>
+        <Button Click="saveEdit" Height="Auto">
+            <Label Content="Save" />
+        </Button>
+    </Grid>
 </Page>

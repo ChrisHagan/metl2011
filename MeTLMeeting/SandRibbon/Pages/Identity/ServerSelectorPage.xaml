@@ -25,7 +25,8 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}" Visibility="{Binding Path=visible}" IsEnabled="{Binding Path=enabled}">
+                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}" Visibility="{Binding Path=visible}" IsEnabled="{Binding Path=enabled}"
+                            MaxWidth="400">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                             <Grid layout:GridLayout.ItemsPerRow="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                 <Image Source="{Binding Path=imageUri}" Margin="{StaticResource clearHorizontal}" Height="300"/>

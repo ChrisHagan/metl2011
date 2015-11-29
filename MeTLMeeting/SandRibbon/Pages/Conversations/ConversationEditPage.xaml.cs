@@ -14,30 +14,18 @@ namespace SandRibbon.Pages.Conversations
 {
     public partial class ConversationEditPage : Page
     {
-        public static RoutedCommand RenameConversation = new RoutedCommand();
-        public static RoutedCommand ShareConversation = new RoutedCommand();
-        public static RoutedCommand DeleteConversation = new RoutedCommand();
-        public class HideErrorsIfEmptyConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                return string.IsNullOrEmpty((string)value) ? Visibility.Collapsed : Visibility.Visible;
-            }
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                return value;
-            }
-        }
+        
         protected NetworkController networkController;
         public ConversationEditPage(NetworkController _networkController)
         {
             networkController = _networkController;
             InitializeComponent();
+            errorDisplay.DataContext = Errors;
         }
 
         public ConversationEditPage(NetworkController _networkController, ConversationDetails conversation) : this(_networkController)
         {
-            this.conversation = conversation;
+            DataContext = conversation;
         }
 
         public string Errors
@@ -72,8 +60,8 @@ namespace SandRibbon.Pages.Conversations
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            var details =  SearchConversationDetails.HydrateFromServer(networkController.client,(ConversationDetails)sender);
-
+            var conversation = DataContext as ConversationDetails;
+            var details =  SearchConversationDetails.HydrateFromServer(networkController.client,conversation);
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
@@ -105,6 +93,22 @@ namespace SandRibbon.Pages.Conversations
                 context.Title = source.Text;
                 saveEdit(source, null);
             }
+        }
+
+        private void Cancel(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
+    }
+    public class HideErrorsIfEmptyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.IsNullOrEmpty((string)value) ? Visibility.Collapsed : Visibility.Visible;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
         }
     }
 }
