@@ -132,8 +132,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <!--<RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}" Label="{Binding Path=color}" >-->
-                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}">
+                                <!--<RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}" Label="{Binding Path=description}" >-->
+                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" SmallImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Label="{Binding Path=description}" >
                                     <RibbonMenuItem Header="Customize" Command="{x:Static api:Commands.RequestReplacePenAttributes}" CommandParameter="{Binding}"/>
                                     <RibbonMenuItem Header="Reset" Command="{x:Static api:Commands.RequestResetPenAttributes}" CommandParameter="{Binding}"/>
                                 </RibbonSplitButton>

@@ -7,7 +7,7 @@
         xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         xmlns:layout="clr-namespace:SandRibbon.Layout"
         mc:Ignorable="d"
-        Title="Customize your brush" Height="500" Width="600">
+        Title="Customize your brush" Height="600" Width="800">
     <Window.Resources>
         <local:ArgbConverter x:Key="ArgbConverter" />
     </Window.Resources>
@@ -17,6 +17,8 @@
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Width="100">
                     <Label Content="Before" Width="100" HorizontalAlignment="Center"/>
+                    <Label x:Name="beforeDescription" FontSize="12"/>
+                    <Label x:Name="beforeDescription2" FontSize="12"/>
                     <Border Padding="5">
                         <Grid Height="100" Width="100">
                             <Border x:Name="originalColorPreview" />
@@ -25,6 +27,8 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="110">
                     <Label Content="After" Width="100" HorizontalAlignment="Center"/>
+                    <Label x:Name="afterDescription" FontSize="12"/>
+                    <Label x:Name="afterDescription2" FontSize="12"/>
                     <Border Padding="5">
                         <Grid Height="100" Width="100">
                             <Border x:Name="colorPreview" 
@@ -49,18 +53,18 @@
                 </StackPanel>
             </StackPanel>
             <Label Content="Adjust the size"/>
-            <Slider Width="200" Orientation="Horizontal" Minimum="1" Maximum="100" x:Name="widthSlider"/>
+            <Slider Width="200" Orientation="Horizontal" Minimum="1" Maximum="100" x:Name="widthSlider" ValueChanged="penSlider_ValueChanged"/>
             <Label Content="Adjust the red value"/>
-            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="rSlider"/>
+            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="rSlider" ValueChanged="penSlider_ValueChanged"/>
             <Label Content="Adjust the green value"/>
-            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="gSlider"/>
+            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="gSlider" ValueChanged="penSlider_ValueChanged"/>
             <Label Content="Adjust the blue value"/>
-            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="bSlider"/>
+            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="bSlider" ValueChanged="penSlider_ValueChanged"/>
             <Label Content="Adjust the transparency"/>
-            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="aSlider"/>
+            <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="aSlider" ValueChanged="penSlider_ValueChanged"/>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Is this a highlighter?"/>
-                <CheckBox x:Name="isHighlighter" Checked="isHighlighter_Checked"/>
+                <CheckBox x:Name="isHighlighter" Click="isHighlighter_Checked"/>
             </StackPanel>
         </Grid>
         <Grid DockPanel.Dock="Bottom">
@@ -101,7 +105,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Click="SelectColorSwatch" Background="{Binding}" Height="50" Width="50" Margin="1"/>
+                            <Button Click="SelectColorSwatch" Background="{Binding Path=Value}" Height="50" Width="50" Margin="1" ToolTip="{Binding Path=Key}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
