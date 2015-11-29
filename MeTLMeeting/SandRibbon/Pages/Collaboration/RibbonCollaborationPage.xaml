@@ -36,7 +36,7 @@
                     <RibbonApplicationMenuItem Header="Logout" />
                 </RibbonApplicationMenu>
             </Ribbon.ApplicationMenu>
-            <RibbonTab Header="Home">
+            <RibbonTab Header="HOME">
                 <RibbonGroup Header="Which tool are you using?">
                     <RibbonGroup.GroupSizeDefinitions>
                         <RibbonGroupSizeDefinition>

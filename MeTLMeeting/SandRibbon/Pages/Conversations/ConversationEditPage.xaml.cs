@@ -35,7 +35,6 @@ namespace SandRibbon.Pages.Conversations
         }
         public static readonly DependencyProperty ErrorsProperty =
             DependencyProperty.Register("Errors", typeof(string), typeof(ConversationEditPage), new UIPropertyMetadata(""));
-        private ConversationDetails conversation;
 
         private string errorsFor(ConversationDetails proposedDetails)
         {
@@ -48,16 +47,7 @@ namespace SandRibbon.Pages.Conversations
                 errorText += "Conversation title can only contain letters, numbers and punctuation marks. ";
             if (!thisIsAValidTitle) { errorText += "Invalid conversation title.  "; }
             return errorText;
-        }
-        private void deleteConversation(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
-            {
-                var details = (ConversationDetails)e.OriginalSource;
-                networkController.client.DeleteConversation(details);
-
-            }
-        }
+        }        
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             var conversation = DataContext as ConversationDetails;
@@ -99,6 +89,16 @@ namespace SandRibbon.Pages.Conversations
         private void Cancel(object sender, RoutedEventArgs e)
         {
             NavigationService.GoBack();
+        }
+
+        private void deleteConversation(object sender, RoutedEventArgs e)
+        {
+            if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
+            {
+                var details = (ConversationDetails)e.OriginalSource;
+                networkController.client.DeleteConversation(details);
+
+            }
         }
     }
     public class HideErrorsIfEmptyConverter : IValueConverter

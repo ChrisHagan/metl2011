@@ -1,6 +1,7 @@
 ﻿using Awesomium.Windows.Controls;
 using MeTLLib.DataTypes;
 using Newtonsoft.Json.Linq;
+using SandRibbon.Components;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -17,24 +18,28 @@ namespace SandRibbon.Pages.Analytics
 {
     public partial class TagCloudPage : Page
     {
-        public TagCloudPage()
+        NetworkController controller;
+        public TagCloudPage(NetworkController networkController)
         {
-            InitializeComponent();            
+            InitializeComponent();
+            controller = networkController;
             loadWorkbench();            
         }
-        public void loadWorkbench() {
+
+        private void loadWorkbench()
+        {            
             var wc = new WebControl();
             wc.WebSession = Globals.authenticatedWebSession;
             Content = wc;
             wc.DocumentReady += Wc_DocumentReady;
             wc.ProcessCreated += delegate
             {
-                wc.Source = new Uri("http://localhost:8080/static/widget.html");
+                wc.Source = controller.client.server.widgetUri;
             };
         }
         
         public IEnumerable<string> Themes(Slide slide) {
-            var page = string.Format("http://localhost:8080/themes?source={0}", slide.id);
+            var page = controller.client.server.themes(slide.id);
             var wc = new WebClient();
             var ts = XDocument.Parse(wc.DownloadString(page)).Descendants("theme").Select(t => t.Value);
             Console.WriteLine("slide {0}", slide.id);

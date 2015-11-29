@@ -4,7 +4,7 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    KeyTip="A" Header="Analytics" x:Name="analyticsRoot">
+    KeyTip="A" Header="ANALYTICS" x:Name="analyticsRoot">
     <RibbonGroup Header="Language">
         <RibbonButton Label="Summarize conversation" Command="{x:Static api:Commands.WordCloud}"
                       SmallImageSource="\Resources\appbar.graph.histogram.description.png" 

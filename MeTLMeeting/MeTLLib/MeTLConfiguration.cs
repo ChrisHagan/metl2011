@@ -55,6 +55,12 @@
             xmppPassword = _xmppPassword;
             host = _host;
         }
+
+        public Uri themes(int id)
+        {
+            return new Uri(host, string.Format("/themes?source={0}", id));
+        }
+
         public string name { get; protected set; }
         public string imageUrl { get; protected set; }
         public string xmppDomain { get; protected set; }
@@ -71,19 +77,27 @@
         }
         public Uri getImage(string jid, string url)
         {
-            return new Uri(host, new Uri(String.Format("/proxyImageUrl/{0}?source={1}", jid, HttpUtility.UrlEncode(url)),UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/proxyImageUrl/{0}?source={1}", jid, HttpUtility.UrlEncode(url)), UriKind.Relative));
         }
         public Uri thumbnailUri(string jid)
         {
-            return new Uri(host, new Uri(String.Format("/thumbnail/{0}", jid),UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/thumbnail/{0}", jid), UriKind.Relative));
         }
-        public Uri renderUri(string jid,int width, int height)
+        public Uri renderUri(string jid, int width, int height)
         {
-            return new Uri(host, new Uri(String.Format("/render/{0}/{1}/{2}", jid,width,height), UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/render/{0}/{1}/{2}", jid, width, height), UriKind.Relative));
+        }
+        public Uri widgetUri
+        {
+            get
+            {
+                return new Uri(host, "/static/widget.html");
+            }
         }
         public Uri authenticationUrl
         {
-            get {
+            get
+            {
                 return new Uri(host, new Uri("/authenticationState", UriKind.Relative));
             }
         }
@@ -95,7 +109,7 @@
         {
             return new Uri(host, new Uri(String.Format("/search?query={0}", HttpUtility.UrlEncode(query)), UriKind.Relative));
         }
-        public Uri uploadResource(string preferredFilename,string jid)
+        public Uri uploadResource(string preferredFilename, string jid)
         {
             return new Uri(host, new Uri(String.Format("/upload?filename={0}&jid={1}", preferredFilename, jid), UriKind.Relative));
         }
@@ -105,11 +119,11 @@
         }
         public Uri duplicateSlide(int slideId, string conversationJid)
         {
-            return new Uri(host,new Uri(String.Format("/duplicateSlide/{0}/{1}", slideId.ToString(), conversationJid), UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/duplicateSlide/{0}/{1}", slideId.ToString(), conversationJid), UriKind.Relative));
         }
         public Uri duplicateConversation(string conversationJid)
         {
-            return new Uri(host,new Uri(String.Format("/duplicateConversation/{0}", conversationJid), UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/duplicateConversation/{0}", conversationJid), UriKind.Relative));
         }
         public Uri updateConversation(string conversationJid)
         {
@@ -117,7 +131,7 @@
         }
         public Uri createConversation(string title)
         {
-            return new Uri(host,new Uri(String.Format("/createConversation/{0}", HttpUtility.UrlEncode(title)), UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/createConversation/{0}", HttpUtility.UrlEncode(title)), UriKind.Relative));
         }
         public Uri serverStatus
         {
@@ -136,6 +150,7 @@
             get { return "global@" + muc; }
         }
         public static readonly MetlConfiguration empty = new MetlConfiguration("", "", "", "", "", new Uri("http://localhost:8080/"));
+
     }
     public abstract class MetlConfigurationManager
     {
@@ -181,7 +196,7 @@
                 return new List<MetlConfiguration>();
             }
             var xml = XDocument.Parse(html).Elements().ToList();
-            var cc = getElementsByTag(xml,"clientConfig");
+            var cc = getElementsByTag(xml, "clientConfig");
             var xmppDomain = getElementsByTag(cc, "xmppDomain").First().Value;
             var xmppUsername = getElementsByTag(cc, "xmppUsername").First().Value;
             var xmppPassword = getElementsByTag(cc, "xmppPassword").First().Value;
@@ -206,15 +221,19 @@
     }
     public class RemoteAppMeTLConfigurationManager : MetlConfigurationManager
     {
-        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server) {
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server)
+        {
             throw new NotImplementedException();
         }
-        override protected void internalGetServers() {
-            try {
+        override protected void internalGetServers()
+        {
+            try
+            {
                 var wc = new WebClient();
                 var xml = wc.DownloadString(new Uri("http://setup.stackableregiments.com/metlServers/metlServers.xml", UriKind.Absolute));
                 var xdoc = XDocument.Parse(xml);
-                servers = xdoc.Descendants("metlServer").Select(xms => {
+                servers = xdoc.Descendants("metlServer").Select(xms =>
+                {
                     var name = xms.Descendants("name").First().Value;
                     var baseUrl = xms.Descendants("baseUrl").First().Value;
                     var imageUrl = xms.Descendants("imageUrl").First().Value;
@@ -224,7 +243,8 @@
                         new Uri(baseUrl, UriKind.Absolute)
                         );
                 }).ToList();
-            } catch
+            }
+            catch
             {
                 servers = new List<MeTLConfigurationProxy>();
             }
@@ -247,7 +267,7 @@
                           conf.xmppServiceName,
                           config.XmppCredential.Username,
                           config.XmppCredential.Password,
-                          new Uri(String.Format("{0}://{1}:{2}",conf.Protocol,conf.Host,conf.HistoryPort))
+                          new Uri(String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.HistoryPort))
                       );
               }).ToDictionary<MetlConfiguration, MeTLConfigurationProxy>(mc =>
               {
@@ -394,7 +414,7 @@ namespace deprecatedLib
             }
         }
 
-        
+
         [ConfigurationProperty("resourceCredential")]
         public CredentialElement ResourceCredential
         {
@@ -442,7 +462,7 @@ namespace deprecatedLib
         {
             get
             {
-                return (int) this["displayIndex"];
+                return (int)this["displayIndex"];
             }
             set
             {
