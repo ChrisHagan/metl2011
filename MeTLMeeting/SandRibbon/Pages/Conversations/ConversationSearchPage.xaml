@@ -103,7 +103,8 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type DataGridRow}}}"/>
+                                    <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type DataGridRow}}}"
+                                              IsHitTestVisible="False"/>
                                     <Label Content="{Binding Path=Title}" />
                                 </StackPanel>
                             </DataTemplate>
