@@ -23,7 +23,10 @@
         <sys:Double x:Key="m">22</sys:Double>
         <sys:Double x:Key="s">18</sys:Double>
         <Style x:Key="heading" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="40" />            
+            <Setter Property="FontSize" Value="40" />
+        </Style>
+        <Style x:Key="subHeading" TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="35" />
         </Style>
         <Style x:Key="primaryChoice" TargetType="{x:Type Button}">
             <Style.Setters>
@@ -57,7 +60,7 @@
                     <Button Command="{x:Static api:Commands.CreateBlankConversation}" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
                 </StackPanel >
 
-                <Label Content="Import conversation" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                <Label Content="Import conversation" Style="{DynamicResource subHeading}" Margin="{DynamicResource nearBottom}"/>
                 <WrapPanel x:Name="pptChoices" Margin="{DynamicResource clearBottom}">
                     <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
                         Style="{DynamicResource secondaryChoice}" Content="PowerPoint" Margin="15 0">
@@ -70,13 +73,14 @@
 
                 <Label Content="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                 <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
-                 Width="{Binding ElementName=pptChoices, Path=ActualWidth}"
+                 Width="200"
+                 Padding="0 10"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"
                      Margin="{DynamicResource nearBottom}"/>
                 <StackPanel Orientation="Horizontal" Margin="{DynamicResource clearBottom}">
                     <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
                           Unchecked="onlyMyConversations_Checked"/>
-                    <Label Content="Only my conversations" />
+                    <Label Content="Only my conversations" Style="{DynamicResource medium}"/>
                 </StackPanel>
 
                 <Label Content="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
@@ -85,13 +89,11 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="{DynamicResource nearBottom}"
                       GridLinesVisibility="None">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Enter conversation" IsReadOnly="True">
+                    <DataGridTemplateColumn Header="Join conversation" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush2}">
-                                    <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
-                                        <macros:IconControl Content="appbar_door_enter" />
-                                    </Viewbox>
+                                <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush2}" Margin="0 5">
+                                    <Image Source="\Resources\appbar.door.enter.png" />
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -113,13 +115,11 @@
                     <DataGridTemplateColumn Header="MODIFY" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="EditConversation" Visibility="{Binding Converter={StaticResource visibleToAuthor}}">
-                                    <Rectangle Width="20" Height="20">
-                                        <Rectangle.Fill>
-                                            <VisualBrush Visual="{StaticResource appbar_cog}" />
-                                        </Rectangle.Fill>
-                                    </Rectangle>
-                                </Button>
+                                <Grid>
+                                    <Button Click="EditConversation" Visibility="{Binding Converter={StaticResource visibleToAuthor}}">
+                                        <Image Source="\Resources\appbar.cog.png" />
+                                    </Button>
+                                </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
