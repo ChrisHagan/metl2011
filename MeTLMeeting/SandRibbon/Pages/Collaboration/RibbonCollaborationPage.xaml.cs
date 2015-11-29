@@ -78,6 +78,11 @@ namespace SandRibbon.Pages.Collaboration
         {
             backgroundBrush = generateBackgroundBrush();
             icon = generateImageSource();
+            description = generateDescription();
+        }
+        protected string generateDescription()
+        {
+            return ColorHelpers.describe(this);
         }
         protected Brush generateBackgroundBrush()
         {
@@ -184,6 +189,16 @@ namespace SandRibbon.Pages.Collaboration
         }
 
         public static readonly DependencyProperty backgroundBrushProperty = DependencyProperty.Register("backgroundBrush", typeof(Brush), typeof(PenAttributes), new PropertyMetadata(Brushes.Transparent));
+        public string description
+        {
+            get { return (string)GetValue(descriptionProperty); }
+            set
+            {
+                SetValue(descriptionProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty descriptionProperty = DependencyProperty.Register("description", typeof(string), typeof(PenAttributes), new PropertyMetadata(""));
 
         public ImageSource icon
         {
@@ -300,7 +315,7 @@ namespace SandRibbon.Pages.Collaboration
             Commands.RequestReplacePenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa =>
             {
                 new PenCustomizationDialog(pa).ShowDialog();
-            }));
+            },pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke));
             Commands.ReplacePenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa =>
             {
                 penCollection.First(p => p.id == pa.id).replaceAttributes(pa);
@@ -317,7 +332,7 @@ namespace SandRibbon.Pages.Collaboration
                 {
                     Commands.SetPenAttributes.Execute(foundPen);
                 }
-            }));
+            }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke));
 
             /*
             Commands.IncreaseFontSize.RegisterCommand(new DelegateCommand<object>(increaseFont, canIncreaseFont));
