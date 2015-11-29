@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -23,6 +24,81 @@ using System.Windows.Shapes;
 
 namespace SandRibbon.Pages.Collaboration
 {
+    public class PenAttributes : DependencyObject
+    {
+        public DrawingAttributes attributes { get; protected set; }
+        protected DrawingAttributes originalAttributes;
+        protected InkCanvasEditingMode originalMode;
+        public int id { get; protected set; }
+        public PenAttributes(int _id, InkCanvasEditingMode _mode, DrawingAttributes _attributes)
+        {
+            id = _id;
+            mode = _mode;
+            attributes = _attributes;
+            attributes.StylusTip = StylusTip.Ellipse;
+            width = attributes.Width;
+            color = attributes.Color;
+            originalAttributes = _attributes.Clone();
+            originalMode = _mode;
+        }
+        public void replaceAttributes(PenAttributes newAttributes)
+        {
+            mode = newAttributes.mode;
+            color = newAttributes.color;
+            width = newAttributes.width;
+        }
+        public void resetAttributes()
+        {
+            replaceAttributes(new PenAttributes(id,originalMode,originalAttributes));
+        }
+
+        protected ImageSource generateImageSource()
+        {
+            return emptyImage;
+        }
+        public double width
+        {
+            get { return (double)GetValue(widthProperty); }
+            set {
+                attributes.Width = value;
+                SetValue(widthProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty widthProperty = DependencyProperty.Register("width", typeof(double), typeof(PenAttributes), new PropertyMetadata(1.0));
+        public Color color
+        {
+            get { return (Color)GetValue(colorProperty); }
+            set {
+                attributes.Color = value;
+                SetValue(colorProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty colorProperty = DependencyProperty.Register("color", typeof(Color), typeof(PenAttributes), new PropertyMetadata(Colors.Black));
+        public InkCanvasEditingMode mode
+        {
+            get { return (InkCanvasEditingMode)GetValue(modeProperty); }
+            set { SetValue(modeProperty, value); }
+        }
+
+        public static readonly DependencyProperty modeProperty = DependencyProperty.Register("mode", typeof(InkCanvasEditingMode), typeof(PenAttributes), new PropertyMetadata(InkCanvasEditingMode.None));
+        public ImageSource icon
+        {
+            get { return (ImageSource)GetValue(iconProperty); }
+            protected set { SetValue(iconProperty, value); }
+        }
+
+        public static ImageSource emptyImage = new BitmapImage();
+        public static readonly DependencyProperty iconProperty = DependencyProperty.Register("icon", typeof(ImageSource), typeof(PenAttributes), new PropertyMetadata(emptyImage));
+        public bool isSelected
+        {
+            get { return (bool)GetValue(isSelectedProperty); }
+            set { SetValue(isSelectedProperty, value); }
+        }
+
+        public static readonly DependencyProperty isSelectedProperty = DependencyProperty.Register("isSelected", typeof(bool), typeof(PenAttributes), new PropertyMetadata(false));
+    }
     public partial class RibbonCollaborationPage : Page
     {
         protected NetworkController networkController;
@@ -30,6 +106,15 @@ namespace SandRibbon.Pages.Collaboration
         protected string conversationJid;
         protected Slide slide;
 
+        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection = new System.Collections.ObjectModel.ObservableCollection<PenAttributes> {
+            new PenAttributes(1,InkCanvasEditingMode.EraseByStroke,new System.Windows.Ink.DrawingAttributes {Color=Colors.White,IsHighlighter=false, Width=1 }),
+            new PenAttributes(2,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Black,IsHighlighter=false, Width=1 }),
+            new PenAttributes(3,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Red,IsHighlighter=false, Width=3 }),
+            new PenAttributes(4,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Blue,IsHighlighter=false, Width=3 }),
+            new PenAttributes(5,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Green,IsHighlighter=false, Width=5 }),
+            new PenAttributes(6,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Yellow,IsHighlighter=true, Width=15}),
+            new PenAttributes(7,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Cyan,IsHighlighter=true, Width=25})
+        };
         /*
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
@@ -43,6 +128,7 @@ namespace SandRibbon.Pages.Collaboration
             //DataContext = slide;
             slide = Slide.Empty;
             DataContext = slide;
+            pens.ItemsSource = penCollection;
 
             InitializeComponent();
             /*
@@ -82,6 +168,34 @@ namespace SandRibbon.Pages.Collaboration
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
             Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
+
+            var currentPenId = 0;
+            Commands.SetPenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa => {
+                currentPenId = pa.id;
+                foreach (var p in penCollection)
+                {
+                    p.isSelected = p.id == pa.id;
+                };
+            }));
+            Commands.RequestReplacePenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa => {
+                new PenCustomizationDialog(pa).ShowDialog();
+            }));
+            Commands.ReplacePenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa => {
+                penCollection.First(p => p.id == pa.id).replaceAttributes(pa);
+                if (pa.id == currentPenId)
+                {
+                    Commands.SetPenAttributes.Execute(pa);
+                }
+            }));
+            Commands.RequestResetPenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa => {
+                var foundPen = penCollection.First(p => p.id == pa.id);
+                foundPen.resetAttributes();
+                if (pa.id == currentPenId)
+                {
+                    Commands.SetPenAttributes.Execute(foundPen);
+                }
+            }));
+
             /*
             Commands.IncreaseFontSize.RegisterCommand(new DelegateCommand<object>(increaseFont, canIncreaseFont));
             Commands.DecreaseFontSize.RegisterCommand(new DelegateCommand<object>(decreaseFont, canDecreaseFont));
