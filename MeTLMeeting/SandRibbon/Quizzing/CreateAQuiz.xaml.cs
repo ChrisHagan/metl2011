@@ -32,7 +32,12 @@ namespace SandRibbon.Quizzing
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.CreateQuizStructure.RegisterCommand(new DelegateCommand<object>(CreateQuizQuestion, canCreateQuizQuestion));
             question.Focus();
+            Loaded += (ps, pe) =>
+            {
+                Commands.RequerySuggested(Commands.CreateQuizStructure, Commands.ConvertPresentationSpaceToQuiz);
+            };
         }
         private void JoinConversation(object obj)
         {
@@ -41,16 +46,17 @@ namespace SandRibbon.Quizzing
         }
         private void Close(object sender, RoutedEventArgs e)
         {
+            Commands.CreateQuizStructure.UnregisterCommand(new DelegateCommand<object>(CreateQuizQuestion,canCreateQuizQuestion));
             Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             this.Close();
         }
-        private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
+        private bool canCreateQuizQuestion(object _sender)
         {
-            if (question == null) return;
+            if (question == null) return false;
             var activeOptions = options.Where(o => o.optionText.Length > 0).ToList();
-            e.CanExecute = !String.IsNullOrEmpty(question.Text) && activeOptions.Count >= 2;
+            return !String.IsNullOrEmpty(question.Text) && activeOptions.Count >= 2;
         }
-        private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
+        private void CreateQuizQuestion(object _unused)
         {
             var creationTimeAndId = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", Globals.me, question.Text, new List<Option>());
@@ -160,7 +166,7 @@ namespace SandRibbon.Quizzing
                 var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption));
                 if (container != null) container.Opacity = 0.5;
             }
-            Commands.RequerySuggested();
+            Commands.RequerySuggested(Commands.CreateQuizStructure, Commands.ConvertPresentationSpaceToQuiz);
         }
         private void RemoveQuizAnswer(object sender, RoutedEventArgs e)
         {
@@ -193,7 +199,7 @@ namespace SandRibbon.Quizzing
                                     var image = new Image();
                                     BitmapImage source = new BitmapImage();
                                     source.BeginInit();
-                                    source.UriSource = new Uri(url);
+                                    source.UriSource = App.controller.config.getResource(url);
                                     source.EndInit();
                                     image.Source = source;
                                     image.Width = 300;

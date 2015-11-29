@@ -4,6 +4,7 @@ using Microsoft.Windows.Controls.Ribbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using SandRibbon.Pages.Collaboration.Layout;
+using SandRibbon.Pages.Conversations;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -356,6 +357,7 @@ namespace SandRibbon.Pages.Collaboration
                 }
                 Commands.RequerySuggested();
             }));
+            Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<MainWindow>(openProjectorWindow));
             this.Loaded += (ps, pe) =>
             {
                 scroll.ScrollChanged += (s, e) =>
@@ -381,7 +383,18 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.MoveToCollaborationPage.Execute(slide.id);
                 Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
                 */
+                Commands.ShowProjector.Execute(null);
             };
+            this.Unloaded += (ps, pe) =>
+            {
+
+
+                Commands.HideProjector.Execute(null);
+            };
+        }
+        protected void openProjectorWindow(MainWindow window)
+        {
+            Commands.MirrorPresentationSpace.Execute(new KeyValuePair<MainWindow, ScrollViewer>(window, scroll));
         }
         /*
 private void restoreTextDefaults(object obj)
@@ -596,7 +609,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(networkController.conversationSearchPage);
+            NavigationService.Navigate(new ConversationSearchPage(networkController,""));
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {

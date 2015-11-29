@@ -21,9 +21,16 @@
         <KeyBinding Key="PageDown" Command="{x:Static api:Commands.MoveToNext}" />
         <KeyBinding Key="Delete" Command="{x:Static api:Commands.DeleteSelectedItems}"/>
     </Controls:MetroWindow.InputBindings>
-    <!--
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
+            <Button Command="{x:Static api:Commands.LaunchDiagnosticWindow}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_alert}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <!--
             <Button Click="ShowDiagnostics">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
@@ -45,9 +52,9 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
+            -->
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
-    -->
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
             <Controls:Flyout x:Name="flyout" Position="Right" Width="250"/>

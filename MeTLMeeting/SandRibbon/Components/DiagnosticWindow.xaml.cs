@@ -269,6 +269,10 @@ namespace SandRibbon.Components
                 timer.Stop();
                 timer.Close();
                 timer.Dispose();
+                if (App.diagnosticWindow == this)
+                {
+                    App.diagnosticWindow = null;
+                }
             };
             timer.Elapsed += (s, a) =>
             {

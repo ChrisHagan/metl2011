@@ -56,6 +56,33 @@ namespace SandRibbon.Components
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
             Commands.AllStaticCommandsAreRegistered();
+            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+        }
+        private void MirrorPresentationSpace(object obj)
+        {
+            try
+            {
+                var tuple = (KeyValuePair<MainWindow, ScrollViewer>)obj;
+                var scroll = tuple.Value;
+                var parent = tuple.Key;
+                var mirror = new Window { Content = new Projector { viewConstraint = scroll } };
+                if (Projector.Window != null)
+                    Projector.Window.Close();
+                Projector.Window = mirror;
+                parent.Closed += (_sender, _args) => mirror.Close();
+                mirror.WindowStyle = WindowStyle.None;
+                mirror.AllowsTransparency = true;
+                setSecondaryWindowBounds(mirror);
+                mirror.Show();
+            }
+            catch (NotSetException)
+            {
+                //Fine it's not time yet anyway.  I don't care.
+            }
+        }
+        private static bool CanMirrorPresentationSpace(object _param)
+        {
+            return Projector.Window == null && System.Windows.Forms.Screen.AllScreens.Length > 1;
         }
 
         private void BanHammerSelectedItems(object obj)
@@ -163,19 +190,29 @@ namespace SandRibbon.Components
                 {
                     Dispatcher.adopt(delegate
                     {
-                        BeginInit();
-                        a(GaugeStatus.InProgress, 25);
-                        stack.ReceiveStrokes(parser.ink);
-                        a(GaugeStatus.InProgress, 50);
-                        stack.ReceiveImages(parser.images.Values);
-                        a(GaugeStatus.InProgress, 75);
-                        foreach (var text in parser.text.Values)
-                            stack.DoText(text);
-                        /*foreach (var moveDelta in parser.moveDeltas)
-                            stack.ReceiveMoveDelta(moveDelta, processHistory: true);
-                        */
-                        stack.RefreshCanvas();
-                        EndInit();
+                        try
+                        {
+                            BeginInit();
+                            a(GaugeStatus.InProgress, 25);
+                            stack.ReceiveStrokes(parser.ink);
+                            a(GaugeStatus.InProgress, 50);
+                            stack.ReceiveImages(parser.images.Values);
+                            a(GaugeStatus.InProgress, 75);
+                            foreach (var text in parser.text.Values)
+                                stack.DoText(text);
+                            /*foreach (var moveDelta in parser.moveDeltas)
+                                stack.ReceiveMoveDelta(moveDelta, processHistory: true);
+                            */
+                            stack.RefreshCanvas();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("exception in parser: {0}", e.Message);
+                        }
+                        finally
+                        {
+                            EndInit();
+                        }
 
                     });
                 }, "renderCanvas", "frontend");

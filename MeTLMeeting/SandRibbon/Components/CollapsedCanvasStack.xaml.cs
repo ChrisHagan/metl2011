@@ -1230,7 +1230,14 @@ namespace SandRibbon.Components
             foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
             {
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
+                    try
+                    {
+                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Exception while receiving stroke: {0}", e.Message);
+                    }
             }
         }
 
@@ -1716,9 +1723,16 @@ namespace SandRibbon.Components
                     {
                         Dispatcher.adoptAsync(() =>
                         {
-                            var receivedImage = image1.imageSpecification.forceEvaluation();
-                            AddImage(Work, receivedImage);
-                            receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                            try
+                            {
+                                var receivedImage = image1.imageSpecification.forceEvaluation();
+                                AddImage(Work, receivedImage);
+                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Error in receiving image: {0}", e.Message);
+                            }
                         });
                     }
                 }
@@ -2190,20 +2204,26 @@ namespace SandRibbon.Components
         public void DoText(TargettedTextBox targettedBox)
         {
             Dispatcher.adoptAsync(delegate
-                                      {
-                                          if (targettedBox.target != _target) return;
-                                          if (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me))
-                                          {
-                                              var box = UpdateTextBoxWithId(targettedBox);
-                                              if (box != null)
-                                              {
-                                                  if (!(targettedBox.HasSameAuthor(me)))
-                                                      box.Focusable = false;
-                                                  box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy);
-                                              }
-                                          }
-                                      });
-
+            {
+                try
+                {
+                    if (targettedBox.target != _target) return;
+                    if (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me))
+                    {
+                        var box = UpdateTextBoxWithId(targettedBox);
+                        if (box != null)
+                        {
+                            if (!(targettedBox.HasSameAuthor(me)))
+                                box.Focusable = false;
+                            box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error while receiving text: {0}", e.Message);
+                }
+            });
         }
 
         private MeTLTextBox UpdateTextBoxWithId(TargettedTextBox textbox)
@@ -2563,7 +2583,7 @@ namespace SandRibbon.Components
         }
         public MeTLTextBox createNewTextbox()
         {
-            var box = new MeTLTextBox();            
+            var box = new MeTLTextBox();
             box.offsetX = contentBuffer.logicalX;
             box.offsetY = contentBuffer.logicalY;
             box.tag(new TextTag

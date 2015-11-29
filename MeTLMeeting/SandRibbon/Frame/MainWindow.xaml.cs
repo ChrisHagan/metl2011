@@ -74,6 +74,8 @@ namespace SandRibbon
         {
             Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
 
+            Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
+
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
@@ -135,7 +137,10 @@ namespace SandRibbon
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
         }
-        
+        private void openProjectorWindow(object _unused)
+        {
+            Commands.MirrorPresentationSpace.Execute(this);
+        }
         private void WordCloud(object obj)
         {
             mainFrame.Navigate(new TagCloudPage(App.controller));
@@ -313,15 +318,14 @@ namespace SandRibbon
 
                     var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
 
-
                     if (Projector.Window == null && screenCount > 1)
-                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(this);
                     else if (Projector.Window != null && screenCount == 1)
                         Projector.Window.Close();
                     else if (Projector.Window != null && screenCount > 1)
                     {
                         // Case 3.
-                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(this);
                     }
                 }
                 finally
@@ -706,6 +710,18 @@ namespace SandRibbon
             this.flyout.Content = TryFindResource("diagnostics");
             this.flyout.DataContext = logs;
             this.flyout.IsOpen = true;
+        }
+        protected void ShowDiagnosticsWindow(object sender, RoutedEventArgs e)
+        {
+            launchDiagnosticsWindow(null);
+        }
+        protected void launchDiagnosticsWindow(object _unused)
+        {
+            if (App.diagnosticWindow == null)
+            {
+                App.diagnosticWindow = new DiagnosticWindow();
+            } 
+            App.diagnosticWindow.Show();
         }
     }
 }

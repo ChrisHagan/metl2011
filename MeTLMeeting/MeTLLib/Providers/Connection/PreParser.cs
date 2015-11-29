@@ -54,44 +54,44 @@ namespace MeTLLib.Providers.Connection
                 foreach (var parser in new[] { otherParser, this })
                 {
                     a(GaugeStatus.InProgress, 10);
-                    foreach (var attendance in parser.attendances)
+                    foreach (var attendance in parser.attendances.ToList())
                         returnParser.actOnAttendance(new MeTLStanzas.Attendance(attendance));
                     foreach (var moveDelta in parser.moveDeltas)
                         returnParser.actOnMoveDelta(new MeTLStanzas.MoveDeltaStanza(moveDelta));
                     //returnParser.moveDeltas.Add(moveDelta);
                     a(GaugeStatus.InProgress, 20);
-                    foreach (var i in parser.dirtyImage)
+                    foreach (var i in parser.dirtyImage.ToList())
                         returnParser.actOnDirtyImageReceived(i);
                     a(GaugeStatus.InProgress, 30);
-                    foreach (var i in parser.dirtyText)
+                    foreach (var i in parser.dirtyText.ToList())
                         returnParser.actOnDirtyTextReceived(i);
                     a(GaugeStatus.InProgress, 40);
-                    foreach (var i in parser.dirtyInk)
+                    foreach (var i in parser.dirtyInk.ToList())
                         returnParser.actOnDirtyStrokeReceived(i);
                     a(GaugeStatus.InProgress, 50);
-                    foreach (var i in parser.ink)
+                    foreach (var i in parser.ink.ToList())
                         returnParser.actOnStrokeReceived(i);
                     //returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));
                     a(GaugeStatus.InProgress, 60);
-                    returnParser.quizzes.AddRange(parser.quizzes);
+                    returnParser.quizzes.AddRange(parser.quizzes.ToList());
                     a(GaugeStatus.InProgress, 70);
-                    returnParser.quizAnswers.AddRange(parser.quizAnswers);
+                    returnParser.quizAnswers.AddRange(parser.quizAnswers.ToList());
                     //returnParser.dirtyImage.AddRange(parser.dirtyImage);
                     //returnParser.dirtyInk.AddRange(parser.dirtyInk);
                     //returnParser.dirtyText.AddRange(parser.dirtyText);
                     a(GaugeStatus.InProgress, 80);
-                    foreach (var kv in parser.text)
+                    foreach (var kv in parser.text.ToList())
                         returnParser.actOnTextReceived(kv.Value);
                     /*if (!returnParser.text.ContainsKey(kv.Key))
                         returnParser.text.Add(kv.Key, kv.Value);*/
                     a(GaugeStatus.InProgress, 90);
-                    foreach (var kv in parser.images)
+                    foreach (var kv in parser.images.ToList())
                         returnParser.actOnImageReceived(kv.Value);
                     /*if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);*/
 
                     a(GaugeStatus.InProgress, 95);
-                    foreach (var kv in parser.liveWindows)
+                    foreach (var kv in parser.liveWindows.ToList())
                         if (!returnParser.liveWindows.ContainsKey(kv.Key))
                             returnParser.liveWindows.Add(kv.Key, kv.Value);
                 }

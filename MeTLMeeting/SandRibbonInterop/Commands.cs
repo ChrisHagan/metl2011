@@ -371,6 +371,10 @@ namespace SandRibbon
         public static DefaultableCompositeCommand DiagnosticMessagesUpdated = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DiagnosticGaugesUpdated = new DefaultableCompositeCommand();
 
+        public static DefaultableCompositeCommand ShowProjector = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand HideProjector = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand EnableProjector = new DefaultableCompositeCommand();
+
         Commands()
         {
             NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => false));
