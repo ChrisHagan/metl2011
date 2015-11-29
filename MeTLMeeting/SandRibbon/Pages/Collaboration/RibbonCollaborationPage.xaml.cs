@@ -363,7 +363,7 @@ namespace SandRibbon.Pages.Collaboration
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                     };
                 Commands.SetLayer.Execute("Sketch");
-                Commands.SetPenAttributes.Execute(penCollection[0]);
+                Commands.SetPenAttributes.Execute(penCollection[1]);
                 /*
                 //watching the navigation away from this page so that we can do cleanup.  This won't be necessary until we stop using a singleton on the network controller.
                 NavigationService.Navigated += (s, e) =>
