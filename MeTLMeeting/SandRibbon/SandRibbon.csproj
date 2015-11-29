@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>92193E45F20993372F145097A9ECAF0909F98211</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_15_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>4F713F4715F20247E7848DC36B267B5AF47809B7</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_16_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -300,7 +300,9 @@
     <Compile Include="Components\DiagnosticWindow.xaml.cs">
       <DependentUpon>DiagnosticWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\PenCustomizationDialog.xaml.cs" />
+    <Compile Include="Components\PenCustomizationDialog.xaml.cs">
+      <DependentUpon>PenCustomizationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\PrivateNotepadSpace.xaml.cs">
       <DependentUpon>PrivateNotepadSpace.xaml</DependentUpon>
     </Compile>
@@ -423,8 +425,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PenCustomizationDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ResourceDictionaries\Client\SaintLeoUniversity.xaml">
       <SubType>Designer</SubType>
@@ -1206,6 +1208,7 @@
     <None Include="SandRibbon_13_TemporaryKey.pfx" />
     <None Include="SandRibbon_14_TemporaryKey.pfx" />
     <None Include="SandRibbon_15_TemporaryKey.pfx" />
+    <None Include="SandRibbon_16_TemporaryKey.pfx" />
     <None Include="SandRibbon_2_TemporaryKey.pfx" />
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />

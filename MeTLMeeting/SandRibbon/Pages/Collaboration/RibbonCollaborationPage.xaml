@@ -132,7 +132,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <RibbonSplitButton LargeImageSource="/Resources/appbar.draw.pen.minus.png" Label="{Binding Path=color}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=color}" >
+                                <!--<RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}" Label="{Binding Path=color}" >-->
+                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}">
                                     <RibbonMenuItem Header="Customize" Command="{x:Static api:Commands.RequestReplacePenAttributes}" CommandParameter="{Binding}"/>
                                     <RibbonMenuItem Header="Reset" Command="{x:Static api:Commands.RequestResetPenAttributes}" CommandParameter="{Binding}"/>
                                 </RibbonSplitButton>
