@@ -21,30 +21,42 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
-            try
+            Loaded += (s, e) =>
             {
-                if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
+                try
+                {
+                    if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
+                    {
+                        Commands.SetPrivacy.ExecuteAsync("Private");
+                    }
+                    else
+                    {
+                        if (Globals.isAuthor)
+                            Commands.SetPrivacy.ExecuteAsync("public");
+                        else
+                            Commands.SetPrivacy.ExecuteAsync("private");
+                        settingEnabledModes(Globals.conversationDetails);
+                        settingSelectedMode(Globals.privacy);
+                    }
+                }
+                catch (NotSetException)
                 {
                     Commands.SetPrivacy.ExecuteAsync("Private");
                 }
-                else
-                {
-                    if (Globals.isAuthor)
-                        Commands.SetPrivacy.ExecuteAsync("public");
-                    else
-                        Commands.SetPrivacy.ExecuteAsync("private");
-                    settingEnabledModes(Globals.conversationDetails);
-                    settingSelectedMode(Globals.privacy);
-                }
-            }
-            catch (NotSetException)
-            {
-                Commands.SetPrivacy.ExecuteAsync("Private");
-            }
+            };
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((jid) => {
+                settingEnabledModes(Globals.conversationDetails);
+                Commands.SetPrivacy.Execute(GetValue(PrivateProperty));
+                settingSelectedMode(Globals.privacy);
+                Commands.RequerySuggested(Commands.SetPrivacy);
+            }));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) => {
+                settingEnabledModes(Globals.conversationDetails);
+                Commands.SetPrivacy.Execute(GetValue(PrivateProperty));
+                settingSelectedMode(Globals.privacy);
                 Commands.RequerySuggested(Commands.SetPrivacy);
             }));
             DataContext = this;
@@ -120,12 +132,15 @@ namespace SandRibbon.Components
             if (p == "public")
             {
                 publicMode.IsChecked = true;
+                privateMode.IsChecked = false;
+
                 // unless there's a very good reason why we want to tear away from whatever element currently has focus I'm going to leave this commented out
                 // commenting out fixes bug #1386
                 //publicMode.Focus();
             }
             else
             {
+                publicMode.IsChecked = false;
                 privateMode.IsChecked = true;
                 // unless there's a very good reason why we want to tear away from whatever element currently has focus I'm going to leave this commented out
                 // commenting out fixes bug #1386
