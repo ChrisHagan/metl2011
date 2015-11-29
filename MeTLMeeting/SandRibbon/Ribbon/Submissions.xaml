@@ -1,4 +1,4 @@
-﻿<RibbonTab KeyTip="S" Header="Submissions"
+﻿<RibbonTab KeyTip="S" Header="SUBMISSIONS"
     x:Class="SandRibbon.Tabs.Submissions"
     x:Name="SubmissionsTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

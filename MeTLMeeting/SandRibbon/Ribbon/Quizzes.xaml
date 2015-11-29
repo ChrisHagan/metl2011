@@ -1,4 +1,4 @@
-﻿<RibbonTab KeyTip="Q" Header="Quizzes"
+﻿<RibbonTab KeyTip="Q" Header="QUIZZES"
     x:Class="SandRibbon.Tabs.Quizzes"
     x:Name="quizzesTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

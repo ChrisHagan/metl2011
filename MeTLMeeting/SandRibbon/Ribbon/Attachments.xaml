@@ -1,4 +1,4 @@
-﻿<RibbonTab KeyTip="A" Header="Attachments"
+﻿<RibbonTab KeyTip="A" Header="ATTACHMENTS"
     x:Class="SandRibbon.Tabs.Attachments"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"

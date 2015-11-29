@@ -82,7 +82,8 @@
                 <Label Content="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
             </Grid>
             <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"                  
-                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="{DynamicResource nearBottom}">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="{DynamicResource nearBottom}"
+                      GridLinesVisibility="None">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Enter conversation" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>

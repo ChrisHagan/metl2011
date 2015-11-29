@@ -5,11 +5,11 @@
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    KeyTip="P" Header="Plugins" x:Name="pluginRoot">
+    KeyTip="P" Header="PLUGINS" x:Name="pluginRoot">
     <RibbonGroup Header="Experimental (Teacher only)" x:Name="teacherPlugins">
         <!--RibbonButton Label="Html" LargeImageSource="\Resources\appbar.form.editable.png" SmallImageSource="\Resources\appbar.form.editable.png" 
                       Command="{x:Static api:Commands.ToggleBrowserControls}" /-->
-        <RibbonToggleButton Label="Identifying lens" 
+        <RibbonToggleButton Label="Kunzweiler lens" 
                             Command="{x:Static api:Commands.ToggleLens}"
                             LargeImageSource="\Resources\appbar.image.backlight.png" SmallImageSource="\Resources\appbar.image.backlight.png">
         </RibbonToggleButton>
