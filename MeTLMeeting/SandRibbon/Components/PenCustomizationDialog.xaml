@@ -7,56 +7,105 @@
         xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         xmlns:layout="clr-namespace:SandRibbon.Layout"
         mc:Ignorable="d"
-        Title="Customize pen" Height="300" Width="300">
+        Title="Customize your brush" Height="500" Width="600">
     <Window.Resources>
         <local:ArgbConverter x:Key="ArgbConverter" />
     </Window.Resources>
-    <Grid layout:GridLayout.ItemsPerRow="1">
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Width"/>
+    <DockPanel>
+        <Grid DockPanel.Dock="Right" layout:GridLayout.ItemsPerRow="1" Width="256">
+            <Label Content="Preview your brush"/>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical" Width="100">
+                    <Label Content="Before" Width="100" HorizontalAlignment="Center"/>
+                    <Border Padding="5">
+                        <Grid Height="100" Width="100">
+                            <Border x:Name="originalColorPreview" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Width="110">
+                    <Label Content="After" Width="100" HorizontalAlignment="Center"/>
+                    <Border Padding="5">
+                        <Grid Height="100" Width="100">
+                            <Border x:Name="colorPreview" 
+                            Height="{Binding ElementName=widthSlider, Path=Value}" 
+                            Width="{Binding ElementName=widthSlider, Path=Value}" 
+                            CornerRadius="{Binding ElementName=widthSlider, Path=Value}" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <Border.Background>
+                                    <SolidColorBrush>
+                                        <SolidColorBrush.Color>
+                                            <MultiBinding Converter="{StaticResource ArgbConverter}">
+                                                <Binding Path="Value" ElementName="rSlider" />
+                                                <Binding Path="Value" ElementName="gSlider" />
+                                                <Binding Path="Value" ElementName="bSlider" />
+                                                <Binding Path="Value" ElementName="aSlider" />
+                                            </MultiBinding>
+                                        </SolidColorBrush.Color>
+                                    </SolidColorBrush>
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+            <Label Content="Adjust the size"/>
             <Slider Width="200" Orientation="Horizontal" Minimum="1" Maximum="100" x:Name="widthSlider"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="R"/>
+            <Label Content="Adjust the red value"/>
             <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="rSlider"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="G"/>
+            <Label Content="Adjust the green value"/>
             <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="gSlider"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="B"/>
+            <Label Content="Adjust the blue value"/>
             <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="bSlider"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="A"/>
+            <Label Content="Adjust the transparency"/>
             <Slider Width="256" Orientation="Horizontal" Minimum="0" Maximum="255" x:Name="aSlider"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Preview"/>
-            <Grid Height="100" Width="100">
-                <Border x:Name="colorPreview" 
-                        Height="{Binding ElementName=widthSlider, Path=Value}" 
-                        Width="{Binding ElementName=widthSlider, Path=Value}" 
-                        CornerRadius="{Binding ElementName=widthSlider, Path=Value}" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                    <Border.Background>
-                        <SolidColorBrush>
-                            <SolidColorBrush.Color>
-                                <MultiBinding Converter="{StaticResource ArgbConverter}">
-                                    <Binding Path="Value" ElementName="rSlider" />
-                                    <Binding Path="Value" ElementName="gSlider" />
-                                    <Binding Path="Value" ElementName="bSlider" />
-                                    <Binding Path="Value" ElementName="aSlider" />
-                                </MultiBinding>
-                            </SolidColorBrush.Color>
-                        </SolidColorBrush>
-                    </Border.Background>
-                </Border>
-            </Grid>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Width"/>
-            <Button Content="Submit" Click="Button_Click"/>
-        </StackPanel>
-    </Grid>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Is this a highlighter?"/>
+                <CheckBox x:Name="isHighlighter" Checked="isHighlighter_Checked"/>
+            </StackPanel>
+        </Grid>
+        <Grid DockPanel.Dock="Bottom">
+            <UniformGrid>
+                <Button Content="Apply these changes to your brush" Click="ApplyColor"/>
+                <Button Content="Leave your brush how it was" Click="Cancel"/>
+            </UniformGrid>
+        </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Content="Select a size for this brush" Grid.Row="0"/>
+            <ItemsControl x:Name="sizeSwatches" Grid.Row="1">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="SelectSizeSwatch" Height="120" Width="50" Margin="1">
+                            <Rectangle Height="{Binding}" Width="40" Fill="{Binding ElementName=colorPreview, Path=Background}"/>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Label Content="Select a color for this brush" Grid.Row="2"/>
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="3">
+                <ItemsControl x:Name="colorSwatches">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Click="SelectColorSwatch" Background="{Binding}" Height="50" Width="50" Margin="1"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
 </Window>
