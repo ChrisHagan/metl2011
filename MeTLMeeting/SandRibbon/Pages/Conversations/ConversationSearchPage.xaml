@@ -73,7 +73,8 @@
 
                 <Label Content="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                 <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
-                 Width="200"
+                 HorizontalAlignment="Left"
+                 Width="250"
                  Padding="0 10"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"
                      Margin="{DynamicResource nearBottom}"/>
