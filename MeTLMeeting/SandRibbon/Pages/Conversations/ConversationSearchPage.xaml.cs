@@ -54,9 +54,14 @@ namespace SandRibbon.Pages.Conversations
             sortedConversations.CustomSort = new ConversationComparator();
             SearchResults.ItemsSource = searchResultsObserver;
             typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
-            this.PreviewKeyUp += OnPreviewKeyUp;
-            FillSearchResults(Globals.me);
+            this.PreviewKeyUp += OnPreviewKeyUp;            
+            NavigationService.LoadCompleted += NavigationService_LoadCompleted;
         }
+
+        private void NavigationService_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            FillSearchResults(e.ExtraData as String);
+        }        
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
@@ -93,6 +98,7 @@ namespace SandRibbon.Pages.Conversations
 
         private void FillSearchResults(string searchString)
         {
+            if (searchString == null) return;
             var search = new BackgroundWorker();
             search.DoWork += (object sender, DoWorkEventArgs e) =>
             {

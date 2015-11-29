@@ -66,6 +66,7 @@ namespace SandRibbon.Pages.Conversations
             if (string.IsNullOrEmpty(errors))
             {
                 networkController.client.UpdateConversationDetails(details);
+                NavigationService.Navigate(new ConversationSearchPage(networkController),details.Title);
             }
             else
             {
