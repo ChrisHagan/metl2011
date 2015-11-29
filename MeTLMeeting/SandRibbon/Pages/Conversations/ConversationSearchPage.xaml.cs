@@ -44,7 +44,7 @@ namespace SandRibbon.Pages.Conversations
         private ListCollectionView sortedConversations;
         protected NetworkController networkController;
 
-        public ConversationSearchPage(NetworkController _networkController)
+        public ConversationSearchPage(NetworkController _networkController, string query)
         {
             networkController = _networkController;
             InitializeComponent();
@@ -55,16 +55,9 @@ namespace SandRibbon.Pages.Conversations
             SearchResults.ItemsSource = searchResultsObserver;
             typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
-            if (NavigationService != null)
-            {
-                NavigationService.LoadCompleted += NavigationService_LoadCompleted;
-            }
+            SearchInput.Text = query;
+            FillSearchResultsFromInput();
         }
-
-        private void NavigationService_LoadCompleted(object sender, NavigationEventArgs e)
-        {
-            FillSearchResults(e.ExtraData as String);
-        }        
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {

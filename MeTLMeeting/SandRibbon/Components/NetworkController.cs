@@ -53,8 +53,7 @@ namespace SandRibbon.Components
                 g(GaugeStatus.InProgress,66);
                 //doing these here while we want them as singletons
                 App.Current.Dispatcher.adopt(delegate {
-                    ribbonCollaborationPage = new RibbonCollaborationPage(this);
-                    conversationSearchPage = new ConversationSearchPage(this);
+                    ribbonCollaborationPage = new RibbonCollaborationPage(this);                    
                     Commands.SetContentVisibility.Execute(Utility.ContentFilterVisibility.defaultVisibilities);
                 });
                 return client;

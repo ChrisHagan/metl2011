@@ -11,11 +11,13 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:macros="clr-namespace:SandRibbon.Pages.Macros"
     xmlns:layout="clr-namespace:SandRibbon.Layout"
+    xmlns:conversation="clr-namespace:SandRibbon.Pages.Conversations"
     xmlns:p="clr-namespace:SandRibbon.Properties"
       xmlns:ppType="clr-namespace:SandRibbon.Utils"
     x:Name="root">
     <Page.Resources>
         <Thickness Top="50" x:Key="space"/>
+        <conversation:VisibleToAuthor x:Key="visibleToAuthor" />
     </Page.Resources>
     <Grid Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -32,6 +34,9 @@
                 <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
                           Unchecked="onlyMyConversations_Checked"/>
             </StackPanel>
+            <Button Click="searchConversations_Click">
+                <Label Content="Search" />
+            </Button>
             <UniformGrid HorizontalAlignment="Left" Columns="2">
                 <Button Click="AnalyzeSelectedConversations">
                     <Label Content="Analyze selected conversations" Style="{StaticResource medium}" />
@@ -60,7 +65,7 @@
                   Grid.Row="1"
                   Margin="{StaticResource space}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="View" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Enter conversation" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Click="JoinConversation">
@@ -82,7 +87,7 @@
                 <DataGridTemplateColumn Header="Edit" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="EditConversation">
+                            <Button Click="EditConversation" Visibility="{Binding Converter={StaticResource visibleToAuthor}}">
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
                                         <VisualBrush Visual="{StaticResource appbar_cog}" />
