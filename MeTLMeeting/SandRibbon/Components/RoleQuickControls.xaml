@@ -31,7 +31,7 @@
                     <CheckBox Checked="StudentsCanPublishChecked" Content="Attach files"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" Content="Add slides"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" Content="List participants"></CheckBox>
-                    <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Follow teacher"></CheckBox>
+                    <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Move freely"></CheckBox>
                 </Grid>
                 <GridSplitter Height="{StaticResource splitter}" HorizontalAlignment="Stretch"/>
                 <WrapPanel>
