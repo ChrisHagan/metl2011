@@ -183,6 +183,12 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetPrivacyOfItems = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand GotoThread = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetDrawingAttributes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetPenAttributes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReplacePenAttributes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RequestReplacePenAttributes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RequestResetPenAttributes = new DefaultableCompositeCommand();
+
+
         public static DefaultableCompositeCommand SendStroke = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveStroke = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveStrokes = new DefaultableCompositeCommand();

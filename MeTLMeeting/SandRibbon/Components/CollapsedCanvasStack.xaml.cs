@@ -30,6 +30,7 @@ using Awesomium.Windows.Controls;
 using Awesomium.Core;
 using SandRibbon.Pages.Collaboration.Layout;
 using Xceed.Wpf.Toolkit;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
@@ -234,6 +235,7 @@ namespace SandRibbon.Components
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<Privacy>(changeSelectedItemsPrivacy));
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
+            Commands.SetPenAttributes.RegisterCommandToDispatcher(new DelegateCommand<PenAttributes>(SetPenAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
@@ -1140,6 +1142,12 @@ namespace SandRibbon.Components
             }
             setInkCanvasMode("Ink");
             Work.DefaultDrawingAttributes = zoomCompensatedAttributes;
+        }
+        private void SetPenAttributes(PenAttributes logicalAttributes)
+        {
+            Commands.SetDrawingAttributes.Execute(logicalAttributes.attributes);
+            Commands.SetLayer.Execute("Sketch");
+            Commands.SetInkCanvasMode.Execute(logicalAttributes.mode.ToString());
         }
         public List<Stroke> PublicStrokes
         {
