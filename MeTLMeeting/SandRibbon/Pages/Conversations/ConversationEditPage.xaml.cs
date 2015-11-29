@@ -1,6 +1,7 @@
 ﻿using MeTLLib.DataTypes;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
+using SandRibbon.Providers;
 using System;
 using System.Globalization;
 using System.Text;
@@ -97,7 +98,7 @@ namespace SandRibbon.Pages.Conversations
             {
                 var conversation = DataContext as ConversationDetails;
                 networkController.client.DeleteConversation(conversation);
-
+                NavigationService.Navigate(new ConversationSearchPage(networkController,Globals.me));
             }
         }
     }
