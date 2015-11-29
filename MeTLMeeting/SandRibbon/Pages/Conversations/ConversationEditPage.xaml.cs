@@ -95,8 +95,8 @@ namespace SandRibbon.Pages.Conversations
         {
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
-                var details = (ConversationDetails)e.OriginalSource;
-                networkController.client.DeleteConversation(details);
+                var conversation = DataContext as ConversationDetails;
+                networkController.client.DeleteConversation(conversation);
 
             }
         }

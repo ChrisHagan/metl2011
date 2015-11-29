@@ -27,10 +27,10 @@
                 <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource clearBottom}">
                     <Label Content="What can students do?" Style="{StaticResource medium}" />
                     <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Publish content"></CheckBox>
-                    <CheckBox Checked="StudentsCanPublishChecked" Content="Publish quizzes"></CheckBox>
-                    <CheckBox Checked="StudentsCanPublishChecked" Content="Attach files"></CheckBox>
-                    <CheckBox Checked="StudentsCanPublishChecked" Content="Add slides"></CheckBox>
-                    <CheckBox Checked="StudentsCanPublishChecked" Content="List participants"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False"  Content="Publish quizzes"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="Attach files"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="Add slides"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="List participants"></CheckBox>
                     <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Move freely"></CheckBox>
                 </Grid>
                 <GridSplitter Height="{StaticResource splitter}" HorizontalAlignment="Stretch"/>
