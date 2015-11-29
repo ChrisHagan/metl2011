@@ -300,6 +300,7 @@
     <Compile Include="Components\DiagnosticWindow.xaml.cs">
       <DependentUpon>DiagnosticWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\PenCustomizationDialog.xaml.cs" />
     <Compile Include="Components\PrivateNotepadSpace.xaml.cs">
       <DependentUpon>PrivateNotepadSpace.xaml</DependentUpon>
     </Compile>
@@ -418,6 +419,10 @@
     <Page Include="Automation\StrokeHarvester.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\PenCustomizationDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

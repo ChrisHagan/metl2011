@@ -54,8 +54,11 @@ namespace SandRibbon.Pages.Conversations
             sortedConversations.CustomSort = new ConversationComparator();
             SearchResults.ItemsSource = searchResultsObserver;
             typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
-            this.PreviewKeyUp += OnPreviewKeyUp;            
-            NavigationService.LoadCompleted += NavigationService_LoadCompleted;
+            this.PreviewKeyUp += OnPreviewKeyUp;
+            if (NavigationService != null)
+            {
+                NavigationService.LoadCompleted += NavigationService_LoadCompleted;
+            }
         }
 
         private void NavigationService_LoadCompleted(object sender, NavigationEventArgs e)
