@@ -519,7 +519,7 @@ namespace SandRibbon
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             if (details.Equals(ConversationDetails.Empty))
                 return Strings.Global_ProductName;
-            return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
+            return string.Format("{0}'s \"{1}\"", details.Author, details.Title);
         }
         private void showReconnectingDialog()
         {

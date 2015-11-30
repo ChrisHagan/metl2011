@@ -197,7 +197,9 @@ namespace SandRibbon.Components
 
         private Privacy currentPrivacy
         {
-            get { return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true)); }
+            get {
+                return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true));
+            }
         }
 
         public CollapsedCanvasStack()
