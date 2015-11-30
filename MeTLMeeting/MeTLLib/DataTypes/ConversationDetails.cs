@@ -280,7 +280,7 @@ namespace MeTLLib.DataTypes
 
         public bool UserHasPermission(Credentials credentials)
         {
-            if (!(credentials.name == Author)
+            if (!(credentials.name.ToLower() == Author.ToLower())
                 && !(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
                 && Subject.ToLower() != "Unrestricted".ToLower()
                 && !(String.IsNullOrEmpty(Subject))
