@@ -184,6 +184,7 @@ namespace SandRibbon.Components
         private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
+            if (Globals.currentPage != "RibbonCollaborationPage") return;
             lock (preParserRenderingLock)
             {
                 App.auditor.wrapAction(a =>

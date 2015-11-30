@@ -820,18 +820,10 @@ namespace MeTLLib.Providers.Connection
                 {
                     a(GaugeStatus.InProgress, 12);
                     leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
-                    a(GaugeStatus.InProgress, 24);
-                    /*
-                    new MucManager(conn).LeaveRoom(
-                        new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
-                        */
+                    a(GaugeStatus.InProgress, 24);                    
                     a(GaugeStatus.InProgress, 36);
-                    var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
-                    location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
                     var oldLocation = location.currentSlide.ToString();
-                    location.currentSlide = where;
-                    //Globals.conversationDetails = currentDetails;
-                    //Globals.slide = where;
+                    location.currentSlide = where;                    
                     joinRooms(fastJoin: true, alreadyInConversation: true);
                     a(GaugeStatus.InProgress, 48);
                     cachedHistoryProvider.ClearCache(oldLocation);

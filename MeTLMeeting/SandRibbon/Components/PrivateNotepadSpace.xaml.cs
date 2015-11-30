@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -34,6 +35,7 @@ namespace SandRibbon.Components
 
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
+            if (Globals.currentPage != "RibbonCollaborationPage") return;
             BeginInit();
             notepadStack.ReceiveStrokes(parser.ink);
             notepadStack.ReceiveImages(parser.images.Values);

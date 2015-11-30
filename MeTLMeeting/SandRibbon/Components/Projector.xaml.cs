@@ -118,9 +118,10 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         public void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
+            if (Globals.currentPage != "RibbonCollaborationPage") return;
             //if (!isPrivate(parser))
             //{
-                BeginInit();
+            BeginInit();
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)

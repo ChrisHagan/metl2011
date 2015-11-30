@@ -9,6 +9,7 @@ using MeTLLib.Providers.Connection;
 using Iveonik.Stemmers;
 using System.Windows.Data;
 using System.Globalization;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -219,6 +220,7 @@ namespace SandRibbon.Components
         }
         private void ReceivePreParser(PreParser p)
         {
+            if (Globals.currentPage != "RibbonCollaborationPage") return;
             ReceiveStrokes(p.ink);
             foreach (var t in p.text.Values.ToList())
                 ReceiveTextbox(t);

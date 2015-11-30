@@ -392,7 +392,7 @@ namespace SandRibbon.Components
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
-                return;
+                return;            
             if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
             {
                 thumbnailList.Clear();

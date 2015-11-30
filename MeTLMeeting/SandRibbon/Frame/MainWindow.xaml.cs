@@ -136,7 +136,14 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
+            mainFrame.Navigating += MainFrame_Navigating;
         }
+
+        private void MainFrame_Navigating(object sender, NavigatingCancelEventArgs e)
+        {
+            Globals.currentPage = e.Content.GetType().Name as String;
+        }
+
         private void openProjectorWindow(object _unused)
         {
             Commands.MirrorPresentationSpace.Execute(this);

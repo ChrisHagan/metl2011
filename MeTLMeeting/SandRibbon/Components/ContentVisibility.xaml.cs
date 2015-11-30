@@ -24,7 +24,7 @@ namespace SandRibbon.Components
 
             InitializeComponent();
             contentVisibilitySelectors.ItemsSource = visibilities;
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((cd) => { UpdateConversationDetails(cd); }));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((loc) => { MoveTo(loc); }));
             Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
             Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
