@@ -97,8 +97,6 @@ namespace SandRibbon
             Commands.MoveToOverview.RegisterCommand(new DelegateCommand<NetworkController>(MoveToOverview, mustBeInConversation));
             if (presentationStrategy == PresentationStrategy.WindowCoordinating)
             {
-                Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(o => Shift(1), mustBeInConversation));
-                Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(o => Shift(-1), mustBeInConversation));
                 Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
             }            
             Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
@@ -274,23 +272,6 @@ namespace SandRibbon
         {
             mainFrame.Navigate(new ConversationOverviewPage(obj, Globals.conversationDetails));
         }
-
-        private void Shift(int direction)
-        {
-            var details = Globals.conversationDetails;
-            var slides = details.Slides.OrderBy(s => s.index).Select(s => s.id).ToList();
-            var currentIndex = slides.IndexOf(Globals.location.currentSlide);
-            if (currentIndex < 0) return;
-            var end = slides.Count - 1;
-            var targetIndex = 0;
-            if (direction >= 0 && currentIndex == end) targetIndex = 0;
-            else if (direction >= 0) targetIndex = currentIndex + 1;
-            else if (currentIndex == 0) targetIndex = end;
-            else targetIndex = currentIndex - 1;
-            Commands.MoveToCollaborationPage.Execute(slides[targetIndex]);
-            //mainFrame.Navigate(new GroupCollaborationPage(slides[targetIndex]));
-        }
-
 
         private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
         {

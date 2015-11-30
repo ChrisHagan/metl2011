@@ -41,7 +41,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void joinConversation(object obj)
         {
-            this.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+            this.Visibility = rootPage.details.isAuthor(Globals.me) ? Visibility.Visible : Visibility.Collapsed;
             NavigationIsLocked = Globals.conversationDetails.Permissions.NavigationLocked;
         }
     }

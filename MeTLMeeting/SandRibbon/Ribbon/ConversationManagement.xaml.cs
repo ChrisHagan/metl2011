@@ -17,6 +17,7 @@ namespace SandRibbon.Tabs
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
         public static RoutedCommand ManageBannedContent = new RoutedCommand();
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public ConversationManagement()
         {
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace SandRibbon.Tabs
         private void updateConversationDetails(ConversationDetails details)
         {
             editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+            banContent.Visibility = rootPage.details.isAuthor(Globals.me) ? Visibility.Visible : Visibility.Collapsed;
             bannedContentManagement.Visibility = banContent.Visibility;
         }
 

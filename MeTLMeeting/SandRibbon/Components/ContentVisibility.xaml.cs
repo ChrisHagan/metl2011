@@ -12,32 +12,39 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
     public partial class ContentVisibility
     {
         public ObservableCollection<ContentVisibilityDefinition> visibilities = new ObservableCollection<ContentVisibilityDefinition>();
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public ContentVisibility()
         {
-            DataContext = this;
-
             InitializeComponent();
             contentVisibilitySelectors.ItemsSource = visibilities;
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((loc) => { MoveTo(loc); }));
-            Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            var updateContentVisibilityCommand = new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh());
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as RibbonCollaborationPage;
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand); 
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.UpdateContentVisibility.UnregisterCommand(updateContentVisibilityCommand);
+            };
             Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
+            DataContext = this;
         }
 
         protected int slide = -1;
         protected ConversationDetails conversation = ConversationDetails.Empty;
         protected List<GroupSet> groupSets = new List<GroupSet>();
-        protected void MoveTo(int s)
-        {
-            slide = s;
-            potentiallyRefresh();
-        }
         protected void UpdateConversationDetails(ConversationDetails cd)
         {
             conversation = cd;
@@ -70,9 +77,9 @@ namespace SandRibbon.Components
                         {
                             var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
                             var wasSubscribed = currentState[g.id];
-                            if (Globals.isAuthor || g.GroupMembers.Contains(Globals.me))
+                            if (rootPage.details.isAuthor(Globals.me) || g.GroupMembers.Contains(Globals.me))
                             {
-                                var groupDescription = Globals.isAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                var groupDescription = rootPage.details.isAuthor(Globals.me) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(
                                     new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (a, p, c, s) => g.GroupMembers.Contains(a))
                                 );

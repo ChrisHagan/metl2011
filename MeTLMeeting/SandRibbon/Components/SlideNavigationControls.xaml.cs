@@ -7,21 +7,30 @@ using System.IO;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
     public partial class SlideNavigationControls : UserControl
     {
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public SlideNavigationControls()
         {
             InitializeComponent();
             this.PreviewKeyDown += KeyPressed;
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((i) => {
-                Commands.RequerySuggested(Commands.MoveToNext, Commands.MoveToPrevious);
-            }));
-            //Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            //Commands.SetSync.Execute(false);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as RibbonCollaborationPage;
+                }
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+            };
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
@@ -42,7 +51,6 @@ namespace SandRibbon.Components
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            Commands.RequerySuggested(Commands.MoveToNext, Commands.MoveToPrevious);
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
             {
@@ -72,7 +80,7 @@ namespace SandRibbon.Components
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
-                    if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
+                    if (rootPage.details.Slides.Exists(sl => sl.id == teacherSlide) && !rootPage.details.isAuthor(Globals.me))
                         Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException){ }

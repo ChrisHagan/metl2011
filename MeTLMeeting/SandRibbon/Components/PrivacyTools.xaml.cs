@@ -8,6 +8,7 @@ using System.Windows.Automation.Provider;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 using System.Windows.Controls.Ribbon;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
@@ -17,25 +18,32 @@ namespace SandRibbon.Components
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
 
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public PrivacyTools()
         {
             InitializeComponent();
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
-            Loaded += (s, e) =>
-            {
+            var setPrivacyCommand = new DelegateCommand<string>(SetPrivacy, canSetPrivacy);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
+            var textboxFocusedCommand = new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox);
+            Loaded += (s, e) => {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as RibbonCollaborationPage;
+                }
+                Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 try
                 {
-                    if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
+                    if (String.IsNullOrEmpty(Globals.privacy) || rootPage.details == null)
                     {
                         Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
                     }
                     else
                     {
-                        if (Globals.isAuthor)
+                        if (rootPage.details.isAuthor(Globals.me))
                             Commands.SetPrivacy.ExecuteAsync(Globals.PUBLIC);
                         else
                             Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
-                        settingEnabledModes(Globals.conversationDetails);
+                        settingEnabledModes(rootPage.details);
                         settingSelectedMode(Globals.privacy);
                     }
                 }
@@ -43,22 +51,15 @@ namespace SandRibbon.Components
                 {
                     Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
                 }
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
+                DataContext = this;
             };
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>((jid) => {
-                settingEnabledModes(Globals.conversationDetails);
-                Commands.SetPrivacy.Execute(GetValue(PrivateProperty));
-                settingSelectedMode(Globals.privacy);
-                Commands.RequerySuggested(Commands.SetPrivacy);
-            }));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) => {
-                settingEnabledModes(Globals.conversationDetails);
-                Commands.SetPrivacy.Execute(GetValue(PrivateProperty));
-                settingSelectedMode(Globals.privacy);
-                Commands.RequerySuggested(Commands.SetPrivacy);
-            }));
-            DataContext = this;
+            Unloaded += (s, e) => {
+                Commands.SetPrivacy.UnregisterCommand(setPrivacyCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.TextboxFocused.UnregisterCommand(textboxFocusedCommand);
+            };
         }
 
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
@@ -80,10 +81,10 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me)) || Globals.isAuthor)
+                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me)) || rootPage.details.isAuthor(Globals.me))
                                       {
                                           publicMode.IsEnabled = true;
-                                          var privacy = Globals.isAuthor ? Globals.PUBLIC : Globals.PRIVATE;
+                                          var privacy = rootPage.details.isAuthor(Globals.me) ? Globals.PUBLIC : Globals.PRIVATE;
                                           SetPrivacy(privacy);
                                       }
 
@@ -101,7 +102,7 @@ namespace SandRibbon.Components
             try
             {
                 var result = privacy != (string)GetValue(PrivateProperty)
-                && ((Globals.conversationDetails.Permissions.studentCanPublish && !Globals.conversationDetails.blacklist.Contains(Globals.me)) || Globals.conversationDetails.Author == Globals.me);
+                && ((rootPage.details.Permissions.studentCanPublish && !rootPage.details.blacklist.Contains(Globals.me)) || rootPage.details.Author == Globals.me);
                 return result;
             }
             catch (Exception)

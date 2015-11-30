@@ -24,6 +24,7 @@ using System.Windows.Media.Effects;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Collaboration.Layout;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Components
 {
@@ -36,27 +37,64 @@ namespace SandRibbon.Components
                 return stack;
             }
         }
-        
+        public RibbonCollaborationPage rootPage { get; protected set; }
+
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
             privacyOverlay.Freeze();
             InitializeComponent();
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
-            Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            //Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));           
-            Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
-            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
-            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
-            Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
-            Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
-            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
-            Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
-            Commands.AllStaticCommandsAreRegistered();
-            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            var undoCommandBinding = new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null));
+            var redoCommandBinding = new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null));
+            var initiateDigCommand = new DelegateCommand<object>(InitiateDig);
+            var receiveLiveWindowCommand = new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow);
+            //var preParserAvailableCommand = new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable);
+            var convertPresentationSpaceToQuizCommand = new DelegateCommand<int>(ConvertPresentationSpaceToQuiz);
+            var syncedMoveRequestedCommand = new DelegateCommand<int>(setUpSyncDisplay);
+            var initiateGrabZoomCommand = new DelegateCommand<object>(InitiateGrabZoom);
+            var highlightCommand = new DelegateCommand<HighlightParameters>(highlight);
+            var removeHighlightCommand = new DelegateCommand<HighlightParameters>(removeHighlight);
+            var sendScreenShotCommand = new DelegateCommand<ScreenshotDetails>(SendScreenShot);
+            var banHammerSelectedItemsCommand = new DelegateCommand<object>(BanHammerSelectedItems);
+            var mirrorPresentationSpaceCommand = new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace);
+            Loaded += (s, e) => {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as RibbonCollaborationPage;
+                }
+                rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { },(i,j) => { },(parser) => PreParserAvailable(parser), rootPage.slide.id.ToString());
+                rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}",Globals.me,rootPage.slide.id.ToString()));
+                rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), rootPage.details.Jid);
+                CommandBindings.Add(undoCommandBinding);
+                CommandBindings.Add(redoCommandBinding);
+                Commands.InitiateDig.RegisterCommand(initiateDigCommand);
+                Commands.ReceiveLiveWindow.RegisterCommand(receiveLiveWindowCommand);
+//                Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
+                Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(convertPresentationSpaceToQuizCommand);
+                Commands.SyncedMoveRequested.RegisterCommand(syncedMoveRequestedCommand);
+                Commands.InitiateGrabZoom.RegisterCommand(initiateGrabZoomCommand);
+                Commands.Highlight.RegisterCommand(highlightCommand);
+                Commands.RemoveHighlight.RegisterCommand(removeHighlightCommand);
+                Commands.GenerateScreenshot.RegisterCommand(sendScreenShotCommand);
+                Commands.BanhammerSelectedItems.RegisterCommand(banHammerSelectedItemsCommand);
+                Commands.MirrorPresentationSpace.RegisterCommand(mirrorPresentationSpaceCommand);
+                Commands.AllStaticCommandsAreRegistered();
+            };
+            Unloaded += (s, e) => {
+                CommandBindings.Remove(undoCommandBinding);
+                CommandBindings.Remove(redoCommandBinding);
+                Commands.InitiateDig.UnregisterCommand(initiateDigCommand);
+                Commands.ReceiveLiveWindow.UnregisterCommand(receiveLiveWindowCommand);
+//                Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
+                Commands.ConvertPresentationSpaceToQuiz.UnregisterCommand(convertPresentationSpaceToQuizCommand);
+                Commands.SyncedMoveRequested.UnregisterCommand(syncedMoveRequestedCommand);
+                Commands.InitiateGrabZoom.UnregisterCommand(initiateGrabZoomCommand);
+                Commands.Highlight.UnregisterCommand(highlightCommand);
+                Commands.RemoveHighlight.UnregisterCommand(removeHighlightCommand);
+                Commands.GenerateScreenshot.UnregisterCommand(sendScreenShotCommand);
+                Commands.BanhammerSelectedItems.UnregisterCommand(banHammerSelectedItemsCommand);
+                Commands.MirrorPresentationSpace.UnregisterCommand(mirrorPresentationSpaceCommand);
+            };
         }
         private void MirrorPresentationSpace(object obj)
         {
@@ -103,7 +141,7 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var author in authorList)
             {
-                if (!Globals.isAuthor && !details.blacklist.Contains(author))
+                if (!rootPage.details.isAuthor(Globals.me) && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
             App.controller.client.UpdateConversationDetails(details);

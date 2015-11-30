@@ -5,11 +5,14 @@ using System.Windows;
 using System.Windows.Controls;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
     public partial class PrivacyToggleButton : UserControl
     {
+        public RibbonCollaborationPage rootPage { get; protected set; }
+
         public PrivacyToggleButton(PrivacyToggleButtonInfo mode, Rect bounds)
         {
             InitializeComponent();
@@ -18,52 +21,58 @@ namespace SandRibbon.Components
             // no longer clip the bottom of the adorner buttons to the bottom of the element it is bound to
             //privacyButtons.Height = bounds.Height;
 
-            if (mode.showDelete)
-                deleteButton.Visibility = Visibility.Visible;
-            else
-                deleteButton.Visibility = Visibility.Collapsed;
-
-            if (mode.AdornerTarget == "presentationSpace")
+            Loaded += (s, e) =>
             {
-                if ((!Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.blacklist.Contains(Globals.me)) && !Globals.isAuthor)
-                {
-                    showButton.Visibility = Visibility.Collapsed;
-                    hideButton.Visibility = Visibility.Collapsed;
-                }
-                else if (mode.privacyChoice == "show")
-                {
-                    showButton.Visibility = Visibility.Visible;
-                    hideButton.Visibility = Visibility.Collapsed;
+                if (rootPage == null)
+                    rootPage = DataContext as RibbonCollaborationPage;
+                if (mode.showDelete)
+                    deleteButton.Visibility = Visibility.Visible;
+                else
+                    deleteButton.Visibility = Visibility.Collapsed;
 
-                }
-                else if (mode.privacyChoice == "hide")
+                if (mode.AdornerTarget == "presentationSpace")
                 {
-                    showButton.Visibility = Visibility.Collapsed;
-                    hideButton.Visibility = Visibility.Visible;
+                    if ((!rootPage.details.Permissions.studentCanPublish || rootPage.details.blacklist.Contains(Globals.me)) && !rootPage.details.isAuthor(Globals.me))
+                    {
+                        showButton.Visibility = Visibility.Collapsed;
+                        hideButton.Visibility = Visibility.Collapsed;
+                    }
+                    else if (mode.privacyChoice == "show")
+                    {
+                        showButton.Visibility = Visibility.Visible;
+                        hideButton.Visibility = Visibility.Collapsed;
+
+                    }
+                    else if (mode.privacyChoice == "hide")
+                    {
+                        showButton.Visibility = Visibility.Collapsed;
+                        hideButton.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        showButton.Visibility = Visibility.Visible;
+                        hideButton.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
-                    showButton.Visibility = Visibility.Visible;
-                    hideButton.Visibility = Visibility.Visible;
+                    showButton.Visibility = Visibility.Collapsed;
+                    hideButton.Visibility = Visibility.Collapsed;
                 }
-            }
-            else
-            {
-                showButton.Visibility = Visibility.Collapsed;
-                hideButton.Visibility = Visibility.Collapsed;
-            }
 
-            if (Globals.IsBanhammerActive)
-            {
-                deleteButton.Visibility = Visibility.Collapsed;
-                showButton.Visibility = Visibility.Collapsed;
-                hideButton.Visibility = Visibility.Collapsed;
-            }
+                if (Globals.IsBanhammerActive)
+                {
+                    deleteButton.Visibility = Visibility.Collapsed;
+                    showButton.Visibility = Visibility.Collapsed;
+                    hideButton.Visibility = Visibility.Collapsed;
+                }
 
-            if (Globals.IsBanhammerActive && Globals.isAuthor)
-                banhammerButton.Visibility = Visibility.Visible;
-            else
-                banhammerButton.Visibility = Visibility.Collapsed;
+                if (Globals.IsBanhammerActive && rootPage.details.isAuthor(Globals.me))
+                    banhammerButton.Visibility = Visibility.Visible;
+                else
+                    banhammerButton.Visibility = Visibility.Collapsed;
+            };
+
         }
 
         private void showContent(object sender, RoutedEventArgs e)

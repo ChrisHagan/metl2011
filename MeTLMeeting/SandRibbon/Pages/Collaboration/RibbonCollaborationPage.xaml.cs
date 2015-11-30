@@ -224,25 +224,22 @@ namespace SandRibbon.Pages.Collaboration
     }
     public partial class RibbonCollaborationPage : Page
     {
-        protected NetworkController networkController;
-        protected ConversationDetails details;
-        protected string conversationJid;
-        protected Slide slide;
+        public NetworkController networkController { get; protected set; }
+        public ConversationDetails details { get; protected set; }
+        public Slide slide { get; protected set; }
 
         protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;
         /*
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
         */
-        public RibbonCollaborationPage(NetworkController _networkController/*, ConversationDetails _details, Slide slide*/)
+        public RibbonCollaborationPage(NetworkController _networkController, ConversationDetails _details, Slide _slide)
         {
             networkController = _networkController;
-            //details = _details;
-            details = ConversationDetails.Empty;
+            details = _details;
+            slide = _slide;
             InitializeComponent();
-            //DataContext = slide;
-            slide = Slide.Empty;
-            DataContext = slide;
+            DataContext = this;
             var ic = new ImageSourceConverter();
             var images = new ImageSources(
                 ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/ShinyEraser.png") as ImageSource,
@@ -271,9 +268,8 @@ namespace SandRibbon.Pages.Collaboration
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
             */
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-
-            Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
+            var setLayerCommand = new DelegateCommand<string>(SetLayer);
+            var duplicateSlideCommand = new DelegateCommand<object>((obj) =>
             {
                 duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
             }, (kvp) =>
@@ -286,24 +282,17 @@ namespace SandRibbon.Pages.Collaboration
                 {
                     return false;
                 }
-            }));
-            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation));
-
-            /*
-            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            
-            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));            
-            */
-            Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
-            Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<string>((s) => RemovePrivacyAdorners(s)));
-            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(fitToView, canFitToView));
-            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(originalView, canOriginalView));
-            Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
-            Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
-            Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
-
+            });
+            var duplicateConversationCommand = new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation);
+            var addPrivacyToggleButtonCommand = new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton);
+            var removePrivacyAdornersCommand = new DelegateCommand<string>((s) => RemovePrivacyAdorners(s));
+            var fitToViewCommand = new DelegateCommand<object>(fitToView, canFitToView);
+            var originalViewCommand = new DelegateCommand<object>(originalView, canOriginalView);
+            var zoomInCommand = new DelegateCommand<object>(doZoomIn, canZoomIn);
+            var zoomOutCommand = new DelegateCommand<object>(doZoomOut, canZoomOut);
+            var setZoomRectCommand = new DelegateCommand<Rect>(SetZoomRect);
             var currentPenId = 0;
-            Commands.SetPenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa =>
+            var setPenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
                 currentPenId = pa.id;
                 foreach (var p in penCollection)
@@ -312,20 +301,20 @@ namespace SandRibbon.Pages.Collaboration
                     //p.isSelectedPen = p.id == currentPenId;
                 };
                 pa.isSelectedPen = true;
-            }));
-            Commands.RequestReplacePenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa =>
+            });
+            var requestReplacePenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
                 new PenCustomizationDialog(pa).ShowDialog();
-            },pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke));
-            Commands.ReplacePenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa =>
+            }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
+            var replacePenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
                 penCollection.First(p => p.id == pa.id).replaceAttributes(pa);
                 if (pa.id == currentPenId)
                 {
                     Commands.SetPenAttributes.Execute(pa);
                 }
-            }));
-            Commands.RequestResetPenAttributes.RegisterCommand(new DelegateCommand<PenAttributes>(pa =>
+            });
+            var requestResetPenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
                 var foundPen = penCollection.First(p => p.id == pa.id);
                 foundPen.resetAttributes();
@@ -333,71 +322,92 @@ namespace SandRibbon.Pages.Collaboration
                 {
                     Commands.SetPenAttributes.Execute(foundPen);
                 }
-            }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke));
+            }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
+            var joinConversationCommand = new DelegateCommand<string>((convJid) =>
+            {
+                Commands.RequerySuggested();
+            });
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
+            var moveToNextCommand = new DelegateCommand<object>(o => Shift(1));
+            var moveToPreviousCommand = new DelegateCommand<object>(o => Shift(-1));
 
-            /*
-            Commands.IncreaseFontSize.RegisterCommand(new DelegateCommand<object>(increaseFont, canIncreaseFont));
-            Commands.DecreaseFontSize.RegisterCommand(new DelegateCommand<object>(decreaseFont, canDecreaseFont));
-            Commands.TextboxSelected.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
-            */
-            //adding these as a workaround while we're doing singletons of this page and re-using it
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) =>
+            Loaded += (cs, ce) =>
             {
-                conversationJid = convJid;
-                Commands.RequerySuggested();
-            }));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) =>
-            {
-                var newSlide = details.Slides.Find(s => s.id == slideId);
-                if (newSlide != null)
-                {
-                    slide = newSlide;
-                    DataContext = newSlide;
-                }
-                Commands.RequerySuggested();
-            }));
-            Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<MainWindow>(openProjectorWindow));
-            this.Loaded += (ps, pe) =>
-            {
+                Commands.MoveToNext.RegisterCommand(moveToNextCommand);
+                Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
+                Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
+                Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);
+                Commands.DuplicateConversation.RegisterCommand(duplicateConversationCommand);
+                Commands.AddPrivacyToggleButton.RegisterCommand(addPrivacyToggleButtonCommand);
+                Commands.RemovePrivacyAdorners.RegisterCommand(removePrivacyAdornersCommand);
+                Commands.FitToView.RegisterCommand(fitToViewCommand);
+                Commands.OriginalView.RegisterCommand(originalViewCommand);
+                Commands.ZoomIn.RegisterCommand(zoomInCommand);
+                Commands.ZoomOut.RegisterCommand(zoomOutCommand);
+                Commands.SetZoomRect.RegisterCommandToDispatcher(setZoomRectCommand);
+                Commands.SetPenAttributes.RegisterCommand(setPenAttributesCommand);
+                Commands.RequestReplacePenAttributes.RegisterCommand(requestReplacePenAttributesCommand);
+                Commands.ReplacePenAttributes.RegisterCommand(replacePenAttributesCommand);
+                Commands.RequestResetPenAttributes.RegisterCommand(requestResetPenAttributesCommand);
+                Commands.JoinConversation.RegisterCommand(joinConversationCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.ProxyMirrorPresentationSpace.RegisterCommand(proxyMirrorPresentationSpaceCommand);
                 scroll.ScrollChanged += (s, e) =>
                     {
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                     };
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
-                /*
-                //watching the navigation away from this page so that we can do cleanup.  This won't be necessary until we stop using a singleton on the network controller.
-                NavigationService.Navigated += (s, e) =>
-                {
-                    if ((Page)e.Content != this)
-                    {
-                        Console.WriteLine("navigatedAwayFromthis");
-                    }
-
-                };
-                */
-                /*
-                //firing these, until we work out the XAML binding up and down the chain.
-                Commands.JoinConversation.Execute(details.Jid);
-                Commands.MoveToCollaborationPage.Execute(slide.id);
-                Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
-                */
                 Commands.ShowProjector.Execute(null);
+                networkController.client.SneakInto(details.Jid);
+                networkController.client.SneakInto(slide.id.ToString());
+                networkController.client.SneakInto(slide.id.ToString() + Globals.me);
             };
             this.Unloaded += (ps, pe) =>
             {
-
-
+                Commands.MoveToNext.UnregisterCommand(moveToNextCommand);
+                Commands.MoveToPrevious.UnregisterCommand(moveToPreviousCommand);
                 Commands.HideProjector.Execute(null);
+                Commands.SetLayer.UnregisterCommand(setLayerCommand);
+                Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);
+                Commands.DuplicateConversation.UnregisterCommand(duplicateConversationCommand);
+                Commands.AddPrivacyToggleButton.UnregisterCommand(addPrivacyToggleButtonCommand);
+                Commands.RemovePrivacyAdorners.UnregisterCommand(removePrivacyAdornersCommand);
+                Commands.FitToView.UnregisterCommand(fitToViewCommand);
+                Commands.OriginalView.UnregisterCommand(originalViewCommand);
+                Commands.ZoomIn.UnregisterCommand(zoomInCommand);
+                Commands.ZoomOut.UnregisterCommand(zoomOutCommand);
+                Commands.SetZoomRect.UnregisterCommand(setZoomRectCommand);
+                Commands.SetPenAttributes.UnregisterCommand(setPenAttributesCommand);
+                Commands.RequestReplacePenAttributes.UnregisterCommand(requestReplacePenAttributesCommand);
+                Commands.ReplacePenAttributes.UnregisterCommand(replacePenAttributesCommand);
+                Commands.RequestResetPenAttributes.UnregisterCommand(requestResetPenAttributesCommand);
+                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
+                networkController.client.SneakOutOf(slide.id.ToString() + Globals.me);
+                networkController.client.SneakOutOf(slide.id.ToString());
+                networkController.client.SneakOutOf(details.Jid);
             };
         }
+        private void Shift(int direction)
+        {
+            var slides = details.Slides.OrderBy(s => s.index).ToList();
+            var currentIndex = slides.IndexOf(slide);
+            var newSlide = slides.ElementAt(currentIndex + direction);
+            if (newSlide != null)
+            {
+                NavigationService.Navigate(new RibbonCollaborationPage(networkController, details, newSlide));
+            }
+        }
+
 
         private void UpdateConversationDetails(ConversationDetails cd)
         {
-            if (conversationJid == cd.Jid)
+            if (details.Jid == cd.Jid)
             {
-                details = cd;                
+                details = cd;
             }
         }
 
@@ -618,7 +628,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationSearchPage(networkController,""));
+            NavigationService.Navigate(new ConversationSearchPage(networkController, ""));
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {

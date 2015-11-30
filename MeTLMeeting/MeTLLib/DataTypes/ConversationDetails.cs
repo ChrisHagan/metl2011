@@ -132,6 +132,12 @@ namespace MeTLLib.DataTypes
                 return Subject.ToLower().GetHashCode() == "deleted".GetHashCode();
             }
         }
+        public bool isAuthor(string user)
+        {
+            if (user == null || ValueEquals(Empty)) return false;
+            return user.ToLower() == Author.ToLower();
+        }
+
         public bool IsEmpty
         {
             get

@@ -16,13 +16,15 @@ namespace SandRibbon.Components
         public ObservableCollection<Slide> activeSlideList = new ObservableCollection<Slide>();
         public static SlideIndexConverter SlideIndex;
         public static UrlForSlideConverter UrlForSlide;
-        public EditConversation()
+        public ConversationDetails details { get; protected set; }
+        public EditConversation(ConversationDetails _details)
         {
+            details = _details;
             SlideIndex = new SlideIndexConverter(activeSlideList);
             UrlForSlide = new UrlForSlideConverter();
             InitializeComponent();
             activeSlides.ItemsSource = activeSlideList;
-            loadConversation(Globals.conversationDetails.Slides);
+            loadConversation(details.Slides);
         }
 
         private void loadConversation(List<Slide> slides)
@@ -43,7 +45,6 @@ namespace SandRibbon.Components
         }
         private void save(object sender, RoutedEventArgs e)
         {
-            var details = Globals.conversationDetails;
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
 

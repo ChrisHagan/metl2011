@@ -21,7 +21,7 @@ namespace SandRibbon.Components
         {
             config = _config;
         }
-        public RibbonCollaborationPage ribbonCollaborationPage { get; protected set; }
+        //public RibbonCollaborationPage ribbonCollaborationPage { get; protected set; }
         public ConversationSearchPage conversationSearchPage { get; protected set; }
         public IClientBehaviour connect(Credentials _creds)
         {
@@ -53,7 +53,7 @@ namespace SandRibbon.Components
                 g(GaugeStatus.InProgress,66);
                 //doing these here while we want them as singletons
                 App.Current.Dispatcher.adopt(delegate {
-                    ribbonCollaborationPage = new RibbonCollaborationPage(this);                    
+                    //ribbonCollaborationPage = new RibbonCollaborationPage(this);                    
                     Commands.SetContentVisibility.Execute(Utility.ContentFilterVisibility.defaultVisibilities);
                 });
                 return client;

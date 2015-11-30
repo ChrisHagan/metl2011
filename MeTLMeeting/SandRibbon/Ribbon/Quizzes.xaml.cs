@@ -36,7 +36,7 @@ namespace SandRibbon.Tabs
                 {
                     try
                     {
-                        if (Globals.isAuthor)
+                        if (rootPage.details.isAuthor(Globals.me))
                             amAuthor();
                         else
                             amRespondent();
@@ -72,7 +72,7 @@ namespace SandRibbon.Tabs
             if (details.IsEmpty) return;
             try
             {
-                if (Globals.isAuthor)
+                if (rootPage.details.isAuthor(Globals.me))
                 {
                     amAuthor();            
                 }

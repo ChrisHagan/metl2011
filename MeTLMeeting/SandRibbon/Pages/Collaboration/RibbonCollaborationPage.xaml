@@ -201,7 +201,7 @@
                     <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="1" Width="Auto"/>
                     <TabControl Grid.Row="2" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
                         <TabItem Header="Pages" Width="80">
-                            <components:SlideDisplay x:Name="slides" />
+                            <components:SlideDisplay x:Name="slides"/>
                         </TabItem>
                         <TabItem Header="Notes" Width="80">
                             <Grid>

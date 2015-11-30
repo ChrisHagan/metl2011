@@ -2,6 +2,7 @@
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Collaboration;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -24,34 +25,44 @@ namespace SandRibbon.Components
 {    
     public partial class RoleQuickControls : UserControl
     {
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public RoleQuickControls()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdatedConversationDetails));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            Commands.SetSync.Execute(false);
-            Commands.ToggleSync.RegisterCommand(new DelegateCommand<object>(toggleSync));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<object>((obj) =>
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdatedConversationDetails);
+            var setSyncCommand = new DelegateCommand<bool>(SetSync);
+            var toggleSyncCommand = new DelegateCommand<object>(toggleSync);
+            Loaded += (s, e) =>
             {
-                UpdatedConversationDetails(Globals.conversationDetails);
-                Commands.RequerySuggested(
-                    Commands.DuplicateConversation,
-                    Commands.DuplicateSlide
-                    );
-            }));
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as RibbonCollaborationPage;
+                }
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.SetSync.RegisterCommand(setSyncCommand);
+                Commands.SetSync.Execute(false);
+                Commands.ToggleSync.RegisterCommand(toggleSyncCommand);
+                UpdatedConversationDetails(rootPage.details);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.SetSync.UnregisterCommand(setSyncCommand);
+                Commands.ToggleSync.UnregisterCommand(toggleSyncCommand);
+            };
         }
 
         private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
         {
             var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
-            var cd = Globals.conversationDetails;
+            var cd = rootPage.details;
             cd.Permissions.studentCanPublish = studentsCanPublishValue;
             App.controller.client.UpdateConversationDetails(cd);
         }
         private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
         {
             var studentsMustFollowTeacherValue = (bool)(sender as CheckBox).IsChecked;
-            var cd = Globals.conversationDetails;
+            var cd = rootPage.details;
             cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
             App.controller.client.UpdateConversationDetails(cd);
         }
@@ -59,7 +70,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-                if (Globals.isAuthor)
+                if (rootPage.details.isAuthor(Globals.me))
                 {
                     ownerQuickControls.Visibility = Visibility.Visible;
                     participantQuickControls.Visibility = Visibility.Collapsed;
@@ -82,7 +93,7 @@ namespace SandRibbon.Components
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
-                    if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
+                    if (rootPage.details.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.details.isAuthor(Globals.me))
                         Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException) { }
@@ -103,8 +114,8 @@ namespace SandRibbon.Components
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
-                MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
+                (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                MeTLMessage.Information("Submission sent to " + rootPage.details.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
