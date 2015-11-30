@@ -33,6 +33,7 @@ namespace SandRibbon.Components
             Commands.ToggleSync.RegisterCommand(new DelegateCommand<object>(toggleSync));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<object>((obj) =>
             {
+                UpdatedConversationDetails(Globals.conversationDetails);
                 Commands.RequerySuggested(
                     Commands.DuplicateConversation,
                     Commands.DuplicateSlide

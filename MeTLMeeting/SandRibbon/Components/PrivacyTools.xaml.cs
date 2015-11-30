@@ -27,24 +27,23 @@ namespace SandRibbon.Components
                 {
                     if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
                     {
-                        Commands.SetPrivacy.ExecuteAsync("Private");
+                        Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
                     }
                     else
                     {
                         if (Globals.isAuthor)
-                            Commands.SetPrivacy.ExecuteAsync("public");
+                            Commands.SetPrivacy.ExecuteAsync(Globals.PUBLIC);
                         else
-                            Commands.SetPrivacy.ExecuteAsync("private");
+                            Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
                         settingEnabledModes(Globals.conversationDetails);
                         settingSelectedMode(Globals.privacy);
                     }
                 }
                 catch (NotSetException)
                 {
-                    Commands.SetPrivacy.ExecuteAsync("Private");
+                    Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
                 }
             };
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((jid) => {
@@ -66,7 +65,7 @@ namespace SandRibbon.Components
         {
             if (info.Target == "presentationSpace")
             {
-                string setPrivacy = info.IsPrivate ? "private" : "public";
+                string setPrivacy = info.IsPrivate ? Globals.PRIVATE : Globals.PUBLIC;
                 Commands.SetPrivacy.ExecuteAsync(setPrivacy);
             }           
         }
@@ -81,7 +80,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
+                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me)) || Globals.isAuthor)
                                       {
                                           publicMode.IsEnabled = true;
                                           var privacy = Globals.isAuthor ? Globals.PUBLIC : Globals.PRIVATE;
@@ -91,18 +90,11 @@ namespace SandRibbon.Components
                                       else
                                       {
                                           publicMode.IsEnabled = false;
-                                          SetPrivacy("private");
-
-                                      }
-                                        
+                                          SetPrivacy(Globals.PRIVATE);
+                                      }                                        
                                   });
         }
 
-        private void setPedagogy(PedagogyLevel obj)
-        {
-            //if (!canBecomePublic())
-              //  WorkPubliclyButton.IsChecked = (Globals.privacy == "private") ? false : true;
-        }
         private bool canSetPrivacy(string privacy)
         {
             try
@@ -121,7 +113,6 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                                       {
                                           settingSelectedMode(p);
-                                          //WorkPubliclyButton.IsChecked = p == "public";
                                           SetValue(PrivateProperty, p);
                                           Commands.RequerySuggested(Commands.SetPrivacy);
                                       });
@@ -132,19 +123,12 @@ namespace SandRibbon.Components
             if (p == "public")
             {
                 publicMode.IsChecked = true;
-                privateMode.IsChecked = false;
-
-                // unless there's a very good reason why we want to tear away from whatever element currently has focus I'm going to leave this commented out
-                // commenting out fixes bug #1386
-                //publicMode.Focus();
+                privateMode.IsChecked = false;                
             }
             else
             {
                 publicMode.IsChecked = false;
-                privateMode.IsChecked = true;
-                // unless there's a very good reason why we want to tear away from whatever element currently has focus I'm going to leave this commented out
-                // commenting out fixes bug #1386
-                //privateMode.Focus();
+                privateMode.IsChecked = true;                
             }
         }
 

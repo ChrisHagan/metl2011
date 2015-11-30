@@ -346,7 +346,7 @@ namespace SandRibbon.Pages.Collaboration
                 conversationJid = convJid;
                 Commands.RequerySuggested();
             }));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((convDetails) => details = convDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>((slideId) =>
             {
                 var newSlide = details.Slides.Find(s => s.id == slideId);
@@ -392,6 +392,15 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.HideProjector.Execute(null);
             };
         }
+
+        private void UpdateConversationDetails(ConversationDetails cd)
+        {
+            if (conversationJid == cd.Jid)
+            {
+                details = cd;                
+            }
+        }
+
         protected void openProjectorWindow(MainWindow window)
         {
             Commands.MirrorPresentationSpace.Execute(new KeyValuePair<MainWindow, ScrollViewer>(window, scroll));
