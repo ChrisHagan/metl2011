@@ -46,7 +46,7 @@ namespace SandRibbon.Components
             };
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((jid) => {
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>((jid) => {
                 settingEnabledModes(Globals.conversationDetails);
                 Commands.SetPrivacy.Execute(GetValue(PrivateProperty));
                 settingSelectedMode(Globals.privacy);

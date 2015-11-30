@@ -115,7 +115,7 @@ namespace SandRibbon.Components
             }
             else
             {
-                Commands.JoinConversation.ExecuteAsync(conversationJid);
+                Commands.JoinConversation.Execute(conversationJid);
             }
         }
         private void canJoinConversation(object sender, CanExecuteRoutedEventArgs e)

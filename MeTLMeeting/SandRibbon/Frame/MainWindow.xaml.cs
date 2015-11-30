@@ -610,7 +610,7 @@ namespace SandRibbon
                 details = connection.CreateConversation(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
-                    Commands.JoinConversation.ExecuteAsync(details.Jid);
+                    Commands.JoinConversation.Execute(details.Jid);
                 mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
             }
         }
@@ -619,7 +619,7 @@ namespace SandRibbon
             var details = (ConversationDetails)detailsObject;
             CommandManager.InvalidateRequerySuggested();
             if (Commands.JoinConversation.CanExecute(details.Jid))
-                Commands.JoinConversation.ExecuteAsync(details.Jid);
+                Commands.JoinConversation.Execute(details.Jid);
             Dispatcher.adopt(delegate {
                 mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
             });

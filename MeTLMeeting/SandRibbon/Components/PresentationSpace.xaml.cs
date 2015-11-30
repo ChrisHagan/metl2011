@@ -103,7 +103,7 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var author in authorList)
             {
-                if (author != Globals.me && !details.blacklist.Contains(author))
+                if (!Globals.isAuthor && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
             App.controller.client.UpdateConversationDetails(details);
