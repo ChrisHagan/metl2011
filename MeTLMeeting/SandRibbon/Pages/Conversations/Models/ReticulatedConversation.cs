@@ -105,31 +105,9 @@ namespace SandRibbon.Pages.Conversations.Models
         {        
             foreach (var slide in Locations)
             {
-                networkController.client.historyProvider.Retrieve<PreParser>(
-                                    null,
-                                    null,
-                                    (parser) =>
-                                    {                                        
-                                        var users = process(parser);
-                                        var aggregate = new LocatedActivity("",slide.Slide.id,0,0);
-                                        foreach (var user in users)
-                                        {
-                                            user.index = slide.Slide.index;
-                                            Participation.Add(user);
-                                            var localParticipation = Participation.Where(p => p.slide == slide.Slide.id);
-                                            if (slide.Participation == null) slide.Participation = new Participation();
-                                            slide.Participation.Participants = localParticipation.ToLookup(p => p.name);
-                                            foreach (var p in localParticipation)
-                                            {
-                                                slide.Participation.Activity.Add(p);
-                                            }
-                                            aggregate.activityCount += user.activityCount;
-                                            aggregate.voices += 1;
-                                        }         
-                                        slide.Aggregate = aggregate;
-                                        LocationAnalyzed?.Invoke();
-                                    },
-                                    slide.Slide.id.ToString());
+                var description = networkController.client.historyProvider.Describe(slide.Slide.id);
+                LocationAnalyzed?.Invoke();
+                slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices);                
             }
         }
 

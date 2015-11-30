@@ -71,6 +71,9 @@
         {
             get { return host.Host; }
         }
+        public Uri getSummary(string slideJid) {
+            return new Uri(host, new Uri(string.Format("/describeHistory?source={0}",slideJid), UriKind.Relative));
+        }
         public Uri getResource(string identity)
         {
             return new Uri(host, new Uri(String.Format("/resourceProxy/{0}", HttpUtility.UrlEncode(identity)), UriKind.Relative));

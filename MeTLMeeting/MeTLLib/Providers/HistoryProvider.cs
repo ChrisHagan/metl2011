@@ -18,7 +18,19 @@ using System.Xml.Linq;
 
 namespace MeTLLib.Providers
 {
-
+    public class HistorySummary {
+        public int stanzaCount { get; set; }
+        public int voices { get; set; }
+        public int attendees { get; set; }
+        public static HistorySummary parse(string xml) {
+            var x = XElement.Parse(xml);
+            return new HistorySummary {
+                stanzaCount = Int32.Parse(x.Descendants("stanzaCount").First().Value),
+                voices = x.Descendants("publisher").Count(),
+                attendees = x.Descendants("occupant").Count()
+            };
+        }        
+    }
     public interface IHistoryProvider
     {
         void Retrieve<T>(
@@ -34,6 +46,7 @@ namespace MeTLLib.Providers
             string author,
             string room
         ) where T : PreParser;
+        HistorySummary Describe(int id);
     }
     public abstract class BaseHistoryProvider : IHistoryProvider
     {
@@ -68,6 +81,11 @@ namespace MeTLLib.Providers
         ) where T : PreParser
         {
             this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{0}/{1}", author, room));
+        }
+
+        public HistorySummary Describe(int id)
+        {
+            return HistorySummary.parse(resourceProvider.secureGetString(serverAddress.getSummary(id.ToString())));
         }
     }
     public class CachedHistoryProvider : BaseHistoryProvider
