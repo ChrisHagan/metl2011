@@ -91,8 +91,8 @@ namespace SandRibbon.Components
                                       else
                                       {
                                           publicMode.IsEnabled = false;
-                                          SetPrivacy("private");
-
+                                          SetPrivacy(Globals.PRIVATE);
+                                          Commands.SetPrivacy.Execute(Globals.PRIVATE);
                                       }
                                         
                                   });
