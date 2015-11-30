@@ -178,7 +178,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : null;
+                return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : ConversationDetails.Empty;
             }
         }
         public static KeyValuePair<ConversationDetails,Slide> slideDetailsInConversationDetails
@@ -255,7 +255,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : "public");
+                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : Globals.PUBLIC);
             }
         }
         public static Policy policy

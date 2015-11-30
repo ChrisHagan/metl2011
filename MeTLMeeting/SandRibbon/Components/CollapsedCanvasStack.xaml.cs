@@ -205,7 +205,6 @@ namespace SandRibbon.Components
             InitializeComponent();
             wireInPublicHandlers();
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
@@ -596,11 +595,7 @@ namespace SandRibbon.Components
                       }
 
                   });
-        }
-        private void SetPrivacy(string privacy)
-        {
-            AllowDrop = true;
-        }
+        }        
         private void setInkCanvasMode(string modeString)
         {
             if (me == Globals.PROJECTOR) return;
