@@ -110,7 +110,7 @@ namespace SandRibbon.Utils.Connection
 
             ResizeCanvas(canvas, contentBuffer);
             //foreach (var moveDelta in moveDeltas)
-            //    moveDeltaProcessor.ReceiveMoveDelta(moveDelta, SandRibbon.Providers.Globals.me, true);
+            //    moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, true);
 
             if (canvas.Children.Count == 0 && canvas.Strokes.Count == 0)
                 return new List<MeTLInkCanvas>();
