@@ -66,14 +66,25 @@ namespace SandRibbon.Components
                 var scroll = tuple.Value;
                 var parent = tuple.Key;
                 var mirror = new Window { Content = new Projector { viewConstraint = scroll } };
-                if (Projector.Window != null)
+                try
+                {
+                    if (Projector.Window != null)
+                    {
+                        Projector.Window.Show();
+                    }
+                } catch
+                {
                     Projector.Window.Close();
-                Projector.Window = mirror;
-                parent.Closed += (_sender, _args) => mirror.Close();
-                mirror.WindowStyle = WindowStyle.None;
-                mirror.AllowsTransparency = true;
-                setSecondaryWindowBounds(mirror);
-                mirror.Show();
+                }
+                if (Projector.Window == null)
+                {
+                    Projector.Window = mirror;
+                    parent.Closed += (_sender, _args) => mirror.Close();
+                    mirror.WindowStyle = WindowStyle.None;
+                    mirror.AllowsTransparency = true;
+                    setSecondaryWindowBounds(mirror);
+                    mirror.Show();
+                }
             }
             catch (NotSetException)
             {
