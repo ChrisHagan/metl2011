@@ -70,7 +70,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-                if (rootPage.details.isAuthor(Globals.me))
+                if (rootPage.details.isAuthor(rootPage.networkController.credentials.name))
                 {
                     ownerQuickControls.Visibility = Visibility.Visible;
                     participantQuickControls.Visibility = Visibility.Collapsed;
@@ -93,7 +93,7 @@ namespace SandRibbon.Components
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
-                    if (rootPage.details.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.details.isAuthor(Globals.me))
+                    if (rootPage.details.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.details.isAuthor(rootPage.networkController.credentials.name))
                         Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException) { }
@@ -114,14 +114,14 @@ namespace SandRibbon.Components
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                (App.controller.client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
                 MeTLMessage.Information("Submission sent to " + rootPage.details.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
-                message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.networkController.credentials.name),
                 showPrivate = true
             });
         }

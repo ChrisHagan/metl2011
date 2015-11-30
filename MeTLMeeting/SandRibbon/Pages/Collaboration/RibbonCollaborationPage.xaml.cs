@@ -362,7 +362,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.ShowProjector.Execute(null);
                 networkController.client.SneakInto(details.Jid);
                 networkController.client.SneakInto(slide.id.ToString());
-                networkController.client.SneakInto(slide.id.ToString() + Globals.me);
+                networkController.client.SneakInto(slide.id.ToString() + networkController.credentials.name);
             };
             this.Unloaded += (ps, pe) =>
             {
@@ -386,7 +386,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
-                networkController.client.SneakOutOf(slide.id.ToString() + Globals.me);
+                networkController.client.SneakOutOf(slide.id.ToString() + networkController.credentials.name);
                 networkController.client.SneakOutOf(slide.id.ToString());
                 networkController.client.SneakOutOf(details.Jid);
             };
@@ -479,12 +479,12 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 */
         private bool userMayAdministerConversation(ConversationDetails _conversation)
         {
-            var conversation = Globals.conversationDetails;
+            var conversation = details;
             if (conversation == null)
             {
                 return false;
             }
-            return conversation.UserHasPermission(Globals.credentials);
+            return conversation.UserHasPermission(networkController.credentials);
         }
 
         private void SetLayer(string layer)
@@ -792,10 +792,10 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 scroll != null &&
                 details != null &&
                 details != ConversationDetails.Empty &&
-                Globals.slideDetails != null &&
-                Globals.slideDetails != Slide.Empty &&
-                scroll.Height != Globals.slideDetails.defaultHeight &&
-                scroll.Width != Globals.slideDetails.defaultWidth;
+                slide != null &&
+                slide != Slide.Empty &&
+                scroll.Height != slide.defaultHeight &&
+                scroll.Width != slide.defaultWidth;
         }
         protected void originalView(object _unused)
         {
@@ -803,10 +803,10 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
             if (scroll != null &&
             details != null &&
             details != ConversationDetails.Empty &&
-            Globals.slideDetails != null &&
-            Globals.slideDetails != Slide.Empty)
+            slide != null &&
+            slide != Slide.Empty)
             {
-                var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).FirstOrDefault();
+                var currentSlide = slide;
                 if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
                 scroll.Width = currentSlide.defaultWidth;
                 scroll.Height = currentSlide.defaultHeight;
@@ -828,18 +828,18 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
         {
-            var kvp = new KeyValuePair<ConversationDetails, Slide>(Globals.conversationDetails, Globals.slideDetails);
-            if (kvp.Key.UserHasPermission(Globals.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
+            var kvp = new KeyValuePair<ConversationDetails, Slide>(details, slide);
+            if (kvp.Key.UserHasPermission(networkController.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
             {
-                App.controller.client.DuplicateSlide(kvp.Key, kvp.Value);
+                networkController.client.DuplicateSlide(kvp.Key, kvp.Value);
             }
         }
         private void duplicateConversation(ConversationDetails _conversationToDuplicate)
         {
-            var conversationToDuplicate = Globals.conversationDetails;
-            if (conversationToDuplicate.UserHasPermission(Globals.credentials))
+            var conversationToDuplicate = details;
+            if (conversationToDuplicate.UserHasPermission(networkController.credentials))
             {
-                App.controller.client.DuplicateConversation(conversationToDuplicate);
+                networkController.client.DuplicateConversation(conversationToDuplicate);
             }
         }
 

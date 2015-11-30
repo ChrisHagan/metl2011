@@ -10,6 +10,7 @@ using SandRibbon.Providers;
 using System.Windows.Input;
 using SandRibbon.Utils;
 using System.Windows.Controls.Ribbon;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Tabs
 {

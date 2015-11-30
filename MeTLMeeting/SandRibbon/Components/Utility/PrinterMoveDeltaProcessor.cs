@@ -12,7 +12,7 @@
 
     public class PrinterMoveDeltaProcessor : MoveDeltaProcessor
     {
-        public PrinterMoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer) : base(canvas, target, contentBuffer)
+        public PrinterMoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationDetails details, string me) : base(canvas, target, contentBuffer,details,me)
         {
         }
 
@@ -38,12 +38,12 @@
 
         protected override void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy)
         {
-            image.ApplyPrivacyStyling(Target, newPrivacy);
+            image.ApplyPrivacyStyling(Target, newPrivacy,details,me);
         }
 
         protected override void ChangeTextPrivacy(MeTLTextBox text, Privacy newPrivacy)
         {
-            text.ApplyPrivacyStyling(Target, newPrivacy);
+            text.ApplyPrivacyStyling(Target, newPrivacy,details,me);
         }
     }
 }

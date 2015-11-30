@@ -15,14 +15,14 @@
         private const double PUBLIC_OPACITY = 1.0;
         private const double PRIVATE_OPACITY = 0.7;
 
-        public static void ApplyPrivacyStyling(this FrameworkElement element, string target, Privacy newPrivacy)
+        public static void ApplyPrivacyStyling(this FrameworkElement element, string target, Privacy newPrivacy, ConversationDetails details, string me)
         {
-            element.ApplyPrivacyStyling(null, target, newPrivacy);
+            element.ApplyPrivacyStyling(null, target, newPrivacy, details, me);
         }
 
-        public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy, bool isAuthor)
+        public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy, ConversationDetails details, string me)
         {
-            if ((!Globals.conversationDetails.Permissions.studentCanPublish && !isAuthor) || (target == "notepad"))
+            if ((!details.Permissions.studentCanPublish && !details.isAuthor(me)) || (target == "notepad"))
             {
                 element.RemovePrivacyStyling(contentBuffer); 
                 return;

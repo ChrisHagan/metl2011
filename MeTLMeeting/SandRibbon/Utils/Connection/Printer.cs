@@ -24,6 +24,8 @@ namespace SandRibbon.Utils.Connection
     {
         public List<object> history = new List<object>();
         private PrinterMoveDeltaProcessor moveDeltaProcessor;
+        public ConversationDetails details { get; protected set; }
+        public string me { get; protected set; }
         public PrintParser(
             Credentials credentials,
             int room,
@@ -35,9 +37,13 @@ namespace SandRibbon.Utils.Connection
             IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,
             HttpResourceProvider httpResourceProvider,
-            IAuditor _auditor)
+            IAuditor _auditor,
+            ConversationDetails _details,
+            string _me)
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
         {
+            details = _details;
+            me = _me;
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<MeTLInkCanvas> ToVisualWithNotes()
@@ -46,7 +52,7 @@ namespace SandRibbon.Utils.Connection
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
         {
-            var canvases = createVisual("presentationSpace", true);
+            var canvases = createVisual("presentationSpace", true,details.isAuthor(me));
             return new[] { canvases.FirstOrDefault() };
         }
         
@@ -68,11 +74,11 @@ namespace SandRibbon.Utils.Connection
                 canvas.Children.Add(child);
         }
 
-        private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic)
+        private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic, bool isAuthor)
         {
             var canvas = new MeTLInkCanvas();
             var contentBuffer = new ContentBuffer();
-            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer);
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, details, me);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
@@ -120,11 +126,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvasList = new List<MeTLInkCanvas>();
 
-            var presentationVisual = createVisual("presentationSpace", includePublic: true);
+            var presentationVisual = createVisual("presentationSpace", true, details.isAuthor(me));
             if (presentationVisual != null && presentationVisual.Count() > 0)
                 canvasList.AddRange(presentationVisual);
 
-            var notesVisual = createVisual("notepad", includePublic: false);
+            var notesVisual = createVisual("notepad", false, details.isAuthor(me));
             if (notesVisual != null && notesVisual.Count() > 0)
                 canvasList.AddRange(notesVisual);
 

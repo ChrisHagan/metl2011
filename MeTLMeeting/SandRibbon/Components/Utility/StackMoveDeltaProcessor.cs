@@ -14,7 +14,7 @@
     {
         private ContentBuffer ContentBuffer { get; set; }
 
-        public StackMoveDeltaProcessor(InkCanvas canvas, ContentBuffer contentBuffer, string target) : base(canvas, target, contentBuffer)
+        public StackMoveDeltaProcessor(InkCanvas canvas, ContentBuffer contentBuffer, string target, ConversationDetails details, string me) : base(canvas, target, contentBuffer,details,me)
         {
             ContentBuffer = contentBuffer;
         }
@@ -43,12 +43,12 @@
 
         protected override void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy)
         {
-            image.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy);
+            image.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy, details, me);
         }
 
         protected override void ChangeTextPrivacy(MeTLTextBox text, Privacy newPrivacy)
         {
-            text.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy);
+            text.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy, details, me);
         }
     }
 }

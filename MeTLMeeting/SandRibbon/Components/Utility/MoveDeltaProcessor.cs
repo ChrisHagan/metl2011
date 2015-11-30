@@ -15,13 +15,17 @@
         public InkCanvas Canvas { get; private set; }
 
         public string Target { get; private set; }
+        public ConversationDetails details { get; protected set; }
 
         public ContentBuffer contentBuffer { get; private set; }
+        public string me { get; protected set; }
 
-        protected MoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer)
+        protected MoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationDetails _details, string _me)
         {
             this.Canvas = canvas;
             this.Target = target;
+            this.details = _details;
+            this.me = _me;
             this.contentBuffer = contentBuffer;
         }
 

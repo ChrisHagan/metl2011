@@ -4,6 +4,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -19,12 +20,23 @@ namespace SandRibbon.Tabs.Groups
             set { SetValue(NavigationIsLockedProperty, value); }
 
         }
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public CollaborationControlsHost()
         {
             InitializeComponent();
-            DataContext = this;
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as RibbonCollaborationPage;
+                DataContext = this;
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                joinConversation(rootPage.details);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+            };
         }
         private void updateConversationDetails(ConversationDetails details)
         {
@@ -39,10 +51,10 @@ namespace SandRibbon.Tabs.Groups
             }
             */
         }
-        private void joinConversation(object obj)
+        private void joinConversation(ConversationDetails details)
         {
-            this.Visibility = rootPage.details.isAuthor(Globals.me) ? Visibility.Visible : Visibility.Collapsed;
-            NavigationIsLocked = Globals.conversationDetails.Permissions.NavigationLocked;
+            this.Visibility = details.isAuthor(Globals.me) ? Visibility.Visible : Visibility.Collapsed;
+            NavigationIsLocked = details.Permissions.NavigationLocked;
         }
     }
 }

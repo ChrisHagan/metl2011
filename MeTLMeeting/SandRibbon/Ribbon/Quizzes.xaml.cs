@@ -11,23 +11,44 @@ using MeTLLib.Providers.Connection;
 using ImageDrop = SandRibbon.Components.ImageDrop;
 using System.Collections.Generic;
 using System.Windows.Controls.Ribbon;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Tabs
 {
     public partial class Quizzes : RibbonTab
     {
         public static RoutedCommand openQuizResults = new RoutedCommand();
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public Quizzes()
         {
             InitializeComponent();
-            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
-            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
-            quizzes.ItemsSource = Globals.quiz.activeQuizzes;
-            SetupUI();
+            var receiveQuizCommand = new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz);
+            var receiveQuizAnswerCommand = new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer);
+            var preParserAvailableCommand = new DelegateCommand<PreParser>(preparserAvailable);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
+            var joinConversationCommand = new DelegateCommand<object>(JoinConversation);
+            var quizResultsSnapshotAvailableCommand = new DelegateCommand<string>(importQuizSnapshot);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as RibbonCollaborationPage;
+                Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
+                Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);
+                Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.JoinConversation.RegisterCommandToDispatcher(joinConversationCommand);
+                Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);
+                quizzes.ItemsSource = Globals.quiz.activeQuizzes;
+                SetupUI();
+            };
+            Unloaded += (s, e) => {
+                Commands.ReceiveQuiz.UnregisterCommand(receiveQuizCommand);
+                Commands.ReceiveQuizAnswer.UnregisterCommand(receiveQuizAnswerCommand);
+                Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
+                Commands.QuizResultsSnapshotAvailable.UnregisterCommand(quizResultsSnapshotAvailableCommand);
+            };
         }
         private void SetupUI()
         {
