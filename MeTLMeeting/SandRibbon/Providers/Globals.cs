@@ -21,12 +21,18 @@ namespace SandRibbon.Providers
         Height = 540
     }
 
-    public class Globals
+    public static class GlobalConstants
     {
         public const string METLCOLLABORATOR = "MeTL Collaborator";
         public const string METLDEMONSTRATOR = "MeTL Demonstrator";
         public const string METL = "MeTL";
         public const string METLPRESENTER = "MeTL Presenter";
+        public static readonly string PUBLIC = "public";
+        public static readonly string PRIVATE = "private";
+        public static readonly string PROJECTOR = "projector";
+    }
+    public class Globals
+    {
 
         private static Size canvasSize = new Size();
         private static QuizData quizData = new QuizData();
@@ -69,9 +75,6 @@ namespace SandRibbon.Providers
             }
         }
         public static Dictionary<string, List<string>> PresenceListing = new Dictionary<string, List<string>>();
-        public static readonly string PUBLIC = "public";
-        public static readonly string PRIVATE = "private";
-        public static readonly string PROJECTOR = "projector";
 
         public static string generateId()
         {
@@ -106,7 +109,7 @@ namespace SandRibbon.Providers
                 }
                 catch (Exception)
                 {
-                    return METL;
+                    return GlobalConstants.METL;
                 }
             }
 
@@ -255,7 +258,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : Globals.PUBLIC);
+                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : GlobalConstants.PUBLIC);
             }
         }
         public static Policy policy

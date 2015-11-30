@@ -35,21 +35,21 @@ namespace SandRibbon.Components
                 {
                     if (String.IsNullOrEmpty(Globals.privacy) || rootPage.details == null)
                     {
-                        Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
+                        Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                     }
                     else
                     {
                         if (rootPage.details.isAuthor(Globals.me))
-                            Commands.SetPrivacy.ExecuteAsync(Globals.PUBLIC);
+                            Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PUBLIC);
                         else
-                            Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
+                            Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                         settingEnabledModes(rootPage.details);
                         settingSelectedMode(Globals.privacy);
                     }
                 }
                 catch (NotSetException)
                 {
-                    Commands.SetPrivacy.ExecuteAsync(Globals.PRIVATE);
+                    Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                 }
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
@@ -66,7 +66,7 @@ namespace SandRibbon.Components
         {
             if (info.Target == "presentationSpace")
             {
-                string setPrivacy = info.IsPrivate ? Globals.PRIVATE : Globals.PUBLIC;
+                string setPrivacy = info.IsPrivate ? GlobalConstants.PRIVATE : GlobalConstants.PUBLIC;
                 Commands.SetPrivacy.ExecuteAsync(setPrivacy);
             }           
         }
@@ -84,15 +84,15 @@ namespace SandRibbon.Components
                                       if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me)) || rootPage.details.isAuthor(Globals.me))
                                       {
                                           publicMode.IsEnabled = true;
-                                          var privacy = rootPage.details.isAuthor(Globals.me) ? Globals.PUBLIC : Globals.PRIVATE;
+                                          var privacy = rootPage.details.isAuthor(Globals.me) ? GlobalConstants.PUBLIC : GlobalConstants.PRIVATE;
                                           SetPrivacy(privacy);
                                       }
 
                                       else
                                       {
                                           publicMode.IsEnabled = false;
-                                          SetPrivacy(Globals.PRIVATE);
-                                          Commands.SetPrivacy.Execute(Globals.PRIVATE);
+                                          SetPrivacy(GlobalConstants.PRIVATE);
+                                          Commands.SetPrivacy.Execute(GlobalConstants.PRIVATE);
                                       }
                                   });
         }

@@ -78,7 +78,7 @@ namespace SandRibbon
 
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
-            Commands.MeTLType.DefaultValue = Globals.METL;
+            Commands.MeTLType.DefaultValue = GlobalConstants.METL;
             Title = Strings.Global_ProductName;
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));

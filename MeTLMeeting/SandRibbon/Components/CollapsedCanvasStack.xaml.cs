@@ -331,7 +331,7 @@ namespace SandRibbon.Components
             };
 
             //For development
-            if (_target == "presentationSpace" && me != Globals.PROJECTOR)
+            if (_target == "presentationSpace" && me != GlobalConstants.PROJECTOR)
                 UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
@@ -471,7 +471,7 @@ namespace SandRibbon.Components
         }
         private void SetLayer(string newLayer)
         {
-            if (me.ToLower() == Globals.PROJECTOR) return;
+            if (me.ToLower() == GlobalConstants.PROJECTOR) return;
             html.IsHitTestVisible = false;
             Work.IsHitTestVisible = true;
             switch (newLayer)
@@ -598,7 +598,7 @@ namespace SandRibbon.Components
 
         private void deleteSelectedElements(object _sender, ExecutedRoutedEventArgs _handler)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
 
             IEnumerable<UIElement> selectedElements = null;
             IEnumerable<MeTLTextBox> selectedTextBoxes = null;
@@ -667,7 +667,7 @@ namespace SandRibbon.Components
         }        
         private void setInkCanvasMode(string modeString)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             Work.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
             Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
         }
@@ -1180,7 +1180,7 @@ namespace SandRibbon.Components
         }
         private void ClearAdorners()
         {
-            if (me != Globals.PROJECTOR)
+            if (me != GlobalConstants.PROJECTOR)
                 Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
         }
         #endregion
@@ -1188,7 +1188,7 @@ namespace SandRibbon.Components
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {
             if (logicalAttributes == null) return;
-            if (me.ToLower() == Globals.PROJECTOR) return;
+            if (me.ToLower() == GlobalConstants.PROJECTOR) return;
             var zoomCompensatedAttributes = logicalAttributes.Clone();
             try
             {
@@ -1272,7 +1272,7 @@ namespace SandRibbon.Components
 
             ReAddFilteredContent(contentVisibility);
 
-            if (me != Globals.PROJECTOR)
+            if (me != GlobalConstants.PROJECTOR)
                 refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
         }
 
@@ -1541,7 +1541,7 @@ namespace SandRibbon.Components
             long timestamp = -1L;
 
             // can't change content privacy for notepad
-            if (me == Globals.PROJECTOR || _target == "notepad") return;
+            if (me == GlobalConstants.PROJECTOR || _target == "notepad") return;
 
             ClearAdorners();
             List<UIElement> selectedElements = null;
@@ -1884,7 +1884,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                if (drop.Target.Equals(_target) && me != Globals.PROJECTOR)
+                if (drop.Target.Equals(_target) && me != GlobalConstants.PROJECTOR)
                     handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
             }
             catch (NotSetException)
@@ -1900,7 +1900,7 @@ namespace SandRibbon.Components
 
         private void addResourceFromDisk(string filter, Action<IEnumerable<string>> withResources)
         {
-            if (_target == "presentationSpace" && me != Globals.PROJECTOR)
+            if (_target == "presentationSpace" && me != GlobalConstants.PROJECTOR)
             {
                 string initialDirectory = "c:\\";
                 foreach (var path in new[] { Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
@@ -1957,7 +1957,7 @@ namespace SandRibbon.Components
         }
         protected void ImagesDrop(object sender, DragEventArgs e)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             var validFormats = e.Data.GetFormats();
             var fileNames = new string[0];
             validFormats.Select(vf =>
@@ -2240,7 +2240,7 @@ namespace SandRibbon.Components
         private void placeCursor(object sender, MouseButtonEventArgs e)
         {
             if (Work.EditingMode != InkCanvasEditingMode.None) return;
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             /*
             var pos = e.GetPosition(this);
             var res = html.ExecuteJavascriptWithResult(string.Format("MeTLText.append({0},{1})", pos.X, pos.Y));
@@ -2385,7 +2385,7 @@ namespace SandRibbon.Components
         }
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             var box = (MeTLTextBox)sender;
             var undoText = box.Text;
             var redoText = box.Text;
@@ -2543,7 +2543,7 @@ namespace SandRibbon.Components
         private void textboxGotFocus(object sender, RoutedEventArgs e)
         {
             if (((MeTLTextBox)sender).tag().author != me) return; //cannot edit other peoples textboxes
-            if (me != Globals.PROJECTOR)
+            if (me != GlobalConstants.PROJECTOR)
             {
                 myTextBox = (MeTLTextBox)sender;
             }
@@ -2601,12 +2601,12 @@ namespace SandRibbon.Components
         {
             if (targettedBox.target != _target) return;
 
-            if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
+            if (me != GlobalConstants.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
 
-            if (targettedBox.slide == rootPage.slide.id && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == Globals.PROJECTOR))
+            if (targettedBox.slide == rootPage.slide.id && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == GlobalConstants.PROJECTOR))
                 RemoveTextBoxWithMatchingId(targettedBox.identity);
-            if (targettedBox.slide == rootPage.slide.id && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != Globals.PROJECTOR)))
+            if (targettedBox.slide == rootPage.slide.id && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != GlobalConstants.PROJECTOR)))
                 DoText(targettedBox);
         }
 
@@ -2771,7 +2771,7 @@ namespace SandRibbon.Components
         }
         protected void HandlePaste(object _args)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             var currentBox = myTextBox.clone();
 
             if (Clipboard.ContainsData(MeTLClipboardData.Type))
@@ -2827,7 +2827,7 @@ namespace SandRibbon.Components
         }
         protected void HandleCopy(object _args)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             //text 
             var selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements()).ToList();
             var selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select((s => s.Clone())).ToList();
@@ -2884,7 +2884,7 @@ namespace SandRibbon.Components
         }
         protected void HandleCut(object _args)
         {
-            if (me == Globals.PROJECTOR) return;
+            if (me == GlobalConstants.PROJECTOR) return;
             var strokesToCut = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().OfType<PrivateAwareStroke>()).Select(s => s.Clone());
             var currentTextBox = myTextBox.clone();
             var selectedImages = filterOnlyMineExceptIfHammering(Work.GetSelectedImages()).Select(i => i.Clone());
