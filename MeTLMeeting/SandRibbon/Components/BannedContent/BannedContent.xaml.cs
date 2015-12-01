@@ -114,6 +114,8 @@ namespace SandRibbon.Components.BannedContent
 
     public partial class BannedContent : Window
     {
+        public ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter { get; protected set; }
+        public ConvertStringToImageSource ConvertStringToImageSource { get; protected set; }
         public ObservableCollection<PrivacyWrapper> submissionList { get; private set; }
         public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
@@ -121,6 +123,9 @@ namespace SandRibbon.Components.BannedContent
         public SlideAwarePage rootPage { get; protected set; }
         public BannedContent(SlideAwarePage _rootPage)
         {
+            ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter(rootPage.getNetworkController());
+            ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.getNetworkController());
+            DataContext = this;
             InitializeComponent();
             rootPage = _rootPage;
             var receiveSubmissionCommand = new DelegateCommand<TargettedSubmission>(ReceiveSubmission);

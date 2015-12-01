@@ -30,7 +30,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Viewbox Width="100" Height="100">
-                            <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
+                            <Image Source="{Binding Path=url, Converter={Binding Path=ConvertStringToImageSource}}" />
                         </Viewbox>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -52,7 +52,7 @@
                                     Converter={x:Static SandRibbon:Converters.ExtractSubmissionAuthor}}"/>
                 <Viewbox Grid.Row="1" Margin="0,35,0,0" Width="{Binding ElementName=GridContainer, Path=ActualWidth}" VerticalAlignment="Top" HorizontalAlignment="Left" >
                     <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
-                    Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
+                    Converter={Binding Path=ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
                 </Viewbox>
             </Grid>
             <StackPanel Grid.Column="2">
