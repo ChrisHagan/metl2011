@@ -86,7 +86,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
-                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target), s => canvas.Strokes.Add(s));
+                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, details), s => canvas.Strokes.Add(s));
             }
             foreach (var image in images)
             {

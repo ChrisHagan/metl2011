@@ -1297,7 +1297,7 @@ namespace SandRibbon.Components
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
                     try
                     {
-                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
+                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.getDetails()));
                     }
                     catch (Exception e)
                     {
@@ -1616,7 +1616,7 @@ namespace SandRibbon.Components
             var checksum = e.Stroke.sum().checksum;
             var timestamp = 0L;
             e.Stroke.tag(new StrokeTag(rootPage.getNetworkController().credentials.name, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter, timestamp));
-            var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
+            var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target, rootPage.getDetails());
             privateAwareStroke.offsetX = contentBuffer.logicalX;
             privateAwareStroke.offsetY = contentBuffer.logicalY;
             Work.Strokes.Remove(e.Stroke);
@@ -2779,7 +2779,7 @@ namespace SandRibbon.Components
             {
                 var data = (MeTLClipboardData)Clipboard.GetData(MeTLClipboardData.Type);
                 var currentChecksums = Work.Strokes.Select(s => s.sum().checksum);
-                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).Select(s => new PrivateAwareStroke(s, _target)).ToList();
+                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).Select(s => new PrivateAwareStroke(s, _target, rootPage.getDetails())).ToList();
                 var boxes = createPastedBoxes(data.Text.ToList());
                 var images = createImages(data.Images.ToList());
                 Action undo = () =>
