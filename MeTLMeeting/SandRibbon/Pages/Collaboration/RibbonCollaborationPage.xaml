@@ -165,7 +165,7 @@
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
                     <Grid layout:GridLayout.ItemsPerRow="1">
-                        <Label Content="What do you want to see?" Style="{StaticResource medium}" />
+                        <TextBlock Text="What do you want to see?" Style="{StaticResource minorHeading}" />
                         <components:ContentVisibility/>
                         <components:RoleQuickControls />
                     </Grid>

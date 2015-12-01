@@ -12,6 +12,9 @@
     <Style x:Key="subHeading" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource heading}">
         <Setter Property="FontSize" Value="35" />
     </Style>
+    <Style x:Key="minorHeading" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource heading}">
+        <Setter Property="FontSize" Value="20" />
+    </Style>
     <Style x:Key="primaryChoice" TargetType="{x:Type Button}">
         <Style.Setters>
             <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
@@ -57,9 +60,10 @@
     <Style TargetType="CheckBox">
         <Setter Property="LayoutTransform">
             <Setter.Value>
-                <ScaleTransform ScaleX="2" ScaleY="2" />
+                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
             </Setter.Value>
         </Setter>
+        <Setter Property="Margin" Value="0 0 0 10"/>
     </Style>
     <Style TargetType="{x:Type Label}">
         <Setter Property="FontSize" Value="30" />                
