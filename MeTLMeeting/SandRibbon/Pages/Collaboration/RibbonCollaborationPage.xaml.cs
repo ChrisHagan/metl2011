@@ -396,6 +396,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
+                userConv.contentVisibility = ContentFilterVisibility.defaultVisibilities;
                 networkController.client.SneakOutOf(slide.id.ToString() + networkController.credentials.name);
                 networkController.client.SneakOutOf(slide.id.ToString());
                 networkController.client.SneakOutOf(details.Jid);
