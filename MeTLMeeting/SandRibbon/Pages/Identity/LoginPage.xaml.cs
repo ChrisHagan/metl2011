@@ -162,6 +162,7 @@ namespace SandRibbon.Pages.Login
                                     apiSecret = "exampleApiSecret",
                                     networkController = controller
                                 };
+                                userServer.thumbnailProvider = new ThumbnailProvider(controller);
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
                                 NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));

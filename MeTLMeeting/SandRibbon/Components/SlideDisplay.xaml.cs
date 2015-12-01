@@ -185,7 +185,7 @@ namespace SandRibbon.Components
                         var container = generator.ContainerFromIndex(i);
                         try
                         {
-                            ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                            rootPage.getUserServerState().thumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
                         }
                         catch { }
                     }

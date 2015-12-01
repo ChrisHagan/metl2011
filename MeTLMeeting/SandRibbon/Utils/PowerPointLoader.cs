@@ -133,7 +133,7 @@ namespace SandRibbon.Utils
         {
             networkController = _controller;
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
-            clientConnection = App.controller.client;
+            clientConnection = networkController.client;
         }
         private class PowerpointLoadTracker {
             private int slidesUploaded = 0;
@@ -171,7 +171,7 @@ namespace SandRibbon.Utils
             if (app == null)
                 return;
             
-            var conversation = App.controller.client.CreateConversation(spec.Details);
+            var conversation = networkController.client.CreateConversation(spec.Details);
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
                 {
@@ -198,7 +198,7 @@ namespace SandRibbon.Utils
                     }
                     catch (Exception)
                     {
-                        App.controller.client.DeleteConversation(conversation);
+                        networkController.client.DeleteConversation(conversation);
                     }
                 }));
             worker.SetApartmentState(ApartmentState.STA);
@@ -330,7 +330,7 @@ namespace SandRibbon.Utils
             var startingId = conversation.Slides.First().id;
             var index = 0;
             conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++, networkController.credentials.name, MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-            var updatedConversation = App.controller.client.UpdateConversationDetails(conversation);
+            var updatedConversation = networkController.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
                 Trace.TraceInformation("PowerpointImport: Failed to update conversation");
@@ -358,13 +358,13 @@ namespace SandRibbon.Utils
                 });
             }
         }
-        public static string getThumbnailPath(string jid, int id)
+        public string getThumbnailPath(string jid, int id)
         {
             string fullPath = createThumbnailFileStructure(jid);
             var path = string.Format("{0}{1}.png", fullPath, id);
             return path;
         }
-        private static string createThumbnailFileStructure(string jid)
+        private string createThumbnailFileStructure(string jid)
         {
             var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", networkController.credentials.name, jid });
             return fullPath;
@@ -387,7 +387,7 @@ namespace SandRibbon.Utils
             try
             {
                 var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
-                var provider = App.controller.client;
+                var provider = networkController.client;
                 var convDescriptor = new ConversationDescriptor(conversation, new XElement("presentation"));
                 convDescriptor.Xml.Add(new XAttribute("name", conversation.Title));
                 if (conversation.Tag == null)
@@ -493,7 +493,7 @@ namespace SandRibbon.Utils
         }
         private XElement uploadXmlUrls(int slide, XElement doc)
         {
-            var conn = App.controller.client;
+            var conn = networkController.client;
             var shapeCount = doc.Descendants("shape").Count();
             for (var i = 0; i < shapeCount; i++)
             {

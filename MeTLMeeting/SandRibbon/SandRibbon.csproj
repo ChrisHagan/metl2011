@@ -406,10 +406,8 @@
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ribbon\Groups\EditingOptions.xaml.cs" />
-    <Compile Include="Ribbon\Groups\TextTools.xaml.cs" />
     <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
-    <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
       <DependentUpon>UndoHistoryVisualiserWindow.xaml</DependentUpon>
     </Compile>
@@ -719,10 +717,6 @@
     <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Groups\TextTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1148,7 +1142,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Utils\StateHelper.cs" />
     <Compile Include="Utils\UndoHistory.cs" />
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">

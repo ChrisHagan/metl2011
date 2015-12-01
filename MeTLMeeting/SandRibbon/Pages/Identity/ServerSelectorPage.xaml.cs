@@ -213,7 +213,6 @@ namespace SandRibbon.Pages.ServerSelection
             refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
             var source = sender as FrameworkElement;
             var selection = source.DataContext as ServerChoice;
-            var userServer = new UserServerState();
             NavigationService.Navigate(new LoginPage(userGlobal, selection.server));
         }
 

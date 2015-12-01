@@ -81,7 +81,7 @@ namespace SandRibbon.Components
                             {
                                 var groupDescription = rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(
-                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (a, p, c, s) => g.GroupMembers.Contains(a))
+                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap,a, p, c, s) => g.GroupMembers.Contains(a))
                                 );
                             }
                         });

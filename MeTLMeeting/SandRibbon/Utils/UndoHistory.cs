@@ -5,11 +5,83 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Providers;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages;
+using System.Windows;
 
 namespace SandRibbon.Utils
 {
-    public partial class UndoHistory
+    public class UndoHistory
     {
+        #region Debug helpers
+
+        public void ShowVisualiser(Window parent)
+        {
+            if (visualiser != null)
+                visualiser.Show(parent);
+        }
+
+        public void HideVisualiser()
+        {
+            if (visualiser != null)
+                visualiser.Hide();
+        }
+
+        #endregion
+
+        public class UndoHistoryVisualiser
+        {
+            UndoHistoryVisualiserWindow window;
+
+            bool IsEnabled
+            {
+                get { return window != null && window.IsVisible; }
+            }
+
+            public UndoHistoryVisualiser()
+            {
+            }
+
+            public void ClearViews()
+            {
+                if (IsEnabled)
+                {
+                    window.ClearViews();
+                }
+            }
+
+            public void UpdateUndoView(Stack<HistoricalAction> undo)
+            {
+                if (IsEnabled)
+                {
+                    window.UpdateUndoView(undo.Select(hist => hist.description));
+                }
+            }
+
+            public void UpdateRedoView(Stack<HistoricalAction> redo)
+            {
+                if (IsEnabled)
+                {
+                    window.UpdateRedoView(redo.Select(hist => hist.description));
+                }
+            }
+
+            public void Show(Window parent)
+            {
+                window = new UndoHistoryVisualiserWindow();
+                window.Owner = parent;
+                window.Show();
+            }
+
+            public void Hide()
+            {
+                if (window != null)
+                {
+                    window.Hide();
+                    window.Close();
+                }
+            }
+        }
+
         public class HistoricalAction
         {
             public Action undo;
@@ -25,12 +97,14 @@ namespace SandRibbon.Utils
                 this.description = description;
             }
         }
-        private static Dictionary<int, Stack<HistoricalAction>> undoQueue = new Dictionary<int,Stack<HistoricalAction>>();
-        private static Dictionary<int, Stack<HistoricalAction>> redoQueue = new Dictionary<int,Stack<HistoricalAction>>();
-        private static int currentSlide;
-        private static UndoHistoryVisualiser visualiser; 
-        static UndoHistory()
+        private Dictionary<int, Stack<HistoricalAction>> undoQueue = new Dictionary<int,Stack<HistoricalAction>>();
+        private Dictionary<int, Stack<HistoricalAction>> redoQueue = new Dictionary<int,Stack<HistoricalAction>>();
+        private int currentSlide;
+        private UndoHistoryVisualiser visualiser;
+        public UserConversationState userConv { get; protected set; }
+        public UndoHistory(UserConversationState _userConv)
         {
+            userConv = _userConv;
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(Redo, CanRedo));
             Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(
@@ -44,7 +118,7 @@ namespace SandRibbon.Utils
 
             visualiser = new UndoHistoryVisualiser();
         }
-        public static void Queue(Action undo, Action redo, String description)
+        public void Queue(Action undo, Action redo, String description)
         {
             ReenableMyContent();
             foreach(var queue in new[]{undoQueue, redoQueue})
@@ -57,16 +131,16 @@ namespace SandRibbon.Utils
 
             RaiseQueryHistoryChanged();
         }
-        private static void RaiseQueryHistoryChanged()
+        private void RaiseQueryHistoryChanged()
         {
             Commands.RequerySuggested(Commands.Undo, Commands.Redo);
         }
-        private static bool CanUndo(object _param) 
+        private bool CanUndo(object _param) 
         { 
             return undoQueue.ContainsKey(currentSlide) && undoQueue[currentSlide].Count() > 0; 
         }
 
-        private static void ReenableMyContent()
+        private void ReenableMyContent()
         {
             #if TOGGLE_CONTENT
             try
@@ -81,7 +155,7 @@ namespace SandRibbon.Utils
             #endif
         }
 
-        internal static void Undo(object param)
+        internal void Undo(object param)
         {
             if (CanUndo(param))
             {
@@ -95,11 +169,11 @@ namespace SandRibbon.Utils
 
             }
         }
-        private static bool CanRedo(object _param)
+        private bool CanRedo(object _param)
         {
             return redoQueue.ContainsKey(currentSlide) && redoQueue[currentSlide].Count() > 0;
         }
-        private static void Redo(object param)
+        private void Redo(object param)
         {
             if (CanRedo(param))
             {

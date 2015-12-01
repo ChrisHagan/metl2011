@@ -39,14 +39,15 @@ namespace SandRibbon.Components
                         attachToClient();
                         Commands.AllStaticCommandsAreRegistered();
                         client.events.StatusChanged -= checkValidity;
-                        //creating singletons of both of these, because they register to the static command system right now.
                     }
                     else
                     {
+                        /*
                         if (WorkspaceStateProvider.savedStateExists())
                         {
                             Commands.LogOut.Execute(true);
                         }
+                        */
                     }
                 };
                 client.events.StatusChanged += checkValidity;

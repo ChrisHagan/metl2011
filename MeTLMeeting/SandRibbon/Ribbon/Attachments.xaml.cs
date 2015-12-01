@@ -135,7 +135,7 @@ namespace SandRibbon.Tabs
 
         private void UploadFile()
         {
-            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.getNetworkController());
+            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.getNetworkController(), rootPage.getDetails(),rootPage.getSlide());
             upload.AddResourceFromDisk();
         }
     }

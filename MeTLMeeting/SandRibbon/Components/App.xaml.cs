@@ -105,7 +105,7 @@ namespace SandRibbon
                 MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
             }
             Trace.TraceInformation("LoggingOut");
-            WorkspaceStateProvider.ClearSettings();
+            //WorkspaceStateProvider.ClearSettings();
             Application.Current.Shutdown();
         }
         protected override void OnStartup(StartupEventArgs e)

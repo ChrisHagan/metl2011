@@ -17,8 +17,12 @@ namespace SandRibbon.Utils
     {
         private Window _owner;
         public NetworkController networkController { get; protected set; }
-        public OpenFileForUpload(Window owner, NetworkController _networkController)
+        public ConversationDetails details { get; protected set; }
+        public Slide slide { get; protected set; }
+        public OpenFileForUpload(Window owner, NetworkController _networkController,ConversationDetails _details, Slide _slide)
         {
+            details = _details;
+            slide = _slide;
             networkController = _networkController;
             _owner = owner;
         }
@@ -80,8 +84,8 @@ namespace SandRibbon.Utils
                  {
                      var target = "presentationSpace"; // looks like this can be "presentationSpace" or "notepad"
                      System.IO.File.Copy(unMangledFilename, filename);
-                     App.controller.client.UploadAndSendFile(
-                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, target, Privacy.Public, -1L, filename, System.IO.Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(networkController.credentials.name,filename)));
+                     networkController.client.UploadAndSendFile(
+                         new MeTLStanzas.LocalFileInformation(slide.id, networkController.credentials.name, target, Privacy.Public, -1L, filename, System.IO.Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(networkController.credentials.name,filename)));
                      System.IO.File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => _owner.Dispatcher.Invoke(DispatcherPriority.Send,

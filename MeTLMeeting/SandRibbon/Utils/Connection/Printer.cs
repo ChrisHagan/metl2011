@@ -17,6 +17,7 @@ using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
 using HttpResourceProvider = MeTLLib.Providers.Connection.HttpResourceProvider;
 using System.Windows.Ink;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -26,6 +27,7 @@ namespace SandRibbon.Utils.Connection
         private PrinterMoveDeltaProcessor moveDeltaProcessor;
         public ConversationDetails details { get; protected set; }
         public string me { get; protected set; }
+        public UserConversationState userConv { get; protected set; }
         public PrintParser(
             Credentials credentials,
             int room,
@@ -39,9 +41,11 @@ namespace SandRibbon.Utils.Connection
             HttpResourceProvider httpResourceProvider,
             IAuditor _auditor,
             ConversationDetails _details,
+            UserConversationState _userConv,
             string _me)
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
         {
+            userConv = _userConv;
             details = _details;
             me = _me;
         }
@@ -59,7 +63,7 @@ namespace SandRibbon.Utils.Connection
         private void ResizeCanvas(MeTLInkCanvas canvas, ContentBuffer contentBuffer)
         {
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible);
+            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible(userConv.contentVisibility));
         }
 
         private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, List<ContentVisibilityDefinition> contentVisibility)

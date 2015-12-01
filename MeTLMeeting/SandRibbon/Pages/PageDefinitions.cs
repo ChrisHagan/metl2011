@@ -3,6 +3,8 @@ using MeTLLib.DataTypes;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using SandRibbon.Pages.Conversations.Models;
+using SandRibbon.Providers;
+using SandRibbon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +24,17 @@ namespace SandRibbon.Pages
         public bool synched { get; set; } = false;
         public int teacherSlide { get; set; } = -1;
         public List<ContentVisibilityDefinition> contentVisibility { get; set; } = new List<ContentVisibilityDefinition>();
+        public UndoHistory undoHistory { get; set; }
+        public UserConversationState()
+        {
+            undoHistory = new UndoHistory(this);
+        }
     }
     public class UserServerState
     {
         public WebSession authenticatedWebSession { get; set; }
         public OneNoteConfiguration OneNoteConfiguration { get; set; }
-
+        public ThumbnailProvider thumbnailProvider { get; set; }
     }
     public class UserGlobalState
     {

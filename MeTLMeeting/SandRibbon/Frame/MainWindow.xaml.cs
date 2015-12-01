@@ -131,7 +131,7 @@ namespace SandRibbon
 
           //  Commands.JoinCreatedConversation.RegisterCommand(new DelegateCommand<object>(joinCreatedConversation));
 
-            WorkspaceStateProvider.RestorePreviousSettings();
+            //WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();

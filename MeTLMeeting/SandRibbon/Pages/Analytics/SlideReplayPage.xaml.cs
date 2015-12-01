@@ -7,6 +7,7 @@ using System.Linq;
 using SandRibbon.Components;
 using System;
 using System.Windows.Navigation;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Pages.Analytics
 {

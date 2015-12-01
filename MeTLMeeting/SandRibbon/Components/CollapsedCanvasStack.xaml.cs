@@ -199,7 +199,7 @@ namespace SandRibbon.Components
         private Privacy currentPrivacy
         {
             get {
-                return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), rootPage.getUserConversationState().privacy, true));
+                return canvasAlignedPrivacy(rootPage.getUserConversationState().privacy);
             }
         }
 
@@ -333,7 +333,7 @@ namespace SandRibbon.Components
 
             //For development
             if (_target == "presentationSpace" && me != GlobalConstants.PROJECTOR)
-                UndoHistory.ShowVisualiser(Window.GetWindow(this));
+                rootPage.getUserConversationState().undoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
         private void ContentElementsChanged(object sender, EventArgs e)
@@ -639,7 +639,7 @@ namespace SandRibbon.Components
                     ClearAdorners();
                     Work.Focus();
                 };
-            UndoHistory.Queue(undo, redo, "Delete selected items");
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Delete selected items");
             redo();
         }
 
@@ -1007,7 +1007,7 @@ namespace SandRibbon.Components
                     AddAdorners();
                     Work.Focus();
                 };
-            UndoHistory.Queue(undo, redo, "Selection moved or resized");
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Selection moved or resized");
             redo();
         }
         private IEnumerable<UIElement> GetSelectedClonedImages()
@@ -1600,7 +1600,7 @@ namespace SandRibbon.Components
                     Work.Focus();
                 };
             redo();
-            UndoHistory.Queue(undo, redo, "Selected items changed privacy");
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
 
         public void RefreshCanvas()
@@ -1670,7 +1670,7 @@ namespace SandRibbon.Components
                         Work.Select(new StrokeCollection(new[] { thisStroke }));
                     AddAdorners();
                 };
-            UndoHistory.Queue(undo, redo, String.Format("Added stroke [{0}]", thisStroke.tag().id));
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, String.Format("Added stroke [{0}]", thisStroke.tag().id));
             //redo();
             doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
         }
@@ -1715,7 +1715,7 @@ namespace SandRibbon.Components
                                      }
                                  });
             redo();
-            UndoHistory.Queue(undo, redo, String.Format("Deleted stroke [{0}]", stroke.tag().id));
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, String.Format("Deleted stroke [{0}]", stroke.tag().id));
         }
 
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
@@ -2177,7 +2177,7 @@ namespace SandRibbon.Components
                     AddAdorners();
                 };
                 redo();
-                UndoHistory.Queue(undo, redo, "Dropped Image");
+                rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Dropped Image");
             });
         }
 
@@ -2409,7 +2409,7 @@ namespace SandRibbon.Components
                 var updatedBox = UpdateTextBoxWithId(redoBox, myText);
                 sendTextWithoutHistory(updatedBox, updatedBox.tag().privacy);
             };
-            UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
             // only do the change locally and let the timer do the rest
             ClearAdorners();
@@ -2796,7 +2796,7 @@ namespace SandRibbon.Components
                                       HandleImagePasteRedo(images);
                                       AddAdorners();
                                   };
-                UndoHistory.Queue(undo, redo, "Pasted items");
+                rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Pasted items");
                 redo();
             }
             else
@@ -2805,7 +2805,7 @@ namespace SandRibbon.Components
                 {
                     Action undo = () => HandleImagePasteUndo(createImages(new List<BitmapSource> { Clipboard.GetImage() }));
                     Action redo = () => HandleImagePasteRedo(createImages(new List<BitmapSource> { Clipboard.GetImage() }));
-                    UndoHistory.Queue(undo, redo, "Pasted images");
+                    rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Pasted images");
                     redo();
                 }
             }
@@ -2909,7 +2909,7 @@ namespace SandRibbon.Components
                 }
             };
             redo();
-            UndoHistory.Queue(undo, redo, "Cut items");
+            rootPage.getUserConversationState().undoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
         private void MoveTo(int _slide)
