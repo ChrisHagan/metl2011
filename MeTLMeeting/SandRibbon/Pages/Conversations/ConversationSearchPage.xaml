@@ -17,50 +17,21 @@
     xmlns:ppType="clr-namespace:SandRibbon.Utils"
     x:Name="root">
     <Page.Resources>
-        <Thickness Top="50" x:Key="space"/>
-        <conversation:VisibleToAuthor x:Key="visibleToAuthor" />
-        <sys:Double x:Key="l">40</sys:Double>
-        <sys:Double x:Key="m">22</sys:Double>
-        <sys:Double x:Key="s">18</sys:Double>
-        <Style x:Key="heading" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="40" />
-        </Style>
-        <Style x:Key="subHeading" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="35" />
-        </Style>
-        <Style x:Key="primaryChoice" TargetType="{x:Type Button}">
-            <Style.Setters>
-                <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontSize" Value="{DynamicResource m}" />
-                <Setter Property="HorizontalAlignment" Value="Left" />
-                <Setter Property="Padding" Value="15" />
-            </Style.Setters>
-        </Style>
-        <Style x:Key="secondaryChoice" TargetType="{x:Type Button}">
-            <Style.Setters>
-                <Setter Property="Background" Value="White" />
-                <Setter Property="Foreground" Value="Black" />
-                <Setter Property="FontSize" Value="{DynamicResource s}" />
-                <Setter Property="HorizontalAlignment" Value="Left" />
-                <Setter Property="Padding" Value="15" />
-            </Style.Setters>
-        </Style>
-        <Thickness x:Key="nearBottom" Left="0" Right="0" Bottom="15" Top="0" />
+        <conversation:VisibleToAuthor x:Key="visibleToAuthor" />        
     </Page.Resources>
     <ScrollViewer>
-        <Grid Margin="50 50" layout:GridLayout.ItemsPerRow="1">
+        <Grid Margin="{DynamicResource insetTopLeft}" layout:GridLayout.ItemsPerRow="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
                 <StackPanel Margin="{DynamicResource nearBottom}">
-                    <Label Content="New conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                    <TextBlock Text="New conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                     <Button Command="{x:Static api:Commands.CreateBlankConversation}" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
                 </StackPanel >
 
-                <Label Content="Import conversation" Style="{DynamicResource subHeading}" Margin="{DynamicResource nearBottom}"/>
+                <TextBlock Text="Import conversation" Style="{DynamicResource subHeading}" Margin="{DynamicResource nearBottom}"/>
                 <WrapPanel x:Name="pptChoices" Margin="{DynamicResource clearBottom}">
                     <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
                         Style="{DynamicResource secondaryChoice}" Content="PowerPoint" Margin="15 0">
@@ -71,7 +42,7 @@
                         Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (high quality)" />
                 </WrapPanel>
 
-                <Label Content="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                <TextBlock Text="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                 <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
                  HorizontalAlignment="Left"
                  Width="250"
@@ -84,7 +55,7 @@
                     <Label Content="Only my conversations" Style="{DynamicResource medium}"/>
                 </StackPanel>
 
-                <Label Content="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
             </Grid>
             <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"                  
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="{DynamicResource nearBottom}"

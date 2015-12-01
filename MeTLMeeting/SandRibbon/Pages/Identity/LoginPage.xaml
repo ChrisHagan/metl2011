@@ -12,7 +12,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="Login">
-    <Grid>
+    <Grid Margin="{DynamicResource insetTopLeft}" >
         <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid x:Name="commandEscape" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid x:Name="logonBrowserContainer" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
