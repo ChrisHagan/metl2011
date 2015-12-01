@@ -6,19 +6,24 @@ using SandRibbon.Providers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using System;
 
 namespace SandRibbon.Pages.Identity
 {
-    public partial class CreateProfilePage : Page
+    public partial class CreateProfilePage : Page, ServerAwarePage
     {
-        protected NetworkController networkController;
-        public CreateProfilePage(NetworkController _networkController)
+        public NetworkController networkController { get; protected set;}
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+        public CreateProfilePage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController)
         {
+            userGlobal = _userGlobal;
+            userServer = _userServer;
             networkController = _networkController;
             InitializeComponent();
             DataContext = new Profile
             {
-                ownerName = Globals.me,
+                ownerName = networkController.credentials.name,
                 logicalName = "",
                 castBars = new[] {
                     new Bar(8)
@@ -66,6 +71,26 @@ namespace SandRibbon.Pages.Identity
             Globals.profiles.Add(profile);
             Globals.currentProfile = profile;
             NavigationService.Navigate(new ProfileSelectorPage(networkController, Globals.profiles));
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
         }
     }
 }
