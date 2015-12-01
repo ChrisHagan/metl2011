@@ -94,15 +94,13 @@ namespace SandRibbon
             Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
             Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(serializeConversationToOneNote, mustBeInConversation));
             //conversation movement
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
-            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
-            Commands.MoveToOverview.RegisterCommand(new DelegateCommand<NetworkController>(MoveToOverview, mustBeInConversation));
+//            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
+//            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
             if (presentationStrategy == PresentationStrategy.WindowCoordinating)
             {
                 Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
             }            
-          //  Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
+            //Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
             
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -110,14 +108,14 @@ namespace SandRibbon
             Commands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
             Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
 
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<NetworkController>(PrintConversation, mustBeInConversation));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<KeyValuePair<NetworkController,ConversationDetails>>(PrintConversation,mustBeInConversation));
 
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop));
-            Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
-            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
+          //  Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
+          //  Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
 
-            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
+            //Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
             Commands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
 
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
@@ -137,13 +135,8 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
-            mainFrame.Navigating += MainFrame_Navigating;
         }
 
-        private void MainFrame_Navigating(object sender, NavigatingCancelEventArgs e)
-        {
-            Globals.currentPage = e.Content.GetType().Name as String;
-        }
 
         private void openProjectorWindow(object _unused)
         {
@@ -272,9 +265,9 @@ namespace SandRibbon
             flyout.IsOpen = true;
         }
 
-        private void MoveToOverview(NetworkController obj)
+        private void MoveToOverview(SlideAwarePage obj)
         {
-            mainFrame.Navigate(new ConversationOverviewPage(obj, Globals.conversationDetails));
+            mainFrame.Navigate(new ConversationOverviewPage(obj.getUserGlobalState(), obj.getUserServerState(), obj.getUserConversationState(), obj.getNetworkController(), obj.getDetails()));
         }
 
         private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
@@ -432,12 +425,12 @@ namespace SandRibbon
             //not sure what to do about this yet - I partly think that this binding should be at frame level, rather than window level.
             //PrintConversation(networkController);
         }
-        private void PrintConversation(NetworkController networkController)
+        private void PrintConversation(KeyValuePair<NetworkController,ConversationDetails> obj)
         {
             if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer(networkController).PrintPrivate(Globals.conversationDetails.Jid, networkController.credentials.name);
+                new Printer(obj.Key).PrintPrivate(obj.Value.Jid, obj.Key.credentials.name);
             else
-                new Printer(networkController).PrintHandout(Globals.conversationDetails.Jid, networkController.credentials.name);
+                new Printer(obj.Key).PrintHandout(obj.Value.Jid, obj.Key.credentials.name);
         }
         private void SetUserOptions(UserOptions options)
         {
@@ -525,52 +518,30 @@ namespace SandRibbon
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-        }                
+        }     
+        /*           
         private bool mustBeInConversationAndBeAuthor(object _arg)
         {
             return mustBeInConversation(_arg) && mustBeAuthor(_arg);
         }
+        */
         private bool mustBeInConversation(object _arg)
         {
-            var details = Globals.conversationDetails;
+            return false;
+        }
+        private bool mustBeInConversation(KeyValuePair<NetworkController,ConversationDetails> obj)
+        {
+            var details = obj.Value;
             if (!details.IsValid)
-                if (Globals.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
-            var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
+                if (obj.Key.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
+            var validGroups = obj.Key.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
             validGroups.Add("unrestricted");
             if (!details.isDeleted && validGroups.Contains(details.Subject.ToLower())) return true;
             return false;
         }
-        private bool mustBeAuthor(object _arg)
+        private bool mustBeAuthor(KeyValuePair<ConversationDetails,string> obj)
         {
-            return Globals.isAuthor;
-        }
-        private void UpdateConversationDetails(ConversationDetails details)
-        {
-            if (details.IsEmpty) return;
-            Dispatcher.adopt(delegate
-                                 {
-                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
-                                     {
-                                         UpdateTitle(details);
-                                         if (!mustBeInConversation(null))
-                                         {
-                                             Commands.LeaveLocation.Execute(null);
-                                         }
-                                     }
-                                 });
-        }
-        private void UpdateTitle(ConversationDetails details)
-        {
-            if (Globals.conversationDetails != null && mustBeInConversation(null))
-            {
-#if DEBUG
-                Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
-#else
-                Title = messageFor(Globals.conversationDetails);
-#endif
-            }
-            else
-                Title = Strings.Global_ProductName;
+            return obj.Key.isAuthor(obj.Value);
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private PresentationStrategy presentationStrategy;
@@ -613,16 +584,18 @@ namespace SandRibbon
             });
         }
         */
+        /*
         private void setSync(object _obj)
         {
             Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }
-
+        */
 
         public Visibility GetVisibilityOf(UIElement target)
         {
             return target.Visibility;
         }
+        /*
         public void toggleNavigationLock(object _obj)
         {
 
@@ -632,6 +605,8 @@ namespace SandRibbon
             details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
             App.controller.client.UpdateConversationDetails(details);
         }
+        */
+        /*
         private void SetConversationPermissions(object obj)
         {
             var style = (string)obj;
@@ -651,11 +626,13 @@ namespace SandRibbon
                 return;
             }
         }
+        */
+        /*
         private bool CanSetConversationPermissions(object _style)
         {
             return Globals.isAuthor;
         }
-
+        */
         private void sleep(object _obj)
         {
             Dispatcher.adoptAsync(delegate

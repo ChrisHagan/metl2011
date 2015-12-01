@@ -308,7 +308,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand PreParserAvailable = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SignedRegions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ConversationPreParserAvailable = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand MoveToOverview = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToPrevious = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand();

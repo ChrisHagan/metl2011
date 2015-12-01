@@ -13,14 +13,14 @@ namespace SandRibbon.Pages
 {
     public class UserSlideState
     {
-        public bool isBanhammerActive { get; set; }
+        public bool isBanhammerActive { get; set; } = false;
     }
     public class UserConversationState
     {
-        public Privacy privacy { get; set; }
-        public bool synched { get; set; }
-        public int teacherSlide { get; set; }
-        public List<ContentVisibilityDefinition> contentVisibility { get; set; }
+        public Privacy privacy { get; set; } = Privacy.NotSet;
+        public bool synched { get; set; } = false;
+        public int teacherSlide { get; set; } = -1;
+        public List<ContentVisibilityDefinition> contentVisibility { get; set; } = new List<ContentVisibilityDefinition>();
     }
     public class UserServerState
     {

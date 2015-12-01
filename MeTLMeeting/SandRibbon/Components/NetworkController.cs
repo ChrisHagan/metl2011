@@ -96,7 +96,7 @@ namespace SandRibbon.Components
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
-            Commands.SendAttendance.RegisterCommand(new DelegateCommand<Attendance>(SendAttendance));
+            Commands.SendAttendance.RegisterCommand(new DelegateCommand<KeyValuePair<string,Attendance>>(SendAttendance));
         }
         /*
         private void RequestUserInformations(List<string> usernames)
@@ -148,15 +148,10 @@ namespace SandRibbon.Components
         {
             client.SendDirtyImage(tde);
         }
-        /*
-        private void SendAttendance(Attendance att)
+        private void SendAttendance(KeyValuePair<string,Attendance> att)
         {
-            if (Globals.conversationDetails.Jid == att.location)
-                client.SendAttendance("global", att);
-            else if (Globals.conversationDetails.Slides.Exists(s => att.location == s.id.ToString()))
-                client.SendAttendance(Globals.conversationDetails.Jid, att);
+            client.SendAttendance(att.Key, att.Value);
         }
-        */
         private void SendDirtyLiveWindow(TargettedDirtyElement tde)
         {
         }
@@ -290,9 +285,9 @@ namespace SandRibbon.Components
         {
             Commands.ReceiveTeacherStatus.Execute(e.status);
         }
-        /*
         private void teacherStatusRequest(object sender, TeacherStatusRequestEventArgs e)
         {
+            /*            
             if (e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor)
             {
                 client.SendTeacherStatus(new TeacherStatus
@@ -303,8 +298,8 @@ namespace SandRibbon.Components
                     Slide = Globals.location.currentSlide.ToString()
                 });
             }
+            */
         }
-        */
         private void presenceAvailable(object sender, PresenceAvailableEventArgs e)
         {
             Commands.ReceiveTeacherStatus.Execute(new TeacherStatus

@@ -225,6 +225,10 @@ namespace SandRibbon.Pages.Collaboration
     public partial class RibbonCollaborationPage : Page, SlideAwarePage
     {
         public NetworkController networkController { get; protected set; }
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+        public UserConversationState userConv { get; protected set; }
+        public UserSlideState userSlide { get; protected set; }
         public ConversationDetails details { get; protected set; }
         public Slide slide { get; protected set; }
 
@@ -233,11 +237,15 @@ namespace SandRibbon.Pages.Collaboration
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
         */
-        public RibbonCollaborationPage(NetworkController _networkController, ConversationDetails _details, Slide _slide)
+        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, UserSlideState _userSlide, NetworkController _networkController, ConversationDetails _details, Slide _slide)
         {
             networkController = _networkController;
             details = _details;
             slide = _slide;
+            userGlobal = _userGlobal;
+            userServer = _userServer;
+            userConv = _userConv;
+            userSlide = _userSlide;
             InitializeComponent();
             DataContext = this;
             var ic = new ImageSourceConverter();
@@ -398,7 +406,7 @@ namespace SandRibbon.Pages.Collaboration
             var newSlide = slides.ElementAt(currentIndex + direction);
             if (newSlide != null)
             {
-                NavigationService.Navigate(new RibbonCollaborationPage(networkController, details, newSlide));
+                NavigationService.Navigate(new RibbonCollaborationPage(userGlobal,userServer,userConv,userSlide,networkController, details, newSlide));
             }
         }
 
@@ -628,11 +636,11 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationSearchPage(networkController, ""));
+            NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer,networkController, ""));
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationOverviewPage(networkController, details));
+            NavigationService.Navigate(new ConversationOverviewPage(userGlobal, userServer, userConv, networkController, details));
         }
         private bool canZoomIn(object sender)
         {
@@ -859,7 +867,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 
         public UserSlideState getUserSlideState()
         {
-            throw new NotImplementedException();
+            return userSlide;
         }
 
         public ConversationDetails getDetails()
@@ -869,7 +877,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 
         public UserConversationState getUserConversationState()
         {
-            throw new NotImplementedException();
+            return userConv;
         }
 
         public NetworkController getNetworkController()
@@ -879,11 +887,16 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 
         public UserServerState getUserServerState()
         {
-            throw new NotImplementedException();
+            return userServer;
         }
         public NavigationService getNavigationService()
         {
             return NavigationService;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
         }
     }
 }

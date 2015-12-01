@@ -45,8 +45,8 @@ namespace SandRibbon.Pages.Collaboration
     };
     public partial class ConversationOverviewPage : Page, ConversationAwarePage
     {
-        ReticulatedConversation conversation;
-        NetworkController networkController;
+        public ReticulatedConversation conversation { get; protected set; }
+        public NetworkController networkController { get; protected set; }
         public UserGlobalState userGlobal { get; protected set; }
         public UserServerState userServer { get; protected set; }
         public UserConversationState userConv { get; protected set; }
@@ -77,7 +77,8 @@ namespace SandRibbon.Pages.Collaboration
             var element = sender as FrameworkElement;
             var slide = element.DataContext as VmSlide;
             //Commands.MoveToCollaborationPage.Execute(slide.Slide.id);
-            NavigationService.Navigate(new RibbonCollaborationPage(networkController, slide.Details, slide.Slide));// networkController.ribbonCollaborationPage);            
+            var userSlide = new UserSlideState();
+            NavigationService.Navigate(new RibbonCollaborationPage(userGlobal,userServer,userConv,userSlide,networkController, slide.Details, slide.Slide));// networkController.ribbonCollaborationPage);            
         }
 
         public ConversationDetails getDetails()
