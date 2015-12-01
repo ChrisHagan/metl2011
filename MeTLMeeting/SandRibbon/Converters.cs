@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Components.BannedContent;
+using SandRibbon.Components;
 
 namespace SandRibbon
 {
@@ -540,13 +541,18 @@ namespace SandRibbon
     }
     public class ConvertStringToImageSource : IValueConverter
     {
+        public NetworkController controller { get; protected set; }
+        public ConvertStringToImageSource(NetworkController _controller)
+        {
+            controller = _controller;
+        }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
             //bitmap.UriSource = uri;
-            bitmap.StreamSource = new System.IO.MemoryStream(App.controller.client.resourceProvider.secureGetData(uri));
+            bitmap.StreamSource = new System.IO.MemoryStream(controller.client.resourceProvider.secureGetData(uri));
             bitmap.EndInit();
             return bitmap;
         }
@@ -558,13 +564,18 @@ namespace SandRibbon
     }
     public class ConvertMeTLIdentityStringToImageSource : IValueConverter
     {
+        public NetworkController controller { get; protected set; }
+        public ConvertMeTLIdentityStringToImageSource(NetworkController _controller)
+        {
+            controller = _controller;
+        }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var uri = App.controller.config.getResource(value.ToString());
+            var uri = controller.config.getResource(value.ToString());
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
             //bitmap.UriSource = uri;
-            bitmap.StreamSource = new System.IO.MemoryStream(App.controller.client.resourceProvider.secureGetData(uri));
+            bitmap.StreamSource = new System.IO.MemoryStream(controller.client.resourceProvider.secureGetData(uri));
             bitmap.EndInit();
             return bitmap;
         }

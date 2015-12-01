@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace SandRibbon.Pages
@@ -31,42 +30,24 @@ namespace SandRibbon.Pages
     {
 
     }
-    public class GlobalAwarePage : Page
+    public interface GlobalAwarePage
     {
-        public UserGlobalState UserGlobalState { get; protected set; }
-        public GlobalAwarePage(UserGlobalState _userGlobal)
-        {
-            UserGlobalState = _userGlobal;
-        }
+        UserGlobalState getUserGlobalState();
+        NavigationService getNavigationService();
     }
-    public class ServerAwarePage : GlobalAwarePage
+    public interface ServerAwarePage : GlobalAwarePage
     {
-        public NetworkController NetworkController { get; protected set; }
-        public UserServerState UserServerState { get; protected set; }
-        public ServerAwarePage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _controller) : base(_userGlobal)
-        {
-            UserServerState = _userServer;
-            NetworkController = _controller;
-        }
+        NetworkController getNetworkController();
+        UserServerState getUserServerState();
     }
-    public class ConversationAwarePage : ServerAwarePage
+    public interface ConversationAwarePage : ServerAwarePage
     {
-        public ConversationDetails Details { get; protected set; }
-        public UserConversationState UserConversationState { get; protected set; }
-        public ConversationAwarePage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConversation, NetworkController _controller, ConversationDetails _details) : base(_userGlobal, _userServer, _controller)
-        {
-            UserConversationState = _userConversation;
-            Details = _details;
-        }
+        ConversationDetails getDetails();
+        UserConversationState getUserConversationState();
     }
-    public class SlideAwarePage : ConversationAwarePage
+    public interface SlideAwarePage : ConversationAwarePage
     {
-        public Slide Slide { get; protected set; }
-        public UserSlideState UserSlideState { get; protected set; }
-        public SlideAwarePage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConversation, UserSlideState _userSlide, NetworkController _controller, ConversationDetails _details, Slide _slide) : base(_userGlobal, _userServer, _userConversation, _controller, _details)
-        {
-            UserSlideState = _userSlide;
-            Slide = _slide;
-        }
+        Slide getSlide();
+        UserSlideState getUserSlideState();
     }
 }

@@ -23,7 +23,7 @@ namespace SandRibbon.Pages.Analytics
         public ConversationDetails details { get; protected set; }
         public UserGlobalState userGlobal { get; protected set; }
         public UserServerState userServer { get; protected set; }
-        public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv) : base(_userGlobal,_userServer,_userConv,networkController,_details)
+        public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer) : base()
         {
             InitializeComponent();
             details = _details;
@@ -75,8 +75,8 @@ namespace SandRibbon.Pages.Analytics
                     tagsRendered = true;
                     var themes = new List<String>();
                     var count = 0;
-                    var max = rootPage.getDetails().Slides.Count;
-                    foreach (var slide in rootPage.getDetails().Slides) {
+                    var max = details.Slides.Count;
+                    foreach (var slide in details.Slides) {
                         ThreadPool.QueueUserWorkItem(delegate
                        {
                            themes.AddRange(Themes(slide));
