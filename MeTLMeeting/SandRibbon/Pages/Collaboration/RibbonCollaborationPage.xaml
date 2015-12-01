@@ -202,8 +202,7 @@
                     <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <components:MiniMap DataContext="{Binding ElementName=scroll}" x:Name="LHSMiniMap"/>
-                <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="1" Width="Auto"/>
+                <components:MiniMap DataContext="{Binding ElementName=scroll}" x:Name="LHSMiniMap"/>            
                 <TabControl Grid.Row="2" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
                     <TabItem Header="Notes" Width="80">
                         <Grid>
@@ -226,8 +225,8 @@
                 </TabControl>
             </Grid>
             <GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Height="Auto" HorizontalAlignment="Stretch"/>
-            <components:SlideDisplay Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" x:Name="slides" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <components:SlideNavigationControls x:Name="NavigationControls" Grid.Column="4" Grid.Row="2" Width="Auto"/>
+            <components:SlideDisplay Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="slides" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         </Grid>
-
     </DockPanel>
 </Page>
