@@ -4,15 +4,21 @@ using SandRibbon.Profiles;
 using SandRibbon.Providers;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Identity
 {
-    public partial class ProfileSelectorPage : Page
+    public partial class ProfileSelectorPage : Page, ServerAwarePage
     {
-        protected NetworkController networkController;
-        public ProfileSelectorPage(NetworkController _networkController, IEnumerable<Profile> profiles)
+        public NetworkController networkController { get; protected set; }
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+        public ProfileSelectorPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, IEnumerable<Profile> profiles)
         {
             networkController = _networkController;
+            userGlobal = _userGlobal;
+            userServer = _userServer;
             InitializeComponent();
             this.profiles.ItemsSource = profiles;
         }
@@ -27,7 +33,27 @@ namespace SandRibbon.Pages.Identity
 
         private void AddProfile(object sender, System.Windows.RoutedEventArgs e)
         {
-            NavigationService.Navigate(new CreateProfilePage(networkController));
+            NavigationService.Navigate(new CreateProfilePage(userGlobal,userServer,networkController));
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
         }
     }
 }

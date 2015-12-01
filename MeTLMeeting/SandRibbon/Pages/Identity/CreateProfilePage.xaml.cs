@@ -70,7 +70,7 @@ namespace SandRibbon.Pages.Identity
             var profile = DataContext as Profile;
             Globals.profiles.Add(profile);
             Globals.currentProfile = profile;
-            NavigationService.Navigate(new ProfileSelectorPage(networkController, Globals.profiles));
+            NavigationService.Navigate(new ProfileSelectorPage(userGlobal,userServer,networkController, Globals.profiles));
         }
 
         public NetworkController getNetworkController()
