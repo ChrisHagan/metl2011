@@ -17,13 +17,13 @@ using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public partial class TagCloudPage : Page, ConversationAwarePage
+    public partial class TagCloudPage : ConversationAwarePage
     {
         public NetworkController controller { get; protected set; }
         public ConversationDetails details { get; protected set; }
         public UserGlobalState userGlobal { get; protected set; }
         public UserServerState userServer { get; protected set; }
-        public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer)
+        public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv) : base(_userGlobal,_userServer,_userConv,networkController,_details)
         {
             InitializeComponent();
             details = _details;

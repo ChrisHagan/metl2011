@@ -408,8 +408,8 @@ namespace SandRibbon.Providers
         }.ToList();
         }
         public static Profile currentProfile = profiles[0];
-        public  static WebSession authenticatedWebSession;
         /*
+        public  static WebSession authenticatedWebSession;
         public static string currentPage { get; set; }
 
         public static Slide slideObject() {
