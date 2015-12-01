@@ -28,6 +28,7 @@
         </macro:Appearance>
     </Grid>
     <!-- Slide navigation -->
+    <!--
     <Button x:Key="conversation_overview" Command="{x:Static api:Commands.MoveToOverview}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
@@ -35,6 +36,7 @@
             </Viewbox>
         </macro:Appearance>
     </Button>
+    -->
     <Button x:Key="slide_next" Command="{x:Static api:Commands.MoveToNext}" x:Shared="False" Style="{StaticResource macro}">
         <macro:Appearance>
             <Viewbox Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">

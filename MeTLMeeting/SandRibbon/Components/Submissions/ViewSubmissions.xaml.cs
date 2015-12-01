@@ -12,20 +12,22 @@ namespace SandRibbon.Components.Submissions
     public partial class ViewSubmissions : Window
     {
         public ObservableCollection<TargettedSubmission> submissions {get; set;}        
-        public ViewSubmissions()
+        public ConvertMeTLIdentityStringToImageSource ConvertMeTLIdentityStringToImageSource {
+            get; protected set; }
+        public NetworkController controller { get; protected set; }
+        public ViewSubmissions(NetworkController _controller, List<TargettedSubmission> userSubmissions)
         {
             InitializeComponent();
+            controller = _controller;
+            ConvertMeTLIdentityStringToImageSource = new ConvertMeTLIdentityStringToImageSource(controller);
             Submissions.ItemsSource = submissions;
             Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
             Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(close));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(close));
-        }
-        
-        public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
-        {
             submissions = new ObservableCollection<TargettedSubmission>(userSubmissions);
             Submissions.ItemsSource = submissions;
         }
+
         private void close(object obj)
         {
             Close();

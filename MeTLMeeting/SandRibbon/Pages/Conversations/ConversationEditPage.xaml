@@ -13,8 +13,7 @@
         <Label Content="Its title" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
         <TextBox Text="{Binding Path=Title}" />
         <Label Content="Who can see it" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
-        <ComboBox IsEditable="False" ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" x:Name="sharing"
-                      SelectedItem="{Binding Path=Subject}"/>
+        <ComboBox IsEditable="False" x:Name="sharing" SelectedItem="{Binding Path=Subject}"/>
         <Label Foreground="Red" Content="{Binding}" x:Name="errorDisplay" Visibility="{Binding Converter={StaticResource errorVisibility}}" />        
         <Button Click="Cancel" Width="Auto">
             <Label Content="Cancel" />

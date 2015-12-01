@@ -28,7 +28,7 @@
         <RibbonButton ToolTip="{DynamicResource UploadFileToolTip}" x:Name="fileUpload" LargeImageSource="\Resources\Attachment.png" Label="Upload file" Command="{x:Static api:Commands.FileUpload}"/>
     </RibbonGroup>
     <RibbonGroup Header="Downloadable Items">
-        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForTextTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static api:Commands.DummyCommandToProcessCanExecuteForTextTools}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
@@ -47,12 +47,12 @@
                     <DataTemplate>
                         <Button Click="saveFile" PreviewMouseRightButtonUp="saveFile">
                             <Button.ToolTip>
-                                <dict:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" 
+                                <dict:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={Binding ConvertStringToImageSource}}" 
                                                                     TitleText="{Binding Path=filename}"
                                                                     ContentText="{Binding Path=tooltip}"/>
                         </Button.ToolTip>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
+                                <Image Source="{Binding Path=fileImage, Converter={Binding ConvertStringToImageSource}}" />
                                 <Label Content="{Binding Path=filename}"/>
                         </StackPanel>
                         </Button>

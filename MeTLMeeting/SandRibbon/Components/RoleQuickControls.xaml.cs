@@ -27,6 +27,8 @@ namespace SandRibbon.Components
     public partial class RoleQuickControls : UserControl
     {
         public SlideAwarePage rootPage { get; protected set; }
+        public KeyValuePair<ConversationDetails,Slide> SlideDetailsInConversationDetails { get; protected set; }
+        public ConversationDetails ConversationDetails { get; protected set; }
         public RoleQuickControls()
         {
             InitializeComponent();
@@ -39,6 +41,8 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
+                SlideDetailsInConversationDetails = new KeyValuePair<ConversationDetails, Slide>(rootPage.getDetails(), rootPage.getSlide());
+                ConversationDetails = rootPage.getDetails();
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.RegisterCommand(setSyncCommand);
                 Commands.SetSync.Execute(false);

@@ -35,6 +35,7 @@ namespace SandRibbon.Tabs
     }
     public partial class Attachments :RibbonTab 
     {
+        public ConvertStringToImageSource ConvertStringToImageSource { get; protected set; }
         private ObservableCollection<FileInfo> files;
         public SlideAwarePage rootPage { get; protected set; } 
         public Attachments()
@@ -51,6 +52,8 @@ namespace SandRibbon.Tabs
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
+                DataContext = this;
+                ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.getNetworkController());
                 Commands.ReceiveFileResource.RegisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
                 Commands.JoinConversation.RegisterCommandToDispatcher(clearOutAttachmentsCommand);

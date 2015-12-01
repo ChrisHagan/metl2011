@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Windows.Navigation;
+using System.Linq;
 
 namespace SandRibbon.Pages.Conversations
 {
@@ -36,6 +37,7 @@ namespace SandRibbon.Pages.Conversations
             InitializeComponent();
             errorDisplay.DataContext = Errors;
             DataContext = details;
+            sharing.ItemsSource = networkController.credentials.authorizedGroups.Select(s => s.groupKey);
         }
 
         public string Errors
