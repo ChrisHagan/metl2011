@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using MeTLLib.DataTypes;
+using System;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace SandRibbon.Utils
 {
@@ -86,5 +90,5 @@ namespace SandRibbon.Utils
             if (bounds.Height < 20) bounds.Height = 20;
             drawingContext.DrawRectangle(brush, null, bounds);
         }
-    }
+    }    
 }

@@ -87,6 +87,7 @@ namespace MeTLLib.Providers.Connection
             request.Credentials = client.Credentials;
             request.KeepAlive = false;
             request.Method = "HEAD";
+            request.KeepAlive = false;
             // use the default timeout
             //request.Timeout = 5 * 1000;
             try

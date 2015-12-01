@@ -149,7 +149,7 @@ namespace SandRibbon.Components
 
             return timedActions.Dequeue();
         }
-    }
+    }    
 
     public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
@@ -382,7 +382,7 @@ namespace SandRibbon.Components
             Work.StylusMove += stylusMove;
             Work.IsKeyboardFocusWithinChanged += Work_IsKeyboardFocusWithinChanged;
         }
-
+        
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue == true)
@@ -1184,6 +1184,7 @@ namespace SandRibbon.Components
         private void ClearAdorners()
         {
             if (me != GlobalConstants.PROJECTOR)
+
                 Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
         }
         #endregion
