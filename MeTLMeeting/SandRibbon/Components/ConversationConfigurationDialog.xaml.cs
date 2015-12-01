@@ -121,11 +121,6 @@ namespace SandRibbon.Components
                 importFile = fileBrowser.FileName;
                 importFileTextBox.Text = importFile;
                 var file = new FileInfo(fileBrowser.FileName);
-                if (Globals.rememberMe)
-                {
-                    Commands.RegisterPowerpointSourceDirectoryPreference.Execute(System.IO.Path.GetDirectoryName(fileBrowser.FileName));
-                    WorkspaceStateProvider.SaveCurrentSettings();
-                }
             }
             if (!fileDialogResult.HasValue) 
                 importFile = null;

@@ -10,6 +10,7 @@ using Iveonik.Stemmers;
 using System.Windows.Data;
 using System.Globalization;
 using SandRibbon.Providers;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -106,31 +107,42 @@ namespace SandRibbon.Components
         public Dictionary<string, MeTLUser> people = new Dictionary<string, MeTLUser>();
         public HashSet<String> seen = new HashSet<string>();
         public IStemmer stemmer = new EnglishStemmer();
+        public ConversationAwarePage rootPage { get; protected set; }
         public Participants()
         {
             InitializeComponent();
-            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<List<TargettedStroke>>(ReceiveStrokes));
-            Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(ReceiveStroke));
-            Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(ReceiveTextbox));
-            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage>(ReceiveImage));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(ReceivePreParser));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-            //Commands.ReceiveTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(ReceivePresence));
-            Commands.ReceiveAttendance.RegisterCommand(new DelegateCommand<Attendance>(ReceivePresence));
-        }
-        private void JoinConversation(string newJid)
-        {
-            ClearList();
-        }
-        private void ClearList()
-        {
-            seen.Clear();
-            Dispatcher.adopt(() =>
+            var receiveStrokesCommand = new DelegateCommand<List<TargettedStroke>>(ReceiveStrokes);
+            var receiveStrokeCommand = new DelegateCommand<TargettedStroke>(ReceiveStroke);
+            var receiveTextboxCommand = new DelegateCommand<TargettedTextBox>(ReceiveTextbox);
+            var receiveImageCommand = new DelegateCommand<TargettedImage>(ReceiveImage);
+            var receivePreParserCommand = new DelegateCommand<PreParser>(ReceivePreParser);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(ReceiveConversationDetails);
+            var receiveScreenshotSubmissionCommand = new DelegateCommand<TargettedSubmission>(ReceiveSubmission);
+            var receiveAttendanceCommand = new DelegateCommand<Attendance>(ReceivePresence);
+            Loaded += (s, e) =>
             {
-                people.Clear();
-            });
+                if (rootPage == null)
+                    rootPage = DataContext as ConversationAwarePage;
+                Commands.ReceiveStrokes.RegisterCommand(receiveStrokesCommand);
+                Commands.ReceiveStroke.RegisterCommand(receiveStrokeCommand);
+                Commands.ReceiveTextBox.RegisterCommand(receiveTextboxCommand);
+                Commands.ReceiveImage.RegisterCommand(receiveImageCommand);
+                Commands.PreParserAvailable.RegisterCommand(receivePreParserCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotSubmissionCommand);
+                Commands.ReceiveAttendance.RegisterCommand(receiveAttendanceCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.ReceiveStrokes.UnregisterCommand(receiveStrokesCommand);
+                Commands.ReceiveStroke.UnregisterCommand(receiveStrokeCommand);
+                Commands.ReceiveTextBox.UnregisterCommand(receiveTextboxCommand);
+                Commands.ReceiveImage.UnregisterCommand(receiveImageCommand);
+                Commands.PreParserAvailable.UnregisterCommand(receivePreParserCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.ReceiveScreenshotSubmission.UnregisterCommand(receiveScreenshotSubmissionCommand);
+                Commands.ReceiveAttendance.UnregisterCommand(receiveAttendanceCommand);
+            };
         }
         private void ReceiveSubmission(TargettedSubmission sub)
         {
@@ -146,7 +158,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveConversationDetails(ConversationDetails details)
         {
-            if (details.Jid == Providers.Globals.conversationDetails.Jid)
+            if (details.Jid == rootPage.getDetails().Jid)
             {
                 foreach (var bannedUsername in details.blacklist)
                 {
@@ -159,7 +171,7 @@ namespace SandRibbon.Components
         }
         protected void ReceivePresence(Attendance presence)
         {
-            if (/*Providers.Globals.conversationDetails.Jid == presence.location || */ Providers.Globals.conversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.location))
+            if (rootPage.getDetails().Slides.Select(s => s.id.ToString()).Contains(presence.location))
             {
                 Dispatcher.adopt(delegate
                 {
@@ -220,7 +232,6 @@ namespace SandRibbon.Components
         }
         private void ReceivePreParser(PreParser p)
         {
-            if (Globals.currentPage != "RibbonCollaborationPage") return;
             ReceiveStrokes(p.ink);
             foreach (var t in p.text.Values.ToList())
                 ReceiveTextbox(t);

@@ -19,13 +19,13 @@ namespace SandRibbon.Components
             rootPage = _rootPage;
             InitializeComponent();
             blacklistedUsers.ItemsSource = blacklistedUsersList;
-            blacklist = Globals.conversationDetails.blacklist.Distinct().ToList();
+            blacklist = rootPage.getDetails().blacklist.Distinct().ToList();
             foreach(var user in blacklist)
                 blacklistedUsersList.Add(user);
         }
         private void updateBlacklist(object sender, RoutedEventArgs e)
         {
-            var details = Globals.conversationDetails;
+            var details = rootPage.getDetails();
             details.blacklist = blacklist;
             rootPage.getNetworkController().client.UpdateConversationDetails(details);
         }

@@ -223,7 +223,7 @@ namespace SandRibbon.Components.BannedContent
             sub.UpdateDisplayNames(userMapping);
 
             blackList.Clear();
-            var updatedBlacklist = WrapBlackList(Globals.conversationDetails.blacklist);
+            var updatedBlacklist = WrapBlackList(rootPage.getDetails().blacklist);
             foreach (var user in updatedBlacklist)
             {
                 blackList.Add(user);
@@ -269,9 +269,10 @@ namespace SandRibbon.Components.BannedContent
         */
         private void SendEmail(string fileName, string report)
         {
+            /*
             try
             {
-                var emailAddress = new MailAddress(Globals.credentials.mail);
+                var emailAddress = new MailAddress(rootPage.getNetworkController().credentials.mail);
                 const string subject = "MeTL Banned Content Report";
                 string body = report;
 
@@ -307,6 +308,7 @@ namespace SandRibbon.Components.BannedContent
                     File.Delete(fileName);
                 } 
             }
+            */
         }
 
         private string SaveImageTemporarilyToFile()
@@ -343,7 +345,7 @@ namespace SandRibbon.Components.BannedContent
         private void unbanSelected_Click(object sender, RoutedEventArgs e)
         {
             var bannedUsers = GetBannedUserCheckboxes();
-            var details = Globals.conversationDetails;
+            var details = rootPage.getDetails();
             foreach (var participant in bannedUsers)
             {
                 var priv = participant.DataContext as PrivateUser;

@@ -148,6 +148,7 @@ namespace SandRibbon.Components
         {
             client.SendDirtyImage(tde);
         }
+        /*
         private void SendAttendance(Attendance att)
         {
             if (Globals.conversationDetails.Jid == att.location)
@@ -155,6 +156,7 @@ namespace SandRibbon.Components
             else if (Globals.conversationDetails.Slides.Exists(s => att.location == s.id.ToString()))
                 client.SendAttendance(Globals.conversationDetails.Jid, att);
         }
+        */
         private void SendDirtyLiveWindow(TargettedDirtyElement tde)
         {
         }
@@ -288,6 +290,7 @@ namespace SandRibbon.Components
         {
             Commands.ReceiveTeacherStatus.Execute(e.status);
         }
+        /*
         private void teacherStatusRequest(object sender, TeacherStatusRequestEventArgs e)
         {
             if (e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor)
@@ -301,6 +304,7 @@ namespace SandRibbon.Components
                 });
             }
         }
+        */
         private void presenceAvailable(object sender, PresenceAvailableEventArgs e)
         {
             Commands.ReceiveTeacherStatus.Execute(new TeacherStatus

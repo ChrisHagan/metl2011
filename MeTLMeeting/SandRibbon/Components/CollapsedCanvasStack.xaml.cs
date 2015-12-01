@@ -199,7 +199,7 @@ namespace SandRibbon.Components
         private Privacy currentPrivacy
         {
             get {
-                return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true));
+                return canvasAlignedPrivacy((Privacy)Enum.Parse(typeof(Privacy), rootPage.getUserConversationState().privacy, true));
             }
         }
 
@@ -1091,7 +1091,7 @@ namespace SandRibbon.Components
         private IEnumerable<PrivateAwareStroke> filterOnlyMineExceptIfHammering(IEnumerable<PrivateAwareStroke> strokes)
         {
             var me = rootPage.getNetworkController().credentials.name;
-            if (Globals.IsBanhammerActive)
+            if (rootPage.getUserSlideState().isBanhammerActive)
             {
                 return strokes.Where(s => s.tag().author != me);
             }
@@ -1111,7 +1111,7 @@ namespace SandRibbon.Components
         }
         private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements, Func<T, string> authorExtractor) where T : UIElement
         {
-            if (Globals.IsBanhammerActive)
+            if (rootPage.getUserSlideState().isBanhammerActive)
             {
                 return filterExceptMine(elements, authorExtractor);
             }
@@ -1122,7 +1122,7 @@ namespace SandRibbon.Components
         }
         private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements) where T : UIElement
         {
-            if (Globals.IsBanhammerActive)
+            if (rootPage.getUserSlideState().isBanhammerActive)
             {
                 return filterExceptMine(elements);
             }
@@ -1609,7 +1609,7 @@ namespace SandRibbon.Components
             Work.Strokes.Clear();
 
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(Globals.contentVisibility);//contentBuffer.CurrentContentVisibility);
+            ReAddFilteredContent(rootPage.getUserConversationState().contentVisibility);//contentBuffer.CurrentContentVisibility);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
