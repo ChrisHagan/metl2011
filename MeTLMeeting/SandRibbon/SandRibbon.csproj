@@ -1199,6 +1199,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\advent-pro.medium.ttf" />
     <None Include="SandRibbon_TemporaryKey.pfx" />
     <Resource Include="Resources\advent-pro.thin.ttf" />
     <Resource Include="Resources\advent-pro.extralight.ttf" />
