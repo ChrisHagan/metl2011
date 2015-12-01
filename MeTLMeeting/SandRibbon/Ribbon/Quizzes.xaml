@@ -1,4 +1,4 @@
-﻿<RibbonTab KeyTip="Q" Header="QUIZZES"
+﻿<RibbonTab KeyTip="P" Header="POLLS"
     x:Class="SandRibbon.Tabs.Quizzes"
     x:Name="quizzesTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -25,7 +25,7 @@
     <RibbonGroup Header="Results" x:Name="results">
         <RibbonButton Command="{x:Static tabs:Quizzes.openQuizResults}" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}"/>
     </RibbonGroup>
-    <RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
+    <RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
         <dict:QuizContainer x:Name="quizzes" 
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}">
@@ -108,7 +108,7 @@
                                            FontSize="12px"
                                            FontFamily="Verdana"
                                            Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
-                                           Content="There are currently no quizzes for this conversation"/>
+                                           Content="There are currently no polls for this conversation"/>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
