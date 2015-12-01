@@ -9,6 +9,7 @@ using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using System.Windows.Media;
+using SandRibbon.Components;
 
 namespace SandRibbon.Providers
 {
@@ -24,13 +25,18 @@ namespace SandRibbon.Providers
     }
     public class ThumbnailProvider
     {
+        public NetworkController controller { get; protected set; }
+        public ThumbnailProvider(NetworkController _controller)
+        {
+            controller = _controller;
+        }
         public static ImageSource emptyImage = new ImageSourceConverter().ConvertFromString("Resources/Slide_Not_Loaded.png") as ImageSource;
-        private static Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
-        private static object cacheLock = new object();
+        private Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
+        private object cacheLock = new object();
         //acceptableStaleTime is measured in ticks
-        public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 5;
-        private static int maximumCachedBitmaps = 200;
-        private static void addToCache(int slideId, CachedThumbnail ct)
+        public long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 5;
+        private int maximumCachedBitmaps = 200;
+        private void addToCache(int slideId, CachedThumbnail ct)
         {
             lock (cacheLock)
             {
@@ -44,7 +50,7 @@ namespace SandRibbon.Providers
                 cache[slideId] = ct;
             }
         }
-        private static void paintThumb(Image image)
+        private void paintThumb(Image image)
         {
           image.Dispatcher.adopt(delegate
           {
@@ -69,7 +75,7 @@ namespace SandRibbon.Providers
               }
           });
         }
-        public static void thumbnail(Image image, int slideId)
+        public void thumbnail(Image image, int slideId)
         {
             if (image == null)
                 return;
@@ -86,8 +92,7 @@ namespace SandRibbon.Providers
             if (shouldPaintThumb) {
                 paintThumb(image);
             } else {
-                var server = App.controller.config;
-                var host = server.name;
+                var server = controller.config;
                 var url = server.thumbnailUri(internalSlideId.ToString());
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
@@ -104,12 +109,15 @@ namespace SandRibbon.Providers
                                     bitmap = new BitmapImage();
                                     g(GaugeStatus.InProgress, 30);
                                     bitmap.BeginInit();
-                                    g(GaugeStatus.InProgress, 40);
-                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                    g(GaugeStatus.InProgress, 50);
-                                    bitmap.StreamSource = stream;
-                                    g(GaugeStatus.InProgress, 60);
-                                    bitmap.EndInit();
+                                    try {
+                                        g(GaugeStatus.InProgress, 40);
+                                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                        g(GaugeStatus.InProgress, 50);
+                                        bitmap.StreamSource = stream;
+                                        g(GaugeStatus.InProgress, 60);
+                                    } catch { } finally {
+                                        bitmap.EndInit();
+                                    }
                                     g(GaugeStatus.InProgress, 70);
                                     bitmap.Freeze();
                                     g(GaugeStatus.InProgress, 80);

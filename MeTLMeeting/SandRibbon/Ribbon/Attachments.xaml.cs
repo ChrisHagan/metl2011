@@ -69,7 +69,7 @@ namespace SandRibbon.Tabs
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
+            if (details.IsJidEqual(rootPage.getDetails().Jid) && details.isDeleted)
                 clearOutAttachments(null);
         }
         private void clearOutAttachments(object obj)
@@ -85,7 +85,7 @@ namespace SandRibbon.Tabs
         }
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
-            if (!Globals.conversationDetails.IsJidEqual(fileInfo.conversationJid.ToString())) return;
+            if (!rootPage.getDetails().IsJidEqual(fileInfo.conversationJid.ToString())) return;
             Dispatcher.adoptAsync(() => {
                                             var fileInfoFileType = FileHelper.DetermineFileTypeFromExtension(fileInfo.name);
                                             if (files.Select(f => f.url).Contains(fileInfo.url)) return;

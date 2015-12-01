@@ -90,7 +90,7 @@ namespace SandRibbon
             //Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
+            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(openOneNoteConfiguration));
             Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
             Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(serializeConversationToOneNote, mustBeInConversation));
             //conversation movement
@@ -258,10 +258,10 @@ namespace SandRibbon
             w.Source = uri;
         }
 
-        private void openOneNoteConfiguration(object obj)
+        private void openOneNoteConfiguration(OneNoteConfiguration obj)
         {
             flyout.Content = TryFindResource("oneNoteConfiguration");
-            flyout.DataContext = Globals.OneNoteConfiguration;
+            flyout.DataContext = obj;
             flyout.IsOpen = true;
         }
 

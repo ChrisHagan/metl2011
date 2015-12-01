@@ -798,12 +798,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\SimpleImpl\SimpleConversationSelector.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\SimpleImpl\SimpleFriendsListing.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1077,9 +1071,6 @@
     <Compile Include="Components\SimpleImpl\FeatureListing.xaml.cs">
       <DependentUpon>FeatureListing.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleConversationSelector.xaml.cs">
-      <DependentUpon>SimpleConversationSelector.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\SimpleImpl\SimpleFriendsListing.xaml.cs">
       <DependentUpon>SimpleFriendsListing.xaml</DependentUpon>
     </Compile>
@@ -1103,7 +1094,6 @@
     </Compile>
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\Globals.cs" />
-    <Compile Include="Providers\RecentConversationProvider.cs" />
     <Compile Include="Ribbon\Analytics.xaml.cs">
       <DependentUpon>Analytics.xaml</DependentUpon>
     </Compile>

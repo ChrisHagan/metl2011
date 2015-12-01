@@ -28,7 +28,7 @@ namespace SandRibbon.Tabs
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            manageBlackList.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
+            manageBlackList.Visibility = details.Author == rootPage.getNetworkController().credentials.name ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)

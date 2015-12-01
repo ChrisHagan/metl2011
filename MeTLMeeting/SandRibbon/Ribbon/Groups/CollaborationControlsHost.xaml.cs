@@ -53,7 +53,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void joinConversation(ConversationDetails details)
         {
-            this.Visibility = details.isAuthor(Globals.me) ? Visibility.Visible : Visibility.Collapsed;
+            this.Visibility = details.isAuthor(rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             NavigationIsLocked = details.Permissions.NavigationLocked;
         }
     }

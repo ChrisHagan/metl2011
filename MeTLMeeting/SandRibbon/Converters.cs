@@ -33,7 +33,6 @@ namespace SandRibbon
         public static videoMirrorPaddingSubtractorConverter videoMirrorPaddingSubtractorConverter = new videoMirrorPaddingSubtractorConverter();
         public static DebugConverter debugConverter = new DebugConverter();
         public static ConversationNameExtractor conversationNameExtractor = new ConversationNameExtractor();
-        public static ConversationTooltipExtractor conversationTooltipExtractor = new ConversationTooltipExtractor();
         public static ServerStatusAsVisibility serverStatusToVisibility = new ServerStatusAsVisibility();
         public static ServerStatusAsBackgroundColor serverStatus = new ServerStatusAsBackgroundColor();
         public static ServerStatusAsString serverStatusString = new ServerStatusAsString();
@@ -503,10 +502,15 @@ namespace SandRibbon
     }
     public class ExtractUrlAndConvertConverter : IValueConverter
     {
+        public NetworkController controller { get; protected set; }
+        public ExtractUrlAndConvertConverter(NetworkController _controller)
+        {
+            controller = _controller;
+        }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return value;
-            var converter = new ConvertStringToImageSource();
+            var converter = new ConvertStringToImageSource(controller);
 
             var submission = value as TargettedSubmission;
             if (submission != null)
@@ -694,19 +698,6 @@ namespace SandRibbon
                 return ((DateTime)value).ToString();
             else
                 return SandRibbonObjects.DateTimeFactory.Now().ToString();
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
-    }
-    public class ConversationTooltipExtractor : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value != null && value is MeTLLib.DataTypes.ConversationDetails)
-                return RecentConversationProvider.DisplayNameFor((MeTLLib.DataTypes.ConversationDetails)value);
-            return value;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
