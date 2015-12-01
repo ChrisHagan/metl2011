@@ -129,7 +129,9 @@ namespace SandRibbon
             var ex = (Exception)e.ExceptionObject;
             if (!falseAlarms.Any(m => ex.Message.StartsWith(m)))
             {
-                MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.");
+                var detail = string.Format("{0}\n{1}", ex.Message, ex.StackTrace);
+                EventLog.WriteEntry("MeTL", detail);
+                MeTLMessage.Error(string.Format("MeTL has encountered an unrecoverable error:\n{0}",detail));
             }
         }
         void Current_Exit(object sender, ExitEventArgs e)

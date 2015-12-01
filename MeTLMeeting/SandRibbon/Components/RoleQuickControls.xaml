@@ -25,7 +25,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource clearBottom}">
-                    <Label Content="What can students do?" Style="{StaticResource medium}" />
+                    <TextBlock Text="What can students do?" Style="{StaticResource minorHeading}" Margin="{DynamicResource nearBottom}"/>
                     <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False"  Content="Publish quizzes"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="Attach files"></CheckBox>
@@ -44,7 +44,7 @@
                 </WrapPanel>
             </Grid>
             <Grid layout:GridLayout.ItemsPerRow="1" x:Name="participantQuickControls">
-                <Label Content="What will you do?" Style="{StaticResource medium}" />
+                <TextBlock Text="What will you do?" Style="{StaticResource minorHeading}" />
                 <WrapPanel>
                     <RibbonToggleButton Label="Follow teacher" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
                     <RibbonButton x:Name="submitSubmission" 

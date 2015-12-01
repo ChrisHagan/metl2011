@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label Content="Where are you going?" Grid.Row="0" Margin="{DynamicResource clearTop}" />
+        <TextBlock Text="Where are you going?" Grid.Row="0" Margin="{DynamicResource insetTopLeft}" Style="{DynamicResource heading}"/>
         <ItemsControl ItemsSource="{Binding}" BorderThickness="0" Grid.Row="1">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -30,7 +30,7 @@
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                             <Grid layout:GridLayout.ItemsPerRow="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                 <Image Source="{Binding Path=imageUri}" Margin="{StaticResource clearHorizontal}" Height="300"/>
-                                <Label HorizontalAlignment="Center" Content="{Binding Path=name}" Margin="{StaticResource clearTop}"/>
+                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=name}" Margin="{StaticResource clearTop}" Style="{DynamicResource heading}"/>
                             </Grid>
                             <Image Source="\Resources\appbar.heart.break.png" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </Grid>
