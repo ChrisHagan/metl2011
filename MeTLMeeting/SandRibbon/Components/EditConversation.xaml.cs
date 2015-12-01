@@ -49,7 +49,7 @@ namespace SandRibbon.Components
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
 
-            App.controller.client.UpdateConversationDetails(details);
+            rootPage.getNetworkController().client.UpdateConversationDetails(details);
             Commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
             Close();
         }

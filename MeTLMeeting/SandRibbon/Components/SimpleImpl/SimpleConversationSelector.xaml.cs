@@ -12,6 +12,7 @@ using SandRibbon.Providers;
 using SandRibbonInterop.Interfaces;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -20,31 +21,21 @@ namespace SandRibbon.Components
         public static IEnumerable<ConversationDetails> rawConversationList = new List<ConversationDetails>();
         public static IEnumerable<ConversationDetails> recentConversations = new List<ConversationDetails>();
 
+        public ServerAwarePage rootPage { get; protected set; }
         public SimpleConversationSelector()
         {
             InitializeComponent();
-            this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(joinConversation));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>(SetIdentity));
-        }
-        private void SetIdentity(object obj)
-        {
-            RedrawList(null);
-        }
-        private void joinConversation(string jid)
-        {
-            var details = App.controller.client.DetailsOf(jid);
-            details.LastAccessed = DateTime.Now;
-            if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
-                recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
-            else
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            Loaded += (s, e) =>
             {
-                recentConversations = recentConversations.Concat(new[] {details});
-            }
-            RecentConversationProvider.addRecentConversation(details, rootPage.networkController.credentials.name);
-            conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
+                this.conversations.ItemsSource = new List<ConversationDetails>();
+                Commands.UpdateForeignConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+            };
+            Unloaded += (s, e) => {
+                Commands.UpdateForeignConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+            };
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -78,7 +69,7 @@ namespace SandRibbon.Components
             {
                 rawConversationList = conversations.ToList();
                 var list = new List<ConversationDetails>();
-                var myConversations = conversations.Where(c => c.Author == rootPage.networkController.credentials.name).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
+                var myConversations = conversations.Where(c => c.Author == rootPage.getNetworkController().credentials.name).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
                 if (myConversations.Count() > 0)
                 {
                     list.Add(new SeparatorConversation("My Conversations"));
@@ -87,7 +78,7 @@ namespace SandRibbon.Components
                 list.Add(new SeparatorConversation("Conversations I've worked in"));
                 var recentConversations = RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid && conversations.Contains(c)).Reverse().Take(2);
                 list.AddRange(recentConversations);
-                var recentAuthors = list.Select(c => c.Author).Where(c => c != rootPage.networkController.credentials.name).Distinct().ToList();
+                var recentAuthors = list.Select(c => c.Author).Where(c => c != rootPage.getNetworkController().credentials.name).Distinct().ToList();
                 foreach (var author in recentAuthors)
                 {
                     var otherConversationsByThisAuthor = conversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).Reverse();
@@ -107,7 +98,7 @@ namespace SandRibbon.Components
         private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
         {
             var conversationJid = e.Parameter as string;
-            var details = App.controller.client.DetailsOf(conversationJid);
+            var details = rootPage.getNetworkController().client.DetailsOf(conversationJid);
             if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
             {
                 // remove the conversation from the menu list

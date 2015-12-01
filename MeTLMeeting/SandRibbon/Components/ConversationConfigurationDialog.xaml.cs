@@ -67,7 +67,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
-                    details = App.controller.client.DetailsOf(conversationJid);
+                    details = rootPage.getNetworkController().client.DetailsOf(conversationJid);
                     PopulateFields();
                     if (details == null)
                     {
@@ -227,11 +227,11 @@ namespace SandRibbon.Components
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
-                    App.controller.client.UpdateConversationDetails(details);
+                    rootPage.getNetworkController().client.UpdateConversationDetails(details);
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.DELETE:
-                    App.controller.client.UpdateConversationDetails(details);
+                    rootPage.getNetworkController().client.UpdateConversationDetails(details);
                     Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
             }

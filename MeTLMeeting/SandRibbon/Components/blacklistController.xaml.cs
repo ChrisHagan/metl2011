@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using MeTLLib;
 using SandRibbon.Providers;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -12,8 +13,10 @@ namespace SandRibbon.Components
     {
         ObservableCollection<string> blacklistedUsersList = new ObservableCollection<string>(); 
         List<string> blacklist = new List<string>();
-        public blacklistController()
+        public SlideAwarePage rootPage { get; protected set; }
+        public blacklistController(SlideAwarePage _rootPage)
         {
+            rootPage = _rootPage;
             InitializeComponent();
             blacklistedUsers.ItemsSource = blacklistedUsersList;
             blacklist = Globals.conversationDetails.blacklist.Distinct().ToList();
@@ -24,7 +27,7 @@ namespace SandRibbon.Components
         {
             var details = Globals.conversationDetails;
             details.blacklist = blacklist;
-            App.controller.client.UpdateConversationDetails(details);
+            rootPage.getNetworkController().client.UpdateConversationDetails(details);
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {

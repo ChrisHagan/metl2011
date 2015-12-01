@@ -2,6 +2,7 @@
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Providers;
 using System;
@@ -25,7 +26,7 @@ namespace SandRibbon.Components
 {    
     public partial class RoleQuickControls : UserControl
     {
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public RoleQuickControls()
         {
             InitializeComponent();
@@ -36,13 +37,13 @@ namespace SandRibbon.Components
             {
                 if (rootPage == null)
                 {
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.RegisterCommand(setSyncCommand);
                 Commands.SetSync.Execute(false);
                 Commands.ToggleSync.RegisterCommand(toggleSyncCommand);
-                UpdatedConversationDetails(rootPage.details);
+                UpdatedConversationDetails(rootPage.getDetails());
             };
             Unloaded += (s, e) =>
             {
@@ -55,22 +56,22 @@ namespace SandRibbon.Components
         private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
         {
             var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
-            var cd = rootPage.details;
+            var cd = rootPage.getDetails();
             cd.Permissions.studentCanPublish = studentsCanPublishValue;
-            App.controller.client.UpdateConversationDetails(cd);
+            rootPage.getNetworkController().client.UpdateConversationDetails(cd);
         }
         private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
         {
             var studentsMustFollowTeacherValue = (bool)(sender as CheckBox).IsChecked;
-            var cd = rootPage.details;
+            var cd = rootPage.getDetails();
             cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
-            App.controller.client.UpdateConversationDetails(cd);
+            rootPage.getNetworkController().client.UpdateConversationDetails(cd);
         }
         protected void UpdatedConversationDetails(ConversationDetails conv)
         {
             Dispatcher.adopt(delegate
             {
-                if (rootPage.details.isAuthor(rootPage.networkController.credentials.name))
+                if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                 {
                     ownerQuickControls.Visibility = Visibility.Visible;
                     participantQuickControls.Visibility = Visibility.Collapsed;
@@ -93,7 +94,7 @@ namespace SandRibbon.Components
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
-                    if (rootPage.details.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.details.isAuthor(rootPage.networkController.credentials.name))
+                    if (rootPage.getDetails().Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                         Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException) { }
@@ -113,15 +114,15 @@ namespace SandRibbon.Components
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (App.controller.client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.networkController.credentials.name,hostedFileName)));
-                MeTLMessage.Information("Submission sent to " + rootPage.details.Author);
+                rootPage.getNetworkController().client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                (rootPage.getSlide().id, rootPage.getNetworkController().credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.getDetails().Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.getNetworkController().credentials.name,hostedFileName)));
+                MeTLMessage.Information("Submission sent to " + rootPage.getDetails().Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
-                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.networkController.credentials.name),
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.getNetworkController().credentials.name),
                 showPrivate = true
             });
         }

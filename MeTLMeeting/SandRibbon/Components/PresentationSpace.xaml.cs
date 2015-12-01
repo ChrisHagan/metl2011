@@ -144,7 +144,7 @@ namespace SandRibbon.Components
                 if (!rootPage.details.isAuthor(rootPage.networkController.credentials.name) && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
-            App.controller.client.UpdateConversationDetails(details);
+            rootPage.getNetworkController().client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
             Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
@@ -156,7 +156,7 @@ namespace SandRibbon.Components
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = App.controller.client;
+                                 var conn = rootPage.getNetworkController().client;
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, rootPage.networkController.credentials.name, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
@@ -396,7 +396,7 @@ namespace SandRibbon.Components
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
             (Globals.slide, rootPage.networkController.credentials.name, marquee, origin, new Point(0, 0),
-            App.controller.client.UploadResourceToPath(
+            rootPage.getNetworkController().client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",

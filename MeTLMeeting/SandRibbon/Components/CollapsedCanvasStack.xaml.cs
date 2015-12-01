@@ -2095,7 +2095,7 @@ namespace SandRibbon.Components
                 worker.DoWork += (s, e) =>
                  {
                      File.Copy(unMangledFilename, filename);
-                     App.controller.client.UploadAndSendFile(
+                     rootPage.getNetworkController().client.UploadAndSendFile(
                          new MeTLStanzas.LocalFileInformation(rootPage.getSlide().id, rootPage.getNetworkController().credentials.name, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(rootPage.getNetworkController().credentials.name,filename)));
                      File.Delete(filename);
                  };
@@ -2718,11 +2718,11 @@ namespace SandRibbon.Components
                 if (File.Exists(tmpFile))
                 {
                     var uri =
-                        App.controller.client.NoAuthUploadResource(
+                        rootPage.getNetworkController().client.NoAuthUploadResource(
                             new Uri(tmpFile, UriKind.RelativeOrAbsolute), rootPage.getSlide().id);
                     var image = new MeTLImage
                     {
-                        Source = new BitmapImage(App.controller.config.getImage(currentPrivacy == Privacy.Public ? rootPage.getSlide().id.ToString() : rootPage.getSlide().id.ToString() + rootPage.getNetworkController().credentials.name, uri)),
+                        Source = new BitmapImage(rootPage.getNetworkController().config.getImage(currentPrivacy == Privacy.Public ? rootPage.getSlide().id.ToString() : rootPage.getSlide().id.ToString() + rootPage.getNetworkController().credentials.name, uri)),
                         Width = imageSource.Width,
                         Height = imageSource.Height,
                         Stretch = Stretch.Fill

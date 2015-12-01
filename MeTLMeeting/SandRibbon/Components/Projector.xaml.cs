@@ -104,7 +104,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                App.controller.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
+                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
             }
             catch (Exception)
             {

@@ -29,55 +29,29 @@ namespace SandRibbon
 
         public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
         public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
-        //public static DiagnosticModel dd = new DiagnosticModel();
         public static DiagnosticWindow diagnosticWindow = null;
         public static IAuditor auditor = new FuncAuditor((g) =>
         {
             diagnosticModelActor.Tell(g);
-            //dd.updateGauge(g);
         }, (m) =>
         {
             diagnosticModelActor.Tell(m);
-            //dd.addMessage(m);
         });
 
-        public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
-        public static NetworkController controller;
-        public static bool isStaging = false;
-        public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-        //        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
-        public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
-
-#if DEBUG
-        public static string OverrideUsername { get; private set; }
-        public static string OverridePassword { get; private set; }
-#endif
+        public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager();
 
         private static SplashScreen splashScreen;
         public static void ShowSplashScreen()
         {
-            //App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
             splashScreen = new SplashScreen("resources/logo-metl-splash.png");
             splashScreen.Show(false);
         }
         public static void CloseSplashScreen()
         {
-            //App.dd.addMessage(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
             splashScreen.Close(TimeSpan.Zero);
         }
 
-        public static void SetBackendProxy(MeTLConfigurationProxy server)
-        {
-            getCurrentServer = server;
-        }
-        public static void SetBackend(MetlConfiguration configuration)
-        {
-            //App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
-            controller = new NetworkController(configuration);
-            //App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
-            //            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
-        }
         public static List<MeTLConfigurationProxy> availableServers()
         {
             if (metlConfigManager.servers.Count == 0)
@@ -85,18 +59,6 @@ namespace SandRibbon
                 metlConfigManager.reload();
             }
             return metlConfigManager.servers;
-        }
-        public static MeTLConfigurationProxy getCurrentServer
-        {
-            get;
-            protected set;
-        }
-        public static MetlConfiguration getCurrentBackend
-        {
-            get
-            {
-                return controller.config;
-            }
         }
         public static void noop(object _arg)
         {
@@ -124,13 +86,6 @@ namespace SandRibbon
             Console.SetOut(outputWriter);
             App.mark("App static constructor runs");
             setDotNetPermissionState();
-            /*
-            // a test of whether training works without fixing its certs
-            //System.Net.ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback((s,ce,ch,e) => true);//bypassAllCertificateStuff);
-            System.Net.ServicePointManager.ServerCertificateValidationCallback += (s, ce, ch, e) => { return true; };//bypassAllCertificateStuff);
-            System.Net.ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls;
-            */            
         }
         private static void setDotNetPermissionState()
         {
@@ -156,11 +111,6 @@ namespace SandRibbon
         protected override void OnStartup(StartupEventArgs e)
         {
             //MeTLConfiguration.Load();            
-#if DEBUG
-            isStaging = true;
-#else
-            isStaging = false;
-#endif
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
@@ -187,8 +137,6 @@ namespace SandRibbon
             try
             {
                 Commands.LeaveAllRooms.Execute(null);
-                if (controller != null && controller.client != null)
-                    controller.client.Disconnect();
             }
             catch (Exception) { }
             if (App.diagnosticWindow != null)
@@ -210,19 +158,6 @@ namespace SandRibbon
         }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-#if DEBUG
-            if (e.Args.Length == 4)
-            {
-                if (e.Args[0] == "-user")
-                {
-                    OverrideUsername = e.Args[1];
-                }
-                if (e.Args[2] == "-pass")
-                {
-                    OverridePassword = e.Args[3];
-                }
-            }
-#endif
         }
     }
 }

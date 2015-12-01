@@ -20,6 +20,7 @@ using MeTLLib.Providers;
 using System.Text;
 using System.Windows.Media;
 using System.Linq;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.BannedContent
 {
@@ -117,12 +118,23 @@ namespace SandRibbon.Components.BannedContent
         public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
         private Dictionary<string, string> userMapping = new Dictionary<string,string>();
-        public BannedContent()
+        public SlideAwarePage rootPage { get; protected set; }
+        public BannedContent(SlideAwarePage _rootPage)
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(JoinConversation));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            rootPage = _rootPage;
+            var receiveSubmissionCommand = new DelegateCommand<TargettedSubmission>(ReceiveSubmission);
+            var closeMeCommand = new DelegateCommand<object>(closeMe);
+            Loaded += (s, e) =>
+            {
+                Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(receiveSubmissionCommand);
+                Commands.ShowConversationSearchBox.RegisterCommandToDispatcher<object>(closeMeCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.ReceiveScreenshotSubmission.UnregisterCommand(receiveSubmissionCommand);
+                Commands.ShowConversationSearchBox.UnregisterCommand(closeMeCommand);
+            };
         }
 
         private void closeMe(object obj)
@@ -175,7 +187,7 @@ namespace SandRibbon.Components.BannedContent
             }
         }
 
-        public BannedContent(List<TargettedSubmission> userSubmissions) : this()
+        public BannedContent(SlideAwarePage _rootPage, List<TargettedSubmission> userSubmissions) : this(_rootPage)
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
@@ -348,7 +360,7 @@ namespace SandRibbon.Components.BannedContent
                     }
                 }
             }
-            App.controller.client.UpdateConversationDetails(details);
+            rootPage.getNetworkController().client.UpdateConversationDetails(details);
         }
     }
 }
