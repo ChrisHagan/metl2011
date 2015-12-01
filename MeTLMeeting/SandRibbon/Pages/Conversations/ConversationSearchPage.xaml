@@ -17,7 +17,7 @@
     xmlns:ppType="clr-namespace:SandRibbon.Utils"
     x:Name="root">
     <Page.Resources>
-        <conversation:VisibleToAuthor x:Key="visibleToAuthor" />        
+        <conversation:VisibleToAuthor x:Key="visibleToAuthor" />
     </Page.Resources>
     <ScrollViewer>
         <Grid Margin="{DynamicResource insetTopLeft}" layout:GridLayout.ItemsPerRow="1">
@@ -88,7 +88,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <Button Click="EditConversation" Visibility="{Binding Converter={StaticResource visibleToAuthor}}">
+                                    <Button Click="EditConversation">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource visibleToAuthor}">
+                                                <Binding />
+                                                <Binding ElementName="root" Path="networkController"/>
+                                            </MultiBinding>
+                                        </Button.Visibility>
                                         <Image Source="\Resources\appbar.cog.png" />
                                     </Button>
                                 </Grid>

@@ -16,10 +16,6 @@ namespace SandRibbon.Components.Utility
     public class ContentBuffer
     {
         public SlideAwarePage rootPage { get; protected set; }
-        public ContentBuffer(SlideAwarePage _rootPage)
-        {
-            rootPage = _rootPage;
-        }
         private StrokeFilter strokeFilter;
         private ImageFilter imageFilter;
         private TextFilter textFilter;
@@ -50,8 +46,9 @@ namespace SandRibbon.Components.Utility
         private ImageFilter imageDeltaCollection;
         private StrokeFilter strokeDeltaFilter;
         
-        public ContentBuffer()
+        public ContentBuffer(SlideAwarePage _rootPage)
         {
+            rootPage = _rootPage;
             strokeFilter = new StrokeFilter(rootPage);
             imageFilter = new ImageFilter(rootPage);
             textFilter = new TextFilter(rootPage);

@@ -25,9 +25,7 @@ namespace SandRibbon.Utils.Connection
     {
         public List<object> history = new List<object>();
         private PrinterMoveDeltaProcessor moveDeltaProcessor;
-        public ConversationDetails details { get; protected set; }
-        public string me { get; protected set; }
-        public UserConversationState userConv { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public PrintParser(
             Credentials credentials,
             int room,
@@ -40,14 +38,11 @@ namespace SandRibbon.Utils.Connection
             IWebClientFactory webClientFactory,
             HttpResourceProvider httpResourceProvider,
             IAuditor _auditor,
-            ConversationDetails _details,
-            UserConversationState _userConv,
-            string _me)
+            SlideAwarePage _rootPage
+        )
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
         {
-            userConv = _userConv;
-            details = _details;
-            me = _me;
+            rootPage = _rootPage;
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<MeTLInkCanvas> ToVisualWithNotes()
@@ -56,14 +51,14 @@ namespace SandRibbon.Utils.Connection
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
         {
-            var canvases = createVisual("presentationSpace", true,details.isAuthor(me));
+            var canvases = createVisual("presentationSpace", true,rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name));
             return new[] { canvases.FirstOrDefault() };
         }
         
         private void ResizeCanvas(MeTLInkCanvas canvas, ContentBuffer contentBuffer)
         {
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible(userConv.contentVisibility));
+            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible(rootPage.getUserConversationState().contentVisibility));
         }
 
         private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, List<ContentVisibilityDefinition> contentVisibility)
@@ -81,12 +76,12 @@ namespace SandRibbon.Utils.Connection
         private IEnumerable<MeTLInkCanvas> createVisual(string target, bool includePublic, bool isAuthor)
         {
             var canvas = new MeTLInkCanvas();
-            var contentBuffer = new ContentBuffer();
-            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, details, me);
+            var contentBuffer = new ContentBuffer(rootPage);
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.getDetails(), rootPage.getNetworkController().credentials.name);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
-                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, details), s => canvas.Strokes.Add(s));
+                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.getDetails()), s => canvas.Strokes.Add(s));
             }
             foreach (var image in images)
             {
@@ -130,11 +125,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvasList = new List<MeTLInkCanvas>();
 
-            var presentationVisual = createVisual("presentationSpace", true, details.isAuthor(me));
+            var presentationVisual = createVisual("presentationSpace", true, rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name));
             if (presentationVisual != null && presentationVisual.Count() > 0)
                 canvasList.AddRange(presentationVisual);
 
-            var notesVisual = createVisual("notepad", false, details.isAuthor(me));
+            var notesVisual = createVisual("notepad", false, rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name));
             if (notesVisual != null && notesVisual.Count() > 0)
                 canvasList.AddRange(notesVisual);
 

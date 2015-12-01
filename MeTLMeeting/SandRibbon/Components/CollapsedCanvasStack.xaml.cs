@@ -158,7 +158,8 @@ namespace SandRibbon.Components
         public ContentBuffer contentBuffer
         {
             get;
-        } = new ContentBuffer();
+            protected set;
+        } 
         private string _target;
         private StackMoveDeltaProcessor moveDeltaProcessor;
         private Privacy _defaultPrivacy;
@@ -244,6 +245,7 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
+                contentBuffer = new ContentBuffer(rootPage);
                 me = rootPage.getNetworkController().credentials.name;
                 Dispatcher.adopt(delegate
                 {

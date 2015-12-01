@@ -25,20 +25,17 @@ using SandRibbon.Components;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public class VisibleToAuthor : IValueConverter
+    public class VisibleToAuthor : IMultiValueConverter
     {
-        public NetworkController controller { get; protected set; }
-        public VisibleToAuthor(NetworkController _controller)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            controller = _controller;
-        }
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+            var value = values[0];
+            var controller = values[1] as NetworkController;
             return (controller.credentials.name == ((ConversationDetails)value).Author) ? Visibility.Visible : Visibility.Hidden;
         }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
-            return false;
+            return new object[] { };
         }
     }
     public partial class ConversationSearchPage : Page, ServerAwarePage
@@ -57,7 +54,8 @@ namespace SandRibbon.Pages.Conversations
             userServer = _userServer;
             networkController = _networkController;
             InitializeComponent();
-            DataContext = searchResultsObserver;
+            DataContext = this;
+            SearchResults.DataContext = searchResultsObserver;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
