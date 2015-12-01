@@ -1,4 +1,5 @@
 ﻿using MeTLLib;
+using SandRibbon.Components;
 using SandRibbon.Pages.Login;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.ServerSelection
 {
@@ -121,16 +123,18 @@ namespace SandRibbon.Pages.ServerSelection
             }
         }
     }
-    public partial class ServerSelectorPage : Page
+    public partial class ServerSelectorPage : Page, GlobalAwarePage
     {
         protected int recheckInterval = 3000;
         //protected Timer dispatcherTimer;
         protected ServerCollection servers = new ServerCollection();
         protected List<Timer> timers = new List<Timer>();
         protected Timer refreshTimer;
-        public ServerSelectorPage()
+        public UserGlobalState userGlobal { get; protected set; }
+        public ServerSelectorPage(UserGlobalState _userGlobal)
         {
             InitializeComponent();
+            userGlobal = _userGlobal;
             DataContext = servers;
             var localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
             Unloaded += (s, e) =>
@@ -209,9 +213,18 @@ namespace SandRibbon.Pages.ServerSelection
             refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
             var source = sender as FrameworkElement;
             var selection = source.DataContext as ServerChoice;
-            App.SetBackendProxy(selection.server);
-            Commands.BackendSelected.Execute(selection);
-            NavigationService.Navigate(new LoginPage(selection.server));
+            var userServer = new UserServerState();
+            NavigationService.Navigate(new LoginPage(userGlobal, selection.server));
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
         }
     }
 }

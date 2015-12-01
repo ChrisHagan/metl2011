@@ -33,6 +33,7 @@ using System.Windows.Navigation;
 using SandRibbon.Pages.Conversations;
 using SandRibbon.Pages.Integration;
 using SandRibbon.Pages.Analytics;
+using SandRibbon.Pages;
 
 namespace SandRibbon
 {
@@ -53,8 +54,9 @@ namespace SandRibbon
         {
             InitializeComponent();
             DoConstructor();
-            Commands.AllStaticCommandsAreRegistered();            
-            mainFrame.Navigate(new ServerSelectorPage());
+            Commands.AllStaticCommandsAreRegistered();
+            var globalState = new UserGlobalState();            
+            mainFrame.Navigate(new ServerSelectorPage(globalState));
             App.CloseSplashScreen();
         }
 

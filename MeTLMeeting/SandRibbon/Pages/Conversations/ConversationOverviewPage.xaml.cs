@@ -43,12 +43,20 @@ namespace SandRibbon.Pages.Collaboration
         public static readonly DependencyProperty voicesProperty =
             DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
     };
-    public partial class ConversationOverviewPage : Page
+    public partial class ConversationOverviewPage : Page, ConversationAwarePage
     {
         ReticulatedConversation conversation;
         NetworkController networkController;
-        public ConversationOverviewPage(NetworkController _networkController, ConversationDetails presentationPath)
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+        public UserConversationState userConv { get; protected set; }
+        public ConversationDetails details { get; protected set; }
+        public ConversationOverviewPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
         {
+            userGlobal = _userGlobal;
+            userServer = _userServer;
+            userConv = _userConv;
+            details = presentationPath;
             networkController = _networkController;
             InitializeComponent();
             DataContext = conversation = new ReticulatedConversation
@@ -70,6 +78,36 @@ namespace SandRibbon.Pages.Collaboration
             var slide = element.DataContext as VmSlide;
             //Commands.MoveToCollaborationPage.Execute(slide.Slide.id);
             NavigationService.Navigate(new RibbonCollaborationPage(networkController, slide.Details, slide.Slide));// networkController.ribbonCollaborationPage);            
+        }
+
+        public ConversationDetails getDetails()
+        {
+            return details;
+        }
+
+        public UserConversationState getUserConversationState()
+        {
+            return userConv;
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
         }
     }    
     public class GridLengthConverter : IValueConverter

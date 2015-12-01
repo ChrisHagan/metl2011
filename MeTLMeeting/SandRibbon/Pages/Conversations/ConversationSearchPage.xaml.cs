@@ -25,7 +25,8 @@ using SandRibbon.Components;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public class VisibleToAuthor : IValueConverter { 
+    public class VisibleToAuthor : IValueConverter
+    {
         public NetworkController controller { get; protected set; }
         public VisibleToAuthor(NetworkController _controller)
         {
@@ -40,16 +41,20 @@ namespace SandRibbon.Pages.Conversations
             return false;
         }
     }
-    public partial class ConversationSearchPage : Page
+    public partial class ConversationSearchPage : Page, ServerAwarePage
     {
         private ObservableCollection<SearchConversationDetails> searchResultsObserver = new ObservableCollection<SearchConversationDetails>();
 
         private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
-        protected NetworkController networkController;
+        public NetworkController networkController { get; protected set; }
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
 
-        public ConversationSearchPage(NetworkController _networkController, string query)
+        public ConversationSearchPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, string query)
         {
+            userGlobal = _userGlobal;
+            userServer = _userServer;
             networkController = _networkController;
             InitializeComponent();
             DataContext = searchResultsObserver;
@@ -199,7 +204,7 @@ namespace SandRibbon.Pages.Conversations
         private void EditConversation(object sender, RoutedEventArgs e)
         {
             var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            NavigationService.Navigate(new ConversationEditPage(networkController,conversation));
+            NavigationService.Navigate(new ConversationEditPage(networkController, conversation));
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)
@@ -211,10 +216,11 @@ namespace SandRibbon.Pages.Conversations
         {
             var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
             var conversation = networkController.client.DetailsOf(requestedConversation.Jid);
-            if (conversation.UserHasPermission(Globals.credentials))
+            if (conversation.UserHasPermission(networkController.credentials))
             {
                 //Commands.JoinConversation.Execute(conversation.Jid);
-                NavigationService.Navigate(new ConversationOverviewPage(networkController,conversation));
+                var userConversation = new UserConversationState();
+                NavigationService.Navigate(new ConversationOverviewPage(userGlobal, userServer, userConversation, networkController, conversation));
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");
@@ -224,7 +230,8 @@ namespace SandRibbon.Pages.Conversations
         {
             if (SearchResults.SelectedItems.Count > 0)
             {
-                NavigationService.Navigate(new ConversationComparisonPage(networkController,SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+                var userConversation = new UserConversationState();
+                NavigationService.Navigate(new ConversationComparisonPage(userGlobal, userServer, userConversation, networkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
             }
         }
 
@@ -233,12 +240,33 @@ namespace SandRibbon.Pages.Conversations
             var cs = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
             if (cs.Count() > 0)
             {
-                Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet {
+                Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet
+                {
                     config = Globals.OneNoteConfiguration,
                     networkController = networkController,
                     conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
                 });
             }
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            throw new NotImplementedException();
         }
     }
     public class ConversationComparator : System.Collections.IComparer

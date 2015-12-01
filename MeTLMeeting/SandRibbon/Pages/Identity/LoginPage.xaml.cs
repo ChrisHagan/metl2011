@@ -20,6 +20,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
+using SandRibbon.Components;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Login
 {
@@ -60,20 +62,20 @@ namespace SandRibbon.Pages.Login
         }
     }
 
-    public partial class LoginPage : Page
+    public partial class LoginPage : Page, GlobalAwarePage
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
         public MeTLConfigurationProxy backend { get; set; }
         protected WebControl logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
-        public LoginPage(MeTLConfigurationProxy _backend)
+        public UserGlobalState userGlobal { get; protected set; }
+        public LoginPage(UserGlobalState _userGlobal, MeTLConfigurationProxy _backend)
         {
+            userGlobal = _userGlobal;
             backend = _backend;
             InitializeComponent();
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
-            Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             ResetWebBrowser(null);
         }
         protected Timer showTimeoutButton;
@@ -82,44 +84,11 @@ namespace SandRibbon.Pages.Login
         {
             ResetWebBrowser(null);
         }
-        protected void hideBrowser()
-        {
-            logonBrowserContainer.Visibility = Visibility.Collapsed;
-            loadingImage.Visibility = Visibility.Visible;
-            logonBrowserContainer.IsHitTestVisible = true;
-            restartLoginProcessContainer.Visibility = Visibility.Collapsed;
-            showTimeoutButton.Change(loginTimeout, Timeout.Infinite);
-        }
-        protected void showBrowser()
-        {
-            loadingImage.Visibility = Visibility.Collapsed;
-            hideResetButton();
-            logonBrowserContainer.Visibility = Visibility.Visible;
-            logonBrowserContainer.IsHitTestVisible = true;
-        }
         protected void showResetButton()
         {
             restartLoginProcessContainer.Visibility = Visibility.Visible;
             showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
         }
-        protected void hideResetButton()
-        {
-            restartLoginProcessContainer.Visibility = Visibility.Collapsed;
-            showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
-        }
-        class UriHostComparer : IEqualityComparer<System.Uri>
-        {
-
-            public bool Equals(Uri x, Uri y)
-            {
-                return x.Host == y.Host;
-            }
-
-            public int GetHashCode(Uri obj)
-            {
-                return obj.Host.GetHashCode();
-            }
-        }        
         protected void ResetWebBrowser(object _unused)
         {
             var loginUri = backend.authenticationUrl;                        
@@ -138,50 +107,6 @@ namespace SandRibbon.Pages.Login
                 var nwc = new WebControl();
                 logonBrowserContainer.Children.Add(nwc);
                 nwc.NativeView = e.NewViewInstance;
-                /*
-                WebControl webControl = sender as WebControl;
-
-                if (webControl == null)
-                    return;
-
-                if (!webControl.IsLive)
-                    return;
-
-                ChildWindow newWindow = new ChildWindow();
-
-                if (e.IsPopup && !e.IsUserSpecsOnly)
-                {
-                    Int32Rect screenRect = e.Specs.InitialPosition.GetInt32Rect();
-
-                    newWindow.NativeView = e.NewViewInstance;
-                    newWindow.ShowInTaskbar = false;
-                    newWindow.WindowStyle = System.Windows.WindowStyle.ToolWindow;
-                    newWindow.ResizeMode = e.Specs.Resizable ? ResizeMode.CanResizeWithGrip : ResizeMode.NoResize;
-
-                    if ((screenRect.Width > 0) && (screenRect.Height > 0))
-                    {
-                        newWindow.Width = screenRect.Width;
-                        newWindow.Height = screenRect.Height;
-                    }
-                    newWindow.Show();
-                    if ((screenRect.Y > 0) && (screenRect.X > 0))
-                    {
-                        newWindow.Top = screenRect.Y;
-                        newWindow.Left = screenRect.X;
-                    }
-                }
-                else if (e.IsWindowOpen || e.IsPost)
-                {
-                    newWindow.NativeView = e.NewViewInstance;
-                    newWindow.Show();
-                }
-                else
-                {
-                    e.Cancel = true;
-                    newWindow.Source = e.TargetURL;
-                    newWindow.Show();
-                }
-                */
             };
             logonBrowser.TargetURLChanged += (s, a) =>
             {
@@ -217,22 +142,22 @@ namespace SandRibbon.Pages.Login
                             var JSESSIONID = logonBrowser.ExecuteJavascriptWithResult("document.cookie");                            
                             Commands.Mark.Execute("Login");
                             var newServer = App.metlConfigManager.parseConfig(backend, authData.First()).First();
-                            App.SetBackend(newServer);
                             var credentials = new Credentials(newServer.xmppUsername, newServer.xmppPassword, authGroups, emailAddress);
                             credentials.cookie = JSESSIONID;
-                            App.controller.connect(credentials);
-                            if (!App.controller.client.Connect(credentials))
+                            var controller = new NetworkController(newServer);
+                            controller.connect(credentials);
+                            if (!controller.client.Connect(credentials))
                             {
                                 Commands.LoginFailed.Execute(null);
                             }
                             else
                             {
                                 loginAttempted = true;
-                                Commands.SetIdentity.Execute(credentials);
-                                Globals.authenticatedWebSession = logonBrowser.WebSession;
+                                var userServer = new UserServerState();
+                                userServer.authenticatedWebSession = logonBrowser.WebSession;
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
-                                NavigationService.Navigate(new ConversationSearchPage(App.controller, credentials.name));
+                                NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
@@ -289,6 +214,26 @@ namespace SandRibbon.Pages.Login
             Commands.SetUserOptions.Execute(options);
             Globals.loadProfiles(identity);
             Commands.Mark.Execute("Identity is established");
+        }
+
+        public NetworkController getNetworkController()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserServerState getUserServerState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public NavigationService getNavigationService()
+        {
+            throw new NotImplementedException();
         }
     }
 }
