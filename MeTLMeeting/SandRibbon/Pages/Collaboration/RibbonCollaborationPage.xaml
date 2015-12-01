@@ -154,76 +154,80 @@
             <tabs:Analytics/>
             <tabs:Plugins/>
         </Ribbon>
-        <Grid x:Name="EffectRoot">
-            <Grid x:Name="columns">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="LHSDrawerDefinition" Width="*" MaxWidth="200"/>
-                    <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
-                    <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
-                    <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
-                    <ColumnDefinition x:Name="RHSDrawerDefinition" Width="200" />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
-                    <Grid layout:GridLayout.ItemsPerRow="1">
-                        <TextBlock Text="What do you want to see?" Style="{StaticResource minorHeading}" />
-                        <components:ContentVisibility/>
-                        <components:RoleQuickControls />
-                    </Grid>
-                </Grid>
-                <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
-                <Grid Grid.Column="2">
-                    <Grid x:Name="adornerGrid" Margin="0,0,27,27">
-                        <Canvas x:Name="syncPageOverlay"/>
-                        <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
-                            <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                <Grid>
-                                    <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
-                                    <collab:KunzweilerLens x:Name="lens" Width="{Binding ElementName=canvas, Path=ActualWidth}" Height="{Binding ElementName=canvas, Path=ActualHeight}" />
-                                </Grid>
-                            </ScrollViewer>
-                        </Viewbox>
-                        <Grid x:Name="dynamicContent" />
-                        <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
-                    </Grid>
-                    <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
-                    <AdornerDecorator>
-                        <Canvas x:Name="privacyTools"/>
-                    </AdornerDecorator>
-                </Grid>
-                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
-                <Grid Grid.Column="4" x:Name="rightDrawer">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="{Binding ElementName=LHSMiniMap, Path=Height}"/>
-                        <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <components:MiniMap DataContext="{Binding ElementName=scroll}" x:Name="LHSMiniMap"/>
-                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="1" Width="Auto"/>
-                    <TabControl Grid.Row="2" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
-                        <TabItem Header="Pages" Width="80">
-                            <components:SlideDisplay x:Name="slides" />
-                        </TabItem>
-                        <TabItem Header="Notes" Width="80">
-                            <Grid>
-                                <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">
-                                    <Viewbox x:Name="notesViewBox" SizeChanged="notepadSizeChanged">
-                                        <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="notepadScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                            <components:PrivateNotepadSpace Height="auto" Width="auto" x:Name="privateNotes" />
-                                        </ScrollViewer>
-                                    </Viewbox>
-                                </Grid>
-                                <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
-                                <AdornerDecorator>
-                                    <Canvas x:Name="notesPrivacyTools"/>
-                                </AdornerDecorator>
-                            </Grid>
-                        </TabItem>
-                        <TabItem x:Name="ParticipantsTabItem" Header="Participants">
-                            <components:Participants/>
-                        </TabItem>
-                    </TabControl>
+        <Grid x:Name="columns" VerticalAlignment="Stretch" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="*" MaxWidth="200"/>
+                <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
+                <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
+                <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
+                <ColumnDefinition x:Name="RHSDrawerDefinition" Width="200" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="200" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
+                <Grid layout:GridLayout.ItemsPerRow="1">
+                    <TextBlock Text="What do you want to see?" Style="{StaticResource minorHeading}" />
+                    <components:ContentVisibility/>
+                    <components:RoleQuickControls />
                 </Grid>
             </Grid>
+            <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
+            <Grid Grid.Column="2" Grid.Row="0" >
+                <Grid x:Name="adornerGrid" Margin="0,0,27,27">
+                    <Canvas x:Name="syncPageOverlay"/>
+                    <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
+                        <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                            <Grid>
+                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                                <collab:KunzweilerLens x:Name="lens" Width="{Binding ElementName=canvas, Path=ActualWidth}" Height="{Binding ElementName=canvas, Path=ActualHeight}" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Viewbox>
+                    <Grid x:Name="dynamicContent" />
+                    <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
+                </Grid>
+                <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
+                <AdornerDecorator>
+                    <Canvas x:Name="privacyTools"/>
+                </AdornerDecorator>
+            </Grid>
+            <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
+            <Grid Grid.Column="4" Grid.Row="0"  x:Name="rightDrawer">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding ElementName=LHSMiniMap, Path=Height}"/>
+                    <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <components:MiniMap DataContext="{Binding ElementName=scroll}" x:Name="LHSMiniMap"/>
+                <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="1" Width="Auto"/>
+                <TabControl Grid.Row="2" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
+                    <TabItem Header="Notes" Width="80">
+                        <Grid>
+                            <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">
+                                <Viewbox x:Name="notesViewBox" SizeChanged="notepadSizeChanged">
+                                    <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="notepadScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                        <components:PrivateNotepadSpace Height="auto" Width="auto" x:Name="privateNotes" />
+                                    </ScrollViewer>
+                                </Viewbox>
+                            </Grid>
+                            <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
+                            <AdornerDecorator>
+                                <Canvas x:Name="notesPrivacyTools"/>
+                            </AdornerDecorator>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="ParticipantsTabItem" Header="Participants">
+                        <components:Participants/>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+            <GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Height="Auto" HorizontalAlignment="Stretch"/>
+            <components:SlideDisplay Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" x:Name="slides" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         </Grid>
+
     </DockPanel>
 </Page>

@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:win="clr-namespace:System.Windows" 
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
@@ -10,82 +11,79 @@
         <core:String x:Key="defaultPrivacy">public</core:String>
         <core:String x:Key="target">presentationSpace</core:String>
         <core:Double x:Key="thumbAspect">0.75</core:Double>
+        <core:Double x:Key="inverseThumbAspect">1.33</core:Double>
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <ScrollViewer>
-            <ScrollViewer.Resources>
-                <core:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">40</core:Double>
-            </ScrollViewer.Resources>
-            <ListBox
+
+    <ScrollViewer Height="Auto">
+        <ScrollViewer.Resources>
+            <core:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">40</core:Double>
+        </ScrollViewer.Resources>
+        <ListBox
              x:Name="slides"
-             ItemsSource="{Binding Path=thumbnailList}"
-             Grid.Row="0"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+             ItemsSource="{Binding Path=thumbnailList}"             
+             ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+             ScrollViewer.VerticalScrollBarVisibility="Disabled" 
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
-             HorizontalAlignment="Stretch" Width="Auto" >
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
-                    <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
-                    <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
-                    <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
-                    <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
-                    <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
-                    <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
-                    <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
-                    <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
-                    <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
-                    <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
-                </ListBox.InputBindings>
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border Name="Border" Margin="1" 
-                            Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+             HorizontalAlignment="Stretch" Width="Auto" Height="Auto">
+            <ListBox.InputBindings>
+                <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
+                <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+                <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
+                <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
+                <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
+                <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
+                <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
+                <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
+                <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
+                <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
+                <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
+            </ListBox.InputBindings>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Name="Border" Margin="1" 
+                            Padding="2" Background="{StaticResource BackgroundBlueGradient}"
                             SnapsToDevicePixels="true" CornerRadius="2"
-                            Width="Auto" HorizontalAlignment="Stretch" >
-                            <Border.Height>
-                                <MultiBinding Converter="{x:Static my:Converters.multiply}">
-                                    <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
-                                    <Binding Source="{StaticResource thumbAspect}"/>
-                                </MultiBinding>
-                            </Border.Height>
-                            <Border.Focusable>
-                                <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
-                                    <Binding Path="index"/>
-                                    <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
-                                    <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
-                                </MultiBinding>
-                            </Border.Focusable>
-                            <Grid>
-                                <Viewbox IsHitTestVisible="False" Width="Auto">
-                                    <Image Height="200" Width="320" x:Name="thumbnailImage"  />
-                                </Viewbox>
-                                <Image Source="/Resources/FogOfWar.png">
-                                    <Image.Visibility>
-                                        <MultiBinding Converter="{x:Static my:Converters.FogOfWar}">
-                                            <Binding Path="index"/>
-                                            <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
-                                            <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
-                                        </MultiBinding>
-                                    </Image.Visibility>
-                                </Image>
-                                <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                            VerticalAlignment="Stretch">
+                        <Border.Width>
+                            <MultiBinding Converter="{x:Static my:Converters.multiply}">
+                                <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                                <Binding Source="{StaticResource inverseThumbAspect}"/>
+                            </MultiBinding>
+                        </Border.Width>
+                        <Border.Focusable>
+                            <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
+                                <Binding Path="index"/>
+                                <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
+                                <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
+                            </MultiBinding>
+                        </Border.Focusable>
+                        <Grid>
+                            <Viewbox IsHitTestVisible="False" HorizontalAlignment="Stretch">
+                                <Image Height="200" Width="320" x:Name="thumbnailImage"  />
+                            </Viewbox>
+                            <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
-                                                VerticalAlignment="Bottom" 
+                                                VerticalAlignment="Top" 
                                                 BorderThickness="1">
-                                    <Label Content="{Binding Converter={StaticResource slideIndexConverter}}"/>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
-    </Grid>
+                                <Label Content="{Binding Converter={StaticResource slideIndexConverter}}"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </ScrollViewer>
 </UserControl>
