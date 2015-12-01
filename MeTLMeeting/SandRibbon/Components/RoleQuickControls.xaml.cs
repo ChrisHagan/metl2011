@@ -88,21 +88,22 @@ namespace SandRibbon.Components
         }
         private void SetSync(bool sync)
         {
-            syncButton.IsChecked = Globals.synched; 
-            if (Globals.synched)
+            syncButton.IsChecked = rootPage.getUserConversationState().synched; 
+            if (rootPage.getUserConversationState().synched)
             {                
                 try
                 {
-                    var teacherSlide = (int)Globals.teacherSlide;
+                    var teacherSlide = (int)rootPage.getUserConversationState().teacherSlide;
                     if (rootPage.getDetails().Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
-                        Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
+                        rootPage.getNavigationService().Navigate(new RibbonCollaborationPage(rootPage.getNetworkController(), rootPage.getDetails(),rootPage.getDetails().Slides.First(s => s.id == teacherSlide)));
+                        //Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException) { }
             }            
         }
         private void toggleSync(object _unused)
         {
-            var synch = !Globals.synched;
+            var synch = !rootPage.getUserConversationState().synched;
             System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
             Commands.SetSync.Execute(synch);
         }

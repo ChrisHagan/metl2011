@@ -99,7 +99,7 @@ namespace SandRibbon.Components
         {
             var conversationJid = e.Parameter as string;
             var details = rootPage.getNetworkController().client.DetailsOf(conversationJid);
-            if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
+            if (details.isDeleted || !details.UserHasPermission(rootPage.getNetworkController().credentials))
             {
                 // remove the conversation from the menu list
                 UpdateConversationDetails(details);

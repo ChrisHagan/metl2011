@@ -13,23 +13,30 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public partial class TagCloudPage : Page
+    public partial class TagCloudPage : Page, ConversationAwarePage
     {
-        NetworkController controller;
-        public TagCloudPage(NetworkController networkController)
+        public NetworkController controller { get; protected set; }
+        public ConversationDetails details { get; protected set; }
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+        public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer)
         {
             InitializeComponent();
+            details = _details;
             controller = networkController;
+            userGlobal = _userGlobal;
+            userServer = _userServer;
             loadWorkbench();            
         }
 
         private void loadWorkbench()
         {            
             var wc = new WebControl();
-            wc.WebSession = Globals.authenticatedWebSession;
+            wc.WebSession = userServer.authenticatedWebSession;
             Content = wc;
             wc.DocumentReady += Wc_DocumentReady;
             wc.ProcessCreated += delegate
@@ -68,8 +75,8 @@ namespace SandRibbon.Pages.Analytics
                     tagsRendered = true;
                     var themes = new List<String>();
                     var count = 0;
-                    var max = Globals.slides.Count;
-                    foreach (var slide in Globals.slides) {
+                    var max = rootPage.getDetails().Slides.Count;
+                    foreach (var slide in rootPage.getDetails().Slides) {
                         ThreadPool.QueueUserWorkItem(delegate
                        {
                            themes.AddRange(Themes(slide));
@@ -87,6 +94,36 @@ namespace SandRibbon.Pages.Analytics
                     }                                          
                 }
             }
-        }        
+        }
+
+        public ConversationDetails getDetails()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserConversationState getUserConversationState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public NetworkController getNetworkController()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
+        }
     }
 }

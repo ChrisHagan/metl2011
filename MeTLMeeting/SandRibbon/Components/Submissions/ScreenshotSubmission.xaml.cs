@@ -141,9 +141,9 @@ namespace SandRibbon.Components.Submissions
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (App.controller.client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.networkController.credentials.name,hostedFileName)));
-                MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
+                rootPage.getNetworkController().client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                (rootPage.getNetworkController().client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.networkController.credentials.name,hostedFileName)));
+                MeTLMessage.Information("Submission sent to " + rootPage.getDetails().Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails

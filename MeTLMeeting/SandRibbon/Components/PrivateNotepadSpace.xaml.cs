@@ -35,7 +35,6 @@ namespace SandRibbon.Components
 
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            if (Globals.currentPage != "RibbonCollaborationPage") return;
             BeginInit();
             notepadStack.ReceiveStrokes(parser.ink);
             notepadStack.ReceiveImages(parser.images.Values);

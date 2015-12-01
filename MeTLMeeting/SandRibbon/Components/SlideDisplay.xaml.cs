@@ -273,7 +273,7 @@ namespace SandRibbon.Components
         {
             if (rootPage.getDetails().ValueEquals(ConversationDetails.Empty)) return false;
             if (String.IsNullOrEmpty(rootPage.getNetworkController().credentials.name)) return false;
-            return (rootPage.getDetails().Permissions.studentCanPublish || rootPage.getDetails().Author == Globals.me);
+            return (rootPage.getDetails().Permissions.studentCanPublish || rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name);
         }
         private void addSlide(object _slide)
         {
@@ -318,7 +318,7 @@ namespace SandRibbon.Components
         private void MoveToTeacher(int where)
         {
             if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name)) return;
-            if (!Globals.synched) return;
+            if (!rootPage.getUserConversationState().synched) return;
             if (where == rootPage.getSlide().id) return; // don't move if we're already on the slide requested
             TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
             checkMovementLimits();
@@ -489,7 +489,7 @@ namespace SandRibbon.Components
 
         public void SendSyncMove(int currentSlideId)
         {
-            if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) && Globals.synched)
+            if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) && rootPage.getUserConversationState().synched)
             {
                 Commands.SendSyncMove.ExecuteAsync(currentSlideId);
             }

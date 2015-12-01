@@ -10,6 +10,7 @@ using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Utils;
 using System.ComponentModel;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Utility
 {
@@ -29,8 +30,8 @@ namespace SandRibbon.Components.Utility
         }
         public string GroupId { get; protected set; }
         //= (author, privacy, conversation, slide) => false;
-        public Func<string, Privacy, ConversationDetails, Slide, bool> Comparer { get; protected set; }
-        public ContentVisibilityDefinition(string label, string description, string groupId, bool subscribed, Func<string, Privacy, ConversationDetails, Slide, bool> comparer)
+        public Func<SlideAwarePage, string, Privacy, ConversationDetails, Slide, bool> Comparer { get; protected set; }
+        public ContentVisibilityDefinition(string label, string description, string groupId, bool subscribed, Func<SlideAwarePage, string, Privacy, ConversationDetails, Slide, bool> comparer)
         {
             Label = label;
             Description = description;
@@ -50,14 +51,14 @@ namespace SandRibbon.Components.Utility
 
     public static class ContentFilterVisibility
     {
-        public static readonly ContentVisibilityDefinition myPublic = new ContentVisibilityDefinition("My public", "", "", true, (a, p, c, s) => a == Globals.me && p == Privacy.Public);
-        public static readonly ContentVisibilityDefinition myPrivate = new ContentVisibilityDefinition("My private", "", "", true, (a, p, c, s) => a == Globals.me && p == Privacy.Private);
-        public static readonly ContentVisibilityDefinition ownersPublic = new ContentVisibilityDefinition("Owner's", "", "", true, (a, p, c, s) => a == c.Author && p == Privacy.Public);
-        public static readonly ContentVisibilityDefinition peersPublic = new ContentVisibilityDefinition("Everyone else's", "", "", true, (a, p, c, s) => a != Globals.me && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition myPublic = new ContentVisibilityDefinition("My public", "", "", true, (sap,a, p, c, s) => a == sap.getNetworkController().credentials.name && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition myPrivate = new ContentVisibilityDefinition("My private", "", "", true, (sap,a, p, c, s) => a == sap.getNetworkController().credentials.name && p == Privacy.Private);
+        public static readonly ContentVisibilityDefinition ownersPublic = new ContentVisibilityDefinition("Owner's", "", "", true, (sap, a, p, c, s) => a == c.Author && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition peersPublic = new ContentVisibilityDefinition("Everyone else's", "", "", true, (sap, a, p, c, s) => a != sap.getNetworkController().credentials.name && p == Privacy.Public);
         public static readonly List<ContentVisibilityDefinition> defaultVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
         public static readonly List<ContentVisibilityDefinition> defaultGroupVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
 
-        public static List<ContentVisibilityDefinition> allVisible = Globals.contentVisibility.ToArray().ToList().Select(cvd => { cvd.Subscribed = true; return cvd; }).ToList();
+        public static List<ContentVisibilityDefinition> allVisible(List<ContentVisibilityDefinition> visibilities) { return visibilities.ToArray().ToList().Select(cvd => { cvd.Subscribed = true; return cvd; }).ToList(); }
         public static void refreshVisibilities()
         {
             Commands.SetContentVisibility.Execute(CurrentContentVisibility);
@@ -84,19 +85,9 @@ namespace SandRibbon.Components.Utility
             refreshVisibilities();
         }
 
-        public static bool isGroupSlide
+        public static bool isGroupSlide(Slide slide)
         {
-            get
-            {
-                try
-                {
-                    return Globals.conversationDetails.Slides.Find(s => s.id == Globals.slide).type == Slide.TYPE.GROUPSLIDE;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
+                    return slide.type == Slide.TYPE.GROUPSLIDE;
         }
         public static List<ContentVisibilityDefinition> CurrentContentVisibility
         {
@@ -110,9 +101,10 @@ namespace SandRibbon.Components.Utility
     public abstract class ContentFilter<C, T> where C : class, ICollection<T>, new() 
     {
         protected C contentCollection;
-
-        public ContentFilter()
+        public SlideAwarePage rootPage { get; protected set; }
+        public ContentFilter(SlideAwarePage _rootPage)
         {
+            rootPage = _rootPage;
             contentCollection = new C();
         }
 
@@ -234,7 +226,7 @@ namespace SandRibbon.Components.Utility
             Clear();
             modifyVisibleContainer();
         }
-        public List<ContentVisibilityDefinition> CurrentContentVisibility { get { return Globals.contentVisibility; } }
+        public List<ContentVisibilityDefinition> CurrentContentVisibility { get { return rootPage.getUserConversationState().contentVisibility; } }
         public void Add(T element, Action<T> modifyVisibleContainer)
         {
             Add(element);
@@ -273,7 +265,7 @@ namespace SandRibbon.Components.Utility
 
         public T FilterContent(T element, List<ContentVisibilityDefinition> contentVisibility)
         {
-            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(AuthorFromTag(element), PrivacyFromTag(element),Globals.conversationDetails,Globals.slideDetails)) ? element : default(T);
+            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(rootPage,AuthorFromTag(element), PrivacyFromTag(element),rootPage.getDetails(),rootPage.getSlide())) ? element : default(T);
         }
 
         public C FilterContent(C elements, List<ContentVisibilityDefinition> contentVisibility)
@@ -281,7 +273,7 @@ namespace SandRibbon.Components.Utility
             var tempList = new C();
             var enabledContentVisibilities = contentVisibility.Where(cv => cv.Subscribed);
             var matchedElements = elements.Where(elem => enabledContentVisibilities.Any(cv => {
-                return cv.Subscribed && cv.Comparer(AuthorFromTag(elem), PrivacyFromTag(elem), Globals.conversationDetails, Globals.slideDetails);
+                return cv.Subscribed && cv.Comparer(rootPage,AuthorFromTag(elem), PrivacyFromTag(elem), rootPage.getDetails(), rootPage.getSlide());
             }));
 
             foreach (var elem in matchedElements)

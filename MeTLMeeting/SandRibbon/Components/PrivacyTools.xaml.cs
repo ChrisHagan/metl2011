@@ -34,7 +34,7 @@ namespace SandRibbon.Components
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 try
                 {
-                    if (String.IsNullOrEmpty(Globals.privacy) || rootPage.getDetails() == null)
+                    if (String.IsNullOrEmpty(rootPage.getUserConversationState().privacy.ToString()) || rootPage.getDetails() == null)
                     {
                         Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                     }
@@ -45,7 +45,7 @@ namespace SandRibbon.Components
                         else
                             Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                         settingEnabledModes(rootPage.getDetails());
-                        settingSelectedMode(Globals.privacy);
+                        settingSelectedMode(rootPage.getUserConversationState().privacy.ToString());
                     }
                 }
                 catch (NotSetException)

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using SandRibbon.Providers;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -11,10 +12,12 @@ namespace SandRibbon.Components
     {
         private readonly static string[] availableModes = new string[]{"Sharing", "Rearranging"};
         private static string mode = availableModes[0];
-        public SlidesEditingDialog()
+        public ConversationAwarePage rootPage { get; protected set; }
+        public SlidesEditingDialog(ConversationAwarePage _rootPage)
         {
+            rootPage = _rootPage;
             InitializeComponent();
-            var slides = Globals.slides.Select(s=>new MeTLLib.DataTypes.ThumbnailInformation{ 
+            var slides = rootPage.getDetails().Slides.Select(s=>new MeTLLib.DataTypes.ThumbnailInformation{ 
                 Exposed=s.exposed,
                 slideId=s.id,
                 slideNumber=s.index+1

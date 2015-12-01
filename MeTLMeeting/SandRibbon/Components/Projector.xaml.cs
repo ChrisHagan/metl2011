@@ -70,11 +70,7 @@ namespace SandRibbon.Components
         }
         private string generateTitle(ConversationDetails details)
         {
-            var possibleIndex = details.Slides.Where(s => s.id == Globals.location.currentSlide);
-            int slideIndex = 1;
-            if(possibleIndex.Count() != 0)
-                slideIndex = possibleIndex.First().index + 1;
-            return string.Format("{0} Page:{1}", details.Title, slideIndex);
+            return string.Format("{0} Page:{1}", details.Title, rootPage.getSlide().index);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -86,7 +82,6 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         public void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            if (Globals.currentPage != "RibbonCollaborationPage") return;
             //if (!isPrivate(parser))
             //{
             BeginInit();

@@ -1,4 +1,5 @@
-﻿using MeTLLib.DataTypes;
+﻿using Awesomium.Core;
+using MeTLLib.DataTypes;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using System;
@@ -23,6 +24,7 @@ namespace SandRibbon.Pages
     }
     public class UserServerState
     {
+        public WebSession authenticatedWebSession { get; set; }
     }
     public class UserGlobalState
     {
@@ -33,7 +35,7 @@ namespace SandRibbon.Pages
         UserGlobalState getUserGlobalState();
         NavigationService getNavigationService();
     }
-    public interface ServerAwarePage
+    public interface ServerAwarePage : GlobalAwarePage
     {
         NetworkController getNetworkController();
         UserServerState getUserServerState();
