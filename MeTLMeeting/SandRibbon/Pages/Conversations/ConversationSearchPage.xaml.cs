@@ -230,8 +230,7 @@ namespace SandRibbon.Pages.Conversations
         {
             if (SearchResults.SelectedItems.Count > 0)
             {
-                var userConversation = new UserConversationState();
-                NavigationService.Navigate(new ConversationComparisonPage(userGlobal, userServer, userConversation, networkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+                NavigationService.Navigate(new ConversationComparisonPage(userGlobal, userServer, networkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
             }
         }
 

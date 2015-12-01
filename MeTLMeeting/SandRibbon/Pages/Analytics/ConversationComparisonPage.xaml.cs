@@ -11,6 +11,7 @@ using System;
 using System.Globalization;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Components;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Analytics
 {
@@ -26,12 +27,17 @@ namespace SandRibbon.Pages.Analytics
             throw new NotImplementedException();
         }
     }
-    public partial class ConversationComparisonPage : Page
+    public partial class ConversationComparisonPage : Page, ServerAwarePage
     {
-        protected NetworkController networkController;
-        public ConversationComparisonPage(NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
+        public NetworkController networkController { get; protected set; }
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+
+        public ConversationComparisonPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
         {
             networkController = _networkController;
+            userGlobal = _userGlobal;
+            userServer = _userServer;
             InitializeComponent();
             DataContext = new ConversationComparableCorpus(networkController,cs);
         }
@@ -51,6 +57,26 @@ namespace SandRibbon.Pages.Analytics
                 });
                 Commands.WatchRoom.Execute(slide.Slide.id.ToString());
             }
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            throw new NotImplementedException();
         }
     }
     public class ConversationComparableCorpus : DependencyObject
