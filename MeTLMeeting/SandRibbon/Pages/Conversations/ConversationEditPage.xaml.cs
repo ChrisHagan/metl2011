@@ -10,23 +10,32 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public partial class ConversationEditPage : Page
+    public partial class ConversationEditPage : Page, ConversationAwarePage
     {
-        
-        protected NetworkController networkController;
-        public ConversationEditPage(NetworkController _networkController)
+
+        public NetworkController networkController { get; protected set; }
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+        public UserConversationState userConv { get; protected set; }
+        public ConversationDetails details { get; protected set; }
+
+
+
+        public ConversationEditPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
         {
+
+            userGlobal = _userGlobal;
+            userServer = _userServer;
+            userConv = _userConv;
+            details = presentationPath;
             networkController = _networkController;
             InitializeComponent();
             errorDisplay.DataContext = Errors;
-        }
-
-        public ConversationEditPage(NetworkController _networkController, ConversationDetails conversation) : this(_networkController)
-        {
-            DataContext = conversation;
+            DataContext = details;
         }
 
         public string Errors
@@ -48,16 +57,16 @@ namespace SandRibbon.Pages.Conversations
                 errorText += "Conversation title can only contain letters, numbers and punctuation marks. ";
             if (!thisIsAValidTitle) { errorText += "Invalid conversation title.  "; }
             return errorText;
-        }        
+        }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             var conversation = DataContext as ConversationDetails;
-            var details =  SearchConversationDetails.HydrateFromServer(networkController.client,conversation);
+            var details = SearchConversationDetails.HydrateFromServer(networkController.client, conversation);
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
                 networkController.client.UpdateConversationDetails(details);
-                NavigationService.Navigate(new ConversationSearchPage(networkController,details.Title));
+                NavigationService.Navigate(new ConversationSearchPage(userGlobal, userServer, networkController, details.Title));
             }
             else
             {
@@ -98,8 +107,38 @@ namespace SandRibbon.Pages.Conversations
             {
                 var conversation = DataContext as ConversationDetails;
                 networkController.client.DeleteConversation(conversation);
-                NavigationService.Navigate(new ConversationSearchPage(networkController,Globals.me));
+                NavigationService.Navigate(new ConversationSearchPage(userGlobal, userServer, networkController, networkController.credentials.name));
             }
+        }
+
+        public ConversationDetails getDetails()
+        {
+            return details;
+        }
+
+        public UserConversationState getUserConversationState()
+        {
+            return userConv;
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
         }
     }
     public class HideErrorsIfEmptyConverter : IValueConverter

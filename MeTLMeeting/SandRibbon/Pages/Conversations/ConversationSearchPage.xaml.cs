@@ -204,7 +204,8 @@ namespace SandRibbon.Pages.Conversations
         private void EditConversation(object sender, RoutedEventArgs e)
         {
             var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            NavigationService.Navigate(new ConversationEditPage(networkController, conversation));
+            var userConv = new UserConversationState();
+            NavigationService.Navigate(new ConversationEditPage(userGlobal,userServer,userConv,networkController, conversation));
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)

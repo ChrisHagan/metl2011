@@ -25,6 +25,7 @@ namespace SandRibbon.Pages.Conversations.Models
 
         public string apiKey { get; set; }
         public string apiSecret { get; set; }
+        public NetworkController networkController {get; set;}
 
         public static string notebooks = "https://www.onenote.com/api/v1.0/me/notes/notebooks?expand=sections";
         public static string sections = "https://www.onenote.com/api/v1.0/me/notes/notebooks/{0}/sections";
@@ -43,7 +44,8 @@ namespace SandRibbon.Pages.Conversations.Models
                 var book = new Notebook
                 {
                     Name = j["name"].Value<string>(),
-                    Id = j["id"].Value<string>()
+                    Id = j["id"].Value<string>(),
+                    networkController = networkController
                 };
                 Books.Add(book);
                 foreach (var s in j["sections"].Children<JObject>())
@@ -52,7 +54,8 @@ namespace SandRibbon.Pages.Conversations.Models
                     {
                         Name = s["name"].Value<string>(),
                         Id = s["id"].Value<string>(),
-                        PagesUrl = s["pagesUrl"].Value<string>()
+                        PagesUrl = s["pagesUrl"].Value<string>(),
+                        networkController = networkController
                     };                    
                     book.Sections.Add(section);
                     LoadPages(token, section);
@@ -77,7 +80,8 @@ namespace SandRibbon.Pages.Conversations.Models
                             Token = token,
                             OriginalHtml = wc.DownloadString(j["contentUrl"].Value<string>()),
                             Title = title,
-                            Id = j["id"].Value<string>()
+                            Id = j["id"].Value<string>(),
+                            networkController = networkController
                         });
                     }
                     catch (WebException ex) {
@@ -120,7 +124,7 @@ namespace SandRibbon.Pages.Conversations.Models
                     wc.Headers.Add("Authorization", string.Format("Bearer {0}", Token));
                     var oneNoteData = wc.DownloadData(source);
                     var alias = string.Format("{0}.png", Guid.NewGuid().ToString());
-                    var upload = App.controller.client.UploadResourceToPath(oneNoteData, "onenote", alias, false);
+                    var upload = networkController.client.UploadResourceToPath(oneNoteData, "onenote", alias, false);
                     var securedUpload = new UriBuilder(upload)
                     {
                         Scheme = "https"
@@ -134,12 +138,14 @@ namespace SandRibbon.Pages.Conversations.Models
         public string Title { get; set; }
         public string Token { get; set; }   
         public string Id { get; set; }     
+        public NetworkController networkController { get; set; }
     }
     public class NotebookSection : DependencyObject
     {
         public string Name { get; set; }
         public string Id { get; set; }
-        public string PagesUrl { get; set; }        
+        public string PagesUrl { get; set; }
+        public NetworkController networkController { get; set; }
 
         public ObservableCollection<NotebookPage> Pages
         {
@@ -154,6 +160,7 @@ namespace SandRibbon.Pages.Conversations.Models
     {
         public string Name { get; set; }
         public string Id { get; set; }
+        public NetworkController networkController { get; set; }
 
         public ObservableCollection<NotebookSection> Sections
         {

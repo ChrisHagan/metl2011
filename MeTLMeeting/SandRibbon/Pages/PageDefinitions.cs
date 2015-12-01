@@ -2,6 +2,7 @@
 using MeTLLib.DataTypes;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Conversations.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace SandRibbon.Pages
     public class UserServerState
     {
         public WebSession authenticatedWebSession { get; set; }
+        public OneNoteConfiguration OneNoteConfiguration { get; set; }
+
     }
     public class UserGlobalState
     {

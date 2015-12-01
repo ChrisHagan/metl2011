@@ -22,6 +22,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using SandRibbon.Components;
 using System.Windows.Navigation;
+using SandRibbon.Pages.Conversations.Models;
 
 namespace SandRibbon.Pages.Login
 {
@@ -155,6 +156,12 @@ namespace SandRibbon.Pages.Login
                                 loginAttempted = true;
                                 var userServer = new UserServerState();
                                 userServer.authenticatedWebSession = logonBrowser.WebSession;
+                                userServer.OneNoteConfiguration = new OneNoteConfiguration
+                                {
+                                    apiKey = "exampleApiKey",
+                                    apiSecret = "exampleApiSecret",
+                                    networkController = controller
+                                };
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
                                 NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));

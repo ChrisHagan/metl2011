@@ -441,12 +441,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Frame\StatusBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Frame\ToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -981,9 +975,6 @@
     </Compile>
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Frame\StatusBar.xaml.cs">
-      <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frame\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>

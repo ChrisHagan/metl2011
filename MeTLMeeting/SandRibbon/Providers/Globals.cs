@@ -135,11 +135,13 @@ namespace SandRibbon.Providers
                 canvasSize = value;
             }
         }
+        /*
         public static OneNoteConfiguration OneNoteConfiguration { get; set; } = new OneNoteConfiguration
         {
             apiKey = "exampleApiKey",
             apiSecret = "exampleApiSecret"
         };
+        */
         /*
         public static PedagogyLevel pedagogy
         {
