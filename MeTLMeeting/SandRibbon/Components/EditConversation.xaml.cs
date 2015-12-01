@@ -18,7 +18,7 @@ namespace SandRibbon.Components
         public static UrlForSlideConverter UrlForSlide;
         public EditConversation()
         {
-            SlideIndex = new SlideIndexConverter(activeSlideList);
+            SlideIndex = new SlideIndexConverter();
             UrlForSlide = new UrlForSlideConverter();
             InitializeComponent();
             activeSlides.ItemsSource = activeSlideList;

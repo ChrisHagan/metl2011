@@ -20,6 +20,7 @@
                 <PropertyGroupDescription PropertyName="Details.Jid" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
+        <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </Page.Resources>
     <Grid layout:GridLayout.ItemsPerRow="1">
         <Grid x:Name="layout">
@@ -81,7 +82,7 @@
                                             <Border.BorderBrush>
                                                 <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                             </Border.BorderBrush>
-                                            <Label Content="{Binding Path=Slide.index}" HorizontalAlignment="Center"/>
+                                            <Label Content="{Binding Path=Slide,Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
                                         </Border>
                                         <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Aggregate.activityCount}" />
                                         <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"

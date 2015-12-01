@@ -11,6 +11,7 @@
         Width="820"
         ResizeMode="NoResize">
     <Window.Resources>
+        <components:SlideIndexConverter x:Key="slideIndexConverter" />
         <DataTemplate x:Key="slideDragTemplate">
             <DataTemplate.Resources>
                 <Style TargetType="Image">
@@ -64,7 +65,7 @@
                                                     HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                     VerticalAlignment="Bottom" 
                                                     BorderThickness="1">
-                                                <Label Content="{Binding Path=index, Converter={x:Static components:EditConversation.SlideIndex}}"/>
+                                                <Label Content="{Binding Converter={StaticResource slideIndexConverter}}"/>
                                             </Border>
                                         </Grid>
                                     </Border>

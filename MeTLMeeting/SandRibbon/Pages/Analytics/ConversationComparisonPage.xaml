@@ -9,6 +9,7 @@
     <Page.Resources>
         <components:UrlForSlideConverter x:Key="renderer" />
         <local:ParticipantsEnumerator x:Key="participantsEnumerator" />
+        <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </Page.Resources>
     <Grid layout:GridLayout.ItemsPerRow="1">
         <Label Content="What are you hoping to discover?" />
@@ -41,7 +42,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemContainerStyle>
                                 <Style TargetType="{x:Type ContentPresenter}">
-                                    <Setter Property="Grid.Column" Value="{Binding Path=Slide.index}" />
+                                    <Setter Property="Grid.Column" Value="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" />
                                 </Style>
                             </ItemsControl.ItemContainerStyle>
                             <ItemsControl.ItemTemplate>
@@ -53,7 +54,7 @@
                                                 <Border.BorderBrush>
                                                     <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                                 </Border.BorderBrush>
-                                                <Label Content="{Binding Path=Slide.index}" HorizontalAlignment="Center"/>
+                                                <Label Content="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
                                             </Border>
                                             <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Aggregate.activityCount}" />
                                             <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"

@@ -519,7 +519,7 @@ namespace SandRibbon
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             if (details.Equals(ConversationDetails.Empty))
                 return Strings.Global_ProductName;
-            return string.Format("{0}'s \"{1}\"", details.Author, details.Title);
+            return string.Format("CONVERSATION {2}: {0}'s \"{1}\"", details.Author, details.Title, details.Permissions.studentCanPublish? "ENABLED" : "DISABLED");
         }
         private void showReconnectingDialog()
         {

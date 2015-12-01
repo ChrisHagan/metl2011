@@ -10,6 +10,7 @@
         <core:String x:Key="defaultPrivacy">public</core:String>
         <core:String x:Key="target">presentationSpace</core:String>
         <core:Double x:Key="thumbAspect">0.75</core:Double>
+        <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -78,7 +79,7 @@
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
-                                    <Label Content="{Binding Path=index, Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
+                                    <Label Content="{Binding Converter={StaticResource slideIndexConverter}}"/>
                                 </Border>
                             </Grid>
                         </Border>

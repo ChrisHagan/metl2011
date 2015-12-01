@@ -28,16 +28,10 @@ namespace SandRibbon.Components
 {
     public class SlideIndexConverter : IValueConverter
     {
-        private ObservableCollection<Slide> collection;
-        public SlideIndexConverter(ObservableCollection<Slide> collection)
-        {
-            this.collection = collection;
-        }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is int)
-                return ((int)value) + 1;
-            else return "?";
+            var slide = value as Slide;
+            return slide.index + 1;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -112,8 +106,7 @@ namespace SandRibbon.Components
             set { SetValue(IsNavigationLockedProperty, value); }
         }
         public int currentSlideId = -1;
-        public ObservableCollection<Slide> thumbnailList { get; set; }
-        public static SlideIndexConverter SlideIndex;
+        public ObservableCollection<Slide> thumbnailList { get; set; }        
         public SlideDisplay()
         {
             refresher = new DispatcherTimer();
@@ -121,8 +114,7 @@ namespace SandRibbon.Components
             refresher.Tick += new EventHandler(refresherTick);
             refresher.Start();
             thumbnailList = new ObservableCollection<Slide>();
-            thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
-            SlideIndex = new SlideIndexConverter(thumbnailList);
+            thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;            
             myMaxSlideIndex = -1;
             TeachersCurrentSlideIndex = -1;
             IsNavigationLocked = calculateNavigationLocked();
