@@ -15,7 +15,6 @@ namespace SandRibbon.Components
     {
         public ObservableCollection<Slide> activeSlideList = new ObservableCollection<Slide>();
         public SlideIndexConverter SlideIndex;
-        public UrlForSlideConverter UrlForSlide;
         public ConversationDetails details { get; protected set; }
         public NetworkController controller { get; protected set; }
         public EditConversation(ConversationDetails _details, NetworkController _controller)
@@ -23,7 +22,6 @@ namespace SandRibbon.Components
             controller = _controller;
             details = _details;
             SlideIndex = new SlideIndexConverter();
-            UrlForSlide = new UrlForSlideConverter(controller);
             InitializeComponent();
             DataContext = this;
             activeSlides.ItemsSource = activeSlideList;
@@ -77,21 +75,18 @@ namespace SandRibbon.Components
             }
         }
     }
-    public class UrlForSlideConverter : IValueConverter
+    public class UrlForSlideConverter : IMultiValueConverter
     {
-        public NetworkController networkController { get; protected set; }
-        public UrlForSlideConverter(NetworkController controller)
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            networkController = controller;
-        }
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
+            var value = values[0];
+            var networkController = values[1] as NetworkController;
             var id = value.ToString();
             var server = networkController.config;
             return new BitmapImage(networkController.config.thumbnailUri(id.ToString()));
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
         }

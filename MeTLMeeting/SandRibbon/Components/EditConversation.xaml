@@ -9,9 +9,11 @@
         MinHeight="200"
         Height="200"
         Width="820"
+        x:Name="root"
         ResizeMode="NoResize">
     <Window.Resources>
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
+        <components:UrlForSlideConverter x:Key="UrlForSlide"/>
         <DataTemplate x:Key="slideDragTemplate">
             <DataTemplate.Resources>
                 <Style TargetType="Image">
@@ -60,7 +62,14 @@
                                         Padding="5" Background="{StaticResource BackgroundBlueGradient}"
                                         SnapsToDevicePixels="true" CornerRadius="2">
                                         <Grid>
-                                            <Image Height="90" Width="90" Source="{Binding Path=id, Converter={Binding Path=UrlForSlide}}"/>
+                                            <Image Height="90" Width="90">
+                                                <Image.Source>
+                                                    <MultiBinding Converter="{StaticResource UrlForSlide}">
+                                                        <Binding Path="id"/>
+                                                        <Binding ElementName="root" Path="controller"/>
+                                                    </MultiBinding>
+                                                </Image.Source>
+                                            </Image> 
                                             <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                     HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                     VerticalAlignment="Bottom" 
