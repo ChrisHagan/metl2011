@@ -242,7 +242,7 @@ namespace SandRibbon.Pages.Conversations
             {
                 Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet
                 {
-                    config = Globals.OneNoteConfiguration,
+                    config = userServer.OneNoteConfiguration,
                     networkController = networkController,
                     conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
                 });

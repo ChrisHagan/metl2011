@@ -234,7 +234,7 @@ namespace SandRibbon
                     if (token != null)
                     {
                         w.DocumentReady -= ready;
-                        flyout.DataContext = Globals.OneNoteConfiguration;
+                        flyout.DataContext = config;
                         flyout.Content = TryFindResource("oneNoteListing");
                         var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
                         oneNoteModel.LoadNotebooks(token);

@@ -1,6 +1,7 @@
 ﻿using MeTLLib;
 using MeTLLib.DataTypes;
 using Newtonsoft.Json.Linq;
+using SandRibbon.Components;
 using SandRibbon.Pages.Conversations.Models;
 using System;
 using System.Collections.Generic;
@@ -9,14 +10,22 @@ using System.Net.Http;
 using System.Text;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Integration
 {
-    public partial class OneNoteSynchronizationPage : Page
+    public partial class OneNoteSynchronizationPage : Page, ServerAwarePage
     {
         public static string METL_NOTEBOOK_TITLE = "MeTL";
-        public OneNoteSynchronizationPage(OneNoteSynchronizationSet sync)
+        public NetworkController networkController {get; protected set;}
+        public UserGlobalState userGlobal { get; protected set; }
+        public UserServerState userServer { get; protected set; }
+
+        public OneNoteSynchronizationPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _controller, OneNoteSynchronizationSet sync)
         {
+            networkController = _controller;
+            userGlobal = _userGlobal;
+            userServer = _userServer;
             InitializeComponent();
             DataContext = sync;
             SynchronizeConversations();
@@ -77,13 +86,12 @@ namespace SandRibbon.Pages.Integration
                     .Select((s, i) => new { s, i })
                     .GroupBy(g => g.i / bucketSize, g => g.s))
                 {
-                    var server = App.getCurrentBackend;
                     var content = new MultipartFormDataContent();
                     var images = new List<XElement>();
                     foreach (var slide in bucket)
                     {
                         var blockName = string.Format("IMAGE{0}", slide.id);
-                        var url = server.renderUri(slide.id.ToString(),1024,768);
+                        var url = networkController.config.renderUri(slide.id.ToString(),1024,768);
                         var t = await httpClient.GetAsync(url);
                         var data = await t.Content.ReadAsByteArrayAsync();
                         var dataContent = new ByteArrayContent(data);
@@ -116,6 +124,26 @@ namespace SandRibbon.Pages.Integration
                 }
             }
             NavigationService.GoBack();
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            return userServer;
+        }
+
+        public UserGlobalState getUserGlobalState()
+        {
+            return userGlobal;
+        }
+
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
         }
     }
 }

@@ -217,30 +217,21 @@ namespace SandRibbon.Pages.Login
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var options = App.controller.client.UserOptionsFor(identity.name);
-            Commands.SetUserOptions.Execute(options);
+            //var options = App.controller.client.UserOptionsFor(identity.name);
+            //Commands.SetUserOptions.Execute(options);
             Globals.loadProfiles(identity);
             Commands.Mark.Execute("Identity is established");
         }
 
-        public NetworkController getNetworkController()
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserServerState getUserServerState()
-        {
-            throw new NotImplementedException();
-        }
 
         public UserGlobalState getUserGlobalState()
         {
-            throw new NotImplementedException();
+            return userGlobal;
         }
 
         public NavigationService getNavigationService()
         {
-            throw new NotImplementedException();
+            return NavigationService;
         }
     }
 }
