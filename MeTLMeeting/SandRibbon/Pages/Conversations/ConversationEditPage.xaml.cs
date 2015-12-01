@@ -140,6 +140,11 @@ namespace SandRibbon.Pages.Conversations
         {
             return NavigationService;
         }
+
+        public ConversationState getConversationState()
+        {
+            throw new NotImplementedException();
+        }
     }
     public class HideErrorsIfEmptyConverter : IValueConverter
     {

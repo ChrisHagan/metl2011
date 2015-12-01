@@ -20,18 +20,16 @@ namespace SandRibbon.Quizzing
         private Dictionary<long, ObservableCollection<QuizAnswer>> answers = new Dictionary<long, ObservableCollection<QuizAnswer>>();
         private Dictionary<long, AssessAQuiz> assessQuizzes = new Dictionary<long, AssessAQuiz>();
         private ObservableCollection<QuizQuestion> activeQuizes = new ObservableCollection<QuizQuestion>();
-
-        public ViewQuizResults()
-        {
-            InitializeComponent();
-            Closing += new System.ComponentModel.CancelEventHandler(ViewQuizResults_Closing);
-        }
+        public Slide slide { get; protected set; }
         void ViewQuizResults_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Commands.UnblockInput.Execute(null);
         }
-        public ViewQuizResults(Dictionary<long, ObservableCollection<QuizAnswer>> answers, ObservableCollection<QuizQuestion> Quizes): this()
+        public ViewQuizResults(Slide _slide, Dictionary<long, ObservableCollection<QuizAnswer>> answers, ObservableCollection<QuizQuestion> Quizes)
         {
+            slide = _slide;
+            InitializeComponent();
+            Closing += new System.ComponentModel.CancelEventHandler(ViewQuizResults_Closing);
             if (Quizes.Count < 1) return;
             this.answers = answers;
             foreach(var answer in answers)
@@ -86,7 +84,7 @@ namespace SandRibbon.Quizzing
                 context.DrawRectangle(new VisualBrush(quiz.SnapshotHost), null, dimensions);
             bitmap.Render(dv);
             quiz.TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=slide.id,data=bitmap});
 
             RestoreAfterRender();
 

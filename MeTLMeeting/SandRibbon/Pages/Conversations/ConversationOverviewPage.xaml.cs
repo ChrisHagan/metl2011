@@ -78,7 +78,7 @@ namespace SandRibbon.Pages.Collaboration
             var slide = element.DataContext as VmSlide;
             //Commands.MoveToCollaborationPage.Execute(slide.Slide.id);
             var userSlide = new UserSlideState();
-            NavigationService.Navigate(new RibbonCollaborationPage(userGlobal,userServer,userConv,userSlide,networkController, slide.Details, slide.Slide));// networkController.ribbonCollaborationPage);            
+            NavigationService.Navigate(new RibbonCollaborationPage(userGlobal,userServer,userConv,new ConversationState(),userSlide,networkController, slide.Details, slide.Slide));// networkController.ribbonCollaborationPage);            
         }
 
         public ConversationDetails getDetails()
@@ -109,6 +109,11 @@ namespace SandRibbon.Pages.Collaboration
         public NavigationService getNavigationService()
         {
             return NavigationService;
+        }
+
+        public ConversationState getConversationState()
+        {
+            throw new NotImplementedException();
         }
     }    
     public class GridLengthConverter : IValueConverter

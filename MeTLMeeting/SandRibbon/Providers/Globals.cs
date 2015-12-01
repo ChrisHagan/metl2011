@@ -35,7 +35,8 @@ namespace SandRibbon.Providers
     {
 
         private static Size canvasSize = new Size();
-        private static QuizData quizData = new QuizData();
+
+        //private static QuizData quizData = new QuizData();
         public static bool AuthorOnline(string author)
         {
             return PresenceListing.Keys.Where(k => k.Contains(author)).Count() > 0;

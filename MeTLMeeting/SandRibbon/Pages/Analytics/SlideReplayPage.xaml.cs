@@ -87,5 +87,10 @@ namespace SandRibbon.Pages.Analytics
         {
             return NavigationService;
         }
+
+        public ConversationState getConversationState()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

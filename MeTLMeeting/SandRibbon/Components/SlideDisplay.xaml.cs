@@ -474,7 +474,7 @@ namespace SandRibbon.Components
                         //Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
                         SendSyncMove(currentSlideId);
                         //checkMovementLimits();
-                        rootPage.getNavigationService().Navigate(new RibbonCollaborationPage(rootPage.getUserGlobalState(), rootPage.getUserServerState(), rootPage.getUserConversationState(), new UserSlideState(),rootPage.getNetworkController(), rootPage.getDetails(), (Slide)e.AddedItems[0]));
+                        rootPage.getNavigationService().Navigate(new RibbonCollaborationPage(rootPage.getUserGlobalState(), rootPage.getUserServerState(), rootPage.getUserConversationState(), rootPage.getConversationState(),new UserSlideState(),rootPage.getNetworkController(), rootPage.getDetails(), (Slide)e.AddedItems[0]));
                     }
                     else if (sender is ListBox)
                     {

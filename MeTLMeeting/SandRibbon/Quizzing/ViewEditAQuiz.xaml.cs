@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Data;
 using SandRibbon.Components.Utility;
 using System.ComponentModel;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Quizzing
 {
@@ -96,9 +97,14 @@ namespace SandRibbon.Quizzing
         {
             get { return (QuizQuestion)DataContext; }
         }
-
-        public ViewEditAQuiz(QuizQuestion thisQuiz)
+        public ConversationState convState { get; protected set; }
+        public Slide slide { get; protected set; }
+        public string me { get; protected set; }
+        public ViewEditAQuiz(QuizQuestion thisQuiz, ConversationState _convState, Slide _slide, string _me)
         {
+            me = _me;
+            slide = _slide;
+            convState = _convState;
             DataContext = thisQuiz;
 
             InitializeComponent();
@@ -118,7 +124,7 @@ namespace SandRibbon.Quizzing
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
         {
-            return Globals.quiz.answers.FirstOrDefault(answer => answer.Key == quizQuestion.Id).Value.Count > 0;
+            return convState.quizData.answers.FirstOrDefault(answer => answer.Key == quizQuestion.Id).Value.Count > 0;
         }
 
         void ViewEditAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -132,7 +138,7 @@ namespace SandRibbon.Quizzing
             if (!question.IsInEditMode)
             {
                 var selection = ((Option)e.AddedItems[0]);
-                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
+                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks));
                 Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
@@ -153,7 +159,7 @@ namespace SandRibbon.Quizzing
                 using (var context = dv.RenderOpen())
                     context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
                 bitmap.Render(dv);
-                Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+                Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=slide.id,data=bitmap});
             }
             finally
             {

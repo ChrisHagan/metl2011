@@ -18,6 +18,10 @@ namespace SandRibbon.Pages
     {
         public bool isBanhammerActive { get; set; } = false;
     }
+    public class ConversationState
+    {
+        public QuizData quizData { get; set; } = new QuizData();
+    }
     public class UserConversationState
     {
         public Privacy privacy { get; set; } = Privacy.NotSet;
@@ -54,6 +58,7 @@ namespace SandRibbon.Pages
     {
         ConversationDetails getDetails();
         UserConversationState getUserConversationState();
+        ConversationState getConversationState();
     }
     public interface SlideAwarePage : ConversationAwarePage
     {

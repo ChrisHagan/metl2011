@@ -38,7 +38,7 @@ namespace SandRibbon.Tabs
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
                 Commands.JoinConversation.RegisterCommandToDispatcher(joinConversationCommand);
                 Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);
-                quizzes.ItemsSource = Globals.quiz.activeQuizzes;
+                quizzes.ItemsSource = rootPage.getConversationState().quizData.activeQuizzes;
                 SetupUI();
             };
             Unloaded += (s, e) => {
@@ -57,7 +57,7 @@ namespace SandRibbon.Tabs
                 {
                     try
                     {
-                        if (rootPage.details.isAuthor(Globals.me))
+                        if (rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name))
                             amAuthor();
                         else
                             amRespondent();
@@ -69,7 +69,7 @@ namespace SandRibbon.Tabs
         }
         private void JoinConversation(object _jid)
         {
-            Globals.quiz.activeQuizzes.Clear();
+            rootPage.getConversationState().quizData.activeQuizzes.Clear();
             SetupUI();
         }
         private void amAuthor()
@@ -93,7 +93,7 @@ namespace SandRibbon.Tabs
             if (details.IsEmpty) return;
             try
             {
-                if (rootPage.details.isAuthor(Globals.me))
+                if (rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name))
                 {
                     amAuthor();            
                 }
@@ -105,10 +105,10 @@ namespace SandRibbon.Tabs
             catch (NotSetException)
             {
             }
-            if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
+            if (details.IsJidEqual(rootPage.getDetails().Jid) && details.isDeleted)
             {
-                Globals.quiz.answers.Clear();
-                Globals.quiz.activeQuizzes.Clear();
+                rootPage.getConversationState().quizData.answers.Clear();
+                rootPage.getConversationState().quizData.activeQuizzes.Clear();
             }
         }
         private void preparserAvailable(PreParser preParser)
@@ -124,19 +124,19 @@ namespace SandRibbon.Tabs
         {
             Dispatcher.adoptAsync(() =>
             {
-                if (Globals.quiz.answers.ContainsKey(answer.id))
+                if (rootPage.getConversationState().quizData.answers.ContainsKey(answer.id))
                 {
-                    if (Globals.quiz.answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
+                    if (rootPage.getConversationState().quizData.answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
                     {
-                        var oldAnswer = Globals.quiz.answers[answer.id].Where(a => a.answerer == answer.answerer).First();
-                        Globals.quiz.answers[answer.id].Remove(oldAnswer);
+                        var oldAnswer = rootPage.getConversationState().quizData.answers[answer.id].Where(a => a.answerer == answer.answerer).First();
+                        rootPage.getConversationState().quizData.answers[answer.id].Remove(oldAnswer);
                     }
-                    Globals.quiz.answers[answer.id].Add(answer);
+                    rootPage.getConversationState().quizData.answers[answer.id].Add(answer);
                 }
                 else
                 {
                     var newList = new ObservableCollection<QuizAnswer> { answer };
-                    Globals.quiz.answers.Add(answer.id, newList);
+                    rootPage.getConversationState().quizData.answers.Add(answer.id, newList);
                 }
             });
         }
@@ -145,35 +145,35 @@ namespace SandRibbon.Tabs
             Dispatcher.adoptAsync(() =>
             {
                 int oldQuizIndex = -1;
-                if (Globals.quiz.activeQuizzes.Any(q => q.Id == quiz.Id))
+                if (rootPage.getConversationState().quizData.activeQuizzes.Any(q => q.Id == quiz.Id))
                 {
-                    List<QuizQuestion> oldQuizzes = Globals.quiz.activeQuizzes.Where(q => q.Id == quiz.Id).ToList();
+                    List<QuizQuestion> oldQuizzes = rootPage.getConversationState().quizData.activeQuizzes.Where(q => q.Id == quiz.Id).ToList();
                     QuizQuestion oldQuiz = oldQuizzes.First();
                     if (quiz.Created >= oldQuiz.Created)
                     {
-                        oldQuizIndex = Globals.quiz.activeQuizzes.IndexOf(oldQuiz);
+                        oldQuizIndex = rootPage.getConversationState().quizData.activeQuizzes.IndexOf(oldQuiz);
                         foreach (var q in oldQuizzes)
                         {
-                            Globals.quiz.activeQuizzes.Remove(q);
+                            rootPage.getConversationState().quizData.activeQuizzes.Remove(q);
                         }
                     }
                 }
-                if (!Globals.quiz.answers.ContainsKey(quiz.Id))
-                    Globals.quiz.answers[quiz.Id] = new ObservableCollection<QuizAnswer>();
+                if (!rootPage.getConversationState().quizData.answers.ContainsKey(quiz.Id))
+                    rootPage.getConversationState().quizData.answers[quiz.Id] = new ObservableCollection<QuizAnswer>();
                 if (!quiz.IsDeleted)
                 {
                     if (oldQuizIndex == -1)
-                        Globals.quiz.activeQuizzes.Add(quiz);
+                        rootPage.getConversationState().quizData.activeQuizzes.Add(quiz);
                     else
-                        Globals.quiz.activeQuizzes.Insert(oldQuizIndex, quiz);
+                        rootPage.getConversationState().quizData.activeQuizzes.Insert(oldQuizIndex, quiz);
                 }
                 // force the UI to update the labels. this is horrible
                 var tempQuizzes = new List<QuizQuestion>();
-                tempQuizzes.AddRange(Globals.quiz.activeQuizzes);
-                Globals.quiz.activeQuizzes.Clear();
+                tempQuizzes.AddRange(rootPage.getConversationState().quizData.activeQuizzes);
+                rootPage.getConversationState().quizData.activeQuizzes.Clear();
                 foreach (var reindexQuiz in tempQuizzes)
                 {
-                    Globals.quiz.activeQuizzes.Add(reindexQuiz);
+                    rootPage.getConversationState().quizData.activeQuizzes.Add(reindexQuiz);
                 }
                 quizzes.ScrollToEnd();
             });
@@ -183,7 +183,7 @@ namespace SandRibbon.Tabs
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
-                var quizDialog = new CreateAQuiz(Globals.quiz.activeQuizzes.Count);
+                var quizDialog = new CreateAQuiz(rootPage.getNetworkController(),rootPage.getDetails(),rootPage.getSlide(),rootPage.getConversationState().quizData.activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
@@ -193,7 +193,7 @@ namespace SandRibbon.Tabs
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
 
-            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz);
+            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz,rootPage.getConversationState(),rootPage.getSlide(),rootPage.getNetworkController().credentials.name);
             viewEditAQuiz.Owner = Window.GetWindow(this);
             viewEditAQuiz.ShowDialog();
         }
@@ -217,12 +217,12 @@ namespace SandRibbon.Tabs
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (Globals.quiz.activeQuizzes != null && Globals.quiz.activeQuizzes.Count > 0);
+            e.CanExecute = (rootPage.getConversationState().quizData.activeQuizzes != null && rootPage.getConversationState().quizData.activeQuizzes.Count > 0);
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
             Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
-            var viewQuizResults = new ViewQuizResults(Globals.quiz.answers, Globals.quiz.activeQuizzes);
+            var viewQuizResults = new ViewQuizResults(rootPage.getSlide(), rootPage.getConversationState().quizData.answers, rootPage.getConversationState().quizData.activeQuizzes);
             viewQuizResults.Owner = Window.GetWindow(this);
             viewQuizResults.ShowDialog();
         }
