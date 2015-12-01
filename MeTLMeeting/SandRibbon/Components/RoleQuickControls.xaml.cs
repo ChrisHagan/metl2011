@@ -114,7 +114,7 @@ namespace SandRibbon.Components
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (App.controller.client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                (App.controller.client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.networkController.credentials.name,hostedFileName)));
                 MeTLMessage.Information("Submission sent to " + rootPage.details.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

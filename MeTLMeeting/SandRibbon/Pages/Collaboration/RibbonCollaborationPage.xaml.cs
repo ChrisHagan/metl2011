@@ -222,7 +222,7 @@ namespace SandRibbon.Pages.Collaboration
 
         public static readonly DependencyProperty isSelectedPenProperty = DependencyProperty.Register("isSelectedPen", typeof(bool), typeof(PenAttributes), new PropertyMetadata(false));
     }
-    public partial class RibbonCollaborationPage : Page
+    public partial class RibbonCollaborationPage : Page, SlideAwarePage
     {
         public NetworkController networkController { get; protected set; }
         public ConversationDetails details { get; protected set; }
@@ -850,6 +850,36 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
             {
                 child.RowDefinitions[0].Height = new GridLength(0);
             }
+        }
+
+        public Slide getSlide()
+        {
+            return slide;
+        }
+
+        public UserSlideState getUserSlideState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConversationDetails getDetails()
+        {
+            return details;
+        }
+
+        public UserConversationState getUserConversationState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public NetworkController getNetworkController()
+        {
+            return networkController;
+        }
+
+        public UserServerState getUserServerState()
+        {
+            throw new NotImplementedException();
         }
     }
 }

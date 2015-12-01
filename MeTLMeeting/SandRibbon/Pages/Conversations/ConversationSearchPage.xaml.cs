@@ -25,11 +25,15 @@ using SandRibbon.Components;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public class VisibleToAuthor : IValueConverter
-    {
+    public class VisibleToAuthor : IValueConverter { 
+        public NetworkController controller { get; protected set; }
+        public VisibleToAuthor(NetworkController _controller)
+        {
+            controller = _controller;
+        }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Globals.me == ((ConversationDetails)value).Author) ? Visibility.Visible : Visibility.Hidden;
+            return (controller.credentials.name == ((ConversationDetails)value).Author) ? Visibility.Visible : Visibility.Hidden;
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -152,13 +156,11 @@ namespace SandRibbon.Pages.Conversations
         {
             if (details.IsEmpty) return;
             // can I use the following test to determine if we're in a conversation?
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
-                return;
             RefreshSortedConversationsList();
         }
-        private static bool shouldShowConversation(ConversationDetails conversation)
+        private bool shouldShowConversation(ConversationDetails conversation)
         {
-            return conversation.UserHasPermission(Globals.credentials);
+            return conversation.UserHasPermission(networkController.credentials);
         }
         private void RefreshSortedConversationsList()
         {
@@ -174,12 +176,12 @@ namespace SandRibbon.Pages.Conversations
             if (conversation.isDeleted)
                 return false;
             var author = conversation.Author;
-            if (author != Globals.me && onlyMyConversations.IsChecked.Value)
+            if (author != networkController.credentials.name && onlyMyConversations.IsChecked.Value)
                 return false;
             var title = conversation.Title.ToLower();
             var searchField = new[] { author.ToLower(), title };
             var searchQuery = SearchInput.Text.ToLower().Trim();
-            if (searchQuery.Length == 0 && author == Globals.me)
+            if (searchQuery.Length == 0 && author == networkController.credentials.name)
             {//All my conversations show up in an empty search
                 return true;
             }

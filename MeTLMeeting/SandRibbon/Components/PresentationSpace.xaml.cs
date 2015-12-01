@@ -63,7 +63,7 @@ namespace SandRibbon.Components
                     rootPage = DataContext as RibbonCollaborationPage;
                 }
                 rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { },(i,j) => { },(parser) => PreParserAvailable(parser), rootPage.slide.id.ToString());
-                rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}",Globals.me,rootPage.slide.id.ToString()));
+                rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.networkController.credentials.name, rootPage.slide.id.ToString()));
                 rootPage.networkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), rootPage.details.Jid);
                 CommandBindings.Add(undoCommandBinding);
                 CommandBindings.Add(redoCommandBinding);
@@ -141,7 +141,7 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var author in authorList)
             {
-                if (!rootPage.details.isAuthor(Globals.me) && !details.blacklist.Contains(author))
+                if (!rootPage.details.isAuthor(rootPage.networkController.credentials.name) && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
             App.controller.client.UpdateConversationDetails(details);
@@ -158,7 +158,7 @@ namespace SandRibbon.Components
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = App.controller.client;
                                  var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, rootPage.networkController.credentials.name, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
@@ -177,7 +177,7 @@ namespace SandRibbon.Components
             if (slide == Globals.slide) return;
             try
             {
-                if (Globals.conversationDetails.Author == Globals.me) return;
+                if (Globals.conversationDetails.Author == rootPage.networkController.credentials.name) return;
                 if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
                 Dispatcher.adoptAsync((Action)delegate
                             {
@@ -222,7 +222,7 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
+                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, rootPage.networkController.credentials.name);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);
@@ -312,7 +312,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != Globals.slide || window.author != Globals.me) return;
+            if (window.slide != Globals.slide || window.author != rootPage.networkController.credentials.name) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.ExecuteAsync(window);
         }
@@ -395,7 +395,7 @@ namespace SandRibbon.Components
 
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0),
+            (Globals.slide, rootPage.networkController.credentials.name, marquee, origin, new Point(0, 0),
             App.controller.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
@@ -513,7 +513,7 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            //App.controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), Globals.me).ToString(); //disabled for the moment, because it appears nobody executes this command
+            //App.controller.client.UploadResource(new Uri(path, UriKind.RelativeOrAbsolute), rootPage.networkController.credentials.name).ToString(); //disabled for the moment, because it appears nobody executes this command
         }
         private FrameworkElement clonePublicOnly()
         {
@@ -531,7 +531,7 @@ namespace SandRibbon.Components
                     {
                         var image = (Image)child;
                         var e = viewFor((FrameworkElement)child);
-                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 2);
+                        Panel.SetZIndex(e, image.tag().author == rootPage.networkController.credentials.name ? 3 : 2);
                         clone.Children.Add(e);
                     }
                     else
@@ -559,7 +559,7 @@ namespace SandRibbon.Components
                 {
                     var image = (Image)child;
                     var e = viewFor(image);
-                    Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
+                    Panel.SetZIndex(e, image.tag().author == rootPage.networkController.credentials.name ? 3 : 1);
                     clone.Children.Add(e);
                 }
                 else

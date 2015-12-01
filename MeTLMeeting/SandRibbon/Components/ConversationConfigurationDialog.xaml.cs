@@ -27,15 +27,17 @@ namespace SandRibbon.Components
         private string importFile;
         private string conversationJid;
 
+        public NetworkController networkController { get; protected set; }
         public static RoutedCommand CompleteConversationDialog = new RoutedCommand();
 
-        public ConversationConfigurationDialog(ConversationConfigurationMode mode, string activeConversation)
-            : this(mode)
+        public ConversationConfigurationDialog(NetworkController _controller, ConversationConfigurationMode mode, string activeConversation)
+            : this(_controller, mode)
         {
             conversationJid = activeConversation;
         }
-        public ConversationConfigurationDialog(ConversationConfigurationMode mode)
+        public ConversationConfigurationDialog(NetworkController _controller, ConversationConfigurationMode mode)
         {
+            networkController = _controller;
             InitializeComponent();
             this.dialogMode = mode;
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
@@ -50,7 +52,7 @@ namespace SandRibbon.Components
         }
         private void UpdateDialogBoxAppearance()
         {
-            var suggestedName = ConversationDetails.DefaultName(Globals.me);
+            var suggestedName = ConversationDetails.DefaultName(networkController.credentials.name);
             switch (dialogMode)
             {
                 case ConversationConfigurationMode.CREATE:
@@ -59,7 +61,7 @@ namespace SandRibbon.Components
                     CommitButton.Content = "Create";
                     if (details == null)
                         details = new ConversationDetails
-                        (suggestedName,"",Globals.me,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
+                        (suggestedName,"",networkController.credentials.name,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
                     break;
                 case ConversationConfigurationMode.EDIT:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -79,7 +81,7 @@ namespace SandRibbon.Components
                     LowQualityPowerpointListBoxItem.IsChecked = true;
                     CommitButton.Content = "Create";
                     details = new ConversationDetails
-                    (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
+                    (suggestedName, "", networkController.credentials.name, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
                     break;
             }
         }
@@ -155,7 +157,7 @@ namespace SandRibbon.Components
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = dialogMode == ConversationConfigurationMode.EDIT ? true :
                 (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
-            var IAmTheAuthor = (details.Author == Globals.me);
+            var IAmTheAuthor = (details.Author == networkController.credentials.name);
             string ErrorText = "";
             if (!thisIsAValidTitle) { ErrorText += "Invalid conversation title.  "; }
             if (!thisTitleIsNotTaken) { ErrorText += "Conversation title already used.  "; }
@@ -322,7 +324,7 @@ namespace SandRibbon.Components
         {
             if (dialogMode == ConversationConfigurationMode.IMPORT)
             {
-                conversationNameTextBox.Text = ConversationDetails.DefaultName(Globals.me);
+                conversationNameTextBox.Text = ConversationDetails.DefaultName(networkController.credentials.name);
                 doBrowseFiles();
             }
         }
@@ -331,9 +333,9 @@ namespace SandRibbon.Components
             if (importFile == null) return null;
              dialogMode = ConversationConfigurationMode.IMPORT;
              importType = _importType;
-             var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
+             var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(networkController.credentials.name), importFile );
              details = new ConversationDetails
-                    (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
+                    (suggestedName, "", networkController.credentials.name, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
             if (checkConversation(details))
                 return handleConversationDialogueCompletion();
             return null;

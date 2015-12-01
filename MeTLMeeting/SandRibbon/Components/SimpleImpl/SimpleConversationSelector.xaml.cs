@@ -19,6 +19,7 @@ namespace SandRibbon.Components
     {
         public static IEnumerable<ConversationDetails> rawConversationList = new List<ConversationDetails>();
         public static IEnumerable<ConversationDetails> recentConversations = new List<ConversationDetails>();
+
         public SimpleConversationSelector()
         {
             InitializeComponent();
@@ -42,7 +43,7 @@ namespace SandRibbon.Components
             {
                 recentConversations = recentConversations.Concat(new[] {details});
             }
-            RecentConversationProvider.addRecentConversation(details, Globals.me);
+            RecentConversationProvider.addRecentConversation(details, rootPage.networkController.credentials.name);
             conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
         }
         private void UpdateConversationDetails(ConversationDetails details)
@@ -77,7 +78,7 @@ namespace SandRibbon.Components
             {
                 rawConversationList = conversations.ToList();
                 var list = new List<ConversationDetails>();
-                var myConversations = conversations.Where(c => c.Author == Globals.me).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
+                var myConversations = conversations.Where(c => c.Author == rootPage.networkController.credentials.name).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
                 if (myConversations.Count() > 0)
                 {
                     list.Add(new SeparatorConversation("My Conversations"));
@@ -86,7 +87,7 @@ namespace SandRibbon.Components
                 list.Add(new SeparatorConversation("Conversations I've worked in"));
                 var recentConversations = RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid && conversations.Contains(c)).Reverse().Take(2);
                 list.AddRange(recentConversations);
-                var recentAuthors = list.Select(c => c.Author).Where(c => c != Globals.me).Distinct().ToList();
+                var recentAuthors = list.Select(c => c.Author).Where(c => c != rootPage.networkController.credentials.name).Distinct().ToList();
                 foreach (var author in recentAuthors)
                 {
                     var otherConversationsByThisAuthor = conversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).Reverse();

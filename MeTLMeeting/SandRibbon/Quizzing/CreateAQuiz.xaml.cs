@@ -13,6 +13,7 @@ using SandRibbon.Providers;
 using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using SandRibbon.Components;
 
 namespace SandRibbon.Quizzing
 {
@@ -23,8 +24,10 @@ namespace SandRibbon.Quizzing
                                                      {
                                                          new Option("A",String.Empty,false,Colors.Blue)
                                                      };
-        public CreateAQuiz(int count)
+        public NetworkController controller { get; protected set; }
+        public CreateAQuiz(NetworkController _controller, int count)
         {
+            controller = _controller;
             InitializeComponent();
             question.Text = string.Format("Quiz {0}", count + 1);
             options.First().color = Colors.White;
@@ -59,7 +62,7 @@ namespace SandRibbon.Quizzing
         private void CreateQuizQuestion(object _unused)
         {
             var creationTimeAndId = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", Globals.me, question.Text, new List<Option>());
+            var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", controller.credentials.name, question.Text, new List<Option>());
             quiz.Url = url;
             foreach (object obj in quizQuestions.Items)
             {

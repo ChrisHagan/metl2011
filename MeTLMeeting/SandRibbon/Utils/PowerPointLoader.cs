@@ -128,8 +128,10 @@ namespace SandRibbon.Utils
         private static int resource = 1;
         private MeTLLib.IClientBehaviour clientConnection;
         private string currentConversation = null;
-        public PowerPointLoader()
+        public NetworkController networkController { get; protected set; }
+        public PowerPointLoader(NetworkController _controller)
         {
+            networkController = _controller;
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             clientConnection = App.controller.client;
         }
@@ -204,13 +206,13 @@ namespace SandRibbon.Utils
         }
         public void CreateBlankConversation()
         {
-            var details = new ConversationDetails(ConversationDetails.DefaultName(Globals.me), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
+            var details = new ConversationDetails(ConversationDetails.DefaultName(networkController.credentials.name), "", networkController.credentials.name, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
             Commands.HideConversationSearchBox.Execute(null);
             Commands.CreateConversation.ExecuteAsync(details);
         }
         public void ImportPowerpoint(Window owner, PowerpointImportType importType)
         {
-            var configDialog = new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
+            var configDialog = new ConversationConfigurationDialog(networkController,ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
             configDialog.Owner = owner;
             configDialog.ChooseFileForImport();
 
@@ -250,7 +252,7 @@ namespace SandRibbon.Utils
             if (conversation.Tag == null)
                 conversation.Tag = "unTagged";
             currentConversation = conversation.Jid;
-            conversation.Author = Globals.me;
+            conversation.Author = networkController.credentials.name;
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
             var thumbnailStartId = conversation.Slides.First().id;
@@ -327,7 +329,7 @@ namespace SandRibbon.Utils
             }
             var startingId = conversation.Slides.First().id;
             var index = 0;
-            conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+            conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++, networkController.credentials.name, MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
             var updatedConversation = App.controller.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
@@ -364,7 +366,7 @@ namespace SandRibbon.Utils
         }
         private static string createThumbnailFileStructure(string jid)
         {
-            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
+            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", networkController.credentials.name, jid });
             return fullPath;
         }
         private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
@@ -391,7 +393,7 @@ namespace SandRibbon.Utils
                 if (conversation.Tag == null)
                     conversation.Tag = "unTagged";
                 currentConversation = conversation.Jid;
-                conversation.Author = Globals.me;
+                conversation.Author = networkController.credentials.name;
                 try
                 {
                     foreach (var slide in ppt.Slides)
@@ -402,7 +404,7 @@ namespace SandRibbon.Utils
                     var startingId = conversation.Slides.First().id;
                     var index = 0;
                     conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide
-                    (startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+                    (startingId++, networkController.credentials.name, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
                     resultantConversation = provider.UpdateConversationDetails(conversation);
                     UploadFromXml(convDescriptor);
                 }
@@ -424,7 +426,7 @@ namespace SandRibbon.Utils
         private void sendSlide(int id, XElement slide, ConversationDescriptor conversationDescriptor)
         {
             bool hasPrivate = conversationDescriptor.HasPrivateContent; 
-            var privateRoom = string.Format("{0}{1}", id, Globals.me);
+            var privateRoom = string.Format("{0}{1}", id, networkController.credentials.name);
             if(hasPrivate) 
                 clientConnection.SneakInto(privateRoom);
             clientConnection.SneakInto(id.ToString());
@@ -443,7 +445,7 @@ namespace SandRibbon.Utils
                 var content = text.Attribute("content").Value;
                 var x = Double.Parse(text.Attribute("x").Value);
                 var y = Double.Parse(text.Attribute("y").Value);
-                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me + shapeCount++;
+                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + networkController.credentials.name + shapeCount++;
                 var font = text.Descendants("font").ElementAt(0);
                 var privacy = (Privacy)Enum.Parse(typeof(Privacy), text.Attribute("privacy").Value, true);
                 var family = font.Attribute("family").Value;
@@ -451,7 +453,7 @@ namespace SandRibbon.Utils
                 var color = (font.Attribute("color").Value).ToString();
                 var tag = new TextTag
                     {
-                        author = Globals.me,
+                        author = networkController.credentials.name,
                         id = textBoxIdentity,
                         privacy = privacy
                     };
@@ -465,7 +467,7 @@ namespace SandRibbon.Utils
         }
         private void sneakilySendShapes(int id, IEnumerable<XElement> shapes) { 
             int shapeCount = 0;
-            var me = Globals.me;
+            var me = networkController.credentials.name;
             var target = "presentationSpace";
             foreach (var shape in shapes)
             {

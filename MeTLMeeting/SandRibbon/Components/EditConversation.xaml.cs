@@ -14,15 +14,16 @@ namespace SandRibbon.Components
     public partial class EditConversation : Window
     {
         public ObservableCollection<Slide> activeSlideList = new ObservableCollection<Slide>();
-        public static SlideIndexConverter SlideIndex;
-        public static UrlForSlideConverter UrlForSlide;
+        public SlideIndexConverter SlideIndex;
+        public UrlForSlideConverter UrlForSlide;
         public ConversationDetails details { get; protected set; }
-        public EditConversation(ConversationDetails _details)
+        public EditConversation(ConversationDetails _details, NetworkController controller)
         {
             details = _details;
-            SlideIndex = new SlideIndexConverter(activeSlideList);
-            UrlForSlide = new UrlForSlideConverter();
+            SlideIndex = new SlideIndexConverter();
+            UrlForSlide = new UrlForSlideConverter(controller);
             InitializeComponent();
+            DataContext = this;
             activeSlides.ItemsSource = activeSlideList;
             loadConversation(details.Slides);
         }
@@ -76,12 +77,16 @@ namespace SandRibbon.Components
     }
     public class UrlForSlideConverter : IValueConverter
     {
+        public NetworkController networkController { get; protected set; }
+        public UrlForSlideConverter(NetworkController controller)
+        {
+            networkController = controller;
+        }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var id = value.ToString();
-            var server = App.controller.config;
-            var host = server.name;
-            return new BitmapImage(new Uri(string.Format(server.host + "/thumbnail" + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
+            var server = networkController.config;
+            return new BitmapImage(networkController.config.thumbnailUri(id.ToString()));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

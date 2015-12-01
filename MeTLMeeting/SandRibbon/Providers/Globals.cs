@@ -76,13 +76,13 @@ namespace SandRibbon.Providers
         }
         public static Dictionary<string, List<string>> PresenceListing = new Dictionary<string, List<string>>();
 
-        public static string generateId()
+        public static string generateId(string me)
         {
-            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
+            return string.Format("{0}:{1}", me, DateTimeFactory.Now().Ticks);
         }
-        public static string generateId(string seed)
+        public static string generateId(string me, string seed)
         {
-            return string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now().Ticks, seed);
+            return string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, seed);
         }
         public static bool isAuthor
         {

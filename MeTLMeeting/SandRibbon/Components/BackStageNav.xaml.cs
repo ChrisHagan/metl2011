@@ -7,21 +7,39 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using UserControl = System.Windows.Controls.UserControl;
 using System.Diagnostics;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
     public partial class BackStageNav : UserControl
     {
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public BackStageNav()
         {
             InitializeComponent();
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
-            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
+            var showConversationSearchBoxCommand = new DelegateCommand<object>(ShowConversationSearchBox);
+            var updateForeignConversationDetailsCommand = new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails);
+            var updateConversationDetailsCommand = new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as RibbonCollaborationPage;
+                }
+                Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(showConversationSearchBoxCommand);
+                Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(updateForeignConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.ShowConversationSearchBox.UnregisterCommand(showConversationSearchBoxCommand);
+                Commands.UpdateForeignConversationDetails.UnregisterCommand(updateForeignConversationDetailsCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+            };
         }
         private void setMyConversationVisibility()
         {
-            mine.Visibility = App.controller.client.ConversationsFor(Globals.me, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+            mine.Visibility = App.controller.client.ConversationsFor(rootPage.networkController.credentials.name, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == rootPage.networkController.credentials.name && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }

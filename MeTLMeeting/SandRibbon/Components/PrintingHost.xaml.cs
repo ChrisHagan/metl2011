@@ -7,16 +7,28 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components
 {
     public partial class PrintingHost : UserControl
     {
         public static int THUMBNAIL_WIDTH = 512;
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public PrintingHost()
         {
             InitializeComponent();
-            Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
+            var quizResultsGeneratedCommand = new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as RibbonCollaborationPage;
+                Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(quizResultsGeneratedCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.QuizResultsAvailableForSnapshot.UnregisterCommand(quizResultsGeneratedCommand);
+            };
         }
         private void QuizResultsGenerated(UnscaledThumbnailData quizData)
         {
@@ -35,7 +47,7 @@ namespace SandRibbon.Components
         {
             if (!Directory.Exists("quizzes"))
                 Directory.CreateDirectory("quizzes");
-            var fullPath = string.Format("quizzes\\{0}", Globals.me);
+            var fullPath = string.Format("quizzes\\{0}", rootPage.networkController.credentials.name);
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             int quiznumber = 0;

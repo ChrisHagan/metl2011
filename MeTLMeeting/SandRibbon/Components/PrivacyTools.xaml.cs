@@ -9,6 +9,7 @@ using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -18,7 +19,7 @@ namespace SandRibbon.Components
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
 
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public PrivacyTools()
         {
             InitializeComponent();
@@ -28,22 +29,22 @@ namespace SandRibbon.Components
             Loaded += (s, e) => {
                 if (rootPage == null)
                 {
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 try
                 {
-                    if (String.IsNullOrEmpty(Globals.privacy) || rootPage.details == null)
+                    if (String.IsNullOrEmpty(Globals.privacy) || rootPage.getDetails() == null)
                     {
                         Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                     }
                     else
                     {
-                        if (rootPage.details.isAuthor(Globals.me))
+                        if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                             Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PUBLIC);
                         else
                             Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
-                        settingEnabledModes(rootPage.details);
+                        settingEnabledModes(rootPage.getDetails());
                         settingSelectedMode(Globals.privacy);
                     }
                 }
@@ -81,10 +82,10 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me)) || rootPage.details.isAuthor(Globals.me))
+                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(rootPage.getNetworkController().credentials.name)) || rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                                       {
                                           publicMode.IsEnabled = true;
-                                          var privacy = rootPage.details.isAuthor(Globals.me) ? GlobalConstants.PUBLIC : GlobalConstants.PRIVATE;
+                                          var privacy = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? GlobalConstants.PUBLIC : GlobalConstants.PRIVATE;
                                           SetPrivacy(privacy);
                                       }
 
@@ -102,7 +103,7 @@ namespace SandRibbon.Components
             try
             {
                 var result = privacy != (string)GetValue(PrivateProperty)
-                && ((rootPage.details.Permissions.studentCanPublish && !rootPage.details.blacklist.Contains(Globals.me)) || rootPage.details.Author == Globals.me);
+                && ((rootPage.getDetails().Permissions.studentCanPublish && !rootPage.getDetails().blacklist.Contains(rootPage.getNetworkController().credentials.name)) || rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name);
                 return result;
             }
             catch (Exception)

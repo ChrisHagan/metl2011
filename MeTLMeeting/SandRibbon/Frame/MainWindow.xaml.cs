@@ -58,6 +58,7 @@ namespace SandRibbon
             App.CloseSplashScreen();
         }
 
+        /*
         public void Log(string message)
         {
             if (String.IsNullOrEmpty(message)) return;
@@ -69,10 +70,10 @@ namespace SandRibbon
                 timestamp = DateTime.Now.Ticks
             });
         }
-
+        */
         private void DoConstructor()
         {
-            Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
+            //Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
 
             Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
 
@@ -431,9 +432,9 @@ namespace SandRibbon
         private void PrintConversation(NetworkController networkController)
         {
             if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer(networkController).PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(networkController).PrintPrivate(Globals.conversationDetails.Jid, networkController.credentials.name);
             else
-                new Printer(networkController).PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+                new Printer(networkController).PrintHandout(Globals.conversationDetails.Jid, networkController.credentials.name);
         }
         private void SetUserOptions(UserOptions options)
         {
@@ -500,7 +501,7 @@ namespace SandRibbon
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             if (details.Equals(ConversationDetails.Empty))
                 return Strings.Global_ProductName;
-            return string.Format("{0}'s \"{1}\"", details.Author, details.Title);
+            return string.Format("CONVERSATION {2}: {0}'s \"{1}\"", details.Author, details.Title, details.Permissions.studentCanPublish? "ENABLED" : "DISABLED");
         }
         private void showReconnectingDialog()
         {

@@ -29,16 +29,10 @@ namespace SandRibbon.Components
 {
     public class SlideIndexConverter : IValueConverter
     {
-        private ObservableCollection<Slide> collection;
-        public SlideIndexConverter(ObservableCollection<Slide> collection)
-        {
-            this.collection = collection;
-        }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is int)
-                return ((int)value) + 1;
-            else return "?";
+            var slide = value as Slide;
+            return slide.index + 1;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -141,7 +135,7 @@ namespace SandRibbon.Components
                 refresher.Start();
                 thumbnailList = new ObservableCollection<Slide>(rootPage.details.Slides.OrderBy(sl => sl.index));
                 thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
-                SlideIndex = new SlideIndexConverter(thumbnailList);
+                SlideIndex = new SlideIndexConverter();
                 myMaxSlideIndex = -1;
                 TeachersCurrentSlideIndex = -1;
                 IsNavigationLocked = calculateNavigationLocked();
@@ -171,12 +165,6 @@ namespace SandRibbon.Components
                 Commands.EditConversation.UnregisterCommand(editConversationCommand);
                 Commands.UpdateNewSlideOrder.UnregisterCommand(updateNewSlideOrderCommand);
             };
-            /*
-            var paste = new CompositeCommand();
-            paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
-            */
-            //slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
-            //InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
         }
 
         void refresherTick(object sender, EventArgs e)
@@ -416,7 +404,7 @@ namespace SandRibbon.Components
         }
         public void EditConversation(object _obj)
         {
-            var editConversation = new EditConversation(rootPage.details);
+            var editConversation = new EditConversation(rootPage.details,rootPage.networkController);
             editConversation.Owner = Window.GetWindow(this);
             editConversation.ShowDialog();
         }
@@ -424,7 +412,7 @@ namespace SandRibbon.Components
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
                 return;            
-            if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
+            if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(rootPage.networkController.credentials))
             {
                 thumbnailList.Clear();
                 return;

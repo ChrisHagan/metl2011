@@ -11,6 +11,7 @@ using SandRibbon.Providers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using SandRibbonObjects;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -67,8 +68,10 @@ namespace SandRibbon.Components
         private IEnumerable<byte[]> _imagesAsBytes;
         public IEnumerable<String> _InkAsString;
         public static string Type = "MeTLClipboardData";
-        public MeTLClipboardData(IEnumerable<string> text, IEnumerable<BitmapSource> images, List<Stroke> ink)
+        public SlideAwarePage rootPage;
+        public MeTLClipboardData(SlideAwarePage _rootPage, IEnumerable<string> text, IEnumerable<BitmapSource> images, List<Stroke> ink)
         {
+            rootPage = _rootPage;
             Text = text;
             Images = images;
             Ink = ink;
@@ -140,7 +143,7 @@ namespace SandRibbon.Components
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
-                  var identity = Globals.generateId(Guid.NewGuid().ToString());
+                  var identity = Globals.generateId(rootPage.getNetworkController().credentials.name,Guid.NewGuid().ToString());
                   stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, (Privacy)Enum.Parse(typeof(Privacy), XmlStroke.Element(metl_ns + privacyTag).Value, true), identity, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns + highlighterTag).Value), long.Parse(XmlStroke.Element(metl_ns + timestampTag).Value)));
                   strokes.Add(stroke);
               }

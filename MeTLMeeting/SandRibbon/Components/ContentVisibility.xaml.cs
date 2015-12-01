@@ -77,7 +77,7 @@ namespace SandRibbon.Components
                         {
                             var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
                             var wasSubscribed = currentState[g.id];
-                            if (rootPage.details.isAuthor(Globals.me) || g.GroupMembers.Contains(Globals.me))
+                            if (rootPage.details.isAuthor(rootPage.networkController.credentials.name) || g.GroupMembers.Contains(rootPage.networkController.credentials.name))
                             {
                                 var groupDescription = rootPage.details.isAuthor(Globals.me) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(

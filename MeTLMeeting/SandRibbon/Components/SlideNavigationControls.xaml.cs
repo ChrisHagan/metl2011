@@ -55,7 +55,7 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 nav.Visibility = Visibility.Visible;
-                if (details.Author == Globals.me)
+                if (details.Author == rootPage.networkController.credentials.name)
                 {
                     Commands.SetSync.Execute(true);
                     //addSlideButton.Visibility = Visibility.Visible;
@@ -80,7 +80,7 @@ namespace SandRibbon.Components
                 try
                 {
                     var teacherSlide = (int)Globals.teacherSlide;
-                    if (rootPage.details.Slides.Exists(sl => sl.id == teacherSlide) && !rootPage.details.isAuthor(Globals.me))
+                    if (rootPage.details.Slides.Exists(sl => sl.id == teacherSlide) && !rootPage.details.isAuthor(rootPage.networkController.credentials.name))
                         Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException){ }

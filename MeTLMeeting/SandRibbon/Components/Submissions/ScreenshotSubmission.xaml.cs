@@ -10,6 +10,7 @@ using MeTLLib.Providers.Connection;
 using System.Diagnostics;
 using SandRibbon.Components.Utility;
 using System.Windows.Media;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -23,16 +24,34 @@ namespace SandRibbon.Components.Submissions
     public partial class ScreenshotSubmission : UserControl
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
+        public RibbonCollaborationPage rootPage { get; protected set; }
         public ScreenshotSubmission()
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(detailsChanged));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
-            Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
-            Commands.RequestScreenshotSubmission.RegisterCommand(new DelegateCommand<object>(generateScreenshot, canGenerateScreenshot));
-            conversationChanged(null);
+            var receiveScreenshotSubmissionCommand = new DelegateCommand<TargettedSubmission>(receiveSubmission);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(detailsChanged);
+            var preParserAvailableCommand = new DelegateCommand<PreParser>(PreParserAvailable);
+            var viewSubmissionsCommand = new DelegateCommand<object>(viewSubmissions, canViewSubmissions);
+            var requestScreenshotSubmissionCommand = new DelegateCommand<object>(generateScreenshot, canGenerateScreenshot);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as RibbonCollaborationPage;
+                Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotSubmissionCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
+                Commands.ViewSubmissions.RegisterCommand(viewSubmissionsCommand);
+                Commands.RequestScreenshotSubmission.RegisterCommand(requestScreenshotSubmissionCommand);
+                conversationChanged(null);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.ReceiveScreenshotSubmission.UnregisterCommand(receiveScreenshotSubmissionCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
+                Commands.ViewSubmissions.UnregisterCommand(viewSubmissionsCommand);
+                Commands.RequestScreenshotSubmission.UnregisterCommand(requestScreenshotSubmissionCommand);
+            };
         }
         private void viewSubmissions(object _obj)
         {
@@ -54,7 +73,7 @@ namespace SandRibbon.Components.Submissions
             if (ConversationDetails.Empty.Equals(details)) return;
             try
             {
-                if (Globals.conversationDetails.Author == Globals.me)
+                if (rootPage.details.Author == rootPage.networkController.credentials.name)
                     amTeacher();
                 else
                     amStudent();
@@ -71,7 +90,7 @@ namespace SandRibbon.Components.Submissions
                                                     try
                                                     {
                                                         submissionList = new List<TargettedSubmission>();
-                                                        if (Globals.conversationDetails.Author == Globals.me)
+                                                        if (rootPage.details.Author == rootPage.networkController.credentials.name)
                                                             amTeacher();
                                                         else
                                                             amStudent();
@@ -123,14 +142,14 @@ namespace SandRibbon.Components.Submissions
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                (App.controller.client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.networkController.credentials.name,hostedFileName)));
                 MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
-                message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.networkController.credentials.name),
                 showPrivate = true
             });
         }

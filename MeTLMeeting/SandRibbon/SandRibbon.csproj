@@ -52,7 +52,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>340</ApplicationRevision>
+    <ApplicationRevision>341</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>2.0.0.340</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.341</MinimumRequiredVersion>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -394,6 +394,7 @@
       <DependentUpon>ServerSelectorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Macros\VisualCloneConverter.cs" />
+    <Compile Include="Pages\PageDefinitions.cs" />
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
       <DependentUpon>DisplayAQuiz.xaml</DependentUpon>
