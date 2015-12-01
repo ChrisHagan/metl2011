@@ -138,7 +138,7 @@ namespace SandRibbon.Components
         {
             var authorList = stack.GetSelectedAuthors();
             var authorColor = stack.ColourSelectedByAuthor(authorList);
-            var details = Globals.conversationDetails;
+            var details = rootPage.getDetails();
             foreach (var author in authorList)
             {
                 if (!rootPage.details.isAuthor(rootPage.networkController.credentials.name) && !details.blacklist.Contains(author))
@@ -157,9 +157,9 @@ namespace SandRibbon.Components
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = rootPage.getNetworkController().client;
-                                 var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, rootPage.networkController.credentials.name, "bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
+                                 var slide = rootPage.getSlide();
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(slide.index + 1, rootPage.networkController.credentials.name, "bannedcontent",
+                                     Privacy.Private, -1L, hostedFileName, rootPage.getDetails().Title, blacklisted, Globals.generateId(rootPage.getNetworkController().credentials.name,hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -173,12 +173,12 @@ namespace SandRibbon.Components
 
         private void setUpSyncDisplay(int slide)
         {
-            if (!Globals.synched) return;
-            if (slide == Globals.slide) return;
+            if (!rootPage.getUserConversationState().synched) return;
+            if (slide == rootPage.getSlide().id) return;
             try
             {
-                if (Globals.conversationDetails.Author == rootPage.networkController.credentials.name) return;
-                if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
+                if (rootPage.getDetails().Author == rootPage.networkController.credentials.name) return;
+                if (rootPage.getDetails().Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
                 Dispatcher.adoptAsync((Action)delegate
                             {
                                 var adorner = GetAdorner();
@@ -233,7 +233,6 @@ namespace SandRibbon.Components
         private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            if (Globals.currentPage != "RibbonCollaborationPage") return;
             lock (preParserRenderingLock)
             {
                 App.auditor.wrapAction(a =>
@@ -312,7 +311,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != Globals.slide || window.author != rootPage.networkController.credentials.name) return;
+            if (window.slide != rootPage.getSlide().id || window.author != rootPage.networkController.credentials.name) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.ExecuteAsync(window);
         }
@@ -395,10 +394,10 @@ namespace SandRibbon.Components
 
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (Globals.slide, rootPage.networkController.credentials.name, marquee, origin, new Point(0, 0),
+            (rootPage.getSlide().id, rootPage.networkController.credentials.name, marquee, origin, new Point(0, 0),
             rootPage.getNetworkController().client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
-                                            "Resource/" + Globals.slide.ToString(),
+                                            "Resource/" + rootPage.getSlide().id.ToString(),
                                             "quizSnapshot.png",
                                             false).ToString()));
         }
@@ -470,7 +469,6 @@ namespace SandRibbon.Components
         {
             try
             {
-                if (Globals.pedagogy.code < PedagogyCode.CollaborativePresentation) return;
                 privacyOverlay = new SolidColorBrush { Color = color, Opacity = 0.2 };
                 privacyAdorner.Fill = privacyOverlay;
                 RemovePrivateRegion(vertices);
@@ -649,7 +647,8 @@ namespace SandRibbon.Components
         }
         public string Value
         {
-            get { return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
+            get { return ""; } //automation peer will need to be constructed appropriately to access the right instance, if it is used that way.
+            //get { return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
         }
         public void SetValue(string value)
         {
