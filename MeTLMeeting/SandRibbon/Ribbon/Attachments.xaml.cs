@@ -18,6 +18,7 @@ using MeTLLib.Providers;
 using SandRibbon.Utils;
 using MeTLLib;
 using System.Windows.Controls.Ribbon;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs
 {
@@ -34,17 +35,36 @@ namespace SandRibbon.Tabs
     }
     public partial class Attachments :RibbonTab 
     {
-        private ObservableCollection<FileInfo> files; 
+        private ObservableCollection<FileInfo> files;
+        public SlideAwarePage rootPage { get; protected set; } 
         public Attachments()
         {
             InitializeComponent();
             files = new ObservableCollection<FileInfo>();
             attachments.ItemsSource = files;
-            Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>((_unused) => { UploadFile(); }));
+            var receiveFilesCommand = new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile);
+            var preParserAvailableCommand = new DelegateCommand<PreParser>(preparserAvailable);
+            var clearOutAttachmentsCommand = new DelegateCommand<object>(clearOutAttachments);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            var fileUploadCommand = new DelegateCommand<object>((_unused) => { UploadFile(); });
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as SlideAwarePage;
+                Commands.ReceiveFileResource.RegisterCommand(receiveFilesCommand);
+                Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
+                Commands.JoinConversation.RegisterCommandToDispatcher(clearOutAttachmentsCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.FileUpload.RegisterCommand(fileUploadCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.ReceiveFileResource.UnregisterCommand(receiveFilesCommand);
+                Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
+                Commands.JoinConversation.UnregisterCommand(clearOutAttachmentsCommand);
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.FileUpload.UnregisterCommand(fileUploadCommand);
+            };
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -115,7 +135,7 @@ namespace SandRibbon.Tabs
 
         private void UploadFile()
         {
-            var upload = new OpenFileForUpload(Window.GetWindow(this));
+            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.getNetworkController());
             upload.AddResourceFromDisk();
         }
     }

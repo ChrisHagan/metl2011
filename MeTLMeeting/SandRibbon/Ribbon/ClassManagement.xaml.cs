@@ -4,15 +4,26 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Providers;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs
 {
     public partial class ClassManagement: RibbonTab
     {
+        public SlideAwarePage rootPage { get; protected set; }
         public ClassManagement()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            var updateCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as SlideAwarePage;
+                }
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateCommand);
+            };
+            Commands.UpdateConversationDetails.UnregisterCommand(updateCommand);
         }
 
         private void UpdateConversationDetails(ConversationDetails details)
@@ -22,7 +33,7 @@ namespace SandRibbon.Tabs
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)
         {
-            var blacklist = new blacklistController();
+            var blacklist = new blacklistController(rootPage);
             blacklist.Owner = Window.GetWindow(this);
             blacklist.ShowDialog();
         }
