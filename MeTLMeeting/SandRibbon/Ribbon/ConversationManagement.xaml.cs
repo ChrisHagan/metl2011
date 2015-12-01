@@ -11,6 +11,7 @@ using System.Windows.Input;
 using SandRibbon.Utils;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs
 {
@@ -18,16 +19,33 @@ namespace SandRibbon.Tabs
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
         public static RoutedCommand ManageBannedContent = new RoutedCommand();
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public ConversationManagement()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
-            Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
-            Commands.ManageBannedContent.RegisterCommand(new DelegateCommand<object>(OnBanContentchanged, CheckManageBannedAllowed));
+            var updateConvCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
+            var receiveScreenshotCommand = new DelegateCommand<TargettedSubmission>(receiveSubmission);
+            var preparserAvailableCommand = new DelegateCommand<PreParser>(PreParserAvailable);
+            var viewBannedContentCommand = new DelegateCommand<object>(viewBannedContent, canViewBannedContent);
+            var manageBannedContentCommand = new DelegateCommand<object>(OnBanContentchanged, CheckManageBannedAllowed);
+            Loaded += (s, e) =>
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as SlideAwarePage;
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConvCommand);
+                Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotCommand);
+                Commands.PreParserAvailable.RegisterCommand(preparserAvailableCommand);
+                Commands.ViewBannedContent.RegisterCommand(viewBannedContentCommand);
+                Commands.ManageBannedContent.RegisterCommand(manageBannedContentCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConvCommand);
+                Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotCommand);
+                Commands.PreParserAvailable.RegisterCommand(preparserAvailableCommand);
+                Commands.ViewBannedContent.RegisterCommand(viewBannedContentCommand);
+                Commands.ManageBannedContent.RegisterCommand(manageBannedContentCommand);
+            };
         }
 
         private void viewBannedContent(object _obj)
@@ -60,7 +78,7 @@ namespace SandRibbon.Tabs
         private void updateConversationDetails(ConversationDetails details)
         {
             editConversation.Visibility = details.Author == rootPage.getNetworkController().credentials.name ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+            banContent.Visibility = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             bannedContentManagement.Visibility = banContent.Visibility;
         }
 

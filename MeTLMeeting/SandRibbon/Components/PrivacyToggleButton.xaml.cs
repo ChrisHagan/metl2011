@@ -6,12 +6,13 @@ using System.Windows.Controls;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
     public partial class PrivacyToggleButton : UserControl
     {
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
 
         public PrivacyToggleButton(PrivacyToggleButtonInfo mode, Rect bounds)
         {
@@ -24,7 +25,7 @@ namespace SandRibbon.Components
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 if (mode.showDelete)
                     deleteButton.Visibility = Visibility.Visible;
                 else
@@ -32,7 +33,7 @@ namespace SandRibbon.Components
 
                 if (mode.AdornerTarget == "presentationSpace")
                 {
-                    if ((!rootPage.details.Permissions.studentCanPublish || rootPage.details.blacklist.Contains(rootPage.getNetworkController().credentials.name)) && !rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name))
+                    if ((!rootPage.getDetails().Permissions.studentCanPublish || rootPage.getDetails().blacklist.Contains(rootPage.getNetworkController().credentials.name)) && !rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                     {
                         showButton.Visibility = Visibility.Collapsed;
                         hideButton.Visibility = Visibility.Collapsed;
@@ -67,7 +68,7 @@ namespace SandRibbon.Components
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.getUserSlideState().isBanhammerActive && rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name))
+                if (rootPage.getUserSlideState().isBanhammerActive && rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                     banhammerButton.Visibility = Visibility.Visible;
                 else
                     banhammerButton.Visibility = Visibility.Collapsed;

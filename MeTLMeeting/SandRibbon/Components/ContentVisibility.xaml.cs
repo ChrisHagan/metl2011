@@ -13,13 +13,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using SandRibbon.Components.Utility;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
     public partial class ContentVisibility
     {
         public ObservableCollection<ContentVisibilityDefinition> visibilities = new ObservableCollection<ContentVisibilityDefinition>();
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public ContentVisibility()
         {
             InitializeComponent();
@@ -29,7 +30,7 @@ namespace SandRibbon.Components
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand); 
             };
@@ -77,9 +78,9 @@ namespace SandRibbon.Components
                         {
                             var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
                             var wasSubscribed = currentState[g.id];
-                            if (rootPage.details.isAuthor(rootPage.networkController.credentials.name) || g.GroupMembers.Contains(rootPage.networkController.credentials.name))
+                            if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) || g.GroupMembers.Contains(rootPage.getNetworkController().credentials.name))
                             {
-                                var groupDescription = rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                var groupDescription = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(
                                     new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap,a, p, c, s) => g.GroupMembers.Contains(a))
                                 );

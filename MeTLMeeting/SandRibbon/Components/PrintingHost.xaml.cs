@@ -8,13 +8,14 @@ using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
     public partial class PrintingHost : UserControl
     {
         public static int THUMBNAIL_WIDTH = 512;
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public PrintingHost()
         {
             InitializeComponent();
@@ -22,7 +23,7 @@ namespace SandRibbon.Components
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(quizResultsGeneratedCommand);
             };
             Unloaded += (s, e) =>
@@ -47,7 +48,7 @@ namespace SandRibbon.Components
         {
             if (!Directory.Exists("quizzes"))
                 Directory.CreateDirectory("quizzes");
-            var fullPath = string.Format("quizzes\\{0}", rootPage.networkController.credentials.name);
+            var fullPath = string.Format("quizzes\\{0}", rootPage.getNetworkController().credentials.name);
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             int quiznumber = 0;

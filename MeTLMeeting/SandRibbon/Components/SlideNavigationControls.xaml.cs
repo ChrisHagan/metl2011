@@ -8,12 +8,13 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
     public partial class SlideNavigationControls : UserControl
     {
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public SlideNavigationControls()
         {
             InitializeComponent();
@@ -23,7 +24,7 @@ namespace SandRibbon.Components
             {
                 if (rootPage == null)
                 {
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
             };
@@ -55,7 +56,7 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 nav.Visibility = Visibility.Visible;
-                if (details.Author == rootPage.networkController.credentials.name)
+                if (details.Author == rootPage.getNetworkController().credentials.name)
                 {
                     Commands.SetSync.Execute(true);
                     //addSlideButton.Visibility = Visibility.Visible;

@@ -12,13 +12,14 @@ using ImageDrop = SandRibbon.Components.ImageDrop;
 using System.Collections.Generic;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs
 {
     public partial class Quizzes : RibbonTab
     {
         public static RoutedCommand openQuizResults = new RoutedCommand();
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public Quizzes()
         {
             InitializeComponent();
@@ -31,7 +32,7 @@ namespace SandRibbon.Tabs
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
@@ -57,7 +58,7 @@ namespace SandRibbon.Tabs
                 {
                     try
                     {
-                        if (rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name))
+                        if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                             amAuthor();
                         else
                             amRespondent();
@@ -93,7 +94,7 @@ namespace SandRibbon.Tabs
             if (details.IsEmpty) return;
             try
             {
-                if (rootPage.details.isAuthor(rootPage.getNetworkController().credentials.name))
+                if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
                 {
                     amAuthor();            
                 }

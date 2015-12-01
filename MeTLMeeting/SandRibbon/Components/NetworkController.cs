@@ -21,7 +21,6 @@ namespace SandRibbon.Components
         {
             config = _config;
         }
-        //public RibbonCollaborationPage ribbonCollaborationPage { get; protected set; }
         public ConversationSearchPage conversationSearchPage { get; protected set; }
         public IClientBehaviour connect(Credentials _creds)
         {

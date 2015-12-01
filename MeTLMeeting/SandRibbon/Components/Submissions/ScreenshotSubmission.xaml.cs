@@ -11,6 +11,7 @@ using System.Diagnostics;
 using SandRibbon.Components.Utility;
 using System.Windows.Media;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -24,7 +25,7 @@ namespace SandRibbon.Components.Submissions
     public partial class ScreenshotSubmission : UserControl
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public ScreenshotSubmission()
         {
             InitializeComponent();
@@ -36,7 +37,7 @@ namespace SandRibbon.Components.Submissions
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotSubmissionCommand);
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
@@ -73,7 +74,7 @@ namespace SandRibbon.Components.Submissions
             if (ConversationDetails.Empty.Equals(details)) return;
             try
             {
-                if (rootPage.details.Author == rootPage.networkController.credentials.name)
+                if (rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name)
                     amTeacher();
                 else
                     amStudent();
@@ -90,7 +91,7 @@ namespace SandRibbon.Components.Submissions
                                                     try
                                                     {
                                                         submissionList = new List<TargettedSubmission>();
-                                                        if (rootPage.details.Author == rootPage.networkController.credentials.name)
+                                                        if (rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name)
                                                             amTeacher();
                                                         else
                                                             amStudent();
@@ -142,14 +143,14 @@ namespace SandRibbon.Components.Submissions
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 rootPage.getNetworkController().client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.getNetworkController().client.location.currentSlide, rootPage.networkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.details.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.networkController.credentials.name,hostedFileName)));
+                (rootPage.getNetworkController().client.location.currentSlide, rootPage.getNetworkController().credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.getDetails().Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.getNetworkController().credentials.name,hostedFileName)));
                 MeTLMessage.Information("Submission sent to " + rootPage.getDetails().Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
-                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.networkController.credentials.name),
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.getNetworkController().credentials.name),
                 showPrivate = true
             });
         }

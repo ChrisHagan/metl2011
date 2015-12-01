@@ -5,6 +5,7 @@ using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -20,7 +21,7 @@ namespace SandRibbon.Tabs.Groups
             set { SetValue(NavigationIsLockedProperty, value); }
 
         }
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public CollaborationControlsHost()
         {
             InitializeComponent();
@@ -28,10 +29,10 @@ namespace SandRibbon.Tabs.Groups
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 DataContext = this;
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
-                joinConversation(rootPage.details);
+                joinConversation(rootPage.getDetails());
             };
             Unloaded += (s, e) =>
             {

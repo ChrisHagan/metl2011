@@ -8,12 +8,13 @@ using MeTLLib.DataTypes;
 using UserControl = System.Windows.Controls.UserControl;
 using System.Diagnostics;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
     public partial class BackStageNav : UserControl
     {
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public BackStageNav()
         {
             InitializeComponent();
@@ -24,7 +25,7 @@ namespace SandRibbon.Components
             {
                 if (rootPage == null)
                 {
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(showConversationSearchBoxCommand);
                 Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(updateForeignConversationDetailsCommand);
@@ -39,7 +40,7 @@ namespace SandRibbon.Components
         }
         private void setMyConversationVisibility()
         {
-            mine.Visibility = rootPage.getNetworkController().client.ConversationsFor(rootPage.networkController.credentials.name, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == rootPage.networkController.credentials.name && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+            mine.Visibility = rootPage.getNetworkController().client.ConversationsFor(rootPage.getNetworkController().credentials.name, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == rootPage.getNetworkController().credentials.name && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }

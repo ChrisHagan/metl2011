@@ -4,12 +4,13 @@ using System.Windows.Controls.Ribbon;
 using System.Windows;
 using SandRibbon.Providers;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs
 {
     public partial class Plugins : RibbonTab
     {
-        public RibbonCollaborationPage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; protected set; }
         public Plugins()
         {
             InitializeComponent();
@@ -17,7 +18,7 @@ namespace SandRibbon.Tabs
             Loaded += (s, e) => {
                 if (rootPage == null)
                 {
-                    rootPage = DataContext as RibbonCollaborationPage;
+                    rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.UpdateConversationDetails.RegisterCommand(updateCommand);
             };
@@ -32,7 +33,7 @@ namespace SandRibbon.Tabs
         private void Update(ConversationDetails obj)
         {
             Dispatcher.adopt(delegate {
-                teacherPlugins.Visibility = (obj.Author == rootPage.networkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+                teacherPlugins.Visibility = (obj.Author == rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             });
         }
     }
