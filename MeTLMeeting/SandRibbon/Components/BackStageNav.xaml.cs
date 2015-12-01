@@ -45,7 +45,7 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+            if (String.IsNullOrEmpty(rootPage.getDetails().Jid))
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
@@ -54,9 +54,9 @@ namespace SandRibbon.Components
             if (details.IsEmpty) return;
 
             // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
-            if (details.IsJidEqual(Globals.location.activeConversation))
+            if (details.IsJidEqual(rootPage.getDetails().Jid))
             {
-                if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
+                if (details.isDeleted || (!details.UserHasPermission(rootPage.getNetworkController().credentials)))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
@@ -68,7 +68,7 @@ namespace SandRibbon.Components
         }
         private void ShowConversationSearchBox(object mode)
         {
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+            if (String.IsNullOrEmpty(rootPage.getDetails().Jid))
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;

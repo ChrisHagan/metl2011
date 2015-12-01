@@ -84,6 +84,7 @@ namespace SandRibbon.Providers
         {
             return string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, seed);
         }
+        /*
         public static bool isAuthor
         {
             get
@@ -92,6 +93,7 @@ namespace SandRibbon.Providers
                 return me.ToLower() == conversationDetails.Author.ToLower();
             }
         }
+        */
         public static UserOptions UserOptions
         {
             get
@@ -138,6 +140,7 @@ namespace SandRibbon.Providers
             apiKey = "exampleApiKey",
             apiSecret = "exampleApiSecret"
         };
+        /*
         public static PedagogyLevel pedagogy
         {
             get
@@ -191,6 +194,8 @@ namespace SandRibbon.Providers
                 return new KeyValuePair<ConversationDetails, Slide>(conversationDetails, slideDetails);
             }
         }
+        */
+        /*
         public static List<ContentVisibilityDefinition> contentVisibility
         {
             get
@@ -198,13 +203,17 @@ namespace SandRibbon.Providers
                 return Commands.SetContentVisibility.IsInitialised ? (List<ContentVisibilityDefinition>)Commands.SetContentVisibility.LastValue() : new List<ContentVisibilityDefinition>();
             }
         }
+        */
+        /*
         public static MeTLLib.DataTypes.QuizData quiz
         {
             get
             {
                 return quizData;
             }
-        }        
+        }
+        */
+        /*
         public static MeTLLib.DataTypes.Credentials credentials
         {
             get
@@ -226,6 +235,8 @@ namespace SandRibbon.Providers
                 return authorizedGroups.Select(g => g.groupKey).ToList();
             }
         }
+        */
+        /*
         public static bool synched
         {
             get
@@ -233,6 +244,8 @@ namespace SandRibbon.Providers
                 return (bool)Commands.SetSync.LastValue();
             }
         }
+        */
+        /*
         public static int teacherSlide
         {
             get
@@ -247,6 +260,7 @@ namespace SandRibbon.Providers
                 return Commands.MoveToCollaborationPage.IsInitialised ? (int)Commands.MoveToCollaborationPage.LastValue() : -1;
             }
         }
+        
         public static string me
         {
             get
@@ -261,16 +275,18 @@ namespace SandRibbon.Providers
                 return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : GlobalConstants.PUBLIC);
             }
         }
+        */
+        /*
         public static Policy policy
         {
             get { return new Policy(isAuthor, false); }
         }
-
         public static UserInformation userInformation
         {
             get { return new UserInformation(credentials, location, policy); }
         }
-
+        */
+        /*
         public static bool IsBanhammerActive
         {
             get
@@ -278,15 +294,7 @@ namespace SandRibbon.Providers
                 return (bool)(Commands.BanhammerActive.IsInitialised ? Commands.BanhammerActive.LastValue() : false);
             }
         }
-
-        public static bool rememberMe
-        {
-            get
-            {
-                return (bool)Commands.RememberMe.LastValue();
-            }
-        }
-
+        */
         private static StoredUIState _storedUIState;
         public static StoredUIState StoredUIState
         {
@@ -401,12 +409,13 @@ namespace SandRibbon.Providers
         }
         public static Profile currentProfile = profiles[0];
         public  static WebSession authenticatedWebSession;
+        /*
         public static string currentPage { get; set; }
 
         public static Slide slideObject() {
             return slides.Where(s => s.id == location.currentSlide).First();
         }
-
+        */
         public static event CanvasClipboardFocusChangedHandler CanvasClipboardFocusChanged;
         public static string CurrentCanvasClipboardFocus
         {

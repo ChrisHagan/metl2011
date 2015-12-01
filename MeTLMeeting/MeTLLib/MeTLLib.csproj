@@ -153,7 +153,6 @@
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\Connection\ProviderMonitor.cs" />
     <Compile Include="Providers\GlobalCultureCompatibility.cs" />
-    <Compile Include="Providers\Globals.cs" />
     <Compile Include="Providers\Crypto.cs" />
     <Compile Include="Providers\Structure\FileConversationDetailsProvider.cs" />
     <Compile Include="Providers\HistoryProvider.cs" />

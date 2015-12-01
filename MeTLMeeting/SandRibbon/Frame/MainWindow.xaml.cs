@@ -85,7 +85,7 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             //Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
+            //Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<object>(openOneNoteConfiguration));
@@ -100,7 +100,7 @@ namespace SandRibbon
             {
                 Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
             }            
-            Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
+          //  Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
             
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -121,7 +121,7 @@ namespace SandRibbon
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
-            Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
+          //  Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
@@ -129,7 +129,7 @@ namespace SandRibbon
             Commands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
             Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(synchronizeToOneNote));
 
-            Commands.JoinCreatedConversation.RegisterCommand(new DelegateCommand<object>(joinCreatedConversation));
+          //  Commands.JoinCreatedConversation.RegisterCommand(new DelegateCommand<object>(joinCreatedConversation));
 
             WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
@@ -147,11 +147,12 @@ namespace SandRibbon
         {
             Commands.MirrorPresentationSpace.Execute(this);
         }
+        /*
         private void WordCloud(object obj)
         {
             mainFrame.Navigate(new TagCloudPage(App.controller));
         }
-
+        */
         private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
         {
             mainFrame.Navigate(obj.networkController.conversationSearchPage);// new ConversationSearchPage(obj.networkController));
@@ -350,7 +351,7 @@ namespace SandRibbon
             }
             catch (Exception e)
             {
-                Log(string.Format("Exception in MainWindow.getDefaultSystemLanguage: {0}", e.Message));
+                //Log(string.Format("Exception in MainWindow.getDefaultSystemLanguage: {0}", e.Message));
             }
         }
         #region helpLinks
@@ -388,7 +389,7 @@ namespace SandRibbon
 
             catch (Exception e)
             {
-                Log(string.Format("Failure in language set: {0}", e.Message));
+                //Log(string.Format("Failure in language set: {0}", e.Message));
             }
         }
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
@@ -400,12 +401,12 @@ namespace SandRibbon
         }
         private void ImportPowerpoint(object obj)
         {
-            if (loader == null) loader = new PowerPointLoader();
+            if (loader == null) loader = new PowerPointLoader(obj as NetworkController);
             loader.ImportPowerpoint(this,(PowerpointImportType)obj);
         }
         private void createBlankConversation(object obj)
         {            
-            if (loader == null) loader = new PowerPointLoader();
+            if (loader == null) loader = new PowerPointLoader(obj as NetworkController);
             loader.CreateBlankConversation();
         }
 
@@ -444,7 +445,7 @@ namespace SandRibbon
         private void SaveUserOptions(UserOptions options)
         {
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
-            App.controller.client.SaveUserOptions(Globals.me, options);
+            //App.controller.client.SaveUserOptions(Globals.me, options);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -452,6 +453,7 @@ namespace SandRibbon
             base.OnSourceInitialized(e);
         }
 
+        /*
         private void Reconnecting(bool success)
         {
             if (success)
@@ -495,7 +497,7 @@ namespace SandRibbon
                 showReconnectingDialog();
             }
         }
-
+        */
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
@@ -578,7 +580,7 @@ namespace SandRibbon
             canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
             Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
         }
-
+        /*
         private void createConversation(object detailsObject)
         {
             var details = (ConversationDetails)detailsObject;
@@ -596,6 +598,8 @@ namespace SandRibbon
                 mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
             }
         }
+        */
+        /*
         protected void joinCreatedConversation(object detailsObject)
         {
             var details = (ConversationDetails)detailsObject;
@@ -606,6 +610,7 @@ namespace SandRibbon
                 mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
             });
         }
+        */
         private void setSync(object _obj)
         {
             Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;

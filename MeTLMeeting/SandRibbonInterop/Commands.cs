@@ -113,7 +113,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ReceiveSleep = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendMoveBoardToSlide = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveMoveBoardToSlide = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand CloseBoardManager = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendPing = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceivePong = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DoWithCurrentSelection = new DefaultableCompositeCommand();

@@ -191,7 +191,7 @@ namespace SandRibbon.Components.BannedContent
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
-            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(Globals.conversationDetails.blacklist));
+            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.getDetails().blacklist));
 
             DataContext = this;
         }

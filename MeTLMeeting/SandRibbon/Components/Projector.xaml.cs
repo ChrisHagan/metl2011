@@ -11,6 +11,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using System.Collections.Generic;
 using MeTLLib.DataTypes;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components
 {
@@ -45,17 +46,27 @@ namespace SandRibbon.Components
             scroll.ScrollToHorizontalOffset(e.HorizontalOffset);
             scroll.ScrollToVerticalOffset(e.VerticalOffset);
         }
-
-        public Projector()
+        public SlideAwarePage rootPage { get; protected set; }
+        public Projector(SlideAwarePage _rootPage)
         {
+            rootPage = _rootPage;
             InitializeComponent();
-            Loaded += Projector_Loaded;
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
-            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
-            Commands.MoveToCollaborationPage.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            Loaded += (s, e) =>
+            {
+                conversationLabel.Text = generateTitle(rootPage.getDetails());
+                stack.me = "projector";
+                stack.Work.EditingMode = InkCanvasEditingMode.None;
+                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.getSlide().id.ToString());
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+            };
+            Unloaded += (s, e) =>
+            {
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+            };
         }
         private string generateTitle(ConversationDetails details)
         {
@@ -67,52 +78,9 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details.IsEmpty) return;
             conversationLabel.Text = generateTitle(details);
-            
-            if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
-            {
-                shutdown(null);
-            }
         }
 
-        private void shutdown(object obj)
-        {
-            if(Window != null)
-                Window.Close();
-        }
-
-        private void setPedagogy(object obj)
-        {
-            //when you change pedagogy all the commands are deregistered this will restart the projector
-            if(Window != null)
-                Window.Close();
-            Commands.CheckExtendedDesktop.Execute(null);
-        }
-
-        private void moveTo(object obj)
-        {
-            conversationLabel.Text = generateTitle(Globals.conversationDetails);
-            
-            stack.Flush();
-        }
-        private void Projector_Loaded(object sender, RoutedEventArgs e)
-        {
-            startProjector(null);
-        }
-        private void startProjector(object obj)
-        {
-            try
-            {
-                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
-            }
-            catch (Exception)
-            {
-            }
-            stack.me = "projector";
-            stack.Work.EditingMode = InkCanvasEditingMode.None;
-            conversationLabel.Text = generateTitle(Globals.conversationDetails);
-        }
         private static DrawingAttributes currentAttributes = new DrawingAttributes();
         private static DrawingAttributes deleteAttributes = new DrawingAttributes();
         private static Color deleteColor = Colors.Red;

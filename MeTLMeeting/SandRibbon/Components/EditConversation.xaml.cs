@@ -17,8 +17,10 @@ namespace SandRibbon.Components
         public SlideIndexConverter SlideIndex;
         public UrlForSlideConverter UrlForSlide;
         public ConversationDetails details { get; protected set; }
-        public EditConversation(ConversationDetails _details, NetworkController controller)
+        public NetworkController controller { get; protected set; }
+        public EditConversation(ConversationDetails _details, NetworkController _controller)
         {
+            controller = _controller;
             details = _details;
             SlideIndex = new SlideIndexConverter();
             UrlForSlide = new UrlForSlideConverter(controller);
@@ -49,7 +51,7 @@ namespace SandRibbon.Components
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
 
-            rootPage.getNetworkController().client.UpdateConversationDetails(details);
+            controller.client.UpdateConversationDetails(details);
             Commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
             Close();
         }

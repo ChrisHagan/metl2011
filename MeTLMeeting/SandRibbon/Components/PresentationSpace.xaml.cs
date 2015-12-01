@@ -103,7 +103,7 @@ namespace SandRibbon.Components
                 var tuple = (KeyValuePair<MainWindow, ScrollViewer>)obj;
                 var scroll = tuple.Value;
                 var parent = tuple.Key;
-                var mirror = new Window { Content = new Projector { viewConstraint = scroll } };
+                var mirror = new Window { Content = new Projector(rootPage) { viewConstraint = scroll } };
                 try
                 {
                     if (Projector.Window != null)

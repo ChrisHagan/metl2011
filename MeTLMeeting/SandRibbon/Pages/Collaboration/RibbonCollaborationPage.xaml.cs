@@ -881,5 +881,9 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         {
             throw new NotImplementedException();
         }
+        public NavigationService getNavigationService()
+        {
+            return NavigationService;
+        }
     }
 }
