@@ -49,7 +49,7 @@ namespace SandRibbon.Tabs
 
         private bool CheckManageBannedAllowed(object sender)
         {
-            return StateHelper.mustBeInConversation();
+            return true;
         }
 
         private void PreParserAvailable(PreParser parser)

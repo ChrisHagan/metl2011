@@ -397,7 +397,6 @@ namespace SandRibbon.Tabs.Groups
 
             //this.DataContext = currentColourValues;
             this.DataContext = this;
-            Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return StateHelper.mustBeInConversation(); }));
             SetupPreviousColoursWithDefaults();
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));

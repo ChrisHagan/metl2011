@@ -9,11 +9,17 @@ using MeTLLib.Providers.Connection;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Utility
 {
     public class ContentBuffer
     {
+        public SlideAwarePage rootPage { get; protected set; }
+        public ContentBuffer(SlideAwarePage _rootPage)
+        {
+            rootPage = _rootPage;
+        }
         private StrokeFilter strokeFilter;
         private ImageFilter imageFilter;
         private TextFilter textFilter;
@@ -46,12 +52,12 @@ namespace SandRibbon.Components.Utility
         
         public ContentBuffer()
         {
-            strokeFilter = new StrokeFilter();
-            imageFilter = new ImageFilter();
-            textFilter = new TextFilter();
+            strokeFilter = new StrokeFilter(rootPage);
+            imageFilter = new ImageFilter(rootPage);
+            textFilter = new TextFilter(rootPage);
 
-            strokeDeltaFilter = new StrokeFilter();
-            imageDeltaCollection = new ImageFilter();
+            strokeDeltaFilter = new StrokeFilter(rootPage);
+            imageDeltaCollection = new ImageFilter(rootPage);
         }
 
         public List<PrivateAwareStroke> FilteredStrokes(List<ContentVisibilityDefinition> contentVisibility)

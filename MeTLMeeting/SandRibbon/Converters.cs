@@ -50,8 +50,8 @@ namespace SandRibbon
         public static ConversationDateConverter DateTimeConverter = new ConversationDateConverter();
         public static ColorToBrushConverter ColorToBrushConverter = new ColorToBrushConverter();
         public static BracketingConverter BracketingConverter = new BracketingConverter();
-        public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
-        public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
+        //public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
+        //public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
         public static ExtractAuthorConverter ExtractAuthorConverter = new ExtractAuthorConverter();
         public static ExtractNameConverter ExtractNameConverter = new ExtractNameConverter();
         public static ExtractTypeConverter ExtractTypeConverter = new ExtractTypeConverter();
@@ -70,7 +70,7 @@ namespace SandRibbon
         public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
         public static NoCachedImageReplicator nonCachedImage = new NoCachedImageReplicator();
         public static ExtractSubmissionAuthorAndConvert ExtractSubmissionAuthor = new ExtractSubmissionAuthorAndConvert();
-        public static ConvertMeTLIdentityStringToImageSource ConvertMeTLIdentityStringToImageSource = new ConvertMeTLIdentityStringToImageSource();
+        //public static ConvertMeTLIdentityStringToImageSource ConvertMeTLIdentityStringToImageSource = new ConvertMeTLIdentityStringToImageSource();
     }
     public class StringTruncatorConverter : IValueConverter
     {

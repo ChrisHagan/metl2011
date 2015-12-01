@@ -3,11 +3,13 @@ using System.Linq;
 using System.Windows.Ink;
 using MeTLLib.DataTypes;
 using MeTLLib.Utilities;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Utility
 {
     public class StrokeFilter : ContentFilter<List<PrivateAwareStroke>, PrivateAwareStroke>
     {
+        public StrokeFilter(SlideAwarePage page) : base(page) { }
         protected override bool Equals(PrivateAwareStroke item1, PrivateAwareStroke item2)
         {
             return item1.tag().id == item2.tag().id;

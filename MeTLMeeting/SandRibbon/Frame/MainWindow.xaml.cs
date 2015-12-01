@@ -133,7 +133,7 @@ namespace SandRibbon
 
             //WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
-            undoHistory = new UndoHistory();
+            //undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
         }
 
@@ -185,6 +185,7 @@ namespace SandRibbon
             mainFrame.Navigate(new OneNotePage(page));
         }
         private void synchronizeToOneNote(OneNoteSynchronizationSet sync) {            
+            /*
             var w = new WebControl();
             var config = sync.config;
             DocumentReadyEventHandler ready = null;
@@ -219,6 +220,7 @@ namespace SandRibbon
                 responseType,
                 redirectUri));
             w.Source = uri;
+            */
         }
         private void browseOneNote(OneNoteConfiguration config)
         {

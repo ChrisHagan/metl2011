@@ -121,7 +121,7 @@ namespace SandRibbon.Components
             var addSlideCommand = new DelegateCommand<object>(addSlide, canAddSlide);
             var moveToNextCommand = new DelegateCommand<object>(moveToNext, isNext);
             var moveToPreviousCommand = new DelegateCommand<object>(moveToPrevious, isPrevious);
-            var receiveTeacherStatusCommand = new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); });
+            var receiveTeacherStatusCommand = new DelegateCommand<TeacherStatus>(receivedStatus);
             var editConversationCommand = new DelegateCommand<object>(EditConversation);
             var updateNewSlideOrderCommand = new DelegateCommand<int>(reorderSlides);
             refresher = new DispatcherTimer();
@@ -474,7 +474,7 @@ namespace SandRibbon.Components
                         //Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
                         SendSyncMove(currentSlideId);
                         //checkMovementLimits();
-                        rootPage.getNavigationService().Navigate(new RibbonCollaborationPage(rootPage.getNetworkController(), rootPage.getDetails(), (Slide)e.AddedItems[0]));
+                        rootPage.getNavigationService().Navigate(new RibbonCollaborationPage(rootPage.getUserGlobalState(), rootPage.getUserServerState(), rootPage.getUserConversationState(), new UserSlideState(),rootPage.getNetworkController(), rootPage.getDetails(), (Slide)e.AddedItems[0]));
                     }
                     else if (sender is ListBox)
                     {

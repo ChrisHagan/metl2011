@@ -9,11 +9,14 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Utils;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Utility
 {
     public class TextFilter : ContentFilter<List<UIElement>, UIElement>
     {
+        public TextFilter(SlideAwarePage page) : base(page) { }
+
         protected override bool Equals(UIElement item1, UIElement item2)
         {
             return item1 is MeTLTextBox && item2 is MeTLTextBox && (item1 as MeTLTextBox).tag().id == (item2 as MeTLTextBox).tag().id; 

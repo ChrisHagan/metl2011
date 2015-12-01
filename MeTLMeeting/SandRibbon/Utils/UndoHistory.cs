@@ -147,7 +147,7 @@ namespace SandRibbon.Utils
             {
                 new List<ContentVisibilityDefinition> { ContentFilterVisibility.myPrivate, ContentFilterVisibility.myPrivate }.ForEach(cvd => cvd.Subscribed = true);
                 // content has been modified, so make sure "my" content is visible
-                Commands.SetContentVisibility.Execute(Globals.contentVisibility);//.Select(cvd =>  Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
+                Commands.SetContentVisibility.Execute(userConv.contentVisibility);//.Select(cvd =>  Globals.contentVisibility | ContentVisibilityEnum.MyPublicVisible | ContentVisibilityEnum.MyPrivateVisible);
             }
             catch (Exception)
             {
