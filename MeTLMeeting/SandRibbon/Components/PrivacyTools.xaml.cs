@@ -10,6 +10,7 @@ using SandRibbon.Providers;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using System.ComponentModel;
 
 namespace SandRibbon.Components
 {
@@ -26,12 +27,23 @@ namespace SandRibbon.Components
             var setPrivacyCommand = new DelegateCommand<string>(SetPrivacy, canSetPrivacy);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
             var textboxFocusedCommand = new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox);
-            Loaded += (s, e) => {
+            var privacyChangedEventHandler = new EventHandler((evs, eve) =>
+            {
+                var newPrivacy = rootPage.getUserConversationState().privacy;
+                var conversation = rootPage.getDetails();
+                var me = rootPage.getNetworkController().credentials.name;
+                publicMode.IsEnabled = (conversation.isAuthor(me) || conversation.Permissions.studentCanPublish);
+                updateVisual(newPrivacy);
+            });
+            var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.privacyProperty, typeof(UserConversationState));
+            Loaded += (s, e) =>
+            {
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
+<<<<<<< HEAD
                 try
                 {
                     if (String.IsNullOrEmpty(rootPage.UserConversationState.Privacy.ToString()) || rootPage.ConversationDetails == null)
@@ -52,34 +64,55 @@ namespace SandRibbon.Components
                 {
                     Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                 }
+=======
+>>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
-                DataContext = this;
+                privacyProperty.AddValueChanged(this, privacyChangedEventHandler);
+
+
+                var details = rootPage.getDetails();
+                var userConv = rootPage.getUserConversationState();
+                if (userConv.privacy == Privacy.NotSet || userConv.privacy == Privacy.Public) {
+                    if (details.isAuthor(rootPage.getNetworkController().credentials.name) || details.Permissions.studentCanPublish)
+                    userConv.privacy = Privacy.Public;
+                    else
+                        rootPage.getUserConversationState().privacy = Privacy.Private;
+                }
+                updateVisual(userConv.privacy);
+
             };
-            Unloaded += (s, e) => {
+            Unloaded += (s, e) =>
+            {
+                privacyProperty.RemoveValueChanged(this, privacyChangedEventHandler);
                 Commands.SetPrivacy.UnregisterCommand(setPrivacyCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.TextboxFocused.UnregisterCommand(textboxFocusedCommand);
             };
         }
-
+        protected void updateVisual(Privacy newPrivacy)
+        {
+            Dispatcher.adopt(delegate
+            {
+                if (newPrivacy == Privacy.Public)
+                {
+                    publicMode.IsChecked = true;
+                }
+                else if (newPrivacy == Privacy.Private)
+                {
+                    privateMode.IsChecked = true;
+                }
+            });
+        }
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
-            if (info.Target == "presentationSpace")
-            {
-                string setPrivacy = info.IsPrivate ? GlobalConstants.PRIVATE : GlobalConstants.PUBLIC;
-                Commands.SetPrivacy.ExecuteAsync(setPrivacy);
-            }           
+            if (info.Target == GlobalConstants.PRESENTATIONSPACE)
+                rootPage.getUserConversationState().privacy = info.IsPrivate ? Privacy.Private : Privacy.Public;
         }
 
         private void updateConversationDetails(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
-            settingEnabledModes(details);
-        }
-
-        private void settingEnabledModes(ConversationDetails details)
-        {
+<<<<<<< HEAD
             Dispatcher.adopt(() =>
                                   {
                                       if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(rootPage.NetworkController.credentials.name)) || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
@@ -96,10 +129,15 @@ namespace SandRibbon.Components
                                           Commands.SetPrivacy.Execute(GlobalConstants.PRIVATE);
                                       }
                                   });
+=======
+            var userConv = rootPage.getUserConversationState();
+            if (userConv.privacy != Privacy.Private &&  (!details.isAuthor(rootPage.getNetworkController().credentials.name) && !details.Permissions.studentCanPublish))
+                userConv.privacy = Privacy.Private;
+>>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
         }
-
         private bool canSetPrivacy(string privacy)
         {
+<<<<<<< HEAD
             try
             {
                 var result = privacy != (string)GetValue(PrivateProperty)
@@ -107,34 +145,26 @@ namespace SandRibbon.Components
                 return result;
             }
             catch (Exception)
+=======
+            if (String.IsNullOrEmpty(privacy)) return false;
+            var newPrivacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
+            if (newPrivacy == Privacy.Private)
+>>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
             {
-                return false;
+                return true;
+            } else if (newPrivacy == Privacy.Public){
+                var userConv = rootPage.getUserConversationState();
+                var details = rootPage.getDetails();
+                var me = rootPage.getNetworkController().credentials.name;
+                return details.isAuthor(me) || details.Permissions.studentCanPublish;
             }
+            else return true;
         }
-        private void SetPrivacy(string p)
+        private void SetPrivacy(string privacy)
         {
-            Dispatcher.adoptAsync(delegate
-                                      {
-                                          settingSelectedMode(p);
-                                          SetValue(PrivateProperty, p);
-                                          Commands.RequerySuggested(Commands.SetPrivacy);
-                                      });
+            if (String.IsNullOrEmpty(privacy)) return;
+            rootPage.getUserConversationState().privacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
         }
-
-        private void settingSelectedMode(string p)
-        {
-            if (p == "public")
-            {
-                publicMode.IsChecked = true;
-                privateMode.IsChecked = false;                
-            }
-            else
-            {
-                publicMode.IsChecked = false;
-                privateMode.IsChecked = true;                
-            }
-        }
-
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new PrivacyToolsAutomationPeer(this);

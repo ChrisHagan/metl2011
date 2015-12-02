@@ -197,6 +197,11 @@ namespace SandRibbon.Pages.Login
             }, null, Timeout.Infinite, Timeout.Infinite);
             logonBrowser.NativeViewInitialized += delegate
             {
+                if (logonBrowser.WebSession != null)
+                {
+                    logonBrowser.WebSession.ClearCache();
+                    logonBrowser.WebSession.ClearCookies();
+                }
                 logonBrowser.Source = loginUri;
             };
         }
