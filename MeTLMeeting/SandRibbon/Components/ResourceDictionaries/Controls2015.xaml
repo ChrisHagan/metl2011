@@ -54,7 +54,7 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
     <Style TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="/Resources/advent-pro.medium.ttf#Advent Pro" />
+        <Setter Property="FontFamily" Value="/Resources/Cabin-Regular-TTF.ttf#Cabin" />
     </Style>
            
     <Style TargetType="CheckBox">
@@ -63,7 +63,7 @@
                 <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
             </Setter.Value>
         </Setter>
-        <Setter Property="Margin" Value="0 0 0 10"/>
+        <Setter Property="Margin" Value="0 10"/>
     </Style>
     <Style TargetType="{x:Type Label}">
         <Setter Property="FontSize" Value="30" />                
