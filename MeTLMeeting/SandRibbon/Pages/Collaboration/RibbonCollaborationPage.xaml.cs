@@ -222,7 +222,7 @@ namespace SandRibbon.Pages.Collaboration
 
         public static readonly DependencyProperty isSelectedPenProperty = DependencyProperty.Register("isSelectedPen", typeof(bool), typeof(PenAttributes), new PropertyMetadata(false));
     }
-    public partial class RibbonCollaborationPage : Page, SlideAwarePage
+    public partial class RibbonCollaborationPage : SlideAwarePage
     {
         public NetworkController networkController { get; protected set; }
         public UserGlobalState userGlobal { get; protected set; }
@@ -233,11 +233,7 @@ namespace SandRibbon.Pages.Collaboration
         public ConversationDetails details { get; protected set; }
         public Slide slide { get; protected set; }
 
-        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;
-        /*
-        private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
-        private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
-        */
+        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;        
         public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, UserSlideState _userSlide, NetworkController _networkController, ConversationDetails _details, Slide _slide)
         {
             networkController = _networkController;
@@ -396,7 +392,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
-                userConv.contentVisibility = ContentFilterVisibility.defaultVisibilities;
+                userConv.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
                 networkController.client.SneakOutOf(slide.id.ToString() + networkController.credentials.name);
                 networkController.client.SneakOutOf(slide.id.ToString());
                 networkController.client.SneakOutOf(details.Jid);

@@ -33,7 +33,7 @@ namespace SandRibbon.Tabs
         private void Update(ConversationDetails obj)
         {
             Dispatcher.adopt(delegate {
-                teacherPlugins.Visibility = (obj.Author == rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+                teacherPlugins.Visibility = (obj.Author == rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             });
         }
     }

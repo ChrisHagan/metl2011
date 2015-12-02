@@ -38,7 +38,7 @@ namespace SandRibbon.Pages.Conversations
             return new object[] { };
         }
     }
-    public partial class ConversationSearchPage : Page, ServerAwarePage
+    public partial class ConversationSearchPage : ServerAwarePage
     {
         private ObservableCollection<SearchConversationDetails> searchResultsObserver = new ObservableCollection<SearchConversationDetails>();
 

@@ -34,18 +34,18 @@ namespace SandRibbon.Components
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 try
                 {
-                    if (String.IsNullOrEmpty(rootPage.getUserConversationState().privacy.ToString()) || rootPage.getDetails() == null)
+                    if (String.IsNullOrEmpty(rootPage.UserConversationState.Privacy.ToString()) || rootPage.ConversationDetails == null)
                     {
                         Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
                     }
                     else
                     {
-                        if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
+                        if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                             Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PUBLIC);
                         else
                             Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
-                        settingEnabledModes(rootPage.getDetails());
-                        settingSelectedMode(rootPage.getUserConversationState().privacy.ToString());
+                        settingEnabledModes(rootPage.ConversationDetails);
+                        settingSelectedMode(rootPage.UserConversationState.Privacy.ToString());
                     }
                 }
                 catch (NotSetException)
@@ -82,10 +82,10 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(rootPage.getNetworkController().credentials.name)) || rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
+                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(rootPage.NetworkController.credentials.name)) || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                                       {
                                           publicMode.IsEnabled = true;
-                                          var privacy = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? GlobalConstants.PUBLIC : GlobalConstants.PRIVATE;
+                                          var privacy = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? GlobalConstants.PUBLIC : GlobalConstants.PRIVATE;
                                           SetPrivacy(privacy);
                                       }
 
@@ -103,7 +103,7 @@ namespace SandRibbon.Components
             try
             {
                 var result = privacy != (string)GetValue(PrivateProperty)
-                && ((rootPage.getDetails().Permissions.studentCanPublish && !rootPage.getDetails().blacklist.Contains(rootPage.getNetworkController().credentials.name)) || rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name);
+                && ((rootPage.ConversationDetails.Permissions.studentCanPublish && !rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) || rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name);
                 return result;
             }
             catch (Exception)

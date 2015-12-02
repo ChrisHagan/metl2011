@@ -124,7 +124,7 @@ namespace SandRibbon.Quizzing
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
         {
-            return convState.quizData.answers.FirstOrDefault(answer => answer.Key == quizQuestion.Id).Value.Count > 0;
+            return convState.QuizData.answers.FirstOrDefault(answer => answer.Key == quizQuestion.Id).Value.Count > 0;
         }
 
         void ViewEditAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)

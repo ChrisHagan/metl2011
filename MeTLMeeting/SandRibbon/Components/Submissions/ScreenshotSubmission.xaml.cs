@@ -56,7 +56,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void viewSubmissions(object _obj)
         {
-            var view = new ViewSubmissions(rootPage.getNetworkController(),submissionList);
+            var view = new ViewSubmissions(rootPage.NetworkController,submissionList);
             view.Owner = Window.GetWindow(this);
             view.Show();
         }
@@ -74,7 +74,7 @@ namespace SandRibbon.Components.Submissions
             if (ConversationDetails.Empty.Equals(details)) return;
             try
             {
-                if (rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name)
+                if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name)
                     amTeacher();
                 else
                     amStudent();
@@ -91,7 +91,7 @@ namespace SandRibbon.Components.Submissions
                                                     try
                                                     {
                                                         submissionList = new List<TargettedSubmission>();
-                                                        if (rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name)
+                                                        if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name)
                                                             amTeacher();
                                                         else
                                                             amStudent();
@@ -142,15 +142,15 @@ namespace SandRibbon.Components.Submissions
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                rootPage.getNetworkController().client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.getNetworkController().client.location.currentSlide, rootPage.getNetworkController().credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.getDetails().Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.getNetworkController().credentials.name,hostedFileName)));
-                MeTLMessage.Information("Submission sent to " + rootPage.getDetails().Author);
+                rootPage.NetworkController.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                (rootPage.NetworkController.client.location.currentSlide, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
+                MeTLMessage.Information("Submission sent to " + rootPage.ConversationDetails.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
-                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.getNetworkController().credentials.name),
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.NetworkController.credentials.name),
                 showPrivate = true
             });
         }

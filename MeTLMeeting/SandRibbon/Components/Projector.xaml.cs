@@ -55,10 +55,10 @@ namespace SandRibbon.Components
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             Loaded += (s, e) =>
             {
-                conversationLabel.Text = generateTitle(rootPage.getDetails());
+                conversationLabel.Text = generateTitle(rootPage.ConversationDetails);
                 stack.me = "projector";
                 stack.Work.EditingMode = InkCanvasEditingMode.None;
-                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.getSlide().id.ToString());
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.Slide.id.ToString());
                 Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
             };
@@ -70,7 +70,7 @@ namespace SandRibbon.Components
         }
         private string generateTitle(ConversationDetails details)
         {
-            return string.Format("{0} Page:{1}", details.Title, rootPage.getSlide().index);
+            return string.Format("{0} Page:{1}", details.Title, rootPage.Slide.index);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {

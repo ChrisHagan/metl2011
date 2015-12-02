@@ -123,7 +123,7 @@ namespace SandRibbon.Pages.ServerSelection
             }
         }
     }
-    public partial class ServerSelectorPage : Page, GlobalAwarePage
+    public partial class ServerSelectorPage : GlobalAwarePage
     {
         protected int recheckInterval = 3000;
         //protected Timer dispatcherTimer;

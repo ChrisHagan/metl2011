@@ -123,8 +123,8 @@ namespace SandRibbon.Components.BannedContent
         public SlideAwarePage rootPage { get; protected set; }
         public BannedContent(SlideAwarePage _rootPage)
         {
-            ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter(rootPage.getNetworkController());
-            ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.getNetworkController());
+            ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter(rootPage.NetworkController);
+            ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.NetworkController);
             DataContext = this;
             InitializeComponent();
             rootPage = _rootPage;
@@ -196,7 +196,7 @@ namespace SandRibbon.Components.BannedContent
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
-            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.getDetails().blacklist));
+            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.ConversationDetails.blacklist));
 
             DataContext = this;
         }
@@ -228,7 +228,7 @@ namespace SandRibbon.Components.BannedContent
             sub.UpdateDisplayNames(userMapping);
 
             blackList.Clear();
-            var updatedBlacklist = WrapBlackList(rootPage.getDetails().blacklist);
+            var updatedBlacklist = WrapBlackList(rootPage.ConversationDetails.blacklist);
             foreach (var user in updatedBlacklist)
             {
                 blackList.Add(user);
@@ -350,7 +350,7 @@ namespace SandRibbon.Components.BannedContent
         private void unbanSelected_Click(object sender, RoutedEventArgs e)
         {
             var bannedUsers = GetBannedUserCheckboxes();
-            var details = rootPage.getDetails();
+            var details = rootPage.ConversationDetails;
             foreach (var participant in bannedUsers)
             {
                 var priv = participant.DataContext as PrivateUser;
@@ -367,7 +367,7 @@ namespace SandRibbon.Components.BannedContent
                     }
                 }
             }
-            rootPage.getNetworkController().client.UpdateConversationDetails(details);
+            rootPage.NetworkController.client.UpdateConversationDetails(details);
         }
     }
 }

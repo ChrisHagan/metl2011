@@ -7,28 +7,29 @@
     xmlns:metl="clr-namespace:SandRibbon"
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:core="clr-namespace:System;assembly=mscorlib"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
-    <!--
-    <sr:RibbonTab.CommandBindings>
-        <CommandBinding Command="{x:Static tabs:Quizzes.openQuizResults}" CanExecute="canOpenResults" Executed="OpenResults"/>
-    </sr:RibbonTab.CommandBindings>
-    -->
+    xmlns:logic="clr-namespace:SandRibbon.Utils"
+    xmlns:core="clr-namespace:System;assembly=mscorlib">
     <RibbonGroup Header="Create" x:Name="quizRibbonGroup" LargeImageSource="\Resources\Quizzes.png">
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static api:Commands.DummyCommandToProcessCanExecuteForTextTools}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-            <RibbonButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" 
-                Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
-                                      x:Name="createQuiz" LargeImageSource="\Resources\NewQuiz.png" SmallImageSource="\Resources\NewQuiz.png" Label="New"/>
-        </StackPanel>
+        <RibbonButton Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
+                          LargeImageSource="\Resources\NewQuiz.png" SmallImageSource="\Resources\NewQuiz.png" Label="New">
+            <RibbonButton.IsEnabled>
+                <MultiBinding Converter="{x:Static logic:Logic.Any}">
+                    <Binding Path="ConversationDetails.Permissions.studentCanCreateQuizzes" />
+                    <Binding Path="ConversationState.IsAuthor" />
+                </MultiBinding>
+            </RibbonButton.IsEnabled>
+        </RibbonButton>
     </RibbonGroup>
     <RibbonGroup Header="Results" x:Name="results">
-        <RibbonButton Command="{x:Static tabs:Quizzes.openQuizResults}" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}"/>
+        <RibbonGroup.Visibility>
+            <MultiBinding Converter="{x:Static logic:Logic.ShowIfAny}">
+                <Binding Path="ConversationState.IsAuthor" />
+            </MultiBinding>
+        </RibbonGroup.Visibility>
+        <!--RibbonButton Command="{x:Static tabs:Quizzes.openQuizResults}" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}" /-->
     </RibbonGroup>
     <RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
-        <dict:QuizContainer x:Name="quizzes" 
-                ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
-                IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}">
+        <dict:QuizContainer x:Name="quizzes">
             <dict:QuizContainer.Style>
                 <Style TargetType="{x:Type dict:QuizContainer}">
                     <Style.Setters>
@@ -89,7 +90,6 @@
                                                             </Label.Content>
                                                         </Label>
                                                     </StackPanel>
-                                                    <!--<TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/> -->
                                                 </StackPanel>
                                             </Button>
                                         </Border>
@@ -99,16 +99,11 @@
                         </Setter>
                     </Style.Setters>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="0">
+                        <DataTrigger Binding="{Binding Path=ConversationDetails.Quizzes.Count}" Value="0">
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <Label VerticalAlignment="Center"
-                                           FontWeight="Bold"
-                                           FontSize="12px"
-                                           FontFamily="Verdana"
-                                           Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
-                                           Content="There are currently no polls for this conversation"/>
+                                        <TextBlock VerticalAlignment="Center" Text="There are currently no polls for this conversation"/>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>

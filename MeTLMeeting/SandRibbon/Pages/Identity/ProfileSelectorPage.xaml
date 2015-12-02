@@ -1,8 +1,9 @@
-﻿<Page x:Class="SandRibbon.Pages.Identity.ProfileSelectorPage"
+﻿<pages:ServerAwarePage x:Class="SandRibbon.Pages.Identity.ProfileSelectorPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:local="clr-namespace:SandRibbon.Pages.Identity"     
+      xmlns:pages="clr-namespace:SandRibbon.Pages"                            
       xmlns:layout="clr-namespace:SandRibbon.Layout"
       Title="Profile Select">
     <Grid layout:GridLayout.ItemsPerRow="1"  HorizontalAlignment="Center">
@@ -39,4 +40,4 @@
             </Grid>
         </Button>
     </Grid>
-</Page>
+</pages:ServerAwarePage>

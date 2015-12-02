@@ -59,7 +59,7 @@ namespace SandRibbon.Components.Utility
         private void possiblyReEnableMyContent<T>(T element){
             if (element is UIElement){
                 var boxAuthor = AuthorFromTag(element as UIElement);
-                if (compareStringContents(boxAuthor, rootPage.getNetworkController().credentials.name))
+                if (compareStringContents(boxAuthor, rootPage.NetworkController.credentials.name))
                 {
                     var boxPrivacy = PrivacyFromTag(element as UIElement);
                     if (boxPrivacy == Privacy.Private)

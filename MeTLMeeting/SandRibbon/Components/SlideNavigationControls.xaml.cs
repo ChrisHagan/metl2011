@@ -56,7 +56,7 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 nav.Visibility = Visibility.Visible;
-                if (details.Author == rootPage.getNetworkController().credentials.name)
+                if (details.Author == rootPage.NetworkController.credentials.name)
                 {
                     Commands.SetSync.Execute(true);
                     //addSlideButton.Visibility = Visibility.Visible;

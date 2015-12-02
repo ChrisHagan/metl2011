@@ -40,13 +40,13 @@ namespace SandRibbon.Components
         }
         private void setMyConversationVisibility()
         {
-            mine.Visibility = rootPage.getNetworkController().client.ConversationsFor(rootPage.getNetworkController().credentials.name, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == rootPage.getNetworkController().credentials.name && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+            mine.Visibility = rootPage.NetworkController.client.ConversationsFor(rootPage.NetworkController.credentials.name, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ToList().Where(c => c.Author == rootPage.NetworkController.credentials.name && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (String.IsNullOrEmpty(rootPage.getDetails().Jid))
+            if (String.IsNullOrEmpty(rootPage.ConversationDetails.Jid))
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
@@ -55,9 +55,9 @@ namespace SandRibbon.Components
             if (details.IsEmpty) return;
 
             // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
-            if (details.IsJidEqual(rootPage.getDetails().Jid))
+            if (details.IsJidEqual(rootPage.ConversationDetails.Jid))
             {
-                if (details.isDeleted || (!details.UserHasPermission(rootPage.getNetworkController().credentials)))
+                if (details.isDeleted || (!details.UserHasPermission(rootPage.NetworkController.credentials)))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
@@ -69,7 +69,7 @@ namespace SandRibbon.Components
         }
         private void ShowConversationSearchBox(object mode)
         {
-            if (String.IsNullOrEmpty(rootPage.getDetails().Jid))
+            if (String.IsNullOrEmpty(rootPage.ConversationDetails.Jid))
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;

@@ -77,8 +77,8 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            editConversation.Visibility = details.Author == rootPage.getNetworkController().credentials.name ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+            editConversation.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
+            banContent.Visibility = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             bannedContentManagement.Visibility = banContent.Visibility;
         }
 

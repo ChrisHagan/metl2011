@@ -33,7 +33,7 @@ namespace SandRibbon.Components
 
                 if (mode.AdornerTarget == "presentationSpace")
                 {
-                    if ((!rootPage.getDetails().Permissions.studentCanPublish || rootPage.getDetails().blacklist.Contains(rootPage.getNetworkController().credentials.name)) && !rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
+                    if ((!rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                     {
                         showButton.Visibility = Visibility.Collapsed;
                         hideButton.Visibility = Visibility.Collapsed;
@@ -61,14 +61,14 @@ namespace SandRibbon.Components
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.getUserSlideState().isBanhammerActive)
+                if (rootPage.UserSlideState.BanhammerActive)
                 {
                     deleteButton.Visibility = Visibility.Collapsed;
                     showButton.Visibility = Visibility.Collapsed;
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.getUserSlideState().isBanhammerActive && rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name))
+                if (rootPage.UserSlideState.BanhammerActive && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                     banhammerButton.Visibility = Visibility.Visible;
                 else
                     banhammerButton.Visibility = Visibility.Collapsed;

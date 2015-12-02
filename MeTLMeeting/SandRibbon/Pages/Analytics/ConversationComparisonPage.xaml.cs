@@ -27,7 +27,7 @@ namespace SandRibbon.Pages.Analytics
             throw new NotImplementedException();
         }
     }
-    public partial class ConversationComparisonPage : Page, ServerAwarePage
+    public partial class ConversationComparisonPage : ServerAwarePage
     {
         public NetworkController networkController { get; protected set; }
         public UserGlobalState userGlobal { get; protected set; }

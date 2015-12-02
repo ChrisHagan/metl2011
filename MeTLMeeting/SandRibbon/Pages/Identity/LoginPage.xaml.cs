@@ -63,7 +63,7 @@ namespace SandRibbon.Pages.Login
         }
     }
 
-    public partial class LoginPage : Page, GlobalAwarePage
+    public partial class LoginPage : GlobalAwarePage
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
@@ -155,14 +155,14 @@ namespace SandRibbon.Pages.Login
                             {
                                 loginAttempted = true;
                                 var userServer = new UserServerState();
-                                userServer.authenticatedWebSession = logonBrowser.WebSession;
+                                userServer.AuthenticatedWebSession = logonBrowser.WebSession;
                                 userServer.OneNoteConfiguration = new OneNoteConfiguration
                                 {
                                     apiKey = "exampleApiKey",
                                     apiSecret = "exampleApiSecret",
                                     networkController = controller
                                 };
-                                userServer.thumbnailProvider = new ThumbnailProvider(controller);
+                                userServer.ThumbnailProvider = new ThumbnailProvider(controller);
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
                                 NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));

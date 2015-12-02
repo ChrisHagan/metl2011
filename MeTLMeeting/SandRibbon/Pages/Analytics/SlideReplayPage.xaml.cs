@@ -11,7 +11,7 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public partial class SlideReplayPage : Page, SlideAwarePage
+    public partial class SlideReplayPage : SlideAwarePage
     {
         public Slide slide { get; protected set; }
         List<TargettedElement> elements = new List<TargettedElement>();
@@ -81,13 +81,7 @@ namespace SandRibbon.Pages.Analytics
         public UserGlobalState getUserGlobalState()
         {
             throw new NotImplementedException();
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
-        }
-
+        }        
         public ConversationState getConversationState()
         {
             throw new NotImplementedException();

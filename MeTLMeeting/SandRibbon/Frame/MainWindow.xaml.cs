@@ -269,7 +269,7 @@ namespace SandRibbon
 
         private void MoveToOverview(SlideAwarePage obj)
         {
-            mainFrame.Navigate(new ConversationOverviewPage(obj.getUserGlobalState(), obj.getUserServerState(), obj.getUserConversationState(), obj.getNetworkController(), obj.getDetails()));
+            mainFrame.Navigate(new ConversationOverviewPage(obj.UserGlobalState, obj.UserServerState, obj.UserConversationState, obj.NetworkController, obj.ConversationDetails));
         }
 
         private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)

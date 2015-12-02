@@ -19,15 +19,15 @@ namespace SandRibbon.Components
             rootPage = _rootPage;
             InitializeComponent();
             blacklistedUsers.ItemsSource = blacklistedUsersList;
-            blacklist = rootPage.getDetails().blacklist.Distinct().ToList();
+            blacklist = rootPage.ConversationDetails.blacklist.Distinct().ToList();
             foreach(var user in blacklist)
                 blacklistedUsersList.Add(user);
         }
         private void updateBlacklist(object sender, RoutedEventArgs e)
         {
-            var details = rootPage.getDetails();
+            var details = rootPage.ConversationDetails;
             details.blacklist = blacklist;
-            rootPage.getNetworkController().client.UpdateConversationDetails(details);
+            rootPage.NetworkController.client.UpdateConversationDetails(details);
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {

@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public partial class ConversationEditPage : Page, ConversationAwarePage
+    public partial class ConversationEditPage : ConversationAwarePage
     {
 
         public NetworkController networkController { get; protected set; }

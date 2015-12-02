@@ -1,8 +1,10 @@
-﻿<Page x:Class="SandRibbon.Pages.Analytics.ConversationComparisonPage"
+﻿<pages:ServerAwarePage x:Class="SandRibbon.Pages.Analytics.ConversationComparisonPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:layout="clr-namespace:SandRibbon.Layout"      
+      xmlns:pages="clr-namespace:SandRibbon.Pages"                             
+
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:local="clr-namespace:SandRibbon.Pages.Analytics"
       Title="ConversationComparisonPage">
@@ -110,4 +112,4 @@
             </DataGrid>
         </ScrollViewer>
     </Grid>
-</Page>
+</pages:ServerAwarePage>

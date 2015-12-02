@@ -36,7 +36,7 @@ namespace SandRibbon.Pages.Analytics
         private void loadWorkbench()
         {            
             var wc = new WebControl();
-            wc.WebSession = userServer.authenticatedWebSession;
+            wc.WebSession = userServer.AuthenticatedWebSession;
             Content = wc;
             wc.DocumentReady += Wc_DocumentReady;
             wc.ProcessCreated += delegate

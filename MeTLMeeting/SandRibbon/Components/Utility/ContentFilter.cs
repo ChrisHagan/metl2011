@@ -51,10 +51,10 @@ namespace SandRibbon.Components.Utility
 
     public static class ContentFilterVisibility
     {
-        public static readonly ContentVisibilityDefinition myPublic = new ContentVisibilityDefinition("My public", "", "", true, (sap,a, p, c, s) => a == sap.getNetworkController().credentials.name && p == Privacy.Public);
-        public static readonly ContentVisibilityDefinition myPrivate = new ContentVisibilityDefinition("My private", "", "", true, (sap,a, p, c, s) => a == sap.getNetworkController().credentials.name && p == Privacy.Private);
+        public static readonly ContentVisibilityDefinition myPublic = new ContentVisibilityDefinition("My public", "", "", true, (sap,a, p, c, s) => a == sap.NetworkController.credentials.name && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition myPrivate = new ContentVisibilityDefinition("My private", "", "", true, (sap,a, p, c, s) => a == sap.NetworkController.credentials.name && p == Privacy.Private);
         public static readonly ContentVisibilityDefinition ownersPublic = new ContentVisibilityDefinition("Owner's", "", "", true, (sap, a, p, c, s) => a == c.Author && p == Privacy.Public);
-        public static readonly ContentVisibilityDefinition peersPublic = new ContentVisibilityDefinition("Everyone else's", "", "", true, (sap, a, p, c, s) => a != sap.getNetworkController().credentials.name && p == Privacy.Public);
+        public static readonly ContentVisibilityDefinition peersPublic = new ContentVisibilityDefinition("Everyone else's", "", "", true, (sap, a, p, c, s) => a != sap.NetworkController.credentials.name && p == Privacy.Public);
         public static readonly List<ContentVisibilityDefinition> defaultVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
         public static readonly List<ContentVisibilityDefinition> defaultGroupVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
 
@@ -226,7 +226,7 @@ namespace SandRibbon.Components.Utility
             Clear();
             modifyVisibleContainer();
         }
-        public List<ContentVisibilityDefinition> CurrentContentVisibility { get { return rootPage.getUserConversationState().contentVisibility; } }
+        public List<ContentVisibilityDefinition> CurrentContentVisibility { get { return rootPage.UserConversationState.ContentVisibility; } }
         public void Add(T element, Action<T> modifyVisibleContainer)
         {
             Add(element);
@@ -265,7 +265,7 @@ namespace SandRibbon.Components.Utility
 
         public T FilterContent(T element, List<ContentVisibilityDefinition> contentVisibility)
         {
-            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(rootPage,AuthorFromTag(element), PrivacyFromTag(element),rootPage.getDetails(),rootPage.getSlide())) ? element : default(T);
+            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(rootPage,AuthorFromTag(element), PrivacyFromTag(element),rootPage.ConversationDetails,rootPage.Slide)) ? element : default(T);
         }
 
         public C FilterContent(C elements, List<ContentVisibilityDefinition> contentVisibility)
@@ -273,7 +273,7 @@ namespace SandRibbon.Components.Utility
             var tempList = new C();
             var enabledContentVisibilities = contentVisibility.Where(cv => cv.Subscribed);
             var matchedElements = elements.Where(elem => enabledContentVisibilities.Any(cv => {
-                return cv.Subscribed && cv.Comparer(rootPage,AuthorFromTag(elem), PrivacyFromTag(elem), rootPage.getDetails(), rootPage.getSlide());
+                return cv.Subscribed && cv.Comparer(rootPage,AuthorFromTag(elem), PrivacyFromTag(elem), rootPage.ConversationDetails, rootPage.Slide);
             }));
 
             foreach (var elem in matchedElements)

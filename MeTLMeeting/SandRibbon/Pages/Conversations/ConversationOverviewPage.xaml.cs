@@ -43,7 +43,7 @@ namespace SandRibbon.Pages.Collaboration
         public static readonly DependencyProperty voicesProperty =
             DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
     };
-    public partial class ConversationOverviewPage : Page, ConversationAwarePage
+    public partial class ConversationOverviewPage : ConversationAwarePage
     {
         public ReticulatedConversation conversation { get; protected set; }
         public NetworkController networkController { get; protected set; }

@@ -48,7 +48,7 @@ namespace SandRibbon.Components
         {
             if (!Directory.Exists("quizzes"))
                 Directory.CreateDirectory("quizzes");
-            var fullPath = string.Format("quizzes\\{0}", rootPage.getNetworkController().credentials.name);
+            var fullPath = string.Format("quizzes\\{0}", rootPage.NetworkController.credentials.name);
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             int quiznumber = 0;

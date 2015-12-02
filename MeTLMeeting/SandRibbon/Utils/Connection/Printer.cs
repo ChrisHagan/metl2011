@@ -51,14 +51,14 @@ namespace SandRibbon.Utils.Connection
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
         {
-            var canvases = createVisual("presentationSpace", true,rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name));
+            var canvases = createVisual("presentationSpace", true,rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
             return new[] { canvases.FirstOrDefault() };
         }
         
         private void ResizeCanvas(MeTLInkCanvas canvas, ContentBuffer contentBuffer)
         {
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible(rootPage.getUserConversationState().contentVisibility));
+            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible(rootPage.UserConversationState.ContentVisibility));
         }
 
         private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, List<ContentVisibilityDefinition> contentVisibility)
@@ -77,11 +77,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvas = new MeTLInkCanvas();
             var contentBuffer = new ContentBuffer(rootPage);
-            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.getDetails(), rootPage.getNetworkController().credentials.name);
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
-                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.getDetails()), s => canvas.Strokes.Add(s));
+                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.ConversationDetails), s => canvas.Strokes.Add(s));
             }
             foreach (var image in images)
             {
@@ -125,11 +125,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvasList = new List<MeTLInkCanvas>();
 
-            var presentationVisual = createVisual("presentationSpace", true, rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name));
+            var presentationVisual = createVisual("presentationSpace", true, rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
             if (presentationVisual != null && presentationVisual.Count() > 0)
                 canvasList.AddRange(presentationVisual);
 
-            var notesVisual = createVisual("notepad", false, rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name));
+            var notesVisual = createVisual("notepad", false, rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
             if (notesVisual != null && notesVisual.Count() > 0)
                 canvasList.AddRange(notesVisual);
 

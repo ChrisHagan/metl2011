@@ -25,36 +25,27 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             contentVisibilitySelectors.ItemsSource = visibilities;
-            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             var updateContentVisibilityCommand = new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh());
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                    rootPage = DataContext as SlideAwarePage;            
                 Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand);
             };
             Unloaded += (s, e) =>
-            {
-                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+            {                
                 Commands.UpdateContentVisibility.UnregisterCommand(updateContentVisibilityCommand);
             };
             Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
             DataContext = this;
         }
-
-        protected int slide = -1;
-        protected ConversationDetails conversation = ConversationDetails.Empty;
-        protected List<GroupSet> groupSets = new List<GroupSet>();
-        protected void UpdateConversationDetails(ConversationDetails cd)
-        {
-            conversation = cd;
-            potentiallyRefresh();
-        }
+        
+        protected List<GroupSet> groupSets = new List<GroupSet>();        
 
         protected void potentiallyRefresh()
         {
-            var thisSlide = conversation.Slides.Find(s => s.id == slide);
+            var conversation = rootPage.ConversationDetails;
+            var thisSlide = conversation.Slides.Find(s => s.id == rootPage.Slide.id);
             if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
             {
                 var oldGroupSets = groupSets;
@@ -66,7 +57,7 @@ namespace SandRibbon.Components
                         currentState.Add(vis.GroupId, vis.Subscribed);
                     }
                 }
-                var newSlide = conversation.Slides.Find(s => s.id == slide);
+                var newSlide = conversation.Slides.Find(s => s.id == rootPage.Slide.id);
                 if (newSlide != null)
                 {
                     groupSets = newSlide.GroupSets;
@@ -78,9 +69,9 @@ namespace SandRibbon.Components
                         {
                             var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
                             var wasSubscribed = currentState[g.id];
-                            if (rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) || g.GroupMembers.Contains(rootPage.getNetworkController().credentials.name))
+                            if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || g.GroupMembers.Contains(rootPage.NetworkController.credentials.name))
                             {
-                                var groupDescription = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                var groupDescription = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(
                                     new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap, a, p, c, s) => g.GroupMembers.Contains(a))
                                 );

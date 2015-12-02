@@ -1,9 +1,10 @@
-﻿<Page x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
+﻿<pages:SlideAwarePage x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration" 
+      xmlns:pages="clr-namespace:SandRibbon.Pages" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:legacy="clr-namespace:SandRibbon.Tabs.Groups"
@@ -237,4 +238,4 @@
             <components:SlideDisplay Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="slides" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         </Grid>
     </DockPanel>
-</Page>
+</pages:SlideAwarePage>

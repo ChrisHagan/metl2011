@@ -63,9 +63,9 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(() => { },(i,j) => { },(parser) => PreParserAvailable(parser), rootPage.getSlide().id.ToString());
-                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.getNetworkController().credentials.name, rootPage.getSlide().id.ToString()));
-                rootPage.getNetworkController().client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), rootPage.getDetails().Jid);
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { },(i,j) => { },(parser) => PreParserAvailable(parser), rootPage.Slide.id.ToString());
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
                 CommandBindings.Add(undoCommandBinding);
                 CommandBindings.Add(redoCommandBinding);
                 Commands.InitiateDig.RegisterCommand(initiateDigCommand);
@@ -139,13 +139,13 @@ namespace SandRibbon.Components
         {
             var authorList = stack.GetSelectedAuthors();
             var authorColor = stack.ColourSelectedByAuthor(authorList);
-            var details = rootPage.getDetails();
+            var details = rootPage.ConversationDetails;
             foreach (var author in authorList)
             {
-                if (!rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) && !details.blacklist.Contains(author))
+                if (!rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && !details.blacklist.Contains(author))
                     details.blacklist.Add(author);
             }
-            rootPage.getNetworkController().client.UpdateConversationDetails(details);
+            rootPage.NetworkController.client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
             Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
@@ -157,10 +157,10 @@ namespace SandRibbon.Components
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = rootPage.getNetworkController().client;
-                                 var slide = rootPage.getSlide();
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(slide.index + 1, rootPage.getNetworkController().credentials.name, "bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, rootPage.getDetails().Title, blacklisted, Globals.generateId(rootPage.getNetworkController().credentials.name,hostedFileName)));
+                                 var conn = rootPage.NetworkController.client;
+                                 var slide = rootPage.Slide;
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(slide.index + 1, rootPage.NetworkController.credentials.name, "bannedcontent",
+                                     Privacy.Private, -1L, hostedFileName, rootPage.ConversationDetails.Title, blacklisted, Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -174,12 +174,12 @@ namespace SandRibbon.Components
 
         private void setUpSyncDisplay(int slide)
         {
-            if (!rootPage.getUserConversationState().synched) return;
-            if (slide == rootPage.getSlide().id) return;
+            if (!rootPage.UserConversationState.Synched) return;
+            if (slide == rootPage.Slide.id) return;
             try
             {
-                if (rootPage.getDetails().Author == rootPage.getNetworkController().credentials.name) return;
-                if (rootPage.getDetails().Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
+                if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name) return;
+                if (rootPage.ConversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
                 Dispatcher.adoptAsync((Action)delegate
                             {
                                 var adorner = GetAdorner();
@@ -223,7 +223,7 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, rootPage.getNetworkController().credentials.name);
+                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, rootPage.NetworkController.credentials.name);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);
@@ -312,7 +312,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != rootPage.getSlide().id || window.author != rootPage.getNetworkController().credentials.name) return;
+            if (window.slide != rootPage.Slide.id || window.author != rootPage.NetworkController.credentials.name) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.ExecuteAsync(window);
         }
@@ -395,10 +395,10 @@ namespace SandRibbon.Components
 
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (rootPage.getSlide().id, rootPage.getNetworkController().credentials.name, marquee, origin, new Point(0, 0),
-            rootPage.getNetworkController().client.UploadResourceToPath(
+            (rootPage.Slide.id, rootPage.NetworkController.credentials.name, marquee, origin, new Point(0, 0),
+            rootPage.NetworkController.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
-                                            "Resource/" + rootPage.getSlide().id.ToString(),
+                                            "Resource/" + rootPage.Slide.id.ToString(),
                                             "quizSnapshot.png",
                                             false).ToString()));
         }
@@ -530,7 +530,7 @@ namespace SandRibbon.Components
                     {
                         var image = (Image)child;
                         var e = viewFor((FrameworkElement)child);
-                        Panel.SetZIndex(e, image.tag().author == rootPage.getNetworkController().credentials.name ? 3 : 2);
+                        Panel.SetZIndex(e, image.tag().author == rootPage.NetworkController.credentials.name ? 3 : 2);
                         clone.Children.Add(e);
                     }
                     else
@@ -558,7 +558,7 @@ namespace SandRibbon.Components
                 {
                     var image = (Image)child;
                     var e = viewFor(image);
-                    Panel.SetZIndex(e, image.tag().author == rootPage.getNetworkController().credentials.name ? 3 : 1);
+                    Panel.SetZIndex(e, image.tag().author == rootPage.NetworkController.credentials.name ? 3 : 1);
                     clone.Children.Add(e);
                 }
                 else

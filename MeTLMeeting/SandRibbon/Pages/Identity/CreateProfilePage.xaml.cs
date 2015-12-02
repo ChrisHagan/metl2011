@@ -10,7 +10,7 @@ using System;
 
 namespace SandRibbon.Pages.Identity
 {
-    public partial class CreateProfilePage : Page, ServerAwarePage
+    public partial class CreateProfilePage : ServerAwarePage
     {
         public NetworkController networkController { get; protected set;}
         public UserGlobalState userGlobal { get; protected set; }

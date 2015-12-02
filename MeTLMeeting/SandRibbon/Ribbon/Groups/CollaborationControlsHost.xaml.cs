@@ -32,7 +32,7 @@ namespace SandRibbon.Tabs.Groups
                     rootPage = DataContext as SlideAwarePage;
                 DataContext = this;
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
-                joinConversation(rootPage.getDetails());
+                joinConversation(rootPage.ConversationDetails);
             };
             Unloaded += (s, e) =>
             {
@@ -54,7 +54,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void joinConversation(ConversationDetails details)
         {
-            this.Visibility = details.isAuthor(rootPage.getNetworkController().credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+            this.Visibility = details.isAuthor(rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             NavigationIsLocked = details.Permissions.NavigationLocked;
         }
     }

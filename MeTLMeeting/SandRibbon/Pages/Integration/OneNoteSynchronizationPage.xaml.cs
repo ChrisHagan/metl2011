@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Integration
 {
-    public partial class OneNoteSynchronizationPage : Page, ServerAwarePage
+    public partial class OneNoteSynchronizationPage : ServerAwarePage
     {
         public static string METL_NOTEBOOK_TITLE = "MeTL";
         public NetworkController networkController {get; protected set;}
