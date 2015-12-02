@@ -31,8 +31,8 @@ namespace SandRibbon.Components
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
-                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
-                Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand); 
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand);
             };
             Unloaded += (s, e) =>
             {
@@ -82,34 +82,26 @@ namespace SandRibbon.Components
                             {
                                 var groupDescription = rootPage.getDetails().isAuthor(rootPage.getNetworkController().credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(
-                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap,a, p, c, s) => g.GroupMembers.Contains(a))
+                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap, a, p, c, s) => g.GroupMembers.Contains(a))
                                 );
                             }
                         });
                     });
-                    Dispatcher.adopt(delegate
+                    visibilities.Clear();
+                    foreach (var nv in newGroupDefs.Concat(ContentFilterVisibility.defaultGroupVisibilities))
                     {
-                        visibilities.Clear();
-                        foreach (var nv in newGroupDefs.Concat(ContentFilterVisibility.defaultGroupVisibilities))
-                        {
-                            visibilities.Add(nv);
-                        }
-                    });
+                        visibilities.Add(nv);
+                    }
                 }
             }
             else
             {
-                Dispatcher.adopt(delegate
+                visibilities.Clear();
+                foreach (var nv in ContentFilterVisibility.defaultVisibilities)
                 {
-                    visibilities.Clear();
-                    foreach (var nv in ContentFilterVisibility.defaultVisibilities)
-                    {
-                        visibilities.Add(nv);
-                    }
-                }); 
-
+                    visibilities.Add(nv);
+                }
             }
-
         }
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {
