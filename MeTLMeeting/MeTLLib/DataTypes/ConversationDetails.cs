@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using Divan;
 using MeTLLib.Providers;
 using System.Globalization;
+using System.Windows;
 
 namespace MeTLLib.DataTypes
 {
@@ -123,7 +124,7 @@ namespace MeTLLib.DataTypes
         }
     }
 
-        public class ConversationDetails : INotifyPropertyChanged
+        public class ConversationDetails : DependencyObject
     {
         public bool isDeleted
         {
@@ -205,84 +206,170 @@ namespace MeTLLib.DataTypes
         {
             return ReadXml(WriteXml());
         }
-        public string Title { get; set; }
-        public string Jid { get; set; }/*The jid is a valid Xmpp jid.  If, for instance, you want
+
+
+        public String Title
+        {
+            get { return (String)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Title.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register("Title", typeof(String), typeof(ConversationDetails), new PropertyMetadata(""));
+
+
+
+        public String Jid
+        {
+            get { return (String)GetValue(JidProperty); }
+            set { SetValue(JidProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Jid.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty JidProperty =
+            DependencyProperty.Register("Jid", typeof(String), typeof(ConversationDetails), new PropertyMetadata(""));
+        /*The jid is a valid Xmpp jid.  If, for instance, you want
                                        * to create a room specific to this conversation so that
                                        * you can restrict broadcast, this is safe to work in Jabber 
                                        * and on the filesystem, whereas the Title is NOT. 
                                        * (If anybody finds another character that breaks it - 
                                        * obvious when history stops working - add it to the illegals 
                                        * string in generateJid).  Never mind that, we're just using a number.*/
-        public string Author { get; set; }
-        public Permissions Permissions { get; set; }
-        public System.DateTime Created
+
+
+        public String Author
         {
-            get; set;
-        }
-        public long CreatedAsTicks
-        {
-            get; set;
-        }
-        public System.DateTime LastAccessed
-        {
-            get; set;
+            get { return (String)GetValue(AuthorProperty); }
+            set { SetValue(AuthorProperty, value); }
         }
 
-        // I want this to be an always valid string because we're comparing this with other conversation detail tags 
-        private string internalTag = string.Empty;
-        public string Tag
+        // Using a DependencyProperty as the backing store for Author.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AuthorProperty =
+            DependencyProperty.Register("Author", typeof(String), typeof(ConversationDetails), new PropertyMetadata(""));
+
+
+
+        public Permissions Permissions
         {
-            get
-            {
-                return internalTag;
-            }
-            set
-            {
-                if (value != null)
-                    internalTag = value;
-                else
-                    internalTag = string.Empty;
-            }
+            get { return (Permissions)GetValue(PermissionsProperty); }
+            set { SetValue(PermissionsProperty, value); }
         }
-        public string Subject { get; set; }
+
+        // Using a DependencyProperty as the backing store for Permissions.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PermissionsProperty =
+            DependencyProperty.Register("Permissions", typeof(Permissions), typeof(ConversationDetails), new PropertyMetadata(Permissions.Empty));
+
+
+
+
+        public DateTime Created
+        {
+            get { return (DateTime)GetValue(CreatedProperty); }
+            set { SetValue(CreatedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Created.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CreatedProperty =
+            DependencyProperty.Register("Created", typeof(DateTime), typeof(ConversationDetails), new PropertyMetadata(new DateTime()));
+
+
+
+        public long CreatedAsTicks
+        {
+            get { return (long)GetValue(CreatedAsTicksProperty); }
+            set { SetValue(CreatedAsTicksProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for CreatedAsTicks.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CreatedAsTicksProperty =
+            DependencyProperty.Register("CreatedAsTicks", typeof(long), typeof(ConversationDetails), new PropertyMetadata(0));
+
+
+
+
+        public DateTime LastAccessed
+        {
+            get { return (DateTime)GetValue(LastAccessedProperty); }
+            set { SetValue(LastAccessedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for LastAccessed.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LastAccessedProperty =
+            DependencyProperty.Register("LastAccessed", typeof(DateTime), typeof(ConversationDetails), new PropertyMetadata(new DateTime()));
+
+
+
+        public String Tag
+        {
+            get { return (String)GetValue(TagProperty); }
+            set { SetValue(TagProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Tag.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TagProperty =
+            DependencyProperty.Register("Tag", typeof(String), typeof(ConversationDetails), new PropertyMetadata(string.Empty));
+
+
+
+        public String Subject
+        {
+            get { return (String)GetValue(SubjectProperty); }
+            set { SetValue(SubjectProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Subject.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SubjectProperty =
+            DependencyProperty.Register("Subject", typeof(String), typeof(ConversationDetails), new PropertyMetadata(string.Empty));
+
+
+
+
         public List<Slide> Slides
         {
-            get; set;
-        } = new List<Slide>();
-        public List<string> blacklist = new List<string>();
+            get { return (List<Slide>)GetValue(SlidesProperty); }
+            set { SetValue(SlidesProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Slides.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SlidesProperty =
+            DependencyProperty.Register("Slides", typeof(List<Slide>), typeof(ConversationDetails), new PropertyMetadata(new List<Slide>()));
+
+
+
+        public List<string> blacklist
+        {
+            get { return (List<string>)GetValue(blacklistProperty); }
+            set { SetValue(blacklistProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for blacklist.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty blacklistProperty =
+            DependencyProperty.Register("blacklist", typeof(List<string>), typeof(ConversationDetails), new PropertyMetadata(new List<String>()));
+
+        
         public byte[] GetBytes()
         {
             return Encoding.UTF8.GetBytes(WriteXml().ToString(SaveOptions.DisableFormatting));
         }
-        public void Refresh()
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs("Permissions"));
-        }
+      
         public bool IsValid
         {
             get
             {
-                if (String.IsNullOrEmpty(Jid) || (String.IsNullOrEmpty(Subject)) || String.IsNullOrEmpty(Title) || String.IsNullOrEmpty(Author)) return false;
-                else
-                    return true;
+                return !new[] { Jid, Subject, Title, Author }.Any(String.IsNullOrEmpty);                
             }
         }
 
         public bool UserIsBlackListed(string userId)
         {
-            return blacklist.Any(user => user == userId);
+            return blacklist.Contains(userId);
         }
 
         public bool IsJidEqual(string thatJid)
         {
-            if (!String.IsNullOrEmpty(Jid) && String.IsNullOrEmpty(thatJid))
-                return false;
-
-            // Microsoft says we can use GetHashCode to safely compare two strings
-            return Jid.GetHashCode() == thatJid.GetHashCode();
+            return Jid == thatJid;            
         }
-
 
         public bool UserHasPermission(Credentials credentials)
         {
@@ -293,11 +380,7 @@ namespace MeTLLib.DataTypes
                 && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower()))) return false;
             return true;
         }
-        public override bool Equals(object obj)
-        {
-            if (obj == null || !(obj is ConversationDetails)) return false;
-            return ((ConversationDetails)obj).Jid.GetHashCode() == Jid.GetHashCode();
-        }
+        
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is ConversationDetails)) return false;
@@ -318,17 +401,12 @@ namespace MeTLLib.DataTypes
             : this(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime())
         {
         }
-
-        //private static readonly ConversationDetails empty = new ConversationDetails();
+        
         public static ConversationDetails Empty
         {
             get { return new ConversationDetails(); }
         }
-        public override int GetHashCode()
-        {
-            if (string.IsNullOrEmpty(Jid)) return 0;
-            return Jid.GetHashCode();
-        }
+        
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
         protected static readonly string CREATED_TAG = "created";
