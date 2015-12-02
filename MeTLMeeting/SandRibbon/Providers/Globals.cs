@@ -30,6 +30,7 @@ namespace SandRibbon.Providers
         public static readonly string PUBLIC = "public";
         public static readonly string PRIVATE = "private";
         public static readonly string PROJECTOR = "projector";
+        public static readonly string PRESENTATIONSPACE = "presentationSpace";
     }
     public class Globals
     {
