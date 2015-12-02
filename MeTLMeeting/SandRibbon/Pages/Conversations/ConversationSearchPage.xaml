@@ -49,11 +49,9 @@
                  Padding="0 10"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"
                      Margin="{DynamicResource nearBottom}"/>
-                <StackPanel Orientation="Horizontal" Margin="{DynamicResource clearBottom}">
-                    <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
-                          Unchecked="onlyMyConversations_Checked"/>
-                    <Label Content="Only my conversations" Style="{DynamicResource medium}"/>
-                </StackPanel>
+                <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
+                          Unchecked="onlyMyConversations_Checked" Content="Only my conversations"
+                              Margin="{DynamicResource clearBottom}"/>
 
                 <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
             </Grid>
