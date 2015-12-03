@@ -130,6 +130,7 @@ namespace SandRibbon.Pages.ServerSelection
         protected Timer refreshTimer;
         public ServerSelectorPage()
         {
+            MessageBox.Show("Constructed serverselectors");
             InitializeComponent();
             DataContext = servers;
             var localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
@@ -148,6 +149,7 @@ namespace SandRibbon.Pages.ServerSelection
             };
             Loaded += (s, e) =>
             {
+                MessageBox.Show("Loading serverselectors");
                 foreach (ServerChoice sc in App.availableServers().Select(server => new ServerChoice(server, true)))
                 {
                     servers.Add(sc);

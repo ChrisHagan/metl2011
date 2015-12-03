@@ -5,7 +5,8 @@
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
     xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
     xmlns:providers="clr-namespace:SandRibbon.Providers"
-    AllowDrop="True"                          
+    AllowDrop="True"                        
+    AllowsTransparency="False"
     Icon="\Resources\favicon-96x96.png"
     ShowIconOnTitleBar="True"
     x:Name="ribbonWindow"
@@ -30,29 +31,6 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
-            <!--
-            <Button Click="ShowDiagnostics">
-                <Rectangle Width="20" Height="20">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_alert}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-            </Button>
-            <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{x:Static providers:Globals.OneNoteConfiguration}">
-                <Rectangle Width="20" Height="20">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_office_onenote}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-            </Button>
-            <Button Click="UserPreferences">
-                <Rectangle Width="20" Height="20">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_cog}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-            </Button>
-            -->
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.Flyouts>

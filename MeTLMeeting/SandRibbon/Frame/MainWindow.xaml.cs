@@ -49,18 +49,14 @@ namespace SandRibbon
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
 
         public MainWindow()
-        {
-            MessageBox.Show("MainWindow construction begun");
-            InitializeComponent();
-            MessageBox.Show("MainWindow component initialized");
-            DoConstructor();
-            MessageBox.Show("MainWindow constructor executed");
-            Commands.AllStaticCommandsAreRegistered();
-            MessageBox.Show("MainWindow commands registered");
-            mainFrame.Navigate(new ServerSelectorPage());
-            MessageBox.Show("MainWindow server selector page");
+        {            
+            InitializeComponent();            
+            DoConstructor();            
+            Commands.AllStaticCommandsAreRegistered();                        
             App.CloseSplashScreen();
             MessageBox.Show("MainWindow constructor complete");
+            mainFrame.Navigate(new ServerSelectorPage());
+            Loaded += delegate { MessageBox.Show("Window loaded"); };
         }        
 
         private void DoConstructor()
