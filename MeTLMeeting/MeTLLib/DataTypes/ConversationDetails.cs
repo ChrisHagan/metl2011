@@ -89,9 +89,9 @@ namespace MeTLLib.DataTypes
             if (conv == null)
                 throw new ArgumentNullException();
 
-            return HydrateFromServer(conn, new SearchConversationDetails(conv));
+            return HydrateFromServer(conn,new SearchConversationDetails(conv));
         }
-        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn, SearchConversationDetails scd)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn,SearchConversationDetails scd)
         {
             if (scd == null)
                 throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");
@@ -114,7 +114,7 @@ namespace MeTLLib.DataTypes
         public string author { get; protected set; }
         public string location { get; protected set; }
         public long timestamp { get; set; }
-        public Attendance(string _author, string _location, bool _present, long _timestamp)
+        public Attendance(string _author, string _location, bool _present,long _timestamp)
         {
             author = _author;
             location = _location;
@@ -123,7 +123,7 @@ namespace MeTLLib.DataTypes
         }
     }
 
-    public class ConversationDetails : INotifyPropertyChanged
+        public class ConversationDetails : INotifyPropertyChanged
     {
         public bool isDeleted
         {
@@ -284,8 +284,7 @@ namespace MeTLLib.DataTypes
                 && !(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
                 && Subject.ToLower() != "Unrestricted".ToLower()
                 && !(String.IsNullOrEmpty(Subject))
-                && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower())))
-                return false;
+                && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower()))) return false;
             return true;
         }
         public override bool Equals(object obj)
@@ -416,14 +415,14 @@ namespace MeTLLib.DataTypes
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
                     new XElement(TYPE_TAG, s.type.ToString()),
                     s.GroupSets.Select(gs => new XElement(GROUP_SET_TAG,
-                        new XElement(GROUP_SET_ID_TAG, gs.id),
-                        new XElement(GROUP_SET_LOCATION_TAG, gs.location),
-                        new XElement(GROUP_SET_SIZE_TAG, gs.groupSize.ToString()),
-                        new XElement(GROUP_SET_GROUPS_TAG, gs.Groups.Select(g => new XElement(GROUP_TAG,
-                             new XElement(GROUP_ID_TAG, g.id),
-                             new XElement(GROUP_LOCATION_TAG, g.location),
-                             new XElement(GROUP_MEMBERS_TAG, g.GroupMembers.Select(gm => new XElement(GROUP_MEMBER_TAG, gm)))
-                         ))))
+                        new XElement(GROUP_SET_ID_TAG,gs.id),
+                        new XElement(GROUP_SET_LOCATION_TAG,gs.location),
+                        new XElement(GROUP_SET_SIZE_TAG,gs.groupSize.ToString()),
+                        new XElement(GROUP_SET_GROUPS_TAG,gs.Groups.Select(g => new XElement(GROUP_TAG,
+                            new XElement(GROUP_ID_TAG,g.id),
+                            new XElement(GROUP_LOCATION_TAG,g.location),
+                            new XElement(GROUP_MEMBERS_TAG,g.GroupMembers.Select(gm => new XElement(GROUP_MEMBER_TAG, gm)))
+                        ))))
                 ))),
                 blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
@@ -563,8 +562,7 @@ namespace MeTLLib.DataTypes
         public string location;
         public int groupSize;
         public List<Group> Groups;
-        public GroupSet(string _id, string _location, int _groupSize, List<Group> _groups)
-        {
+        public GroupSet(string _id, string _location, int _groupSize, List<Group> _groups) {
             id = _id;
             location = _location;
             groupSize = _groupSize;
@@ -614,11 +612,11 @@ namespace MeTLLib.DataTypes
             defaultWidth = newDefaultWidth;
             defaultHeight = newDefaultHeight;
         }
-        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight)
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed) : this(newId,newAuthor,newType,newIndex,newDefaultWidth,newDefaultHeight)
         {
             exposed = newExposed;
         }
-        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed, List<GroupSet> newGroups) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight, newExposed)
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed,List<GroupSet> newGroups) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight,newExposed)
         {
             GroupSets = newGroups;
         }
