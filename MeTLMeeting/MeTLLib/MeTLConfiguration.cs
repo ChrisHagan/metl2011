@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Net;
     using System.Web;
+    using System.Windows;
     using System.Xml.Linq;
 
     public class MeTLConfigurationProxy
@@ -232,6 +233,7 @@
         {
             try
             {
+                MessageBox.Show("Internalgetservers");
                 var wc = new WebClient();
                 var xml = wc.DownloadString(new Uri("http://setup.stackableregiments.com/metlServers/metlServers.xml", UriKind.Absolute));
                 var xdoc = XDocument.Parse(xml);
@@ -240,6 +242,7 @@
                     var name = xms.Descendants("name").First().Value;
                     var baseUrl = xms.Descendants("baseUrl").First().Value;
                     var imageUrl = xms.Descendants("imageUrl").First().Value;
+                    MessageBox.Show("Servers retrieved");
                     return new MeTLConfigurationProxy(
                         name,
                         new Uri(imageUrl, UriKind.Absolute),
