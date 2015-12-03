@@ -9,15 +9,9 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
-using SandRibbon.Utils;
-using MeTLLib.DataTypes;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using Akka;
-using System.Threading.Tasks;
 using Akka.Actor;
-using System.Windows.Controls;
 
 //[assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -25,8 +19,6 @@ namespace SandRibbon
 {
     public partial class App : Application
     {
-
-
         public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
         public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
         //public static DiagnosticModel dd = new DiagnosticModel();
@@ -120,8 +112,9 @@ namespace SandRibbon
         public static Process proc;
         static App()
         {
+            MessageBox.Show("App constructor starts");
             proc = Process.GetCurrentProcess();
-            //Console.SetOut(outputWriter);
+            Console.SetOut(outputWriter);
             App.mark("App static constructor runs");
             setDotNetPermissionState();
             /*
@@ -206,7 +199,8 @@ namespace SandRibbon
             var msg = e.Exception.Message;
             if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
             {
-                Commands.Mark.Execute(string.Format("Unhandled exception: {0}", msg));
+                var detail = string.Format("{0}\n{1}", e.Exception.Message, e.Exception.StackTrace);
+                EventLog.WriteEntry("MeTL", detail);
                 e.Handled = true;
             }
         }

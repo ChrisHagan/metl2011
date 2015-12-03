@@ -47,33 +47,24 @@ namespace SandRibbon
         private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-        private AsyncObservableCollection<LogMessage> logs = new AsyncObservableCollection<LogMessage>();
 
         public MainWindow()
         {
+            MessageBox.Show("MainWindow construction begun");
             InitializeComponent();
+            MessageBox.Show("MainWindow component initialized");
             DoConstructor();
-            Commands.AllStaticCommandsAreRegistered();            
+            MessageBox.Show("MainWindow constructor executed");
+            Commands.AllStaticCommandsAreRegistered();
+            MessageBox.Show("MainWindow commands registered");
             mainFrame.Navigate(new ServerSelectorPage());
+            MessageBox.Show("MainWindow server selector page");
             App.CloseSplashScreen();
-        }
-
-        public void Log(string message)
-        {
-            if (String.IsNullOrEmpty(message)) return;
-            logs.Add(new LogMessage
-            {
-                content = message,
-                user = Globals.me,
-                slide = Globals.location.currentSlide,
-                timestamp = DateTime.Now.Ticks
-            });
-        }
+            MessageBox.Show("MainWindow constructor complete");
+        }        
 
         private void DoConstructor()
         {
-            Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
-
             Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
 
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
@@ -367,8 +358,7 @@ namespace SandRibbon
                 Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
             }
             catch (Exception e)
-            {
-                Log(string.Format("Exception in MainWindow.getDefaultSystemLanguage: {0}", e.Message));
+            {             
             }
         }
         #region helpLinks
@@ -405,8 +395,7 @@ namespace SandRibbon
             }
 
             catch (Exception e)
-            {
-                Log(string.Format("Failure in language set: {0}", e.Message));
+            {                
             }
         }
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
@@ -499,12 +488,10 @@ namespace SandRibbon
                 }
                 catch (NotSetException e)
                 {
-                    Log(string.Format("Reconnecting: {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
                 {
-                    Log(string.Format("Reconnecting: {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
             }
@@ -710,14 +697,7 @@ namespace SandRibbon
         private void UserPreferences(object sender, RoutedEventArgs e)
         {
             mainFrame.Navigate(new CommandBarConfigurationPage());
-        }
-
-        private void ShowDiagnostics(object sender, RoutedEventArgs e)
-        {
-            this.flyout.Content = TryFindResource("diagnostics");
-            this.flyout.DataContext = logs;
-            this.flyout.IsOpen = true;
-        }
+        }        
         protected void ShowDiagnosticsWindow(object sender, RoutedEventArgs e)
         {
             launchDiagnosticsWindow(null);
