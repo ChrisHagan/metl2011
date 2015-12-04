@@ -5,9 +5,7 @@
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
     xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
     xmlns:providers="clr-namespace:SandRibbon.Providers"
-    AllowDrop="True"                          
-    Icon="\Resources\favicon-96x96.png"
-    ShowIconOnTitleBar="True"
+    AllowDrop="True"                              
     x:Name="ribbonWindow"
     Closing="ribbonWindow_Closing">
     <Controls:MetroWindow.InputBindings>
