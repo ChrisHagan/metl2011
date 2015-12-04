@@ -121,7 +121,7 @@ namespace SandRibbon
         static App()
         {
             proc = Process.GetCurrentProcess();
-            //Console.SetOut(outputWriter);
+            Console.SetOut(outputWriter);
             App.mark("App static constructor runs");
             setDotNetPermissionState();
             /*
