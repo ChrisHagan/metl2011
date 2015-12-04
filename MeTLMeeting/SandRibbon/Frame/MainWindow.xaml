@@ -4,9 +4,8 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"    
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
     xmlns:palettes="clr-namespace:SandRibbon.Pages.Collaboration.Palettes"    
-    xmlns:providers="clr-namespace:SandRibbon.Providers"
-    AllowDrop="True"                          
-    
+    xmlns:providers="clr-namespace:SandRibbon.Providers"   
+    AllowDrop="True"                           
     x:Name="ribbonWindow"
     Closing="ribbonWindow_Closing">
     <Controls:MetroWindow.InputBindings>

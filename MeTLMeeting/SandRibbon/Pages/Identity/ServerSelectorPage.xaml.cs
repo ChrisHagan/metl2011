@@ -130,6 +130,7 @@ namespace SandRibbon.Pages.ServerSelection
         protected Timer refreshTimer;
         public ServerSelectorPage()
         {
+            MessageBox.Show("Constructed serverselectors");
             InitializeComponent();
             DataContext = servers;
             var localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
@@ -138,8 +139,7 @@ namespace SandRibbon.Pages.ServerSelection
                 timers.ForEach(t =>
                 {
                     t.Change(Timeout.Infinite, Timeout.Infinite);
-                    t.Dispose();
-                    t = null;
+                    t.Dispose();                    
                 });
                 timers.Clear();
                 refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
@@ -148,14 +148,17 @@ namespace SandRibbon.Pages.ServerSelection
             };
             Loaded += (s, e) =>
             {
+                MessageBox.Show("Loading serverselectors");
                 foreach (ServerChoice sc in App.availableServers().Select(server => new ServerChoice(server, true)))
                 {
                     servers.Add(sc);
                 }
+                MessageBox.Show("Loading timers");
                 timers = servers.Concat(new List<ServerChoice> {
                     localServer
                 }).ToList().Select(sc => new Timer(delegate
                 {
+                    MessageBox.Show("Timer");
                     var wc = new WebClient();
                     var oldState = sc.ready;
                     var newState = false;
@@ -186,6 +189,7 @@ namespace SandRibbon.Pages.ServerSelection
                     }
                 }, null, 0, recheckInterval)).ToList();
                 internetCheckLabel.Visibility = (servers.Count == 0 || servers.All(sc => sc == localServer)) ? Visibility.Visible : Visibility.Collapsed;
+                MessageBox.Show("Building refresh timer");
                 refreshTimer = new Timer(delegate
                 {
                     if (servers.Count == 0 || servers.All(sc => sc == localServer))
