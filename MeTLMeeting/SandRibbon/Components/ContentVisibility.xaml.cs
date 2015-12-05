@@ -33,6 +33,7 @@ namespace SandRibbon.Components
                 Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand);
                 Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
                 DataContext = this;
+                potentiallyRefresh();
             };
             Unloaded += (s, e) =>
             {                
