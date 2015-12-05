@@ -330,6 +330,7 @@ namespace SandRibbon.Pages.Collaboration
 
             Loaded += (cs, ce) =>
             {
+                UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;
                 Commands.MoveToNext.RegisterCommand(moveToNextCommand);
                 Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);

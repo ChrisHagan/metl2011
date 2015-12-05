@@ -111,6 +111,8 @@ namespace SandRibbon.Components
         public ObservableCollection<Slide> thumbnailList { get; set; }
         public static SlideIndexConverter SlideIndex;
         public SlideAwarePage rootPage { get; protected set; }
+        protected TimeSpan shortRefresh = new TimeSpan(0, 0, 1);
+        protected TimeSpan longRefresh = new TimeSpan(0, 0, 10);
         public SlideDisplay()
         {
             InitializeComponent();
@@ -125,7 +127,7 @@ namespace SandRibbon.Components
             var editConversationCommand = new DelegateCommand<object>(EditConversation);
             var updateNewSlideOrderCommand = new DelegateCommand<int>(reorderSlides);
             refresher = new DispatcherTimer();
-            refresher.Interval = new TimeSpan(0, 0, 5);
+            refresher.Interval = shortRefresh;
             refresher.Tick += new EventHandler(refresherTick);
             Loaded += (s, e) =>
             {
@@ -133,8 +135,6 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                refresherTick(this, new EventArgs());
-                refresher.Start();
                 thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides.OrderBy(sl => sl.index));
                 thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
                 SlideIndex = new SlideIndexConverter();
@@ -153,6 +153,7 @@ namespace SandRibbon.Components
                 Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(receiveTeacherStatusCommand);
                 Commands.EditConversation.RegisterCommandToDispatcher(editConversationCommand);
                 Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(updateNewSlideOrderCommand);
+                refresherTick(this, new EventArgs());
             };
             Unloaded += (s, e) =>
             {
@@ -169,8 +170,9 @@ namespace SandRibbon.Components
             };
         }
 
-        void refresherTick(object sender, EventArgs e)
+        void refresherTick(object _sender, EventArgs _e)
         {
+            var shouldSpeedUp = false;
             try
             {
                 var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
@@ -184,15 +186,36 @@ namespace SandRibbon.Components
                     {
                         var id = context[i].id;
                         var container = generator.ContainerFromIndex(i);
-                        try
+                        if (container == null)
                         {
-                            rootPage.UserServerState.ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
+                            shouldSpeedUp = true;
                         }
-                        catch { }
+                        else
+                        {
+                            shouldSpeedUp = false;
+                            try
+                            {
+                                var slideImage = UIHelper.FindVisualChild<Image>(container);
+                                if (slideImage == null)
+                                    shouldSpeedUp = true;
+                                rootPage.UserServerState.ThumbnailProvider.thumbnail(slideImage, id);
+                            }
+                            catch
+                            {
+                                shouldSpeedUp = true;
+                            }
+                        }
                     }
                 }
             }
-            catch { }
+            catch {
+                shouldSpeedUp = true;
+            } finally
+            {
+                refresher.Interval = shouldSpeedUp ? shortRefresh : longRefresh;
+                refresher.Stop();
+                refresher.Start();
+            }
         }
 
         private void OnThumbnailCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
