@@ -227,14 +227,12 @@ namespace SandRibbon.Components
             var extendCanvasBySizeCommand = new DelegateCommand<SizeWithTarget>(extendCanvasBySize);
             var imageDroppedCommand = new DelegateCommand<ImageDrop>(imageDropped);
             var imagesDroppedCommand = new DelegateCommand<List<ImageDrop>>(imagesDropped);
-            var moveToCollaborationPageCommand = new DelegateCommand<int>(MoveTo);
             var setLayerCommand = new DelegateCommand<string>(SetLayer);
             var deleteSelectedItemsCommand = new DelegateCommand<object>(deleteSelectedItems);
             var setPrivacyOfItemsCommand = new DelegateCommand<Privacy>(changeSelectedItemsPrivacy);
             var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);
             var setPenAttributesCommand = new DelegateCommand<PenAttributes>(SetPenAttributes);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
-            var joinConversationCommand = new DelegateCommand<object>((_unused) => { JoinConversation(); });
             var pasteCommandBinding = new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute);
             var copyCommandBinding = new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute);
             var cutCommandBinding = new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute);
@@ -283,14 +281,12 @@ namespace SandRibbon.Components
                 Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(extendCanvasBySizeCommand);
                 Commands.ImageDropped.RegisterCommandToDispatcher(imageDroppedCommand);
                 Commands.ImagesDropped.RegisterCommandToDispatcher(imagesDroppedCommand);
-                Commands.MoveToCollaborationPage.RegisterCommand(moveToCollaborationPageCommand);
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
                 Commands.DeleteSelectedItems.RegisterCommandToDispatcher(deleteSelectedItemsCommand);
                 Commands.SetPrivacyOfItems.RegisterCommand(setPrivacyOfItemsCommand);
                 Commands.SetDrawingAttributes.RegisterCommandToDispatcher(setDrawingAttributesCommand);
                 Commands.SetPenAttributes.RegisterCommandToDispatcher(setPenAttributesCommand);
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
-                Commands.JoinConversation.RegisterCommand(joinConversationCommand);
                 Commands.ClipboardManager.RegisterCommand(clipboardManagerCommand);
                 clipboardManager.RegisterHandler(ClipboardAction.Paste, OnClipboardPaste, CanHandleClipboardPaste);
                 clipboardManager.RegisterHandler(ClipboardAction.Cut, OnClipboardCut, CanHandleClipboardCut);
@@ -320,14 +316,12 @@ namespace SandRibbon.Components
                 Commands.ExtendCanvasBySize.UnregisterCommand(extendCanvasBySizeCommand);
                 Commands.ImageDropped.UnregisterCommand(imageDroppedCommand);
                 Commands.ImagesDropped.UnregisterCommand(imagesDroppedCommand);
-                Commands.MoveToCollaborationPage.UnregisterCommand(moveToCollaborationPageCommand);
                 Commands.SetLayer.UnregisterCommand(setLayerCommand);
                 Commands.DeleteSelectedItems.UnregisterCommand(deleteSelectedItemsCommand);
                 Commands.SetPrivacyOfItems.UnregisterCommand(setPrivacyOfItemsCommand);
                 Commands.SetDrawingAttributes.UnregisterCommand(setDrawingAttributesCommand);
                 Commands.SetPenAttributes.UnregisterCommand(setPenAttributesCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
-                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
                 Commands.ClipboardManager.UnregisterCommand(clipboardManagerCommand);
                 clipboardManager.ClearAllHandlers();
                 Globals.CanvasClipboardFocusChanged -= CanvasClipboardFocusChanged;
@@ -402,7 +396,7 @@ namespace SandRibbon.Components
                 ClipboardFocus.BorderBrush = new SolidColorBrush(Colors.Pink);
             }
         }
-
+        /*
         private void JoinConversation()
         {
             if (myTextBox != null)
@@ -411,7 +405,7 @@ namespace SandRibbon.Components
                 myTextBox = null;
             }
         }
-
+        */
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.ResetSyncTimer();
@@ -2915,6 +2909,7 @@ namespace SandRibbon.Components
             rootPage.UserConversationState.UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
+        /*
         private void MoveTo(int _slide)
         {
             if (contentBuffer != null)
@@ -2932,6 +2927,7 @@ namespace SandRibbon.Components
             }
             myTextBox = null;
         }
+        */
         public void Flush()
         {
             ClearAdorners();

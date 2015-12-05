@@ -49,7 +49,6 @@ namespace SandRibbon.Components
             var redoCommandBinding = new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null));
             var initiateDigCommand = new DelegateCommand<object>(InitiateDig);
             var receiveLiveWindowCommand = new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow);
-            //var preParserAvailableCommand = new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable);
             var convertPresentationSpaceToQuizCommand = new DelegateCommand<int>(ConvertPresentationSpaceToQuiz);
             var syncedMoveRequestedCommand = new DelegateCommand<int>(setUpSyncDisplay);
             var initiateGrabZoomCommand = new DelegateCommand<object>(InitiateGrabZoom);
@@ -63,14 +62,10 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { },(i,j) => { },(parser) => PreParserAvailable(parser), rootPage.Slide.id.ToString());
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i,j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
                 CommandBindings.Add(undoCommandBinding);
                 CommandBindings.Add(redoCommandBinding);
                 Commands.InitiateDig.RegisterCommand(initiateDigCommand);
                 Commands.ReceiveLiveWindow.RegisterCommand(receiveLiveWindowCommand);
-//                Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
                 Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(convertPresentationSpaceToQuizCommand);
                 Commands.SyncedMoveRequested.RegisterCommand(syncedMoveRequestedCommand);
                 Commands.InitiateGrabZoom.RegisterCommand(initiateGrabZoomCommand);
@@ -80,13 +75,15 @@ namespace SandRibbon.Components
                 Commands.BanhammerSelectedItems.RegisterCommand(banHammerSelectedItemsCommand);
                 Commands.MirrorPresentationSpace.RegisterCommand(mirrorPresentationSpaceCommand);
                 Commands.AllStaticCommandsAreRegistered();
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.Slide.id.ToString());
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
             };
             Unloaded += (s, e) => {
                 CommandBindings.Remove(undoCommandBinding);
                 CommandBindings.Remove(redoCommandBinding);
                 Commands.InitiateDig.UnregisterCommand(initiateDigCommand);
                 Commands.ReceiveLiveWindow.UnregisterCommand(receiveLiveWindowCommand);
-//                Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
                 Commands.ConvertPresentationSpaceToQuiz.UnregisterCommand(convertPresentationSpaceToQuizCommand);
                 Commands.SyncedMoveRequested.UnregisterCommand(syncedMoveRequestedCommand);
                 Commands.InitiateGrabZoom.UnregisterCommand(initiateGrabZoomCommand);

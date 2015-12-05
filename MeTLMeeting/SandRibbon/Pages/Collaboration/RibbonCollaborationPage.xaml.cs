@@ -243,7 +243,6 @@ namespace SandRibbon.Pages.Collaboration
                 ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/appbar.draw.pen.png") as ImageSource,
                 ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/Highlighter.png") as ImageSource,
                 (Brush)FindResource("CheckedGradient")
-            //                (Brush)FindResource("ShinyAbsoluteHighlightBrush")
             );
             penCollection = new System.Collections.ObjectModel.ObservableCollection<PenAttributes> {
                 new PenAttributes(1,InkCanvasEditingMode.EraseByStroke,new System.Windows.Ink.DrawingAttributes {Color=Colors.White,IsHighlighter=false, Width=1 },images),

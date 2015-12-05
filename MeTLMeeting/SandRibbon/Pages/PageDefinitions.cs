@@ -72,7 +72,7 @@ namespace SandRibbon.Pages
             set { SetValue(ContentVisibilityProperty, value); }
         }        
         public static readonly DependencyProperty ContentVisibilityProperty =
-            DependencyProperty.Register("ContentVisibility", typeof(List<ContentVisibilityDefinition>), typeof(UserConversationState), new PropertyMetadata(new List<ContentVisibilityDefinition>()));
+            DependencyProperty.Register("ContentVisibility", typeof(List<ContentVisibilityDefinition>), typeof(UserConversationState), new PropertyMetadata(ContentFilterVisibility.defaultVisibilities));
 
         public UndoHistory UndoHistory
         {
