@@ -73,7 +73,7 @@ namespace SandRibbon.Pages.Login
         public UserGlobalState userGlobal { get; protected set; }
         public LoginPage(UserGlobalState _userGlobal, MeTLConfigurationProxy _backend)
         {
-            userGlobal = _userGlobal;
+            UserGlobalState = _userGlobal;
             backend = _backend;
             InitializeComponent();
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
@@ -227,17 +227,6 @@ namespace SandRibbon.Pages.Login
             //Commands.SetUserOptions.Execute(options);
             Globals.loadProfiles(identity);
             Commands.Mark.Execute("Identity is established");
-        }
-
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
         }
     }
 }

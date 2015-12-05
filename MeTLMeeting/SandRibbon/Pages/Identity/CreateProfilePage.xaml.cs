@@ -12,18 +12,15 @@ namespace SandRibbon.Pages.Identity
 {
     public partial class CreateProfilePage : ServerAwarePage
     {
-        public NetworkController networkController { get; protected set;}
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
         public CreateProfilePage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController)
         {
-            userGlobal = _userGlobal;
-            userServer = _userServer;
-            networkController = _networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
+            NetworkController = _networkController;
             InitializeComponent();
             DataContext = new Profile
             {
-                ownerName = networkController.credentials.name,
+                ownerName = NetworkController.credentials.name,
                 logicalName = "",
                 castBars = new[] {
                     new Bar(8)
@@ -70,27 +67,7 @@ namespace SandRibbon.Pages.Identity
             var profile = DataContext as Profile;
             Globals.profiles.Add(profile);
             Globals.currentProfile = profile;
-            NavigationService.Navigate(new ProfileSelectorPage(userGlobal,userServer,networkController, Globals.profiles));
-        }
-
-        public NetworkController getNetworkController()
-        {
-            return networkController;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return userServer;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
+            NavigationService.Navigate(new ProfileSelectorPage(UserGlobalState,UserServerState,NetworkController, Globals.profiles));
         }
     }
 }

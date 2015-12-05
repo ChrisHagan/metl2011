@@ -133,6 +133,7 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
+                refresherTick(this, new EventArgs());
                 refresher.Start();
                 thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides.OrderBy(sl => sl.index));
                 thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;

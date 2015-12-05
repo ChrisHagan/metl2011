@@ -6,15 +6,8 @@ using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using System.Collections.Generic;
-<<<<<<< HEAD
 using System.Windows;
 using System.Windows.Controls;
-=======
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
->>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
 using System.Windows.Navigation;
 
 namespace SandRibbon.Pages
@@ -41,7 +34,6 @@ namespace SandRibbon.Pages
     }
     public class UserConversationState : DependencyObject
     {
-<<<<<<< HEAD
         public bool IsAuthor
         {
             get { return (bool)GetValue(IsAuthorProperty); }
@@ -80,7 +72,7 @@ namespace SandRibbon.Pages
             set { SetValue(ContentVisibilityProperty, value); }
         }        
         public static readonly DependencyProperty ContentVisibilityProperty =
-            DependencyProperty.Register("ContentVisibility", typeof(List<ContentVisibilityDefinition>), typeof(UserConversationState), new PropertyMetadata(new List<ConversationState>()));
+            DependencyProperty.Register("ContentVisibility", typeof(List<ContentVisibilityDefinition>), typeof(UserConversationState), new PropertyMetadata(new List<ContentVisibilityDefinition>()));
 
         public UndoHistory UndoHistory
         {
@@ -90,23 +82,6 @@ namespace SandRibbon.Pages
         public static readonly DependencyProperty UndoHistoryProperty =
             DependencyProperty.Register("UndoHistory", typeof(UndoHistory), typeof(UserConversationState), new PropertyMetadata(null));
         
-=======
-        public Privacy privacy
-        {
-            get { return (Privacy)GetValue(privacyProperty); }
-            set { SetValue(privacyProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty privacyProperty =
-            DependencyProperty.Register("privacy", typeof(Privacy), typeof(UserConversationState), new PropertyMetadata(Privacy.NotSet));
-
-
-        public bool synched { get; set; } = false;
-        public int teacherSlide { get; set; } = -1;
-        public List<ContentVisibilityDefinition> contentVisibility { get; set; } = new List<ContentVisibilityDefinition>();
-        public UndoHistory undoHistory { get; set; }
->>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
         public UserConversationState()
         {
             UndoHistory = new UndoHistory(this);
@@ -114,29 +89,10 @@ namespace SandRibbon.Pages
     }
     public class UserServerState : DependencyObject
     {
-        public WebSession AuthenticatedWebSession
-        {
-            get { return (WebSession)GetValue(AuthenticatedWebSessionProperty); }
-            set { SetValue(AuthenticatedWebSessionProperty, value); }
-        }        
-        public static readonly DependencyProperty AuthenticatedWebSessionProperty =
-            DependencyProperty.Register("AuthenticatedWebSession", typeof(WebSession), typeof(UserServerState), new PropertyMetadata(null));
+        public WebSession AuthenticatedWebSession { get; set; }
+        public OneNoteConfiguration OneNoteConfiguration { get; set; }
         
-        public OneNoteConfiguration OneNoteConfiguration
-        {
-            get { return (OneNoteConfiguration)GetValue(OneNoteConfigurationProperty); }
-            set { SetValue(OneNoteConfigurationProperty, value); }
-        }
-        public static readonly DependencyProperty OneNoteConfigurationProperty =
-            DependencyProperty.Register("OneNoteConfiguration", typeof(OneNoteConfiguration), typeof(UserServerState), new PropertyMetadata(new OneNoteConfiguration()));
-        
-        public ThumbnailProvider ThumbnailProvider
-        {
-            get { return (ThumbnailProvider)GetValue(ThumbnailProviderProperty); }
-            set { SetValue(ThumbnailProviderProperty, value); }
-        }
-        public static readonly DependencyProperty ThumbnailProviderProperty =
-            DependencyProperty.Register("ThumbnailProvider", typeof(ThumbnailProvider), typeof(UserServerState), new PropertyMetadata(null));        
+        public ThumbnailProvider ThumbnailProvider { get; set; }
     }
     public class UserGlobalState
     {

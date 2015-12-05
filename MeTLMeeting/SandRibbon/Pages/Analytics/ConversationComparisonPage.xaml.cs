@@ -29,17 +29,13 @@ namespace SandRibbon.Pages.Analytics
     }
     public partial class ConversationComparisonPage : ServerAwarePage
     {
-        public NetworkController networkController { get; protected set; }
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
-
         public ConversationComparisonPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
         {
-            networkController = _networkController;
-            userGlobal = _userGlobal;
-            userServer = _userServer;
+            NetworkController = _networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
             InitializeComponent();
-            DataContext = new ConversationComparableCorpus(networkController,cs);
+            DataContext = new ConversationComparableCorpus(NetworkController,cs);
         }
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
@@ -61,17 +57,17 @@ namespace SandRibbon.Pages.Analytics
 
         public NetworkController getNetworkController()
         {
-            return networkController;
+            return NetworkController;
         }
 
         public UserServerState getUserServerState()
         {
-            return userServer;
+            return UserServerState;
         }
 
         public UserGlobalState getUserGlobalState()
         {
-            return userGlobal;
+            return UserGlobalState;
         }
 
         public NavigationService getNavigationService()

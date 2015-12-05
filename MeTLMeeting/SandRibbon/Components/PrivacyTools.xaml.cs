@@ -29,13 +29,13 @@ namespace SandRibbon.Components
             var textboxFocusedCommand = new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox);
             var privacyChangedEventHandler = new EventHandler((evs, eve) =>
             {
-                var newPrivacy = rootPage.getUserConversationState().privacy;
-                var conversation = rootPage.getDetails();
-                var me = rootPage.getNetworkController().credentials.name;
+                var newPrivacy = rootPage.UserConversationState.Privacy;
+                var conversation = rootPage.ConversationDetails;
+                var me = rootPage.NetworkController.credentials.name;
                 publicMode.IsEnabled = (conversation.isAuthor(me) || conversation.Permissions.studentCanPublish);
                 updateVisual(newPrivacy);
             });
-            var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.privacyProperty, typeof(UserConversationState));
+            var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.PrivacyProperty, typeof(UserConversationState));
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
@@ -43,43 +43,20 @@ namespace SandRibbon.Components
                     rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
-<<<<<<< HEAD
-                try
-                {
-                    if (String.IsNullOrEmpty(rootPage.UserConversationState.Privacy.ToString()) || rootPage.ConversationDetails == null)
-                    {
-                        Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
-                    }
-                    else
-                    {
-                        if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
-                            Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PUBLIC);
-                        else
-                            Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
-                        settingEnabledModes(rootPage.ConversationDetails);
-                        settingSelectedMode(rootPage.UserConversationState.Privacy.ToString());
-                    }
-                }
-                catch (NotSetException)
-                {
-                    Commands.SetPrivacy.ExecuteAsync(GlobalConstants.PRIVATE);
-                }
-=======
->>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
                 privacyProperty.AddValueChanged(this, privacyChangedEventHandler);
 
 
-                var details = rootPage.getDetails();
-                var userConv = rootPage.getUserConversationState();
-                if (userConv.privacy == Privacy.NotSet || userConv.privacy == Privacy.Public) {
-                    if (details.isAuthor(rootPage.getNetworkController().credentials.name) || details.Permissions.studentCanPublish)
-                    userConv.privacy = Privacy.Public;
+                var details = rootPage.ConversationDetails;
+                var userConv = rootPage.UserConversationState;
+                if (userConv.Privacy == Privacy.NotSet || userConv.Privacy == Privacy.Public) {
+                    if (details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanPublish)
+                    userConv.Privacy = Privacy.Public;
                     else
-                        rootPage.getUserConversationState().privacy = Privacy.Private;
+                        rootPage.UserConversationState.Privacy = Privacy.Private;
                 }
-                updateVisual(userConv.privacy);
+                updateVisual(userConv.Privacy);
 
             };
             Unloaded += (s, e) =>
@@ -107,55 +84,26 @@ namespace SandRibbon.Components
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
             if (info.Target == GlobalConstants.PRESENTATIONSPACE)
-                rootPage.getUserConversationState().privacy = info.IsPrivate ? Privacy.Private : Privacy.Public;
+                rootPage.UserConversationState.Privacy = info.IsPrivate ? Privacy.Private : Privacy.Public;
         }
 
         private void updateConversationDetails(ConversationDetails details)
         {
-<<<<<<< HEAD
-            Dispatcher.adopt(() =>
-                                  {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(rootPage.NetworkController.credentials.name)) || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
-                                      {
-                                          publicMode.IsEnabled = true;
-                                          var privacy = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? GlobalConstants.PUBLIC : GlobalConstants.PRIVATE;
-                                          SetPrivacy(privacy);
-                                      }
-
-                                      else
-                                      {
-                                          publicMode.IsEnabled = false;
-                                          SetPrivacy(GlobalConstants.PRIVATE);
-                                          Commands.SetPrivacy.Execute(GlobalConstants.PRIVATE);
-                                      }
-                                  });
-=======
-            var userConv = rootPage.getUserConversationState();
-            if (userConv.privacy != Privacy.Private &&  (!details.isAuthor(rootPage.getNetworkController().credentials.name) && !details.Permissions.studentCanPublish))
-                userConv.privacy = Privacy.Private;
->>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
+            var userConv = rootPage.UserConversationState;
+            if (userConv.Privacy != Privacy.Private &&  (!details.isAuthor(rootPage.NetworkController.credentials.name) && !details.Permissions.studentCanPublish))
+                userConv.Privacy = Privacy.Private;
         }
         private bool canSetPrivacy(string privacy)
         {
-<<<<<<< HEAD
-            try
-            {
-                var result = privacy != (string)GetValue(PrivateProperty)
-                && ((rootPage.ConversationDetails.Permissions.studentCanPublish && !rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) || rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name);
-                return result;
-            }
-            catch (Exception)
-=======
             if (String.IsNullOrEmpty(privacy)) return false;
             var newPrivacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
             if (newPrivacy == Privacy.Private)
->>>>>>> d2729ee75f5e7aab1393aa7e4deb13b0ab70f108
             {
                 return true;
             } else if (newPrivacy == Privacy.Public){
-                var userConv = rootPage.getUserConversationState();
-                var details = rootPage.getDetails();
-                var me = rootPage.getNetworkController().credentials.name;
+                var userConv = rootPage.UserConversationState;
+                var details = rootPage.ConversationDetails;
+                var me = rootPage.NetworkController.credentials.name;
                 return details.isAuthor(me) || details.Permissions.studentCanPublish;
             }
             else return true;
@@ -163,7 +111,7 @@ namespace SandRibbon.Components
         private void SetPrivacy(string privacy)
         {
             if (String.IsNullOrEmpty(privacy)) return;
-            rootPage.getUserConversationState().privacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
+            rootPage.UserConversationState.Privacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {

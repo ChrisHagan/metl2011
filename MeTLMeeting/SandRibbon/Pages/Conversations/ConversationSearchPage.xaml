@@ -91,7 +91,7 @@
                                         <Button.Visibility>
                                             <MultiBinding Converter="{StaticResource visibleToAuthor}">
                                                 <Binding />
-                                                <Binding ElementName="root" Path="networkController"/>
+                                                <Binding ElementName="root" Path="NetworkController"/>
                                             </MultiBinding>
                                         </Button.Visibility>
                                         <Image Source="\Resources\appbar.cog.png" />

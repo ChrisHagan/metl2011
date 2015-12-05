@@ -130,11 +130,10 @@ namespace SandRibbon.Pages.ServerSelection
         protected ServerCollection servers = new ServerCollection();
         protected List<Timer> timers = new List<Timer>();
         protected Timer refreshTimer;
-        public UserGlobalState userGlobal { get; protected set; }
         public ServerSelectorPage(UserGlobalState _userGlobal)
         {
             InitializeComponent();
-            userGlobal = _userGlobal;
+            UserGlobalState = _userGlobal;
             DataContext = servers;
             var localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
             Unloaded += (s, e) =>
@@ -213,17 +212,7 @@ namespace SandRibbon.Pages.ServerSelection
             refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
             var source = sender as FrameworkElement;
             var selection = source.DataContext as ServerChoice;
-            NavigationService.Navigate(new LoginPage(userGlobal, selection.server));
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
+            NavigationService.Navigate(new LoginPage(UserGlobalState, selection.server));
         }
     }
 }

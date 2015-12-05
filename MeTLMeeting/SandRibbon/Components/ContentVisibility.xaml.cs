@@ -31,13 +31,13 @@ namespace SandRibbon.Components
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;            
                 Commands.UpdateContentVisibility.RegisterCommandToDispatcher(updateContentVisibilityCommand);
+                Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
+                DataContext = this;
             };
             Unloaded += (s, e) =>
             {                
                 Commands.UpdateContentVisibility.UnregisterCommand(updateContentVisibilityCommand);
             };
-            Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
-            DataContext = this;
         }
         
         protected List<GroupSet> groupSets = new List<GroupSet>();        

@@ -46,24 +46,19 @@ namespace SandRibbon.Pages.Collaboration
     public partial class ConversationOverviewPage : ConversationAwarePage
     {
         public ReticulatedConversation conversation { get; protected set; }
-        public NetworkController networkController { get; protected set; }
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
-        public UserConversationState userConv { get; protected set; }
-        public ConversationDetails details { get; protected set; }
         public ConversationOverviewPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
         {
-            userGlobal = _userGlobal;
-            userServer = _userServer;
-            userConv = _userConv;
-            details = presentationPath;
-            networkController = _networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
+            UserConversationState = _userConv;
+            ConversationDetails = presentationPath;
+            NetworkController = _networkController;
             InitializeComponent();
             DataContext = conversation = new ReticulatedConversation
             {
-                networkController = networkController,
+                networkController = NetworkController,
                 PresentationPath = presentationPath,
-                RelatedMaterial = new List<string>{}.Select(jid => networkController.client.DetailsOf(jid)).ToList()
+                RelatedMaterial = new List<string>{}.Select(jid => NetworkController.client.DetailsOf(jid)).ToList()
 
             };
             conversation.CalculateLocations();            
@@ -78,42 +73,7 @@ namespace SandRibbon.Pages.Collaboration
             var slide = element.DataContext as VmSlide;
             //Commands.MoveToCollaborationPage.Execute(slide.Slide.id);
             var userSlide = new UserSlideState();
-            NavigationService.Navigate(new RibbonCollaborationPage(userGlobal,userServer,userConv,new ConversationState(),userSlide,networkController, slide.Details, slide.Slide));// networkController.ribbonCollaborationPage);            
-        }
-
-        public ConversationDetails getDetails()
-        {
-            return details;
-        }
-
-        public UserConversationState getUserConversationState()
-        {
-            return userConv;
-        }
-
-        public NetworkController getNetworkController()
-        {
-            return networkController;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return userServer;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
-        }
-
-        public ConversationState getConversationState()
-        {
-            throw new NotImplementedException();
+            NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, new ConversationState(), userSlide, NetworkController, slide.Details, slide.Slide));            
         }
     }    
     public class GridLengthConverter : IValueConverter

@@ -44,15 +44,11 @@ namespace SandRibbon.Pages.Conversations
 
         private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
-        public NetworkController networkController { get; protected set; }
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
-
         public ConversationSearchPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, string query)
         {
-            userGlobal = _userGlobal;
-            userServer = _userServer;
-            networkController = _networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
+            NetworkController = _networkController;
             InitializeComponent();
             DataContext = this;
             SearchResults.DataContext = searchResultsObserver;
@@ -107,7 +103,7 @@ namespace SandRibbon.Pages.Conversations
             {
                 Commands.BlockSearch.ExecuteAsync(null);
                 var bw = sender as BackgroundWorker;
-                e.Result = networkController.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+                e.Result = NetworkController.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
             };
 
             search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
@@ -163,7 +159,7 @@ namespace SandRibbon.Pages.Conversations
         }
         private bool shouldShowConversation(ConversationDetails conversation)
         {
-            return conversation.UserHasPermission(networkController.credentials);
+            return conversation.UserHasPermission(NetworkController.credentials);
         }
         private void RefreshSortedConversationsList()
         {
@@ -179,12 +175,12 @@ namespace SandRibbon.Pages.Conversations
             if (conversation.isDeleted)
                 return false;
             var author = conversation.Author;
-            if (author != networkController.credentials.name && onlyMyConversations.IsChecked.Value)
+            if (author != NetworkController.credentials.name && onlyMyConversations.IsChecked.Value)
                 return false;
             var title = conversation.Title.ToLower();
             var searchField = new[] { author.ToLower(), title };
             var searchQuery = SearchInput.Text.ToLower().Trim();
-            if (searchQuery.Length == 0 && author == networkController.credentials.name)
+            if (searchQuery.Length == 0 && author == NetworkController.credentials.name)
             {//All my conversations show up in an empty search
                 return true;
             }
@@ -203,7 +199,7 @@ namespace SandRibbon.Pages.Conversations
         {
             var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
             var userConv = new UserConversationState();
-            NavigationService.Navigate(new ConversationEditPage(userGlobal,userServer,userConv,networkController, conversation));
+            NavigationService.Navigate(new ConversationEditPage(UserGlobalState,UserServerState,userConv,NetworkController, conversation));
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)
@@ -214,12 +210,12 @@ namespace SandRibbon.Pages.Conversations
         private void JoinConversation(object sender, RoutedEventArgs e)
         {
             var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            var conversation = networkController.client.DetailsOf(requestedConversation.Jid);
-            if (conversation.UserHasPermission(networkController.credentials))
+            var conversation = NetworkController.client.DetailsOf(requestedConversation.Jid);
+            if (conversation.UserHasPermission(NetworkController.credentials))
             {
                 //Commands.JoinConversation.Execute(conversation.Jid);
                 var userConversation = new UserConversationState();
-                NavigationService.Navigate(new ConversationOverviewPage(userGlobal, userServer, userConversation, networkController, conversation));
+                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, NetworkController, conversation));
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");
@@ -229,7 +225,7 @@ namespace SandRibbon.Pages.Conversations
         {
             if (SearchResults.SelectedItems.Count > 0)
             {
-                NavigationService.Navigate(new ConversationComparisonPage(userGlobal, userServer, networkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+                NavigationService.Navigate(new ConversationComparisonPage(UserGlobalState, UserServerState, NetworkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
             }
         }
 
@@ -240,32 +236,13 @@ namespace SandRibbon.Pages.Conversations
             {
                 Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet
                 {
-                    config = userServer.OneNoteConfiguration,
-                    networkController = networkController,
+                    config = UserServerState.OneNoteConfiguration,
+                    networkController = NetworkController,
                     conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
                 });
             }
         }
 
-        public NetworkController getNetworkController()
-        {
-            return networkController;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return userServer;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            throw new NotImplementedException();
-        }
     }
     public class ConversationComparator : System.Collections.IComparer
     {

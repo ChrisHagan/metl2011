@@ -124,7 +124,7 @@ namespace MeTLLib.DataTypes
         }
     }
 
-        public class ConversationDetails : DependencyObject
+        public class ConversationDetails
     {
         public bool isDeleted
         {
@@ -208,27 +208,10 @@ namespace MeTLLib.DataTypes
         }
 
 
-        public String Title
-        {
-            get { return (String)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
-        }
+        public string Title { get; set; }
 
-        // Using a DependencyProperty as the backing store for Title.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(String), typeof(ConversationDetails), new PropertyMetadata(""));
+        public string Jid { get; set; }
 
-
-
-        public String Jid
-        {
-            get { return (String)GetValue(JidProperty); }
-            set { SetValue(JidProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Jid.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty JidProperty =
-            DependencyProperty.Register("Jid", typeof(String), typeof(ConversationDetails), new PropertyMetadata(""));
         /*The jid is a valid Xmpp jid.  If, for instance, you want
                                        * to create a room specific to this conversation so that
                                        * you can restrict broadcast, this is safe to work in Jabber 
@@ -238,121 +221,21 @@ namespace MeTLLib.DataTypes
                                        * string in generateJid).  Never mind that, we're just using a number.*/
 
 
-        public String Author
-        {
-            get { return (String)GetValue(AuthorProperty); }
-            set { SetValue(AuthorProperty, value); }
-        }
+        public string Author { get; set; }
+        public Permissions Permissions { get; set; }
 
-        // Using a DependencyProperty as the backing store for Author.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty AuthorProperty =
-            DependencyProperty.Register("Author", typeof(String), typeof(ConversationDetails), new PropertyMetadata(""));
+        public DateTime Created { get; set; }
+        public long CreatedAsTicks { get; set; }
+        public DateTime LastAccessed { get; set; }
+        public string Tag { get; set; }
+        public string Subject { get; set; }
 
-
-
-        public Permissions Permissions
-        {
-            get { return (Permissions)GetValue(PermissionsProperty); }
-            set { SetValue(PermissionsProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Permissions.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty PermissionsProperty =
-            DependencyProperty.Register("Permissions", typeof(Permissions), typeof(ConversationDetails), new PropertyMetadata(Permissions.Empty));
-
-
-
-
-        public DateTime Created
-        {
-            get { return (DateTime)GetValue(CreatedProperty); }
-            set { SetValue(CreatedProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Created.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CreatedProperty =
-            DependencyProperty.Register("Created", typeof(DateTime), typeof(ConversationDetails), new PropertyMetadata(new DateTime()));
-
-
-
-        public long CreatedAsTicks
-        {
-            get { return (long)GetValue(CreatedAsTicksProperty); }
-            set { SetValue(CreatedAsTicksProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for CreatedAsTicks.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CreatedAsTicksProperty =
-            DependencyProperty.Register("CreatedAsTicks", typeof(long), typeof(ConversationDetails), new PropertyMetadata(0));
-
-
-
-
-        public DateTime LastAccessed
-        {
-            get { return (DateTime)GetValue(LastAccessedProperty); }
-            set { SetValue(LastAccessedProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for LastAccessed.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LastAccessedProperty =
-            DependencyProperty.Register("LastAccessed", typeof(DateTime), typeof(ConversationDetails), new PropertyMetadata(new DateTime()));
-
-
-
-        public String Tag
-        {
-            get { return (String)GetValue(TagProperty); }
-            set { SetValue(TagProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Tag.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TagProperty =
-            DependencyProperty.Register("Tag", typeof(String), typeof(ConversationDetails), new PropertyMetadata(string.Empty));
-
-
-
-        public String Subject
-        {
-            get { return (String)GetValue(SubjectProperty); }
-            set { SetValue(SubjectProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Subject.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SubjectProperty =
-            DependencyProperty.Register("Subject", typeof(String), typeof(ConversationDetails), new PropertyMetadata(string.Empty));
-
-
-
-
-        public List<Slide> Slides
-        {
-            get { return (List<Slide>)GetValue(SlidesProperty); }
-            set { SetValue(SlidesProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Slides.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SlidesProperty =
-            DependencyProperty.Register("Slides", typeof(List<Slide>), typeof(ConversationDetails), new PropertyMetadata(new List<Slide>()));
-
-
-
-        public List<string> blacklist
-        {
-            get { return (List<string>)GetValue(blacklistProperty); }
-            set { SetValue(blacklistProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for blacklist.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty blacklistProperty =
-            DependencyProperty.Register("blacklist", typeof(List<string>), typeof(ConversationDetails), new PropertyMetadata(new List<String>()));
-
-        
+        public List<Slide> Slides { get; set; }
+        public List<string> blacklist { get; set; }
         public byte[] GetBytes()
         {
             return Encoding.UTF8.GetBytes(WriteXml().ToString(SaveOptions.DisableFormatting));
         }
-      
         public bool IsValid
         {
             get
@@ -514,14 +397,14 @@ namespace MeTLLib.DataTypes
     }
     public class Permissions
     {
-        public Permissions(String newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced)
+        public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced)
         {
             Label = newLabel;
             studentCanOpenFriends = newStudentsCanOpenFriends;
             studentCanPublish = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
         }
-        public Permissions(String newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced, String newConversationGroup)
+        public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced, String newConversationGroup)
         {
             Label = newLabel;
             studentCanOpenFriends = newStudentsCanOpenFriends;
@@ -590,7 +473,7 @@ namespace MeTLLib.DataTypes
             TUTORIAL_PERMISSIONS,
             MEETING_PERMISSIONS};
         public static readonly string PERMISSIONS_TAG = "permissions";
-        public string Label;
+        public string Label { get; set; }
         public bool studentCanPublish = false;
         private static string CANSHOUT = "studentCanPublish";
         public bool studentCanOpenFriends = false;
@@ -608,7 +491,7 @@ namespace MeTLLib.DataTypes
             var usersAreCompulsorilySynced = false;
             if (doc.Element(ALLSYNC) != null)
                 usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
-            var permission = new Permissions(null, studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
+            var permission = new Permissions("custom", studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
             if (doc.Element(NAVIGATIONLOCKED) != null)
                 permission.NavigationLocked = Boolean.Parse(doc.Element(NAVIGATIONLOCKED).Value);
             return permission;

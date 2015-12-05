@@ -19,7 +19,7 @@ namespace SandRibbon.Utils
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return values.Any(v => (bool)v)? Visibility.Visible : Visibility.Collapsed;
+            return values.Any(v => v is bool ? (bool)v : false) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -31,7 +31,7 @@ namespace SandRibbon.Utils
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return values.Any(v => (bool)v);
+            return values.Any(v => v is bool ? (bool)v : false);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -43,7 +43,7 @@ namespace SandRibbon.Utils
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return values.All(v => (bool)v);
+            return values.All(v => v is bool ? (bool)v : false);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

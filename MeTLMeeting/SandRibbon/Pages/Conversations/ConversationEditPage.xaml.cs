@@ -17,27 +17,18 @@ namespace SandRibbon.Pages.Conversations
 {
     public partial class ConversationEditPage : ConversationAwarePage
     {
-
-        public NetworkController networkController { get; protected set; }
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
-        public UserConversationState userConv { get; protected set; }
-        public ConversationDetails details { get; protected set; }
-
-
-
         public ConversationEditPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
         {
 
-            userGlobal = _userGlobal;
-            userServer = _userServer;
-            userConv = _userConv;
-            details = presentationPath;
-            networkController = _networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
+            UserConversationState = _userConv;
+            ConversationDetails = presentationPath;
+            NetworkController = _networkController;
             InitializeComponent();
             errorDisplay.DataContext = Errors;
-            DataContext = details;
-            sharing.ItemsSource = networkController.credentials.authorizedGroups.Select(s => s.groupKey);
+            DataContext = ConversationDetails;
+            sharing.ItemsSource = NetworkController.credentials.authorizedGroups.Select(s => s.groupKey);
         }
 
         public string Errors
@@ -63,12 +54,12 @@ namespace SandRibbon.Pages.Conversations
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             var conversation = DataContext as ConversationDetails;
-            var details = SearchConversationDetails.HydrateFromServer(networkController.client, conversation);
+            var details = SearchConversationDetails.HydrateFromServer(NetworkController.client, conversation);
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
             {
-                networkController.client.UpdateConversationDetails(details);
-                NavigationService.Navigate(new ConversationSearchPage(userGlobal, userServer, networkController, details.Title));
+                NetworkController.client.UpdateConversationDetails(details);
+                NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, details.Title));
             }
             else
             {
@@ -108,44 +99,9 @@ namespace SandRibbon.Pages.Conversations
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var conversation = DataContext as ConversationDetails;
-                networkController.client.DeleteConversation(conversation);
-                NavigationService.Navigate(new ConversationSearchPage(userGlobal, userServer, networkController, networkController.credentials.name));
+                NetworkController.client.DeleteConversation(conversation);
+                NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, NetworkController.credentials.name));
             }
-        }
-
-        public ConversationDetails getDetails()
-        {
-            return details;
-        }
-
-        public UserConversationState getUserConversationState()
-        {
-            return userConv;
-        }
-
-        public NetworkController getNetworkController()
-        {
-            return networkController;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return userServer;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
-        }
-
-        public ConversationState getConversationState()
-        {
-            throw new NotImplementedException();
         }
     }
     public class HideErrorsIfEmptyConverter : IValueConverter

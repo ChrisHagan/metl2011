@@ -19,34 +19,30 @@ namespace SandRibbon.Pages.Analytics
 {
     public partial class TagCloudPage : ConversationAwarePage
     {
-        public NetworkController controller { get; protected set; }
-        public ConversationDetails details { get; protected set; }
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
         public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer) : base()
         {
             InitializeComponent();
-            details = _details;
-            controller = networkController;
-            userGlobal = _userGlobal;
-            userServer = _userServer;
+            ConversationDetails = _details;
+            NetworkController = networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
             loadWorkbench();            
         }
 
         private void loadWorkbench()
         {            
             var wc = new WebControl();
-            wc.WebSession = userServer.AuthenticatedWebSession;
+            wc.WebSession = UserServerState.AuthenticatedWebSession;
             Content = wc;
             wc.DocumentReady += Wc_DocumentReady;
             wc.ProcessCreated += delegate
             {
-                wc.Source = controller.client.server.widgetUri;
+                wc.Source = NetworkController.client.server.widgetUri;
             };
         }
         
         public IEnumerable<string> Themes(Slide slide) {
-            var page = controller.client.server.themes(slide.id);
+            var page = NetworkController.client.server.themes(slide.id);
             var wc = new WebClient();
             var ts = XDocument.Parse(wc.DownloadString(page)).Descendants("theme").Select(t => t.Value);
             Console.WriteLine("slide {0}", slide.id);
@@ -75,8 +71,8 @@ namespace SandRibbon.Pages.Analytics
                     tagsRendered = true;
                     var themes = new List<String>();
                     var count = 0;
-                    var max = details.Slides.Count;
-                    foreach (var slide in details.Slides) {
+                    var max = ConversationDetails.Slides.Count;
+                    foreach (var slide in ConversationDetails.Slides) {
                         ThreadPool.QueueUserWorkItem(delegate
                        {
                            themes.AddRange(Themes(slide));
@@ -94,41 +90,6 @@ namespace SandRibbon.Pages.Analytics
                     }                                          
                 }
             }
-        }
-
-        public ConversationDetails getDetails()
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserConversationState getUserConversationState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public NetworkController getNetworkController()
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return userServer;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
-        }
-
-        public ConversationState getConversationState()
-        {
-            throw new NotImplementedException();
         }
     }
 }

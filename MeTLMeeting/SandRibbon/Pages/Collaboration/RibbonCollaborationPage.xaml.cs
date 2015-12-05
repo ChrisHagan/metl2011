@@ -224,26 +224,17 @@ namespace SandRibbon.Pages.Collaboration
     }
     public partial class RibbonCollaborationPage : SlideAwarePage
     {
-        public NetworkController networkController { get; protected set; }
-        public UserGlobalState userGlobal { get; protected set; }
-        public UserServerState userServer { get; protected set; }
-        public UserConversationState userConv { get; protected set; }
-        public ConversationState convState { get; protected set; }
-        public UserSlideState userSlide { get; protected set; }
-        public ConversationDetails details { get; protected set; }
-        public Slide slide { get; protected set; }
-
-        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;        
+        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;
         public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, UserSlideState _userSlide, NetworkController _networkController, ConversationDetails _details, Slide _slide)
         {
-            networkController = _networkController;
-            details = _details;
-            slide = _slide;
-            userGlobal = _userGlobal;
-            userServer = _userServer;
-            userConv = _userConv;
-            convState = _convState;
-            userSlide = _userSlide;
+            NetworkController = _networkController;
+            ConversationDetails = _details;
+            Slide = _slide;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
+            UserConversationState = _userConv;
+            ConversationState = _convState;
+            UserSlideState = _userSlide;
             InitializeComponent();
             DataContext = this;
             var ic = new ImageSourceConverter();
@@ -366,9 +357,9 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);
-                networkController.client.SneakInto(details.Jid);
-                networkController.client.SneakInto(slide.id.ToString());
-                networkController.client.SneakInto(slide.id.ToString() + networkController.credentials.name);
+                NetworkController.client.SneakInto(ConversationDetails.Jid);
+                NetworkController.client.SneakInto(Slide.id.ToString());
+                NetworkController.client.SneakInto(Slide.id.ToString() + NetworkController.credentials.name);
             };
             this.Unloaded += (ps, pe) =>
             {
@@ -392,29 +383,29 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
-                userConv.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
-                networkController.client.SneakOutOf(slide.id.ToString() + networkController.credentials.name);
-                networkController.client.SneakOutOf(slide.id.ToString());
-                networkController.client.SneakOutOf(details.Jid);
+                UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
+                NetworkController.client.SneakOutOf(Slide.id.ToString() + NetworkController.credentials.name);
+                NetworkController.client.SneakOutOf(Slide.id.ToString());
+                NetworkController.client.SneakOutOf(ConversationDetails.Jid);
             };
         }
         private void Shift(int direction)
         {
-            var slides = details.Slides.OrderBy(s => s.index).ToList();
-            var currentIndex = slides.IndexOf(slide);
+            var slides = ConversationDetails.Slides.OrderBy(s => s.index).ToList();
+            var currentIndex = slides.IndexOf(Slide);
             var newSlide = slides.ElementAt(currentIndex + direction);
             if (newSlide != null)
             {
-                NavigationService.Navigate(new RibbonCollaborationPage(userGlobal,userServer,userConv,convState,userSlide,networkController, details, newSlide));
+                NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, UserSlideState, NetworkController, ConversationDetails, newSlide));
             }
         }
 
 
         private void UpdateConversationDetails(ConversationDetails cd)
         {
-            if (details.Jid == cd.Jid)
+            if (ConversationDetails.Jid == cd.Jid)
             {
-                details = cd;
+                ConversationDetails = cd;
             }
         }
 
@@ -486,12 +477,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 */
         private bool userMayAdministerConversation(ConversationDetails _conversation)
         {
-            var conversation = details;
-            if (conversation == null)
-            {
-                return false;
-            }
-            return conversation.UserHasPermission(networkController.credentials);
+            return ConversationDetails.UserHasPermission(NetworkController.credentials);
         }
 
         private void SetLayer(string layer)
@@ -635,15 +621,15 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer,networkController, ""));
+            NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, ""));
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationOverviewPage(userGlobal, userServer, userConv, networkController, details));
+            NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, UserConversationState, NetworkController, ConversationDetails));
         }
         private bool canZoomIn(object sender)
         {
-            return !(scroll == null) && details != ConversationDetails.Empty;
+            return !(scroll == null) && ConversationDetails != ConversationDetails.Empty;
         }
         private bool canZoomOut(object sender)
         {
@@ -666,7 +652,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 {
                     result = vTrue;
                 }
-                result = (hTrue || vTrue) && details != ConversationDetails.Empty;
+                result = (hTrue || vTrue) && ConversationDetails != ConversationDetails.Empty;
             }
             return result;
         }
@@ -797,23 +783,23 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         {
             return
                 scroll != null &&
-                details != null &&
-                details != ConversationDetails.Empty &&
-                slide != null &&
-                slide != Slide.Empty &&
-                scroll.Height != slide.defaultHeight &&
-                scroll.Width != slide.defaultWidth;
+                ConversationDetails != null &&
+                ConversationDetails != ConversationDetails.Empty &&
+                Slide != null &&
+                Slide != Slide.Empty &&
+                scroll.Height != Slide.defaultHeight &&
+                scroll.Width != Slide.defaultWidth;
         }
         protected void originalView(object _unused)
         {
 
             if (scroll != null &&
-            details != null &&
-            details != ConversationDetails.Empty &&
-            slide != null &&
-            slide != Slide.Empty)
+            ConversationDetails != null &&
+            ConversationDetails != ConversationDetails.Empty &&
+            Slide != null &&
+            Slide != Slide.Empty)
             {
-                var currentSlide = slide;
+                var currentSlide = Slide;
                 if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
                 scroll.Width = currentSlide.defaultWidth;
                 scroll.Height = currentSlide.defaultHeight;
@@ -835,18 +821,18 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
         {
-            var kvp = new KeyValuePair<ConversationDetails, Slide>(details, slide);
-            if (kvp.Key.UserHasPermission(networkController.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
+            var kvp = new KeyValuePair<ConversationDetails, Slide>(ConversationDetails, Slide);
+            if (kvp.Key.UserHasPermission(NetworkController.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
             {
-                networkController.client.DuplicateSlide(kvp.Key, kvp.Value);
+                NetworkController.client.DuplicateSlide(kvp.Key, kvp.Value);
             }
         }
         private void duplicateConversation(ConversationDetails _conversationToDuplicate)
         {
-            var conversationToDuplicate = details;
-            if (conversationToDuplicate.UserHasPermission(networkController.credentials))
+            var conversationToDuplicate = ConversationDetails;
+            if (conversationToDuplicate.UserHasPermission(NetworkController.credentials))
             {
-                networkController.client.DuplicateConversation(conversationToDuplicate);
+                NetworkController.client.DuplicateConversation(conversationToDuplicate);
             }
         }
 
@@ -857,50 +843,6 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
             {
                 child.RowDefinitions[0].Height = new GridLength(0);
             }
-        }
-
-        public Slide getSlide()
-        {
-            return slide;
-        }
-
-        public UserSlideState getUserSlideState()
-        {
-            return userSlide;
-        }
-
-        public ConversationDetails getDetails()
-        {
-            return details;
-        }
-
-        public UserConversationState getUserConversationState()
-        {
-            return userConv;
-        }
-
-        public NetworkController getNetworkController()
-        {
-            return networkController;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return userServer;
-        }
-        public NavigationService getNavigationService()
-        {
-            return NavigationService;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return userGlobal;
-        }
-
-        public ConversationState getConversationState()
-        {
-            return convState;
         }
     }
 }
