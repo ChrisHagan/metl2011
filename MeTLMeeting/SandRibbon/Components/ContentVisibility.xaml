@@ -6,7 +6,7 @@
     xmlns:sr="clr-namespace:SandRibbon"
     x:Name="contentVisibility"        
     AutomationProperties.AutomationId="contentVisibility">
-    <ItemsControl x:Name="contentVisibilitySelectors">
+    <ItemsControl x:Name="contentVisibilitySelectors" ItemsSource="{Binding Path=UserGlobalState.Visibilities}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <CheckBox ToolTip="{Binding Description}" Content="{Binding Label}">

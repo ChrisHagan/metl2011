@@ -1,34 +1,25 @@
-﻿using MeTLLib;
-using MeTLLib.DataTypes;
+﻿using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Linq;
-using SandRibbon.Components;
-using System;
-using System.Windows.Navigation;
-using SandRibbon.Providers;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public partial class SlideReplayPage : SlideAwarePage
-    {
-        public Slide slide { get; protected set; }
+    public partial class SlideReplayPage : Page
+    {        
         List<TargettedElement> elements = new List<TargettedElement>();
-        int pointer = 0;
-        public ConversationDetails details { get; protected set; }
-        public NetworkController controller { get; protected set; }
-        public SlideReplayPage(NetworkController _controller, ConversationDetails _details, Slide _slide)
+        int pointer = 0;        
+        public SlideReplayPage()
         {
-            InitializeComponent();
-            this.slide = slide;
-            details = _details;
-            controller = _controller;
+            InitializeComponent();                        
             loadParser();
         }
         public void loadParser()
         {
-            controller.client.historyProvider.Retrieve<PreParser>(
+            var rootPage = DataContext as DataContextRoot;
+            rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(
                                         null,
                                         null,
                                         (parser) =>
@@ -41,50 +32,11 @@ namespace SandRibbon.Pages.Analytics
                                             shuttle.Maximum = elements.Count;
                                             shuttle.ValueChanged += Shuttle_ValueChanged;
                                         },
-                                        slide.id.ToString());
+                                        rootPage.ConversationState.Slide.id.ToString());
         }
 
         private void Shuttle_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
         {                 
-        }
-
-        public Slide getSlide()
-        {
-            return slide;
-        }
-
-        public UserSlideState getUserSlideState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ConversationDetails getDetails()
-        {
-            return details;
-        }
-
-        public UserConversationState getUserConversationState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public NetworkController getNetworkController()
-        {
-            return controller;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            throw new NotImplementedException();
         }        
-        public ConversationState getConversationState()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

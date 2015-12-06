@@ -5,23 +5,21 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using SandRibbon.Providers;
 using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Automation.Peers;
-using MeTLLib;
 using System.ComponentModel;
 using System.Collections.Generic;
 using SandRibbon.Components.Utility;
 using System.Windows.Automation;
 using SandRibbon.Pages.Collaboration;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Components;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Conversations
 {
@@ -31,6 +29,7 @@ namespace SandRibbon.Pages.Conversations
         {
             var value = values[0];
             var controller = values[1] as NetworkController;
+            if (controller == null) return Visibility.Hidden;
             return (controller.credentials.name == ((ConversationDetails)value).Author) ? Visibility.Visible : Visibility.Hidden;
         }
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
@@ -38,128 +37,67 @@ namespace SandRibbon.Pages.Conversations
             return new object[] { };
         }
     }
-    public partial class ConversationSearchPage : ServerAwarePage
+    public partial class ConversationSearchPage : Page
     {
         private ObservableCollection<SearchConversationDetails> searchResultsObserver = new ObservableCollection<SearchConversationDetails>();
-
-        private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
-        public ConversationSearchPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, string query)
+        public ConversationSearchPage(string query)
         {
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
-            NetworkController = _networkController;
             InitializeComponent();
-            DataContext = this;
             SearchResults.DataContext = searchResultsObserver;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
             SearchResults.ItemsSource = searchResultsObserver;
-            typingDelay = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
             SearchInput.Text = query;
-            FillSearchResultsFromInput();
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
-            Dispatcher.adopt(() =>
+            if (keyEventArgs.Key == Key.Enter)
             {
-                if (keyEventArgs.Key == Key.Enter)
-                {
-                    RefreshSortedConversationsList();
-                    FillSearchResultsFromInput();
-                }
-            });
+                RefreshSortedConversationsList();
+                FillSearchResultsFromInput();
+            }
         }
 
         private void FillSearchResultsFromInput()
         {
-            Dispatcher.Invoke((Action)delegate
+            var trimmedSearchInput = SearchInput.Text.Trim();
+            if (String.IsNullOrEmpty(trimmedSearchInput))
             {
-                var trimmedSearchInput = SearchInput.Text.Trim();
-                if (String.IsNullOrEmpty(trimmedSearchInput))
-                {
 
-                    searchResultsObserver.Clear();
-                    RefreshSortedConversationsList();
-                    return;
-                }
-                if (!String.IsNullOrEmpty(trimmedSearchInput))
-                {
-                    FillSearchResults(trimmedSearchInput);
-                }
-                else
-                    searchResultsObserver.Clear();
-            });
+                searchResultsObserver.Clear();
+                RefreshSortedConversationsList();
+                return;
+            }
+            if (!String.IsNullOrEmpty(trimmedSearchInput))
+            {
+                FillSearchResults(trimmedSearchInput);
+            }
+            else
+                searchResultsObserver.Clear();
         }
 
         private void FillSearchResults(string searchString)
         {
             if (searchString == null) return;
-            var search = new BackgroundWorker();
-            search.DoWork += (object sender, DoWorkEventArgs e) =>
-            {
-                Commands.BlockSearch.ExecuteAsync(null);
-                var bw = sender as BackgroundWorker;
-                e.Result = NetworkController.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
-            };
-
-            search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
-            {
-                Commands.UnblockSearch.ExecuteAsync(null);
-                if (e.Error == null)
-                {
-                    var conversations = e.Result as List<SearchConversationDetails>;
-                    if (conversations != null)
-                    {
-                        searchResultsObserver.Clear();
-                        conversations.ForEach(cd => searchResultsObserver.Add(cd));
-                    }
-                }
-
-                #region Automation events
-                if (AutomationPeer.ListenerExists(AutomationEvents.AsyncContentLoaded))
-                {
-                    var peer = UIElementAutomationPeer.FromElement(this) as UIElementAutomationPeer;
-                    if (peer != null)
-                    {
-                        peer.RaiseAsyncContentLoadedEvent(new AsyncContentLoadedEventArgs(AsyncContentLoadedState.Completed, 100));
-                    }
-                }
-                #endregion
-            };
-
-            search.RunWorkerAsync();
+            var rootPage = DataContext as DataContextRoot;
+            var conversations = rootPage.NetworkController.client.ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+            searchResultsObserver.Clear();
+            conversations.ForEach(cd => searchResultsObserver.Add(cd));
         }
-
         private void clearState()
         {
             SearchInput.Clear();
             RefreshSortedConversationsList();
             SearchInput.SelectionStart = 0;
-        }
-
-        private void PauseRefreshTimer()
-        {
-            typingDelay.Change(Timeout.Infinite, Timeout.Infinite);
-        }
-
-        private void RestartRefreshTimer()
-        {
-            typingDelay.Change(500, Timeout.Infinite);
-        }
-
-        private void UpdateAllConversations(ConversationDetails details)
-        {
-            if (details.IsEmpty) return;
-            // can I use the following test to determine if we're in a conversation?
-            RefreshSortedConversationsList();
-        }
+        }                
         private bool shouldShowConversation(ConversationDetails conversation)
         {
-            return conversation.UserHasPermission(NetworkController.credentials);
+            var rootPage = DataContext as DataContextRoot;
+            return conversation.UserHasPermission(rootPage.NetworkController.credentials);
         }
         private void RefreshSortedConversationsList()
         {
@@ -168,6 +106,7 @@ namespace SandRibbon.Pages.Conversations
         }
         private bool isWhatWeWereLookingFor(object sender)
         {
+            var rootPage = DataContext as DataContextRoot;
             var conversation = sender as ConversationDetails;
             if (conversation == null) return false;
             if (!shouldShowConversation(conversation))
@@ -175,12 +114,12 @@ namespace SandRibbon.Pages.Conversations
             if (conversation.isDeleted)
                 return false;
             var author = conversation.Author;
-            if (author != NetworkController.credentials.name && onlyMyConversations.IsChecked.Value)
+            if (author != rootPage.NetworkController.credentials.name && onlyMyConversations.IsChecked.Value)
                 return false;
             var title = conversation.Title.ToLower();
             var searchField = new[] { author.ToLower(), title };
             var searchQuery = SearchInput.Text.ToLower().Trim();
-            if (searchQuery.Length == 0 && author == NetworkController.credentials.name)
+            if (searchQuery.Length == 0 && author == rootPage.NetworkController.credentials.name)
             {//All my conversations show up in an empty search
                 return true;
             }
@@ -189,17 +128,14 @@ namespace SandRibbon.Pages.Conversations
         private void searchConversations_Click(object sender, RoutedEventArgs e)
         {
             FillSearchResultsFromInput();
-        }
-        private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            RestartRefreshTimer();
-        }
+        }        
 
         private void EditConversation(object sender, RoutedEventArgs e)
         {
-            var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            var userConv = new UserConversationState();
-            NavigationService.Navigate(new ConversationEditPage(UserGlobalState,UserServerState,userConv,NetworkController, conversation));
+            var rootPage = DataContext as DataContextRoot;
+            var source = sender as FrameworkElement;
+            rootPage.ConversationState = new ConversationState(source.DataContext as ConversationDetails, rootPage.NetworkController);
+            NavigationService.Navigate(new ConversationEditPage());
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)
@@ -209,13 +145,16 @@ namespace SandRibbon.Pages.Conversations
 
         private void JoinConversation(object sender, RoutedEventArgs e)
         {
-            var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
-            var conversation = NetworkController.client.DetailsOf(requestedConversation.Jid);
-            if (conversation.UserHasPermission(NetworkController.credentials))
+            var rootPage = DataContext as DataContextRoot;
+            var source = sender as FrameworkElement;
+            var requestedConversation = source.DataContext as ConversationDetails;
+            var conversation = rootPage.NetworkController.client.DetailsOf(requestedConversation.Jid);
+            if (conversation.UserHasPermission(rootPage.NetworkController.credentials))
             {
-                //Commands.JoinConversation.Execute(conversation.Jid);
-                var userConversation = new UserConversationState();
-                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, NetworkController, conversation));
+                rootPage.UserConversationState = new UserConversationState();
+                rootPage.UserGlobalState = new UserGlobalState();
+                rootPage.ConversationState = new ConversationState(conversation, rootPage.NetworkController);
+                NavigationService.Navigate(new ConversationOverviewPage());
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");
@@ -225,19 +164,20 @@ namespace SandRibbon.Pages.Conversations
         {
             if (SearchResults.SelectedItems.Count > 0)
             {
-                NavigationService.Navigate(new ConversationComparisonPage(UserGlobalState, UserServerState, NetworkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
+                NavigationService.Navigate(new ConversationComparisonPage(SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
             }
         }
 
         private void SynchronizeToOneNote(object sender, RoutedEventArgs e)
         {
+            var rootPage = DataContext as DataContextRoot;
             var cs = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
             if (cs.Count() > 0)
             {
                 Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet
                 {
-                    config = UserServerState.OneNoteConfiguration,
-                    networkController = NetworkController,
+                    config = rootPage.UserServerState.OneNoteConfiguration,
+                    networkController = rootPage.NetworkController,
                     conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
                 });
             }

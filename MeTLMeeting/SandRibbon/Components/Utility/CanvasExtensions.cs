@@ -16,6 +16,7 @@ using SandRibbon.Providers;
 using SandRibbonObjects;
 using SandRibbon.Pages.Collaboration.Layout;
 using System.Windows.Controls;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Utility
 {
@@ -139,7 +140,7 @@ namespace SandRibbon.Components.Utility
         private StreamGeometry geometry;
         private string target;
         private Stroke whiteStroke;
-        private ConversationDetails details;
+        private ConversationState details;
         private bool isPrivate{
             get {return this.tag().privacy == Privacy.Private; }
         }
@@ -152,7 +153,7 @@ namespace SandRibbon.Components.Utility
             pas.offsetY = offsetY;
             return pas;
         }
-        public PrivateAwareStroke(Stroke stroke, string target, ConversationDetails details) : base(stroke.StylusPoints, stroke.DrawingAttributes)
+        public PrivateAwareStroke(Stroke stroke, string target, ConversationState details) : base(stroke.StylusPoints, stroke.DrawingAttributes)
         {
             this.details = details;
             var cs = new[] {55, 0, 0, 0}.Select(i => (byte) i).ToList();
@@ -165,7 +166,7 @@ namespace SandRibbon.Components.Utility
                     }), stroke.DrawingAttributes.Width * 4);
             this.target = target; 
             this.tag(stroke.tag());
-            shouldShowPrivacy = (this.tag().author == details.Author || details.Permissions.studentCanPublish); //move this logic out of here because this doesn't have access to instance state.
+            shouldShowPrivacy = (this.tag().author == details.Author || details.StudentsCanPublish); //move this logic out of here because this doesn't have access to instance state.
             
             if (!isPrivate) return;
 

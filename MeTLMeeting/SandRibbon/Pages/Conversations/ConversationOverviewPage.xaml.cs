@@ -1,29 +1,26 @@
-﻿using MeTLLib;
-using MeTLLib.DataTypes;
-using System.Collections.Generic;
-using System.Windows.Controls;
+﻿using MeTLLib.DataTypes;
 using System.Windows.Navigation;
-using System.Linq;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System;
-using SandRibbon.Pages.Conversations.Models;
-using SandRibbon.Components;
+using System.Windows.Controls;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Collaboration
 {
     public class LocatedActivity : DependencyObject
     {
         public string name { get; set; }
-        public int slide { get; set; }
+        public Slide slide { get; set; }
         public int index { get; set; }
-        public LocatedActivity(string name, int slide, int activityCount, int voices)
+        public LocatedActivity(string name, Slide slide, int activityCount, int voices)
         {
             this.name = name;
             this.slide = slide;
+            this.index = slide.index;
             this.activityCount = activityCount;
-            this.voices = voices;
+            this.voices = voices;            
         }
 
         public int activityCount
@@ -43,37 +40,26 @@ namespace SandRibbon.Pages.Collaboration
         public static readonly DependencyProperty voicesProperty =
             DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
     };
-    public partial class ConversationOverviewPage : ConversationAwarePage
-    {
-        public ReticulatedConversation conversation { get; protected set; }
-        public ConversationOverviewPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
+    public partial class ConversationOverviewPage : Page
+    {        
+        public ConversationOverviewPage()
         {
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
-            UserConversationState = _userConv;
-            ConversationDetails = presentationPath;
-            NetworkController = _networkController;
             InitializeComponent();
-            DataContext = conversation = new ReticulatedConversation
-            {
-                networkController = NetworkController,
-                PresentationPath = presentationPath,
-                RelatedMaterial = new List<string>{}.Select(jid => NetworkController.client.DetailsOf(jid)).ToList()
-
-            };
-            conversation.CalculateLocations();            
-            processing.Maximum = conversation.Locations.Count;
-            conversation.LocationAnalyzed += () => processing.Value++;
-            conversation.AnalyzeLocations();
         }
-
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
+            var rootPage = DataContext as DataContextRoot;
             var element = sender as FrameworkElement;
-            var slide = element.DataContext as VmSlide;
-            //Commands.MoveToCollaborationPage.Execute(slide.Slide.id);
-            var userSlide = new UserSlideState();
-            NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, new ConversationState(), userSlide, NetworkController, slide.Details, slide.Slide));            
+            var activity = element.DataContext as LocatedActivity;
+            var slide = activity.slide;
+            rootPage.ConversationState.Slide = slide;
+            /*This one wants to be able to work against the DataContext during construction*/
+            NavigationService.Navigate(new RibbonCollaborationPage(
+                rootPage.UserGlobalState, 
+                rootPage.UserServerState, 
+                rootPage.UserConversationState, 
+                rootPage.ConversationState, 
+                rootPage.NetworkController));            
         }
     }    
     public class GridLengthConverter : IValueConverter

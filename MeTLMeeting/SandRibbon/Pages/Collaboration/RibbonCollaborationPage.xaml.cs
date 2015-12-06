@@ -1,270 +1,36 @@
 ﻿using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using Microsoft.Windows.Controls.Ribbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
-using SandRibbon.Pages.Collaboration.Layout;
+using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Conversations;
-using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public class ImageSources
-    {
-        public ImageSource eraserImage { get; protected set; }
-        public ImageSource penImage { get; protected set; }
-        public ImageSource highlighterImage { get; protected set; }
-        public Brush selectedBrush { get; protected set; }
-        public ImageSources(ImageSource _eraserImage, ImageSource _penImage, ImageSource _highlighterImage, Brush _selectedBrush)
+    public partial class RibbonCollaborationPage : Page
+    {        
+        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, NetworkController _networkController)
         {
-            eraserImage = _eraserImage;
-            penImage = _penImage;
-            highlighterImage = _highlighterImage;
-            selectedBrush = _selectedBrush;
-        }
-    }
-    public class PenAttributes : DependencyObject
-    {
-        public DrawingAttributes attributes { get; protected set; }
-        protected DrawingAttributes originalAttributes;
-        protected InkCanvasEditingMode originalMode;
-        public int id { get; protected set; }
-        protected bool ready = false;
-        protected ImageSources images;
-        public PenAttributes(int _id, InkCanvasEditingMode _mode, DrawingAttributes _attributes, ImageSources _images)
-        {
-            id = _id;
-            images = _images;
-            attributes = _attributes;
-            mode = _mode;
-            attributes.StylusTip = StylusTip.Ellipse;
-            width = attributes.Width;
-            color = attributes.Color;
-            originalAttributes = _attributes.Clone();
-            originalMode = _mode;
-            isSelectedPen = false;
-            ready = true;
-            icon = generateImageSource();
-        }
-        public void replaceAttributes(PenAttributes newAttributes)
-        {
-            mode = newAttributes.mode;
-            color = newAttributes.color;
-            width = newAttributes.width;
-            isHighlighter = newAttributes.isHighlighter;
-        }
-        public void resetAttributes()
-        {
-            replaceAttributes(new PenAttributes(id, originalMode, originalAttributes, images));
-        }
-        protected static readonly Point centerBottom = new Point(128, 256);
-        protected static readonly Point centerTop = new Point(128, 0);
-        protected void regenerateVisual()
-        {
-            backgroundBrush = generateBackgroundBrush();
-            icon = generateImageSource();
-            description = generateDescription();
-        }
-        protected string generateDescription()
-        {
-            return ColorHelpers.describe(this);
-        }
-        protected Brush generateBackgroundBrush()
-        {
-            return isSelectedPen ? images.selectedBrush : Brushes.Transparent;
-        }
-        protected ImageSource generateImageSource()
-        {
-            DrawingVisual visual = new DrawingVisual();
-            DrawingContext dc = visual.RenderOpen();
-            /*
-            if (isSelected)
+            var root = new DataContextRoot
             {
-                dc.DrawRectangle(images.selectedBrush, new Pen(images.selectedBrush, 0), new Rect(new Point(0, 0), new Point(256, 256)));
-                dc.DrawEllipse(new SolidColorBrush(Colors.White), new Pen(new SolidColorBrush(Colors.White), 0.0), centerTop, 128, 128);
-            }
-            */
-            if (mode == InkCanvasEditingMode.EraseByStroke || mode == InkCanvasEditingMode.EraseByPoint)
-            {
-                dc.DrawImage(images.eraserImage, new Rect(0, 0, 256, 256));
-            }
-            else
-            {
-                var colorBrush = new SolidColorBrush(attributes.Color);
-                //                dc.DrawEllipse(colorBrush, new Pen(colorBrush, 0), center, attributes.Width / 2, attributes.Width / 2);
-                //dc.DrawEllipse(colorBrush, new Pen(colorBrush, 0), centerBottom, attributes.Width * 1.25, attributes.Width * 1.25);
-                dc.DrawEllipse(colorBrush, new Pen(colorBrush, 0), centerBottom, attributes.Width + 25, attributes.Width + 25); //adjusting size to scale them and make them more visible, so that the radius will be between 25 and 125 out of a maximum diameter of 256
-                if (attributes.IsHighlighter)
-                {
-                    dc.DrawImage(images.highlighterImage, new Rect(0, 0, 256, 256));
-                }
-                else
-                {
-                    dc.DrawImage(images.penImage, new Rect(0, 0, 256, 256));
-                }
-            }
-            dc.Close();
-            var bmp = new RenderTargetBitmap(256, 256, 96.0, 96.0, PixelFormats.Pbgra32);
-            bmp.Render(visual);
-            return bmp;
-        }
-        public double width
-        {
-            get { return (double)GetValue(widthProperty); }
-            set
-            {
-                attributes.Width = value;
-                attributes.Height = value;
-                var changed = ((double)GetValue(widthProperty)) != value;
-                if (ready && changed)
-                    regenerateVisual();
-                SetValue(widthProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty widthProperty = DependencyProperty.Register("width", typeof(double), typeof(PenAttributes), new PropertyMetadata(1.0));
-        public bool isHighlighter
-        {
-            get { return (bool)GetValue(isHighlighterProperty); }
-            set
-            {
-                attributes.IsHighlighter = value;
-                var changed = ((bool)GetValue(isHighlighterProperty)) != value;
-                if (ready && changed)
-                    regenerateVisual();
-                SetValue(isHighlighterProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty isHighlighterProperty = DependencyProperty.Register("isHighlighter", typeof(bool), typeof(PenAttributes), new PropertyMetadata(false));
-        public Color color
-        {
-            get { return (Color)GetValue(colorProperty); }
-            set
-            {
-                attributes.Color = value;
-                var changed = ((Color)GetValue(colorProperty)) != value;
-                if (ready && changed)
-                    regenerateVisual();
-                SetValue(colorProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty colorProperty = DependencyProperty.Register("color", typeof(Color), typeof(PenAttributes), new PropertyMetadata(Colors.Black));
-        public InkCanvasEditingMode mode
-        {
-            get { return (InkCanvasEditingMode)GetValue(modeProperty); }
-            set
-            {
-                var changed = ((InkCanvasEditingMode)GetValue(modeProperty)) != value;
-                if (ready && changed)
-                    regenerateVisual();
-                SetValue(modeProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty modeProperty = DependencyProperty.Register("mode", typeof(InkCanvasEditingMode), typeof(PenAttributes), new PropertyMetadata(InkCanvasEditingMode.None));
-        public Brush backgroundBrush
-        {
-            get { return (Brush)GetValue(backgroundBrushProperty); }
-            set
-            {
-                SetValue(backgroundBrushProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty backgroundBrushProperty = DependencyProperty.Register("backgroundBrush", typeof(Brush), typeof(PenAttributes), new PropertyMetadata(Brushes.Transparent));
-        public string description
-        {
-            get { return (string)GetValue(descriptionProperty); }
-            set
-            {
-                SetValue(descriptionProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty descriptionProperty = DependencyProperty.Register("description", typeof(string), typeof(PenAttributes), new PropertyMetadata(""));
-
-        public ImageSource icon
-        {
-            get { return (ImageSource)GetValue(iconProperty); }
-            protected set { SetValue(iconProperty, value); }
-        }
-
-        public static ImageSource emptyImage = new BitmapImage();
-        public static readonly DependencyProperty iconProperty = DependencyProperty.Register("icon", typeof(ImageSource), typeof(PenAttributes), new PropertyMetadata(emptyImage));
-        public bool isSelectedPen
-        {
-            get { return (bool)GetValue(isSelectedPenProperty); }
-            set
-            {
-                if (ready)
-                    regenerateVisual();
-                SetValue(isSelectedPenProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty isSelectedPenProperty = DependencyProperty.Register("isSelectedPen", typeof(bool), typeof(PenAttributes), new PropertyMetadata(false));
-    }
-    public partial class RibbonCollaborationPage : SlideAwarePage
-    {
-        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;
-        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, UserSlideState _userSlide, NetworkController _networkController, ConversationDetails _details, Slide _slide)
-        {
-            NetworkController = _networkController;
-            ConversationDetails = _details;
-            Slide = _slide;
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
-            UserConversationState = _userConv;
-            ConversationState = _convState;
-            UserSlideState = _userSlide;
-            InitializeComponent();
-            DataContext = this;
-            var ic = new ImageSourceConverter();
-            var images = new ImageSources(
-                ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/ShinyEraser.png") as ImageSource,
-                ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/appbar.draw.pen.png") as ImageSource,
-                ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/Highlighter.png") as ImageSource,
-                (Brush)FindResource("CheckedGradient")
-            );
-            penCollection = new System.Collections.ObjectModel.ObservableCollection<PenAttributes> {
-                new PenAttributes(1,InkCanvasEditingMode.EraseByStroke,new System.Windows.Ink.DrawingAttributes {Color=Colors.White,IsHighlighter=false, Width=1 },images),
-                new PenAttributes(2,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Black,IsHighlighter=false, Width=1 },images),
-                new PenAttributes(3,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Red,IsHighlighter=false, Width=3 },images),
-                new PenAttributes(4,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Blue,IsHighlighter=false, Width=3 },images),
-                new PenAttributes(5,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Green,IsHighlighter=false, Width=5 },images),
-                new PenAttributes(6,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Yellow,IsHighlighter=true, Width=15},images),
-                new PenAttributes(7,InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Cyan,IsHighlighter=true, Width=25},images)
+                NetworkController = _networkController,
+                UserGlobalState = _userGlobal,
+                UserServerState = _userServer,
+                UserConversationState = _userConv,
+                ConversationState = _convState                
             };
-
-            pens.ItemsSource = penCollection;
-
-            InitializeComponent();
-            /*
-            fontFamily.ItemsSource = fontList;
-            fontSize.ItemsSource = fontSizes;
-            fontSize.SetValue(Selector.SelectedIndexProperty,0);
-            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
-            */
-            var setLayerCommand = new DelegateCommand<string>(SetLayer);
+            UserGlobalState.Images.selectedBrush = FindResource("CheckedGradient") as Brush;
+            DataContext = root;
+            InitializeComponent();            
+            
             var duplicateSlideCommand = new DelegateCommand<object>((obj) =>
             {
                 duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
@@ -272,14 +38,14 @@ namespace SandRibbon.Pages.Collaboration
             {
                 try
                 {
-                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
+                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(root.ConversationState) : false;
                 }
                 catch
                 {
                     return false;
                 }
             });
-            var duplicateConversationCommand = new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation);
+            var setLayerCommand = new DelegateCommand<string>(SetLayer);
             var addPrivacyToggleButtonCommand = new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton);
             var removePrivacyAdornersCommand = new DelegateCommand<string>((s) => RemovePrivacyAdorners(s));
             var fitToViewCommand = new DelegateCommand<object>(fitToView, canFitToView);
@@ -291,12 +57,11 @@ namespace SandRibbon.Pages.Collaboration
             var setPenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
                 currentPenId = pa.id;
-                foreach (var p in penCollection)
+                foreach (var p in root.UserGlobalState.Pens)
                 {
-                    p.isSelectedPen = false;
-                    //p.isSelectedPen = p.id == currentPenId;
+                    p.IsSelectedPen = false;                 
                 };
-                pa.isSelectedPen = true;
+                pa.IsSelectedPen = true;
             });
             var requestReplacePenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
@@ -304,7 +69,7 @@ namespace SandRibbon.Pages.Collaboration
             }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
             var replacePenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
-                penCollection.First(p => p.id == pa.id).replaceAttributes(pa);
+                root.UserGlobalState.Pens.First(p => p.id == pa.id).replaceAttributes(pa);
                 if (pa.id == currentPenId)
                 {
                     Commands.SetPenAttributes.Execute(pa);
@@ -312,7 +77,7 @@ namespace SandRibbon.Pages.Collaboration
             });
             var requestResetPenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
-                var foundPen = penCollection.First(p => p.id == pa.id);
+                var foundPen = root.UserGlobalState.Pens.First(p => p.id == pa.id);
                 foundPen.resetAttributes();
                 if (pa.id == currentPenId)
                 {
@@ -322,20 +87,18 @@ namespace SandRibbon.Pages.Collaboration
             var joinConversationCommand = new DelegateCommand<string>((convJid) =>
             {
                 Commands.RequerySuggested();
-            });
-            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            });            
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
             var moveToNextCommand = new DelegateCommand<object>(o => Shift(1));
             var moveToPreviousCommand = new DelegateCommand<object>(o => Shift(-1));
 
             Loaded += (cs, ce) =>
             {
-                UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;
+                root.UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(root.ConversationState.Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;
                 Commands.MoveToNext.RegisterCommand(moveToNextCommand);
                 Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
-                Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);
-                Commands.DuplicateConversation.RegisterCommand(duplicateConversationCommand);
+                Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);                
                 Commands.AddPrivacyToggleButton.RegisterCommand(addPrivacyToggleButtonCommand);
                 Commands.RemovePrivacyAdorners.RegisterCommand(removePrivacyAdornersCommand);
                 Commands.FitToView.RegisterCommand(fitToViewCommand);
@@ -347,19 +110,19 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestReplacePenAttributes.RegisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.RegisterCommand(replacePenAttributesCommand);
                 Commands.RequestResetPenAttributes.RegisterCommand(requestResetPenAttributesCommand);
-                Commands.JoinConversation.RegisterCommand(joinConversationCommand);
-                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.JoinConversation.RegisterCommand(joinConversationCommand);               
                 Commands.ProxyMirrorPresentationSpace.RegisterCommand(proxyMirrorPresentationSpaceCommand);
                 scroll.ScrollChanged += (s, e) =>
                     {
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                     };
-                Commands.SetLayer.Execute("Sketch");
-                Commands.SetPenAttributes.Execute(penCollection[1]);
+                Commands.SetLayer.Execute("Sketch");                                
                 Commands.ShowProjector.Execute(null);
-                NetworkController.client.SneakInto(ConversationDetails.Jid);
-                NetworkController.client.SneakInto(Slide.id.ToString());
-                NetworkController.client.SneakInto(Slide.id.ToString() + NetworkController.credentials.name);
+                root.UserGlobalState.Pens[1].IsSelectedPen = true;
+
+                root.NetworkController.client.SneakInto(root.ConversationState.Jid);
+                root.NetworkController.client.SneakInto(root.ConversationState.Slide.id.ToString());
+                root.NetworkController.client.SneakInto(root.ConversationState.Slide.id.ToString() + root.NetworkController.credentials.name);
             };
             this.Unloaded += (ps, pe) =>
             {
@@ -367,8 +130,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.MoveToPrevious.UnregisterCommand(moveToPreviousCommand);
                 Commands.HideProjector.Execute(null);
                 Commands.SetLayer.UnregisterCommand(setLayerCommand);
-                Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);
-                Commands.DuplicateConversation.UnregisterCommand(duplicateConversationCommand);
+                Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);      
                 Commands.AddPrivacyToggleButton.UnregisterCommand(addPrivacyToggleButtonCommand);
                 Commands.RemovePrivacyAdorners.UnregisterCommand(removePrivacyAdornersCommand);
                 Commands.FitToView.UnregisterCommand(fitToViewCommand);
@@ -380,106 +142,34 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestReplacePenAttributes.UnregisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.UnregisterCommand(replacePenAttributesCommand);
                 Commands.RequestResetPenAttributes.UnregisterCommand(requestResetPenAttributesCommand);
-                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
-                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);                
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
-                UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
-                NetworkController.client.SneakOutOf(Slide.id.ToString() + NetworkController.credentials.name);
-                NetworkController.client.SneakOutOf(Slide.id.ToString());
-                NetworkController.client.SneakOutOf(ConversationDetails.Jid);
+                root.UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
+                root.NetworkController.client.SneakOutOf(root.ConversationState.Slide.id.ToString() + root.NetworkController.credentials.name);
+                root.NetworkController.client.SneakOutOf(root.ConversationState.Slide.id.ToString());
+                root.NetworkController.client.SneakOutOf(root.ConversationState.Jid);
             };
         }
         private void Shift(int direction)
         {
-            var slides = ConversationDetails.Slides.OrderBy(s => s.index).ToList();
-            var currentIndex = slides.IndexOf(Slide);
+            var rootPage = DataContext as DataContextRoot;
+            var slides = rootPage.ConversationState.Slides.OrderBy(s => s.index).ToList();
+            var currentIndex = slides.IndexOf(rootPage.ConversationState.Slide);
             var newSlide = slides.ElementAt(currentIndex + direction);
             if (newSlide != null)
             {
-                NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, UserSlideState, NetworkController, ConversationDetails, newSlide));
+                rootPage.ConversationState.Slide = newSlide;                
             }
-        }
-
-
-        private void UpdateConversationDetails(ConversationDetails cd)
-        {
-            if (ConversationDetails.Jid == cd.Jid)
-            {
-                ConversationDetails = cd;
-            }
-        }
-
+        }        
         protected void openProjectorWindow(MainWindow window)
         {
             Commands.MirrorPresentationSpace.Execute(new KeyValuePair<MainWindow, ScrollViewer>(window, scroll));
-        }
-        /*
-private void restoreTextDefaults(object obj)
-{
-   fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
-   fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
-}
-
-private void updateTextControls(TextInformation info)
-{
-   fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
-   fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
-   TextBoldButton.IsChecked = info.Bold;
-   TextItalicButton.IsChecked = info.Italics;
-   TextUnderlineButton.IsChecked = info.Underline;
-   TextStrikethroughButton.IsChecked = info.Strikethrough;
-}       
-
-protected bool canDecreaseFont(object _unused)
-{
-   return fontSize != null;
-}
-private void decreaseFont(object _unused)
-{
-   if (fontSize.ItemsSource == null) return;
-   var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
-   if (currentItem - 1 >= 0)
-   {
-       var newSize = fontSizes[currentItem - 1];
-       fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
-       Commands.FontSizeChanged.Execute(newSize);
-   }
-}   
-protected bool canIncreaseFont(object _unused)
-{
-   return fontSize != null;
-}     
-private void increaseFont(object _unused)
-{
-   if (fontSize.ItemsSource == null) return;
-   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-   if (currentItem + 1 < fontSizes.Count())
-   {
-       var newSize = fontSizes[currentItem + 1];
-       fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
-       Commands.FontSizeChanged.Execute(newSize);
-   }
-}
-private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
-{
-   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-   if(currentItem < 0) return;
-   if (e.AddedItems.Count == 0) return;
-   var size = Double.Parse(e.AddedItems[0].ToString());
-   Commands.FontSizeChanged.Execute(size);
-}
-private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
-{
-   if (e.AddedItems.Count == 0) return;
-   var font = new FontFamily(e.AddedItems[0].ToString());
-   Commands.FontChanged.Execute(font);
-}   
-*/
-        private bool userMayAdministerConversation(ConversationDetails _conversation)
+        }       
+        private bool userMayAdministerConversation(ConversationState state)
         {
-            return ConversationDetails.UserHasPermission(NetworkController.credentials);
+            var rootPage = DataContext as DataContextRoot;
+            return rootPage.ConversationState.StudentsCanDuplicate;
         }
-
         private void SetLayer(string layer)
         {
             foreach (var group in new UIElement[] { inkGroup, textGroup, imageGroup })
@@ -494,7 +184,6 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 case "Html": imageGroup.Visibility = Visibility.Visible; break;
             }
         }
-
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {
             Viewbox viewbox = null;
@@ -510,7 +199,6 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 adornerLayer.Add(new UIAdorner(viewbox, new PrivacyToggleButton(info, adornerRect)));
             });
         }
-
         private bool LessThan(double val1, double val2, double tolerance)
         {
             var difference = val2 * tolerance;
@@ -521,7 +209,6 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
             var difference = val2 * tolerance;
             return val1 > (val2 - difference) && val1 > (val2 + difference);
         }
-
         private Adorner[] GetPrivacyAdorners(Viewbox viewbox, out AdornerLayer adornerLayer)
         {
             adornerLayer = AdornerLayer.GetAdornerLayer(viewbox);
@@ -530,7 +217,6 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 
             return adornerLayer.GetAdorners(viewbox);
         }
-
         private void UpdatePrivacyAdorners(string targetName)
         {
             if (RemovePrivacyAdorners(targetName))
@@ -542,7 +228,6 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 }
                 catch (NotSetException) { }
         }
-
         private void GetViewboxAndCanvasFromTarget(string targetName, out Viewbox viewbox, out UIElement container)
         {
             if (targetName == "presentationSpace")
@@ -587,19 +272,16 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
 
             return hasAdorners;
         }
-
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdatePrivacyAdorners(adornerScroll.Target);
             BroadcastZoom();
         }
-
         private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             UpdatePrivacyAdorners(adornerScroll.Target);
             BroadcastZoom();
         }
-
         private void BroadcastZoom()
         {
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
@@ -607,29 +289,27 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
             Commands.ZoomChanged.Execute(currentZoom);
         }
-
         private void notepadSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdatePrivacyAdorners(notesAdornerScroll.Target);
             BroadcastZoom();
         }
-
         private void notepadScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             UpdatePrivacyAdorners(notesAdornerScroll.Target);
             BroadcastZoom();
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, ""));
+        {            
+            NavigationService.Navigate(new ConversationSearchPage(""));
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, UserConversationState, NetworkController, ConversationDetails));
+            NavigationService.Navigate(new ConversationOverviewPage());
         }
         private bool canZoomIn(object sender)
         {
-            return !(scroll == null) && ConversationDetails != ConversationDetails.Empty;
+            return !(scroll == null);
         }
         private bool canZoomOut(object sender)
         {
@@ -652,7 +332,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 {
                     result = vTrue;
                 }
-                result = (hTrue || vTrue) && ConversationDetails != ConversationDetails.Empty;
+                result = (hTrue || vTrue);
             }
             return result;
         }
@@ -761,13 +441,11 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
             scroll.Height = viewbox.Height;
             scroll.UpdateLayout();
             scroll.ScrollToHorizontalOffset(viewbox.X);
-            scroll.ScrollToVerticalOffset(viewbox.Y);
-            //Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+            scroll.ScrollToVerticalOffset(viewbox.Y);            
         }
         protected bool canFitToView(object _unused)
         {
-            return scroll != null && !(double.IsNaN(scroll.Height) && double.IsNaN(scroll.Width) && double.IsNaN(canvas.Height) && double.IsNaN(canvas.Width));
-            //return scroll != null && (scroll.Height != double.NaN || scroll.Width != double.NaN || canvas.Height != double.NaN || canvas.Width != double.NaN);
+            return scroll != null && !(double.IsNaN(scroll.Height) && double.IsNaN(scroll.Width) && double.IsNaN(canvas.Height) && double.IsNaN(canvas.Width));            
         }
         protected void fitToView(object _unused)
         {
@@ -781,28 +459,24 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         protected bool canOriginalView(object _unused)
         {
+            var rootPage = DataContext as DataContextRoot;
             return
-                scroll != null &&
-                ConversationDetails != null &&
-                ConversationDetails != ConversationDetails.Empty &&
-                Slide != null &&
-                Slide != Slide.Empty &&
-                scroll.Height != Slide.defaultHeight &&
-                scroll.Width != Slide.defaultWidth;
+                scroll != null &&                
+                rootPage.ConversationState.Slide != null &&
+                rootPage.ConversationState.Slide != Slide.Empty &&
+                scroll.Height != rootPage.ConversationState.Slide.defaultHeight &&
+                scroll.Width != rootPage.ConversationState.Slide.defaultWidth;
         }
         protected void originalView(object _unused)
         {
-
+            var rootPage = DataContext as DataContextRoot;
             if (scroll != null &&
-            ConversationDetails != null &&
-            ConversationDetails != ConversationDetails.Empty &&
-            Slide != null &&
-            Slide != Slide.Empty)
-            {
-                var currentSlide = Slide;
-                if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
-                scroll.Width = currentSlide.defaultWidth;
-                scroll.Height = currentSlide.defaultHeight;
+            rootPage.ConversationState.Slide != null &&
+            rootPage.ConversationState.Slide != Slide.Empty)
+            {                
+                if (rootPage.ConversationState.Slide.defaultHeight == 0 || rootPage. ConversationState.Slide.defaultWidth == 0) return;
+                scroll.Width = rootPage.ConversationState.Slide.defaultWidth;
+                scroll.Height = rootPage.ConversationState.Slide.defaultHeight;
                 if (canvas != null && canvas.stack != null && !Double.IsNaN(canvas.stack.offsetX) && !Double.IsNaN(canvas.stack.offsetY))
                 {
                     scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth, Math.Max(0, -canvas.stack.offsetX)));
@@ -814,30 +488,14 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                     scroll.ScrollToTop();
                 }
             }
-        }
-        private void TextColor_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            Commands.SetTextColor.Execute((Color)((System.Windows.Controls.Ribbon.RibbonGalleryItem)e.NewValue).Content);
-        }
+        }        
         private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
         {
-            var kvp = new KeyValuePair<ConversationDetails, Slide>(ConversationDetails, Slide);
-            if (kvp.Key.UserHasPermission(NetworkController.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
-            {
-                NetworkController.client.DuplicateSlide(kvp.Key, kvp.Value);
-            }
-        }
-        private void duplicateConversation(ConversationDetails _conversationToDuplicate)
-        {
-            var conversationToDuplicate = ConversationDetails;
-            if (conversationToDuplicate.UserHasPermission(NetworkController.credentials))
-            {
-                NetworkController.client.DuplicateConversation(conversationToDuplicate);
-            }
-        }
-
+            var rootPage = DataContext as DataContextRoot;
+            if (rootPage.ConversationState.CanDuplicate) rootPage.ConversationState.DuplicateSlide();            
+        }        
         private void Ribbon_Loaded(object sender, RoutedEventArgs e)
-        {
+        {//Remove the QuickLaunchBar; it's too small to use and we have our own Frame
             Grid child = VisualTreeHelper.GetChild((DependencyObject)sender, 0) as Grid;
             if (child != null)
             {

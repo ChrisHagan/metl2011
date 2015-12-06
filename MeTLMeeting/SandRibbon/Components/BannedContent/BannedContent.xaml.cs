@@ -2,25 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using MeTLLib;
 using MeTLLib.DataTypes;
 using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components.Utility;
-using SandRibbon.Providers;
 using MeTLLib.Providers;
-using System.Text;
 using System.Windows.Media;
-using System.Linq;
-using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.BannedContent
 {
@@ -119,15 +110,14 @@ namespace SandRibbon.Components.BannedContent
         public ObservableCollection<PrivacyWrapper> submissionList { get; private set; }
         public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
-        private Dictionary<string, string> userMapping = new Dictionary<string,string>();
-        public SlideAwarePage rootPage { get; protected set; }
-        public BannedContent(SlideAwarePage _rootPage)
+        private Dictionary<string, string> userMapping = new Dictionary<string,string>();        
+        public BannedContent()
         {
+            var rootPage = DataContext as DataContextRoot;
             ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter(rootPage.NetworkController);
             ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.NetworkController);
             DataContext = this;
-            InitializeComponent();
-            rootPage = _rootPage;
+            InitializeComponent();            
             var receiveSubmissionCommand = new DelegateCommand<TargettedSubmission>(ReceiveSubmission);
             var closeMeCommand = new DelegateCommand<object>(closeMe);
             Loaded += (s, e) =>
@@ -192,15 +182,14 @@ namespace SandRibbon.Components.BannedContent
             }
         }
 
-        public BannedContent(SlideAwarePage _rootPage, List<TargettedSubmission> userSubmissions) : this(_rootPage)
+        public BannedContent(List<TargettedSubmission> userSubmissions)
         {
+            var rootPage = DataContext as DataContextRoot;
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
-            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.ConversationDetails.blacklist));
+            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.ConversationState.Blacklist));            
+        }        
 
-            DataContext = this;
-        }
-        
         private void ReceiveSubmission(TargettedSubmission submission)
         {
             if (submission.target != "bannedcontent")
@@ -224,11 +213,12 @@ namespace SandRibbon.Components.BannedContent
 
         private void UpdateDisplayNames(PrivacyWrapper sub)
         {
+            var rootPage = DataContext as DataContextRoot;
             userMapping.Clear();
             sub.UpdateDisplayNames(userMapping);
 
             blackList.Clear();
-            var updatedBlacklist = WrapBlackList(rootPage.ConversationDetails.blacklist);
+            var updatedBlacklist = WrapBlackList(rootPage.ConversationState.Blacklist);
             foreach (var user in updatedBlacklist)
             {
                 blackList.Add(user);
@@ -350,13 +340,13 @@ namespace SandRibbon.Components.BannedContent
         private void unbanSelected_Click(object sender, RoutedEventArgs e)
         {
             var bannedUsers = GetBannedUserCheckboxes();
-            var details = rootPage.ConversationDetails;
+            var rootPage = DataContext as DataContextRoot;
             foreach (var participant in bannedUsers)
             {
                 var priv = participant.DataContext as PrivateUser;
                 if (participant.IsChecked ?? false)
                 {
-                    details.blacklist.Remove(priv.UserName);
+                    rootPage.ConversationState.Blacklist.Remove(priv.UserName);
                     foreach (var usr in blackList)
                     {
                         if (usr.UserName == priv.UserName)
@@ -366,8 +356,7 @@ namespace SandRibbon.Components.BannedContent
                         }
                     }
                 }
-            }
-            rootPage.NetworkController.client.UpdateConversationDetails(details);
+            }            
         }
     }
 }

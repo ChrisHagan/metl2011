@@ -14,14 +14,11 @@ using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Integration
 {
-    public partial class OneNoteSynchronizationPage : ServerAwarePage
+    public partial class OneNoteSynchronizationPage : Page
     {
         public static string METL_NOTEBOOK_TITLE = "MeTL";
-        public OneNoteSynchronizationPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _controller, OneNoteSynchronizationSet sync)
-        {
-            NetworkController = _controller;
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
+        public OneNoteSynchronizationPage(OneNoteSynchronizationSet sync)
+        {            
             InitializeComponent();
             DataContext = sync;
             SynchronizeConversations();
@@ -87,7 +84,7 @@ namespace SandRibbon.Pages.Integration
                     foreach (var slide in bucket)
                     {
                         var blockName = string.Format("IMAGE{0}", slide.id);
-                        var url = NetworkController.config.renderUri(slide.id.ToString(),1024,768);
+                        var url = sync.networkController.config.renderUri(slide.id.ToString(),1024,768);
                         var t = await httpClient.GetAsync(url);
                         var data = await t.Content.ReadAsByteArrayAsync();
                         var dataContent = new ByteArrayContent(data);

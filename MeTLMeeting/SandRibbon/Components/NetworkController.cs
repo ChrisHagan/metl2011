@@ -21,7 +21,6 @@ namespace SandRibbon.Components
         {
             config = _config;
         }
-        public ConversationSearchPage conversationSearchPage { get; protected set; }
         public IClientBehaviour connect(Credentials _creds)
         {
             return App.auditor.wrapFunction((g) =>
@@ -136,7 +135,7 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-            client.MoveTo(slide);
+            client.MoveTo(slide);            
         }
         private void SendChatMessage(object _obj)
         {
@@ -329,7 +328,9 @@ namespace SandRibbon.Components
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
             if (e.conversationDetails != null && e.conversationDetails.Jid == client.location.activeConversation)
+            {
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
+            }
             else
             {
                 Application.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));

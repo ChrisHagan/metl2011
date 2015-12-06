@@ -9,12 +9,13 @@
     using System.Windows.Media;
     using System.Windows.Controls;
     using System.Windows.Ink;
+    using Pages;
 
     public class StackMoveDeltaProcessor : MoveDeltaProcessor
     {
         private ContentBuffer ContentBuffer { get; set; }
 
-        public StackMoveDeltaProcessor(InkCanvas canvas, ContentBuffer contentBuffer, string target, ConversationDetails details, string me) : base(canvas, target, contentBuffer,details,me)
+        public StackMoveDeltaProcessor(InkCanvas canvas, ContentBuffer contentBuffer, string target, ConversationState details, string me) : base(canvas, target, contentBuffer,details,me)
         {
             ContentBuffer = contentBuffer;
         }
@@ -43,12 +44,12 @@
 
         protected override void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy)
         {
-            image.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy, details, me);
+            image.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy, conversationState, me);
         }
 
         protected override void ChangeTextPrivacy(MeTLTextBox text, Privacy newPrivacy)
         {
-            text.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy, details, me);
+            text.ApplyPrivacyStyling(ContentBuffer, Target, newPrivacy, conversationState, me);
         }
     }
 }

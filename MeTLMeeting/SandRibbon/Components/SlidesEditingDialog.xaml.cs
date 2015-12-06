@@ -11,18 +11,9 @@ namespace SandRibbon.Components
     public partial class SlidesEditingDialog : Window
     {
         private readonly static string[] availableModes = new string[]{"Sharing", "Rearranging"};
-        private static string mode = availableModes[0];
-        public ConversationAwarePage rootPage { get; protected set; }
-        public SlidesEditingDialog(ConversationAwarePage _rootPage)
-        {
-            rootPage = _rootPage;
-            InitializeComponent();
-            var slides = rootPage.ConversationDetails.Slides.Select(s=>new MeTLLib.DataTypes.ThumbnailInformation{ 
-                Exposed=s.exposed,
-                slideId=s.id,
-                slideNumber=s.index+1
-            });
-            exposed.ItemsSource = slides;
+        private static string mode = availableModes[0];        
+        public SlidesEditingDialog()
+        {                        
             modes.ItemsSource=availableModes;
         }
         private void modeSelected(object sender, RoutedEventArgs args) { 

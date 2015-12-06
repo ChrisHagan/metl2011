@@ -18,6 +18,7 @@ using MeTLLib.Providers.Connection;
 using HttpResourceProvider = MeTLLib.Providers.Connection.HttpResourceProvider;
 using System.Windows.Ink;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -25,7 +26,8 @@ namespace SandRibbon.Utils.Connection
     {
         public List<object> history = new List<object>();
         private PrinterMoveDeltaProcessor moveDeltaProcessor;
-        public SlideAwarePage rootPage { get; protected set; }
+        private DataContextRoot rootPage;
+
         public PrintParser(
             Credentials credentials,
             int room,
@@ -38,11 +40,11 @@ namespace SandRibbon.Utils.Connection
             IWebClientFactory webClientFactory,
             HttpResourceProvider httpResourceProvider,
             IAuditor _auditor,
-            SlideAwarePage _rootPage
+            DataContextRoot rootPage            
         )
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
         {
-            rootPage = _rootPage;
+            this.rootPage = rootPage;
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<MeTLInkCanvas> ToVisualWithNotes()
@@ -50,8 +52,8 @@ namespace SandRibbon.Utils.Connection
             return createVisual();
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
-        {
-            var canvases = createVisual("presentationSpace", true,rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+        {            
+            var canvases = createVisual("presentationSpace", true, rootPage.ConversationState.IsAuthor);
             return new[] { canvases.FirstOrDefault() };
         }
         
@@ -77,11 +79,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvas = new MeTLInkCanvas();
             var contentBuffer = new ContentBuffer(rootPage);
-            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
-                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.ConversationDetails), s => canvas.Strokes.Add(s));
+                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.ConversationState), s => canvas.Strokes.Add(s));
             }
             foreach (var image in images)
             {
@@ -125,11 +127,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvasList = new List<MeTLInkCanvas>();
 
-            var presentationVisual = createVisual("presentationSpace", true, rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+            var presentationVisual = createVisual("presentationSpace", true, rootPage.ConversationState.IsAuthor);
             if (presentationVisual != null && presentationVisual.Count() > 0)
                 canvasList.AddRange(presentationVisual);
 
-            var notesVisual = createVisual("notepad", false, rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+            var notesVisual = createVisual("notepad", false, rootPage.ConversationState.IsAuthor);
             if (notesVisual != null && notesVisual.Count() > 0)
                 canvasList.AddRange(notesVisual);
 

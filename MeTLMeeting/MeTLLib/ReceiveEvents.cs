@@ -40,11 +40,13 @@ namespace MeTLLib
         public delegate void ServersDownEventHandler(object sender, ServersDownEventArgs e);
         public delegate void AttendanceAvailableEventHandler(object sender, AttendanceAvailableEventArgs e);
         public delegate void AllContentSentEventHandler(object sender, AllContentSentEventArgs e);
+        public delegate void SlideJoinedEventHandler(object sender, SlideJoinedEventArgs e);
     }
     #endregion
     #region EventArgs
     public class HandlePongEventArgs : EventArgs { public string[] parts; }
     public class AllContentSentEventArgs : EventArgs { public int slide; }
+    public class SlideJoinedEventArgs : EventArgs { public int slide; }
     public class ServersDownEventArgs : EventArgs { public Uri uri; }
     public class QuizzesAvailableEventArgs : EventArgs { public List<QuizInfo> quizzes; }
     public class AttachmentsAvailableEventArgs : EventArgs { public List<TargettedFile> attachments; }
@@ -73,7 +75,7 @@ namespace MeTLLib
     public class SyncMoveRequestedEventArgs: EventArgs {public int where;}
     #endregion
     public interface IReceiveEvents
-    {
+    {        
         void serversDown(Uri url);
         void allContentSent(int slide);
         void handlePong(string[] parts);
@@ -142,6 +144,9 @@ namespace MeTLLib
         event MeTLLibEventHandlers.HandlePongEventHandler HandlePong;
         event MeTLLibEventHandlers.AttendanceAvailableEventHandler AttendanceAvailable;
         event MeTLLibEventHandlers.AllContentSentEventHandler AllContentSent;
+        event MeTLLibEventHandlers.SlideJoinedEventHandler SlideJoined;
+        /*Reflect state changes back through the viewmodel*/
+        void MoveTo(int slide);
     }
 
     class ProductionReceiveEvents : IReceiveEvents
@@ -176,6 +181,7 @@ namespace MeTLLib
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
             this.AttendanceAvailable += (sender, args) => { };
             this.ServersDown += (sender, args) => { };
+            this.SlideJoined += delegate { };
         }
         void IReceiveEvents.attendanceReceived(Attendance attendance)
         {
@@ -374,6 +380,7 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.HandlePongEventHandler HandlePong;
         public event MeTLLibEventHandlers.AttendanceAvailableEventHandler AttendanceAvailable;
         public event MeTLLibEventHandlers.AllContentSentEventHandler AllContentSent;
+        public event MeTLLibEventHandlers.SlideJoinedEventHandler SlideJoined;
 
         #region VirtualEventSubscribers
         protected virtual void onServersDown(ServersDownEventArgs e)
@@ -430,6 +437,11 @@ namespace MeTLLib
         { ConversationDetailsAvailable(this, e); }
         protected virtual void onCommandAvailable(CommandAvailableEventArgs e)
         { CommandAvailable(this, e); }
+
+        public void MoveTo(int slide)
+        {
+            this.SlideJoined(this, new SlideJoinedEventArgs { slide = slide });
+        }
         #endregion
     }
 }

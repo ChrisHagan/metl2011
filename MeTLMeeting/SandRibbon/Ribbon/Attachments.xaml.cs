@@ -19,6 +19,7 @@ using SandRibbon.Utils;
 using MeTLLib;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Tabs
 {
@@ -36,8 +37,7 @@ namespace SandRibbon.Tabs
     public partial class Attachments :RibbonTab 
     {
         public ConvertStringToImageSource ConvertStringToImageSource { get; protected set; }
-        private ObservableCollection<FileInfo> files;
-        public SlideAwarePage rootPage { get; protected set; } 
+        private ObservableCollection<FileInfo> files;        
         public Attachments()
         {
             InitializeComponent();
@@ -50,9 +50,7 @@ namespace SandRibbon.Tabs
             var fileUploadCommand = new DelegateCommand<object>((_unused) => { UploadFile(); });
             Loaded += (s, e) =>
             {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
-                DataContext = this;
+                var rootPage = DataContext as DataContextRoot;
                 ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.NetworkController);
                 Commands.ReceiveFileResource.RegisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
@@ -72,7 +70,8 @@ namespace SandRibbon.Tabs
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            if (details.IsJidEqual(rootPage.ConversationDetails.Jid) && details.isDeleted)
+            var rootPage = DataContext as DataContextRoot;
+            if (details.IsJidEqual(rootPage.ConversationState.Jid) && details.isDeleted)
                 clearOutAttachments(null);
         }
         private void clearOutAttachments(object obj)
@@ -88,7 +87,8 @@ namespace SandRibbon.Tabs
         }
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
-            if (!rootPage.ConversationDetails.IsJidEqual(fileInfo.conversationJid.ToString())) return;
+            var rootPage = DataContext as DataContextRoot;
+            if (rootPage.ConversationState.Jid != fileInfo.conversationJid.ToString()) return;
             Dispatcher.adoptAsync(() => {
                                             var fileInfoFileType = FileHelper.DetermineFileTypeFromExtension(fileInfo.name);
                                             if (files.Select(f => f.url).Contains(fileInfo.url)) return;
@@ -138,7 +138,8 @@ namespace SandRibbon.Tabs
 
         private void UploadFile()
         {
-            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationDetails,rootPage.Slide);
+            var rootPage = DataContext as DataContextRoot;
+            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationState,rootPage.ConversationState.Slide);
             upload.AddResourceFromDisk();
         }
     }

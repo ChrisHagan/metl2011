@@ -27,15 +27,13 @@ namespace SandRibbon.Pages.Analytics
             throw new NotImplementedException();
         }
     }
-    public partial class ConversationComparisonPage : ServerAwarePage
+    public partial class ConversationComparisonPage : Page
     {
-        public ConversationComparisonPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
-        {
-            NetworkController = _networkController;
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
+        public ConversationComparisonPage(IEnumerable<SearchConversationDetails> cs)
+        {           
             InitializeComponent();
-            DataContext = new ConversationComparableCorpus(NetworkController,cs);
+            var root = DataContext as DataContextRoot;
+            DataContext = new ConversationComparableCorpus(root.NetworkController,cs);
         }
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
@@ -53,27 +51,7 @@ namespace SandRibbon.Pages.Analytics
                 });
                 Commands.WatchRoom.Execute(slide.Slide.id.ToString());
             }
-        }
-
-        public NetworkController getNetworkController()
-        {
-            return NetworkController;
-        }
-
-        public UserServerState getUserServerState()
-        {
-            return UserServerState;
-        }
-
-        public UserGlobalState getUserGlobalState()
-        {
-            return UserGlobalState;
-        }
-
-        public NavigationService getNavigationService()
-        {
-            throw new NotImplementedException();
-        }
+        }        
     }
     public class ConversationComparableCorpus : DependencyObject
     {
@@ -93,17 +71,17 @@ namespace SandRibbon.Pages.Analytics
         public static readonly DependencyProperty SlideContextsProperty =
             DependencyProperty.Register("SlideContexts", typeof(ObservableCollection<ToolableSpaceModel>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ToolableSpaceModel>()));
 
-        public ConversationComparableCorpus(NetworkController _networkController, IEnumerable<SearchConversationDetails> cds)
-        {            
+        public NetworkController NetworkController {get;set;}
+        public ConversationComparableCorpus(NetworkController networkController, IEnumerable<SearchConversationDetails> cds)
+        {
+            NetworkController = NetworkController;
             foreach (var c in cds)
             {
                 var conversation = new ReticulatedConversation{
-                    networkController = _networkController,
+                    networkController = networkController,
                     PresentationPath = c
                 };
-                Conversations.Add(conversation);
-                conversation.CalculateLocations();
-                conversation.AnalyzeLocations();
+                Conversations.Add(conversation);                
             }
         }
     }
