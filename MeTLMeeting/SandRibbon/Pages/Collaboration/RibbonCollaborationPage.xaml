@@ -1,4 +1,4 @@
-﻿<Page x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
+﻿<pages:SlideAwarePage x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -26,6 +26,9 @@
     </Page.Resources>
     <DockPanel>
         <Ribbon DockPanel.Dock="Top" Loaded="Ribbon_Loaded">
+            <Ribbon.QuickAccessToolBar>
+                <RibbonQuickAccessToolBar Visibility="Collapsed" />
+            </Ribbon.QuickAccessToolBar>
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu>
                     <RibbonApplicationMenuItem Header="Create new" />
@@ -119,7 +122,10 @@
                 <components:PrivacyTools Header="Who can see your work?"/>
                 <components:ZoomControls Header="How much content do you see?"/>
                 <RibbonGroup x:Name="inkGroup" Header="Ink options">
-                    <ItemsControl x:Name="pens" ItemsSource="{Binding Path=UserGlobalState.Pens}">
+                    <!--
+                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke"></RibbonRadioButton>
+                    -->
+                    <ItemsControl x:Name="pens">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
@@ -127,8 +133,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" SmallImageSource="{Binding Path=icon}" 
-                                                   Label="{Binding Path=description}" IsChecked="{Binding Path=IsSelectedPen}">
+                                <!--<RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}" Label="{Binding Path=description}" >-->
+                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" SmallImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Label="{Binding Path=description}" >
                                     <RibbonMenuItem Header="Customize" Command="{x:Static api:Commands.RequestReplacePenAttributes}" CommandParameter="{Binding}"/>
                                     <RibbonMenuItem Header="Reset" Command="{x:Static api:Commands.RequestResetPenAttributes}" CommandParameter="{Binding}"/>
                                 </RibbonSplitButton>
@@ -137,13 +143,15 @@
                     </ItemsControl>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup"></RibbonGroup>
+                <!--<legacy:TextTools x:Name="textGroup" /-->
                 <RibbonGroup x:Name="imageGroup" Header="Image options">
                     <RibbonButton Label="Insert image" Command="{x:Static api:Commands.AddImage}" SmallImageSource="\Resources\appbar.page.image.png" LargeImageSource="\Resources\appbar.page.image.png" />
                 </RibbonGroup>
             </RibbonTab>
             <tabs:Quizzes/>
             <tabs:Submissions/>
-            <tabs:Attachments/>            
+            <tabs:Attachments/>
+            <!--tabs:ConversationManagement/-->
             <tabs:Analytics/>
             <tabs:Plugins/>
         </Ribbon>
@@ -168,8 +176,7 @@
                     <components:RoleQuickControls />
                 </Grid>
             </Grid>
-            <GridSplitter Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
-                          ShowsPreview="True" Width="40" />
+            <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
             <Grid Grid.Column="2" Grid.Row="0" >
                 <Grid x:Name="adornerGrid" Margin="0,0,27,27">
                     <Canvas x:Name="syncPageOverlay"/>
@@ -231,4 +238,4 @@
             <components:SlideDisplay Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="slides" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         </Grid>
     </DockPanel>
-</Page>
+</pages:SlideAwarePage>

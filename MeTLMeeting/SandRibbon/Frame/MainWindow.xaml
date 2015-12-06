@@ -28,6 +28,29 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
+            <!--
+            <Button Click="ShowDiagnostics">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_alert}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Command="{x:Static api:Commands.BrowseOneNote}" CommandParameter="{x:Static providers:Globals.OneNoteConfiguration}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_office_onenote}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Click="UserPreferences">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_cog}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            -->
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.Flyouts>
@@ -35,7 +58,7 @@
             <Controls:Flyout x:Name="flyout" Position="Right" Width="250"/>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
-    <Frame x:Name="mainFrame" LoadCompleted="frame_LoadCompleted">
+    <Frame x:Name="mainFrame">
         <!--Uncomment this to remove navigation options-->
         <!--
         <Frame.Template>

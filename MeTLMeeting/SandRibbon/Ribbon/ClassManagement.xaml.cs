@@ -5,18 +5,22 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Providers;
 using SandRibbon.Pages;
-using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Tabs
 {
     public partial class ClassManagement: RibbonTab
     {
+        public SlideAwarePage rootPage { get; protected set; }
         public ClassManagement()
         {
             InitializeComponent();
             var updateCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             Loaded += (s, e) =>
             {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as SlideAwarePage;
+                }
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateCommand);
             };
             Commands.UpdateConversationDetails.UnregisterCommand(updateCommand);
@@ -24,15 +28,13 @@ namespace SandRibbon.Tabs
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            var rootPage = DataContext as DataContextRoot;
             manageBlackList.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)
-        {            
-            var blacklist = new BlacklistController();
+        {
+            var blacklist = new blacklistController(rootPage);
             blacklist.Owner = Window.GetWindow(this);
-            blacklist.DataContext = DataContext;
             blacklist.ShowDialog();
         }
     }

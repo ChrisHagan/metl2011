@@ -1,4 +1,4 @@
-﻿<Page x:Class="SandRibbon.Pages.Conversations.ConversationEditPage"
+﻿<pages:ConversationAwarePage x:Class="SandRibbon.Pages.Conversations.ConversationEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"      
       xmlns:layout="clr-namespace:SandRibbon.Layout"
@@ -27,4 +27,4 @@
             <Label Content="I want to delete it" />
         </Button>
     </Grid>
-</Page>
+</pages:ConversationAwarePage>

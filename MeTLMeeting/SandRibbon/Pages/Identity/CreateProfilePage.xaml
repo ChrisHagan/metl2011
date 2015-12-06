@@ -1,0 +1,48 @@
+﻿<page:ServerAwarePage x:Class="SandRibbon.Pages.Identity.CreateProfilePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
+      xmlns:local="clr-namespace:SandRibbon.Pages.Identity"      
+      xmlns:page="clr-namespace:SandRibbon.Pages"      
+      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
+      Title="CreateProfilePage">
+    <Grid Margin="{StaticResource clearTop}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid layout:GridLayout.ItemsPerRow="1" Grid.Column="1" Grid.Row="0">
+            <Label Content="Add a persona" Margin="{StaticResource clearBottom}"/>
+            <TextBlock Style="{StaticResource explanation}">
+                A persona is a style of using the system.<LineBreak />
+                They are all you, but some of them don't own the conversations you own.  This lets you enter your own conversations as a student.<LineBreak />
+                A persona has its own set of user interfaces.  You might use them for different devices, or for different activities.
+            </TextBlock>
+            <TextBox Text="{Binding Path=logicalName}" Margin="{StaticResource clearTop}"
+                     FontSize="14"
+                     Controls:TextBoxHelper.Watermark="Choose a name for your persona.  Other people will not be able to see it."/>
+            <StackPanel Orientation="Horizontal" Margin="{StaticResource clearTop}">
+                <CheckBox IsChecked="{Binding Path=identifiesAsOwner}" HorizontalAlignment="Left"/>
+                <Label Content="My new persona owns the same conversations as me" />
+            </StackPanel>
+            <Button Margin="{StaticResource clearTop}" Click="SkipConfiguringBars" HorizontalAlignment="Right">
+                <Button.Background>
+                    <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                </Button.Background>
+                <StackPanel Orientation="Horizontal" Width="Auto">
+                    <Rectangle Width="{DynamicResource ButtonWidth}" Height="{DynamicResource ButtonHeight}">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{DynamicResource appbar_people_checkbox}" />
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Label Content="Save" />
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+</page:ServerAwarePage>
