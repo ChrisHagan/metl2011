@@ -11,6 +11,7 @@ using System.Diagnostics;
 using SandRibbon.Utils;
 using System.ComponentModel;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.Utility
 {
@@ -28,10 +29,9 @@ namespace SandRibbon.Components.Utility
                 ContentFilterVisibility.refreshVisibilities();
             }
         }
-        public string GroupId { get; protected set; }
-        //= (author, privacy, conversation, slide) => false;
-        public Func<SlideAwarePage, string, Privacy, ConversationDetails, Slide, bool> Comparer { get; protected set; }
-        public ContentVisibilityDefinition(string label, string description, string groupId, bool subscribed, Func<SlideAwarePage, string, Privacy, ConversationDetails, Slide, bool> comparer)
+        public string GroupId { get; protected set; }        
+        public Func<DataContextRoot, string, Privacy, ConversationState, Slide, bool> Comparer { get; protected set; }
+        public ContentVisibilityDefinition(string label, string description, string groupId, bool subscribed, Func<DataContextRoot, string, Privacy, ConversationState, Slide, bool> comparer)
         {
             Label = label;
             Description = description;
@@ -101,8 +101,8 @@ namespace SandRibbon.Components.Utility
     public abstract class ContentFilter<C, T> where C : class, ICollection<T>, new() 
     {
         protected C contentCollection;
-        public SlideAwarePage rootPage { get; protected set; }
-        public ContentFilter(SlideAwarePage _rootPage)
+        public DataContextRoot rootPage { get; protected set; }
+        public ContentFilter(DataContextRoot _rootPage)
         {
             rootPage = _rootPage;
             contentCollection = new C();
@@ -265,7 +265,7 @@ namespace SandRibbon.Components.Utility
 
         public T FilterContent(T element, List<ContentVisibilityDefinition> contentVisibility)
         {
-            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(rootPage,AuthorFromTag(element), PrivacyFromTag(element),rootPage.ConversationDetails,rootPage.Slide)) ? element : default(T);
+            return contentVisibility.Where(cv => cv.Subscribed).Any(cv => cv.Comparer(rootPage,AuthorFromTag(element), PrivacyFromTag(element),rootPage.ConversationState,rootPage.ConversationState.Slide)) ? element : default(T);
         }
 
         public C FilterContent(C elements, List<ContentVisibilityDefinition> contentVisibility)
@@ -273,7 +273,7 @@ namespace SandRibbon.Components.Utility
             var tempList = new C();
             var enabledContentVisibilities = contentVisibility.Where(cv => cv.Subscribed);
             var matchedElements = elements.Where(elem => enabledContentVisibilities.Any(cv => {
-                return cv.Subscribed && cv.Comparer(rootPage,AuthorFromTag(elem), PrivacyFromTag(elem), rootPage.ConversationDetails, rootPage.Slide);
+                return cv.Subscribed && cv.Comparer(rootPage,AuthorFromTag(elem), PrivacyFromTag(elem), rootPage.ConversationState, rootPage.ConversationState.Slide);
             }));
 
             foreach (var elem in matchedElements)

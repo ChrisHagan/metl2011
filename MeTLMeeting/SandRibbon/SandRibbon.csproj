@@ -341,9 +341,6 @@
     <Compile Include="Pages\Collaboration\Layout\CastBarFrame.xaml.cs">
       <DependentUpon>CastBarFrame.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\CollaborationContext\ChooseCollaborationContextPage.xaml.cs">
-      <DependentUpon>ChooseCollaborationContextPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Collaboration\GroupCollaborationPage.xaml.cs">
       <DependentUpon>GroupCollaborationPage.xaml</DependentUpon>
     </Compile>
@@ -353,6 +350,8 @@
     <Compile Include="Pages\Collaboration\Layout\UserCardSmall.xaml.cs">
       <DependentUpon>UserCardSmall.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\Models\DataContextRoot.cs" />
+    <Compile Include="Pages\Collaboration\Models\PenModel.cs" />
     <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">
@@ -374,12 +373,7 @@
     <Compile Include="Pages\Conversations\Models\OneNoteConfiguration.cs" />
     <Compile Include="Pages\Conversations\Models\PickContext.cs" />
     <Compile Include="Pages\Conversations\Models\ReticulatedConversation.cs" />
-    <Compile Include="Pages\Identity\CreateProfilePage.xaml.cs">
-      <DependentUpon>CreateProfilePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Identity\ProfileSelectorPage.xaml.cs">
-      <DependentUpon>ProfileSelectorPage.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Pages\Conversations\Views\UrlForThumbnailConverter.cs" />
     <Compile Include="Pages\Integration\OneNoteSynchronizationPage.xaml.cs">
       <DependentUpon>OneNoteSynchronizationPage.xaml</DependentUpon>
     </Compile>
@@ -445,10 +439,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\BackStageNav.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\BannedContent\BannedContent.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -527,14 +517,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Identity\CreateProfilePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Identity\ProfileSelectorPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\Integration\OneNoteSynchronizationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -554,10 +536,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ContentVisibility.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\EditConversation.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -638,10 +616,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Utility\MeTLVideoPlayer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\CollaborationContext\ChooseCollaborationContextPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -898,9 +872,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Components\Autoscroller.cs" />
-    <Compile Include="Components\BackStageNav.xaml.cs">
-      <DependentUpon>BackStageNav.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\blacklistController.xaml.cs">
       <DependentUpon>blacklistController.xaml</DependentUpon>
     </Compile>
@@ -920,9 +891,6 @@
     </Compile>
     <Compile Include="Components\ContentVisibility.xaml.cs">
       <DependentUpon>ContentVisibility.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\EditConversation.xaml.cs">
-      <DependentUpon>EditConversation.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\NetworkController.cs" />
     <Compile Include="Components\UserOptionsDialog.xaml.cs">
@@ -2702,32 +2670,32 @@
   <ItemGroup>
     <PublishFile Include="Microsoft.Vbe.Interop">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="office">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="stdole">
       <Visible>False</Visible>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
   </ItemGroup>

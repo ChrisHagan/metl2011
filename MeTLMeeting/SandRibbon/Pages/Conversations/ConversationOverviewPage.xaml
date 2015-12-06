@@ -1,26 +1,21 @@
-﻿<pages:ConversationAwarePage x:Class="SandRibbon.Pages.Collaboration.ConversationOverviewPage"
+﻿<Page x:Class="SandRibbon.Pages.Collaboration.ConversationOverviewPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:local="clr-namespace:SandRibbon.Pages.Collaboration"  
-xmlns:pages="clr-namespace:SandRibbon.Pages"                             
+      xmlns:pages="clr-namespace:SandRibbon.Pages"                             
       xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
       xmlns:layout="clr-namespace:SandRibbon.Layout"
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:view="clr-namespace:SandRibbon.Pages.Conversations.Views"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
       xmlns:resourceChangeEvent="clr-namespace:Itschwabing.Libraries.ResourceChangeEvent;assembly=ResourceChangeEvent"      
       x:Name="page"
       Title="Conversation Overview">
     <Page.Resources>
-        <components:UrlForSlideConverter x:Key="renderer" />
-        <CollectionViewSource x:Key="labelledLocations" Source="{Binding Path=Locations}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Details.Jid" />
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </Page.Resources>
     <Grid layout:GridLayout.ItemsPerRow="1">
@@ -34,9 +29,9 @@ xmlns:pages="clr-namespace:SandRibbon.Pages"
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding Path=PresentationPath.Title}" />
-            <Label Grid.Row="1" Content="{Binding Path=PresentationPath.Jid}" />
-            <Label Grid.Row="2" Content="{Binding Path=PresentationPath.Author}" />
+            <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding Path=ConversationState.Title}" />
+            <Label Grid.Row="1" Content="{Binding Path=ConversationState.Jid}" />
+            <Label Grid.Row="2" Content="{Binding Path=ConversationState.Author}" />
             <Label Grid.Row="1" Grid.Column="1" Content="Teaching objectives" />
             <TextBlock Grid.Row="2" Grid.Column="1" />
         </Grid>
@@ -45,33 +40,16 @@ xmlns:pages="clr-namespace:SandRibbon.Pages"
             <Label Content="Where do you want to enter the conversation?" />
             <ScrollViewer Width="{Binding ElementName=page, Path=ActualWidth}" HorizontalScrollBarVisibility="Visible">
                 <Grid layout:GridLayout.ItemsPerRow="1">
-                    <ItemsControl ItemsSource="{Binding Source={StaticResource labelledLocations}}">
+                    <ItemsControl ItemsSource="{Binding Path=ConversationState.SlideSummaries}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Grid layout:GridLayout.RowCount="1"
-                                      layout:GridLayout.ColumnCount="{Binding ElementName=page, Path=DataContext.LongestPathLength}" />
+                                      layout:GridLayout.ColumnCount="{Binding Path=ConversationState.Slides.Count}" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-                        <ItemsControl.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.ContainerStyle>
-                                    <Style TargetType="{x:Type GroupItem}">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                    <GroupBox Header="{Binding Name}">
-                                                        <ItemsPresenter />
-                                                    </GroupBox>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.ContainerStyle>
-                            </GroupStyle>
-                        </ItemsControl.GroupStyle>
                         <ItemsControl.ItemContainerStyle>
                             <Style TargetType="{x:Type ContentPresenter}">
-                                <Setter Property="Grid.Column" Value="{Binding Path=Slide.index}" />
+                                <Setter Property="Grid.Column" Value="{Binding Path=index}" />
                             </Style>
                         </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemTemplate>
@@ -83,9 +61,9 @@ xmlns:pages="clr-namespace:SandRibbon.Pages"
                                             <Border.BorderBrush>
                                                 <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                             </Border.BorderBrush>
-                                            <Label Content="{Binding Path=Slide,Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
+                                            <Label Content="{Binding Path=slide,Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
                                         </Border>
-                                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Aggregate.activityCount}" />
+                                        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=activityCount}" />
                                         <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
@@ -95,7 +73,7 @@ xmlns:pages="clr-namespace:SandRibbon.Pages"
                                                 </Rectangle.Fill>
                                             </Rectangle>
                                         </Viewbox>
-                                        <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Aggregate.voices}" />
+                                        <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=voices}" />
                                         <Viewbox Grid.Row="2" Grid.Column="1" 
                                          Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
                                          Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
@@ -114,4 +92,4 @@ xmlns:pages="clr-namespace:SandRibbon.Pages"
             </ScrollViewer>
         </Grid>
     </Grid>
-</pages:ConversationAwarePage>
+</Page>

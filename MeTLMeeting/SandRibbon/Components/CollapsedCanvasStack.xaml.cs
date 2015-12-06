@@ -32,6 +32,7 @@ using SandRibbon.Pages.Collaboration.Layout;
 using Xceed.Wpf.Toolkit;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -204,7 +205,7 @@ namespace SandRibbon.Components
             }
         }
 
-        public SlideAwarePage rootPage { get; protected set; }
+        private DataContextRoot rootPage { get; set; }
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -239,12 +240,8 @@ namespace SandRibbon.Components
             var clipboardManagerCommand = new DelegateCommand<ClipboardAction>((action) => clipboardManager.OnClipboardAction(action));
             Loaded += (s, e) =>
             {
-                if (rootPage == null)
-                {
-                    rootPage = DataContext as SlideAwarePage;
-                }
-                contentBuffer = new ContentBuffer(rootPage);
-                me = rootPage.NetworkController.credentials.name;
+                rootPage = DataContext as DataContextRoot;
+                contentBuffer = new ContentBuffer(rootPage);                
                 Dispatcher.adopt(delegate
                 {
                     if (_target == null)
@@ -257,7 +254,7 @@ namespace SandRibbon.Components
                             Globals.CurrentCanvasClipboardFocus = _target;
                         }
 
-                        moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                        moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                     }
                 });
                 CommandBindings.Add(deleteCommandBinding);
@@ -623,7 +620,7 @@ namespace SandRibbon.Components
             Action redo = () =>
                 {
                     var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.isDeleted = true;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
                     Commands.SendMoveDelta.ExecuteAsync(moveDelta);
@@ -646,12 +643,12 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                   {
                       foreach (MeTLImage image in Work.ImageChildren())
-                          image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                          image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                       foreach (var item in Work.TextChildren())
                       {
                           MeTLTextBox box = null;
                           box = (MeTLTextBox)item;
-                          box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                          box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                       }
 
                       if (myTextBox != null)
@@ -738,7 +735,7 @@ namespace SandRibbon.Components
                     foreach (var add in undoToAdd)
                     {
                         contentBuffer.AddImage(add, (img) => Work.Children.Add(img));
-                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                     }
                 };
             Action redo = () =>
@@ -748,7 +745,7 @@ namespace SandRibbon.Components
                     foreach (var add in redoToAdd)
                     {
                         contentBuffer.AddImage(add, (img) => Work.Children.Add(img));
-                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                     }
                 };
 
@@ -825,7 +822,7 @@ namespace SandRibbon.Components
                   foreach (var box in undoBoxesToAdd)
                   {
                       AddTextBoxToCanvas(box, true);
-                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                   }
               };
             Action redo = () =>
@@ -838,7 +835,7 @@ namespace SandRibbon.Components
                   foreach (var box in redoBoxesToAdd)
                   {
                       AddTextBoxToCanvas(box, false);
-                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                   }
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
@@ -946,7 +943,7 @@ namespace SandRibbon.Components
                     ClearAdorners();
 
                     var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.NotSet, identity, -1L,
+                    var moveDelta = TargettedMoveDelta.Create(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(endingStrokes.Select(s => (s as Stroke).Clone())),
                         endingTexts.Select(et => et as Xceed.Wpf.Toolkit.RichTextBox),
                         endingImages.Select(et => et as Image));
@@ -976,7 +973,7 @@ namespace SandRibbon.Components
                     ClearAdorners();
 
                     var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.NotSet, identity, -1L,
+                    var moveDelta = TargettedMoveDelta.Create(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(startingStrokes.Select(s => (s as Stroke).Clone())),
                         startingBoxes.Select(et => et as Xceed.Wpf.Toolkit.RichTextBox),
                         startingImages.Select(et => et as Image));
@@ -1087,7 +1084,7 @@ namespace SandRibbon.Components
         private IEnumerable<PrivateAwareStroke> filterOnlyMineExceptIfHammering(IEnumerable<PrivateAwareStroke> strokes)
         {
             var me = rootPage.NetworkController.credentials.name;
-            if (rootPage.UserSlideState.BanhammerActive)
+            if (rootPage.ConversationState.BanhammerActive)
             {
                 return strokes.Where(s => s.tag().author != me);
             }
@@ -1107,7 +1104,7 @@ namespace SandRibbon.Components
         }
         private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements, Func<T, string> authorExtractor) where T : UIElement
         {
-            if (rootPage.UserSlideState.BanhammerActive)
+            if (rootPage.ConversationState.BanhammerActive)
             {
                 return filterExceptMine(elements, authorExtractor);
             }
@@ -1118,7 +1115,7 @@ namespace SandRibbon.Components
         }
         private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements) where T : UIElement
         {
-            if (rootPage.UserSlideState.BanhammerActive)
+            if (rootPage.ConversationState.BanhammerActive)
             {
                 return filterExceptMine(elements);
             }
@@ -1233,7 +1230,7 @@ namespace SandRibbon.Components
         public void ReceiveDirtyStrokes(IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
         {
             if (targettedDirtyStrokes.Count() == 0) return;
-            if (!(targettedDirtyStrokes.First().target.Equals(_target)) || targettedDirtyStrokes.First().slide != rootPage.Slide.id) return;
+            if (!(targettedDirtyStrokes.First().target.Equals(_target)) || targettedDirtyStrokes.First().slide != rootPage.ConversationState.Slide.id) return;
             Dispatcher.adopt(delegate
             {
                 dirtyStrokes(Work, targettedDirtyStrokes);
@@ -1294,7 +1291,7 @@ namespace SandRibbon.Components
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
                     try
                     {
-                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.ConversationDetails));
+                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.ConversationState));
                     }
                     catch (Exception e)
                     {
@@ -1459,7 +1456,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
                         //sendImageWithoutHistory(tmpImage, tmpImage.tag().privacy);
                     }
-                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             Action undo = () =>
@@ -1481,7 +1478,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
                         //sendImageWithoutHistory(tmpImage, tmpImage.tag().privacy);
                     }
-                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection privacy changed");
@@ -1507,7 +1504,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
                         //sendTextWithoutHistory(tmpText, tmpText.tag().privacy);
                     }
-                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             Action undo = () =>
@@ -1529,7 +1526,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
                         //sendTextWithoutHistory(tmpText, tmpText.tag().privacy);
                     }
-                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection changed privacy");
@@ -1564,7 +1561,7 @@ namespace SandRibbon.Components
                 {
                     var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
                     //var moveDelta = TargettedMoveDelta.Create(rootPage.slide.id, rootPage.networkController.credentials.name, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
-                    var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = newPrivacy;
                     var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
@@ -1581,7 +1578,7 @@ namespace SandRibbon.Components
             Action undo = () =>
                 {
                     var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
-                    var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
+                    var moveDelta = TargettedMoveDelta.Create(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = oldPrivacy;
                     var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
                     moveDelta.xOrigin = mdb.Left;
@@ -1613,7 +1610,7 @@ namespace SandRibbon.Components
             var checksum = e.Stroke.sum().checksum;
             var timestamp = 0L;
             e.Stroke.tag(new StrokeTag(rootPage.NetworkController.credentials.name, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter, timestamp));
-            var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target, rootPage.ConversationDetails);
+            var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target, rootPage.ConversationState);
             privateAwareStroke.offsetX = contentBuffer.logicalX;
             privateAwareStroke.offsetY = contentBuffer.logicalY;
             Work.Strokes.Remove(e.Stroke);
@@ -1718,7 +1715,7 @@ namespace SandRibbon.Components
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
         {
             var strokeTag = stroke.tag();
-            Commands.SendDirtyStroke.Execute(new TargettedDirtyElement(rootPage.Slide.id, strokeTag.author, _target, strokeTag.privacy, strokeTag.id, strokeTag.timestamp));
+            Commands.SendDirtyStroke.Execute(new TargettedDirtyElement(rootPage.ConversationState.Slide.id, strokeTag.author, _target, strokeTag.privacy, strokeTag.id, strokeTag.timestamp));
         }
         private void doMyStrokeAddedExceptHistory(PrivateAwareStroke stroke, Privacy thisPrivacy)
         {
@@ -1732,11 +1729,11 @@ namespace SandRibbon.Components
             if (!stroke.shouldPersist()) return;
             //Offset the negative co-ordinates before sending the stroke off the wire
             var translatedStroke = OffsetNegativeCartesianStrokeTranslate(stroke);
-            var privateRoom = string.Format("{0}{1}", rootPage.Slide.id, translatedStroke.tag().author);
-            if (thisPrivacy == Privacy.Private && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && me != translatedStroke.tag().author)
+            var privateRoom = string.Format("{0}{1}", rootPage.ConversationState.Slide.id, translatedStroke.tag().author);
+            if (thisPrivacy == Privacy.Private && rootPage.ConversationState.IsAuthor && me != translatedStroke.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendStroke.Execute(new TargettedStroke(rootPage.Slide.id, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
-            if (thisPrivacy == Privacy.Private && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && me != stroke.tag().author)
+            Commands.SendStroke.Execute(new TargettedStroke(rootPage.ConversationState.Slide.id, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
+            if (thisPrivacy == Privacy.Private && rootPage.ConversationState.IsAuthor && me != stroke.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
         #endregion
@@ -1745,12 +1742,12 @@ namespace SandRibbon.Components
         private void sendImage(MeTLImage newImage)
         {
             newImage.UpdateLayout();
-            Commands.SendImage.Execute(new TargettedImage(rootPage.Slide.id, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().resourceIdentity, newImage.tag().timestamp));
+            Commands.SendImage.Execute(new TargettedImage(rootPage.ConversationState.Slide.id, me, _target, newImage.tag().privacy, newImage.tag().id, newImage, newImage.tag().resourceIdentity, newImage.tag().timestamp));
         }
         private void dirtyImage(MeTLImage imageToDirty)
         {
-            imageToDirty.ApplyPrivacyStyling(contentBuffer, _target, imageToDirty.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
-            Commands.SendDirtyImage.Execute(new TargettedDirtyElement(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, imageToDirty.tag().privacy, imageToDirty.tag().id, imageToDirty.tag().timestamp));
+            imageToDirty.ApplyPrivacyStyling(contentBuffer, _target, imageToDirty.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
+            Commands.SendDirtyImage.Execute(new TargettedDirtyElement(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, imageToDirty.tag().privacy, imageToDirty.tag().id, imageToDirty.tag().timestamp));
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
@@ -1789,7 +1786,7 @@ namespace SandRibbon.Components
                             {
                                 var receivedImage = image1.imageSpecification.forceEvaluation();
                                 AddImage(Work, receivedImage);
-                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                             }
                             catch (Exception e)
                             {
@@ -1841,7 +1838,7 @@ namespace SandRibbon.Components
         public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(_target))) return;
-            if (element.slide != rootPage.Slide.id) return;
+            if (element.slide != rootPage.ConversationState.Slide.id) return;
             Dispatcher.adoptAsync(() => dirtyImage(element.identity));
         }
 
@@ -2093,7 +2090,7 @@ namespace SandRibbon.Components
                  {
                      File.Copy(unMangledFilename, filename);
                      rootPage.NetworkController.client.UploadAndSendFile(
-                         new MeTLStanzas.LocalFileInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(rootPage.NetworkController.credentials.name,filename)));
+                         new MeTLStanzas.LocalFileInformation(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(rootPage.NetworkController.credentials.name,filename)));
                      File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
@@ -2148,7 +2145,7 @@ namespace SandRibbon.Components
                 InkCanvas.SetTop(image, imagePos.Y);
                 //image.tag(new ImageTag(rootPage.networkController.credentials.name, currentPrivacy, Globals.generateId(rootPage.networkController.credentials.name), false, -1L));
                 image.tag(new ImageTag(rootPage.NetworkController.credentials.name, currentPrivacy, Globals.generateId(rootPage.NetworkController.credentials.name), false, -1L, ""));
-                var currentSlide = rootPage.Slide.id;
+                var currentSlide = rootPage.ConversationState.Slide.id;
                 var translatedImage = OffsetNegativeCartesianImageTranslate(image);
 
                 Action undo = () =>
@@ -2277,7 +2274,7 @@ namespace SandRibbon.Components
                         {
                             if (!(targettedBox.HasSameAuthor(me)))
                                 box.Focusable = false;
-                            box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                            box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                         }
                     }
                 }
@@ -2387,7 +2384,7 @@ namespace SandRibbon.Components
             var box = (MeTLTextBox)sender;
             var undoText = box.Text;
             var redoText = box.Text;
-            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
             box.Height = Double.NaN;
             var mybox = box.clone();
             var undoBox = box.clone();
@@ -2412,7 +2409,7 @@ namespace SandRibbon.Components
             ClearAdorners();
             UpdateTextBoxWithId(mybox, redoText);
 
-            var currentSlide = rootPage.Slide.id;
+            var currentSlide = rootPage.ConversationState.Slide.id;
             Action typingTimedAction = () => Dispatcher.adoptAsync(delegate
             {
                 var senderTextBox = sender as MeTLTextBox;
@@ -2457,7 +2454,7 @@ namespace SandRibbon.Components
 
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy)
         {
-            sendTextWithoutHistory(box, thisPrivacy, rootPage.Slide.id);
+            sendTextWithoutHistory(box, thisPrivacy, rootPage.ConversationState.Slide.id);
         }
 
         public void sendTextWithoutHistory(MeTLTextBox box, Privacy thisPrivacy, int slide)
@@ -2471,7 +2468,7 @@ namespace SandRibbon.Components
             var newTextTag = new TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id, oldTextTag.timestamp);
             box.tag(newTextTag);
             var translatedTextBox = OffsetNegativeCartesianTextTranslate(box);
-            var privateRoom = string.Format("{0}{1}", rootPage.Slide.id, translatedTextBox.tag().author);
+            var privateRoom = string.Format("{0}{1}", rootPage.ConversationState.Slide.id, translatedTextBox.tag().author);
             /*
             if (thisPrivacy == Privacy.Private && rootPage.details.isAuthor(rootPage.networkController.credentials.name) && me != translatedTextBox.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
@@ -2482,7 +2479,7 @@ namespace SandRibbon.Components
                 Commands.SneakOutOf.Execute(privateRoom);
              */
             //NegativeCartesianTextTranslate(translatedTextBox);
-            /*var privateRoom = string.Format("{0}{1}", rootPage.slide.id, box.tag().author);
+            /*var privateRoom = string.Format("{0}{1}", rootPage.ConversationState.Slide.id, box.tag().author);
             if (thisPrivacy == Privacy.Private && rootPage.details.isAuthor(rootPage.networkController.credentials.name) && me != box.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
             Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, _target, thisPrivacy, box.tag().id, box, box.tag().timestamp));
@@ -2492,7 +2489,7 @@ namespace SandRibbon.Components
 
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box, bool removeLocal = true)
         {
-            dirtyTextBoxWithoutHistory(box, rootPage.Slide.id, removeLocal);
+            dirtyTextBoxWithoutHistory(box, rootPage.ConversationState.Slide.id, removeLocal);
         }
 
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide, bool removeLocal = true)
@@ -2505,15 +2502,15 @@ namespace SandRibbon.Components
         /*
         public void sendImageWithoutHistory(MeTLImage image, Privacy thisPrivacy)
         {
-            sendImageWithoutHistory(image, thisPrivacy, rootPage.slide.id);
+            sendImageWithoutHistory(image, thisPrivacy, rootPage.ConversationState.Slide.id);
         }
 
         public void sendImageWithoutHistory(MeTLImage image, Privacy thisPrivacy, int slide)
         {
-            var privateRoom = string.Format("{0}{1}", rootPage.slide.id, image.tag().author);
+            var privateRoom = string.Format("{0}{1}", rootPage.ConversationState.Slide.id, image.tag().author);
             if (thisPrivacy == Privacy.Private && rootPage.details.isAuthor(rootPage.networkController.credentials.name) && me != image.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendImage.ExecuteAsync(new TargettedImage(rootPage.slide.id, image.tag().author, _target, thisPrivacy, image.tag().id, image, image.tag().timestamp));
+            Commands.SendImage.ExecuteAsync(new TargettedImage(rootPage.ConversationState.Slide.id, image.tag().author, _target, thisPrivacy, image.tag().id, image, image.tag().timestamp));
             if (thisPrivacy == Privacy.Private && rootPage.details.isAuthor(rootPage.networkController.credentials.name) && me != image.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
@@ -2535,7 +2532,7 @@ namespace SandRibbon.Components
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Work.Children.Contains(box)) return;
-            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
         }
 
         private void textboxGotFocus(object sender, RoutedEventArgs e)
@@ -2581,7 +2578,7 @@ namespace SandRibbon.Components
         private void receiveDirtyText(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(_target))) return;
-            if (element.slide != rootPage.Slide.id) return;
+            if (element.slide != rootPage.ConversationState.Slide.id) return;
             Dispatcher.adoptAsync(delegate
             {
                 if (myTextBox != null && element.HasSameIdentity(myTextBox.tag().id)) return;
@@ -2602,9 +2599,9 @@ namespace SandRibbon.Components
             if (me != GlobalConstants.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
 
-            if (targettedBox.slide == rootPage.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == GlobalConstants.PROJECTOR))
+            if (targettedBox.slide == rootPage.ConversationState.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == GlobalConstants.PROJECTOR))
                 RemoveTextBoxWithMatchingId(targettedBox.identity);
-            if (targettedBox.slide == rootPage.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != GlobalConstants.PROJECTOR)))
+            if (targettedBox.slide == rootPage.ConversationState.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != GlobalConstants.PROJECTOR)))
                 DoText(targettedBox);
         }
 
@@ -2716,10 +2713,10 @@ namespace SandRibbon.Components
                 {
                     var uri =
                         rootPage.NetworkController.client.NoAuthUploadResource(
-                            new Uri(tmpFile, UriKind.RelativeOrAbsolute), rootPage.Slide.id);
+                            new Uri(tmpFile, UriKind.RelativeOrAbsolute), rootPage.ConversationState.Slide.id);
                     var image = new MeTLImage
                     {
-                        Source = new BitmapImage(rootPage.NetworkController.config.getImage(currentPrivacy == Privacy.Public ? rootPage.Slide.id.ToString() : rootPage.Slide.id.ToString() + rootPage.NetworkController.credentials.name, uri)),
+                        Source = new BitmapImage(rootPage.NetworkController.config.getImage(currentPrivacy == Privacy.Public ? rootPage.ConversationState.Slide.id.ToString() : rootPage.ConversationState.Slide.id.ToString() + rootPage.NetworkController.credentials.name, uri)),
                         Width = imageSource.Width,
                         Height = imageSource.Height,
                         Stretch = Stretch.Fill
@@ -2735,7 +2732,7 @@ namespace SandRibbon.Components
         private void HandleImagePasteRedo(List<MeTLImage> selectedImages)
         {
             foreach (var image in selectedImages)
-                Commands.SendImage.ExecuteAsync(new TargettedImage(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, image.tag().id, image, image.tag().resourceIdentity, image.tag().timestamp));
+                Commands.SendImage.ExecuteAsync(new TargettedImage(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, image.tag().id, image, image.tag().resourceIdentity, image.tag().timestamp));
         }
         private void HandleImagePasteUndo(List<MeTLImage> selectedImages)
         {
@@ -2776,7 +2773,7 @@ namespace SandRibbon.Components
             {
                 var data = (MeTLClipboardData)Clipboard.GetData(MeTLClipboardData.Type);
                 var currentChecksums = Work.Strokes.Select(s => s.sum().checksum);
-                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).Select(s => new PrivateAwareStroke(s, _target, rootPage.ConversationDetails)).ToList();
+                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).Select(s => new PrivateAwareStroke(s, _target, rootPage.ConversationState)).ToList();
                 var boxes = createPastedBoxes(data.Text.ToList());
                 var images = createImages(data.Images.ToList());
                 Action undo = () =>
@@ -2859,9 +2856,9 @@ namespace SandRibbon.Components
         {
             foreach (var img in selectedImages)
             {
-                img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 Work.Children.Remove(img);
-                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id, img.tag().timestamp));
+                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id, img.tag().timestamp));
             }
             return selectedImages.Select(i => (BitmapSource)i.Source);
         }
@@ -2875,7 +2872,7 @@ namespace SandRibbon.Components
         }
         private IEnumerable<PrivateAwareStroke> HandleInkCutRedo(IEnumerable<PrivateAwareStroke> selectedStrokes)
         {
-            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(rootPage.Slide.id, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.tag().id /* stroke.sum().checksum.ToString()*/, stroke.tag().timestamp)).ToList();
+            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(rootPage.ConversationState.Slide.id, stroke.tag().author, _target, canvasAlignedPrivacy(stroke.tag().privacy), stroke.tag().id /* stroke.sum().checksum.ToString()*/, stroke.tag().timestamp)).ToList();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
             return selectedStrokes.ToList();

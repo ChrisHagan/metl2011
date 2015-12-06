@@ -4,12 +4,13 @@ using System.Windows.Ink;
 using MeTLLib.DataTypes;
 using MeTLLib.Utilities;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.Utility
 {
     public class StrokeFilter : ContentFilter<List<PrivateAwareStroke>, PrivateAwareStroke>
     {
-        public StrokeFilter(SlideAwarePage page) : base(page) { }
+        public StrokeFilter(DataContextRoot root) : base(root) { }
         protected override bool Equals(PrivateAwareStroke item1, PrivateAwareStroke item2)
         {
             return item1.tag().id == item2.tag().id;

@@ -9,20 +9,21 @@
     using SandRibbon.Providers;
     using System.Windows.Media;
     using System.Windows.Media.Effects;
+    using Pages;
 
     public static class FrameworkElementExtensions
     {
         private const double PUBLIC_OPACITY = 1.0;
         private const double PRIVATE_OPACITY = 0.7;
 
-        public static void ApplyPrivacyStyling(this FrameworkElement element, string target, Privacy newPrivacy, ConversationDetails details, string me)
+        public static void ApplyPrivacyStyling(this FrameworkElement element, string target, Privacy newPrivacy, ConversationState state, string me)
         {
-            element.ApplyPrivacyStyling(null, target, newPrivacy, details, me);
+            element.ApplyPrivacyStyling(null, target, newPrivacy, state, me);
         }
 
-        public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy, ConversationDetails details, string me)
+        public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy, ConversationState details, string me)
         {
-            if ((!details.Permissions.studentCanPublish && !details.isAuthor(me)) || (target == "notepad"))
+            if ((!details.StudentsCanPublish && !details.IsAuthor || (target == "notepad")))
             {
                 element.RemovePrivacyStyling(contentBuffer); 
                 return;

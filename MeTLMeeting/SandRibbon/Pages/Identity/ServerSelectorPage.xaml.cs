@@ -123,7 +123,7 @@ namespace SandRibbon.Pages.ServerSelection
             }
         }
     }
-    public partial class ServerSelectorPage : GlobalAwarePage
+    public partial class ServerSelectorPage : Page
     {
         protected int recheckInterval = 3000;
         //protected Timer dispatcherTimer;
@@ -133,8 +133,7 @@ namespace SandRibbon.Pages.ServerSelection
         public ServerSelectorPage(UserGlobalState _userGlobal)
         {
             InitializeComponent();
-            UserGlobalState = _userGlobal;
-            DataContext = servers;
+            serverDisplay.DataContext = servers;         
             var localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
             Unloaded += (s, e) =>
             {
@@ -212,7 +211,7 @@ namespace SandRibbon.Pages.ServerSelection
             refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
             var source = sender as FrameworkElement;
             var selection = source.DataContext as ServerChoice;
-            NavigationService.Navigate(new LoginPage(UserGlobalState, selection.server));
+            NavigationService.Navigate(new LoginPage(selection.server));
         }
     }
 }

@@ -12,14 +12,14 @@ using SandRibbon.Utils;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Tabs
 {
     public partial class ConversationManagement : RibbonTab
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
-        public static RoutedCommand ManageBannedContent = new RoutedCommand();
-        public SlideAwarePage rootPage { get; protected set; }
+        public static RoutedCommand ManageBannedContent = new RoutedCommand();        
         public ConversationManagement()
         {
             InitializeComponent();
@@ -29,9 +29,7 @@ namespace SandRibbon.Tabs
             var viewBannedContentCommand = new DelegateCommand<object>(viewBannedContent, canViewBannedContent);
             var manageBannedContentCommand = new DelegateCommand<object>(OnBanContentchanged, CheckManageBannedAllowed);
             Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
+            {                
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConvCommand);
                 Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotCommand);
                 Commands.PreParserAvailable.RegisterCommand(preparserAvailableCommand);
@@ -77,8 +75,9 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
+            var rootPage = DataContext as DataContextRoot;
             editConversation.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+            banContent.Visibility = rootPage.ConversationState.IsAuthor ? Visibility.Visible : Visibility.Collapsed;
             bannedContentManagement.Visibility = banContent.Visibility;
         }
 

@@ -1,7 +1,6 @@
 ﻿using MeTLLib.DataTypes;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
-using SandRibbon.Providers;
 using System;
 using System.Globalization;
 using System.Text;
@@ -12,23 +11,18 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Windows.Navigation;
 using System.Linq;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Conversations
 {
-    public partial class ConversationEditPage : ConversationAwarePage
+    public partial class ConversationEditPage : Page
     {
-        public ConversationEditPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
+        public ConversationEditPage()
         {
-
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
-            UserConversationState = _userConv;
-            ConversationDetails = presentationPath;
-            NetworkController = _networkController;
             InitializeComponent();
+            var rootPage = DataContext as DataContextRoot;
             errorDisplay.DataContext = Errors;
-            DataContext = ConversationDetails;
-            sharing.ItemsSource = NetworkController.credentials.authorizedGroups.Select(s => s.groupKey);
+            sharing.ItemsSource = rootPage.NetworkController.credentials.authorizedGroups.Select(s => s.groupKey);
         }
 
         public string Errors
@@ -53,18 +47,18 @@ namespace SandRibbon.Pages.Conversations
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            var conversation = DataContext as ConversationDetails;
-            var details = SearchConversationDetails.HydrateFromServer(NetworkController.client, conversation);
+            /*
+            var rootPage = DataContext as DataContextRoot;                        
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
-            {
-                NetworkController.client.UpdateConversationDetails(details);
-                NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, details.Title));
+            {                
+                NavigationService.Navigate(new ConversationSearchPage(details.Title));
             }
             else
             {
                 this.Errors = errors;
             }
+            */
         }
         private void TextBox_Loaded(object sender, RoutedEventArgs e)
         {
@@ -95,13 +89,13 @@ namespace SandRibbon.Pages.Conversations
         }
 
         private void deleteConversation(object sender, RoutedEventArgs e)
-        {
+        {            
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
-                var conversation = DataContext as ConversationDetails;
-                NetworkController.client.DeleteConversation(conversation);
-                NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, NetworkController.credentials.name));
-            }
+                var rootPage = DataContext as DataContextRoot;
+                rootPage.ConversationState.Subject = "Deleted";
+                NavigationService.Navigate(new ConversationSearchPage(rootPage.NetworkController.credentials.name));
+            }            
         }
     }
     public class HideErrorsIfEmptyConverter : IValueConverter

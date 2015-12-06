@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Globalization;
 using SandRibbon.Providers;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -106,8 +107,7 @@ namespace SandRibbon.Components
         public static SlideCollectionDescriber slideCollectionDescriber = new SlideCollectionDescriber();
         public Dictionary<string, MeTLUser> people = new Dictionary<string, MeTLUser>();
         public HashSet<String> seen = new HashSet<string>();
-        public IStemmer stemmer = new EnglishStemmer();
-        public ConversationAwarePage rootPage { get; protected set; }
+        public IStemmer stemmer = new EnglishStemmer();        
         public Participants()
         {
             InitializeComponent();
@@ -120,9 +120,7 @@ namespace SandRibbon.Components
             var receiveScreenshotSubmissionCommand = new DelegateCommand<TargettedSubmission>(ReceiveSubmission);
             var receiveAttendanceCommand = new DelegateCommand<Attendance>(ReceivePresence);
             Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                    rootPage = DataContext as ConversationAwarePage;
+            {                
                 Commands.ReceiveStrokes.RegisterCommand(receiveStrokesCommand);
                 Commands.ReceiveStroke.RegisterCommand(receiveStrokeCommand);
                 Commands.ReceiveTextBox.RegisterCommand(receiveTextboxCommand);
@@ -158,7 +156,8 @@ namespace SandRibbon.Components
         }
         private void ReceiveConversationDetails(ConversationDetails details)
         {
-            if (details.Jid == rootPage.ConversationDetails.Jid)
+            var rootPage = DataContext as DataContextRoot;
+            if (details.Jid == rootPage.ConversationState.Jid)
             {
                 foreach (var bannedUsername in details.blacklist)
                 {
@@ -171,7 +170,8 @@ namespace SandRibbon.Components
         }
         protected void ReceivePresence(Attendance presence)
         {
-            if (rootPage.ConversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.location))
+            var rootPage = DataContext as DataContextRoot;
+            if (rootPage.ConversationState.Slides.Select(s => s.id.ToString()).Contains(presence.location))
             {
                 Dispatcher.adopt(delegate
                 {

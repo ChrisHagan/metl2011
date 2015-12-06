@@ -83,69 +83,7 @@ namespace SandRibbon.Pages.Conversations.Models
         public delegate void LocationAnalysis();
         public event LocationAnalysis LocationAnalyzed;
 
-        public void CalculateLocations()
-        {
-            var locs = new List<VmSlide>();
-            PresentationPath?.Slides.ForEach(s => locs.Add(new VmSlide { Details = PresentationPath, Slide = s, Relevance = ConversationRelevance.PRESENTATION_PATH }));
-            AdvancedMaterial?.Slides.ForEach(s => locs.Add(new VmSlide { Details = AdvancedMaterial, Slide = s, Relevance = ConversationRelevance.ADVANCED_MATERIAL }));
-            RemedialMaterial?.Slides.ForEach(s => locs.Add(new VmSlide { Details = RemedialMaterial, Slide = s, Relevance = ConversationRelevance.REMEDIAL_MATERIAL }));
-            for (int row = 0; row < RelatedMaterial.Count(); row++)
-            {
-                var details = RelatedMaterial[row];
-                details?.Slides.ForEach(s => locs.Add(new VmSlide { Details = details, Slide = s, Relevance = ConversationRelevance.RELATED_MATERIAL }));
-            }
-            Locations.Clear();
-            foreach (var loc in locs)
-            {
-                Locations.Add(loc);
-            }
-        }
-
-        public void AnalyzeLocations()
-        {        
-            foreach (var slide in Locations)
-            {
-                var description = networkController.client.historyProvider.Describe(slide.Slide.id);
-                LocationAnalyzed?.Invoke();
-                slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices);                
-            }
-        }
-
-        private void inc(Dictionary<string, int> dict, string author)
-        {
-            if (!dict.ContainsKey(author))
-            {
-                dict[author] = 1;
-            }
-            else
-            {
-                dict[author]++;
-            }
-        }
-
-        private IEnumerable<LocatedActivity> process(PreParser p)
-        {
-            var tallies = new Dictionary<string, int>();
-            var authors = new HashSet<string>();
-            foreach (var s in p.ink)
-            {
-                inc(tallies, s.author);
-                authors.Add(s.author);
-            }
-            foreach (var t in p.text.Values)
-            {
-                inc(tallies, t.author);
-                authors.Add(t.author);
-            }
-            foreach (var i in p.images.Values)
-            {
-                inc(tallies, i.author);
-                authors.Add(i.author);
-            }            
-            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, authors.Count));
-        }
-    }
-
+    }    
     public class ReticulatedNode
     {
         public List<ReticulatedNode> Outputs { get; set; }

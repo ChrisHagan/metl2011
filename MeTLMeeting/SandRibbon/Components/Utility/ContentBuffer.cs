@@ -10,12 +10,13 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.Utility
 {
     public class ContentBuffer
     {
-        public SlideAwarePage rootPage { get; protected set; }
+        public DataContextRoot rootPage { get; protected set; }
         private StrokeFilter strokeFilter;
         private ImageFilter imageFilter;
         private TextFilter textFilter;
@@ -46,9 +47,9 @@ namespace SandRibbon.Components.Utility
         private ImageFilter imageDeltaCollection;
         private StrokeFilter strokeDeltaFilter;
         
-        public ContentBuffer(SlideAwarePage _rootPage)
+        public ContentBuffer(DataContextRoot rootPage)
         {
-            rootPage = _rootPage;
+            this.rootPage = rootPage;
             strokeFilter = new StrokeFilter(rootPage);
             imageFilter = new ImageFilter(rootPage);
             textFilter = new TextFilter(rootPage);
