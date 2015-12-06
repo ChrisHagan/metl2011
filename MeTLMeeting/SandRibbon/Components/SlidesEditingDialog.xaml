@@ -23,7 +23,7 @@
     <StackPanel>
         <Grid>
             <quiz:GoldPlaque />
-            <ItemsControl HorizontalAlignment="Left" x:Name="modes" ItemsSource="{Binding Path=ConversationState.Slides}">
+            <ItemsControl HorizontalAlignment="Left" x:Name="modes">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />

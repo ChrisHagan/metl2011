@@ -10,12 +10,12 @@ using ImageDrop = SandRibbon.Components.ImageDrop;
 using System.Collections.Generic;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages;
-using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Tabs
 {
     public partial class Quizzes : RibbonTab
-    {                
+    {        
+        public SlideAwarePage rootPage { get; protected set; }
         public Quizzes()
         {
             InitializeComponent();
@@ -23,7 +23,9 @@ namespace SandRibbon.Tabs
             var receiveQuizAnswerCommand = new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer);                        
             var quizResultsSnapshotAvailableCommand = new DelegateCommand<string>(importQuizSnapshot);
             Loaded += (s, e) =>
-           {
+            {
+                if (rootPage == null)
+                    rootPage = DataContext as SlideAwarePage;
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);            
                 Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);                                
@@ -36,7 +38,6 @@ namespace SandRibbon.Tabs
         }                     
         private void ReceiveQuizAnswer(MeTLLib.DataTypes.QuizAnswer answer)
         {
-            var rootPage = DataContext as DataContextRoot;
             Dispatcher.adoptAsync(() =>
             {
                 var qd = rootPage.ConversationState.QuizData;
@@ -58,7 +59,6 @@ namespace SandRibbon.Tabs
         }
         private void ReceiveQuiz(QuizQuestion quiz)
         {
-            var rootPage = DataContext as DataContextRoot;
             Dispatcher.adoptAsync(() =>
             {
                 var qd = rootPage.ConversationState.QuizData;
@@ -98,22 +98,20 @@ namespace SandRibbon.Tabs
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
-            var rootPage = DataContext as DataContextRoot;
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
-                var quizDialog = new CreateAQuiz(rootPage.NetworkController,rootPage.ConversationState,rootPage.ConversationState.Slide,rootPage.ConversationState.QuizData.activeQuizzes.Count);
+                var quizDialog = new CreateAQuiz(rootPage.NetworkController,rootPage.ConversationDetails,rootPage.Slide,rootPage.ConversationState.QuizData.activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
-            var rootPage = DataContext as DataContextRoot;
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
 
-            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz,rootPage.ConversationState,rootPage.ConversationState.Slide,rootPage.NetworkController.credentials.name);
+            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz,rootPage.ConversationState,rootPage.Slide,rootPage.NetworkController.credentials.name);
             viewEditAQuiz.Owner = Window.GetWindow(this);
             viewEditAQuiz.ShowDialog();
         }
@@ -137,15 +135,13 @@ namespace SandRibbon.Tabs
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            var rootPage = DataContext as DataContextRoot;
             var qd = rootPage.ConversationState.QuizData;
             e.CanExecute = (qd.activeQuizzes != null && qd.activeQuizzes.Count > 0);
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
-            var rootPage = DataContext as DataContextRoot;
             Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
-            var viewQuizResults = new ViewQuizResults(rootPage.ConversationState.Slide, rootPage.ConversationState.QuizData.answers, rootPage.ConversationState.QuizData.activeQuizzes);
+            var viewQuizResults = new ViewQuizResults(rootPage.Slide, rootPage.ConversationState.QuizData.answers, rootPage.ConversationState.QuizData.activeQuizzes);
             viewQuizResults.Owner = Window.GetWindow(this);
             viewQuizResults.ShowDialog();
         }

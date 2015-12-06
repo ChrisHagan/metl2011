@@ -10,7 +10,6 @@ using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using System.Windows.Threading;
 using SandRibbon.Components;
-using SandRibbon.Pages;
 
 namespace SandRibbon.Utils
 {
@@ -18,9 +17,9 @@ namespace SandRibbon.Utils
     {
         private Window _owner;
         public NetworkController networkController { get; protected set; }
-        public ConversationState details { get; protected set; }
+        public ConversationDetails details { get; protected set; }
         public Slide slide { get; protected set; }
-        public OpenFileForUpload(Window owner, NetworkController _networkController,ConversationState _details, Slide _slide)
+        public OpenFileForUpload(Window owner, NetworkController _networkController,ConversationDetails _details, Slide _slide)
         {
             details = _details;
             slide = _slide;

@@ -7,12 +7,13 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
-using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
     public partial class PrivacyToggleButton : UserControl
     {
+        public SlideAwarePage rootPage { get; protected set; }
+
         public PrivacyToggleButton(PrivacyToggleButtonInfo mode, Rect bounds)
         {
             InitializeComponent();
@@ -23,7 +24,8 @@ namespace SandRibbon.Components
 
             Loaded += (s, e) =>
             {
-                var rootPage = DataContext as DataContextRoot;
+                if (rootPage == null)
+                    rootPage = DataContext as SlideAwarePage;
                 if (mode.showDelete)
                     deleteButton.Visibility = Visibility.Visible;
                 else
@@ -31,9 +33,7 @@ namespace SandRibbon.Components
 
                 if (mode.AdornerTarget == "presentationSpace")
                 {
-                    if ((
-                    !rootPage.ConversationState.StudentsCanPublish || 
-                    rootPage.ConversationState.Blacklist.Contains(rootPage.NetworkController.credentials.name)) && !rootPage.ConversationState.IsAuthor)
+                    if ((!rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                     {
                         showButton.Visibility = Visibility.Collapsed;
                         hideButton.Visibility = Visibility.Collapsed;
@@ -61,14 +61,14 @@ namespace SandRibbon.Components
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.ConversationState.BanhammerActive)
+                if (rootPage.UserSlideState.BanhammerActive)
                 {
                     deleteButton.Visibility = Visibility.Collapsed;
                     showButton.Visibility = Visibility.Collapsed;
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.ConversationState.BanhammerActive && rootPage.ConversationState.IsAuthor)
+                if (rootPage.UserSlideState.BanhammerActive && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                     banhammerButton.Visibility = Visibility.Visible;
                 else
                     banhammerButton.Visibility = Visibility.Collapsed;

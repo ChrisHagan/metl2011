@@ -10,13 +10,12 @@ using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Utils;
 using SandRibbon.Pages;
-using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.Utility
 {
     public class ImageFilter : ContentFilter<List<UIElement>, UIElement>
     {
-        public ImageFilter(DataContextRoot page) : base(page) { }
+        public ImageFilter(SlideAwarePage page) : base(page) { }
         protected override bool Equals(UIElement item1, UIElement item2)
         {
             return (item1 as MeTLImage).tag().id == (item2 as MeTLImage).tag().id; 

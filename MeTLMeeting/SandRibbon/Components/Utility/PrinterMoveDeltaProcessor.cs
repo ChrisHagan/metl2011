@@ -9,11 +9,10 @@
     using System.Windows.Media;
     using System.Windows.Ink;
     using System.Windows.Controls;
-    using Pages;
 
     public class PrinterMoveDeltaProcessor : MoveDeltaProcessor
     {
-        public PrinterMoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationState details, string me) : base(canvas, target, contentBuffer,details,me)
+        public PrinterMoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationDetails details, string me) : base(canvas, target, contentBuffer,details,me)
         {
         }
 
@@ -39,12 +38,12 @@
 
         protected override void ChangeImagePrivacy(MeTLImage image, Privacy newPrivacy)
         {
-            image.ApplyPrivacyStyling(Target, newPrivacy,conversationState,me);
+            image.ApplyPrivacyStyling(Target, newPrivacy,details,me);
         }
 
         protected override void ChangeTextPrivacy(MeTLTextBox text, Privacy newPrivacy)
         {
-            text.ApplyPrivacyStyling(Target, newPrivacy,conversationState,me);
+            text.ApplyPrivacyStyling(Target, newPrivacy,details,me);
         }
     }
 }

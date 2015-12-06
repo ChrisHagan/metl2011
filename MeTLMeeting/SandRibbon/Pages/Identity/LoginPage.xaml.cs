@@ -2,21 +2,27 @@
 using Awesomium.Windows.Controls;
 using MeTLLib;
 using MeTLLib.DataTypes;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using mshtml;
+using SandRibbon.Components.Sandpit;
+using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.Conversations;
+using SandRibbon.Pages.Identity;
 using SandRibbon.Providers;
+using SandRibbon.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
 using SandRibbon.Components;
 using System.Windows.Navigation;
 using SandRibbon.Pages.Conversations.Models;
-using SandRibbon.Pages.Collaboration.Models;
-using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Login
 {
@@ -57,15 +63,17 @@ namespace SandRibbon.Pages.Login
         }
     }
 
-    public partial class LoginPage : Page
+    public partial class LoginPage : GlobalAwarePage
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
         public MeTLConfigurationProxy backend { get; set; }
         protected WebControl logonBrowser;
-        protected List<Uri> browseHistory = new List<Uri>();        
-        public LoginPage(MeTLConfigurationProxy _backend)
-        {            
+        protected List<Uri> browseHistory = new List<Uri>();
+        public UserGlobalState userGlobal { get; protected set; }
+        public LoginPage(UserGlobalState _userGlobal, MeTLConfigurationProxy _backend)
+        {
+            UserGlobalState = _userGlobal;
             backend = _backend;
             InitializeComponent();
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
@@ -157,10 +165,7 @@ namespace SandRibbon.Pages.Login
                                 userServer.ThumbnailProvider = new ThumbnailProvider(controller);
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
-                                var root = DataContext as DataContextRoot;
-                                root.UserServerState = userServer;
-                                root.NetworkController = controller;
-                                NavigationService.Navigate(new ConversationSearchPage(controller.credentials.name));
+                                NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)

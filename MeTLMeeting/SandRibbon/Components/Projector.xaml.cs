@@ -12,7 +12,6 @@ using SandRibbon.Providers;
 using System.Collections.Generic;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages;
-using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -46,30 +45,34 @@ namespace SandRibbon.Components
         {
             scroll.ScrollToHorizontalOffset(e.HorizontalOffset);
             scroll.ScrollToVerticalOffset(e.VerticalOffset);
-        }        
-        public Projector(DataContextRoot rootPage)
-        {            
+        }
+        public SlideAwarePage rootPage { get; protected set; }
+        public Projector(SlideAwarePage _rootPage)
+        {
+            rootPage = _rootPage;
             InitializeComponent();
-            var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);            
+            var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             Loaded += (s, e) =>
             {
-                conversationLabel.Text = generateTitle(rootPage.ConversationState);
+                conversationLabel.Text = generateTitle(rootPage.ConversationDetails);
                 stack.me = "projector";
                 stack.Work.EditingMode = InkCanvasEditingMode.None;
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.ConversationState.Slide.id.ToString());
-                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);            
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.Slide.id.ToString());
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
             };
             Unloaded += (s, e) =>
             {
-                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);                
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
+                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
             };
         }
-        private string generateTitle(ConversationState details)
+        private string generateTitle(ConversationDetails details)
         {
-            var rootPage = DataContext as DataContextRoot;
-            return string.Format("{0} Page:{1}", details.Title, rootPage.ConversationState.Slide.index);
+            return string.Format("{0} Page:{1}", details.Title, rootPage.Slide.index);
         }
-        private void UpdateConversationDetails(ConversationState details)
+        private void UpdateConversationDetails(ConversationDetails details)
         {
             conversationLabel.Text = generateTitle(details);
         }

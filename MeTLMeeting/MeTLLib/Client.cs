@@ -82,7 +82,8 @@ namespace MeTLLib
         string NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
         List<SearchConversationDetails> ConversationsFor(String query, int maxResults);
-        UserOptions UserOptionsFor(string username);        
+        UserOptions UserOptionsFor(string username);
+        //List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
     }
     public class DisconnectedClientConnection : IClientBehaviour
     {
@@ -519,7 +520,6 @@ namespace MeTLLib
             Action work = delegate
             {
                 wire.MoveTo(slide);
-                events.MoveTo(slide);
             };
             tryIfConnected(work);
         }

@@ -14,37 +14,45 @@ using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Windows.Navigation;
-using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public partial class TagCloudPage : Page
+    public partial class TagCloudPage : ConversationAwarePage
     {
-        public TagCloudPage()
+        public TagCloudPage(NetworkController networkController, ConversationDetails _details, UserGlobalState _userGlobal, UserServerState _userServer) : base()
         {
             InitializeComponent();
-            Loaded += delegate
-            {
-                loadWorkbench();
-            };        
+            ConversationDetails = _details;
+            NetworkController = networkController;
+            UserGlobalState = _userGlobal;
+            UserServerState = _userServer;
+            loadWorkbench();            
         }
 
         private void loadWorkbench()
-        {
-            var root = DataContext as DataContextRoot;
+        {            
             var wc = new WebControl();
-            wc.WebSession = root.UserServerState.AuthenticatedWebSession;
+            wc.WebSession = UserServerState.AuthenticatedWebSession;
             Content = wc;
             wc.DocumentReady += Wc_DocumentReady;
             wc.ProcessCreated += delegate
             {
-                wc.Source = root.NetworkController.client.server.widgetUri;
+                wc.Source = NetworkController.client.server.widgetUri;
             };
         }
         
         public IEnumerable<string> Themes(Slide slide) {
-            var root = DataContext as DataContextRoot;
-            var page = root.NetworkController.client.server.themes(slide.id);
+            var page = NetworkController.client.server.themes(slide.id);
+            var wc = new WebClient();
+            var ts = XDocument.Parse(wc.DownloadString(page)).Descendants("theme").Select(t => t.Value);
+            Console.WriteLine("slide {0}", slide.id);
+            foreach (var t in ts) Console.WriteLine(t);
+            return ts;
+        }
+
+        public IEnumerable<string> Words(Slide slide)
+        {
+            var page = string.Format("http://localhost:8080/words/{0}", slide.id);
             var wc = new WebClient();
             var ts = XDocument.Parse(wc.DownloadString(page)).Descendants("theme").Select(t => t.Value);
             Console.WriteLine("slide {0}", slide.id);
@@ -55,7 +63,6 @@ namespace SandRibbon.Pages.Analytics
         bool tagsRendered = false;
         private void Wc_DocumentReady(object sender, Awesomium.Core.DocumentReadyEventArgs e)
         {
-            var root = DataContext as DataContextRoot;
             var wc = sender as WebControl;
             if (wc.HTML.Contains("function wordcloud"))
             {
@@ -64,8 +71,8 @@ namespace SandRibbon.Pages.Analytics
                     tagsRendered = true;
                     var themes = new List<String>();
                     var count = 0;
-                    var max = root.ConversationState.Slides.Count;
-                    foreach (var slide in root.ConversationState.Slides) {
+                    var max = ConversationDetails.Slides.Count;
+                    foreach (var slide in ConversationDetails.Slides) {
                         ThreadPool.QueueUserWorkItem(delegate
                        {
                            themes.AddRange(Themes(slide));

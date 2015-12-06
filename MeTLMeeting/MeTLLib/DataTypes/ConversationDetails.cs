@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Divan;
 using MeTLLib.Providers;
 using System.Globalization;
+using System.Windows;
 
 namespace MeTLLib.DataTypes
 {

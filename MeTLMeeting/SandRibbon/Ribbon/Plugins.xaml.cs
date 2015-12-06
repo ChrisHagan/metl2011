@@ -2,17 +2,24 @@
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Controls.Ribbon;
 using System.Windows;
-using SandRibbon.Pages.Collaboration.Models;
+using SandRibbon.Providers;
+using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs
 {
     public partial class Plugins : RibbonTab
-    { 
+    {
+        public SlideAwarePage rootPage { get; protected set; }
         public Plugins()
         {
             InitializeComponent();
             var updateCommand = new DelegateCommand<ConversationDetails>(Update);
-            Loaded += (s, e) => {     
+            Loaded += (s, e) => {
+                if (rootPage == null)
+                {
+                    rootPage = DataContext as SlideAwarePage;
+                }
                 Commands.UpdateConversationDetails.RegisterCommand(updateCommand);
             };
             Unloaded += (s, e) =>
@@ -25,7 +32,6 @@ namespace SandRibbon.Tabs
 
         private void Update(ConversationDetails obj)
         {
-            var rootPage = DataContext as DataContextRoot;
             Dispatcher.adopt(delegate {
                 teacherPlugins.Visibility = (obj.Author == rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
             });

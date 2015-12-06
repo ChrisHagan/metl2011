@@ -1,4 +1,4 @@
-﻿<Page x:Class="SandRibbon.Pages.ServerSelection.ServerSelectorPage"
+﻿<page:GlobalAwarePage x:Class="SandRibbon.Pages.ServerSelection.ServerSelectorPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"             
       xmlns:local="clr-namespace:SandRibbon.Pages.ServerSelection"      
@@ -18,7 +18,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Text="Where are you going?" Grid.Row="0" Margin="{DynamicResource insetTopLeft}" Style="{DynamicResource heading}"/>
-        <ItemsControl ItemsSource="{Binding}" x:Name="serverDisplay" BorderThickness="0" Grid.Row="1">
+        <ItemsControl ItemsSource="{Binding}" BorderThickness="0" Grid.Row="1">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="{Binding Path=Count}" />
@@ -44,6 +44,6 @@
             <Image Source="\Resources\appbar.network.port.disconnect.png" Height="200"/>
         </Grid>
     </Grid>
-</Page>
+</page:GlobalAwarePage>
 
     
