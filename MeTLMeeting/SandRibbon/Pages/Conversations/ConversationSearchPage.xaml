@@ -1,4 +1,4 @@
-﻿<page:ServerAwarePage x:Class="SandRibbon.Pages.Conversations.ConversationSearchPage"
+﻿<Page x:Class="SandRibbon.Pages.Conversations.ConversationSearchPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -108,4 +108,4 @@
             </StackPanel>
         </Grid>
     </ScrollViewer>
-</page:ServerAwarePage>
+</Page>

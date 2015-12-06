@@ -23,6 +23,6 @@ namespace SandRibbon.Pages.Collaboration.Models
         public NetworkController NetworkController
         {
             get; set;
-        }
+        }        
     }
 }

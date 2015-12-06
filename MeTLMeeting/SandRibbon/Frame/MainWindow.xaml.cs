@@ -34,6 +34,7 @@ using SandRibbon.Pages.Conversations;
 using SandRibbon.Pages.Integration;
 using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon
 {
@@ -45,7 +46,6 @@ namespace SandRibbon
         private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
 
         private PowerPointLoader loader;
-        private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         private AsyncObservableCollection<LogMessage> logs = new AsyncObservableCollection<LogMessage>();
@@ -58,6 +58,7 @@ namespace SandRibbon
             var globalState = new UserGlobalState();            
             mainFrame.Navigate(new ServerSelectorPage(globalState));
             App.CloseSplashScreen();
+            DataContext = new DataContextRoot();
         }
 
         /*
@@ -72,7 +73,18 @@ namespace SandRibbon
                 timestamp = DateTime.Now.Ticks
             });
         }
-        */
+        */        
+        private void frame_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            UpdateFrameDataContext(sender, e);
+        }
+        private void UpdateFrameDataContext(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            var content = mainFrame.Content as FrameworkElement;
+            if (content == null)
+                return;
+            content.DataContext = DataContext;
+        }
         private void DoConstructor()
         {
             //Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
@@ -150,7 +162,7 @@ namespace SandRibbon
         */
         private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
         {
-            mainFrame.Navigate(obj.networkController.conversationSearchPage);// new ConversationSearchPage(obj.networkController));
+            mainFrame.Navigate(new ConversationSearchPage(""));
         }
 
         private void PickImages(PickContext context)
@@ -378,7 +390,6 @@ namespace SandRibbon
                 newDict.Source = sourceUri;
                 mergedDicts[mergedDicts.IndexOf(currentToolTips)] = newDict;
             }
-
             catch (Exception e)
             {
                 //Log(string.Format("Failure in language set: {0}", e.Message));

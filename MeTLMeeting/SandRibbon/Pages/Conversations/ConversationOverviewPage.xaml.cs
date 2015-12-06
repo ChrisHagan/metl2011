@@ -6,6 +6,8 @@ using System.Windows.Data;
 using System;
 using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Components;
+using System.Windows.Controls;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Collaboration
 {
@@ -40,7 +42,7 @@ namespace SandRibbon.Pages.Collaboration
         public static readonly DependencyProperty voicesProperty =
             DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
     };
-    public partial class ConversationOverviewPage : ConversationAwarePage
+    public partial class ConversationOverviewPage : Page
     {        
         public ConversationOverviewPage()
         {
@@ -48,11 +50,17 @@ namespace SandRibbon.Pages.Collaboration
         }
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
+            var rootPage = DataContext as DataContextRoot;
             var element = sender as FrameworkElement;
             var activity = element.DataContext as LocatedActivity;
             var slide = activity.slide;
-            ConversationState.Slide = slide;
-            NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, NetworkController));            
+            rootPage.ConversationState.Slide = slide;
+            NavigationService.Navigate(new RibbonCollaborationPage(
+                rootPage.UserGlobalState, 
+                rootPage.UserServerState, 
+                rootPage.UserConversationState, 
+                rootPage.ConversationState, 
+                rootPage.NetworkController));            
         }
     }    
     public class GridLengthConverter : IValueConverter

@@ -21,7 +21,6 @@ namespace SandRibbon.Components
         {
             config = _config;
         }
-        public ConversationSearchPage conversationSearchPage { get; protected set; }
         public IClientBehaviour connect(Credentials _creds)
         {
             return App.auditor.wrapFunction((g) =>

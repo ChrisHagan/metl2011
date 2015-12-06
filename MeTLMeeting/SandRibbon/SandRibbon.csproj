@@ -341,9 +341,6 @@
     <Compile Include="Pages\Collaboration\Layout\CastBarFrame.xaml.cs">
       <DependentUpon>CastBarFrame.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\CollaborationContext\ChooseCollaborationContextPage.xaml.cs">
-      <DependentUpon>ChooseCollaborationContextPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Collaboration\GroupCollaborationPage.xaml.cs">
       <DependentUpon>GroupCollaborationPage.xaml</DependentUpon>
     </Compile>
@@ -377,12 +374,6 @@
     <Compile Include="Pages\Conversations\Models\PickContext.cs" />
     <Compile Include="Pages\Conversations\Models\ReticulatedConversation.cs" />
     <Compile Include="Pages\Conversations\Views\UrlForThumbnailConverter.cs" />
-    <Compile Include="Pages\Identity\CreateProfilePage.xaml.cs">
-      <DependentUpon>CreateProfilePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Identity\ProfileSelectorPage.xaml.cs">
-      <DependentUpon>ProfileSelectorPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Integration\OneNoteSynchronizationPage.xaml.cs">
       <DependentUpon>OneNoteSynchronizationPage.xaml</DependentUpon>
     </Compile>
@@ -526,14 +517,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Identity\CreateProfilePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Identity\ProfileSelectorPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\Integration\OneNoteSynchronizationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -633,10 +616,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Utility\MeTLVideoPlayer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\CollaborationContext\ChooseCollaborationContextPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

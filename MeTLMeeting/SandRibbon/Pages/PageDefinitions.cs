@@ -51,6 +51,14 @@ namespace SandRibbon.Pages
             source.client.events.SlideJoined += Events_SlideJoined;
         }
 
+        public string Subject
+        {
+            get { return (string)GetValue(SubjectProperty); }
+            set { SetValue(SubjectProperty, value); }
+        }        
+        public static readonly DependencyProperty SubjectProperty =
+            DependencyProperty.Register("Subject", typeof(string), typeof(ConversationState), new PropertyMetadata("Unrestricted"));
+
         public bool BanhammerActive
         {
             get { return (bool)GetValue(BanhammerActiveProperty); }
