@@ -54,9 +54,7 @@ namespace SandRibbon
             DoConstructor();            
             Commands.AllStaticCommandsAreRegistered();                        
             App.CloseSplashScreen();
-            MessageBox.Show("MainWindow constructor complete");
             mainFrame.Navigate(new ServerSelectorPage());
-            Loaded += delegate { MessageBox.Show("Window loaded"); };
         }        
 
         private void DoConstructor()

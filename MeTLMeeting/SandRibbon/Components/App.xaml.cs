@@ -112,7 +112,6 @@ namespace SandRibbon
         public static Process proc;
         static App()
         {
-            MessageBox.Show("App constructor starts");
             proc = Process.GetCurrentProcess();
             Console.SetOut(outputWriter);
             App.mark("App static constructor runs");
