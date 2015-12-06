@@ -12,6 +12,7 @@ using SandRibbon.Components.Utility;
 using System.Windows.Media;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -25,7 +26,6 @@ namespace SandRibbon.Components.Submissions
     public partial class ScreenshotSubmission : UserControl
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
-        public SlideAwarePage rootPage { get; protected set; }
         public ScreenshotSubmission()
         {
             InitializeComponent();
@@ -35,9 +35,7 @@ namespace SandRibbon.Components.Submissions
             var viewSubmissionsCommand = new DelegateCommand<object>(viewSubmissions, canViewSubmissions);
             var requestScreenshotSubmissionCommand = new DelegateCommand<object>(generateScreenshot, canGenerateScreenshot);
             Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
+            {                
                 Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotSubmissionCommand);
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
@@ -56,6 +54,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void viewSubmissions(object _obj)
         {
+            var rootPage = DataContext as DataContextRoot;
             var view = new ViewSubmissions(rootPage.NetworkController,submissionList);
             view.Owner = Window.GetWindow(this);
             view.Show();
@@ -74,6 +73,7 @@ namespace SandRibbon.Components.Submissions
             if (ConversationDetails.Empty.Equals(details)) return;
             try
             {
+                var rootPage = DataContext as DataContextRoot;
                 if (rootPage.ConversationState.IsAuthor)
                     amTeacher();
                 else
@@ -86,6 +86,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void conversationChanged(object details)
         {
+            var rootPage = DataContext as DataContextRoot;
             Dispatcher.adoptAsync( delegate
                                                 {
                                                     try
@@ -136,6 +137,7 @@ namespace SandRibbon.Components.Submissions
         }
         protected void generateScreenshot(object _unused)
         {
+            var rootPage = DataContext as DataContextRoot;
             Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<string> sendScreenshot = null;

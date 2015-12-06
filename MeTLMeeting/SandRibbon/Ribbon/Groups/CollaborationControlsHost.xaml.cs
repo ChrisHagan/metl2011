@@ -8,10 +8,7 @@ using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
 
 namespace SandRibbon.Tabs.Groups
-{
-    /// <summary>
-    /// Interaction logic for CollaborationControlsHost.xaml
-    /// </summary>
+{ 
     public partial class CollaborationControlsHost 
     {
         public static readonly DependencyProperty NavigationIsLockedProperty = DependencyProperty.Register("NavigationIsLocked", typeof (bool), typeof(CollaborationControlsHost));
@@ -21,15 +18,9 @@ namespace SandRibbon.Tabs.Groups
             set { SetValue(NavigationIsLockedProperty, value); }
 
         }
-        public SlideAwarePage rootPage { get; protected set; }
         public CollaborationControlsHost()
         {
-            InitializeComponent();            
-            Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;                                
-            };            
+            InitializeComponent();                     
         }        
     }
 }

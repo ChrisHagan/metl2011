@@ -24,8 +24,7 @@ namespace SandRibbon.Utils.Connection
     public class PrintParser : MeTLLib.Providers.Connection.PreParser
     {
         public List<object> history = new List<object>();
-        private PrinterMoveDeltaProcessor moveDeltaProcessor;
-        public SlideAwarePage rootPage { get; protected set; }
+        private PrinterMoveDeltaProcessor moveDeltaProcessor;        
         public PrintParser(
             Credentials credentials,
             int room,
@@ -37,12 +36,10 @@ namespace SandRibbon.Utils.Connection
             IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,
             HttpResourceProvider httpResourceProvider,
-            IAuditor _auditor,
-            SlideAwarePage _rootPage
+            IAuditor _auditor            
         )
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
-        {
-            rootPage = _rootPage;
+        {            
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<MeTLInkCanvas> ToVisualWithNotes()
@@ -51,6 +48,7 @@ namespace SandRibbon.Utils.Connection
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
         {
+            var rootPage = DataContext as DataContextRoot;
             var canvases = createVisual("presentationSpace", true, rootPage.ConversationState.IsAuthor);
             return new[] { canvases.FirstOrDefault() };
         }

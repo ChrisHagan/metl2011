@@ -3,21 +3,18 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using MeTLLib;
-using SandRibbon.Providers;
-using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
-    public partial class blacklistController : Window
+    public partial class BlacklistController : Window
     {
         ObservableCollection<string> blacklistedUsersList = new ObservableCollection<string>(); 
-        List<string> blacklist = new List<string>();
-        public SlideAwarePage rootPage { get; protected set; }
-        public blacklistController(SlideAwarePage _rootPage)
-        {
-            rootPage = _rootPage;
+        List<string> blacklist = new List<string>();        
+        public BlacklistController()
+        {            
             InitializeComponent();
+            var rootPage = DataContext as DataContextRoot;
             blacklistedUsers.ItemsSource = blacklistedUsersList;
             blacklist = rootPage.ConversationState.Blacklist.Distinct().ToList();
             foreach(var user in blacklist)
@@ -25,6 +22,7 @@ namespace SandRibbon.Components
         }
         private void updateBlacklist(object sender, RoutedEventArgs e)
         {
+            var rootPage = DataContext as DataContextRoot;
             rootPage.ConversationState.Blacklist = blacklist;
             rootPage.ConversationState.Broadcast();
         }

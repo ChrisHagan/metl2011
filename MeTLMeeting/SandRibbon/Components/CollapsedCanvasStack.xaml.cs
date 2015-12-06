@@ -32,6 +32,7 @@ using SandRibbon.Pages.Collaboration.Layout;
 using Xceed.Wpf.Toolkit;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -204,7 +205,7 @@ namespace SandRibbon.Components
             }
         }
 
-        public SlideAwarePage rootPage { get; protected set; }
+        private DataContextRoot rootPage { get; set; }
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -238,11 +239,7 @@ namespace SandRibbon.Components
             var cutCommandBinding = new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute);
             var clipboardManagerCommand = new DelegateCommand<ClipboardAction>((action) => clipboardManager.OnClipboardAction(action));
             Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                {
-                    rootPage = DataContext as SlideAwarePage;
-                }
+            {                
                 contentBuffer = new ContentBuffer(rootPage);
                 me = rootPage.NetworkController.credentials.name;
                 Dispatcher.adopt(delegate

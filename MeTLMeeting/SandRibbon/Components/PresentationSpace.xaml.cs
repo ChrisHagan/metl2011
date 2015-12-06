@@ -37,9 +37,7 @@ namespace SandRibbon.Components
             {
                 return stack;
             }
-        }
-        public SlideAwarePage rootPage { get; protected set; }
-
+        }        
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
@@ -58,10 +56,7 @@ namespace SandRibbon.Components
             var banHammerSelectedItemsCommand = new DelegateCommand<object>(BanHammerSelectedItems);
             var mirrorPresentationSpaceCommand = new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace);
             Loaded += (s, e) => {
-                if (rootPage == null)
-                {
-                    rootPage = DataContext as SlideAwarePage;
-                }
+                var rootPage = DataContext as DataContextRoot;         
                 CommandBindings.Add(undoCommandBinding);
                 CommandBindings.Add(redoCommandBinding);
                 Commands.InitiateDig.RegisterCommand(initiateDigCommand);
@@ -75,8 +70,8 @@ namespace SandRibbon.Components
                 Commands.BanhammerSelectedItems.RegisterCommand(banHammerSelectedItemsCommand);
                 Commands.MirrorPresentationSpace.RegisterCommand(mirrorPresentationSpaceCommand);
                 Commands.AllStaticCommandsAreRegistered();
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.Slide.id.ToString());
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationState.Slide.id.ToString());
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.ConversationState.Slide.id.ToString()));
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationState.Jid);
             };
             Unloaded += (s, e) => {
@@ -101,7 +96,7 @@ namespace SandRibbon.Components
                 var tuple = (KeyValuePair<MainWindow, ScrollViewer>)obj;
                 var scroll = tuple.Value;
                 var parent = tuple.Key;
-                var mirror = new Window { Content = new Projector(rootPage) { viewConstraint = scroll } };
+                var mirror = new Window { Content = new Projector(DataContext as DataContextRoot) { viewConstraint = scroll } };
                 try
                 {
                     if (Projector.Window != null)

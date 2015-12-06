@@ -11,6 +11,7 @@ using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
 using System.ComponentModel;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -19,14 +20,14 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
-
-        public SlideAwarePage rootPage { get; protected set; }
+        
         public PrivacyTools()
         {
             InitializeComponent();
             var setPrivacyCommand = new DelegateCommand<string>(SetPrivacy, canSetPrivacy);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
             var textboxFocusedCommand = new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox);
+            var rootPage = DataContext as DataContextRoot;
             var privacyChangedEventHandler = new EventHandler((evs, eve) =>
             {
                 var newPrivacy = rootPage.UserConversationState.Privacy;
@@ -36,10 +37,6 @@ namespace SandRibbon.Components
             var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.PrivacyProperty, typeof(UserConversationState));
             Loaded += (s, e) =>
             {
-                if (rootPage == null)
-                {
-                    rootPage = DataContext as SlideAwarePage;
-                }
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
@@ -80,18 +77,21 @@ namespace SandRibbon.Components
         }
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
+            var rootPage = DataContext as DataContextRoot;
             if (info.Target == GlobalConstants.PRESENTATIONSPACE)
                 rootPage.UserConversationState.Privacy = info.IsPrivate ? Privacy.Private : Privacy.Public;
         }
 
         private void updateConversationDetails(ConversationDetails details)
         {
+            var rootPage = DataContext as DataContextRoot;
             var userConv = rootPage.UserConversationState;
             if (userConv.Privacy != Privacy.Private &&  (!details.isAuthor(rootPage.NetworkController.credentials.name) && !details.Permissions.studentCanPublish))
                 userConv.Privacy = Privacy.Private;
         }
         private bool canSetPrivacy(string privacy)
         {
+            var rootPage = DataContext as DataContextRoot;
             if (String.IsNullOrEmpty(privacy)) return false;
             var newPrivacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
             if (newPrivacy == Privacy.Private)
@@ -105,6 +105,7 @@ namespace SandRibbon.Components
         }
         private void SetPrivacy(string privacy)
         {
+            var rootPage = DataContext as DataContextRoot;
             if (String.IsNullOrEmpty(privacy)) return;
             rootPage.UserConversationState.Privacy = (Privacy)Enum.Parse(typeof(Privacy), privacy, true);
         }

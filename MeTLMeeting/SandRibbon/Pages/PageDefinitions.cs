@@ -10,27 +10,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 using System;
 using MeTLLib;
+using System.Collections.ObjectModel;
+using System.Windows.Media;
 
 namespace SandRibbon.Pages
-{
-    public class UserSlideState : DependencyObject
-    {
-        public bool BanhammerActive
-        {
-            get { return (bool)GetValue(BanhammerActiveProperty); }
-            set { SetValue(BanhammerActiveProperty, value); }
-        }
-        public static readonly DependencyProperty BanhammerActiveProperty =
-            DependencyProperty.Register("BanhammerActive", typeof(bool), typeof(UserSlideState), new PropertyMetadata(false));
-    }
+{    
     public class ConversationState : DependencyObject
     {
-        private NetworkController networkController;        
+        private NetworkController networkController;
         public ConversationState(ConversationDetails requestedConversation, NetworkController networkController)
-        {         
+        {
             this.networkController = networkController;
             Bind(networkController);
             Jid = requestedConversation.Jid;
@@ -39,24 +30,96 @@ namespace SandRibbon.Pages
 
         internal void Broadcast()
         {/*If you don't see something going out to participants, this is where the details were reconstructed from bound state*/
-            var details = new ConversationDetails {
+            var details = new ConversationDetails
+            {
                 Jid = Jid,
                 Title = Title,
                 Author = Author,
                 Slides = Slides,
                 blacklist = Blacklist,
-                Permissions = new Permissions("",true,StudentsCanPublish,!StudentsCanMoveFreely)
+                Permissions = new Permissions("", true, StudentsCanPublish, !StudentsCanMoveFreely)
             };
             networkController.client.UpdateConversationDetails(details);
         }
 
         public void Bind(NetworkController source)
-        {/*If you don't see something coming into the application from participants, this is where the client properties were converters
+        {/*If you don't see something coming into the application from participants, this is where the client properties are converted
             to DependencyProperties.*/
             this.networkController = source;
             source.client.events.ConversationDetailsAvailable -= Events_ConversationDetailsAvailable;
-            source.client.events.ConversationDetailsAvailable += Events_ConversationDetailsAvailable;            
+            source.client.events.ConversationDetailsAvailable += Events_ConversationDetailsAvailable;
+            source.client.events.SlideJoined += Events_SlideJoined;
+        }
+
+        public bool BanhammerActive
+        {
+            get { return (bool)GetValue(BanhammerActiveProperty); }
+            set { SetValue(BanhammerActiveProperty, value); }
+        }
+        public static readonly DependencyProperty BanhammerActiveProperty =
+            DependencyProperty.Register("BanhammerActive", typeof(bool), typeof(ConversationState), new PropertyMetadata(false));
+
+        public List<GroupSet> GroupSets
+        {
+            get { return (List<GroupSet>)GetValue(GroupSetsProperty); }
+            set { SetValue(GroupSetsProperty, value); }
         }        
+        public static readonly DependencyProperty GroupSetsProperty =
+            DependencyProperty.Register("GroupSets", typeof(List<GroupSet>), typeof(ConversationState), new PropertyMetadata(new List<GroupSet>()));
+
+        private void Events_SlideJoined(object sender, SlideJoinedEventArgs e)
+        {            
+            var thisSlide = Slides.Find(s => s.id == e.slide);
+            if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
+            {
+                var oldGroupSets = GroupSets;
+                var currentState = new Dictionary<string, bool>();
+                foreach (var vis in Visibilities)
+                {
+                    if (vis.GroupId != "")
+                    {
+                        currentState.Add(vis.GroupId, vis.Subscribed);
+                    }
+                }
+                var newSlide = Slides.Find(s => s.id == e.slide);
+                if (newSlide != null)
+                {
+                    GroupSets = newSlide.GroupSets;
+                    var newGroupDefs = new List<ContentVisibilityDefinition>();
+                    GroupSets.ForEach(gs =>
+                    {
+                        var oldGroupSet = oldGroupSets.Find(oldGroup => oldGroup.id == gs.id);
+                        gs.Groups.ForEach(g =>
+                        {
+                            var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
+                            var wasSubscribed = currentState[g.id];
+                            if (IsAuthor || g.GroupMembers.Contains(networkController.credentials.name))
+                            {
+                                var groupDescription = IsAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                newGroupDefs.Add(
+                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap, a, p, c, s) => g.GroupMembers.Contains(a))
+                                );
+                            }
+                        });
+                    });
+                    Visibilities.Clear();
+                    foreach (var nv in newGroupDefs.Concat(ContentFilterVisibility.defaultGroupVisibilities))
+                    {
+                        Visibilities.Add(nv);
+                    }
+                }
+            }
+            else
+            {
+                Visibilities.Clear();
+                foreach (var nv in ContentFilterVisibility.defaultVisibilities)
+                {
+                    Visibilities.Add(nv);
+                }
+            }
+        }
+
+        public ObservableCollection<GroupSet> GroupsSets { get; set; } = new ObservableCollection<GroupSet>();
 
         private void Events_ConversationDetailsAvailable(object sender, MeTLLib.ConversationDetailsAvailableEventArgs e)
         {
@@ -67,21 +130,28 @@ namespace SandRibbon.Pages
                 StudentsCanMoveFreely = !details.Permissions.NavigationLocked;
                 StudentsCanPublish = details.Permissions.studentCanPublish;
                 Slides = details.Slides.OrderBy(s => s.index).ToList();
-                var summaries = Slides.Select(s => new LocatedActivity("",s,0,0)).ToArray();
-                foreach (var slide in Slides.AsParallel()) {
+                var summaries = Slides.Select(s => new LocatedActivity("", s, 0, 0)).ToArray();
+                foreach (var slide in Slides.AsParallel())
+                {
                     Console.WriteLine(slide.index);
                     var desc = networkController.client.historyProvider.Describe(slide.id);
-                    summaries[slide.index] = new LocatedActivity("",slide, desc.stanzaCount, desc.voices);
+                    summaries[slide.index] = new LocatedActivity("", slide, desc.stanzaCount, desc.voices);
                     SlideSummaries = summaries.ToList();
                 }
             }
         }
 
+
+        public ObservableCollection<ContentVisibilityDefinition> Visibilities
+        {
+            get; set;
+        } = new ObservableCollection<ContentVisibilityDefinition>();
+
         public List<string> Blacklist
         {
             get { return (List<string>)GetValue(BlacklistProperty); }
             set { SetValue(BlacklistProperty, value); Broadcast(); }
-        }        
+        }
         public static readonly DependencyProperty BlacklistProperty =
             DependencyProperty.Register("Blacklist", typeof(List<string>), typeof(ConversationState), new PropertyMetadata(new List<string>()));
 
@@ -93,12 +163,12 @@ namespace SandRibbon.Pages
 
         public delegate void LocationAnalysis();
         public event LocationAnalysis LocationAnalyzed;
-        
+
         public List<LocatedActivity> SlideSummaries
         {
             get { return (List<LocatedActivity>)GetValue(SlideSummariesProperty); }
             set { SetValue(SlideSummariesProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty SlideSummariesProperty =
             DependencyProperty.Register("SlideSummaries", typeof(List<LocatedActivity>), typeof(ConversationState), new PropertyMetadata(new List<LocatedActivity>()));
 
@@ -117,14 +187,14 @@ namespace SandRibbon.Pages
         }
         public static readonly DependencyProperty QuizDataProperty =
             DependencyProperty.Register("QuizData", typeof(QuizData), typeof(ConversationState), new PropertyMetadata(new QuizData()));
-        
+
         public string Author
         {
             get { return (string)GetValue(AuthorProperty); }
             set { SetValue(AuthorProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty AuthorProperty =
-            DependencyProperty.Register("Author", typeof(string), typeof(ConversationState), new PropertyMetadata(""));        
+            DependencyProperty.Register("Author", typeof(string), typeof(ConversationState), new PropertyMetadata(""));
 
         public string Title
         {
@@ -156,26 +226,32 @@ namespace SandRibbon.Pages
             set { SetValue(SlidesProperty, value); }
         }
 
-        public bool IsAuthor {
-            get {
+        public bool IsAuthor
+        {
+            get
+            {
                 return networkController.credentials.name.ToLower() == Author.ToLower();
             }
         }
 
-        public bool AnyoneCanPublish {
-            get {
+        public bool AnyoneCanPublish
+        {
+            get
+            {
                 return IsAuthor || StudentsCanPublish;
             }
         }
-       
+
         public bool StudentsCanDuplicate
         {
             get { return (bool)GetValue(StudentsCanDuplicateProperty); }
             set { SetValue(StudentsCanDuplicateProperty, value); }
         }
 
-        public bool CanDuplicate {
-            get {
+        public bool CanDuplicate
+        {
+            get
+            {
                 return IsAuthor || StudentsCanDuplicate;
             }
         }
@@ -186,11 +262,17 @@ namespace SandRibbon.Pages
 
         public static readonly DependencyProperty StudentsCanDuplicateProperty =
             DependencyProperty.Register("StudentsCanDuplicate", typeof(bool), typeof(ConversationState), new PropertyMetadata(false));
-        
+
         public static readonly DependencyProperty SlidesProperty =
             DependencyProperty.Register("Slides", typeof(List<Slide>), typeof(ConversationState), new PropertyMetadata(new List<Slide>()));
-
         
+        public Slide Slide
+        {
+            get { return (Slide)GetValue(SlideProperty); }
+            set { SetValue(SlideProperty, value); }
+        }        
+        public static readonly DependencyProperty SlideProperty =
+            DependencyProperty.Register("Slide", typeof(Slide), typeof(ConversationState), new PropertyMetadata(Slide.Empty));
     }
     public class UserConversationState : DependencyObject
     {
@@ -256,7 +338,25 @@ namespace SandRibbon.Pages
     }
     public class UserGlobalState
     {
-
+        private static ImageSourceConverter ic = new ImageSourceConverter();
+        public static ImageSources Images
+        {
+            get; set;
+        } = new ImageSources(
+            ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/ShinyEraser.png") as ImageSource,
+            ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/appbar.draw.pen.png") as ImageSource,
+            ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/Highlighter.png") as ImageSource
+        );
+        public ObservableCollection<PenAttributes> Pens { get; set; } = new ObservableCollection<PenAttributes>
+        {
+                new PenAttributes(1, InkCanvasEditingMode.EraseByStroke,new System.Windows.Ink.DrawingAttributes {Color=Colors.White,IsHighlighter=false, Width=1 },Images),
+                new PenAttributes(2, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Black,IsHighlighter=false, Width=1 },Images),
+                new PenAttributes(3, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Red,IsHighlighter=false, Width=3 },Images),
+                new PenAttributes(4, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Blue,IsHighlighter=false, Width=3 },Images),
+                new PenAttributes(5, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Green,IsHighlighter=false, Width=5 },Images),
+                new PenAttributes(6, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Yellow,IsHighlighter=true, Width=15},Images),
+                new PenAttributes(7, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Cyan,IsHighlighter=true, Width=25},Images)
+            };
     }
     public class GlobalAwarePage : Page
     {
@@ -274,11 +374,5 @@ namespace SandRibbon.Pages
         public ConversationAwarePage() { }
         public UserConversationState UserConversationState { get; set; }
         public ConversationState ConversationState { get; set; }
-    }
-    public class SlideAwarePage : ConversationAwarePage
-    {
-        public SlideAwarePage() { }
-        public Slide Slide { get; set; }
-        public UserSlideState UserSlideState { get; set; }
-    }
+    }    
 }

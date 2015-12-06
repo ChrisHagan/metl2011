@@ -7,13 +7,12 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
     public partial class PrivacyToggleButton : UserControl
     {
-        public SlideAwarePage rootPage { get; protected set; }
-
         public PrivacyToggleButton(PrivacyToggleButtonInfo mode, Rect bounds)
         {
             InitializeComponent();
@@ -24,8 +23,7 @@ namespace SandRibbon.Components
 
             Loaded += (s, e) =>
             {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
+                var rootPage = DataContext as DataContextRoot;
                 if (mode.showDelete)
                     deleteButton.Visibility = Visibility.Visible;
                 else

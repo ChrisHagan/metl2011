@@ -4,6 +4,7 @@ using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
 using SandRibbon.Pages;
 using SandRibbon.Pages.Collaboration;
+using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,7 @@ using System.Windows.Shapes;
 namespace SandRibbon.Components
 {    
     public partial class RoleQuickControls : UserControl
-    {
-        public SlideAwarePage rootPage { get; protected set; }
+    {        
         public ConversationDetails ConversationDetails { get; protected set; }
         public RoleQuickControls()
         {
@@ -34,11 +34,7 @@ namespace SandRibbon.Components
             var setSyncCommand = new DelegateCommand<bool>(SetSync);
             var toggleSyncCommand = new DelegateCommand<object>(toggleSync);
             Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                {
-                    rootPage = DataContext as SlideAwarePage;
-                }                
+            {     
                 Commands.SetSync.RegisterCommand(setSyncCommand);
                 Commands.SetSync.Execute(false);
                 Commands.ToggleSync.RegisterCommand(toggleSyncCommand);                
@@ -51,15 +47,18 @@ namespace SandRibbon.Components
         }
 
         private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
-        {            
+        {
+            var rootPage = DataContext as DataContextRoot;
             rootPage.ConversationState.StudentsCanPublish = (bool)(sender as CheckBox).IsChecked;
         }
         private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
         {
+            var rootPage = DataContext as DataContextRoot;
             rootPage.ConversationState.StudentsCanMoveFreely = !(bool)(sender as CheckBox).IsChecked;            
         }
         protected void UpdatedConversationDetails(ConversationState conv)
         {
+            var rootPage = DataContext as DataContextRoot;
             Dispatcher.adopt(delegate
             {
                 if (rootPage.ConversationState.IsAuthor)
@@ -79,6 +78,7 @@ namespace SandRibbon.Components
         }
         private void SetSync(bool sync)
         {
+            var rootPage = DataContext as DataContextRoot;
             syncButton.IsChecked = rootPage.UserConversationState.Synched; 
             if (rootPage.UserConversationState.Synched)
             {                
@@ -86,19 +86,21 @@ namespace SandRibbon.Components
                 {
                     var teacherSlide = (int)rootPage.UserConversationState.TeacherSlide;
                     if (rootPage.ConversationState.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.ConversationState.IsAuthor)
-                        rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState,rootPage.UserServerState,rootPage.UserConversationState,rootPage.ConversationState,new UserSlideState(),rootPage.NetworkController, rootPage.ConversationState.Slides.First(s => s.id == teacherSlide)));                        
+                        NavigationService.GetNavigationService(this).Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState,rootPage.UserServerState,rootPage.UserConversationState,rootPage.ConversationState,new UserSlideState(),rootPage.NetworkController, rootPage.ConversationState.Slides.First(s => s.id == teacherSlide)));                        
                 }
                 catch (NotSetException) { }
             }            
         }
         private void toggleSync(object _unused)
         {
+            var rootPage = DataContext as DataContextRoot;
             var synch = !rootPage.UserConversationState.Synched;
             System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
             Commands.SetSync.Execute(synch);
         }
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
+            var rootPage = DataContext as DataContextRoot;
             Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<string> sendScreenshot = null;
@@ -106,7 +108,7 @@ namespace SandRibbon.Components
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 rootPage.NetworkController.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.Slide.id, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationState.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
+                (rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationState.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
                 MeTLMessage.Information("Submission sent to " + rootPage.ConversationState.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

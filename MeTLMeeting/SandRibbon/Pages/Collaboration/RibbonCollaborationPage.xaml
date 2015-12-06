@@ -26,9 +26,6 @@
     </Page.Resources>
     <DockPanel>
         <Ribbon DockPanel.Dock="Top" Loaded="Ribbon_Loaded">
-            <Ribbon.QuickAccessToolBar>
-                <RibbonQuickAccessToolBar Visibility="Collapsed" />
-            </Ribbon.QuickAccessToolBar>
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu>
                     <RibbonApplicationMenuItem Header="Create new" />
@@ -122,10 +119,7 @@
                 <components:PrivacyTools Header="Who can see your work?"/>
                 <components:ZoomControls Header="How much content do you see?"/>
                 <RibbonGroup x:Name="inkGroup" Header="Ink options">
-                    <!--
-                    <RibbonRadioButton GroupName="pen" LargeImageSource="/Resources/appbar.draw.pen.minus.png" Background="White" Command="{x:Static api:Commands.SetInkCanvasMode}" CommandParameter="EraseByStroke"></RibbonRadioButton>
-                    -->
-                    <ItemsControl x:Name="pens">
+                    <ItemsControl x:Name="pens" ItemsSource="{Binding Path=UserGlobalState.Pens}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
@@ -133,8 +127,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <!--<RibbonSplitButton LargeImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Background="{Binding Path=backgroundBrush}" Label="{Binding Path=description}" >-->
-                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" SmallImageSource="{Binding Path=icon}" Command="{x:Static api:Commands.SetPenAttributes}" CommandParameter="{Binding}" Label="{Binding Path=description}" >
+                                <RibbonSplitButton LargeImageSource="{Binding Path=icon}" SmallImageSource="{Binding Path=icon}" 
+                                                   Label="{Binding Path=description}" IsChecked="{Binding Path=IsSelectedPen}">
                                     <RibbonMenuItem Header="Customize" Command="{x:Static api:Commands.RequestReplacePenAttributes}" CommandParameter="{Binding}"/>
                                     <RibbonMenuItem Header="Reset" Command="{x:Static api:Commands.RequestResetPenAttributes}" CommandParameter="{Binding}"/>
                                 </RibbonSplitButton>
@@ -143,15 +137,13 @@
                     </ItemsControl>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup"></RibbonGroup>
-                <!--<legacy:TextTools x:Name="textGroup" /-->
                 <RibbonGroup x:Name="imageGroup" Header="Image options">
                     <RibbonButton Label="Insert image" Command="{x:Static api:Commands.AddImage}" SmallImageSource="\Resources\appbar.page.image.png" LargeImageSource="\Resources\appbar.page.image.png" />
                 </RibbonGroup>
             </RibbonTab>
             <tabs:Quizzes/>
             <tabs:Submissions/>
-            <tabs:Attachments/>
-            <!--tabs:ConversationManagement/-->
+            <tabs:Attachments/>            
             <tabs:Analytics/>
             <tabs:Plugins/>
         </Ribbon>
@@ -176,7 +168,8 @@
                     <components:RoleQuickControls />
                 </Grid>
             </Grid>
-            <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
+            <GridSplitter Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
+                          ShowsPreview="True" Width="40" />
             <Grid Grid.Column="2" Grid.Row="0" >
                 <Grid x:Name="adornerGrid" Margin="0,0,27,27">
                     <Canvas x:Name="syncPageOverlay"/>

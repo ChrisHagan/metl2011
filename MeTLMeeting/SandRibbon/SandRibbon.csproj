@@ -353,6 +353,8 @@
     <Compile Include="Pages\Collaboration\Layout\UserCardSmall.xaml.cs">
       <DependentUpon>UserCardSmall.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Collaboration\Models\DataContextRoot.cs" />
+    <Compile Include="Pages\Collaboration\Models\PenModel.cs" />
     <Compile Include="Pages\Collaboration\Models\ToolableSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\Models\VisibleSpaceModel.cs" />
     <Compile Include="Pages\Collaboration\OneNotePage.xaml.cs">

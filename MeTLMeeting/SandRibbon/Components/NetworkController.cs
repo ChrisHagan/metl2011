@@ -136,7 +136,7 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-            client.MoveTo(slide);
+            client.MoveTo(slide);            
         }
         private void SendChatMessage(object _obj)
         {

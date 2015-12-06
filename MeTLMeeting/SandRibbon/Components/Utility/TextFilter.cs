@@ -10,12 +10,13 @@ using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Utils;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components.Utility
 {
     public class TextFilter : ContentFilter<List<UIElement>, UIElement>
     {
-        public TextFilter(SlideAwarePage page) : base(page) { }
+        public TextFilter(DataContextRoot page) : base(page) { }
 
         protected override bool Equals(UIElement item1, UIElement item2)
         {

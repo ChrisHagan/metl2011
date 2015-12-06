@@ -12,6 +12,7 @@ using SandRibbon.Providers;
 using System.Collections.Generic;
 using MeTLLib.DataTypes;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Components
 {
@@ -45,11 +46,9 @@ namespace SandRibbon.Components
         {
             scroll.ScrollToHorizontalOffset(e.HorizontalOffset);
             scroll.ScrollToVerticalOffset(e.VerticalOffset);
-        }
-        public SlideAwarePage rootPage { get; protected set; }
-        public Projector(SlideAwarePage _rootPage)
-        {
-            rootPage = _rootPage;
+        }        
+        public Projector(DataContextRoot rootPage)
+        {            
             InitializeComponent();
             var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);            
             Loaded += (s, e) =>
@@ -57,7 +56,7 @@ namespace SandRibbon.Components
                 conversationLabel.Text = generateTitle(rootPage.ConversationState);
                 stack.me = "projector";
                 stack.Work.EditingMode = InkCanvasEditingMode.None;
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.Slide.id.ToString());
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.ConversationState.Slide.id.ToString());
                 Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);            
             };
             Unloaded += (s, e) =>
@@ -67,7 +66,8 @@ namespace SandRibbon.Components
         }
         private string generateTitle(ConversationState details)
         {
-            return string.Format("{0} Page:{1}", details.Title, rootPage.Slide.index);
+            var rootPage = DataContext as DataContextRoot;
+            return string.Format("{0} Page:{1}", details.Title, rootPage.ConversationState.Slide.index);
         }
         private void UpdateConversationDetails(ConversationState details)
         {
