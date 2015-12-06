@@ -242,7 +242,7 @@ namespace SandRibbon.Pages
             }
         }
 
-        public bool AnyoneCanPublish
+        public bool ICanPublish
         {
             get
             {
@@ -276,8 +276,12 @@ namespace SandRibbon.Pages
         
         public Slide Slide
         {
-            get { return (Slide)GetValue(SlideProperty); }
-            set { SetValue(SlideProperty, value); }
+            get {
+                return (Slide)GetValue(SlideProperty);
+            }
+            set {
+                SetValue(SlideProperty, value);
+            }
         }        
         public static readonly DependencyProperty SlideProperty =
             DependencyProperty.Register("Slide", typeof(Slide), typeof(ConversationState), new PropertyMetadata(Slide.Empty));
@@ -365,22 +369,5 @@ namespace SandRibbon.Pages
                 new PenAttributes(6, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Yellow,IsHighlighter=true, Width=15},Images),
                 new PenAttributes(7, InkCanvasEditingMode.Ink,new System.Windows.Ink.DrawingAttributes {Color=Colors.Cyan,IsHighlighter=true, Width=25},Images)
             };
-    }
-    public class GlobalAwarePage : Page
-    {
-        public GlobalAwarePage() { }
-        public UserGlobalState UserGlobalState { get; set; }
-    }
-    public class ServerAwarePage : GlobalAwarePage
-    {
-        public ServerAwarePage() { }
-        public NetworkController NetworkController { get; set; }
-        public UserServerState UserServerState { get; set; }
-    }
-    public class ConversationAwarePage : ServerAwarePage
-    {
-        public ConversationAwarePage() { }
-        public UserConversationState UserConversationState { get; set; }
-        public ConversationState ConversationState { get; set; }
-    }    
+    }        
 }

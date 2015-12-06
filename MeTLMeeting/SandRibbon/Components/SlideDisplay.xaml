@@ -20,11 +20,11 @@
         </ScrollViewer.Resources>
         <ListBox
              x:Name="slides"
-             ItemsSource="{Binding Path=Slides}"             
+             ItemsSource="{Binding Path=ConversationState.Slides}"
+             SelectedItem ="{Binding Path=ConversationState.Slide, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
              ScrollViewer.HorizontalScrollBarVisibility="Auto" 
              ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-             OverridesDefaultStyle="False"
-             SelectionChanged="slides_SelectionChanged"
+             OverridesDefaultStyle="False"             
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" Height="Auto">
             <ListBox.InputBindings>

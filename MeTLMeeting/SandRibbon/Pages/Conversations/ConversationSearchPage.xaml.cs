@@ -88,19 +88,12 @@ namespace SandRibbon.Pages.Conversations
             searchResultsObserver.Clear();
             conversations.ForEach(cd => searchResultsObserver.Add(cd));
         }
-
         private void clearState()
         {
             SearchInput.Clear();
             RefreshSortedConversationsList();
             SearchInput.SelectionStart = 0;
-        }        
-        private void UpdateAllConversations(ConversationDetails details)
-        {
-            if (details.IsEmpty) return;
-            // can I use the following test to determine if we're in a conversation?
-            RefreshSortedConversationsList();
-        }
+        }                
         private bool shouldShowConversation(ConversationDetails conversation)
         {
             var rootPage = DataContext as DataContextRoot;
@@ -158,7 +151,8 @@ namespace SandRibbon.Pages.Conversations
             var conversation = rootPage.NetworkController.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(rootPage.NetworkController.credentials))
             {
-                var userConversation = new UserConversationState();
+                rootPage.UserConversationState = new UserConversationState();
+                rootPage.UserGlobalState = new UserGlobalState();
                 rootPage.ConversationState = new ConversationState(conversation, rootPage.NetworkController);
                 NavigationService.Navigate(new ConversationOverviewPage());
             }

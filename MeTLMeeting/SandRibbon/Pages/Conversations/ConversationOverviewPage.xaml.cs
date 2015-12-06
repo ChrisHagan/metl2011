@@ -4,8 +4,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System;
-using SandRibbon.Pages.Conversations.Models;
-using SandRibbon.Components;
 using System.Windows.Controls;
 using SandRibbon.Pages.Collaboration.Models;
 
@@ -55,6 +53,7 @@ namespace SandRibbon.Pages.Collaboration
             var activity = element.DataContext as LocatedActivity;
             var slide = activity.slide;
             rootPage.ConversationState.Slide = slide;
+            /*This one wants to be able to work against the DataContext during construction*/
             NavigationService.Navigate(new RibbonCollaborationPage(
                 rootPage.UserGlobalState, 
                 rootPage.UserServerState, 

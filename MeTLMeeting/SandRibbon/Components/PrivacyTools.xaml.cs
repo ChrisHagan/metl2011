@@ -5,10 +5,8 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 using System.Windows.Controls.Ribbon;
-using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
 using System.ComponentModel;
 using SandRibbon.Pages.Collaboration.Models;
@@ -27,16 +25,18 @@ namespace SandRibbon.Components
             var setPrivacyCommand = new DelegateCommand<string>(SetPrivacy, canSetPrivacy);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
             var textboxFocusedCommand = new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox);
-            var rootPage = DataContext as DataContextRoot;
+            
             var privacyChangedEventHandler = new EventHandler((evs, eve) =>
             {
+                var rootPage = DataContext as DataContextRoot;
                 var newPrivacy = rootPage.UserConversationState.Privacy;
-                publicMode.IsEnabled = rootPage.ConversationState.AnyoneCanPublish;
+                publicMode.IsEnabled = rootPage.ConversationState.ICanPublish;
                 updateVisual(newPrivacy);
             });
             var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.PrivacyProperty, typeof(UserConversationState));
             Loaded += (s, e) =>
             {
+                var rootPage = DataContext as DataContextRoot;
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
@@ -45,7 +45,7 @@ namespace SandRibbon.Components
                 
                 var userConv = rootPage.UserConversationState;
                 if (userConv.Privacy == Privacy.NotSet || userConv.Privacy == Privacy.Public) {
-                    if (rootPage.ConversationState.AnyoneCanPublish)
+                    if (rootPage.ConversationState.ICanPublish)
                         userConv.Privacy = Privacy.Public;
                     else
                         rootPage.UserConversationState.Privacy = Privacy.Private;
@@ -99,7 +99,7 @@ namespace SandRibbon.Components
                 return true;
             } else if (newPrivacy == Privacy.Public){
                 var userConv = rootPage.UserConversationState;
-                return rootPage.ConversationState.AnyoneCanPublish;
+                return rootPage.ConversationState.ICanPublish;
             }
             else return true;
         }

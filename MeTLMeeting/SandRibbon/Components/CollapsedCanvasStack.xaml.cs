@@ -239,9 +239,9 @@ namespace SandRibbon.Components
             var cutCommandBinding = new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute);
             var clipboardManagerCommand = new DelegateCommand<ClipboardAction>((action) => clipboardManager.OnClipboardAction(action));
             Loaded += (s, e) =>
-            {                
-                contentBuffer = new ContentBuffer(rootPage);
-                me = rootPage.NetworkController.credentials.name;
+            {
+                rootPage = DataContext as DataContextRoot;
+                contentBuffer = new ContentBuffer(rootPage);                
                 Dispatcher.adopt(delegate
                 {
                     if (_target == null)
