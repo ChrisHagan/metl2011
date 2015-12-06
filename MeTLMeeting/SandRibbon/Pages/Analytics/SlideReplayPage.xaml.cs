@@ -1,18 +1,13 @@
-﻿using MeTLLib;
-using MeTLLib.DataTypes;
+﻿using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Linq;
-using SandRibbon.Components;
-using System;
-using System.Windows.Navigation;
-using SandRibbon.Providers;
 using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public partial class SlideReplayPage : UserControl
+    public partial class SlideReplayPage : Page
     {        
         List<TargettedElement> elements = new List<TargettedElement>();
         int pointer = 0;        

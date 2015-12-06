@@ -165,7 +165,7 @@ namespace SandRibbon.Pages.Login
                                 userServer.ThumbnailProvider = new ThumbnailProvider(controller);
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
-                                NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));
+                                NavigationService.Navigate(new ConversationSearchPage(controller.credentials.name));
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)

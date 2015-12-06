@@ -44,13 +44,9 @@ namespace SandRibbon.Pages.Conversations
 
         private System.Threading.Timer typingDelay;
         private ListCollectionView sortedConversations;
-        public ConversationSearchPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, string query)
-        {
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
-            NetworkController = _networkController;
-            InitializeComponent();
-            DataContext = this;
+        public ConversationSearchPage(string query)
+        {            
+            InitializeComponent();         
             SearchResults.DataContext = searchResultsObserver;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
             sortedConversations.Filter = isWhatWeWereLookingFor;
@@ -216,7 +212,7 @@ namespace SandRibbon.Pages.Conversations
             {                
                 var userConversation = new UserConversationState();
                 var conversationState = new ConversationState(conversation, NetworkController);                               
-                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, conversationState, NetworkController));
+                NavigationService.Navigate(new ConversationOverviewPage());
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");

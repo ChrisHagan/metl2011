@@ -18,13 +18,16 @@ using MeTLLib.Providers.Connection;
 using HttpResourceProvider = MeTLLib.Providers.Connection.HttpResourceProvider;
 using System.Windows.Ink;
 using SandRibbon.Pages;
+using SandRibbon.Pages.Collaboration.Models;
 
 namespace SandRibbon.Utils.Connection
 {
     public class PrintParser : MeTLLib.Providers.Connection.PreParser
     {
         public List<object> history = new List<object>();
-        private PrinterMoveDeltaProcessor moveDeltaProcessor;        
+        private PrinterMoveDeltaProcessor moveDeltaProcessor;
+        private DataContextRoot rootPage;
+
         public PrintParser(
             Credentials credentials,
             int room,
@@ -36,10 +39,12 @@ namespace SandRibbon.Utils.Connection
             IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,
             HttpResourceProvider httpResourceProvider,
-            IAuditor _auditor            
+            IAuditor _auditor,
+            DataContextRoot rootPage            
         )
             : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider,_auditor)
-        {            
+        {
+            this.rootPage = rootPage;
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<MeTLInkCanvas> ToVisualWithNotes()
@@ -47,8 +52,7 @@ namespace SandRibbon.Utils.Connection
             return createVisual();
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
-        {
-            var rootPage = DataContext as DataContextRoot;
+        {            
             var canvases = createVisual("presentationSpace", true, rootPage.ConversationState.IsAuthor);
             return new[] { canvases.FirstOrDefault() };
         }

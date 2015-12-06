@@ -139,7 +139,7 @@ namespace SandRibbon.Tabs
         private void UploadFile()
         {
             var rootPage = DataContext as DataContextRoot;
-            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationState,rootPage.Slide);
+            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationState,rootPage.ConversationState.Slide);
             upload.AddResourceFromDisk();
         }
     }

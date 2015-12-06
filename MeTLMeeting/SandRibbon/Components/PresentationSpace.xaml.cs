@@ -129,6 +129,7 @@ namespace SandRibbon.Components
 
         private void BanHammerSelectedItems(object obj)
         {
+            var rootPage = DataContext as DataContextRoot;
             var authorList = stack.GetSelectedAuthors().Distinct().Except(new[] { rootPage.ConversationState.Author });
             rootPage.ConversationState.Blacklist = rootPage.ConversationState.Blacklist.Concat(authorList).Distinct().ToList();
             Commands.DeleteSelectedItems.ExecuteAsync(null);
@@ -136,8 +137,9 @@ namespace SandRibbon.Components
 
         private void setUpSyncDisplay(int slide)
         {
+            var rootPage = DataContext as DataContextRoot;
             if (!rootPage.UserConversationState.Synched) return;
-            if (slide == rootPage.Slide.id) return;
+            if (slide == rootPage.ConversationState.Slide.id) return;
             try
             {
                 if (rootPage.ConversationState.Author == rootPage.NetworkController.credentials.name) return;
@@ -174,6 +176,7 @@ namespace SandRibbon.Components
             var file = "";
             Dispatcher.adopt(() =>
             {
+                var rootPage = DataContext as DataContextRoot;
                 var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack, details.dimensions);
                 var bitmap = new RenderTargetBitmap((int)targetSize.Width, (int)targetSize.Height, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
@@ -274,7 +277,8 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != rootPage.Slide.id || window.author != rootPage.NetworkController.credentials.name) return;
+            var rootPage = DataContext as DataContextRoot;
+            if (window.slide != rootPage.ConversationState.Slide.id || window.author != rootPage.NetworkController.credentials.name) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.ExecuteAsync(window);
         }
@@ -351,16 +355,17 @@ namespace SandRibbon.Components
         }
         private void SendNewDig(Rect rect)
         {
+            var rootPage = DataContext as DataContextRoot;
             var marquee = new Rectangle { Height = rect.Height, Width = rect.Width };
             System.Windows.Controls.Canvas.SetLeft(marquee, rect.Left);
             System.Windows.Controls.Canvas.SetTop(marquee, rect.Top);
 
             var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (rootPage.Slide.id, rootPage.NetworkController.credentials.name, marquee, origin, new Point(0, 0),
+            (rootPage.ConversationState.Slide.id, rootPage.NetworkController.credentials.name, marquee, origin, new Point(0, 0),
             rootPage.NetworkController.client.UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
-                                            "Resource/" + rootPage.Slide.id.ToString(),
+                                            "Resource/" + rootPage.ConversationState.Slide.id.ToString(),
                                             "quizSnapshot.png",
                                             false).ToString()));
         }
@@ -478,6 +483,7 @@ namespace SandRibbon.Components
         }
         private FrameworkElement clonePublicOnly()
         {
+            var rootPage = DataContext as DataContextRoot;
             var clone = new InkCanvas();
             clone.Height = ActualHeight;
             clone.Width = ActualWidth;
@@ -510,6 +516,7 @@ namespace SandRibbon.Components
         }
         private FrameworkElement cloneAll()
         {
+            var rootPage = DataContext as DataContextRoot;
             var clone = new InkCanvas();
             foreach (var stroke in stack.AllStrokes)
                 clone.Strokes.Add(stroke.Clone());

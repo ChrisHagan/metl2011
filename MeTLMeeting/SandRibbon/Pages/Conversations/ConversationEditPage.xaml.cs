@@ -59,7 +59,7 @@ namespace SandRibbon.Pages.Conversations
             if (string.IsNullOrEmpty(errors))
             {
                 NetworkController.client.UpdateConversationDetails(details);
-                NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, details.Title));
+                NavigationService.Navigate(new ConversationSearchPage(details.Title));
             }
             else
             {
@@ -100,7 +100,7 @@ namespace SandRibbon.Pages.Conversations
             {
                 var conversation = DataContext as ConversationDetails;
                 NetworkController.client.DeleteConversation(conversation);
-                NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, NetworkController.credentials.name));
+                NavigationService.Navigate(new ConversationSearchPage(NetworkController.credentials.name));
             }
         }
     }

@@ -15,9 +15,9 @@ using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public partial class RibbonCollaborationPage
+    public partial class RibbonCollaborationPage : Page
     {        
-        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, UserSlideState _userSlide, NetworkController _networkController)
+        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, NetworkController _networkController)
         {
             var root = new DataContextRoot
             {
@@ -25,8 +25,7 @@ namespace SandRibbon.Pages.Collaboration
                 UserGlobalState = _userGlobal,
                 UserServerState = _userServer,
                 UserConversationState = _userConv,
-                ConversationState = _convState,
-                UserSlideState = _userSlide
+                ConversationState = _convState                
             };
             UserGlobalState.Images.selectedBrush = FindResource("CheckedGradient") as Brush;
             DataContext = root;
@@ -39,7 +38,7 @@ namespace SandRibbon.Pages.Collaboration
             {
                 try
                 {
-                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(ConversationState) : false;
+                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(root.ConversationState) : false;
                 }
                 catch
                 {
@@ -95,7 +94,7 @@ namespace SandRibbon.Pages.Collaboration
 
             Loaded += (cs, ce) =>
             {
-                UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(ConversationState.Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;
+                root.UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(root.ConversationState.Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;
                 Commands.MoveToNext.RegisterCommand(moveToNextCommand);
                 Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
@@ -121,9 +120,9 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.ShowProjector.Execute(null);
                 root.UserGlobalState.Pens[1].IsSelectedPen = true;
 
-                NetworkController.client.SneakInto(ConversationState.Jid);
-                NetworkController.client.SneakInto(ConversationState.Slide.id.ToString());
-                NetworkController.client.SneakInto(ConversationState.Slide.id.ToString() + NetworkController.credentials.name);
+                root.NetworkController.client.SneakInto(root.ConversationState.Jid);
+                root.NetworkController.client.SneakInto(root.ConversationState.Slide.id.ToString());
+                root.NetworkController.client.SneakInto(root.ConversationState.Slide.id.ToString() + root.NetworkController.credentials.name);
             };
             this.Unloaded += (ps, pe) =>
             {
@@ -145,20 +144,21 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestResetPenAttributes.UnregisterCommand(requestResetPenAttributesCommand);
                 Commands.JoinConversation.UnregisterCommand(joinConversationCommand);                
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
-                UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
-                NetworkController.client.SneakOutOf(ConversationState.Slide.id.ToString() + NetworkController.credentials.name);
-                NetworkController.client.SneakOutOf(ConversationState.Slide.id.ToString());
-                NetworkController.client.SneakOutOf(ConversationState.Jid);
+                root.UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
+                root.NetworkController.client.SneakOutOf(root.ConversationState.Slide.id.ToString() + root.NetworkController.credentials.name);
+                root.NetworkController.client.SneakOutOf(root.ConversationState.Slide.id.ToString());
+                root.NetworkController.client.SneakOutOf(root.ConversationState.Jid);
             };
         }
         private void Shift(int direction)
         {
-            var slides = ConversationState.Slides.OrderBy(s => s.index).ToList();
-            var currentIndex = slides.IndexOf(ConversationState.Slide);
+            var rootPage = DataContext as DataContextRoot;
+            var slides = rootPage.ConversationState.Slides.OrderBy(s => s.index).ToList();
+            var currentIndex = slides.IndexOf(rootPage.ConversationState.Slide);
             var newSlide = slides.ElementAt(currentIndex + direction);
             if (newSlide != null)
             {
-                ConversationState.Slide = newSlide;                
+                rootPage.ConversationState.Slide = newSlide;                
             }
         }        
         protected void openProjectorWindow(MainWindow window)
@@ -167,7 +167,8 @@ namespace SandRibbon.Pages.Collaboration
         }       
         private bool userMayAdministerConversation(ConversationState state)
         {
-            return ConversationState.StudentsCanDuplicate;
+            var rootPage = DataContext as DataContextRoot;
+            return rootPage.ConversationState.StudentsCanDuplicate;
         }
         private void SetLayer(string layer)
         {
@@ -299,12 +300,12 @@ namespace SandRibbon.Pages.Collaboration
             BroadcastZoom();
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new ConversationSearchPage(UserGlobalState, UserServerState, NetworkController, ""));
+        {            
+            NavigationService.Navigate(new ConversationSearchPage(""));
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, NetworkController));
+            NavigationService.Navigate(new ConversationOverviewPage());
         }
         private bool canZoomIn(object sender)
         {
@@ -458,22 +459,24 @@ namespace SandRibbon.Pages.Collaboration
         }
         protected bool canOriginalView(object _unused)
         {
+            var rootPage = DataContext as DataContextRoot;
             return
                 scroll != null &&                
-                ConversationState.Slide != null &&
-                ConversationState.Slide != Slide.Empty &&
-                scroll.Height != ConversationState.Slide.defaultHeight &&
-                scroll.Width != ConversationState.Slide.defaultWidth;
+                rootPage.ConversationState.Slide != null &&
+                rootPage.ConversationState.Slide != Slide.Empty &&
+                scroll.Height != rootPage.ConversationState.Slide.defaultHeight &&
+                scroll.Width != rootPage.ConversationState.Slide.defaultWidth;
         }
         protected void originalView(object _unused)
         {
+            var rootPage = DataContext as DataContextRoot;
             if (scroll != null &&
-            ConversationState.Slide != null &&
-            ConversationState.Slide != Slide.Empty)
+            rootPage.ConversationState.Slide != null &&
+            rootPage.ConversationState.Slide != Slide.Empty)
             {                
-                if (ConversationState.Slide.defaultHeight == 0 || ConversationState.Slide.defaultWidth == 0) return;
-                scroll.Width = ConversationState.Slide.defaultWidth;
-                scroll.Height = ConversationState.Slide.defaultHeight;
+                if (rootPage.ConversationState.Slide.defaultHeight == 0 || rootPage. ConversationState.Slide.defaultWidth == 0) return;
+                scroll.Width = rootPage.ConversationState.Slide.defaultWidth;
+                scroll.Height = rootPage.ConversationState.Slide.defaultHeight;
                 if (canvas != null && canvas.stack != null && !Double.IsNaN(canvas.stack.offsetX) && !Double.IsNaN(canvas.stack.offsetY))
                 {
                     scroll.ScrollToHorizontalOffset(Math.Min(scroll.ExtentWidth, Math.Max(0, -canvas.stack.offsetX)));
@@ -488,7 +491,8 @@ namespace SandRibbon.Pages.Collaboration
         }        
         private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
         {
-            if (ConversationState.CanDuplicate) ConversationState.DuplicateSlide();            
+            var rootPage = DataContext as DataContextRoot;
+            if (rootPage.ConversationState.CanDuplicate) rootPage.ConversationState.DuplicateSlide();            
         }        
         private void Ribbon_Loaded(object sender, RoutedEventArgs e)
         {//Remove the QuickLaunchBar; it's too small to use and we have our own Frame

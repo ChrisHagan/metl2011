@@ -1,4 +1,4 @@
-﻿<pages:SlideAwarePage x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
+﻿<Page x:Class="SandRibbon.Pages.Collaboration.RibbonCollaborationPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -231,4 +231,4 @@
             <components:SlideDisplay Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" x:Name="slides" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         </Grid>
     </DockPanel>
-</pages:SlideAwarePage>
+</Page>

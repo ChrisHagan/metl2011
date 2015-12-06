@@ -61,14 +61,14 @@ namespace SandRibbon.Components
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.UserSlideState.BanhammerActive)
+                if (rootPage.ConversationState.BanhammerActive)
                 {
                     deleteButton.Visibility = Visibility.Collapsed;
                     showButton.Visibility = Visibility.Collapsed;
                     hideButton.Visibility = Visibility.Collapsed;
                 }
 
-                if (rootPage.UserSlideState.BanhammerActive && rootPage.ConversationState.IsAuthor)
+                if (rootPage.ConversationState.BanhammerActive && rootPage.ConversationState.IsAuthor)
                     banhammerButton.Visibility = Visibility.Visible;
                 else
                     banhammerButton.Visibility = Visibility.Collapsed;

@@ -41,27 +41,18 @@ namespace SandRibbon.Pages.Collaboration
             DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
     };
     public partial class ConversationOverviewPage : ConversationAwarePage
-    {
-        public ReticulatedConversation conversation { get; protected set; }
-        public ConversationOverviewPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _conversationState, NetworkController _networkController)
-        {/*Grab all the states for further threading.  Trust that bindings have already been established.  Your referrer
-            knows more about possible optimisations than you do right now.*/
-            UserGlobalState = _userGlobal;
-            UserServerState = _userServer;
-            UserConversationState = _userConv;
-            ConversationState = _conversationState;
-            NetworkController = _networkController;            
-            DataContext = ConversationState;
+    {        
+        public ConversationOverviewPage()
+        {
             InitializeComponent();
         }
-
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var activity = element.DataContext as LocatedActivity;
             var slide = activity.slide;
-            var userSlide = new UserSlideState();            
-            NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, userSlide, NetworkController, slide));            
+            ConversationState.Slide = slide;
+            NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, NetworkController));            
         }
     }    
     public class GridLengthConverter : IValueConverter
