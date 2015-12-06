@@ -17,7 +17,7 @@ namespace SandRibbon.Components
         {
             rootPage = _rootPage;
             InitializeComponent();
-            var slides = rootPage.ConversationDetails.Slides.Select(s=>new MeTLLib.DataTypes.ThumbnailInformation{ 
+            var slides = rootPage.ConversationState.Slides.Select(s=>new MeTLLib.DataTypes.ThumbnailInformation{ 
                 Exposed=s.exposed,
                 slideId=s.id,
                 slideNumber=s.index+1

@@ -225,10 +225,9 @@ namespace SandRibbon.Pages.Collaboration
     public partial class RibbonCollaborationPage : SlideAwarePage
     {
         protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;
-        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, UserSlideState _userSlide, NetworkController _networkController, ConversationDetails _details, Slide _slide)
+        public RibbonCollaborationPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, ConversationState _convState, UserSlideState _userSlide, NetworkController _networkController, Slide _slide)
         {
-            NetworkController = _networkController;
-            ConversationDetails = _details;
+            NetworkController = _networkController;            
             Slide = _slide;
             UserGlobalState = _userGlobal;
             UserServerState = _userServer;
@@ -256,14 +255,7 @@ namespace SandRibbon.Pages.Collaboration
 
             pens.ItemsSource = penCollection;
 
-            InitializeComponent();
-            /*
-            fontFamily.ItemsSource = fontList;
-            fontSize.ItemsSource = fontSizes;
-            fontSize.SetValue(Selector.SelectedIndexProperty,0);
-            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
-            */
+            InitializeComponent();            
             var setLayerCommand = new DelegateCommand<string>(SetLayer);
             var duplicateSlideCommand = new DelegateCommand<object>((obj) =>
             {
@@ -272,14 +264,13 @@ namespace SandRibbon.Pages.Collaboration
             {
                 try
                 {
-                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
+                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(ConversationState) : false;
                 }
                 catch
                 {
                     return false;
                 }
-            });
-            var duplicateConversationCommand = new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation);
+            });            
             var addPrivacyToggleButtonCommand = new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton);
             var removePrivacyAdornersCommand = new DelegateCommand<string>((s) => RemovePrivacyAdorners(s));
             var fitToViewCommand = new DelegateCommand<object>(fitToView, canFitToView);
@@ -322,8 +313,7 @@ namespace SandRibbon.Pages.Collaboration
             var joinConversationCommand = new DelegateCommand<string>((convJid) =>
             {
                 Commands.RequerySuggested();
-            });
-            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            });            
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
             var moveToNextCommand = new DelegateCommand<object>(o => Shift(1));
             var moveToPreviousCommand = new DelegateCommand<object>(o => Shift(-1));
@@ -334,8 +324,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.MoveToNext.RegisterCommand(moveToNextCommand);
                 Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
-                Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);
-                Commands.DuplicateConversation.RegisterCommand(duplicateConversationCommand);
+                Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);                
                 Commands.AddPrivacyToggleButton.RegisterCommand(addPrivacyToggleButtonCommand);
                 Commands.RemovePrivacyAdorners.RegisterCommand(removePrivacyAdornersCommand);
                 Commands.FitToView.RegisterCommand(fitToViewCommand);
@@ -347,8 +336,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestReplacePenAttributes.RegisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.RegisterCommand(replacePenAttributesCommand);
                 Commands.RequestResetPenAttributes.RegisterCommand(requestResetPenAttributesCommand);
-                Commands.JoinConversation.RegisterCommand(joinConversationCommand);
-                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
+                Commands.JoinConversation.RegisterCommand(joinConversationCommand);               
                 Commands.ProxyMirrorPresentationSpace.RegisterCommand(proxyMirrorPresentationSpaceCommand);
                 scroll.ScrollChanged += (s, e) =>
                     {
@@ -357,7 +345,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);
-                NetworkController.client.SneakInto(ConversationDetails.Jid);
+                NetworkController.client.SneakInto(ConversationState.Jid);
                 NetworkController.client.SneakInto(Slide.id.ToString());
                 NetworkController.client.SneakInto(Slide.id.ToString() + NetworkController.credentials.name);
             };
@@ -367,8 +355,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.MoveToPrevious.UnregisterCommand(moveToPreviousCommand);
                 Commands.HideProjector.Execute(null);
                 Commands.SetLayer.UnregisterCommand(setLayerCommand);
-                Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);
-                Commands.DuplicateConversation.UnregisterCommand(duplicateConversationCommand);
+                Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);      
                 Commands.AddPrivacyToggleButton.UnregisterCommand(addPrivacyToggleButtonCommand);
                 Commands.RemovePrivacyAdorners.UnregisterCommand(removePrivacyAdornersCommand);
                 Commands.FitToView.UnregisterCommand(fitToViewCommand);
@@ -380,34 +367,24 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestReplacePenAttributes.UnregisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.UnregisterCommand(replacePenAttributesCommand);
                 Commands.RequestResetPenAttributes.UnregisterCommand(requestResetPenAttributesCommand);
-                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
-                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
+                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);                
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
                 UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
                 NetworkController.client.SneakOutOf(Slide.id.ToString() + NetworkController.credentials.name);
                 NetworkController.client.SneakOutOf(Slide.id.ToString());
-                NetworkController.client.SneakOutOf(ConversationDetails.Jid);
+                NetworkController.client.SneakOutOf(ConversationState.Jid);
             };
         }
         private void Shift(int direction)
         {
-            var slides = ConversationDetails.Slides.OrderBy(s => s.index).ToList();
+            var slides = ConversationState.Slides.OrderBy(s => s.index).ToList();
             var currentIndex = slides.IndexOf(Slide);
             var newSlide = slides.ElementAt(currentIndex + direction);
             if (newSlide != null)
             {
-                NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, UserSlideState, NetworkController, ConversationDetails, newSlide));
+                NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, UserSlideState, NetworkController, newSlide));
             }
-        }
-
-
-        private void UpdateConversationDetails(ConversationDetails cd)
-        {
-            if (ConversationDetails.Jid == cd.Jid)
-            {
-                ConversationDetails = cd;
-            }
-        }
+        }        
 
         protected void openProjectorWindow(MainWindow window)
         {
@@ -475,9 +452,9 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
    Commands.FontChanged.Execute(font);
 }   
 */
-        private bool userMayAdministerConversation(ConversationDetails _conversation)
+        private bool userMayAdministerConversation(ConversationState state)
         {
-            return ConversationDetails.UserHasPermission(NetworkController.credentials);
+            return ConversationState.StudentsCanDuplicate;
         }
 
         private void SetLayer(string layer)
@@ -625,11 +602,11 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void RibbonApplicationMenuItem_ConversationOverview_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, UserConversationState, NetworkController, ConversationDetails));
+            NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, NetworkController));
         }
         private bool canZoomIn(object sender)
         {
-            return !(scroll == null) && ConversationDetails != ConversationDetails.Empty;
+            return !(scroll == null);
         }
         private bool canZoomOut(object sender)
         {
@@ -652,7 +629,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
                 {
                     result = vTrue;
                 }
-                result = (hTrue || vTrue) && ConversationDetails != ConversationDetails.Empty;
+                result = (hTrue || vTrue);
             }
             return result;
         }
@@ -782,9 +759,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         protected bool canOriginalView(object _unused)
         {
             return
-                scroll != null &&
-                ConversationDetails != null &&
-                ConversationDetails != ConversationDetails.Empty &&
+                scroll != null &&                
                 Slide != null &&
                 Slide != Slide.Empty &&
                 scroll.Height != Slide.defaultHeight &&
@@ -793,9 +768,7 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         protected void originalView(object _unused)
         {
 
-            if (scroll != null &&
-            ConversationDetails != null &&
-            ConversationDetails != ConversationDetails.Empty &&
+            if (scroll != null &&            
             Slide != null &&
             Slide != Slide.Empty)
             {
@@ -821,20 +794,8 @@ private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         }
         private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
         {
-            var kvp = new KeyValuePair<ConversationDetails, Slide>(ConversationDetails, Slide);
-            if (kvp.Key.UserHasPermission(NetworkController.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
-            {
-                NetworkController.client.DuplicateSlide(kvp.Key, kvp.Value);
-            }
-        }
-        private void duplicateConversation(ConversationDetails _conversationToDuplicate)
-        {
-            var conversationToDuplicate = ConversationDetails;
-            if (conversationToDuplicate.UserHasPermission(NetworkController.credentials))
-            {
-                NetworkController.client.DuplicateConversation(conversationToDuplicate);
-            }
-        }
+            if (ConversationState.CanDuplicate) ConversationState.DuplicateSlide();            
+        }        
 
         private void Ribbon_Loaded(object sender, RoutedEventArgs e)
         {

@@ -30,9 +30,7 @@ namespace SandRibbon.Components
             var privacyChangedEventHandler = new EventHandler((evs, eve) =>
             {
                 var newPrivacy = rootPage.UserConversationState.Privacy;
-                var conversation = rootPage.ConversationDetails;
-                var me = rootPage.NetworkController.credentials.name;
-                publicMode.IsEnabled = (conversation.isAuthor(me) || conversation.Permissions.studentCanPublish);
+                publicMode.IsEnabled = rootPage.ConversationState.AnyoneCanPublish;
                 updateVisual(newPrivacy);
             });
             var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.PrivacyProperty, typeof(UserConversationState));
@@ -47,12 +45,11 @@ namespace SandRibbon.Components
                 Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
                 privacyProperty.AddValueChanged(this, privacyChangedEventHandler);
 
-
-                var details = rootPage.ConversationDetails;
+                
                 var userConv = rootPage.UserConversationState;
                 if (userConv.Privacy == Privacy.NotSet || userConv.Privacy == Privacy.Public) {
-                    if (details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanPublish)
-                    userConv.Privacy = Privacy.Public;
+                    if (rootPage.ConversationState.AnyoneCanPublish)
+                        userConv.Privacy = Privacy.Public;
                     else
                         rootPage.UserConversationState.Privacy = Privacy.Private;
                 }
@@ -102,9 +99,7 @@ namespace SandRibbon.Components
                 return true;
             } else if (newPrivacy == Privacy.Public){
                 var userConv = rootPage.UserConversationState;
-                var details = rootPage.ConversationDetails;
-                var me = rootPage.NetworkController.credentials.name;
-                return details.isAuthor(me) || details.Permissions.studentCanPublish;
+                return rootPage.ConversationState.AnyoneCanPublish;
             }
             else return true;
         }

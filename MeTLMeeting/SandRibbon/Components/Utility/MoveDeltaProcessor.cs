@@ -9,23 +9,24 @@
     using System.Windows.Media;
     using MeTLLib.DataTypes;
     using System.Collections.ObjectModel;
+    using Pages;
 
     public abstract class MoveDeltaProcessor
     {
         public InkCanvas Canvas { get; private set; }
 
         public string Target { get; private set; }
-        public ConversationDetails details { get; protected set; }
+        public ConversationState conversationState { get; set; }
 
         public ContentBuffer contentBuffer { get; private set; }
         public string me { get; protected set; }
 
-        protected MoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationDetails _details, string _me)
+        protected MoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationState _details, string _me)
         {
             this.Canvas = canvas;
-            this.Target = target;
-            this.details = _details;
+            this.Target = target;            
             this.me = _me;
+            conversationState = _details;
             this.contentBuffer = contentBuffer;
         }
 

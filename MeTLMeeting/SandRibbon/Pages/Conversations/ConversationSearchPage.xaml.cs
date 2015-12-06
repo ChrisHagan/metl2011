@@ -199,7 +199,8 @@ namespace SandRibbon.Pages.Conversations
         {
             var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
             var userConv = new UserConversationState();
-            NavigationService.Navigate(new ConversationEditPage(UserGlobalState,UserServerState,userConv,NetworkController, conversation));
+            var conv = new ConversationState(conversation, NetworkController);
+            NavigationService.Navigate(new ConversationEditPage(UserGlobalState,UserServerState,userConv,NetworkController, conv));
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)
@@ -212,10 +213,10 @@ namespace SandRibbon.Pages.Conversations
             var requestedConversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
             var conversation = NetworkController.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(NetworkController.credentials))
-            {
-                //Commands.JoinConversation.Execute(conversation.Jid);
+            {                
                 var userConversation = new UserConversationState();
-                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, NetworkController, conversation));
+                var conversationState = new ConversationState(conversation, NetworkController);                               
+                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, conversationState, NetworkController));
             }
             else
                 MeTLMessage.Information("You no longer have permission to view this conversation.");

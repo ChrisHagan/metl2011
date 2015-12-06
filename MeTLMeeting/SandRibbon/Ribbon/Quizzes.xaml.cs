@@ -101,7 +101,7 @@ namespace SandRibbon.Tabs
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
-                var quizDialog = new CreateAQuiz(rootPage.NetworkController,rootPage.ConversationDetails,rootPage.Slide,rootPage.ConversationState.QuizData.activeQuizzes.Count);
+                var quizDialog = new CreateAQuiz(rootPage.NetworkController,rootPage.ConversationState,rootPage.Slide,rootPage.ConversationState.QuizData.activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });

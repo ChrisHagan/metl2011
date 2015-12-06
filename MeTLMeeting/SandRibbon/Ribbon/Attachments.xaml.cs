@@ -72,7 +72,7 @@ namespace SandRibbon.Tabs
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            if (details.IsJidEqual(rootPage.ConversationDetails.Jid) && details.isDeleted)
+            if (details.IsJidEqual(rootPage.ConversationState.Jid) && details.isDeleted)
                 clearOutAttachments(null);
         }
         private void clearOutAttachments(object obj)
@@ -88,7 +88,7 @@ namespace SandRibbon.Tabs
         }
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
-            if (!rootPage.ConversationDetails.IsJidEqual(fileInfo.conversationJid.ToString())) return;
+            if (rootPage.ConversationState.Jid != fileInfo.conversationJid.ToString()) return;
             Dispatcher.adoptAsync(() => {
                                             var fileInfoFileType = FileHelper.DetermineFileTypeFromExtension(fileInfo.name);
                                             if (files.Select(f => f.url).Contains(fileInfo.url)) return;
@@ -138,7 +138,7 @@ namespace SandRibbon.Tabs
 
         private void UploadFile()
         {
-            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationDetails,rootPage.Slide);
+            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationState,rootPage.Slide);
             upload.AddResourceFromDisk();
         }
     }

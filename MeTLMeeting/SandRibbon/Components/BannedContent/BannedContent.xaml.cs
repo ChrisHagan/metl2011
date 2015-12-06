@@ -196,11 +196,10 @@ namespace SandRibbon.Components.BannedContent
         {
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
-            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.ConversationDetails.blacklist));
+            blackList = new ObservableCollection<PrivateUser>(WrapBlackList(rootPage.ConversationState.Blacklist));
+            DataContext = rootPage.ConversationState;
+        }        
 
-            DataContext = this;
-        }
-        
         private void ReceiveSubmission(TargettedSubmission submission)
         {
             if (submission.target != "bannedcontent")
@@ -228,7 +227,7 @@ namespace SandRibbon.Components.BannedContent
             sub.UpdateDisplayNames(userMapping);
 
             blackList.Clear();
-            var updatedBlacklist = WrapBlackList(rootPage.ConversationDetails.blacklist);
+            var updatedBlacklist = WrapBlackList(rootPage.ConversationState.Blacklist);
             foreach (var user in updatedBlacklist)
             {
                 blackList.Add(user);
@@ -349,14 +348,13 @@ namespace SandRibbon.Components.BannedContent
 
         private void unbanSelected_Click(object sender, RoutedEventArgs e)
         {
-            var bannedUsers = GetBannedUserCheckboxes();
-            var details = rootPage.ConversationDetails;
+            var bannedUsers = GetBannedUserCheckboxes();            
             foreach (var participant in bannedUsers)
             {
                 var priv = participant.DataContext as PrivateUser;
                 if (participant.IsChecked ?? false)
                 {
-                    details.blacklist.Remove(priv.UserName);
+                    rootPage.ConversationState.Blacklist.Remove(priv.UserName);
                     foreach (var usr in blackList)
                     {
                         if (usr.UserName == priv.UserName)
@@ -366,8 +364,7 @@ namespace SandRibbon.Components.BannedContent
                         }
                     }
                 }
-            }
-            rootPage.NetworkController.client.UpdateConversationDetails(details);
+            }            
         }
     }
 }

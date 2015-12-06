@@ -123,8 +123,7 @@ namespace SandRibbon.Components
             var addSlideCommand = new DelegateCommand<object>(addSlide, canAddSlide);
             var moveToNextCommand = new DelegateCommand<object>(moveToNext, isNext);
             var moveToPreviousCommand = new DelegateCommand<object>(moveToPrevious, isPrevious);
-            var receiveTeacherStatusCommand = new DelegateCommand<TeacherStatus>(receivedStatus);
-            var editConversationCommand = new DelegateCommand<object>(EditConversation);
+            var receiveTeacherStatusCommand = new DelegateCommand<TeacherStatus>(receivedStatus);            
             var updateNewSlideOrderCommand = new DelegateCommand<int>(reorderSlides);
             refresher = new DispatcherTimer();
             refresher.Interval = shortRefresh;
@@ -135,7 +134,7 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides.OrderBy(sl => sl.index));
+                thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationState.Slides.OrderBy(sl => sl.index));
                 thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
                 SlideIndex = new SlideIndexConverter();
                 myMaxSlideIndex = -1;
@@ -150,8 +149,7 @@ namespace SandRibbon.Components
                 Commands.AddSlide.RegisterCommand(addSlideCommand);
                 Commands.MoveToNext.RegisterCommand(moveToNextCommand);
                 Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
-                Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(receiveTeacherStatusCommand);
-                Commands.EditConversation.RegisterCommandToDispatcher(editConversationCommand);
+                Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(receiveTeacherStatusCommand);                
                 Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(updateNewSlideOrderCommand);
                 refresherTick(this, new EventArgs());
             };
@@ -164,8 +162,7 @@ namespace SandRibbon.Components
                 Commands.AddSlide.UnregisterCommand(addSlideCommand);
                 Commands.MoveToNext.UnregisterCommand(moveToNextCommand);
                 Commands.MoveToPrevious.UnregisterCommand(moveToPreviousCommand);
-                Commands.ReceiveTeacherStatus.UnregisterCommand(receiveTeacherStatusCommand);
-                Commands.EditConversation.UnregisterCommand(editConversationCommand);
+                Commands.ReceiveTeacherStatus.UnregisterCommand(receiveTeacherStatusCommand);                
                 Commands.UpdateNewSlideOrder.UnregisterCommand(updateNewSlideOrderCommand);
             };
         }
@@ -177,7 +174,7 @@ namespace SandRibbon.Components
             {
                 var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
                 var generator = slides.ItemContainerGenerator;
-                var context = rootPage.ConversationDetails.Slides.OrderBy(s => s.index).ToList();
+                var context = rootPage.ConversationState.Slides;
                 if (view != null)
                 {
                     var top = view.VerticalOffset;
@@ -208,9 +205,11 @@ namespace SandRibbon.Components
                     }
                 }
             }
-            catch {
+            catch
+            {
                 shouldSpeedUp = true;
-            } finally
+            }
+            finally
             {
                 refresher.Interval = shouldSpeedUp ? shortRefresh : longRefresh;
                 refresher.Stop();
@@ -253,7 +252,7 @@ namespace SandRibbon.Components
                 Who = status.Teacher,
                 Where = status.Conversation
             });
-            if (status.Conversation == rootPage.ConversationDetails.Jid && status.Teacher == rootPage.ConversationDetails.Author)
+            if (status.Conversation == rootPage.ConversationState.Jid && status.Teacher == rootPage.ConversationState.Author)
             {
                 TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, status.Slide);
                 IsNavigationLocked = calculateNavigationLocked();
@@ -277,9 +276,9 @@ namespace SandRibbon.Components
 
         private bool calculateNavigationLocked()
         {
-            var d = rootPage.ConversationDetails;
-            return !d.isAuthor(rootPage.NetworkController.credentials.name) &&
-                   d.Permissions.NavigationLocked &&
+            var d = rootPage.ConversationState;
+            return !d.IsAuthor &&
+                   !d.StudentsCanMoveFreely &&
                    Globals.AuthorOnline(d.Author) &&
                    Globals.AuthorInRoom(d.Author, d.Jid);
         }
@@ -296,13 +295,12 @@ namespace SandRibbon.Components
 
         private bool canAddSlide(object _slide)
         {
-            if (rootPage.ConversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
             if (String.IsNullOrEmpty(rootPage.NetworkController.credentials.name)) return false;
-            return (rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name);
+            return (rootPage.ConversationState.StudentsCanPublish || rootPage.ConversationState.IsAuthor);
         }
         private void addSlide(object _slide)
         {
-            rootPage.NetworkController.client.AppendSlideAfter(rootPage.Slide.id, rootPage.ConversationDetails.Jid);
+            rootPage.NetworkController.client.AppendSlideAfter(rootPage.Slide.id, rootPage.ConversationState.Jid);
         }
         private bool isSlideInSlideDisplay(int slide)
         {
@@ -342,7 +340,7 @@ namespace SandRibbon.Components
 
         private void MoveToTeacher(int where)
         {
-            if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name)) return;
+            if (rootPage.ConversationState.IsAuthor) return;
             if (!rootPage.UserConversationState.Synched) return;
             if (where == rootPage.Slide.id) return; // don't move if we're already on the slide requested
             TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
@@ -351,7 +349,7 @@ namespace SandRibbon.Components
                                                                   {
                                                                       try
                                                                       {
-                                                                          var index = rootPage.ConversationDetails.Slides.First(s => s.id == where).index;
+                                                                          var index = rootPage.ConversationState.Slides.First(s => s.id == where).index;
                                                                           slides.SelectedIndex = index;
                                                                           slides.ScrollIntoView(slides.SelectedItem);
                                                                       }
@@ -363,21 +361,14 @@ namespace SandRibbon.Components
         }
         private bool slideInConversation(int slide)
         {
-            return rootPage.ConversationDetails.Slides.Select(t => t.id).Contains(slide);
+            return rootPage.ConversationState.Slides.Select(t => t.id).Contains(slide);
         }
         private bool isPrevious(object _object)
         {
-            if (rootPage.ConversationDetails != null && rootPage.ConversationDetails != ConversationDetails.Empty && rootPage.Slide != null && rootPage.Slide != Slide.Empty)
-            {
-                var isAtStart = rootPage.ConversationDetails.Slides.Select(s => s.index).Min() == rootPage.Slide.index;
-                var slideLockNav = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || ((rootPage.Slide.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
-                var canNav = !isAtStart && slideLockNav;// normalNav && slideLockNav;
-                return canNav;
-            }
-            else return false;
-            //var normalNav = slides != null &&  slides.SelectedIndex < thumbnailList.Count() - 1;
-
-            //            return slides != null && slides.SelectedIndex > 0;
+            var isAtStart = rootPage.ConversationState.Slides.Select(s => s.index).Min() == rootPage.Slide.index;
+            var slideLockNav = rootPage.ConversationState.IsAuthor || ((rootPage.Slide.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
+            var canNav = !isAtStart && slideLockNav;// normalNav && slideLockNav;
+            return canNav;
         }
         private void moveToPrevious(object _object)
         {
@@ -388,15 +379,10 @@ namespace SandRibbon.Components
         }
         private bool isNext(object _object)
         {
-            if (rootPage.ConversationDetails != null && rootPage.ConversationDetails != ConversationDetails.Empty && rootPage.Slide != null && rootPage.Slide != Slide.Empty)
-            {
-                var isAtEnd = rootPage.ConversationDetails.Slides.Select(s => s.index).Max() == rootPage.Slide.index;
-                var slideLockNav = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || ((rootPage.Slide.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
-                var canNav = !isAtEnd && slideLockNav;// normalNav && slideLockNav;
-                return canNav;
-            }
-            else return false;
-            //var normalNav = slides != null &&  slides.SelectedIndex < thumbnailList.Count() - 1;
+            var isAtEnd = rootPage.ConversationState.Slides.Select(s => s.index).Max() == rootPage.Slide.index;
+            var slideLockNav = rootPage.ConversationState.IsAuthor || ((rootPage.Slide.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
+            var canNav = !isAtEnd && slideLockNav;// normalNav && slideLockNav;
+            return canNav;
         }
 
         public void MoveToSlide(int slideIndex)
@@ -413,11 +399,10 @@ namespace SandRibbon.Components
         }
         private void reorderSlides(int conversationJid)
         {
-            if (rootPage.ConversationDetails.Jid != conversationJid.ToString()) return;
-            IsNavigationLocked = calculateNavigationLocked();
-            var details = rootPage.ConversationDetails;
+            if (rootPage.ConversationState.Jid != conversationJid.ToString()) return;
+            IsNavigationLocked = calculateNavigationLocked();            
             thumbnailList.Clear();
-            foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+            foreach (var slide in rootPage.ConversationState.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
             {
                 thumbnailList.Add(slide);
             }
@@ -427,23 +412,17 @@ namespace SandRibbon.Components
         {
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
-        }
-        public void EditConversation(object _obj)
-        {
-            var editConversation = new EditConversation(rootPage.ConversationDetails,rootPage.NetworkController);
-            editConversation.Owner = Window.GetWindow(this);
-            editConversation.ShowDialog();
-        }
+        }        
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
-                return;            
+                return;
             if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(rootPage.NetworkController.credentials))
             {
                 thumbnailList.Clear();
                 return;
             }
-            Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = rootPage.ConversationDetails.Jid, Slide = "0", Teacher = rootPage.ConversationDetails.Author });
+            Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = rootPage.ConversationState.Jid, Slide = "0", Teacher = rootPage.ConversationState.Author });
             IsNavigationLocked = calculateNavigationLocked();
             checkMovementLimits();
             if (thumbnailList.Count == 0)
@@ -499,7 +478,7 @@ namespace SandRibbon.Components
                         //Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
                         SendSyncMove(currentSlideId);
                         //checkMovementLimits();
-                        rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState,new UserSlideState(),rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
+                        rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, (Slide)e.AddedItems[0]));
                     }
                     else if (sender is ListBox)
                     {
@@ -514,7 +493,7 @@ namespace SandRibbon.Components
 
         public void SendSyncMove(int currentSlideId)
         {
-            if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && rootPage.UserConversationState.Synched)
+            if (rootPage.ConversationState.IsAuthor && rootPage.UserConversationState.Synched)
             {
                 Commands.SendSyncMove.ExecuteAsync(currentSlideId);
             }

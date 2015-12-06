@@ -77,7 +77,7 @@ namespace SandRibbon.Components
                 Commands.AllStaticCommandsAreRegistered();
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.Slide.id.ToString());
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationState.Jid);
             };
             Unloaded += (s, e) => {
                 CommandBindings.Remove(undoCommandBinding);
@@ -134,39 +134,9 @@ namespace SandRibbon.Components
 
         private void BanHammerSelectedItems(object obj)
         {
-            var authorList = stack.GetSelectedAuthors();
-            var authorColor = stack.ColourSelectedByAuthor(authorList);
-            var details = rootPage.ConversationDetails;
-            foreach (var author in authorList)
-            {
-                if (!rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && !details.blacklist.Contains(author))
-                    details.blacklist.Add(author);
-            }
-            rootPage.NetworkController.client.UpdateConversationDetails(details);
-            GenerateBannedContentScreenshot(authorColor);
+            var authorList = stack.GetSelectedAuthors().Distinct().Except(new[] { rootPage.ConversationState.Author });
+            rootPage.ConversationState.Blacklist = rootPage.ConversationState.Blacklist.Concat(authorList).Distinct().ToList();
             Commands.DeleteSelectedItems.ExecuteAsync(null);
-        }
-
-        private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
-        {
-            var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            DelegateCommand<string> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
-                             {
-                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = rootPage.NetworkController.client;
-                                 var slide = rootPage.Slide;
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(slide.index + 1, rootPage.NetworkController.credentials.name, "bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, rootPage.ConversationDetails.Title, blacklisted, Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
-                             });
-            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
-            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
-            {
-                time = time,
-                message = string.Format("Banned content submission at {0}", new DateTime(time)),
-                showPrivate = false,
-                dimensions = new Size(1024, 768)
-            });
         }
 
         private void setUpSyncDisplay(int slide)
@@ -175,8 +145,8 @@ namespace SandRibbon.Components
             if (slide == rootPage.Slide.id) return;
             try
             {
-                if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name) return;
-                if (rootPage.ConversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
+                if (rootPage.ConversationState.Author == rootPage.NetworkController.credentials.name) return;
+                if (rootPage.ConversationState.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
                 Dispatcher.adoptAsync((Action)delegate
                             {
                                 var adorner = GetAdorner();

@@ -4,12 +4,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:layout="clr-namespace:SandRibbon.Layout"      
       xmlns:pages="clr-namespace:SandRibbon.Pages"                             
-
+      xmlns:view="clr-namespace:SandRibbon.Pages.Conversations.Views"
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:local="clr-namespace:SandRibbon.Pages.Analytics"
       Title="ConversationComparisonPage">
     <Page.Resources>
-        <components:UrlForSlideConverter x:Key="renderer" />
+        <view:ThumbnailSourceConverter x:Key="renderer" />
         <local:ParticipantsEnumerator x:Key="participantsEnumerator" />
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </Page.Resources>
@@ -56,7 +56,14 @@
                                                 <Border.BorderBrush>
                                                     <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                                 </Border.BorderBrush>
-                                                <Label Content="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
+                                                <Label HorizontalAlignment="Center">
+                                                    <Label.Content>
+                                                        <MultiBinding Converter="{StaticResource renderer}">
+                                                            <Binding Path="../NetworkController" />
+                                                            <Binding Path="Slide" />
+                                                        </MultiBinding> 
+                                                    </Label.Content>
+                                                </Label>
                                             </Border>
                                             <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Aggregate.activityCount}" />
                                             <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"

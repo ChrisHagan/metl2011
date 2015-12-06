@@ -374,6 +374,7 @@
     <Compile Include="Pages\Conversations\Models\OneNoteConfiguration.cs" />
     <Compile Include="Pages\Conversations\Models\PickContext.cs" />
     <Compile Include="Pages\Conversations\Models\ReticulatedConversation.cs" />
+    <Compile Include="Pages\Conversations\Views\UrlForThumbnailConverter.cs" />
     <Compile Include="Pages\Identity\CreateProfilePage.xaml.cs">
       <DependentUpon>CreateProfilePage.xaml</DependentUpon>
     </Compile>
@@ -445,10 +446,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\BackStageNav.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\BannedContent\BannedContent.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -554,10 +551,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ContentVisibility.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\EditConversation.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -898,9 +891,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Components\Autoscroller.cs" />
-    <Compile Include="Components\BackStageNav.xaml.cs">
-      <DependentUpon>BackStageNav.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\blacklistController.xaml.cs">
       <DependentUpon>blacklistController.xaml</DependentUpon>
     </Compile>
@@ -920,9 +910,6 @@
     </Compile>
     <Compile Include="Components\ContentVisibility.xaml.cs">
       <DependentUpon>ContentVisibility.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\EditConversation.xaml.cs">
-      <DependentUpon>EditConversation.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\NetworkController.cs" />
     <Compile Include="Components\UserOptionsDialog.xaml.cs">
@@ -2702,32 +2689,32 @@
   <ItemGroup>
     <PublishFile Include="Microsoft.Vbe.Interop">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="office">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="stdole">
       <Visible>False</Visible>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
   </ItemGroup>

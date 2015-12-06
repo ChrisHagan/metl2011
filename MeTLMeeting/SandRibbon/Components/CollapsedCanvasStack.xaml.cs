@@ -257,7 +257,7 @@ namespace SandRibbon.Components
                             Globals.CurrentCanvasClipboardFocus = _target;
                         }
 
-                        moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                        moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                     }
                 });
                 CommandBindings.Add(deleteCommandBinding);
@@ -646,12 +646,12 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                   {
                       foreach (MeTLImage image in Work.ImageChildren())
-                          image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                          image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                       foreach (var item in Work.TextChildren())
                       {
                           MeTLTextBox box = null;
                           box = (MeTLTextBox)item;
-                          box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                          box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                       }
 
                       if (myTextBox != null)
@@ -738,7 +738,7 @@ namespace SandRibbon.Components
                     foreach (var add in undoToAdd)
                     {
                         contentBuffer.AddImage(add, (img) => Work.Children.Add(img));
-                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                     }
                 };
             Action redo = () =>
@@ -748,7 +748,7 @@ namespace SandRibbon.Components
                     foreach (var add in redoToAdd)
                     {
                         contentBuffer.AddImage(add, (img) => Work.Children.Add(img));
-                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                        add.ApplyPrivacyStyling(contentBuffer, _target, add.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                     }
                 };
 
@@ -825,7 +825,7 @@ namespace SandRibbon.Components
                   foreach (var box in undoBoxesToAdd)
                   {
                       AddTextBoxToCanvas(box, true);
-                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                   }
               };
             Action redo = () =>
@@ -838,7 +838,7 @@ namespace SandRibbon.Components
                   foreach (var box in redoBoxesToAdd)
                   {
                       AddTextBoxToCanvas(box, false);
-                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                      box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                   }
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
@@ -1294,7 +1294,7 @@ namespace SandRibbon.Components
                 if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
                     try
                     {
-                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.ConversationDetails));
+                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.ConversationState));
                     }
                     catch (Exception e)
                     {
@@ -1459,7 +1459,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
                         //sendImageWithoutHistory(tmpImage, tmpImage.tag().privacy);
                     }
-                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             Action undo = () =>
@@ -1481,7 +1481,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddImage(tmpImage, (img) => Work.Children.Add(tmpImage));
                         //sendImageWithoutHistory(tmpImage, tmpImage.tag().privacy);
                     }
-                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpImage.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection privacy changed");
@@ -1507,7 +1507,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
                         //sendTextWithoutHistory(tmpText, tmpText.tag().privacy);
                     }
-                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, newPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             Action undo = () =>
@@ -1529,7 +1529,7 @@ namespace SandRibbon.Components
                         contentBuffer.AddTextBox(tmpText, (txt) => Work.Children.Add(tmpText));
                         //sendTextWithoutHistory(tmpText, tmpText.tag().privacy);
                     }
-                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                    tmpText.ApplyPrivacyStyling(contentBuffer, _target, oldPrivacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 }
             };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection changed privacy");
@@ -1613,7 +1613,7 @@ namespace SandRibbon.Components
             var checksum = e.Stroke.sum().checksum;
             var timestamp = 0L;
             e.Stroke.tag(new StrokeTag(rootPage.NetworkController.credentials.name, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter, timestamp));
-            var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target, rootPage.ConversationDetails);
+            var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target, rootPage.ConversationState);
             privateAwareStroke.offsetX = contentBuffer.logicalX;
             privateAwareStroke.offsetY = contentBuffer.logicalY;
             Work.Strokes.Remove(e.Stroke);
@@ -1733,10 +1733,10 @@ namespace SandRibbon.Components
             //Offset the negative co-ordinates before sending the stroke off the wire
             var translatedStroke = OffsetNegativeCartesianStrokeTranslate(stroke);
             var privateRoom = string.Format("{0}{1}", rootPage.Slide.id, translatedStroke.tag().author);
-            if (thisPrivacy == Privacy.Private && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && me != translatedStroke.tag().author)
+            if (thisPrivacy == Privacy.Private && rootPage.ConversationState.IsAuthor && me != translatedStroke.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
             Commands.SendStroke.Execute(new TargettedStroke(rootPage.Slide.id, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
-            if (thisPrivacy == Privacy.Private && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && me != stroke.tag().author)
+            if (thisPrivacy == Privacy.Private && rootPage.ConversationState.IsAuthor && me != stroke.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }
         #endregion
@@ -1749,7 +1749,7 @@ namespace SandRibbon.Components
         }
         private void dirtyImage(MeTLImage imageToDirty)
         {
-            imageToDirty.ApplyPrivacyStyling(contentBuffer, _target, imageToDirty.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            imageToDirty.ApplyPrivacyStyling(contentBuffer, _target, imageToDirty.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
             Commands.SendDirtyImage.Execute(new TargettedDirtyElement(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, imageToDirty.tag().privacy, imageToDirty.tag().id, imageToDirty.tag().timestamp));
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
@@ -1789,7 +1789,7 @@ namespace SandRibbon.Components
                             {
                                 var receivedImage = image1.imageSpecification.forceEvaluation();
                                 AddImage(Work, receivedImage);
-                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                             }
                             catch (Exception e)
                             {
@@ -2277,7 +2277,7 @@ namespace SandRibbon.Components
                         {
                             if (!(targettedBox.HasSameAuthor(me)))
                                 box.Focusable = false;
-                            box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                            box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                         }
                     }
                 }
@@ -2387,7 +2387,7 @@ namespace SandRibbon.Components
             var box = (MeTLTextBox)sender;
             var undoText = box.Text;
             var redoText = box.Text;
-            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
             box.Height = Double.NaN;
             var mybox = box.clone();
             var undoBox = box.clone();
@@ -2535,7 +2535,7 @@ namespace SandRibbon.Components
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Work.Children.Contains(box)) return;
-            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
         }
 
         private void textboxGotFocus(object sender, RoutedEventArgs e)
@@ -2776,7 +2776,7 @@ namespace SandRibbon.Components
             {
                 var data = (MeTLClipboardData)Clipboard.GetData(MeTLClipboardData.Type);
                 var currentChecksums = Work.Strokes.Select(s => s.sum().checksum);
-                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).Select(s => new PrivateAwareStroke(s, _target, rootPage.ConversationDetails)).ToList();
+                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum)).Select(s => new PrivateAwareStroke(s, _target, rootPage.ConversationState)).ToList();
                 var boxes = createPastedBoxes(data.Text.ToList());
                 var images = createImages(data.Images.ToList());
                 Action undo = () =>
@@ -2859,7 +2859,7 @@ namespace SandRibbon.Components
         {
             foreach (var img in selectedImages)
             {
-                img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                img.ApplyPrivacyStyling(contentBuffer, _target, img.tag().privacy, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
                 Work.Children.Remove(img);
                 Commands.SendDirtyImage.Execute(new TargettedDirtyElement(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, canvasAlignedPrivacy(img.tag().privacy), img.tag().id, img.tag().timestamp));
             }

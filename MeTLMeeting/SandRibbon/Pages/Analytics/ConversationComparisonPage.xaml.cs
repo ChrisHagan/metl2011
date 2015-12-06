@@ -93,17 +93,17 @@ namespace SandRibbon.Pages.Analytics
         public static readonly DependencyProperty SlideContextsProperty =
             DependencyProperty.Register("SlideContexts", typeof(ObservableCollection<ToolableSpaceModel>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ToolableSpaceModel>()));
 
-        public ConversationComparableCorpus(NetworkController _networkController, IEnumerable<SearchConversationDetails> cds)
-        {            
+        public NetworkController NetworkController {get;set;}
+        public ConversationComparableCorpus(NetworkController networkController, IEnumerable<SearchConversationDetails> cds)
+        {
+            NetworkController = NetworkController;
             foreach (var c in cds)
             {
                 var conversation = new ReticulatedConversation{
-                    networkController = _networkController,
+                    networkController = networkController,
                     PresentationPath = c
                 };
-                Conversations.Add(conversation);
-                conversation.CalculateLocations();
-                conversation.AnalyzeLocations();
+                Conversations.Add(conversation);                
             }
         }
     }

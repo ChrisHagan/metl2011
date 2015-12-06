@@ -74,7 +74,7 @@ namespace SandRibbon.Components.Submissions
             if (ConversationDetails.Empty.Equals(details)) return;
             try
             {
-                if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name)
+                if (rootPage.ConversationState.IsAuthor)
                     amTeacher();
                 else
                     amStudent();
@@ -91,7 +91,7 @@ namespace SandRibbon.Components.Submissions
                                                     try
                                                     {
                                                         submissionList = new List<TargettedSubmission>();
-                                                        if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name)
+                                                        if (rootPage.ConversationState.IsAuthor)
                                                             amTeacher();
                                                         else
                                                             amStudent();
@@ -143,8 +143,8 @@ namespace SandRibbon.Components.Submissions
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 rootPage.NetworkController.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.NetworkController.client.location.currentSlide, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
-                MeTLMessage.Information("Submission sent to " + rootPage.ConversationDetails.Author);
+                (rootPage.NetworkController.client.location.currentSlide, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationState.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
+                MeTLMessage.Information("Submission sent to " + rootPage.ConversationState.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails

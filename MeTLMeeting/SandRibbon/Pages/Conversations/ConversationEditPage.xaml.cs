@@ -17,17 +17,17 @@ namespace SandRibbon.Pages.Conversations
 {
     public partial class ConversationEditPage : ConversationAwarePage
     {
-        public ConversationEditPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationDetails presentationPath)
+        public ConversationEditPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConv, NetworkController _networkController, ConversationState conversationState)
         {
 
             UserGlobalState = _userGlobal;
             UserServerState = _userServer;
             UserConversationState = _userConv;
-            ConversationDetails = presentationPath;
+            ConversationState = conversationState;
             NetworkController = _networkController;
             InitializeComponent();
             errorDisplay.DataContext = Errors;
-            DataContext = ConversationDetails;
+            DataContext = conversationState;
             sharing.ItemsSource = NetworkController.credentials.authorizedGroups.Select(s => s.groupKey);
         }
 

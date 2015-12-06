@@ -51,28 +51,25 @@ namespace SandRibbon.Components
         {
             rootPage = _rootPage;
             InitializeComponent();
-            var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);
-            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
+            var setDrawingAttributesCommand = new DelegateCommand<DrawingAttributes>(SetDrawingAttributes);            
             Loaded += (s, e) =>
             {
-                conversationLabel.Text = generateTitle(rootPage.ConversationDetails);
+                conversationLabel.Text = generateTitle(rootPage.ConversationState);
                 stack.me = "projector";
                 stack.Work.EditingMode = InkCanvasEditingMode.None;
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.Slide.id.ToString());
-                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);            
             };
             Unloaded += (s, e) =>
             {
-                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);                
             };
         }
-        private string generateTitle(ConversationDetails details)
+        private string generateTitle(ConversationState details)
         {
             return string.Format("{0} Page:{1}", details.Title, rootPage.Slide.index);
         }
-        private void UpdateConversationDetails(ConversationDetails details)
+        private void UpdateConversationDetails(ConversationState details)
         {
             conversationLabel.Text = generateTitle(details);
         }

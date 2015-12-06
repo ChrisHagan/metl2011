@@ -158,7 +158,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveConversationDetails(ConversationDetails details)
         {
-            if (details.Jid == rootPage.ConversationDetails.Jid)
+            if (details.Jid == rootPage.ConversationState.Jid)
             {
                 foreach (var bannedUsername in details.blacklist)
                 {
@@ -171,7 +171,7 @@ namespace SandRibbon.Components
         }
         protected void ReceivePresence(Attendance presence)
         {
-            if (rootPage.ConversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.location))
+            if (rootPage.ConversationState.Slides.Select(s => s.id.ToString()).Contains(presence.location))
             {
                 Dispatcher.adopt(delegate
                 {

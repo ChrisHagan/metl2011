@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Data;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
-using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Providers;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using SandRibbon.Components.Utility;
-using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
 
 namespace SandRibbon.Components
@@ -45,7 +38,7 @@ namespace SandRibbon.Components
 
         protected void potentiallyRefresh()
         {
-            var conversation = rootPage.ConversationDetails;
+            var conversation = rootPage.ConversationState;
             var thisSlide = conversation.Slides.Find(s => s.id == rootPage.Slide.id);
             if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
             {
@@ -70,9 +63,9 @@ namespace SandRibbon.Components
                         {
                             var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
                             var wasSubscribed = currentState[g.id];
-                            if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || g.GroupMembers.Contains(rootPage.NetworkController.credentials.name))
+                            if (rootPage.ConversationState.IsAuthor || g.GroupMembers.Contains(rootPage.NetworkController.credentials.name))
                             {
-                                var groupDescription = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                var groupDescription = rootPage.ConversationState.IsAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                 newGroupDefs.Add(
                                     new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap, a, p, c, s) => g.GroupMembers.Contains(a))
                                 );

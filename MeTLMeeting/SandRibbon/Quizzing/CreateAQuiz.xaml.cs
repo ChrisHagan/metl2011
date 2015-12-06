@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using SandRibbon.Components;
+using SandRibbon.Pages;
 
 namespace SandRibbon.Quizzing
 {
@@ -25,9 +26,9 @@ namespace SandRibbon.Quizzing
                                                          new Option("A",String.Empty,false,Colors.Blue)
                                                      };
         public NetworkController controller { get; protected set; }
-        public ConversationDetails details { get; protected set; }
+        public ConversationState details { get; protected set; }
         public Slide slide { get; protected set; }
-        public CreateAQuiz(NetworkController _controller, ConversationDetails _details, Slide _slide, int count)
+        public CreateAQuiz(NetworkController _controller, ConversationState _details, Slide _slide, int count)
         {
             details = _details;
             controller = _controller;

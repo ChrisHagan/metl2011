@@ -51,7 +51,7 @@ namespace SandRibbon.Utils.Connection
         }
         public IEnumerable<MeTLInkCanvas> ToVisualWithoutNotes()
         {
-            var canvases = createVisual("presentationSpace", true,rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+            var canvases = createVisual("presentationSpace", true, rootPage.ConversationState.IsAuthor);
             return new[] { canvases.FirstOrDefault() };
         }
         
@@ -77,11 +77,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvas = new MeTLInkCanvas();
             var contentBuffer = new ContentBuffer(rootPage);
-            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            moveDeltaProcessor = new PrinterMoveDeltaProcessor(canvas, target,contentBuffer, rootPage.ConversationState, rootPage.NetworkController.credentials.name);
             foreach (var stroke in ink)
             {
                 if ((includePublic && stroke.privacy == Privacy.Public) || stroke.target == target)
-                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.ConversationDetails), s => canvas.Strokes.Add(s));
+                    contentBuffer.AddStroke(new PrivateAwareStroke(stroke.stroke, target, rootPage.ConversationState), s => canvas.Strokes.Add(s));
             }
             foreach (var image in images)
             {
@@ -125,11 +125,11 @@ namespace SandRibbon.Utils.Connection
         {
             var canvasList = new List<MeTLInkCanvas>();
 
-            var presentationVisual = createVisual("presentationSpace", true, rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+            var presentationVisual = createVisual("presentationSpace", true, rootPage.ConversationState.IsAuthor);
             if (presentationVisual != null && presentationVisual.Count() > 0)
                 canvasList.AddRange(presentationVisual);
 
-            var notesVisual = createVisual("notepad", false, rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+            var notesVisual = createVisual("notepad", false, rootPage.ConversationState.IsAuthor);
             if (notesVisual != null && notesVisual.Count() > 0)
                 canvasList.AddRange(notesVisual);
 
