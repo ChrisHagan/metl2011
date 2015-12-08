@@ -12,25 +12,52 @@ using System.Windows.Navigation;
 
 namespace SandRibbon.Pages
 {
+    public class ServerAware<T>
+    {
+        public T Value { get; protected set; }
+        public NetworkController NetworkController { get; protected set; }
+        public ServerAware(NetworkController nc, T value)
+        {
+            this.NetworkController = nc;
+            this.Value = value;
+        }
+    }
+    public class ConversationAware<T> : ServerAware<T>
+    {
+        public ConversationDetails ConversationDetails { get; protected set; }
+        public ConversationAware(NetworkController nc, ConversationDetails cd, T value) : base(nc, value)
+        {
+            ConversationDetails = cd;
+        }
+    }
+    public class SlideAware<T> : ConversationAware<T>
+    {
+        public Slide Slide { get; protected set; }
+        public SlideAware(NetworkController nc, ConversationDetails cd, Slide sl, T value) : base(nc, cd, value)
+        {
+            Slide = sl;
+        }
+    }
+
     public class UserSlideState : DependencyObject
     {
         public bool BanhammerActive
         {
             get { return (bool)GetValue(BanhammerActiveProperty); }
             set { SetValue(BanhammerActiveProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty BanhammerActiveProperty =
-            DependencyProperty.Register("BanhammerActive", typeof(bool), typeof(UserSlideState), new PropertyMetadata(false));        
+            DependencyProperty.Register("BanhammerActive", typeof(bool), typeof(UserSlideState), new PropertyMetadata(false));
     }
     public class ConversationState : DependencyObject
-    {        
+    {
         public QuizData QuizData
         {
             get { return (QuizData)GetValue(QuizDataProperty); }
             set { SetValue(QuizDataProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty QuizDataProperty =
-            DependencyProperty.Register("QuizData", typeof(QuizData), typeof(ConversationState), new PropertyMetadata(new QuizData()));        
+            DependencyProperty.Register("QuizData", typeof(QuizData), typeof(ConversationState), new PropertyMetadata(new QuizData()));
     }
     public class UserConversationState : DependencyObject
     {
@@ -38,7 +65,7 @@ namespace SandRibbon.Pages
         {
             get { return (bool)GetValue(IsAuthorProperty); }
             set { SetValue(IsAuthorProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty IsAuthorProperty =
             DependencyProperty.Register("IsAuthor", typeof(bool), typeof(UserConversationState), new PropertyMetadata(false));
 
@@ -46,15 +73,15 @@ namespace SandRibbon.Pages
         {
             get { return (Privacy)GetValue(PrivacyProperty); }
             set { SetValue(PrivacyProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty PrivacyProperty =
             DependencyProperty.Register("Privacy", typeof(Privacy), typeof(UserConversationState), new PropertyMetadata(Privacy.NotSet));
-                
+
         public bool Synched
         {
             get { return (bool)GetValue(SynchedProperty); }
             set { SetValue(SynchedProperty, value); }
-        }       
+        }
         public static readonly DependencyProperty SynchedProperty =
             DependencyProperty.Register("Synched", typeof(bool), typeof(UserConversationState), new PropertyMetadata(false));
 
@@ -62,7 +89,7 @@ namespace SandRibbon.Pages
         {
             get { return (int)GetValue(TeacherSlideProperty); }
             set { SetValue(TeacherSlideProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty TeacherSlideProperty =
             DependencyProperty.Register("TeacherSlide", typeof(int), typeof(UserConversationState), new PropertyMetadata(-1));
 
@@ -70,7 +97,7 @@ namespace SandRibbon.Pages
         {
             get { return (List<ContentVisibilityDefinition>)GetValue(ContentVisibilityProperty); }
             set { SetValue(ContentVisibilityProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty ContentVisibilityProperty =
             DependencyProperty.Register("ContentVisibility", typeof(List<ContentVisibilityDefinition>), typeof(UserConversationState), new PropertyMetadata(ContentFilterVisibility.defaultVisibilities));
 
@@ -78,10 +105,10 @@ namespace SandRibbon.Pages
         {
             get { return (UndoHistory)GetValue(UndoHistoryProperty); }
             set { SetValue(UndoHistoryProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty UndoHistoryProperty =
             DependencyProperty.Register("UndoHistory", typeof(UndoHistory), typeof(UserConversationState), new PropertyMetadata(null));
-        
+
         public UserConversationState()
         {
             UndoHistory = new UndoHistory(this);
@@ -91,7 +118,7 @@ namespace SandRibbon.Pages
     {
         public WebSession AuthenticatedWebSession { get; set; }
         public OneNoteConfiguration OneNoteConfiguration { get; set; }
-        
+
         public ThumbnailProvider ThumbnailProvider { get; set; }
     }
     public class UserGlobalState
@@ -101,25 +128,25 @@ namespace SandRibbon.Pages
     public class GlobalAwarePage : Page
     {
         public GlobalAwarePage() { }
-        public UserGlobalState UserGlobalState { get; set; }                
+        public UserGlobalState UserGlobalState { get; set; }
     }
     public class ServerAwarePage : GlobalAwarePage
     {
         public ServerAwarePage() { }
-        public NetworkController NetworkController { get; set; }        
-        public UserServerState UserServerState { get; set; }        
+        public NetworkController NetworkController { get; set; }
+        public UserServerState UserServerState { get; set; }
     }
     public class ConversationAwarePage : ServerAwarePage
     {
         public ConversationAwarePage() { }
-        public ConversationDetails ConversationDetails { get; set; }        
-        public UserConversationState UserConversationState { get; set; }                
-        public ConversationState ConversationState { get; set; }        
+        public ConversationDetails ConversationDetails { get; set; }
+        public UserConversationState UserConversationState { get; set; }
+        public ConversationState ConversationState { get; set; }
     }
     public class SlideAwarePage : ConversationAwarePage
     {
         public SlideAwarePage() { }
-        public Slide Slide { get; set; }        
-        public UserSlideState UserSlideState { get; set; }        
+        public Slide Slide { get; set; }
+        public UserSlideState UserSlideState { get; set; }
     }
 }
