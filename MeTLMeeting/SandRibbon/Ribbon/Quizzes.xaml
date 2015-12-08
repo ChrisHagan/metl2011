@@ -74,7 +74,7 @@
                                         <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
                                             <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
                                                 <Button.ToolTip>
-                                                    <dict:MeTLImageToolTip TitleText="View quiz" 
+                                                    <dict:MeTLImageToolTip TitleText="View poll" 
                                                                            ImageSource="\Resources\Ribbon-Quiz.png"
                                                                            ContentText="{Binding Path=Question}"/>
                                                 </Button.ToolTip>

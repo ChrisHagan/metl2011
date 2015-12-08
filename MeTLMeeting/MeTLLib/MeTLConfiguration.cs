@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Net;
     using System.Web;
+    using System.Windows;
     using System.Xml.Linq;
 
     public class MeTLConfigurationProxy

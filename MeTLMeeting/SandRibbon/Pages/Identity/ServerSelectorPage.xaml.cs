@@ -141,8 +141,7 @@ namespace SandRibbon.Pages.ServerSelection
                 timers.ForEach(t =>
                 {
                     t.Change(Timeout.Infinite, Timeout.Infinite);
-                    t.Dispose();
-                    t = null;
+                    t.Dispose();                    
                 });
                 timers.Clear();
                 refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);

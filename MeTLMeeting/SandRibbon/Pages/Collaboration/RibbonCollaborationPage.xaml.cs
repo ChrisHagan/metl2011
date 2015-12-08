@@ -287,14 +287,14 @@ namespace SandRibbon.Pages.Collaboration
             var zoomInCommand = new DelegateCommand<object>(doZoomIn, canZoomIn);
             var zoomOutCommand = new DelegateCommand<object>(doZoomOut, canZoomOut);
             var setZoomRectCommand = new DelegateCommand<Rect>(SetZoomRect);
+
             var currentPenId = 0;
             var setPenAttributesCommand = new DelegateCommand<PenAttributes>(pa =>
             {
                 currentPenId = pa.id;
                 foreach (var p in penCollection)
                 {
-                    p.isSelectedPen = false;
-                    //p.isSelectedPen = p.id == currentPenId;
+                    p.isSelectedPen = false;                    
                 };
                 pa.isSelectedPen = true;
             });
@@ -319,10 +319,6 @@ namespace SandRibbon.Pages.Collaboration
                     Commands.SetPenAttributes.Execute(foundPen);
                 }
             }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
-            var joinConversationCommand = new DelegateCommand<string>((convJid) =>
-            {
-                Commands.RequerySuggested();
-            });
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
             var moveToNextCommand = new DelegateCommand<object>(o => Shift(1));
@@ -347,7 +343,6 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestReplacePenAttributes.RegisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.RegisterCommand(replacePenAttributesCommand);
                 Commands.RequestResetPenAttributes.RegisterCommand(requestResetPenAttributesCommand);
-                Commands.JoinConversation.RegisterCommand(joinConversationCommand);
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.RegisterCommand(proxyMirrorPresentationSpaceCommand);
                 scroll.ScrollChanged += (s, e) =>
@@ -382,7 +377,6 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestReplacePenAttributes.UnregisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.UnregisterCommand(replacePenAttributesCommand);
                 Commands.RequestResetPenAttributes.UnregisterCommand(requestResetPenAttributesCommand);
-                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
                 UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
@@ -416,69 +410,7 @@ namespace SandRibbon.Pages.Collaboration
         protected void openProjectorWindow(MainWindow window)
         {
             Commands.MirrorPresentationSpace.Execute(new KeyValuePair<MainWindow, ScrollViewer>(window, scroll));
-        }
-        /*
-private void restoreTextDefaults(object obj)
-{
-   fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
-   fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
-}
-
-private void updateTextControls(TextInformation info)
-{
-   fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
-   fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
-   TextBoldButton.IsChecked = info.Bold;
-   TextItalicButton.IsChecked = info.Italics;
-   TextUnderlineButton.IsChecked = info.Underline;
-   TextStrikethroughButton.IsChecked = info.Strikethrough;
-}       
-
-protected bool canDecreaseFont(object _unused)
-{
-   return fontSize != null;
-}
-private void decreaseFont(object _unused)
-{
-   if (fontSize.ItemsSource == null) return;
-   var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
-   if (currentItem - 1 >= 0)
-   {
-       var newSize = fontSizes[currentItem - 1];
-       fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
-       Commands.FontSizeChanged.Execute(newSize);
-   }
-}   
-protected bool canIncreaseFont(object _unused)
-{
-   return fontSize != null;
-}     
-private void increaseFont(object _unused)
-{
-   if (fontSize.ItemsSource == null) return;
-   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-   if (currentItem + 1 < fontSizes.Count())
-   {
-       var newSize = fontSizes[currentItem + 1];
-       fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
-       Commands.FontSizeChanged.Execute(newSize);
-   }
-}
-private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
-{
-   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-   if(currentItem < 0) return;
-   if (e.AddedItems.Count == 0) return;
-   var size = Double.Parse(e.AddedItems[0].ToString());
-   Commands.FontSizeChanged.Execute(size);
-}
-private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
-{
-   if (e.AddedItems.Count == 0) return;
-   var font = new FontFamily(e.AddedItems[0].ToString());
-   Commands.FontChanged.Execute(font);
-}   
-*/
+        }        
         private bool userMayAdministerConversation(ConversationDetails _conversation)
         {
             return ConversationDetails.UserHasPermission(NetworkController.credentials);

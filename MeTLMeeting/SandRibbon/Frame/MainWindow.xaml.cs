@@ -48,7 +48,6 @@ namespace SandRibbon
         private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-        private AsyncObservableCollection<LogMessage> logs = new AsyncObservableCollection<LogMessage>();
 
         public MainWindow()
         {
@@ -346,9 +345,7 @@ namespace SandRibbon
             {
                 Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
             }
-            catch (Exception e)
-            {
-                //Log(string.Format("Exception in MainWindow.getDefaultSystemLanguage: {0}", e.Message));
+            catch (Exception e) { 
             }
         }
         #region helpLinks
@@ -480,12 +477,10 @@ namespace SandRibbon
                 }
                 catch (NotSetException e)
                 {
-                    Log(string.Format("Reconnecting: {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
                 {
-                    Log(string.Format("Reconnecting: {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
             }
@@ -678,14 +673,7 @@ namespace SandRibbon
         private void UserPreferences(object sender, RoutedEventArgs e)
         {
             mainFrame.Navigate(new CommandBarConfigurationPage());
-        }
-
-        private void ShowDiagnostics(object sender, RoutedEventArgs e)
-        {
-            this.flyout.Content = TryFindResource("diagnostics");
-            this.flyout.DataContext = logs;
-            this.flyout.IsOpen = true;
-        }
+        }        
         protected void ShowDiagnosticsWindow(object sender, RoutedEventArgs e)
         {
             launchDiagnosticsWindow(null);

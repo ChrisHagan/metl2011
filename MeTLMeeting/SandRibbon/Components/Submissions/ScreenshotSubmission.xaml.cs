@@ -104,7 +104,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void amTeacher()
         {
-            submitSubmission.Visibility = Visibility.Collapsed;
+            submitSubmission.Visibility = Visibility.Visible;
             viewSubmission.Visibility = Visibility.Visible;
 
         }
