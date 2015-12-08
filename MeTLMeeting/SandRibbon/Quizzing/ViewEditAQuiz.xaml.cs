@@ -105,8 +105,7 @@ namespace SandRibbon.Quizzing
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
 
-            question.Options.CollectionChanged += UpdateOptionError;
-            //QuestionError = false;
+            question.Options.CollectionChanged += UpdateOptionError;            
             ResultsExist = CheckResultsExist(question);
         }
 

@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components;
 using SandRibbon.Quizzing;
 using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
@@ -53,7 +52,7 @@ namespace SandRibbon.Tabs
         }
         private void amAuthor()
         {
-            quizResultsRibbonGroup.Header = "Quizzes";
+            quizResultsRibbonGroup.Header = "Polls";
             quizRibbonGroup.Visibility = Visibility.Visible;
             createQuiz.Visibility = Visibility.Visible;
             createQuiz.IsEnabled = true;
@@ -62,8 +61,7 @@ namespace SandRibbon.Tabs
         private void amRespondent()
         {
             quizResultsRibbonGroup.Header = "Respond";
-            quizRibbonGroup.Visibility = Visibility.Collapsed;
-            //createQuiz.Visibility = Visibility.Collapsed;
+            quizRibbonGroup.Visibility = Visibility.Collapsed;           
             createQuiz.IsEnabled = false;
             results.Visibility = Visibility.Collapsed;
         }

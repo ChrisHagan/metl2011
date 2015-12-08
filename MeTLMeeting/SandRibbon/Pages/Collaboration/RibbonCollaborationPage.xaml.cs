@@ -229,18 +229,12 @@ namespace SandRibbon.Pages.Collaboration
         protected string conversationJid;
         protected Slide slide;
 
-        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;
-        /*
-        private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
-        private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
-        */
-        public RibbonCollaborationPage(NetworkController _networkController/*, ConversationDetails _details, Slide slide*/)
+        protected System.Collections.ObjectModel.ObservableCollection<PenAttributes> penCollection;        
+        public RibbonCollaborationPage(NetworkController _networkController)
         {
-            networkController = _networkController;
-            //details = _details;
+            networkController = _networkController;            
             details = ConversationDetails.Empty;
-            InitializeComponent();
-            //DataContext = slide;
+            InitializeComponent();            
             slide = Slide.Empty;
             DataContext = slide;
             var ic = new ImageSourceConverter();
@@ -248,8 +242,7 @@ namespace SandRibbon.Pages.Collaboration
                 ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/ShinyEraser.png") as ImageSource,
                 ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/appbar.draw.pen.png") as ImageSource,
                 ic.ConvertFromString("pack://application:,,,/MeTL;component/Resources/Highlighter.png") as ImageSource,
-                (Brush)FindResource("CheckedGradient")
-            //                (Brush)FindResource("ShinyAbsoluteHighlightBrush")
+                (Brush)FindResource("CheckedGradient")            
             );
             penCollection = new System.Collections.ObjectModel.ObservableCollection<PenAttributes> {
                 new PenAttributes(1,InkCanvasEditingMode.EraseByStroke,new System.Windows.Ink.DrawingAttributes {Color=Colors.White,IsHighlighter=false, Width=1 },images),
@@ -263,14 +256,7 @@ namespace SandRibbon.Pages.Collaboration
 
             pens.ItemsSource = penCollection;
 
-            InitializeComponent();
-            /*
-            fontFamily.ItemsSource = fontList;
-            fontSize.ItemsSource = fontSizes;
-            fontSize.SetValue(Selector.SelectedIndexProperty,0);
-            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
-            */
+            InitializeComponent();            
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
 
             Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
@@ -288,12 +274,6 @@ namespace SandRibbon.Pages.Collaboration
                 }
             }));
             Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation));
-
-            /*
-            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            
-            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));            
-            */
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<string>((s) => RemovePrivacyAdorners(s)));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(fitToView, canFitToView));
@@ -308,8 +288,7 @@ namespace SandRibbon.Pages.Collaboration
                 currentPenId = pa.id;
                 foreach (var p in penCollection)
                 {
-                    p.isSelectedPen = false;
-                    //p.isSelectedPen = p.id == currentPenId;
+                    p.isSelectedPen = false;                    
                 };
                 pa.isSelectedPen = true;
             }));
@@ -333,13 +312,7 @@ namespace SandRibbon.Pages.Collaboration
                 {
                     Commands.SetPenAttributes.Execute(foundPen);
                 }
-            }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke));
-
-            /*
-            Commands.IncreaseFontSize.RegisterCommand(new DelegateCommand<object>(increaseFont, canIncreaseFont));
-            Commands.DecreaseFontSize.RegisterCommand(new DelegateCommand<object>(decreaseFont, canDecreaseFont));
-            Commands.TextboxSelected.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
-            */
+            }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke));            
             //adding these as a workaround while we're doing singletons of this page and re-using it
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>((convJid) =>
             {
@@ -365,24 +338,7 @@ namespace SandRibbon.Pages.Collaboration
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                     };
                 Commands.SetLayer.Execute("Sketch");
-                Commands.SetPenAttributes.Execute(penCollection[1]);
-                /*
-                //watching the navigation away from this page so that we can do cleanup.  This won't be necessary until we stop using a singleton on the network controller.
-                NavigationService.Navigated += (s, e) =>
-                {
-                    if ((Page)e.Content != this)
-                    {
-                        Console.WriteLine("navigatedAwayFromthis");
-                    }
-
-                };
-                */
-                /*
-                //firing these, until we work out the XAML binding up and down the chain.
-                Commands.JoinConversation.Execute(details.Jid);
-                Commands.MoveToCollaborationPage.Execute(slide.id);
-                Commands.SetContentVisibility.Execute(ContentFilterVisibility.defaultVisibilities);
-                */
+                Commands.SetPenAttributes.Execute(penCollection[1]);                
                 Commands.ShowProjector.Execute(null);
             };
             this.Unloaded += (ps, pe) =>
@@ -404,69 +360,7 @@ namespace SandRibbon.Pages.Collaboration
         protected void openProjectorWindow(MainWindow window)
         {
             Commands.MirrorPresentationSpace.Execute(new KeyValuePair<MainWindow, ScrollViewer>(window, scroll));
-        }
-        /*
-private void restoreTextDefaults(object obj)
-{
-   fontFamily.SetValue(Selector.SelectedItemProperty, "Arial");
-   fontSize.SetValue(Selector.SelectedItemProperty, 12.0);            
-}
-
-private void updateTextControls(TextInformation info)
-{
-   fontFamily.SetValue(Selector.SelectedItemProperty, info.Family.ToString());
-   fontSize.SetValue(Selector.SelectedItemProperty, info.Size);            
-   TextBoldButton.IsChecked = info.Bold;
-   TextItalicButton.IsChecked = info.Italics;
-   TextUnderlineButton.IsChecked = info.Underline;
-   TextStrikethroughButton.IsChecked = info.Strikethrough;
-}       
-
-protected bool canDecreaseFont(object _unused)
-{
-   return fontSize != null;
-}
-private void decreaseFont(object _unused)
-{
-   if (fontSize.ItemsSource == null) return;
-   var currentItem = (int) fontSize.GetValue(Selector.SelectedIndexProperty);
-   if (currentItem - 1 >= 0)
-   {
-       var newSize = fontSizes[currentItem - 1];
-       fontSize.SetValue(Selector.SelectedIndexProperty,currentItem - 1);
-       Commands.FontSizeChanged.Execute(newSize);
-   }
-}   
-protected bool canIncreaseFont(object _unused)
-{
-   return fontSize != null;
-}     
-private void increaseFont(object _unused)
-{
-   if (fontSize.ItemsSource == null) return;
-   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-   if (currentItem + 1 < fontSizes.Count())
-   {
-       var newSize = fontSizes[currentItem + 1];
-       fontSize.SetValue(Selector.SelectedIndexProperty, currentItem + 1);
-       Commands.FontSizeChanged.Execute(newSize);
-   }
-}
-private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
-{
-   var currentItem = (int)fontSize.GetValue(Selector.SelectedIndexProperty);
-   if(currentItem < 0) return;
-   if (e.AddedItems.Count == 0) return;
-   var size = Double.Parse(e.AddedItems[0].ToString());
-   Commands.FontSizeChanged.Execute(size);
-}
-private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
-{
-   if (e.AddedItems.Count == 0) return;
-   var font = new FontFamily(e.AddedItems[0].ToString());
-   Commands.FontChanged.Execute(font);
-}   
-*/
+        }        
         private bool userMayAdministerConversation(ConversationDetails _conversation)
         {
             var conversation = Globals.conversationDetails;
