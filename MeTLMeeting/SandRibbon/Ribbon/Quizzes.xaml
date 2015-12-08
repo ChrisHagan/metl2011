@@ -10,23 +10,12 @@
     xmlns:logic="clr-namespace:SandRibbon.Utils"
     xmlns:core="clr-namespace:System;assembly=mscorlib">
     <RibbonGroup Header="Create" x:Name="quizRibbonGroup" LargeImageSource="\Resources\Quizzes.png">
-        <RibbonButton Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
+        <RibbonButton Click="CreateQuiz" ToolTip="{DynamicResource CreateQuizToolTip}"
                           LargeImageSource="\Resources\NewQuiz.png" SmallImageSource="\Resources\NewQuiz.png" Label="New">
-            <RibbonButton.IsEnabled>
-                <MultiBinding Converter="{x:Static logic:Logic.Any}">
-                    <Binding Path="ConversationDetails.Permissions.studentCanCreateQuizzes" />
-                    <Binding Path="ConversationState.IsAuthor" />
-                </MultiBinding>
-            </RibbonButton.IsEnabled>
         </RibbonButton>
     </RibbonGroup>
     <RibbonGroup Header="Results" x:Name="results">
-        <RibbonGroup.Visibility>
-            <MultiBinding Converter="{x:Static logic:Logic.ShowIfAny}">
-                <Binding Path="ConversationState.IsAuthor" />
-            </MultiBinding>
-        </RibbonGroup.Visibility>
-        <!--RibbonButton Command="{x:Static tabs:Quizzes.openQuizResults}" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}" /-->
+        <RibbonButton LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}" />
     </RibbonGroup>
     <RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
         <dict:QuizContainer x:Name="quizzes">
@@ -41,29 +30,6 @@
                                             <StackPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
                                         </ScrollViewer>
                                     </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Small">
-                                            <Setter TargetName="Scroller" Property="Width" Value="100"/>
-                                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
-                                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
-                                        </Trigger>
-                                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Medium">
-                                            <Setter TargetName="Scroller" Property="Width" Value="300"/>
-                                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                                        </Trigger>
-                                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Large">
-                                            <Setter TargetName="Scroller" Property="Width" Value="600"/>
-                                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

@@ -50,8 +50,8 @@ namespace MeTLLib
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
         void SendAttendance(string where, Attendance att);
-        void SendQuizAnswer(QuizAnswer qa);
-        void SendQuizQuestion(QuizQuestion qq);
+        void SendQuizAnswer(QuizAnswer qa, string jid);
+        void SendQuizQuestion(QuizQuestion qq, string jid);
         void SendFile(TargettedFile tf);
         void SendSyncMove(int slide);
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
@@ -120,8 +120,8 @@ namespace MeTLLib
         public void GetAllSubmissionsForConversation(string conversationJid) { }
         public void SendStanza(string where, Element stanza) { }
         public void SendAttendance(string where, Attendance att) { }
-        public void SendQuizAnswer(QuizAnswer qa) { }
-        public void SendQuizQuestion(QuizQuestion qq) { }
+        public void SendQuizAnswer(QuizAnswer qa, string jid) { }
+        public void SendQuizQuestion(QuizQuestion qq, string jid) { }
         public void SendFile(TargettedFile tf) { }
         public void SendSyncMove(int slide) { }
         public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii) { }
@@ -406,19 +406,19 @@ namespace MeTLLib
                               };
             tryIfConnected(work);
         }
-        public void SendQuizAnswer(QuizAnswer qa)
+        public void SendQuizAnswer(QuizAnswer qa,string jid)
         {
             Action work = delegate
             {
-                wire.SendQuizAnswer(qa);
+                wire.SendQuizAnswer(qa,jid);
             };
             tryIfConnected(work);
         }
-        public void SendQuizQuestion(QuizQuestion qq)
+        public void SendQuizQuestion(QuizQuestion qq, string jid)
         {
             Action work = delegate
             {
-                wire.SendQuiz(qq);
+                wire.SendQuiz(qq, jid);
             };
             tryIfConnected(work);
         }

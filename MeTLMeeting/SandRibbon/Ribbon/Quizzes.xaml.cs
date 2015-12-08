@@ -28,7 +28,9 @@ namespace SandRibbon.Tabs
                     rootPage = DataContext as SlideAwarePage;
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);            
-                Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);                                
+                Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);
+                quizzes.ItemsSource = rootPage.ConversationState.QuizData.activeQuizzes;
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
             };
             Unloaded += (s, e) => {
                 Commands.ReceiveQuiz.UnregisterCommand(receiveQuizCommand);
@@ -36,6 +38,15 @@ namespace SandRibbon.Tabs
                 Commands.QuizResultsSnapshotAvailable.UnregisterCommand(quizResultsSnapshotAvailableCommand);
             };
         }                     
+        protected void PreParserAvailable(PreParser parser)
+        {
+            parser.quizzes.ForEach(q => {
+                ReceiveQuiz(q);
+            });
+            parser.quizAnswers.ForEach(qa => {
+                ReceiveQuizAnswer(qa);
+            });
+        }
         private void ReceiveQuizAnswer(MeTLLib.DataTypes.QuizAnswer answer)
         {
             Dispatcher.adoptAsync(() =>

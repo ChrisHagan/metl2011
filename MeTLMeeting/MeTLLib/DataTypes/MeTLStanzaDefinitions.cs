@@ -934,7 +934,17 @@ namespace MeTLLib.DataTypes
                         return (Color)ColorConverter.ConvertFromString(s);
                     }
                     var colorInfo = s.Split(' ');
-                    if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
+                    if (colorInfo.Count() == 1 && colorInfo[0].StartsWith("Color(")) {
+                        var parts = colorInfo[0].Remove(0, 6).Reverse().ToString().Remove(0,1).Reverse().ToString().Split(',');
+                        return new Color
+                        {
+                            R = Byte.Parse(parts[0]),
+                            G = Byte.Parse(parts[1]),
+                            B = Byte.Parse(parts[2]),
+                            A = Byte.Parse(parts[3])
+                        };
+                    }
+                    else if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
                     return new Color
                     {
                         R = Byte.Parse(colorInfo[0]),

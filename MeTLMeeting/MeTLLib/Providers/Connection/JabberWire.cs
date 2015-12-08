@@ -1047,15 +1047,15 @@ namespace MeTLLib.Providers.Connection
             // split up the TargettedMoveDelta if content is moving across the privacy boundary
             MoveDeltaSeparator(tmd);
         }
-        public void SendQuiz(QuizQuestion parameters)
+        public void SendQuiz(QuizQuestion parameters, string jid)
         {
             var quiz = new MeTLStanzas.Quiz(parameters);
-            stanza(location.activeConversation, quiz);
+            stanza(jid, quiz);
         }
-        public void SendQuizAnswer(QuizAnswer parameters)
+        public void SendQuizAnswer(QuizAnswer parameters, string jid)
         {
             var quiz = new MeTLStanzas.QuizResponse(parameters);
-            stanza(location.activeConversation, quiz);
+            stanza(jid, quiz);
         }
         public void SendDirtyConversationDetails(string jid)
         {

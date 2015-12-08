@@ -74,7 +74,8 @@ namespace SandRibbon.Quizzing
                 if (!string.IsNullOrEmpty(answer.optionText))
                     quiz.Options.Add(answer);
             }
-            Commands.SendQuiz.ExecuteAsync(quiz);
+            controller.client.SendQuizQuestion(quiz, details.Jid.ToString());
+            //Commands.SendQuiz.ExecuteAsync(quiz);
             Trace.TraceInformation("CreatedQuizQuestion {0}", question.Text);
             this.Close();
         }
