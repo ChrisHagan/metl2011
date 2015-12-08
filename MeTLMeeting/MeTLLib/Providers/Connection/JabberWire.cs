@@ -593,7 +593,12 @@ namespace MeTLLib.Providers.Connection
         }
         public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
         {
-            var rooms = new List<Jid>();
+            //var rooms = new List<Jid>();
+            foreach (var roomJid in currentRooms)
+            {
+                leaveRoom(roomJid);
+            }
+            /*
             if (location != null)
             {
                 rooms.AddRange(
@@ -620,6 +625,7 @@ namespace MeTLLib.Providers.Connection
             {
                 leaveRoom(room);
             }
+            */
         }
         private bool isLocationValid()
         {
@@ -627,6 +633,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void leaveRoom(Jid room)
         {
+            currentRooms.Remove(room);
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
         }
@@ -651,11 +658,21 @@ namespace MeTLLib.Providers.Connection
         }
         private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
         {
+            /*
             if (!fastJoin)
             {
                 leaveRooms();
-                joinRoom(new Jid(metlServerAddress.globalMuc));
+            //    joinRoom(new Jid(metlServerAddress.globalMuc));
             }
+            */
+            var cRooms = new Jid[currentRooms.Count()];
+            currentRooms.CopyTo(cRooms, 0);
+            leaveRooms();
+            foreach (var roomJid in cRooms)
+            {
+                joinRoom(roomJid);
+            }
+            /*
             if (isLocationValid())
             {
                 var rooms = new List<Jid>();
@@ -676,7 +693,9 @@ namespace MeTLLib.Providers.Connection
                 SendAttendance("global", new Attendance(credentials.name, location.activeConversation, true, -1L));
                 SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), true, -1L));
             }
+            */
         }
+        protected HashSet<Jid> currentRooms = new HashSet<Jid>();
         private void joinRoom(Jid room)
         {
             try
@@ -684,6 +703,7 @@ namespace MeTLLib.Providers.Connection
                 Trace.WriteLine(String.Format("Jabberwire::JoinRoom => Joining room {0}", room));
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
+                currentRooms.Add(room);
             }
             catch (Exception e)
             {
