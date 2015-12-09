@@ -15,7 +15,7 @@
         </RibbonButton>
     </RibbonGroup>
     <RibbonGroup Header="Results" x:Name="results">
-        <RibbonButton LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}" />
+        <RibbonButton Click="OpenResults" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}" />
     </RibbonGroup>
     <RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
         <dict:QuizContainer x:Name="quizzes">

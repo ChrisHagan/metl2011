@@ -122,7 +122,7 @@ namespace SandRibbon.Tabs
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
 
-            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz,rootPage.ConversationState,rootPage.Slide,rootPage.NetworkController.credentials.name);
+            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz,rootPage.NetworkController,rootPage.ConversationDetails, rootPage.ConversationState, rootPage.Slide,rootPage.NetworkController.credentials.name);
             viewEditAQuiz.Owner = Window.GetWindow(this);
             viewEditAQuiz.ShowDialog();
         }
@@ -149,7 +149,7 @@ namespace SandRibbon.Tabs
             var qd = rootPage.ConversationState.QuizData;
             e.CanExecute = (qd.activeQuizzes != null && qd.activeQuizzes.Count > 0);
         }
-        private void OpenResults(object sender, ExecutedRoutedEventArgs e)
+        private void OpenResults(object sender, RoutedEventArgs e)
         {
             Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
             var viewQuizResults = new ViewQuizResults(rootPage.Slide, rootPage.ConversationState.QuizData.answers, rootPage.ConversationState.QuizData.activeQuizzes);

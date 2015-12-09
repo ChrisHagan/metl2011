@@ -459,17 +459,17 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void ReadXml(object sender, string xml)
         {
-#if DEBUG_VERBOSE
+//#if DEBUG_VERBOSE
             if (!xml.Contains("/WORM_MOVES"))
                 Trace.TraceInformation("IN:" + xml);
-#endif
+//#endif
         }
         protected virtual void WriteXml(object sender, string xml)
         {
-#if DEBUG_VERBOSE
+//#if DEBUG_VERBOSE
             if (!xml.Contains("/WORM_MOVES"))
                 Trace.TraceInformation("OUT:" + xml);
-#endif
+//#endif
         }
         private void OnClose(object sender)
         {
@@ -594,7 +594,7 @@ namespace MeTLLib.Providers.Connection
         public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
         {
             //var rooms = new List<Jid>();
-            foreach (var roomJid in currentRooms)
+            foreach (var roomJid in currentRooms.ToList())
             {
                 leaveRoom(roomJid);
             }

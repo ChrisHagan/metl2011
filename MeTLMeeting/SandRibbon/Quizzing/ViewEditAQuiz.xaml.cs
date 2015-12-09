@@ -100,8 +100,12 @@ namespace SandRibbon.Quizzing
         public ConversationState convState { get; protected set; }
         public Slide slide { get; protected set; }
         public string me { get; protected set; }
-        public ViewEditAQuiz(QuizQuestion thisQuiz, ConversationState _convState, Slide _slide, string _me)
+        public NetworkController controller { get; protected set; }
+        public ConversationDetails details { get; protected set; }
+        public ViewEditAQuiz(QuizQuestion thisQuiz, NetworkController _controller, ConversationDetails _details, ConversationState _convState, Slide _slide, string _me)
         {
+            controller = _controller;
+            details = _details;
             me = _me;
             slide = _slide;
             convState = _convState;
@@ -137,7 +141,8 @@ namespace SandRibbon.Quizzing
             if (!question.IsInEditMode)
             {
                 var selection = ((Option)e.AddedItems[0]);
-                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks));
+                controller.client.SendQuizAnswer(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks), details.Jid);
+                //Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks));
                 Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
