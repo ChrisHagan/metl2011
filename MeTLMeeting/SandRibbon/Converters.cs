@@ -663,7 +663,7 @@ namespace SandRibbon
             try
             {
                 var list = ((ObservableCollection<MeTLLib.DataTypes.QuizQuestion>)values[1]);
-                return string.Format("Quiz: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
+                return string.Format("Poll: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
             }
             catch (Exception)
             {
