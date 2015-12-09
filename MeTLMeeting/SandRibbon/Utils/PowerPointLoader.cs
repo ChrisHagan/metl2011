@@ -242,81 +242,57 @@ namespace SandRibbon.Utils
             return procList.Count() != 0;
         }
 
-        public ConversationDetails LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, ConversationDetails conversation, int MagnificationRating)
+        public ConversationDetails LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, int MagnificationRating)
         {
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
-            var convDescriptor = new ConversationDescriptor(conversation, new XElement("presentation"));
 
-            convDescriptor.Xml.Add(new XAttribute("name", conversation.Title));
-            if (conversation.Tag == null)
-                conversation.Tag = "unTagged";
-            currentConversation = conversation.Jid;
-            conversation.Author = networkController.credentials.name;
+            var convXml = new XElement("export");
+            var histories = new XElement("histories");
+
+            var slides = new List<MeTLLib.DataTypes.Slide>();
+            var permissions = new Permissions("restrictedByPowerpoint", false, false, true);
+            var startingJid = 1000;
+            var title = String.Format("",file,DateTime.Now);
+            var conversation = new ConversationDetails("", startingJid.ToString(), networkController.credentials.name, slides, permissions, networkController.credentials.name);
+            conversation.Slides = slides;
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
-            var thumbnailStartId = conversation.Slides.First().id;
             try
             {
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
-                    var slidePath = getThumbnailPath(conversation.Jid, thumbnailStartId++);
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                    {
-                        shape.Visible = MsoTriState.msoFalse;
-                    }
-                    var privateShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                    {
-                        if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
-                        {
-                            shape.Visible = MsoTriState.msoFalse;
-                            privateShapes.Add(shape);
-                        }
-                        else shape.Visible = MsoTriState.msoTrue;
-                    }
-                    slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
-                    var xSlide = new XElement("slide");
-                    xSlide.Add(new XAttribute("index", slide.SlideIndex));
-                    xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
-                    xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
-                    xSlide.Add(new XElement("shape",
-                    new XAttribute("x", 0),
-                    new XAttribute("y", 0),
-                    new XAttribute("height", backgroundHeight),
-                    new XAttribute("width", backgroundWidth),
-                    new XAttribute("privacy", "public"),
-                    new XAttribute("background", true),
-                    new XAttribute("snapshot", slidePath)));
-                    convDescriptor.Xml.Add(xSlide);
-                    var exportFormat = PpShapeFormat.ppShapeFormatPNG;
-                    var exportMode = PpExportMode.ppRelativeToSlide;
-                    var actualBackgroundHeight = 540;
-                    var actualBackgroundWidth = 720;
-                    double Magnification = (double)MagnificationRating;
-                    try
-                    {
-                        if (actualBackgroundHeight != Convert.ToInt32(slide.Master.Height))
-                            actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
-                        if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
-                            actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
-
-                        // add the speaker notes
-                        var speakerNotes = slide.NotesPage.Shapes.Placeholders[2];
-                        if (speakerNotes != null)
-                        {
-                            speakerNotes.Tags.Add("speakerNotes", "true");
-                            privateShapes.Add(speakerNotes);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in (from p in privateShapes orderby (p.ZOrderPosition) select p))
-                    {
-                        ExportShape(convDescriptor, shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
-                    }
-                    progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count);
+                    var slideJid = startingJid + slide.SlideIndex + 1;
+                    var tempFile = String.Format("pptBackground_{0}_{1}",slideJid.ToString(),DateTime.Now.Ticks);
+                    slide.Export(tempFile, "JPG", (int)backgroundWidth, (int)backgroundHeight);
+                    var history = new XElement("history");
+                    history.Add(new XAttribute("jid", slideJid.ToString()));
+                    var imageElem = new XElement("image");
+                    conversation.Slides.Add(new MeTLLib.DataTypes.Slide(
+                        slideJid,
+                        networkController.credentials.name,
+                        MeTLLib.DataTypes.Slide.TYPE.SLIDE,
+                        slide.SlideIndex,
+                        backgroundWidth,
+                        backgroundHeight));
+                    new List<KeyValuePair<string, string>> {
+                        new KeyValuePair<string, string>("imageBytes",System.Convert.ToBase64String(File.ReadAllBytes(tempFile))),
+                        new KeyValuePair<string, string>("author",networkController.credentials.name),
+                        new KeyValuePair<string, string>("target","presentationSpace"),
+                        new KeyValuePair<string, string>("privacy","PUBLIC"),
+                        new KeyValuePair<string, string>("slide",slideJid.ToString()),
+                        new KeyValuePair<string, string>("identity",tempFile),
+                        new KeyValuePair<string, string>("tag",""),
+                        new KeyValuePair<string, string>("width",backgroundWidth.ToString()),
+                        new KeyValuePair<string, string>("height",backgroundHeight.ToString()),
+                        new KeyValuePair<string, string>("x","0"),
+                        new KeyValuePair<string, string>("y","0")
+                    }.ForEach(kvp => {
+                        imageElem.Add(new XElement(kvp.Key, kvp.Value));
+                    });
+                    File.Delete(tempFile);
+                    history.Add(imageElem);
+                    histories.Add(history);
                 }
             }
             catch (COMException e)
@@ -327,6 +303,11 @@ namespace SandRibbon.Utils
             {
                 ppt.Close();
             }
+            convXml.Add(conversation.WriteXml());
+            convXml.Add(histories);
+
+            var url = networkController.config.importConversation(convXml.ToString());
+            networkController.client.resourceProvider.ToString\
             var startingId = conversation.Slides.First().id;
             var index = 0;
             conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++, networkController.credentials.name, MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
