@@ -29,7 +29,7 @@
             <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
                 <StackPanel Margin="{DynamicResource nearBottom}">
                     <TextBlock Text="New conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
-                    <Button Command="{x:Static api:Commands.CreateBlankConversation}" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
+                    <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
                 </StackPanel >
 
                 <TextBlock Text="Import conversation" Style="{DynamicResource subHeading}" Margin="{DynamicResource nearBottom}"/>

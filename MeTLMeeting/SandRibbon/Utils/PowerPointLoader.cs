@@ -203,13 +203,7 @@ namespace SandRibbon.Utils
                 }));
             worker.SetApartmentState(ApartmentState.STA);
             worker.Start();
-        }
-        public void CreateBlankConversation()
-        {
-            var details = new ConversationDetails(ConversationDetails.DefaultName(networkController.credentials.name), "", networkController.credentials.name, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
-            Commands.HideConversationSearchBox.Execute(null);
-            Commands.CreateConversation.ExecuteAsync(details);
-        }
+        }        
         public void ImportPowerpoint(Window owner, PowerpointImportType importType)
         {
             var configDialog = new ConversationConfigurationDialog(networkController,ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
