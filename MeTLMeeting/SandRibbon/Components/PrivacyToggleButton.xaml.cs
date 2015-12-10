@@ -21,17 +21,15 @@ namespace SandRibbon.Components
             System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
             // no longer clip the bottom of the adorner buttons to the bottom of the element it is bound to
             //privacyButtons.Height = bounds.Height;
-
+            rootPage = mode.rootPage;
             Loaded += (s, e) =>
             {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
                 if (mode.showDelete)
                     deleteButton.Visibility = Visibility.Visible;
                 else
                     deleteButton.Visibility = Visibility.Collapsed;
 
-                if (mode.AdornerTarget == "presentationSpace")
+                if (mode.AdornerTarget == GlobalConstants.PRESENTATIONSPACE)
                 {
                     if ((!rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                     {
@@ -103,9 +101,10 @@ namespace SandRibbon.Components
             public Rect ElementBounds;
             public bool showDelete;
             public string AdornerTarget { get; private set; }
-
-            public PrivacyToggleButtonInfo(string privacy, Boolean delete, Rect bounds, string target)
+            public SlideAwarePage rootPage {get; protected set;}
+            public PrivacyToggleButtonInfo(SlideAwarePage _rootPage, string privacy, Boolean delete, Rect bounds, string target)
             {
+                rootPage = _rootPage;
                 privacyChoice = privacy;
                 showDelete = delete;
                 ElementBounds = bounds;

@@ -44,7 +44,6 @@ namespace SandRibbon
     {
         private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
 
-        private PowerPointLoader loader;
         private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
@@ -83,7 +82,6 @@ namespace SandRibbon
             Commands.MeTLType.DefaultValue = GlobalConstants.METL;
             Title = Strings.Global_ProductName;
             //create
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             //Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
             //Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -391,11 +389,6 @@ namespace SandRibbon
                 var userOptions = new UserOptionsDialog();
                 userOptions.Owner = Window.GetWindow(this);
                 userOptions.ShowDialog();                       
-        }
-        private void ImportPowerpoint(object obj)
-        {
-            if (loader == null) loader = new PowerPointLoader(obj as NetworkController);
-            loader.ImportPowerpoint(this,(PowerpointImportType)obj);
         }
         
         private void HelpBinding(object sender, EventArgs e)

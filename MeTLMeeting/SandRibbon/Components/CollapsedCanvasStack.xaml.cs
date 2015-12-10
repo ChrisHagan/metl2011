@@ -1173,7 +1173,7 @@ namespace SandRibbon.Components
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, allElementsCount != 0, Work.GetSelectionBounds(), _target));
+            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(rootPage, privacyChoice, allElementsCount != 0, Work.GetSelectionBounds(), _target));
         }
         private void ClearAdorners()
         {

@@ -2256,8 +2256,8 @@ namespace MeTLLib.DataTypes
                 get { return GetTag(sourceTag); }
                 set { SetTag(sourceTag, value); }
             }
-            protected static readonly string heightTag = "height";
-            protected static readonly string widthTag = "width";
+            public static readonly string heightTag = "height";
+            public static readonly string widthTag = "width";
             public string tag
             {
                 get { return GetTag(tagTag); }

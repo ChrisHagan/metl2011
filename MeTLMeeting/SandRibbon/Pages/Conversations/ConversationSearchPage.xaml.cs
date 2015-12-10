@@ -22,6 +22,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Components;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Pages.Conversations
 {
@@ -60,6 +61,13 @@ namespace SandRibbon.Pages.Conversations
             this.PreviewKeyUp += OnPreviewKeyUp;
             SearchInput.Text = query;
             FillSearchResultsFromInput();
+            var importConversationCommand = new DelegateCommand<object>(ImportPowerpoint);
+            Loaded += (s,e) => {
+                Commands.ImportPowerpoint.RegisterCommand(importConversationCommand);
+            };
+            Unloaded += (s,e) => {
+                Commands.ImportPowerpoint.UnregisterCommand(importConversationCommand);
+            };
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -72,6 +80,17 @@ namespace SandRibbon.Pages.Conversations
                     FillSearchResultsFromInput();
                 }
             });
+        }
+        private void ImportPowerpoint(object obj)
+        {
+            var conv = new PowerPointLoader(NetworkController).ImportPowerpoint((PowerpointImportType)obj);
+            if (conv != ConversationDetails.Empty)
+            {
+                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, new UserConversationState(), NetworkController, conv));
+            }
+            else {
+                MeTLMessage.Error("Conversation import failed.");
+            }
         }
 
         private void FillSearchResultsFromInput()
@@ -199,7 +218,7 @@ namespace SandRibbon.Pages.Conversations
         {
             var conversation = (ConversationDetails)((FrameworkElement)sender).DataContext;
             var userConv = new UserConversationState();
-            NavigationService.Navigate(new ConversationEditPage(UserGlobalState,UserServerState,userConv,NetworkController, conversation));
+            NavigationService.Navigate(new ConversationEditPage(UserGlobalState, UserServerState, userConv, NetworkController, conversation));
         }
 
         private void onlyMyConversations_Checked(object sender, RoutedEventArgs e)

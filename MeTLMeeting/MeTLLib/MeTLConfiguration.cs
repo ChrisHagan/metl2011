@@ -145,6 +145,18 @@
         {
             return new Uri(host, new Uri("/fullClientHistory?source=" + HttpUtility.UrlEncode(jid), UriKind.Relative));
         }
+        public Uri importConversation()
+        {
+            return new Uri(host, new Uri("/conversationImportAsMe",UriKind.Relative));
+        }
+        public Uri importPowerpoint(string title, int magnification)
+        {
+            return new Uri(host, new Uri(String.Format("/powerpointImport?title={0}&magnification={1}", HttpUtility.UrlEncode(title), magnification.ToString()), UriKind.Relative));
+        }
+        public Uri importPowerpointFlexible(string title)
+        {
+            return new Uri(host, new Uri(String.Format("/powerpointImportFlexible?title={0}",HttpUtility.UrlEncode(title)), UriKind.Relative));
+        }
         public string muc
         {
             get { return "conference." + xmppDomain; }
