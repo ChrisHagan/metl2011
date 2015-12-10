@@ -85,7 +85,6 @@ namespace SandRibbon
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             //Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
-            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             //Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -398,12 +397,7 @@ namespace SandRibbon
             if (loader == null) loader = new PowerPointLoader(obj as NetworkController);
             loader.ImportPowerpoint(this,(PowerpointImportType)obj);
         }
-        private void createBlankConversation(object obj)
-        {            
-            if (loader == null) loader = new PowerPointLoader(obj as NetworkController);
-            loader.CreateBlankConversation();
-        }
-
+        
         private void HelpBinding(object sender, EventArgs e)
         {
             LaunchHelp(null);

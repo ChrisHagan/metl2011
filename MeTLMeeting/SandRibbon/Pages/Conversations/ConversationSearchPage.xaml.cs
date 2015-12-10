@@ -243,6 +243,13 @@ namespace SandRibbon.Pages.Conversations
             }
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var details = new ConversationDetails(ConversationDetails.DefaultName(NetworkController.credentials.name), "", NetworkController.credentials.name, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
+            NetworkController.client.CreateConversation(details);
+            SearchInput.Text = details.Title;
+            FillSearchResultsFromInput();
+        }
     }
     public class ConversationComparator : System.Collections.IComparer
     {
