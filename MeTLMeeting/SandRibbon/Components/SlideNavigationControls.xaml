@@ -7,9 +7,9 @@
     <UserControl.InputBindings>
         <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static api:Commands.ClipboardManager}" CommandParameter="{x:Static Components:ClipboardAction.Paste}"/>
     </UserControl.InputBindings>
-    <StackPanel x:Name="nav">
+    <StackPanel x:Name="nav" Orientation="Horizontal">
         <Button x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}">
-            <TextBlock Text="Previous" Style="{StaticResource subHeading}" />
+            <TextBlock Text="Previous" Style="{StaticResource heading}" />
         </Button>
         <Button x:Name="moveToNext" ToolTip="{DynamicResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}">
             <TextBlock Text="Next" Style="{StaticResource heading}" />
