@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- set up the path for the msbuild extension pack -->
@@ -431,6 +431,10 @@
     <Page Include="Components\ResourceDictionaries\Client\SaintLeoUniversity.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ResourceDictionaries\ToolTips_en-gb.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Frame\Flyouts\Flyouts.xaml">
       <SubType>Designer</SubType>

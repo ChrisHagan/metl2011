@@ -321,8 +321,8 @@ namespace SandRibbon.Pages.Collaboration
             }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
-            var moveToNextCommand = new DelegateCommand<object>(o => Shift(1));
-            var moveToPreviousCommand = new DelegateCommand<object>(o => Shift(-1));
+            var moveToNextCommand = new DelegateCommand<object>(o => Shift(1),o=>true);
+            var moveToPreviousCommand = new DelegateCommand<object>(o => Shift(-1),o=>true);
 
             Loaded += (cs, ce) =>
             {

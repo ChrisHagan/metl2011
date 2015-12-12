@@ -27,6 +27,9 @@ namespace SandRibbon.Components
                     rootPage = DataContext as SlideAwarePage;
                 }
                 Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                /*Because the consumers of these commands are only registering after they load, these can't be declared in XAML*/
+                moveToPrevious.Command = Commands.MoveToPrevious;
+                moveToNext.Command = Commands.MoveToNext;
             };
             Unloaded += (s, e) =>
             {

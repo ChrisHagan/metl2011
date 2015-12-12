@@ -23,6 +23,8 @@ using System.Xml.Linq;
 using SandRibbon.Components;
 using System.Windows.Navigation;
 using SandRibbon.Pages.Conversations.Models;
+using System.Xml;
+using System.Diagnostics;
 
 namespace SandRibbon.Pages.Login
 {
@@ -92,7 +94,7 @@ namespace SandRibbon.Pages.Login
         }
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = backend.authenticationUrl;                        
+            var loginUri = backend.authenticationUrl;
             logonBrowser = new WebControl();
             logonBrowser.ShowContextMenu += (s, a) =>
             {
@@ -109,18 +111,13 @@ namespace SandRibbon.Pages.Login
                 logonBrowserContainer.Children.Add(nwc);
                 nwc.NativeView = e.NewViewInstance;
             };
-            logonBrowser.TargetURLChanged += (s, a) =>
-            {
-                Console.WriteLine("target url changed: " + a.Url.ToString());
-            };
             logonBrowserContainer.Children.Add(logonBrowser);
             var loginAttempted = false;
             logonBrowser.DocumentReady += (sender, args) =>
             {
                 if (loginAttempted) return;
                 var html = (sender as WebControl).HTML;
-                if (string.IsNullOrEmpty(html)) return;
-                try
+                if (html.Contains("authdata"))
                 {
                     var xml = XDocument.Parse(html).Elements().ToList();
                     var authData = getElementsByTag(xml, "authdata");
@@ -140,7 +137,7 @@ namespace SandRibbon.Pages.Login
                     {
                         try
                         {
-                            var JSESSIONID = logonBrowser.ExecuteJavascriptWithResult("document.cookie");                            
+                            var JSESSIONID = logonBrowser.ExecuteJavascriptWithResult("document.cookie");
                             Commands.Mark.Execute("Login");
                             var newServer = App.metlConfigManager.parseConfig(backend, authData.First()).First();
                             var credentials = new Credentials(newServer.xmppUsername, newServer.xmppPassword, authGroups, emailAddress);
@@ -165,7 +162,7 @@ namespace SandRibbon.Pages.Login
                                 userServer.ThumbnailProvider = new ThumbnailProvider(controller);
                                 logonBrowser.Stop();
                                 logonBrowser.Dispose();
-                                NavigationService.Navigate(new ConversationSearchPage(userGlobal,userServer, controller, controller.credentials.name));
+                                NavigationService.Navigate(new ConversationSearchPage(userGlobal, userServer, controller, controller.credentials.name));
                             }
                         }
                         catch (TriedToStartMeTLWithNoInternetException)
@@ -173,37 +170,24 @@ namespace SandRibbon.Pages.Login
                             Commands.Mark.Execute("Internet not found");
                             Commands.LoginFailed.Execute(null);
                             Commands.NoNetworkConnectionAvailable.Execute(null);
-                        }                        
+                        }
                     }
-                }
-                catch (Exception e)
+                };
+                if (showTimeoutButton != null)
                 {
-                    Commands.Mark.Execute(e.Message);
+                    showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
+                    showTimeoutButton.Dispose();
+                    showTimeoutButton = null;
                 }
-
+                showTimeoutButton = new System.Threading.Timer((s) =>
+                {
+                    Dispatcher.adoptAsync(delegate
+                    {
+                        showResetButton();
+                    });
+                }, null, Timeout.Infinite, Timeout.Infinite);     
             };
-            if (showTimeoutButton != null)
-            {
-                showTimeoutButton.Change(Timeout.Infinite, Timeout.Infinite);
-                showTimeoutButton.Dispose();
-                showTimeoutButton = null;
-            }
-            showTimeoutButton = new System.Threading.Timer((s) =>
-            {
-                Dispatcher.adoptAsync(delegate
-                {
-                    showResetButton();
-                });
-            }, null, Timeout.Infinite, Timeout.Infinite);
-            logonBrowser.NativeViewInitialized += delegate
-            {
-                if (logonBrowser.WebSession != null)
-                {
-                    logonBrowser.WebSession.ClearCache();
-                    logonBrowser.WebSession.ClearCookies();
-                }
-                logonBrowser.Source = loginUri;
-            };
+            logonBrowser.Source = loginUri;
         }
         protected List<XElement> getElementsByTag(List<XElement> x, String tagName)
         {

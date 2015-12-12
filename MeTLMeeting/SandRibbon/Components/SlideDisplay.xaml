@@ -23,7 +23,7 @@
              x:Name="slides"
              ItemsSource="{Binding Path=thumbnailList}"             
              ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-             ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+             ScrollViewer.VerticalScrollBarVisibility="Hidden" 
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"

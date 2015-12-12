@@ -149,7 +149,7 @@ namespace SandRibbon.Components
 
             return timedActions.Dequeue();
         }
-    }    
+    }
 
     public partial class CollapsedCanvasStack : UserControl, IClipboardHandler
     {
@@ -159,7 +159,7 @@ namespace SandRibbon.Components
         {
             get;
             protected set;
-        } 
+        }
         private string _target;
         private StackMoveDeltaProcessor moveDeltaProcessor;
         private Privacy _defaultPrivacy;
@@ -199,7 +199,8 @@ namespace SandRibbon.Components
 
         private Privacy currentPrivacy
         {
-            get {
+            get
+            {
                 return canvasAlignedPrivacy(rootPage.UserConversationState.Privacy);
             }
         }
@@ -225,6 +226,8 @@ namespace SandRibbon.Components
             var receiveDirtyTextCommand = new DelegateCommand<TargettedDirtyElement>(receiveDirtyText);
             var setContentVisibilityCommand = new DelegateCommand<List<ContentVisibilityDefinition>>(SetContentVisibility);
             var extendCanvasBySizeCommand = new DelegateCommand<SizeWithTarget>(extendCanvasBySize);
+            var extendCanvasUpCommand = new DelegateCommand<object>(extendCanvasUp);
+            var extendCanvasDownCommand = new DelegateCommand<object>(extendCanvasDown);
             var imageDroppedCommand = new DelegateCommand<ImageDrop>(imageDropped);
             var imagesDroppedCommand = new DelegateCommand<List<ImageDrop>>(imagesDropped);
             var setLayerCommand = new DelegateCommand<string>(SetLayer);
@@ -279,6 +282,8 @@ namespace SandRibbon.Components
                 Commands.ReceiveDirtyText.RegisterCommand(receiveDirtyTextCommand);
                 Commands.SetContentVisibility.RegisterCommandToDispatcher<List<ContentVisibilityDefinition>>(setContentVisibilityCommand);
                 Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(extendCanvasBySizeCommand);
+                Commands.ExtendCanvasUp.RegisterCommandToDispatcher<object>(extendCanvasUpCommand);
+                Commands.ExtendCanvasDown.RegisterCommandToDispatcher<object>(extendCanvasDownCommand);
                 Commands.ImageDropped.RegisterCommandToDispatcher(imageDroppedCommand);
                 Commands.ImagesDropped.RegisterCommandToDispatcher(imagesDroppedCommand);
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
@@ -332,6 +337,29 @@ namespace SandRibbon.Components
                 rootPage.UserConversationState.UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
+        private void extendCanvasDown(object o)
+        {
+            var d = (double)o;
+            Height += d;
+        }
+
+        private void extendCanvasUp(object o)
+        {
+            var d = (double)o;
+            Height += d;
+            contentBuffer.logicalY -= d;
+            contentBuffer.AdjustContent();
+        }
+
+        private void extendCanvasByFactor(SizeWithTarget obj)
+        {
+            if (_target == obj.Target)
+            {
+                Height = Height * obj.Height;
+                Width = Width * obj.Width;
+            }
+        }
+
         private void ContentElementsChanged(object sender, EventArgs e)
         {
             AddAdorners();
@@ -376,7 +404,7 @@ namespace SandRibbon.Components
             Work.StylusMove += stylusMove;
             Work.IsKeyboardFocusWithinChanged += Work_IsKeyboardFocusWithinChanged;
         }
-        
+
         void Work_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue == true)
@@ -622,7 +650,7 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name, Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, identity, -1L, new StrokeCollection(selectedStrokes.Select(s => s as Stroke)), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.isDeleted = true;
                     moveDeltaProcessor.rememberSentMoveDelta(moveDelta);
@@ -661,7 +689,7 @@ namespace SandRibbon.Components
                       }
 
                   });
-        }        
+        }
         private void setInkCanvasMode(string modeString)
         {
             if (me == GlobalConstants.PROJECTOR) return;
@@ -945,7 +973,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
 
-                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name, Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(endingStrokes.Select(s => (s as Stroke).Clone())),
                         endingTexts.Select(et => et as Xceed.Wpf.Toolkit.RichTextBox),
@@ -975,7 +1003,7 @@ namespace SandRibbon.Components
                 {
                     ClearAdorners();
 
-                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name, Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.NotSet, identity, -1L,
                         new StrokeCollection(startingStrokes.Select(s => (s as Stroke).Clone())),
                         startingBoxes.Select(et => et as Xceed.Wpf.Toolkit.RichTextBox),
@@ -1562,7 +1590,7 @@ namespace SandRibbon.Components
 
             Action redo = () =>
                 {
-                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name, Guid.NewGuid().ToString());
                     //var moveDelta = TargettedMoveDelta.Create(rootPage.slide.id, rootPage.networkController.credentials.name, _target, currentPrivacy, timestamp, selectedStrokes, selectedTextBoxes, selectedImages);
                     var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = newPrivacy;
@@ -1580,7 +1608,7 @@ namespace SandRibbon.Components
                 };
             Action undo = () =>
                 {
-                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name, Guid.NewGuid().ToString());
                     var moveDelta = TargettedMoveDelta.Create(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, oldPrivacy, identity, timestamp, selectedStrokes.Select(s => s as Stroke), selectedTextBoxes.Select(s => s as Xceed.Wpf.Toolkit.RichTextBox), selectedImages.Select(s => s as Image));
                     moveDelta.newPrivacy = oldPrivacy;
                     var mdb = ContentBuffer.getLogicalBoundsOfContent(selectedImages.ToList(), selectedTextBoxes.ToList(), selectedStrokes);
@@ -1610,6 +1638,11 @@ namespace SandRibbon.Components
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
+            var inner = e.Stroke.GetBounds();
+            var outer = new Rect(Work.RenderSize);
+            if (!outer.Contains(inner)) {
+                var d = 1;
+            }
             var checksum = e.Stroke.sum().checksum;
             var timestamp = 0L;
             e.Stroke.tag(new StrokeTag(rootPage.NetworkController.credentials.name, currentPrivacy, checksum.ToString(), checksum, e.Stroke.DrawingAttributes.IsHighlighter, timestamp));
@@ -2093,7 +2126,7 @@ namespace SandRibbon.Components
                  {
                      File.Copy(unMangledFilename, filename);
                      rootPage.NetworkController.client.UploadAndSendFile(
-                         new MeTLStanzas.LocalFileInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(rootPage.NetworkController.credentials.name,filename)));
+                         new MeTLStanzas.LocalFileInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(rootPage.NetworkController.credentials.name, filename)));
                      File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
@@ -2694,7 +2727,7 @@ namespace SandRibbon.Components
                     //selection.Add(stroke);
                     var clonedStroke = stroke.Clone();
                     var oldTag = clonedStroke.tag();
-                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                    var identity = Globals.generateId(rootPage.NetworkController.credentials.name, Guid.NewGuid().ToString());
                     clonedStroke.tag(new StrokeTag(oldTag.author, oldTag.privacy, identity, oldTag.startingSum, stroke.DrawingAttributes.IsHighlighter, oldTag.timestamp));
                     doMyStrokeAddedExceptHistory(clonedStroke, clonedStroke.tag().privacy);
                 }
@@ -2841,7 +2874,7 @@ namespace SandRibbon.Components
                 text = HandleTextCopyRedo(selectedElements, selectedText);
             }
             var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes.Select(s => s as Stroke).ToList());
-            Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage,text, images, copiedStrokes));
+            Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage, text, images, copiedStrokes));
         }
         private void HandleImageCutUndo(IEnumerable<MeTLImage> selectedImages)
         {
@@ -2893,7 +2926,7 @@ namespace SandRibbon.Components
                 ClearAdorners();
                 var images = HandleImageCutRedo(selectedImages);
                 var ink = HandleInkCutRedo(strokesToCut);
-                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage,new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
+                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage, new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
             };
             Action undo = () =>
             {

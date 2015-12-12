@@ -850,13 +850,9 @@ namespace MeTLLib.DataTypes
                         GetTag(authorTag), privacy, identity,
                         GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)),
                         Boolean.Parse(GetTag(highlighterTag)), timestamp));
+                    var slideString = GetTag(slideTag);
                     var slideInt = 0;
-                    try {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    } catch
-                    {
-
-                    }
+                    Int32.TryParse(slideString,out slideInt);                    
                     var targettedStroke = new TargettedStroke(slideInt, GetTag(authorTag), GetTag(targetTag), privacy, identity, timestamp, stroke, startingSum);
                     return targettedStroke;
                 }
@@ -1127,15 +1123,8 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var tstamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var slideInt = 0;
-                    try
-                    {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    }
-                    catch
-                    {
-
-                    }
+                    var slideInt = 0;                    
+                    Int32.TryParse(GetTag(slideTag),out slideInt);                    
                     var box = new TargettedTextBox(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(tstamp));
                     return box;
                 }
