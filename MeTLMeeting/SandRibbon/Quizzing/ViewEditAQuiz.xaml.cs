@@ -141,8 +141,7 @@ namespace SandRibbon.Quizzing
             if (!question.IsInEditMode)
             {
                 var selection = ((Option)e.AddedItems[0]);
-                controller.client.SendQuizAnswer(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks), details.Jid);
-                //Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks));
+                controller.client.SendQuizAnswer(new QuizAnswer(question.Id, me, selection.name, DateTime.Now.Ticks), details.Jid);                
                 Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
@@ -151,6 +150,7 @@ namespace SandRibbon.Quizzing
         public void DisplayQuiz(object sender, RoutedEventArgs e)
         {
             var quizDisplay = new DisplayAQuiz(question);
+            /*We're literally snapshotting this element*/
             quizDisplay.Show();
 
             try
@@ -163,7 +163,7 @@ namespace SandRibbon.Quizzing
                 using (var context = dv.RenderOpen())
                     context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
                 bitmap.Render(dv);
-                Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=slide.id,data=bitmap});
+                Commands.QuizResultsAvailableForSnapshot.Execute(new UnscaledThumbnailData{id=slide.id,data=bitmap});
             }
             finally
             {

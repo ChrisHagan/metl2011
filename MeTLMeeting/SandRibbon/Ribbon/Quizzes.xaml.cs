@@ -14,36 +14,39 @@ using SandRibbon.Pages;
 namespace SandRibbon.Tabs
 {
     public partial class Quizzes : RibbonTab
-    {        
+    {
         public SlideAwarePage rootPage { get; protected set; }
         public Quizzes()
         {
             InitializeComponent();
             var receiveQuizCommand = new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz);
-            var receiveQuizAnswerCommand = new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer);                        
+            var receiveQuizAnswerCommand = new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer);
             var quizResultsSnapshotAvailableCommand = new DelegateCommand<string>(importQuizSnapshot);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
-                Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);            
+                Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);
                 Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);
                 quizzes.ItemsSource = rootPage.ConversationState.QuizData.activeQuizzes;
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
             };
-            Unloaded += (s, e) => {
+            Unloaded += (s, e) =>
+            {
                 Commands.ReceiveQuiz.UnregisterCommand(receiveQuizCommand);
-                Commands.ReceiveQuizAnswer.UnregisterCommand(receiveQuizAnswerCommand);                
+                Commands.ReceiveQuizAnswer.UnregisterCommand(receiveQuizAnswerCommand);
                 Commands.QuizResultsSnapshotAvailable.UnregisterCommand(quizResultsSnapshotAvailableCommand);
             };
-        }                     
+        }
         protected void PreParserAvailable(PreParser parser)
         {
-            parser.quizzes.ForEach(q => {
+            parser.quizzes.ForEach(q =>
+            {
                 ReceiveQuiz(q);
             });
-            parser.quizAnswers.ForEach(qa => {
+            parser.quizAnswers.ForEach(qa =>
+            {
                 ReceiveQuizAnswer(qa);
             });
         }
@@ -112,7 +115,7 @@ namespace SandRibbon.Tabs
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
-                var quizDialog = new CreateAQuiz(rootPage.NetworkController,rootPage.ConversationDetails,rootPage.Slide,rootPage.ConversationState.QuizData.activeQuizzes.Count);
+                var quizDialog = new CreateAQuiz(rootPage.NetworkController, rootPage.ConversationDetails, rootPage.Slide, rootPage.ConversationState.QuizData.activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
@@ -122,27 +125,20 @@ namespace SandRibbon.Tabs
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
 
-            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz,rootPage.NetworkController,rootPage.ConversationDetails, rootPage.ConversationState, rootPage.Slide,rootPage.NetworkController.credentials.name);
+            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz, rootPage.NetworkController, rootPage.ConversationDetails, rootPage.ConversationState, rootPage.Slide, rootPage.NetworkController.credentials.name);
             viewEditAQuiz.Owner = Window.GetWindow(this);
             viewEditAQuiz.ShowDialog();
         }
         private void importQuizSnapshot(string filename)
         {
-            DelegateCommand<PreParser> onPreparserAvailable = null;
-            onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
+            Commands.ImageDropped.Execute(new ImageDrop
             {
-                Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                Commands.ImageDropped.ExecuteAsync(new ImageDrop
-                {
-                    Filename = filename,
-                    Point = new Point(0,0),
-                    Position = 1,
-                    OverridePoint = false,
-                    Target = "presentationSpace"
-                });
+                Filename = filename,
+                Point = new Point(0, 0),
+                Position = 1,
+                OverridePoint = false,
+                Target = "presentationSpace"
             });
-            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.ExecuteAsync(null);
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {

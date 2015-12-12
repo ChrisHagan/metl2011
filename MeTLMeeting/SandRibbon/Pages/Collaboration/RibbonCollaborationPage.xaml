@@ -143,15 +143,13 @@
                     </ItemsControl>
                 </RibbonGroup>
                 <RibbonGroup x:Name="textGroup"></RibbonGroup>
-                <!--<legacy:TextTools x:Name="textGroup" /-->
                 <RibbonGroup x:Name="imageGroup" Header="Image options">
                     <RibbonButton Label="Insert image" Command="{x:Static api:Commands.AddImage}" SmallImageSource="\Resources\appbar.page.image.png" LargeImageSource="\Resources\appbar.page.image.png" />
                 </RibbonGroup>
             </RibbonTab>
             <tabs:Quizzes/>
             <tabs:Submissions/>
-            <tabs:Attachments/>
-            <!--tabs:ConversationManagement/-->
+            <tabs:Attachments/>            
             <tabs:Analytics/>
             <tabs:Plugins/>
         </Ribbon>
@@ -169,6 +167,7 @@
                 <RowDefinition Height="200" />
             </Grid.RowDefinitions>
 
+            
             <TabControl Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
                 <TabItem Header="Filter">
                     <Grid layout:GridLayout.ItemsPerRow="1">

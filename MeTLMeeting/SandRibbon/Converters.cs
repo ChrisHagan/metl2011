@@ -114,14 +114,15 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class conversationDetailsToDescription : IValueConverter { 
+    public class conversationDetailsToDescription : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var details = (MeTLLib.DataTypes.ConversationDetails)value;
-            if (details == null) 
+            if (details == null)
                 return "Undefined";
             var slides = string.Format("{0} page", details.Slides.Count);
-            if(details.Slides.Count > 1)
+            if (details.Slides.Count > 1)
                 slides = string.Format("{0}s", slides);
             var restriction = details.Subject;
             return string.Format("Created by {0} and restricted to {1}\n({3}) Created on: {2}", details.Author, restriction, details.Created, slides);
@@ -146,7 +147,8 @@ namespace SandRibbon
             return "private";
         }
     }
-    public class NoCachedImageReplicator : IValueConverter {
+    public class NoCachedImageReplicator : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var uri = (string)value;
@@ -223,7 +225,7 @@ namespace SandRibbon
             {
                 var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter" : "pen";
                 var penString = ColourInformationProvider.ConvertToName(((System.Windows.Ink.DrawingAttributes)value).Color) + " " + penType;
-                return penString.Substring(0,1).ToUpper() + penString.Substring(1);
+                return penString.Substring(0, 1).ToUpper() + penString.Substring(1);
             }
             return "Use this pen.";
         }
@@ -365,12 +367,12 @@ namespace SandRibbon
         /// </summary>
         public bool Negate { get; set; }
         #endregion
- 
+
         #region IValueConverter Members
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool booleanToConvert = (bool)value;
-             
+
             if (booleanToConvert != Negate)
             {
                 return Visibility.Visible;
@@ -383,15 +385,15 @@ namespace SandRibbon
                     return Visibility.Hidden;
             }
         }
- 
+
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             Visibility visibilityToConvert = (Visibility)value;
- 
-                if (visibilityToConvert == Visibility.Visible)
-                    return !Negate;
-                else
-                    return Negate;
+
+            if (visibilityToConvert == Visibility.Visible)
+                return !Negate;
+            else
+                return Negate;
         }
         #endregion
     }
@@ -409,12 +411,12 @@ namespace SandRibbon
             throw new NotImplementedException("You shouldn't be converting an IndexInThisCollection back to anything");
         }
     }
-    public class GetFileTooltip: IValueConverter
+    public class GetFileTooltip : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var fileInfo = (FileInfo) value;
-            return string.Format("{0} {1} {2} {3}kb", fileInfo.filename, fileInfo.author, fileInfo.uploadTime, fileInfo.size); 
+            var fileInfo = (FileInfo)value;
+            return string.Format("{0} {1} {2} {3}kb", fileInfo.filename, fileInfo.author, fileInfo.uploadTime, fileInfo.size);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -461,12 +463,12 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class ExtractAuthorConverter :IValueConverter
+    public class ExtractAuthorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "";
-            return ((FileInfo) value).author;
+            return ((FileInfo)value).author;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -474,12 +476,12 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class ExtractTypeConverter :IValueConverter
+    public class ExtractTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "";
-            return ((FileInfo) value).fileType;
+            return ((FileInfo)value).fileType;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -487,12 +489,12 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class ExtractNameConverter :IValueConverter
+    public class ExtractNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "";
-            return ((FileInfo) value).filename;
+            return ((FileInfo)value).filename;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -524,7 +526,7 @@ namespace SandRibbon
                 return converter.Convert(privacyWrapper.url, null, null, null);
             }
 
-            return value; 
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -616,8 +618,8 @@ namespace SandRibbon
             return new LinearGradientBrush
             {
                 GradientStops = new GradientStopCollection {
-                        new GradientStop(shadowColor(baseColor), 0), 
-                        new GradientStop(baseColor, 0.2), 
+                        new GradientStop(shadowColor(baseColor), 0),
+                        new GradientStop(baseColor, 0.2),
                         new GradientStop(highlightColor(baseColor), 0.65)
                     },
                 StartPoint = new Point(0, 0),
@@ -655,20 +657,16 @@ namespace SandRibbon
             return value;
         }
     }
-    
+
     public class QuizPositionConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            try
-            {
-                var list = ((ObservableCollection<MeTLLib.DataTypes.QuizQuestion>)values[1]);
-                return string.Format("Poll: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
-            }
-            catch (Exception)
-            {
-                return "Unknown";
-            }
+
+            var container = values[1] as ObservableCollection<QuizQuestion>;
+            var item = values[0] as QuizQuestion;
+            if (container == null || item == null) return "";
+            return string.Format("Poll: {0}", container.IndexOf(item) + 1);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -829,7 +827,7 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class SlideFocusableConverter:IMultiValueConverter
+    public class SlideFocusableConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -837,10 +835,10 @@ namespace SandRibbon
             {
                 return false;
             }
-            var currentIndex = (int) values[0];
-            var locked = (bool) values[1];
-            var maxIndex = (int) values[2];
-            if(maxIndex == -1)
+            var currentIndex = (int)values[0];
+            var locked = (bool)values[1];
+            var maxIndex = (int)values[2];
+            if (maxIndex == -1)
                 return true;
             if (locked && currentIndex > maxIndex)
                 return false;
@@ -852,14 +850,14 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class FogOfWarConverter:IMultiValueConverter
+    public class FogOfWarConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var currentIndex = (int) values[0];
-            var locked = (bool) values[1];
-            var maxIndex = (int) values[2];
-            if(maxIndex == -1)
+            var currentIndex = (int)values[0];
+            var locked = (bool)values[1];
+            var maxIndex = (int)values[2];
+            if (maxIndex == -1)
                 return Visibility.Collapsed;
             if (locked && currentIndex > maxIndex)
                 return Visibility.Visible;
@@ -917,7 +915,7 @@ namespace SandRibbon
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new MeTLLib.DataTypes.ConversationDetails((string)values[0],"","",new List<MeTLLib.DataTypes.Slide>(),(MeTLLib.DataTypes.Permissions)values[3],(string)values[2]);
+            return new MeTLLib.DataTypes.ConversationDetails((string)values[0], "", "", new List<MeTLLib.DataTypes.Slide>(), (MeTLLib.DataTypes.Permissions)values[3], (string)values[2]);
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -949,28 +947,28 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class videoMirrorPaddingSubtractorConverter: IValueConverter
+    public class videoMirrorPaddingSubtractorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return null;
             var originalSize = (double)value;
-            return Math.Max((double)originalSize - 10,(double)0);
+            return Math.Max((double)originalSize - 10, (double)0);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
-    public class videoPaddingSubtractorConverter: IValueConverter
+    public class videoPaddingSubtractorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return null;
             var originalSize = (double)value;
-            return Math.Max((double)originalSize - 60,(double)0);
+            return Math.Max((double)originalSize - 60, (double)0);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -1326,7 +1324,7 @@ namespace SandRibbon
                 }
                 else
                 {
-                    if (Negate)                    
+                    if (Negate)
                         return Collapse ? Visibility.Collapsed : Visibility.Hidden;
 
                     return Visibility.Visible;
