@@ -257,7 +257,7 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            Display(rootPage.NetworkController.client.AppendSlideAfter(rootPage.Slide.id, rootPage.ConversationDetails.Jid));
+            rootPage.NetworkController.client.AppendSlideAfter(rootPage.Slide.id, rootPage.ConversationDetails.Jid);
         }
         private bool isSlideInSlideDisplay(int slide)
         {
