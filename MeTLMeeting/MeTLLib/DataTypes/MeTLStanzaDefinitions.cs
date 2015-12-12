@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using System.Web;
 using Xceed.Wpf.Toolkit;
+using System.Text.RegularExpressions;
 
 namespace MeTLLib.DataTypes
 {
@@ -171,7 +172,7 @@ namespace MeTLLib.DataTypes
     public class TargettedMoveDelta : TargettedElement
     {
         public TargettedMoveDelta(int slide, string author, string target, Privacy privacy, string identity, long timestamp)
-            : base(slide, author, target, privacy, identity,timestamp)
+            : base(slide, author, target, privacy, identity, timestamp)
         {
             Initialise();
         }
@@ -319,7 +320,7 @@ namespace MeTLLib.DataTypes
 
             targettedMoveDelta.xOrigin = tmd.xOrigin;
             targettedMoveDelta.yOrigin = tmd.yOrigin;
-            
+
             AddFromCollection<TargettedStroke>(strokes, (s) => targettedMoveDelta.AddInkId(s.identity));
             AddFromCollection<TargettedTextBox>(texts, (t) => targettedMoveDelta.AddTextId(t.identity));
             AddFromCollection<TargettedImage>(images, (i) => targettedMoveDelta.AddImageId(i.identity));
@@ -403,7 +404,7 @@ namespace MeTLLib.DataTypes
 
             var transformMatrix = new Matrix();
             if (xScale != 1.0 || yScale != 1.0)
-            {   
+            {
                 transformMatrix.Translate(-myRect.X, -myRect.Y);
 
                 var newS1 = newStroke.stroke.Clone();
@@ -411,9 +412,9 @@ namespace MeTLLib.DataTypes
                 newStroke.stroke = newS1;
 
                 transformMatrix = new Matrix();
-                transformMatrix.Scale(xScale,yScale);
-                
-                if(double.IsNaN(xTranslate))
+                transformMatrix.Scale(xScale, yScale);
+
+                if (double.IsNaN(xTranslate))
                 {
                     xTranslate = 0;
                 }
@@ -424,7 +425,7 @@ namespace MeTLLib.DataTypes
                 xTranslate = xTranslate + myRect.X;
                 yTranslate = yTranslate + myRect.Y;
             }
-            
+
             transformMatrix.Translate(xTranslate, yTranslate);
             var newS3 = newStroke.stroke.Clone();
             newS3.Transform(transformMatrix, false);
@@ -541,7 +542,7 @@ namespace MeTLLib.DataTypes
                         identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
                     }
                 }
-                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground,value.tag().timestamp,source));
+                value.tag(new ImageTag(author, privacy, identity, value.tag().isBackground, value.tag().timestamp, source));
                 imageProperty = value;
             }
         }
@@ -698,7 +699,7 @@ namespace MeTLLib.DataTypes
             }
         }
 
-        public class TimestampedMeTLElement 
+        public class TimestampedMeTLElement
         {
             public long timestamp { get; private set; }
             public Element element { get; private set; }
@@ -722,7 +723,7 @@ namespace MeTLLib.DataTypes
 
             private static long getTimestamp(Element foreign)
             {
-                var timestamp = 0L;                
+                var timestamp = 0L;
                 var message = foreign as Element;
                 if (message.GetAttribute("type") == "error")
                 {
@@ -732,14 +733,15 @@ namespace MeTLLib.DataTypes
                 if (message.HasAttribute("timestamp"))
                 {
                     timestamp = message.GetAttributeLong("timestamp");
-                } else 
+                }
+                else
                 {
                     var childElements = message.ChildNodes.ToArray().Where(cn => (cn as Node).NodeType == NodeType.Element).Select(cn => (cn as Element));
                     if (childElements.Count() > 0)
                     {
                         timestamp = childElements.Select(ce => getTimestamp(ce)).Max();
                     }
-                } 
+                }
                 return timestamp;
             }
 
@@ -770,11 +772,11 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     return new TeacherStatus
-                               {
-                                   Conversation = GetTag(whereTag),
-                                   Teacher = GetTag(identityTag),
-                                   Slide = GetTag(slideTag)
-                               };
+                    {
+                        Conversation = GetTag(whereTag),
+                        Teacher = GetTag(identityTag),
+                        Slide = GetTag(slideTag)
+                    };
                 }
                 set
                 {
@@ -815,11 +817,12 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var points = stringToPoints(GetTag(pointsTag));
-                    if (points.Count == 0) points = new StylusPointCollection(
-                        new StylusPoint[]{
+                    if (points.Count == 0)
+                        points = new StylusPointCollection(
+     new StylusPoint[]{
                            new StylusPoint(0,0,0f)
-                        }
-                    );
+     }
+ );
                     var stroke = new Stroke(points, new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
 
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
@@ -852,7 +855,7 @@ namespace MeTLLib.DataTypes
                         Boolean.Parse(GetTag(highlighterTag)), timestamp));
                     var slideString = GetTag(slideTag);
                     var slideInt = 0;
-                    Int32.TryParse(slideString,out slideInt);                    
+                    Int32.TryParse(slideString, out slideInt);
                     var targettedStroke = new TargettedStroke(slideInt, GetTag(authorTag), GetTag(targetTag), privacy, identity, timestamp, stroke, startingSum);
                     return targettedStroke;
                 }
@@ -898,7 +901,7 @@ namespace MeTLLib.DataTypes
                 {
                     Double.Parse(p);
                 }
-                for (int i = 0; i < pointInfo.Count(); )
+                for (int i = 0; i < pointInfo.Count();)
                 {
                     var X = Double.Parse(pointInfo[i++]);
                     var Y = Double.Parse(pointInfo[i++]);
@@ -923,34 +926,28 @@ namespace MeTLLib.DataTypes
             }
             public static Color stringToColor(string s)
             {
-                try
+                if (s.StartsWith("#"))
                 {
-                    if (s.StartsWith("#"))
-                    {
-                        return (Color)ColorConverter.ConvertFromString(s);
+                    return (Color)ColorConverter.ConvertFromString(s);
+                }
+                if (s.StartsWith("Color"))
+                {
+                    var parts = Regex.Split(s, @"[^\d]+").Where(p => !String.IsNullOrEmpty(p)).ToArray();
+                    if (parts.Length != 4) {
+                        Trace.TraceError("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.  Supplied information was: [{0}]", s);
+                        return Colors.Black;
                     }
-                    var colorInfo = s.Split(' ');
-                    if (colorInfo.Count() == 1 && colorInfo[0].StartsWith("Color(")) {
-                        var parts = colorInfo[0].Remove(0, 6).Reverse().ToString().Remove(0,1).Reverse().ToString().Split(',');
-                        return new Color
-                        {
-                            R = Byte.Parse(parts[0]),
-                            G = Byte.Parse(parts[1]),
-                            B = Byte.Parse(parts[2]),
-                            A = Byte.Parse(parts[3])
-                        };
-                    }
-                    else if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
                     return new Color
                     {
-                        R = Byte.Parse(colorInfo[0]),
-                        G = Byte.Parse(colorInfo[1]),
-                        B = Byte.Parse(colorInfo[2]),
-                        A = Byte.Parse(colorInfo[3])
+                        R = Byte.Parse(parts[0]),
+                        G = Byte.Parse(parts[1]),
+                        B = Byte.Parse(parts[2]),
+                        A = Byte.Parse(parts[3])
                     };
                 }
-                catch (Exception)
+                else
                 {
+                    Trace.TraceError("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.  Supplied information was: [{0}]", s);
                     return Colors.Black;
                 }
             }
@@ -1002,14 +999,8 @@ namespace MeTLLib.DataTypes
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
-                    try
-                    {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    }
-                    catch
-                    {
+                    Int32.TryParse(GetTag(slideTag),out slideInt);
 
-                    }
 
                     var moveDelta = new TargettedMoveDelta(slideInt, GetTag(authorTag), GetTag(targetTag), GetPrivacyFromEnum(privacyTag), GetTag(identityTag), long.Parse(timestamp));
 
@@ -1106,15 +1097,15 @@ namespace MeTLLib.DataTypes
             public Xceed.Wpf.Toolkit.RichTextBox forceEvaluation()
             {
                 var textBox = new Xceed.Wpf.Toolkit.RichTextBox
-                {                    
+                {
                     Tag = tag,
                     Text = text,
                     Height = height,
                     Width = width,
                     AcceptsReturn = true
                 };
-                textBox.tag(new TextTag(Box.author, Box.privacy, Box.identity, Box.timestamp));                
-                InkCanvas.SetLeft(textBox, x);                
+                textBox.tag(new TextTag(Box.author, Box.privacy, Box.identity, Box.timestamp));
+                InkCanvas.SetLeft(textBox, x);
                 InkCanvas.SetTop(textBox, y);
                 return textBox;
             }
@@ -1123,8 +1114,8 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var tstamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var slideInt = 0;                    
-                    Int32.TryParse(GetTag(slideTag),out slideInt);                    
+                    var slideInt = 0;
+                    Int32.TryParse(GetTag(slideTag), out slideInt);
                     var box = new TargettedTextBox(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(tstamp));
                     return box;
                 }
@@ -1169,11 +1160,11 @@ namespace MeTLLib.DataTypes
                 var width = textCtrl.Width;
                 this.width = (Double.IsNaN(width) || width <= 0) ? textCtrl.ActualWidth : width;
                 var height = textCtrl.Height;
-                this.height = (Double.IsNaN(height) || height <= 0) ? textCtrl.ActualHeight : height;                
+                this.height = (Double.IsNaN(height) || height <= 0) ? textCtrl.ActualHeight : height;
                 this.x = InkCanvas.GetLeft(textCtrl);
                 this.y = InkCanvas.GetTop(textCtrl);
                 this.text = textCtrl.Text;
-                this.tag = textCtrl.Tag.ToString();                                
+                this.tag = textCtrl.Tag.ToString();
             }
 
             public static readonly string widthTag = "width";
@@ -1315,14 +1306,7 @@ namespace MeTLLib.DataTypes
                     //var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var slideInt = 0;
-                    try
-                    {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    }
-                    catch
-                    {
-
-                    }
+                    Int32.TryParse(GetTag(slideTag), out slideInt);                    
                     var file = new TargettedFile(slideInt, GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
                     return file;
                 }
@@ -1348,7 +1332,7 @@ namespace MeTLLib.DataTypes
                 file = File;
                 name = Name;
                 overwrite = Overwrite;
-                size = Size; 
+                size = Size;
                 timestamp = Timestamp;
                 identity = Identity;
                 uploadTime = UploadTime;
@@ -1471,7 +1455,7 @@ namespace MeTLLib.DataTypes
                 return !(elemA == elemB);
             }
 
-            public static implicit operator string(ElementIdentity elemId)
+            public static implicit operator string (ElementIdentity elemId)
             {
                 return elemId.Identity;
             }
@@ -1656,7 +1640,7 @@ namespace MeTLLib.DataTypes
                 {
                     //var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var url = GetTag(URL);
-//                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    //                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
                     try
@@ -1858,7 +1842,7 @@ namespace MeTLLib.DataTypes
                 string url = HasTag(URL) ? GetTag(URL) : "none";
                 if (url.ToLower() != "none")
                 {
-                    url = new Uri(server.host, new Uri(GetTag(URL),UriKind.Relative)).ToString();
+                    url = new Uri(server.host, new Uri(GetTag(URL), UriKind.Relative)).ToString();
                     //url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/quizProxy/{0}/{1}",GetTag(""),GetTag(ID)), UriKind.Relative)).ToString();
                 }
                 return url;
@@ -1902,7 +1886,7 @@ namespace MeTLLib.DataTypes
                                 }
                             }
                         }
-                        
+
                     }
                     return quiz;
                 }
@@ -1940,14 +1924,15 @@ namespace MeTLLib.DataTypes
                 this.Namespace = METL_NS;
                 this.TagName = TAG;
             }
-            public Attendance(MeTLLib.DataTypes.Attendance attendance) : this(){
+            public Attendance(MeTLLib.DataTypes.Attendance attendance) : this()
+            {
                 this.attendance = attendance;
             }
             public MeTLLib.DataTypes.Attendance attendance
             {
                 get
                 {
-                    return new MeTLLib.DataTypes.Attendance(GetTag(AUTHOR), GetTag(LOCATION), bool.Parse(GetTag(PRESENT)),TimeStampedMessage.getTimestamp(this));
+                    return new MeTLLib.DataTypes.Attendance(GetTag(AUTHOR), GetTag(LOCATION), bool.Parse(GetTag(PRESENT)), TimeStampedMessage.getTimestamp(this));
                 }
                 set
                 {
@@ -2085,13 +2070,13 @@ namespace MeTLLib.DataTypes
                 //var sourceString = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{1}", GetTag(slideTag), HttpUtility.UrlEncode(GetTag(identityTag))), UriKind.Relative));
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + identityTag + "::::" + this.tag;
                 MeTLImage image = new MeTLImage
-                    {
-                        Tag = dynamicTag,
-                        Height = this.height,
-                        Width = this.width,
-                        Source = BackupSource,
-                        Stretch = Stretch.Fill
-                    };
+                {
+                    Tag = dynamicTag,
+                    Height = this.height,
+                    Width = this.width,
+                    Source = BackupSource,
+                    Stretch = Stretch.Fill
+                };
                 RoutedEventHandler handler = null;
                 handler = delegate
                 {
@@ -2100,23 +2085,23 @@ namespace MeTLLib.DataTypes
                     {
                         if (image == null) return;//This might have been GCed if they moved conversations
                         image.Dispatcher.Invoke((Action)delegate
-                        {
-                            try
-                            {
-                                var newSource = asynchronouslyLoadImageData();
-                                var oldTag = image.Tag;
-                                if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                                    image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                                image.Source = newSource;
-                                // Having next two lines causes bug #1480 but partially fixes #1435
-                                //image.Height = newSource.Height;
-                                //image.Width = newSource.Width;
-                            }
-                            catch (InvalidOperationException)
-                            {
-                                Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::forceEvaluation - couldn't find a dispatcher");
-                            }
-                        });
+                                {
+                                    try
+                                    {
+                                        var newSource = asynchronouslyLoadImageData();
+                                        var oldTag = image.Tag;
+                                        if (oldTag.ToString().StartsWith("NOT_LOADED"))
+                                            image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+                                        image.Source = newSource;
+                                        // Having next two lines causes bug #1480 but partially fixes #1435
+                                        //image.Height = newSource.Height;
+                                        //image.Width = newSource.Width;
+                                    }
+                                    catch (InvalidOperationException)
+                                    {
+                                        Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::forceEvaluation - couldn't find a dispatcher");
+                                    }
+                                });
                     }, null);
                 };
                 image.Loaded += handler;
@@ -2143,7 +2128,7 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
-                  var path = server.getImage(GetTag(slideTag),GetTag(sourceTag));
+                    var path = server.getImage(GetTag(slideTag), GetTag(sourceTag));
                     var bytes = provider.secureGetData(path);
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);
@@ -2166,15 +2151,7 @@ namespace MeTLLib.DataTypes
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
-                    try
-                    {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    }
-                    catch
-                    {
-
-                    }
-
+                    Int32.TryParse(GetTag(slideTag), out slideInt);                    
                     var targettedImage = new TargettedImage(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(timestamp));
                     return targettedImage;
                 }
@@ -2296,15 +2273,8 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var slideInt = 0;
-                    try
-                    {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    }
-                    catch
-                    {
-
-                    }
+                    var slideInt = 0;                    
+                    Int32.TryParse(GetTag(slideTag),out slideInt);                    
                     return new TargettedDirtyElement(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
                 }
                 set

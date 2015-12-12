@@ -256,14 +256,7 @@ namespace SandRibbon.Pages.Collaboration
 
             pens.ItemsSource = penCollection;
 
-            InitializeComponent();
-            /*
-            fontFamily.ItemsSource = fontList;
-            fontSize.ItemsSource = fontSizes;
-            fontSize.SetValue(Selector.SelectedIndexProperty,0);
-            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(updateTextControls));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));            
-            */
+            InitializeComponent();            
             var setLayerCommand = new DelegateCommand<string>(SetLayer);
             var duplicateSlideCommand = new DelegateCommand<object>((obj) =>
             {
@@ -321,14 +314,10 @@ namespace SandRibbon.Pages.Collaboration
             }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
-            var moveToNextCommand = new DelegateCommand<object>(o => Shift(1),o=>true);
-            var moveToPreviousCommand = new DelegateCommand<object>(o => Shift(-1),o=>true);
-
+            
             Loaded += (cs, ce) =>
             {
-                UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;
-                Commands.MoveToNext.RegisterCommand(moveToNextCommand);
-                Commands.MoveToPrevious.RegisterCommand(moveToPreviousCommand);
+                UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;             
                 Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
                 Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);
                 Commands.DuplicateConversation.RegisterCommand(duplicateConversationCommand);
@@ -359,9 +348,7 @@ namespace SandRibbon.Pages.Collaboration
                 NetworkController.client.SneakInto(Slide.id.ToString() + NetworkController.credentials.name);
             };
             this.Unloaded += (ps, pe) =>
-            {
-                Commands.MoveToNext.UnregisterCommand(moveToNextCommand);
-                Commands.MoveToPrevious.UnregisterCommand(moveToPreviousCommand);
+            {                
                 Commands.HideProjector.Execute(null);
                 Commands.SetLayer.UnregisterCommand(setLayerCommand);
                 Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);
@@ -386,18 +373,7 @@ namespace SandRibbon.Pages.Collaboration
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), false, -1));
                 NetworkController.client.SneakOutOf(ConversationDetails.Jid);
             };
-        }
-        private void Shift(int direction)
-        {
-            var slides = ConversationDetails.Slides.OrderBy(s => s.index).ToList();
-            var currentIndex = slides.IndexOf(Slide);
-            var newSlide = slides.ElementAt(currentIndex + direction);
-            if (newSlide != null)
-            {
-                NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, ConversationState, UserSlideState, NetworkController, ConversationDetails, newSlide));
-            }
-        }
-
+        }        
 
         private void UpdateConversationDetails(ConversationDetails cd)
         {

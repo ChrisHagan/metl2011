@@ -105,27 +105,39 @@ namespace SandRibbon.Providers
                                 g(GaugeStatus.InProgress, 10);
                                 using (var stream = new MemoryStream(client.DownloadData(url)))
                                 {
-                                    g(GaugeStatus.InProgress, 20);
-                                    bitmap = new BitmapImage();
-                                    g(GaugeStatus.InProgress, 30);
-                                    bitmap.BeginInit();
-                                    try {
-                                        g(GaugeStatus.InProgress, 40);
-                                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                        g(GaugeStatus.InProgress, 50);
-                                        bitmap.StreamSource = stream;
-                                        g(GaugeStatus.InProgress, 60);
-                                    } catch { } finally {
-                                        bitmap.EndInit();
+                                    if (stream.Length == 0)
+                                    {
+                                        App.Now(string.Format("Error loading thumbnail: zero length image"));
+                                        g(GaugeStatus.Failed, 100);
                                     }
-                                    g(GaugeStatus.InProgress, 70);
-                                    bitmap.Freeze();
-                                    g(GaugeStatus.InProgress, 80);
-                                    stream.Close();
-                                    g(GaugeStatus.InProgress, 85);
-                                    addToCache(slideId, new CachedThumbnail(bitmap));
-                                    g(GaugeStatus.InProgress, 90);
+                                    else
+                                    {
+                                        g(GaugeStatus.InProgress, 20);
+                                        bitmap = new BitmapImage();
+                                        g(GaugeStatus.InProgress, 30);
+                                        bitmap.BeginInit();
+                                        try
+                                        {
+                                            g(GaugeStatus.InProgress, 40);
+                                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                            g(GaugeStatus.InProgress, 50);
+                                            bitmap.StreamSource = stream;
+                                            g(GaugeStatus.InProgress, 60);
+                                        }
+                                        catch { }
+                                        finally
+                                        {
+                                            bitmap.EndInit();
+                                        }
+                                        g(GaugeStatus.InProgress, 70);
+                                        bitmap.Freeze();
+                                        g(GaugeStatus.InProgress, 80);
+                                        stream.Close();
+                                        g(GaugeStatus.InProgress, 85);
+                                        addToCache(slideId, new CachedThumbnail(bitmap));
+                                        g(GaugeStatus.InProgress, 90);
 
+                                    }
                                 }
                                 paintThumb(image);
                             }

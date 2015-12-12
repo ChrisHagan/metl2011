@@ -52,25 +52,7 @@ namespace SandRibbon.Components
             get { return (int)GetValue(TeachersCurrentSlideIndexProperty); }
             set { SetValue(TeachersCurrentSlideIndexProperty, value); }
         }
-
-        private static void AutomationSlideChanged(SlideDisplay slideDisplay, int oldValue, int newValue)
-        {
-            #region Automation events
-            if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
-            {
-                var peer = UIElementAutomationPeer.FromElement(slideDisplay) as SlideDisplayAutomationPeer;
-
-                if (peer != null)
-                {
-                    peer.RaisePropertyChangedEvent(
-                        RangeValuePatternIdentifiers.ValueProperty,
-                        (double)oldValue,
-                        (double)newValue);
-                }
-            }
-            #endregion
-        }
-
+        
         private static void OnTeachersCurrentSlideIndexChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             var slideDisplay = (SlideDisplay)obj;
@@ -381,10 +363,9 @@ namespace SandRibbon.Components
         }
         private void moveToPrevious(object _object)
         {
+            if (slides.SelectedIndex == 0) return;
             var previousIndex = slides.SelectedIndex - 1;
-            if (previousIndex < 0) return;
-            slides.SelectedIndex = previousIndex;
-            slides.ScrollIntoView(slides.SelectedItem);
+            MoveToSlide(previousIndex);
         }
         private bool isNext(object _object)
         {
@@ -408,8 +389,7 @@ namespace SandRibbon.Components
         private void moveToNext(object _object)
         {
             var nextIndex = slides.SelectedIndex + 1;
-            slides.SelectedIndex = nextIndex;
-            slides.ScrollIntoView(slides.SelectedItem);
+            MoveToSlide(nextIndex);
         }
         private void reorderSlides(int conversationJid)
         {
@@ -494,8 +474,7 @@ namespace SandRibbon.Components
                     {
                         currentSlideId = selected.id;
                         foreach (var slide in removedItems) ((Slide)slide).refresh();
-                        AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
-
+                        MoveToSlide(selected.index);
                         //Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
                         SendSyncMove(currentSlideId);
                         //checkMovementLimits();
@@ -518,96 +497,6 @@ namespace SandRibbon.Components
             {
                 Commands.SendSyncMove.ExecuteAsync(currentSlideId);
             }
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new SlideDisplayAutomationPeer(this);
-        }
-    }
-
-    public class SlideDisplayAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
-    {
-        public SlideDisplayAutomationPeer(SlideDisplay control)
-            : base(control)
-        {
-        }
-
-        protected override string GetClassNameCore()
-        {
-            return "SlideDisplay";
-        }
-
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        {
-            return AutomationControlType.Slider;
-        }
-
-        public override object GetPattern(PatternInterface patternInterface)
-        {
-            if (patternInterface == PatternInterface.RangeValue)
-            {
-                return this;
-            }
-            return base.GetPattern(patternInterface);
-        }
-
-        #region IRangeValueProvider members
-
-        bool IRangeValueProvider.IsReadOnly
-        {
-            get { return !IsEnabled(); }
-        }
-
-        double IRangeValueProvider.LargeChange
-        {
-            get { return 1; }
-        }
-
-        double IRangeValueProvider.Maximum
-        {
-            get { return (double)Control.LastSlideIndex; }
-        }
-
-        double IRangeValueProvider.Minimum
-        {
-            get { return (double)Control.FirstSlideIndex; }
-        }
-
-        void IRangeValueProvider.SetValue(double value)
-        {
-            if (!IsEnabled())
-            {
-                throw new ElementNotEnabledException();
-            }
-
-            var slideIndex = (int)value;
-            if (slideIndex < Control.FirstSlideIndex || slideIndex > Control.LastSlideIndex)
-            {
-                throw new ArgumentOutOfRangeException("value");
-            }
-
-            Control.MoveToSlide(slideIndex);
-        }
-
-        double IRangeValueProvider.SmallChange
-        {
-            get { return 1; }
-        }
-
-        double IRangeValueProvider.Value
-        {
-            get { return (double)Control.TeachersCurrentSlideIndex; }
-        }
-
-        #endregion
-
-        private SlideDisplay Control
-        {
-            get
-            {
-                return (SlideDisplay)base.Owner;
-            }
-        }
-    }
+        }        
+    }    
 }
