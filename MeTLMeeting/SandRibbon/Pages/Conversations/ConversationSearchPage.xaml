@@ -16,6 +16,7 @@
     xmlns:conversation="clr-namespace:SandRibbon.Pages.Conversations"
     xmlns:p="clr-namespace:SandRibbon.Properties"
     xmlns:ppType="clr-namespace:SandRibbon.Utils"
+    Title="Server Overview"
     x:Name="root">
     <Page.Resources>
         <conversation:VisibleToAuthor x:Key="visibleToAuthor" />
@@ -29,20 +30,12 @@
             <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
                 <StackPanel Margin="{DynamicResource nearBottom}">
                     <TextBlock Text="New conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
-                    <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
+                    <WrapPanel Margin="{DynamicResource clearBottom}">
+                        <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
+                        <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="15 0"/>
+                        <!--<Button Command="{x:Static api:Commands.BrowseOneNote}" Style="{DynamicResource secondaryChoice}" Content="Import OneNote" Margin="15 0"/>-->
+                    </WrapPanel>
                 </StackPanel >
-
-                <TextBlock Text="Import conversation" Style="{DynamicResource subHeading}" Margin="{DynamicResource nearBottom}"/>
-                <WrapPanel x:Name="pptChoices" Margin="{DynamicResource clearBottom}">
-                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
-                        Style="{DynamicResource secondaryChoice}" Content="PowerPoint" Margin="15 0">
-                    </Button>
-                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}"
-                        Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (flexible)" />
-                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}"
-                        Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (high quality)" />
-                </WrapPanel>
-
                 <TextBlock Text="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                 <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
                  HorizontalAlignment="Left"

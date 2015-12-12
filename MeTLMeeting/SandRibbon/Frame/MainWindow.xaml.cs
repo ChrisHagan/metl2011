@@ -34,17 +34,19 @@ using SandRibbon.Pages.Conversations;
 using SandRibbon.Pages.Integration;
 using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages;
+using SandRibbon.Frame.Flyouts;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon
 {
-    public enum PresentationStrategy {
-        WindowCoordinating,PageCoordinating
+    public enum PresentationStrategy
+    {
+        WindowCoordinating, PageCoordinating
     }
     public partial class MainWindow : MetroWindow
     {
         private System.Windows.Threading.DispatcherTimer displayDispatcherTimer;
 
-        private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
 
@@ -53,7 +55,7 @@ namespace SandRibbon
             InitializeComponent();
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
-            var globalState = new UserGlobalState();            
+            var globalState = new UserGlobalState();
             mainFrame.Navigate(new ServerSelectorPage(globalState));
             App.CloseSplashScreen();
         }
@@ -77,62 +79,84 @@ namespace SandRibbon
 
             Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
 
-            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-            Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = GlobalConstants.METL;
             Title = Strings.Global_ProductName;
-            //create
-            //Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop));
-            //Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation));
-            Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.ManuallyConfigureOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(openOneNoteConfiguration));
-            Commands.BrowseOneNote.RegisterCommand(new DelegateCommand<OneNoteConfiguration>(browseOneNote));
-            Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(serializeConversationToOneNote, mustBeInConversation));
-            //conversation movement
-//            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
-//            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
-            if (presentationStrategy == PresentationStrategy.WindowCoordinating)
-            {
-                Commands.MoveToNotebookPage.RegisterCommand(new DelegateCommand<NotebookPage>(NavigateToNotebookPage));
-            }            
             //Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
-            
-            Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-
-            Commands.MoreTextOptions.RegisterCommand(new DelegateCommand<object>(MoreTextOptions));
-            Commands.MoreImageOptions.RegisterCommand(new DelegateCommand<object>(MoreImageOptions));
-
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<KeyValuePair<NetworkController,ConversationDetails>>(PrintConversation,mustBeInConversation));
-
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop));
-          //  Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
-          //  Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
-
-            //Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
-            Commands.PickImages.RegisterCommand(new DelegateCommand<PickContext>(PickImages));
 
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
-          //  Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
-            Commands.ModifySelection.RegisterCommand(new DelegateCommand<IEnumerable<PrivateAwareStroke>>(ModifySelection));
-            Commands.SerializeConversationToOneNote.RegisterCommand(new DelegateCommand<OneNoteSynchronizationSet>(synchronizeToOneNote));
-
-          //  Commands.JoinCreatedConversation.RegisterCommand(new DelegateCommand<object>(joinCreatedConversation));
-
-            //WorkspaceStateProvider.RestorePreviousSettings();
             getDefaultSystemLanguage();
-            //undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
+
+            Commands.AddFlyoutCard.RegisterCommand(new DelegateCommand<FlyoutCard>(addFlyoutCard));
+            Commands.CloseFlyoutCard.RegisterCommand(new DelegateCommand<FlyoutCard>(closeFlyoutCard));
+            Commands.CreateDummyCard.RegisterCommand(new DelegateCommand<object>(createDummyCard));
+            cardControls.ItemsSource = flyoutCards;
+            var flyoutReminderTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);
+            flyoutReminderTimer.Interval = TimeSpan.FromSeconds(30);
+            flyoutReminderTimer.Tick += new EventHandler((s, e) =>
+            {
+                refreshFlyoutState();
+            });
+            flyoutReminderTimer.Start();
+            mainFrame.Navigated += (s, e) =>
+            {
+                try
+                {
+                    SetTitle(((Page)e.Content).Title);
+                }
+                catch { }
+            };
         }
 
+        protected void SetTitle(string newTitle)
+        {
+            this.Title = "MeTL - " + newTitle;
+        }
+        protected ObservableCollection<FlyoutCard> flyoutCards = new ObservableCollection<FlyoutCard>();
+        protected void createDummyCard(object obj)
+        {
+            var ifc = new InformationFlyout("dummy flyout", "check this out! @ " + DateTime.Now.ToString());
+            ifc.Width = new Random().Next(300) + 100;
+            Commands.AddFlyoutCard.Execute(ifc);
+        }
+        protected void addFlyoutCard(object obj)
+        {
+            if (obj is FlyoutCard)
+            {
+                var fc = obj as FlyoutCard;
+                flyoutCards.Add(fc);
+                refreshFlyoutState();
+            }
+        }
+        protected void closeFlyoutCard(object obj)
+        {
+            if (obj is FlyoutCard)
+            {
+                var fc = obj as FlyoutCard;
+                flyoutCards.Remove(fc);
+                refreshFlyoutState();
+            }
+        }
+        protected void refreshFlyoutState()
+        {
+            Dispatcher.adopt(delegate
+            {
+                if (flyoutCards.Count > 0)
+                {
+                    flyout.Width = flyoutCards.Select(s => s.Width).Max();
+                    flyout.IsOpen = true;
+                }
+                else
+                {
+                    flyout.IsOpen = false;
+                }
+            });
+        }
 
         private void openProjectorWindow(object _unused)
         {
@@ -162,100 +186,6 @@ namespace SandRibbon
             };
             dialog.ShowDialog();
         }
-
-        private void MoreImageOptions(object obj)
-        {
-            flyout.Content = TryFindResource("moreImageOptions");
-            flyout.DataContext = new PickContext();
-            flyout.IsOpen = true;
-        }
-
-        private void MoreTextOptions(object obj)
-        {
-            flyout.Content = TryFindResource("moreTextOptions");
-            flyout.IsOpen = true;
-        }
-
-        private void NavigateToNotebookPage(NotebookPage page)
-        {
-            mainFrame.Navigate(new OneNotePage(page));
-        }
-        private void synchronizeToOneNote(OneNoteSynchronizationSet sync) {            
-            /*
-            var w = new WebControl();
-            var config = sync.config;
-            DocumentReadyEventHandler ready = null;
-            ready = (s, e) =>
-            {
-                var queryPart = e.Url.AbsoluteUri.Split('#');
-                if (queryPart.Length > 1)
-                {
-                    var ps = HttpUtility.ParseQueryString(queryPart[1]);
-                    var token = ps["access_token"];
-                    if (token != null)
-                    {
-                        w.DocumentReady -= ready;
-                        sync.token = token;
-                        flyout.IsOpen = false;
-                        mainFrame.Navigate(new OneNoteSynchronizationPage(sync));
-                    }
-                }
-            };
-            w.DocumentReady += ready;
-            flyout.Content = w;
-            flyout.Width = 600;
-            flyout.IsOpen = true;
-            var scope = "office.onenote_update";
-            var responseType = "token";
-            var clientId = config.apiKey;
-            var redirectUri = "https://login.live.com/oauth20_desktop.srf";
-            var req = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type={2}&redirect_uri={3}";
-            var uri = new Uri(String.Format(req,
-                config.apiKey,
-                scope,
-                responseType,
-                redirectUri));
-            w.Source = uri;
-            */
-        }
-        private void browseOneNote(OneNoteConfiguration config)
-        {
-            var w = new WebControl();
-            DocumentReadyEventHandler ready = null;
-            ready = (s, e) =>
-            {
-                var queryPart = e.Url.AbsoluteUri.Split('#');
-                if (queryPart.Length > 1)
-                {
-                    var ps = HttpUtility.ParseQueryString(queryPart[1]);
-                    var token = ps["access_token"];
-                    if (token != null)
-                    {
-                        w.DocumentReady -= ready;
-                        flyout.DataContext = config;
-                        flyout.Content = TryFindResource("oneNoteListing");
-                        var oneNoteModel = flyout.DataContext as OneNoteConfiguration;
-                        oneNoteModel.LoadNotebooks(token);
-                    }
-                }
-            };
-            w.DocumentReady += ready;
-            flyout.Content = w;
-            flyout.Width = 600;
-            flyout.IsOpen = true;
-            var scope = "office.onenote_update";
-            var responseType = "token";
-            var clientId = config.apiKey;
-            var redirectUri = "https://login.live.com/oauth20_desktop.srf";
-            var req = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type={2}&redirect_uri={3}";
-            var uri = new Uri(String.Format(req,
-                config.apiKey,
-                scope,
-                responseType,
-                redirectUri));
-            w.Source = uri;
-        }
-
         private void openOneNoteConfiguration(OneNoteConfiguration obj)
         {
             flyout.Content = TryFindResource("oneNoteConfiguration");
@@ -266,12 +196,6 @@ namespace SandRibbon
         private void MoveToOverview(SlideAwarePage obj)
         {
             mainFrame.Navigate(new ConversationOverviewPage(obj.UserGlobalState, obj.UserServerState, obj.UserConversationState, obj.NetworkController, obj.ConversationDetails));
-        }
-
-        private void ModifySelection(IEnumerable<PrivateAwareStroke> obj)
-        {
-            this.flyout.Content = TryFindResource("worm");
-            this.flyout.IsOpen = !this.flyout.IsOpen;
         }
 
         [System.STAThreadAttribute()]
@@ -342,27 +266,10 @@ namespace SandRibbon
             {
                 Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
             }
-            catch (Exception e) { 
+            catch (Exception e)
+            {
             }
         }
-        #region helpLinks
-        private void OpenEULABrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(Properties.Settings.Default.UserAgreementUrl);
-        }
-        private void OpenTutorialBrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(Properties.Settings.Default.TutorialUrl);
-        }
-        private void OpenReportBugBrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(Properties.Settings.Default.BugReportUrl);
-        }
-        private void OpenAboutMeTLBrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(Properties.Settings.Default.DescriptionUrl);
-        }
-        #endregion
         private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
         {
             try
@@ -383,14 +290,6 @@ namespace SandRibbon
                 //Log(string.Format("Failure in language set: {0}", e.Message));
             }
         }
-        private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
-        {
-            Trace.TraceInformation("UserOptionsDialog_Show");           
-                var userOptions = new UserOptionsDialog();
-                userOptions.Owner = Window.GetWindow(this);
-                userOptions.ShowDialog();                       
-        }
-        
         private void HelpBinding(object sender, EventArgs e)
         {
             LaunchHelp(null);
@@ -405,18 +304,6 @@ namespace SandRibbon
             catch (Exception)
             {
             }
-        }
-        private void PrintBinding(object sender, EventArgs e)
-        {
-            //not sure what to do about this yet - I partly think that this binding should be at frame level, rather than window level.
-            //PrintConversation(networkController);
-        }
-        private void PrintConversation(KeyValuePair<NetworkController,ConversationDetails> obj)
-        {
-            if (Globals.UserOptions.includePrivateNotesOnPrint)
-                new Printer(obj.Key).PrintPrivate(obj.Value.Jid, obj.Key.credentials.name);
-            else
-                new Printer(obj.Key).PrintHandout(obj.Value.Jid, obj.Key.credentials.name);
         }
         private void SetUserOptions(UserOptions options)
         {
@@ -434,233 +321,10 @@ namespace SandRibbon
             base.OnSourceInitialized(e);
         }
 
-        /*
-        private void Reconnecting(bool success)
-        {
-            if (success)
-            {
-                try
-                {
-                    var details = Globals.conversationDetails;
-                    if (details == null || details.Equals(ConversationDetails.Empty))
-                    {
-                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-                    }
-                    else
-                    {
-                        var jid = Globals.conversationDetails.Jid;
-                        Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
-                        Commands.MoveToCollaborationPage.Execute(Globals.location.currentSlide);
-                        //SlideDisplay.SendSyncMove(Globals.location.currentSlide);
-                        App.controller.client.historyProvider.Retrieve<PreParser>(
-                                    null,
-                                    null,
-                                    (parser) =>
-                                    {
-                                        Commands.PreParserAvailable.Execute(parser);
-                                    },
-                                    jid);
-                    }
-                }
-                catch (NotSetException e)
-                {
-                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-                }
-                catch (Exception e)
-                {
-                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-                }
-            }
-            else
-            {
-                showReconnectingDialog();
-            }
-        }
-        */
-        private string messageFor(ConversationDetails details)
-        {
-            var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
-            if (details.Equals(ConversationDetails.Empty))
-                return Strings.Global_ProductName;
-            return string.Format("CONVERSATION {2}: {0}'s \"{1}\"", details.Author, details.Title, details.Permissions.studentCanPublish? "ENABLED" : "DISABLED");
-        }
-        private void showReconnectingDialog()
-        {
-            var majorHeading = new TextBlock
-            {
-                Foreground = Brushes.White,
-                Text = "Connection lost...  Reconnecting",
-                FontSize = 72,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            var minorHeading = new TextBlock
-            {
-                Foreground = Brushes.White,
-                Text = "You must have an active internet connection,\nand you must not be logged in twice with the same account.",
-                FontSize = 30,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-        }     
-        /*           
-        private bool mustBeInConversationAndBeAuthor(object _arg)
-        {
-            return mustBeInConversation(_arg) && mustBeAuthor(_arg);
-        }
-        */
-        private bool mustBeInConversation(object _arg)
-        {
-            return false;
-        }
-        private bool mustBeInConversation(KeyValuePair<NetworkController,ConversationDetails> obj)
-        {
-            var details = obj.Value;
-            if (!details.IsValid)
-                if (obj.Key.credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("superuser")) return true;
-            var validGroups = obj.Key.credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).ToList();
-            validGroups.Add("unrestricted");
-            if (!details.isDeleted && validGroups.Contains(details.Subject.ToLower())) return true;
-            return false;
-        }
-        private bool mustBeAuthor(KeyValuePair<ConversationDetails,string> obj)
-        {
-            return obj.Key.isAuthor(obj.Value);
-        }
-        private DelegateCommand<object> canOpenFriendsOverride;
-        private PresentationStrategy presentationStrategy;
-
-        private void applyPermissions(Permissions permissions)
-        {
-            if (canOpenFriendsOverride != null)
-                Commands.ToggleFriendsVisibility.UnregisterCommand(canOpenFriendsOverride);
-            canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
-            Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
-        }
-        /*
-        private void createConversation(object detailsObject)
-        {
-            var details = (ConversationDetails)detailsObject;
-            if (details == null) return;
-            if (Commands.CreateConversation.CanExecute(details))
-            {
-                if (details.Tag == null)
-                    details.Tag = "unTagged";
-                details.Author = Globals.userInformation.credentials.name;
-                var connection = App.controller.client;
-                details = connection.CreateConversation(details);
-                CommandManager.InvalidateRequerySuggested();
-                if (Commands.JoinConversation.CanExecute(details.Jid))
-                    Commands.JoinConversation.Execute(details.Jid);
-                mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
-            }
-        }
-        */
-        /*
-        protected void joinCreatedConversation(object detailsObject)
-        {
-            var details = (ConversationDetails)detailsObject;
-            CommandManager.InvalidateRequerySuggested();
-            if (Commands.JoinConversation.CanExecute(details.Jid))
-                Commands.JoinConversation.Execute(details.Jid);
-            Dispatcher.adopt(delegate {
-                mainFrame.NavigationService.Navigate(new ConversationOverviewPage(App.controller, details));
-            });
-        }
-        */
-        /*
-        private void setSync(object _obj)
-        {
-            Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
-        }
-        */
-
-        public Visibility GetVisibilityOf(UIElement target)
-        {
-            return target.Visibility;
-        }
-        /*
-        public void toggleNavigationLock(object _obj)
-        {
-
-            var details = Globals.conversationDetails;
-            if (details == null)
-                return;
-            details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
-            App.controller.client.UpdateConversationDetails(details);
-        }
-        */
-        /*
-        private void SetConversationPermissions(object obj)
-        {
-            var style = (string)obj;
-            try
-            {
-                var details = Globals.conversationDetails;
-                if (details == null)
-                    return;
-                if (style == "lecture")
-                    details.Permissions.applyLectureStyle();
-                else
-                    details.Permissions.applyTuteStyle();
-                App.controller.client.UpdateConversationDetails(details);
-            }
-            catch (NotSetException)
-            {
-                return;
-            }
-        }
-        */
-        /*
-        private bool CanSetConversationPermissions(object _style)
-        {
-            return Globals.isAuthor;
-        }
-        */
-        private void sleep(object _obj)
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                Hide();
-            });
-        }
-        private void wakeUp(object _obj)
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                Show();
-                WindowState = WindowState.Maximized;
-            });
-        }
-
-
-
-        private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)
-            {
-                e.Cancel = true;
-            }
-            else
-            {
-                Commands.CloseApplication.Execute(null);
-                Application.Current.Shutdown();
-            }
-        }
-        private void ApplicationPopup_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            App.AccidentallyClosing = DateTime.Now;
-        }
-
-        private void ribbon_SelectedTabChanged(object sender, EventArgs e)
-        {
-            var ribbon = sender as Ribbon;
-        }
-
         private void UserPreferences(object sender, RoutedEventArgs e)
         {
             mainFrame.Navigate(new CommandBarConfigurationPage());
-        }        
+        }
         protected void ShowDiagnosticsWindow(object sender, RoutedEventArgs e)
         {
             launchDiagnosticsWindow(null);
@@ -670,7 +334,7 @@ namespace SandRibbon
             if (App.diagnosticWindow == null)
             {
                 App.diagnosticWindow = new DiagnosticWindow();
-            } 
+            }
             App.diagnosticWindow.Show();
         }
     }

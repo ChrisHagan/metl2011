@@ -7,7 +7,7 @@
     xmlns:providers="clr-namespace:SandRibbon.Providers"   
     AllowDrop="True"                           
     x:Name="ribbonWindow"
-    Closing="ribbonWindow_Closing">
+    >
     <Controls:MetroWindow.InputBindings>
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
@@ -21,6 +21,13 @@
     </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
+            <Button Command="{x:Static api:Commands.CreateDummyCard}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_alert}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
             <Button Command="{x:Static api:Commands.LaunchDiagnosticWindow}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
@@ -32,7 +39,10 @@
     </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="flyout" Position="Right" Width="250"/>
+            <Controls:Flyout x:Name="flyout" Position="Right" Width="250">
+                <ItemsControl x:Name="cardControls">
+                </ItemsControl>
+            </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Frame x:Name="mainFrame">

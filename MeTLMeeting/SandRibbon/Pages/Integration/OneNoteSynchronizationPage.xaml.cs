@@ -30,9 +30,9 @@ namespace SandRibbon.Pages.Integration
         {
             var sync = DataContext as OneNoteSynchronizationSet;
             var configuration = sync.config;
-            configuration.LoadNotebooks(sync.token);
+            configuration.LoadNotebooks();
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", sync.token));
+            httpClient.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", sync.config.token));
             var metlNotebook = configuration.Books.Where(b => b.Name == METL_NOTEBOOK_TITLE);
             if (metlNotebook.Count() == 0)
             {
@@ -41,7 +41,7 @@ namespace SandRibbon.Pages.Integration
                     name = METL_NOTEBOOK_TITLE
                 }).ToString();
                 await httpClient.PostAsync(OneNoteConfiguration.notebooks, new StringContent(data, Encoding.UTF8, "application/json"));
-                configuration.LoadNotebooks(sync.token);
+                configuration.LoadNotebooks();
                 metlNotebook = configuration.Books.Where(b => b.Name == METL_NOTEBOOK_TITLE);
             }
             var metlNotebookId = metlNotebook.First().Id;

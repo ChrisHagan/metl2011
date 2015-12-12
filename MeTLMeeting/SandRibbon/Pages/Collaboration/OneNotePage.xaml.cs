@@ -1,12 +1,16 @@
-﻿using SandRibbon.Pages.Conversations.Models;
+﻿using SandRibbon.Components;
+using SandRibbon.Pages.Conversations.Models;
 using System.Windows.Controls;
 
 namespace SandRibbon.Pages.Collaboration
 {
-    public partial class OneNotePage : Page
+    public partial class OneNotePage : ServerAwarePage
     {
-        public OneNotePage(NotebookPage page)
+        public OneNotePage(UserGlobalState userGlobalState, UserServerState userServerState, NetworkController networkController, OneNoteConfiguration config, NotebookPage page) : base()
         {
+            UserGlobalState = userGlobalState;
+            UserServerState = userServerState;
+            NetworkController = networkController;
             InitializeComponent();
             DataContext = page;
             wb.NativeViewInitialized += delegate {

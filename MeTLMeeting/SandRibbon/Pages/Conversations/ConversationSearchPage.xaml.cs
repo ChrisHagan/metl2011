@@ -23,6 +23,8 @@ using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Components;
 using SandRibbon.Utils;
+using SandRibbon.Frame.Flyouts;
+using SandRibbon.Pages.Integration;
 
 namespace SandRibbon.Pages.Conversations
 {
@@ -62,11 +64,14 @@ namespace SandRibbon.Pages.Conversations
             SearchInput.Text = query;
             FillSearchResultsFromInput();
             var importConversationCommand = new DelegateCommand<object>(ImportPowerpoint);
+            var browseOneNoteCommand = new DelegateCommand<object>(BrowseOneNote);
             Loaded += (s,e) => {
                 Commands.ImportPowerpoint.RegisterCommand(importConversationCommand);
+                Commands.BrowseOneNote.RegisterCommand(browseOneNoteCommand);
             };
             Unloaded += (s,e) => {
                 Commands.ImportPowerpoint.UnregisterCommand(importConversationCommand);
+                Commands.BrowseOneNote.UnregisterCommand(browseOneNoteCommand);
             };
         }
 
@@ -83,14 +88,11 @@ namespace SandRibbon.Pages.Conversations
         }
         private void ImportPowerpoint(object obj)
         {
-            var conv = new PowerPointLoader(NetworkController).ImportPowerpoint((PowerpointImportType)obj);
-            if (conv != ConversationDetails.Empty)
-            {
-                NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, new UserConversationState(), NetworkController, conv));
-            }
-            else {
-                MeTLMessage.Error("Conversation import failed.");
-            }
+            Commands.AddFlyoutCard.Execute(new PowerpointLoaderFlyout(NavigationService,NetworkController,UserGlobalState,UserServerState));
+        }
+        private void BrowseOneNote(object obj)
+        {
+            NavigationService.Navigate(new OneNoteAuthenticationPage(UserGlobalState, UserServerState, NetworkController, (ugs, uss, nc, oc) => new OneNoteListingPage(ugs, uss, nc, oc), UserServerState.OneNoteConfiguration));
         }
 
         private void FillSearchResultsFromInput()
@@ -253,12 +255,13 @@ namespace SandRibbon.Pages.Conversations
             var cs = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
             if (cs.Count() > 0)
             {
-                Commands.SerializeConversationToOneNote.Execute(new OneNoteSynchronizationSet
+                NavigationService.Navigate(new OneNoteAuthenticationPage(UserGlobalState,UserServerState,NetworkController,(ugs,uss,nc,oc) => new OneNoteSynchronizationPage(ugs,uss,nc,
+                new OneNoteSynchronizationSet
                 {
-                    config = UserServerState.OneNoteConfiguration,
+                    config = oc,
                     networkController = NetworkController,
                     conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
-                });
+                }),UserServerState.OneNoteConfiguration));
             }
         }
 

@@ -373,6 +373,11 @@ namespace SandRibbon
         public static DefaultableCompositeCommand HideProjector = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand EnableProjector = new DefaultableCompositeCommand();
 
+        public static DefaultableCompositeCommand AddFlyoutCard = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CloseFlyoutCard = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CreateDummyCard = new DefaultableCompositeCommand(); // for testing only
+
+
         Commands()
         {
             NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => false));
