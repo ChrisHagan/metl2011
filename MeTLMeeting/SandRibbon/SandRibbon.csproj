@@ -327,6 +327,16 @@
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />
     <Compile Include="Components\Utility\TimedAction.cs" />
+    <Compile Include="Frame\Flyouts\DiagnosticsFlyout.xaml.cs">
+      <DependentUpon>DiagnosticsFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frame\Flyouts\FlyoutCard.cs" />
+    <Compile Include="Frame\Flyouts\InformationFlyout.xaml.cs">
+      <DependentUpon>InformationFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frame\Flyouts\PowerpointLoaderFlyout.xaml.cs">
+      <DependentUpon>PowerpointLoaderFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Layout\ConstrainingStackPanel.cs" />
     <Compile Include="Layout\Grid.cs" />
     <Compile Include="Pages\Analytics\EmbeddedSummariesPage.xaml.cs">
@@ -380,6 +390,12 @@
     <Compile Include="Pages\Identity\ProfileSelectorPage.xaml.cs">
       <DependentUpon>ProfileSelectorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Integration\OneNoteAuthenticationPage.xaml.cs">
+      <DependentUpon>OneNoteAuthenticationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Integration\OneNoteListingPage.xaml.cs">
+      <DependentUpon>OneNoteListingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Integration\OneNoteSynchronizationPage.xaml.cs">
       <DependentUpon>OneNoteSynchronizationPage.xaml</DependentUpon>
     </Compile>
@@ -432,11 +448,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Frame\Flyouts\DiagnosticsFlyout.xaml">
+      <SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
     <Page Include="Components\ResourceDictionaries\ToolTips_en-gb.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frame\Flyouts\Flyouts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Frame\Flyouts\InformationFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Frame\Flyouts\PowerpointLoaderFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -536,6 +564,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Identity\ProfileSelectorPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Integration\OneNoteAuthenticationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Integration\OneNoteListingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

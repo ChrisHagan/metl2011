@@ -170,13 +170,23 @@
             
             <TabControl Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
                 <TabItem Header="Filter">
-                    <Grid layout:GridLayout.ItemsPerRow="1">
-                        <TextBlock Text="What do you want to see?" Style="{StaticResource minorHeading}" />
-                        <components:ContentVisibility/>
-                    </Grid>
+                    <ContentPresenter>
+                        <ContentPresenter.Content>
+
+                            <Grid layout:GridLayout.ItemsPerRow="1">
+                                <TextBlock Text="What do you want to see?" Style="{StaticResource minorHeading}" />
+                                <components:ContentVisibility/>
+                            </Grid>
+                        </ContentPresenter.Content>
+                    </ContentPresenter>
                 </TabItem>
                 <TabItem Header="Interact">
-                    <components:RoleQuickControls />
+                    <ContentPresenter>
+                        <ContentPresenter.Content>
+
+                            <components:RoleQuickControls />
+                        </ContentPresenter.Content>
+                    </ContentPresenter>
                 </TabItem>
             </TabControl>
             <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" 

@@ -2140,7 +2140,9 @@ namespace MeTLLib.DataTypes
                 var image = new BitmapImage();
                 try
                 {
-                    var path = server.getImage(GetTag(slideTag), GetTag(sourceTag));
+                    var path = server.getResource(GetTag(sourceTag));
+                    //                    var path = server.getImage(GetTag(slideTag), GetTag(identityTag));
+                    //var path = server.getImage(GetTag(slideTag), GetTag(sourceTag)); //this was the original
                     var bytes = provider.secureGetData(path);
                     if (bytes.Length == 0) return null;
                     var stream = new MemoryStream(bytes);

@@ -1,0 +1,32 @@
+﻿<local:FlyoutCard x:Class="SandRibbon.Frame.Flyouts.PowerpointLoaderFlyout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SandRibbon.Frame.Flyouts"
+             mc:Ignorable="d" 
+             Height="300" Width="300">
+    <StackPanel>
+        <TextBlock x:Name="filename" Visibility="Visible"/>
+        <TextBlock x:Name="powerpointStatus" Visibility="Visible"/>
+        <ItemsControl x:Name="importTypes">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding}" Click="TypeChosen"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl x:Name="progresses" Width="Auto" HorizontalAlignment="Stretch">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Width="Auto" HorizontalAlignment="Stretch">
+                        <Label Content="{Binding Category}" Width="Auto" HorizontalAlignment="Stretch"/>
+                        <ProgressBar Value="{Binding Count}" Maximum="{Binding Total}" Width="Auto" HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="{Binding Description}" Width="Auto" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button Content="Join conversation" x:Name="goToConversation" IsEnabled="False"/>
+    </StackPanel>
+</local:FlyoutCard>

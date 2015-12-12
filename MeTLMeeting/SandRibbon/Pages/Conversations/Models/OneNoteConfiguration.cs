@@ -32,7 +32,9 @@ namespace SandRibbon.Pages.Conversations.Models
         public static string pages = "https://www.onenote.com/api/v1.0/me/notes/sections/{0}/pages";
         public static string pages_delete = "https://www.onenote.com/api/v1.0/me/notes/pages/{0}/";
 
-        public void LoadNotebooks(string token)
+        public string token { get; set; }
+
+        public void LoadNotebooks()
         {
             var wc = new WebClient();
             wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
@@ -58,11 +60,11 @@ namespace SandRibbon.Pages.Conversations.Models
                         networkController = networkController
                     };                    
                     book.Sections.Add(section);
-                    LoadPages(token, section);
+                    LoadPages(section);
                 }
             }
         }
-        public void LoadPages(string token, NotebookSection section)
+        public void LoadPages(NotebookSection section)
         {
             var wc = new WebClient();
             wc.Headers.Add("Authorization", string.Format("Bearer {0}", token));
@@ -93,7 +95,6 @@ namespace SandRibbon.Pages.Conversations.Models
         }                
     }
     public class OneNoteSynchronizationSet {
-        public string token { get; set; }
         public OneNoteConfiguration config { get; set; }
         public IEnumerable<OneNoteSynchronization> conversations { get; set; }
         public NetworkController networkController { get; set; }
