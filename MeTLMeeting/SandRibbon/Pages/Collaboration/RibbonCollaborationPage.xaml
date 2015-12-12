@@ -180,10 +180,9 @@
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
-                <TabItem Header="Interact">
+                <TabItem Header="Interact" IsSelected="True">
                     <ContentPresenter>
                         <ContentPresenter.Content>
-
                             <components:RoleQuickControls />
                         </ContentPresenter.Content>
                     </ContentPresenter>

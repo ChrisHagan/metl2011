@@ -6,10 +6,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Components="clr-namespace:SandRibbon.Components">
     <UniformGrid x:Name="nav" Height="40" Rows="1" Columns="2">
         <Button x:Name="moveToPrevious" ToolTip="{DynamicResource PreviousSlideToolTip}" >
-            <TextBlock Text="Previous" Style="{DynamicResource subHeading}" />
+            <TextBlock Text="Previous" Style="{DynamicResource minorHeading}" />
         </Button>
         <Button x:Name="moveToNext" ToolTip="{DynamicResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}">
-            <TextBlock Text="Next" Style="{DynamicResource subHeading}" />
+            <TextBlock Text="Next" Style="{DynamicResource minorHeading}" />
         </Button>
     </UniformGrid>
 </UserControl>

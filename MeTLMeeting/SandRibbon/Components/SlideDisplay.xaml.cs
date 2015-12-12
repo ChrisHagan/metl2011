@@ -253,7 +253,7 @@ namespace SandRibbon.Components
         {
             if (rootPage.ConversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
             if (String.IsNullOrEmpty(rootPage.NetworkController.credentials.name)) return false;
-            return (rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name);
+            return (rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
         }
         private void addSlide(object _slide)
         {
