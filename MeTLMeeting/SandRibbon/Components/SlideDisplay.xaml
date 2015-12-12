@@ -15,20 +15,18 @@
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </UserControl.Resources>
 
-    <ScrollViewer Height="Auto">
+    <ScrollViewer Height="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
         <ScrollViewer.Resources>
             <core:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">40</core:Double>
         </ScrollViewer.Resources>
         <ListBox
-             x:Name="slides"
-             ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-             ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+             x:Name="slides"             
              OverridesDefaultStyle="False"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" Height="Auto">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemContainerStyle>
@@ -39,8 +37,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border Name="Border" Margin="1" 
-                            Padding="1" Background="{StaticResource BackgroundBlueGradient}"
-                            SnapsToDevicePixels="true"
+                            Padding="1" Background="{StaticResource BackgroundBlueGradient}"                            
                             VerticalAlignment="Stretch">
                         <Border.Width>
                             <MultiBinding Converter="{x:Static my:Converters.multiply}">

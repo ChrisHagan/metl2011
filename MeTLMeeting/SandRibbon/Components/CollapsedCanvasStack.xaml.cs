@@ -337,17 +337,16 @@ namespace SandRibbon.Components
                 rootPage.UserConversationState.UndoHistory.ShowVisualiser(Window.GetWindow(this));
         }
 
+        double shift = 200;
         private void extendCanvasDown(object o)
         {
-            var d = (double)o;
-            Height += d;
+            Height += shift;
         }
 
         private void extendCanvasUp(object o)
-        {
-            var d = (double)o;
-            Height += d;
-            contentBuffer.logicalY -= d;
+        {            
+            Height += shift;
+            contentBuffer.logicalY -= shift;
             contentBuffer.AdjustContent();
         }
 

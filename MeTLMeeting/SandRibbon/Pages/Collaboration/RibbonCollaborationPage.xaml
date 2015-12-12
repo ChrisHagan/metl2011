@@ -248,13 +248,18 @@
                     </ContentPresenter>
                 </TabItem>
             </TabControl>
-            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="5" Grid.Row="1">
+            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="5" Grid.Row="1"
+                          Height="Auto">
                 <GridSplitter.Template>
                     <ControlTemplate TargetType="{x:Type GridSplitter}">
-                        <Border HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" BorderBrush="{TemplateBinding BorderBrush}"
+                        <Border
+                            BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}">
-                            <components:SlideNavigationControls x:Name="NavigationControls" Width="Auto" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+                            Background="{TemplateBinding Background}"
+                            Height="40">
+                            <components:SlideNavigationControls x:Name="NavigationControls"                                                                 
+                                                                HorizontalAlignment="Center"                                                                 
+                                                                Background="Yellow"/>
                         </Border>
                     </ControlTemplate>
                 </GridSplitter.Template>

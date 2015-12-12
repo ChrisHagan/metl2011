@@ -308,10 +308,10 @@ namespace MeTLLib.Providers.Connection
                 conn.OnStreamError -= ElementError;
                 conn.OnClose -= OnClose;
                 conn.OnIq -= OnIq;
-//#if DEBUG
+/*
                 conn.OnReadXml -= ReadXml;
                 conn.OnWriteXml -= WriteXml;
-//#endif
+*/
             }
             this.conn = new XmppClientConnection(jid.Server);
             conn.ConnectServer = metlServerAddress.xmppHost;
@@ -329,10 +329,10 @@ namespace MeTLLib.Providers.Connection
             conn.OnStreamError += ElementError;
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
-//#if DEBUG
+/*
             conn.OnReadXml += ReadXml;
             conn.OnWriteXml += WriteXml;
-//#endif
+*/
         }
 
         private void SendPing(string who)
