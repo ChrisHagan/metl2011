@@ -9,19 +9,8 @@ using SandRibbon.Components.Interfaces;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
-using System.Collections.Generic;
-using MeTLLib.Providers.Connection;
 using System.Windows.Data;
-using SandRibbon.Utils;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
-using System.Windows.Automation;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Threading;
-using System.Windows.Media;
 using MeTLLib.Utilities;
-using System.ComponentModel;
 using System.Windows.Threading;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
@@ -51,24 +40,6 @@ namespace SandRibbon.Components
         {
             get { return (int)GetValue(TeachersCurrentSlideIndexProperty); }
             set { SetValue(TeachersCurrentSlideIndexProperty, value); }
-        }
-
-        private static void AutomationSlideChanged(SlideDisplay slideDisplay, int oldValue, int newValue)
-        {
-            #region Automation events
-            if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
-            {
-                var peer = UIElementAutomationPeer.FromElement(slideDisplay) as SlideDisplayAutomationPeer;
-
-                if (peer != null)
-                {
-                    peer.RaisePropertyChangedEvent(
-                        RangeValuePatternIdentifiers.ValueProperty,
-                        (double)oldValue,
-                        (double)newValue);
-                }
-            }
-            #endregion
         }
 
         private static void OnTeachersCurrentSlideIndexChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -107,7 +78,6 @@ namespace SandRibbon.Components
             get { return (bool)GetValue(IsNavigationLockedProperty); }
             set { SetValue(IsNavigationLockedProperty, value); }
         }
-        public int currentSlideId = -1;
         public ObservableCollection<Slide> thumbnailList { get; set; }
         public static SlideIndexConverter SlideIndex;
         public SlideAwarePage rootPage { get; protected set; }
@@ -118,11 +88,11 @@ namespace SandRibbon.Components
             InitializeComponent();
 
             var moveToTeacherCommand = new DelegateCommand<int>(MoveToTeacher);
-            var forcePageRefreshCommand = new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation);
+            var forcePageRefreshCommand = new DelegateCommand<int>((slideIndex) => QueryReachable(slideIndex, true), slideInConversation);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(Display);
             var addSlideCommand = new DelegateCommand<object>(addSlide, canAddSlide);
-            var moveToNextCommand = new DelegateCommand<object>(moveToNext, isNext);
-            var moveToPreviousCommand = new DelegateCommand<object>(moveToPrevious, isPrevious);
+            var moveToNextCommand = new DelegateCommand<object>(selectNext, isNext);
+            var moveToPreviousCommand = new DelegateCommand<object>(selectPrevious, isPrevious);
             var receiveTeacherStatusCommand = new DelegateCommand<TeacherStatus>(receivedStatus);
             var editConversationCommand = new DelegateCommand<object>(EditConversation);
             var updateNewSlideOrderCommand = new DelegateCommand<int>(reorderSlides);
@@ -135,13 +105,15 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides.OrderBy(sl => sl.index));
-                thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
+                slides.ItemsSource = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides);
+                /*Observe this ordering or you'll fall into an infinite loop*/
+                slides.SelectedItem = rootPage.Slide;
+                slides.SelectionChanged += slides_SelectionChanged;
+
                 SlideIndex = new SlideIndexConverter();
                 myMaxSlideIndex = -1;
                 TeachersCurrentSlideIndex = -1;
-                IsNavigationLocked = calculateNavigationLocked();
-                DataContext = this;
+                IsNavigationLocked = calculateNavigationLocked();                
                 slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
 
                 Commands.SyncedMoveRequested.RegisterCommandToDispatcher(moveToTeacherCommand);
@@ -208,24 +180,17 @@ namespace SandRibbon.Components
                     }
                 }
             }
-            catch {
+            catch
+            {
                 shouldSpeedUp = true;
-            } finally
+            }
+            finally
             {
                 refresher.Interval = shouldSpeedUp ? shortRefresh : longRefresh;
                 refresher.Stop();
                 refresher.Start();
             }
-        }
-
-        private void OnThumbnailCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var thumbnails = sender as ObservableCollection<Slide>;
-            if (e.NewItems != null && e.NewItems.Count != 0)
-            {
-                LastSlideIndex = thumbnails.Count;
-            }
-        }
+        }        
 
         private void HandlePaste(object obj)
         {
@@ -282,18 +247,7 @@ namespace SandRibbon.Components
                    d.Permissions.NavigationLocked &&
                    Globals.AuthorOnline(d.Author) &&
                    Globals.AuthorInRoom(d.Author, d.Jid);
-        }
-        private void resetLocationLocals(object _unused)
-        {
-            currentSlideId = -1;
-        }
-        private void JoinConversation(object obj)
-        {
-            myMaxSlideIndex = -1;
-            TeachersCurrentSlideIndex = -1;
-            thumbnailList.Clear();
-        }
-
+        }        
         private bool canAddSlide(object _slide)
         {
             if (rootPage.ConversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
@@ -313,25 +267,16 @@ namespace SandRibbon.Components
             return thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
         }
 
-        private void MoveTo(int slide, bool _forceRefresh)
+        private void QueryReachable(int slide, bool _forceRefresh)
         {
             myMaxSlideIndex = calculateMaxIndex(myMaxSlideIndex, indexOf(slide));
-            currentSlideId = slide;
             checkMovementLimits();
         }
 
         private int calculateMaxIndex(int myIndex, int index)
         {
             return myIndex > index ? myIndex : index;
-        }
-
-        public static readonly DependencyProperty LastSlideIndexProperty = DependencyProperty.Register("LastSlideIndex", typeof(int), typeof(SlideDisplay));
-        public int LastSlideIndex
-        {
-            get { return (int)GetValue(LastSlideIndexProperty); }
-            set { SetValue(LastSlideIndexProperty, value); }
-        }
-
+        }        
         private const int defaultFirstSlideIndex = 0;
         public static readonly DependencyProperty FirstSlideIndexProperty = DependencyProperty.Register("FirstSlideIndex", typeof(int), typeof(SlideDisplay), new PropertyMetadata(defaultFirstSlideIndex));
         public int FirstSlideIndex
@@ -349,15 +294,8 @@ namespace SandRibbon.Components
             checkMovementLimits();
             var action = (Action)(() => Dispatcher.adoptAsync(() =>
                                                                   {
-                                                                      try
-                                                                      {
-                                                                          var index = rootPage.ConversationDetails.Slides.First(s => s.id == where).index;
-                                                                          slides.SelectedIndex = index;
-                                                                          slides.ScrollIntoView(slides.SelectedItem);
-                                                                      }
-                                                                      catch (Exception)
-                                                                      {
-                                                                      }
+                                                                      var index = rootPage.ConversationDetails.Slides.First(s => s.id == where).index;
+                                                                      slides.SelectedIndex = index;
                                                                   }));
             GlobalTimers.SetSyncTimer(action);
         }
@@ -371,20 +309,14 @@ namespace SandRibbon.Components
             {
                 var isAtStart = rootPage.ConversationDetails.Slides.Select(s => s.index).Min() == rootPage.Slide.index;
                 var slideLockNav = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || ((rootPage.Slide.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
-                var canNav = !isAtStart && slideLockNav;// normalNav && slideLockNav;
+                var canNav = !isAtStart && slideLockNav;
                 return canNav;
             }
             else return false;
-            //var normalNav = slides != null &&  slides.SelectedIndex < thumbnailList.Count() - 1;
-
-            //            return slides != null && slides.SelectedIndex > 0;
         }
-        private void moveToPrevious(object _object)
+        private void selectPrevious(object _object)
         {
-            var previousIndex = slides.SelectedIndex - 1;
-            if (previousIndex < 0) return;
-            slides.SelectedIndex = previousIndex;
-            slides.ScrollIntoView(slides.SelectedItem);
+            if(isPrevious(_object))slides.SelectedIndex -= 1;            
         }
         private bool isNext(object _object)
         {
@@ -392,24 +324,14 @@ namespace SandRibbon.Components
             {
                 var isAtEnd = rootPage.ConversationDetails.Slides.Select(s => s.index).Max() == rootPage.Slide.index;
                 var slideLockNav = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || ((rootPage.Slide.index < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex)) || !IsNavigationLocked);
-                var canNav = !isAtEnd && slideLockNav;// normalNav && slideLockNav;
+                var canNav = !isAtEnd && slideLockNav;
                 return canNav;
             }
-            else return false;
-            //var normalNav = slides != null &&  slides.SelectedIndex < thumbnailList.Count() - 1;
-        }
-
-        public void MoveToSlide(int slideIndex)
+            else return false;            
+        }        
+        private void selectNext(object _object)
         {
-            slides.SelectedIndex = slideIndex;
-            slides.ScrollIntoView(slides.SelectedItem);
-        }
-
-        private void moveToNext(object _object)
-        {
-            var nextIndex = slides.SelectedIndex + 1;
-            slides.SelectedIndex = nextIndex;
-            slides.ScrollIntoView(slides.SelectedItem);
+            if(isNext(_object)) slides.SelectedIndex += 1;            
         }
         private void reorderSlides(int conversationJid)
         {
@@ -430,14 +352,14 @@ namespace SandRibbon.Components
         }
         public void EditConversation(object _obj)
         {
-            var editConversation = new EditConversation(rootPage.ConversationDetails,rootPage.NetworkController);
+            var editConversation = new EditConversation(rootPage.ConversationDetails, rootPage.NetworkController);
             editConversation.Owner = Window.GetWindow(this);
             editConversation.ShowDialog();
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
-                return;            
+                return;
             if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(rootPage.NetworkController.credentials))
             {
                 thumbnailList.Clear();
@@ -488,126 +410,19 @@ namespace SandRibbon.Components
             {
                 var removedItems = e.RemovedItems;
                 var selected = (Slide)addedItems[0];
-                if (selected.id != currentSlideId)
+                if (isWithinTeachersRange(selected))
+                {                                        
+                    Commands.SendSyncMove.ExecuteAsync(selected.id);                    
+                    rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
+                }
+                else if (sender is ListBox)
                 {
-                    if (isWithinTeachersRange(selected))
+                    if (removedItems.Count > 0)
                     {
-                        currentSlideId = selected.id;
-                        foreach (var slide in removedItems) ((Slide)slide).refresh();
-                        AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
-
-                        //Commands.MoveToCollaborationPage.ExecuteAsync(currentSlideId);
-                        SendSyncMove(currentSlideId);
-                        //checkMovementLimits();
-                        rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState,new UserSlideState(),rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
-                    }
-                    else if (sender is ListBox)
-                    {
-                        if (removedItems.Count > 0)
-                        {
-                            ((ListBox)sender).SelectedItem = removedItems[0];
-                        }
+                        ((ListBox)sender).SelectedItem = removedItems[0];
                     }
                 }
             }
-        }
-
-        public void SendSyncMove(int currentSlideId)
-        {
-            if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && rootPage.UserConversationState.Synched)
-            {
-                Commands.SendSyncMove.ExecuteAsync(currentSlideId);
-            }
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new SlideDisplayAutomationPeer(this);
-        }
-    }
-
-    public class SlideDisplayAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
-    {
-        public SlideDisplayAutomationPeer(SlideDisplay control)
-            : base(control)
-        {
-        }
-
-        protected override string GetClassNameCore()
-        {
-            return "SlideDisplay";
-        }
-
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        {
-            return AutomationControlType.Slider;
-        }
-
-        public override object GetPattern(PatternInterface patternInterface)
-        {
-            if (patternInterface == PatternInterface.RangeValue)
-            {
-                return this;
-            }
-            return base.GetPattern(patternInterface);
-        }
-
-        #region IRangeValueProvider members
-
-        bool IRangeValueProvider.IsReadOnly
-        {
-            get { return !IsEnabled(); }
-        }
-
-        double IRangeValueProvider.LargeChange
-        {
-            get { return 1; }
-        }
-
-        double IRangeValueProvider.Maximum
-        {
-            get { return (double)Control.LastSlideIndex; }
-        }
-
-        double IRangeValueProvider.Minimum
-        {
-            get { return (double)Control.FirstSlideIndex; }
-        }
-
-        void IRangeValueProvider.SetValue(double value)
-        {
-            if (!IsEnabled())
-            {
-                throw new ElementNotEnabledException();
-            }
-
-            var slideIndex = (int)value;
-            if (slideIndex < Control.FirstSlideIndex || slideIndex > Control.LastSlideIndex)
-            {
-                throw new ArgumentOutOfRangeException("value");
-            }
-
-            Control.MoveToSlide(slideIndex);
-        }
-
-        double IRangeValueProvider.SmallChange
-        {
-            get { return 1; }
-        }
-
-        double IRangeValueProvider.Value
-        {
-            get { return (double)Control.TeachersCurrentSlideIndex; }
-        }
-
-        #endregion
-
-        private SlideDisplay Control
-        {
-            get
-            {
-                return (SlideDisplay)base.Owner;
-            }
-        }
+        }        
     }
 }

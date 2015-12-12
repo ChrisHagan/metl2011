@@ -450,7 +450,11 @@
     </Page>
     <Page Include="Frame\Flyouts\DiagnosticsFlyout.xaml">
       <SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+    <Page Include="Components\ResourceDictionaries\ToolTips_en-gb.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Frame\Flyouts\Flyouts.xaml">
       <SubType>Designer</SubType>

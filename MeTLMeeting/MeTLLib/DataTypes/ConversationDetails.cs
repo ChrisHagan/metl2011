@@ -158,7 +158,7 @@ namespace MeTLLib.DataTypes
             this.Title = title;
             this.Jid = jid;
             this.Author = author;
-            this.Slides = slides;
+            this.Slides = slides.OrderBy(s => s.index).ToList();
             this.Permissions = permissions;
             this.Subject = subject;
         }

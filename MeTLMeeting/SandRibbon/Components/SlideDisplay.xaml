@@ -15,35 +15,18 @@
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </UserControl.Resources>
 
-    <ScrollViewer Height="Auto">
+    <ScrollViewer Height="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
         <ScrollViewer.Resources>
             <core:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">40</core:Double>
         </ScrollViewer.Resources>
         <ListBox
-             x:Name="slides"
-             ItemsSource="{Binding Path=thumbnailList}"             
-             ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-             ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+             x:Name="slides"             
              OverridesDefaultStyle="False"
-             SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" Height="Auto">
-            <ListBox.InputBindings>
-                <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
-                <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
-                <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
-                <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
-                <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
-                <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
-                <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
-                <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
-                <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
-                <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
-                <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
-            </ListBox.InputBindings>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemContainerStyle>
@@ -54,8 +37,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border Name="Border" Margin="1" 
-                            Padding="2" Background="{StaticResource BackgroundBlueGradient}"
-                            SnapsToDevicePixels="true" CornerRadius="2"
+                            Padding="1" Background="{StaticResource BackgroundBlueGradient}"                            
                             VerticalAlignment="Stretch">
                         <Border.Width>
                             <MultiBinding Converter="{x:Static my:Converters.multiply}">
@@ -74,7 +56,7 @@
                             <Viewbox IsHitTestVisible="False" HorizontalAlignment="Stretch">
                                 <Image Height="200" Width="320" x:Name="thumbnailImage"  />
                             </Viewbox>
-                            <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                            <Border BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Top" 
                                                 BorderThickness="1">

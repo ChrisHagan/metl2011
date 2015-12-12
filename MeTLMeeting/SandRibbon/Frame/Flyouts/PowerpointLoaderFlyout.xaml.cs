@@ -177,8 +177,9 @@ namespace SandRibbon.Frame.Flyouts
             var spec = new PowerpointSpec
             {
                 File = pptFile,
-                Type = pptImportType
-
+                Type = pptImportType,
+                Magnification = pptImportType == PowerpointImportType.HighDefImage ? 3 : 1
+                
             };
             var pptThread = new System.Threading.Thread(new System.Threading.ThreadStart(delegate {
                 loader.UploadPowerpoint(spec, onProgress, onComplete);

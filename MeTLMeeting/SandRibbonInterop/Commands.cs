@@ -32,7 +32,7 @@ namespace SandRibbon
             }
         }        
         public DefaultableCompositeCommand()
-        {
+        {            
         }
 
         public DefaultableCompositeCommand(object newValue) 
@@ -62,7 +62,7 @@ namespace SandRibbon
         public override void RegisterCommand(ICommand command)
         {
             try {
-                base.RegisterCommand(command);
+                base.RegisterCommand(command);                
             } catch (Exception e)
             {
                 Console.WriteLine("exception while registering command: " + e.Message);
@@ -98,7 +98,11 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ShowOptionsDialog = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetUserOptions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ZoomChanged = new DefaultableCompositeCommand();
+
         public static DefaultableCompositeCommand ExtendCanvasBySize = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ExtendCanvasUp= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ExtendCanvasDown= new DefaultableCompositeCommand();
+        
         public static DefaultableCompositeCommand CheckExtendedDesktop = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand AddPrivacyToggleButton = new DefaultableCompositeCommand();
