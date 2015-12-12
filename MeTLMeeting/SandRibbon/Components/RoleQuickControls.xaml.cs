@@ -8,26 +8,16 @@ using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SandRibbon.Components
-{    
+{
     public partial class RoleQuickControls : UserControl
     {
         public SlideAwarePage rootPage { get; protected set; }
-        public KeyValuePair<ConversationDetails,Slide> SlideDetailsInConversationDetails { get; protected set; }
         public ConversationDetails ConversationDetails { get; protected set; }
         public RoleQuickControls()
         {
@@ -40,8 +30,7 @@ namespace SandRibbon.Components
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
-                }
-                SlideDetailsInConversationDetails = new KeyValuePair<ConversationDetails, Slide>(rootPage.ConversationDetails, rootPage.Slide);
+                }                
                 ConversationDetails = rootPage.ConversationDetails;
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.RegisterCommand(setSyncCommand);
@@ -132,5 +121,9 @@ namespace SandRibbon.Components
             });
         }
 
+        private void duplicatePage_Click(object sender, RoutedEventArgs e)
+        {
+            Commands.DuplicateSlide.Execute(new KeyValuePair<ConversationDetails, Slide>(rootPage.ConversationDetails,rootPage.Slide));            
+        }
     }
 }

@@ -338,6 +338,7 @@ namespace SandRibbon.Pages.Collaboration
                     {
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                     };
+                notesAdornerScroll.ScrollViewer = notesScroll;
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);

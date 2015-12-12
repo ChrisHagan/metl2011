@@ -231,7 +231,7 @@
                                         </ScrollViewer>
                                     </Viewbox>
                                 </Grid>
-                                <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
+                                <components:ScrollBar x:Name="notesAdornerScroll" Target="notepad"/>
                                 <AdornerDecorator>
                                     <Canvas x:Name="notesPrivacyTools"/>
                                 </AdornerDecorator>

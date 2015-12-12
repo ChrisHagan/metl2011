@@ -10,10 +10,11 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon
 {
-    public class NotSetException : Exception{
+    public class NotSetException : Exception
+    {
         public NotSetException(string msg) : base(msg) { }
     }
-    public class DefaultableCompositeCommand : CompositeCommand 
+    public class DefaultableCompositeCommand : CompositeCommand
     {
         private bool isSet = false;
         private object commandValue = null;
@@ -25,17 +26,17 @@ namespace SandRibbon
                 Debug.Assert(isSet, "Default value has not been set");
                 return commandValue;
             }
-            set 
+            set
             {
                 isSet = true;
                 commandValue = value;
             }
-        }        
+        }
         public DefaultableCompositeCommand()
-        {            
+        {
         }
 
-        public DefaultableCompositeCommand(object newValue) 
+        public DefaultableCompositeCommand(object newValue)
         {
             DefaultValue = newValue;
         }
@@ -53,7 +54,7 @@ namespace SandRibbon
             Debug.Assert(isSet, "Default value has not been set");
             return DefaultValue;
         }
-        public override void Execute(object arg) 
+        public override void Execute(object arg)
         {
             DefaultValue = arg;
             base.Execute(arg);
@@ -61,12 +62,8 @@ namespace SandRibbon
 
         public override void RegisterCommand(ICommand command)
         {
-            try {
-                base.RegisterCommand(command);                
-            } catch (Exception e)
-            {
-                Console.WriteLine("exception while registering command: " + e.Message);
-            }
+            if (RegisteredCommands.Contains(command)) return;
+            base.RegisterCommand(command);
         }
     }
     public class Commands
@@ -85,7 +82,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetStackVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendNewSlideOrder = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ChangeLanguage = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand PresentVideo= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PresentVideo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReorderDragDone = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ConnectToSmartboard = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DisconnectFromSmartboard = new DefaultableCompositeCommand();
@@ -100,16 +97,16 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ZoomChanged = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand ExtendCanvasBySize = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand ExtendCanvasUp= new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand ExtendCanvasDown= new DefaultableCompositeCommand();
-        
+        public static DefaultableCompositeCommand ExtendCanvasUp = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ExtendCanvasDown = new DefaultableCompositeCommand();
+
         public static DefaultableCompositeCommand CheckExtendedDesktop = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand AddPrivacyToggleButton = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RemovePrivacyAdorners = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MirrorVideo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand VideoMirrorRefreshRectangle = new DefaultableCompositeCommand();
-        
+
         public static DefaultableCompositeCommand AnalyzeSelectedConversations = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendWakeUp = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendSleep = new DefaultableCompositeCommand();
@@ -127,9 +124,9 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetZoomRect = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand Highlight = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RemoveHighlight = new DefaultableCompositeCommand();
-        
-        public static DefaultableCompositeCommand ServersDown= new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand RequestScreenshotSubmission = new DefaultableCompositeCommand(); 
+
+        public static DefaultableCompositeCommand ServersDown = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RequestScreenshotSubmission = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand();
@@ -161,7 +158,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ReceiveLiveWindow = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveDirtyLiveWindow = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DeleteSelectedItems = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand BanhammerSelectedItems= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BanhammerSelectedItems = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand VisualizeContent = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand SendAttendance = new DefaultableCompositeCommand();
@@ -169,8 +166,8 @@ namespace SandRibbon
 
         //public static DefaultableCompositeCommand Relogin = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleWorm = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand SendWormMove = new DefaultableCompositeCommand(); 
-        public static DefaultableCompositeCommand ReceiveWormMove = new DefaultableCompositeCommand(); 
+        public static DefaultableCompositeCommand SendWormMove = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveWormMove = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ConvertPresentationSpaceToQuiz = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendQuiz = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendQuizAnswer = new DefaultableCompositeCommand();
@@ -207,7 +204,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ZoomIn = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ZoomOut = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ExtendCanvasBothWays = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand ToggleBrowser = new DefaultableCompositeCommand();        
+        public static DefaultableCompositeCommand ToggleBrowser = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ToggleBrowserControls = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoreImageOptions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PickImages = new DefaultableCompositeCommand();
@@ -255,7 +252,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand EndGrabZoom = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveCanvasByDelta = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand FitToView = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand FitToPageWidth= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FitToPageWidth = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UpdateTextStyling = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand SetFontSize = new DefaultableCompositeCommand();
@@ -329,7 +326,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand CreateBlankConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ShowEditSlidesDialog = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand CreateConversation = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand DuplicateSlide = new DefaultableCompositeCommand(new KeyValuePair<ConversationDetails,Slide>(ConversationDetails.Empty,Slide.Empty));
+        public static DefaultableCompositeCommand DuplicateSlide = new DefaultableCompositeCommand(new KeyValuePair<ConversationDetails, Slide>(ConversationDetails.Empty, Slide.Empty));
         public static DefaultableCompositeCommand DuplicateConversation = new DefaultableCompositeCommand(ConversationDetails.Empty);
         public static DefaultableCompositeCommand CreateGrouping = new DefaultableCompositeCommand();
         //public static DefaultableCompositeCommand PreEditConversation = new DefaultableCompositeCommand();
@@ -381,20 +378,25 @@ namespace SandRibbon
         {
             NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => false));
         }
-        public static int HandlerCount{
-            get {
+        public static int HandlerCount
+        {
+            get
+            {
                 return all.Aggregate(0, (acc, item) => acc += item.RegisteredCommands.Count());
             }
         }
-        private static List<ICommand> staticHandlers = new List<ICommand>();        
+        private static List<ICommand> staticHandlers = new List<ICommand>();
 
-        public static void AllStaticCommandsAreRegistered() {
-            foreach (var command in all) {
+        public static void AllStaticCommandsAreRegistered()
+        {
+            foreach (var command in all)
+            {
                 foreach (var handler in command.RegisteredCommands)
                     staticHandlers.Add(handler);
             }
         }
-        private static IEnumerable<DefaultableCompositeCommand> all{
+        private static IEnumerable<DefaultableCompositeCommand> all
+        {
             get
             {
                 return typeof(Commands).GetFields()
@@ -402,9 +404,9 @@ namespace SandRibbon
                     .Select(f => (DefaultableCompositeCommand)f.GetValue(null));
             }
         }
-        
 
-        public static IEnumerable<ICommand> allHandlers() 
+
+        public static IEnumerable<ICommand> allHandlers()
         {
             var handlers = new List<ICommand>();
             foreach (var command in all)
@@ -412,19 +414,22 @@ namespace SandRibbon
                     handlers.Add(handler);
             return handlers.ToList();
         }
-        public static void UnregisterAllCommands() {
+        public static void UnregisterAllCommands()
+        {
             foreach (var command in all)
                 foreach (var handler in command.RegisteredCommands)
-                    if(!staticHandlers.Contains(handler))
+                    if (!staticHandlers.Contains(handler))
                         command.UnregisterCommand(handler);
         }
-        public static string which(ICommand command) {
+        public static string which(ICommand command)
+        {
             foreach (var field in typeof(Commands).GetFields())
                 if (field.GetValue(null) == command)
                     return field.Name;
             return "Not a member of commands";
         }
-        public static DefaultableCompositeCommand called(string name) {
+        public static DefaultableCompositeCommand called(string name)
+        {
             return (DefaultableCompositeCommand)typeof(Commands).GetField(name).GetValue(null);
         }
         public static void RequerySuggested()
@@ -441,10 +446,13 @@ namespace SandRibbon
             if (command.RegisteredCommands.Count() > 0)
             {
                 //wrapping this in a try-catch for those commands who have non-nullable types on their canExecutes
-                try {
+                try
+                {
                     var delegateCommand = command.RegisteredCommands[0];
-                    delegateCommand.GetType().InvokeMember ("RaiseCanExecuteChanged", BindingFlags.InvokeMethod, null, delegateCommand, new object[] { });
-                } catch (Exception e){
+                    delegateCommand.GetType().InvokeMember("RaiseCanExecuteChanged", BindingFlags.InvokeMethod, null, delegateCommand, new object[] { });
+                }
+                catch (Exception e)
+                {
                     Console.WriteLine("exception while requerying: " + e.Message);
                 }
             }
@@ -452,13 +460,15 @@ namespace SandRibbon
     }
     public static class CommandExtensions
     {
-        public static void ExecuteAsync(this DefaultableCompositeCommand command, object arg) {
+        public static void ExecuteAsync(this DefaultableCompositeCommand command, object arg)
+        {
             if (command.CanExecute(arg))
             {
                 command.Execute(arg);
             }
         }
-        public static void RegisterCommandToDispatcher<T>(this DefaultableCompositeCommand command, DelegateCommand<T> handler) {
+        public static void RegisterCommandToDispatcher<T>(this DefaultableCompositeCommand command, DelegateCommand<T> handler)
+        {
             command.RegisterCommand(new DelegateCommand<T>(arg =>
                                    {
                                        try
@@ -467,7 +477,7 @@ namespace SandRibbon
                                            if (!dispatcher.CheckAccess())
                                                dispatcher.Invoke((Action)delegate
                                                                               {
-                                                                                  if ( handler.CanExecute(arg)) handler.Execute (arg);
+                                                                                  if (handler.CanExecute(arg)) handler.Execute(arg);
                                                                               });
                                            else if (handler.CanExecute(arg))
                                                handler.Execute(arg);
@@ -478,6 +488,6 @@ namespace SandRibbon
                                        }
                                    }
                                , handler.CanExecute));
-        } 
+        }
     }
 }

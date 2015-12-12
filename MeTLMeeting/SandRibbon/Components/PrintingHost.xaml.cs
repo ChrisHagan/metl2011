@@ -6,15 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Pages;
-using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
     public partial class PrintingHost : UserControl
     {
-        public static int THUMBNAIL_WIDTH = 512;
-        public SlideAwarePage rootPage { get; protected set; }
+        public static int THUMBNAIL_WIDTH = 512;        
         public PrintingHost()
         {
             InitializeComponent();
