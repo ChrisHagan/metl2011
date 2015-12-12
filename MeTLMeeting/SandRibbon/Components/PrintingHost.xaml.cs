@@ -6,9 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
-using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -21,9 +20,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             var quizResultsGeneratedCommand = new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated);
             Loaded += (s, e) =>
-            {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;
+            {                
                 Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(quizResultsGeneratedCommand);
             };
             Unloaded += (s, e) =>
@@ -47,16 +44,13 @@ namespace SandRibbon.Components
         public string QuizPath(int id)
         {
             if (!Directory.Exists("quizzes"))
-                Directory.CreateDirectory("quizzes");
-            var fullPath = string.Format("quizzes\\{0}", rootPage.NetworkController.credentials.name);
-            if (!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
+                Directory.CreateDirectory("quizzes");            
             int quiznumber = 0;
-            string path = string.Format("{0}\\{1}_{2}.png", fullPath, id, quiznumber);
+            string path = string.Format("{0}\\{1}_{2}.png", "quizzes",id, quiznumber);
             while (File.Exists(path))
             {
                 quiznumber++;
-                path = string.Format("{0}\\{1}_{2}.png", fullPath, id, quiznumber);
+                path = string.Format("{0}\\{1}_{2}.png", "quizzes",id, quiznumber);
             }   
             return path;
         }

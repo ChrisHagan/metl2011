@@ -1,15 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components;
-using SandRibbon.Providers;
-using MeTLLib.DataTypes;
-using System.Diagnostics;
-using SandRibbon.Components.Utility;
+﻿using System.Windows;
 
 namespace SandRibbon.Quizzing
 {

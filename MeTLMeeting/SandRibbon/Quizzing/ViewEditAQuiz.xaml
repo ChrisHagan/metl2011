@@ -70,8 +70,8 @@
                 </ScrollViewer>
 
                 <StackPanel Grid.Row="3" x:Name="TeacherControls" Background="{StaticResource BackgroundBlueGradient}" Visibility="{Binding Source={StaticResource Globals}, Path=isAuthor, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button Click="Edit_Click">Edit quiz</Button>
-                    <Button Click="DisplayQuiz">Display quiz</Button>
+                    <Button Click="Edit_Click">Edit poll</Button>
+                    <Button Click="DisplayQuiz">Display poll</Button>
                 </StackPanel>
             </Grid>
         </DataTemplate>

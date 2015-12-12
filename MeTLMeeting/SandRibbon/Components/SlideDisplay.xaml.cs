@@ -105,7 +105,8 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                slides.ItemsSource = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides);
+                thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides);
+                slides.ItemsSource = thumbnailList;
                 /*Observe this ordering or you'll fall into an infinite loop*/
                 slides.SelectedItem = rootPage.Slide;
                 slides.SelectionChanged += slides_SelectionChanged;
@@ -256,7 +257,7 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            rootPage.NetworkController.client.AppendSlideAfter(rootPage.Slide.id, rootPage.ConversationDetails.Jid);
+            Display(rootPage.NetworkController.client.AppendSlideAfter(rootPage.Slide.id, rootPage.ConversationDetails.Jid));
         }
         private bool isSlideInSlideDisplay(int slide)
         {

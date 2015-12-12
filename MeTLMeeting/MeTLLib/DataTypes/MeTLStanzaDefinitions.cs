@@ -933,7 +933,8 @@ namespace MeTLLib.DataTypes
                 if (s.StartsWith("Color"))
                 {
                     var parts = Regex.Split(s, @"[^\d]+").Where(p => !String.IsNullOrEmpty(p)).ToArray();
-                    if (parts.Length != 4) {
+                    if (parts.Length != 4)
+                    {
                         Trace.TraceError("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.  Supplied information was: [{0}]", s);
                         return Colors.Black;
                     }
@@ -947,8 +948,19 @@ namespace MeTLLib.DataTypes
                 }
                 else
                 {
-                    Trace.TraceError("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.  Supplied information was: [{0}]", s);
-                    return Colors.Black;
+                    var parts = Regex.Split(s, @"[^\d]+").Where(p => !String.IsNullOrEmpty(p)).ToArray();
+                    if (parts.Length != 4)
+                    {
+                        Trace.TraceError("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.  Supplied information was: [{0}]", s);
+                        return Colors.Black;
+                    }
+                    return new Color
+                    {
+                        R = Byte.Parse(parts[0]),
+                        G = Byte.Parse(parts[1]),
+                        B = Byte.Parse(parts[2]),
+                        A = Byte.Parse(parts[3])
+                    };
                 }
             }
         }
@@ -999,7 +1011,7 @@ namespace MeTLLib.DataTypes
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
-                    Int32.TryParse(GetTag(slideTag),out slideInt);
+                    Int32.TryParse(GetTag(slideTag), out slideInt);
 
 
                     var moveDelta = new TargettedMoveDelta(slideInt, GetTag(authorTag), GetTag(targetTag), GetPrivacyFromEnum(privacyTag), GetTag(identityTag), long.Parse(timestamp));
@@ -1306,7 +1318,7 @@ namespace MeTLLib.DataTypes
                     //var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var slideInt = 0;
-                    Int32.TryParse(GetTag(slideTag), out slideInt);                    
+                    Int32.TryParse(GetTag(slideTag), out slideInt);
                     var file = new TargettedFile(slideInt, GetTag(authorTag), target, privacy, identity, long.Parse(timestamp), url, fileuploadTime, filesize, filename);
                     return file;
                 }
@@ -2153,7 +2165,7 @@ namespace MeTLLib.DataTypes
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
-                    Int32.TryParse(GetTag(slideTag), out slideInt);                    
+                    Int32.TryParse(GetTag(slideTag), out slideInt);
                     var targettedImage = new TargettedImage(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(timestamp));
                     return targettedImage;
                 }
@@ -2275,8 +2287,8 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var slideInt = 0;                    
-                    Int32.TryParse(GetTag(slideTag),out slideInt);                    
+                    var slideInt = 0;
+                    Int32.TryParse(GetTag(slideTag), out slideInt);
                     return new TargettedDirtyElement(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), GetTag(identityTag), long.Parse(timestamp));
                 }
                 set
