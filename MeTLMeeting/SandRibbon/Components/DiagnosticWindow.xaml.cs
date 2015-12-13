@@ -208,6 +208,7 @@ namespace SandRibbon.Components
             gauges.ItemsSource = gaugeSource;
             messages.ItemsSource = messageSource;
             inProgress.ItemsSource = inProgressSource;
+            commands.ItemsSource = DefaultableCompositeCommand.Registrations.Commands;
             /*
             Commands.DiagnosticGaugesUpdated.RegisterCommand(new DelegateCommand<List<DiagnosticGauge>>(gs => {
                 Dispatcher.adoptAsync(delegate

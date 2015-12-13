@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SandRibbon.Components"
+        xmlns:layout="clr-namespace:SandRibbon.Layout"
+        xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         mc:Ignorable="d"
         x:Name="diagnosticWindow"
         Title="MeTL Diagnostics" Height="300" Width="300">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -58,6 +61,17 @@
                 <DataGridTextColumn Header="TotalProcessorTime" Binding="{Binding TotalProcessorTime, Mode=OneTime}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <ListView x:Name="commands" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid layout:GridLayout.ItemsPerRow="2">
+                        <TextBlock Text="{Binding Key}" />
+                        <TextBlock Text="{Binding Value}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
         <TextBox x:Name="console" Grid.Row="0" Grid.Column="2" />
         <ItemsControl x:Name="inProgress" Grid.Row="1" Grid.Column="2">
             <ItemsControl.ItemsPanel>
