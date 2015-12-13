@@ -447,16 +447,19 @@ namespace MeTLLib
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
 
-                    MeTLImage newImage = lii.image;
-                    var previousTag = newImage.tag();
-                    previousTag.resourceIdentity = newPath;
-                    lii.image.tag(previousTag);
+                    //MeTLImage newImage = lii.image;
+                    //var previousTag = newImage.tag();
+                    //previousTag.resourceIdentity = newPath;
+                    //lii.image.tag(previousTag);
 
+                    /*
                     newImage.Dispatcher.adopt(() =>
                     {
-                        newImage.tag(lii.image.tag());
+                        //newImage.tag(lii.image.tag());
                         wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, newPath, lii.image.tag().timestamp));
                     });
+                    */
+                    wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newPath, lii.X,lii.Y,lii.Width,lii.Height, newPath, -1L));
                 }
                 catch (Exception e)
                 {

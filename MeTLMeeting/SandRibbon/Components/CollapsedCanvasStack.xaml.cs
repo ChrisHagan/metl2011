@@ -1900,6 +1900,10 @@ namespace SandRibbon.Components
             newImage.offsetY = 0;
             return newImage;
         }
+        private Point OffsetNegativeCartesianPointTranslate(Point point)
+        {
+            return new Point(point.X + contentBuffer.logicalX, point.Y + contentBuffer.logicalY);
+        }
 
         public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
@@ -2183,69 +2187,10 @@ namespace SandRibbon.Components
                 MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
-            Dispatcher.adoptAsync(() =>
-            {
-                var imagePos = new Point(0, 0);
-                MeTLImage image = null;
-                try
-                {
-                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute), useDefaultMargin);
-
-                    if (useDefaultMargin)
-                    {
-                        if (imagePos.X < 50)
-                            imagePos.X = 50;
-                        if (imagePos.Y < 50)
-                            imagePos.Y = 50;
-                    }
-
-                    imagePos = positionUpdate(image, imagePos, count);
-                }
-                catch (Exception e)
-                {
-                    MeTLMessage.Warning("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
-                    return;
-                }
-                if (image == null)
-                    return;
-                // center the image horizonally if there is no margin set. this is only used for dropping quiz result images on the canvas
-                if (!useDefaultMargin)
-                {
-                    imagePos.X = (Globals.DefaultCanvasSize.Width / 2) - ((image.Width + (Globals.QuizMargin * 2)) / 2);
-                    //pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
-                }
-                InkCanvas.SetLeft(image, imagePos.X);
-                InkCanvas.SetTop(image, imagePos.Y);
-                //image.tag(new ImageTag(rootPage.networkController.credentials.name, currentPrivacy, Globals.generateId(rootPage.networkController.credentials.name), false, -1L));
-                image.tag(new ImageTag(rootPage.NetworkController.credentials.name, currentPrivacy, Globals.generateId(rootPage.NetworkController.credentials.name), false, -1L, ""));
-                var currentSlide = rootPage.Slide.id;
-                var translatedImage = OffsetNegativeCartesianImageTranslate(image);
-
-                Action undo = () =>
-                                  {
-                                      ClearAdorners();
-                                      contentBuffer.RemoveImage(translatedImage, (img) => Work.Children.Remove(img));
-                                      dirtyImage(translatedImage);
-                                  };
-                Action redo = () =>
-                {
-                    ClearAdorners();
-                    if (!fileName.StartsWith("http"))
-                        rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, rootPage.NetworkController.credentials.name, _target, currentPrivacy, translatedImage, fileName, false));
-                    else
-                        sendImage(translatedImage);
-
-                    contentBuffer.AddImage(translatedImage, (img) =>
-                    {
-                        if (!Work.Children.Contains(img))
-                            Work.Children.Add(img);
-                    });
-                    Work.Select(new[] { translatedImage });
-                    AddAdorners();
-                };
-                redo();
-                rootPage.UserConversationState.UndoHistory.Queue(undo, redo, "Dropped Image");
-            });
+            var newPoint = OffsetNegativeCartesianPointTranslate(origin);
+            var width = 320;
+            var height = 240;
+            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, newPoint.X,newPoint.Y, width,height, fileName));
         }
 
         public MeTLImage createImageFromUri(Uri uri, bool useDefaultMargin)

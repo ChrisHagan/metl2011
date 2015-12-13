@@ -21,6 +21,7 @@ using System.Xml.Linq;
 using System.Web;
 using Xceed.Wpf.Toolkit;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace MeTLLib.DataTypes
 {
@@ -476,6 +477,19 @@ namespace MeTLLib.DataTypes
         {
             source = Source;
             image = Image;
+        }
+        public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, string Identity, double X, double Y, double Width, double Height, string Source, long Timestamp)
+            : base(Slide, Author, Target, Privacy, Identity, Timestamp)
+        {
+            source = Source;
+            var imageSpec = new MeTLStanzas.Image();
+            imageSpec.x = X;
+            imageSpec.y = Y;
+            imageSpec.width = Width;
+            imageSpec.height = Height;
+            imageSpec.tag = JsonConvert.SerializeObject(new ImageTag(Author, Privacy, Identity, false, Timestamp, Identity, 0));
+            imageSpec.source = Source;
+            imageSpecification = imageSpec;
         }
         public TargettedImage(int Slide, string Author, string Target, Privacy Privacy, MeTLStanzas.Image ImageSpecification, string Identity, long Timestamp)
             : base(Slide, Author, Target, Privacy, Identity, Timestamp)
@@ -1367,20 +1381,24 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
-            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, MeTLImage Image, string File, bool Overwrite)
+            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, double X, double Y, double Height, double Width, string File)
             {
                 slide = Slide;
                 author = Author;
                 target = Target;
                 privacy = Privacy;
-                image = Image;
+                this.Width = Width;
+                this.Height = Height;
+                this.X = X;
+                this.Y = Y;
                 file = File;
-                overwrite = Overwrite;
             }
             public string author;
-            public MeTLImage image;
+            public double X;
+            public double Y;
+            public double Height;
+            public double Width;
             public string file;
-            public bool overwrite;
             public Privacy privacy;
             public int slide;
             public string target;
