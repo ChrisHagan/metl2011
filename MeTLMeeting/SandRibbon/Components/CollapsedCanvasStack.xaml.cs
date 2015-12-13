@@ -274,7 +274,7 @@ namespace SandRibbon.Components
                 Commands.ZoomChanged.RegisterCommand(zoomChangedCommand);
                 Commands.ReceiveImage.RegisterCommand(receiveImageCommand);
                 Commands.ReceiveDirtyImage.RegisterCommand(receiveDirtyImageCommand);
-                Commands.AddImage.RegisterCommandToDispatcher(addImageCommand);
+                Commands.AddImage.RegisterCommand(addImageCommand);
                 Commands.ReceiveMoveDelta.RegisterCommandToDispatcher(receiveMoveDeltaCommand);
                 Commands.ReceiveTextBox.RegisterCommandToDispatcher(receiveTextBoxCommand);
                 Commands.EstablishPrivileges.RegisterCommand(establishPrivilegesCommand);
@@ -344,7 +344,7 @@ namespace SandRibbon.Components
         }
 
         private void extendCanvasUp(object o)
-        {            
+        {
             Height += shift;
             contentBuffer.logicalY -= shift;
             contentBuffer.AdjustContent();
@@ -1639,7 +1639,8 @@ namespace SandRibbon.Components
         {
             var inner = e.Stroke.GetBounds();
             var outer = new Rect(Work.RenderSize);
-            if (!outer.Contains(inner)) {
+            if (!outer.Contains(inner))
+            {
                 var d = 1;
             }
             var checksum = e.Stroke.sum().checksum;
@@ -1896,12 +1897,15 @@ namespace SandRibbon.Components
         #region imagedrop
         private void addImageFromDisk(object obj)
         {
-            addResourceFromDisk((files) =>
+            Dispatcher.adopt(delegate
             {
-                var origin = new Point(0, 0);
-                int i = 0;
-                foreach (var file in files)
-                    handleDrop(file, origin, true, i++, (source, offset, count) => { return offset; });
+                addResourceFromDisk((files) =>
+                {
+                    var origin = new Point(0, 0);
+                    int i = 0;
+                    foreach (var file in files)
+                        handleDrop(file, origin, true, i++, (source, offset, count) => { return offset; });
+                });
             });
         }
 
