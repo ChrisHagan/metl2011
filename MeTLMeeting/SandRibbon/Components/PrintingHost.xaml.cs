@@ -18,7 +18,7 @@ namespace SandRibbon.Components
             var quizResultsGeneratedCommand = new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated);
             Loaded += (s, e) =>
             {                
-                Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(quizResultsGeneratedCommand);
+                Commands.QuizResultsAvailableForSnapshot.RegisterCommand(quizResultsGeneratedCommand);
             };
             Unloaded += (s, e) =>
             {
@@ -27,16 +27,20 @@ namespace SandRibbon.Components
         }
         private void QuizResultsGenerated(UnscaledThumbnailData quizData)
         {
-            var bitmap = BitmapFrame.Create(quizData.data);
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(bitmap);
-            var stream = new MemoryStream();
-            encoder.Save(stream);
-            var frombitmap = new Bitmap(stream);
-            stream.Close();
-            string path = QuizPath(quizData.id);
-            saveUnscaledBitmapToDisk(path, frombitmap);
-            Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
+            Dispatcher.adopt(delegate
+            {
+
+                var bitmap = BitmapFrame.Create(quizData.data);
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(bitmap);
+                var stream = new MemoryStream();
+                encoder.Save(stream);
+                var frombitmap = new Bitmap(stream);
+                stream.Close();
+                string path = QuizPath(quizData.id);
+                saveUnscaledBitmapToDisk(path, frombitmap);
+                Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
+            });
         }
         public string QuizPath(int id)
         {

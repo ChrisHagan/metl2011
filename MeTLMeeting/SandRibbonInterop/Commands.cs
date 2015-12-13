@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Windows;
 using MeTLLib.DataTypes;
 using System.Runtime.CompilerServices;
+using System.Windows.Threading;
 
 namespace SandRibbon
 {
@@ -519,28 +520,6 @@ namespace SandRibbon
             {
                 command.Execute(arg);
             }
-        }
-        public static void RegisterCommandToDispatcher<T>(this DefaultableCompositeCommand command, DelegateCommand<T> handler)
-        {
-            command.RegisterCommand(new DelegateCommand<T>(arg =>
-                                   {
-                                       try
-                                       {
-                                           var dispatcher = Application.Current.Dispatcher;
-                                           if (!dispatcher.CheckAccess())
-                                               dispatcher.Invoke((Action)delegate
-                                                                              {
-                                                                                  if (handler.CanExecute(arg)) handler.Execute(arg);
-                                                                              });
-                                           else if (handler.CanExecute(arg))
-                                               handler.Execute(arg);
-                                       }
-                                       catch (Exception e)
-                                       {
-                                           Trace.TraceError("CRASH: fixed EXCEPTION:{0} INNER:{1}", e, e.InnerException);
-                                       }
-                                   }
-                               , handler.CanExecute));
         }
     }
 }

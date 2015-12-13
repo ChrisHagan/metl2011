@@ -21,7 +21,7 @@ namespace SandRibbon.Components
         public static HeightCorrector HeightCorrector = new HeightCorrector();
         public ScrollViewer viewConstraint
         {
-            set 
+            set
             {
                 DataContext = value;
                 value.ScrollChanged += new ScrollChangedEventHandler(value_ScrollChanged);
@@ -31,7 +31,7 @@ namespace SandRibbon.Components
         public static Window Window
         {
             get { return windowProperty; }
-            set 
+            set
             {
                 windowProperty = value;
                 value.Closed += (_sender, _args) =>
@@ -60,12 +60,12 @@ namespace SandRibbon.Components
                 stack.Work.EditingMode = InkCanvasEditingMode.None;
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(null, null, PreParserAvailable, rootPage.Slide.id.ToString());
                 Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
             };
             Unloaded += (s, e) =>
             {
                 Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
             };
         }
         private string generateTitle(ConversationDetails details)
@@ -74,7 +74,10 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            conversationLabel.Text = generateTitle(details);
+            Dispatcher.adopt(delegate
+            {
+                conversationLabel.Text = generateTitle(details);
+            });
         }
 
         private static DrawingAttributes currentAttributes = new DrawingAttributes();
@@ -84,7 +87,9 @@ namespace SandRibbon.Components
         {
             //if (!isPrivate(parser))
             //{
-            BeginInit();
+            try
+            {
+                BeginInit();
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)
@@ -92,8 +97,13 @@ namespace SandRibbon.Components
                 stack.RefreshCanvas();
                 /*foreach (var moveDelta in parser.moveDeltas)
                     stack.ReceiveMoveDelta(moveDelta, processHistory: true);*/
+            }
+            catch { }
+            finally
+            {
                 EndInit();
-           //}
+            }
+            //}
         }
 
         private bool isPrivate(MeTLLib.Providers.Connection.PreParser parser)
@@ -124,7 +134,7 @@ namespace SandRibbon.Components
             var targetHeight = (double)values[3];
             var sourceAspect = sourceWidth / sourceHeight;
             var destinationAspect = targetWidth / targetHeight;
-            if(Math.Abs(destinationAspect - sourceAspect) < 0.01) return sourceWidth;
+            if (Math.Abs(destinationAspect - sourceAspect) < 0.01) return sourceWidth;
             if (destinationAspect < sourceAspect) return sourceWidth;
             return sourceHeight * destinationAspect;
         }
@@ -143,7 +153,7 @@ namespace SandRibbon.Components
             var targetHeight = (double)values[3];
             var sourceAspect = sourceWidth / sourceHeight;
             var destinationAspect = targetWidth / targetHeight;
-            if(Math.Abs(destinationAspect - sourceAspect) < 0.01) return sourceHeight;
+            if (Math.Abs(destinationAspect - sourceAspect) < 0.01) return sourceHeight;
             if (destinationAspect > sourceAspect) return sourceHeight;
             return sourceWidth / destinationAspect;
         }

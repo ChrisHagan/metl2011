@@ -19,7 +19,7 @@ namespace SandRibbon.Components.SimpleImpl
 
     public class SimpleModeSwitcherUIState
     {
-        public InputMode CurrentInputMode; 
+        public InputMode CurrentInputMode;
     }
     /// <summary>
     /// Interaction logic for SimpleModeSwitcher.xaml
@@ -29,91 +29,104 @@ namespace SandRibbon.Components.SimpleImpl
         public SimpleModeSwitcher()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
-            Commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            Commands.SaveUIState.RegisterCommand(new DelegateCommand<object>(SaveUIState));
+            Commands.RestoreUIState.RegisterCommand(new DelegateCommand<object>(RestoreUIState));
         }
 
         private void SaveUIState(object parameter)
         {
-            var saveState = new SimpleModeSwitcherUIState();
+            Dispatcher.adopt(delegate
+            {
+                var saveState = new SimpleModeSwitcherUIState();
 
-            if (Pen.IsChecked ?? false)
-                saveState.CurrentInputMode = InputMode.Pen;
-            if (Image.IsChecked ?? false)
-                saveState.CurrentInputMode = InputMode.Image;
-            if (Text.IsChecked ?? false)
-                saveState.CurrentInputMode = InputMode.Text;
-            if (View.IsChecked ?? false)
-                saveState.CurrentInputMode = InputMode.View;
-            if (Select.IsChecked ?? false)
-                saveState.CurrentInputMode = InputMode.Select;
+                if (Pen.IsChecked ?? false)
+                    saveState.CurrentInputMode = InputMode.Pen;
+                if (Image.IsChecked ?? false)
+                    saveState.CurrentInputMode = InputMode.Image;
+                if (Text.IsChecked ?? false)
+                    saveState.CurrentInputMode = InputMode.Text;
+                if (View.IsChecked ?? false)
+                    saveState.CurrentInputMode = InputMode.View;
+                if (Select.IsChecked ?? false)
+                    saveState.CurrentInputMode = InputMode.Select;
 
-            Globals.StoredUIState.SimpleModeSwitcherUIState = saveState; 
+                Globals.StoredUIState.SimpleModeSwitcherUIState = saveState;
+            });
         }
 
         private void RestoreUIState(object parameter)
         {
-            var saveState = Globals.StoredUIState.SimpleModeSwitcherUIState;
-            string inputMode = "Sketch";
-            if (saveState != null)
+            Dispatcher.adopt(delegate
             {
-                switch (saveState.CurrentInputMode)
+                var saveState = Globals.StoredUIState.SimpleModeSwitcherUIState;
+                string inputMode = "Sketch";
+                if (saveState != null)
                 {
-                    case InputMode.Select:
-                        inputMode = "Select";
-                        break;
+                    switch (saveState.CurrentInputMode)
+                    {
+                        case InputMode.Select:
+                            inputMode = "Select";
+                            break;
 
-                    case InputMode.Pen:
-                        inputMode = "Sketch";
-                        break;
-                
-                    case InputMode.Image:
-                        inputMode = "Insert";
-                        break;
-                
-                    case InputMode.Text:
-                        inputMode = "Text";
-                        break;
-                    
-                    case InputMode.View:
-                        inputMode = "View";
-                        break;
+                        case InputMode.Pen:
+                            inputMode = "Sketch";
+                            break;
 
-                    default:
-                        inputMode = "Sketch";
-                        break;
+                        case InputMode.Image:
+                            inputMode = "Insert";
+                            break;
+
+                        case InputMode.Text:
+                            inputMode = "Text";
+                            break;
+
+                        case InputMode.View:
+                            inputMode = "View";
+                            break;
+
+                        default:
+                            inputMode = "Sketch";
+                            break;
+                    }
                 }
-            }
-            Commands.SetLayer.ExecuteAsync(inputMode);
+
+                Commands.SetLayer.ExecuteAsync(inputMode);
+            });
         }
 
         private void SetLayer(string layer)
         {
-            switch(layer)
+            Dispatcher.adopt(delegate
             {
-                case "Select":
-                    Select.IsChecked = true;
-                    break;
-                case "Insert":
-                    Image.IsChecked = true;
-                    break;
-                case "Text":
-                    Text.IsChecked = true;
-                    break;
-                case "View":
-                    View.IsChecked = true;
-                    break;
-                default:
-                    Pen.IsChecked = true;
-                    break;
-            }
+                switch (layer)
+                {
+                    case "Select":
+                        Select.IsChecked = true;
+                        break;
+                    case "Insert":
+                        Image.IsChecked = true;
+                        break;
+                    case "Text":
+                        Text.IsChecked = true;
+                        break;
+                    case "View":
+                        View.IsChecked = true;
+                        break;
+                    default:
+                        Pen.IsChecked = true;
+                        break;
+                }
+            });
         }
         private void JoinConversation(object obj)
         {
-            Commands.SetLayer.ExecuteAsync("Sketch");
-            Pen.IsChecked = true;
+            Dispatcher.adopt(delegate
+            {
+                Commands.SetLayer.ExecuteAsync("Sketch");
+                Pen.IsChecked = true;
+            });
         }
 
         private void CommandBinding_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)

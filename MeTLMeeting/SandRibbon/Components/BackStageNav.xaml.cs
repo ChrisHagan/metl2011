@@ -27,9 +27,9 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(showConversationSearchBoxCommand);
-                Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(updateForeignConversationDetailsCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.ShowConversationSearchBox.RegisterCommand(showConversationSearchBoxCommand);
+                Commands.UpdateForeignConversationDetails.RegisterCommand(updateForeignConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
             };
             Unloaded += (s, e) =>
             {
@@ -46,42 +46,48 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (String.IsNullOrEmpty(rootPage.ConversationDetails.Jid))
+            Dispatcher.adopt(delegate
             {
-                current.Visibility = Visibility.Collapsed;
-                currentConversation.Visibility = Visibility.Collapsed;
-                separator2.Visibility = Visibility.Collapsed;
-            }
-            if (details.IsEmpty) return;
-
-            // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
-            if (details.IsJidEqual(rootPage.ConversationDetails.Jid))
-            {
-                if (details.isDeleted || (!details.UserHasPermission(rootPage.NetworkController.credentials)))
+                if (String.IsNullOrEmpty(rootPage.ConversationDetails.Jid))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
                     separator2.Visibility = Visibility.Collapsed;
-                    Commands.ShowConversationSearchBox.Execute("find");
                 }
-            }
-            //setMyConversationVisibility();
+                if (details.IsEmpty) return;
+
+                // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
+                if (details.IsJidEqual(rootPage.ConversationDetails.Jid))
+                {
+                    if (details.isDeleted || (!details.UserHasPermission(rootPage.NetworkController.credentials)))
+                    {
+                        current.Visibility = Visibility.Collapsed;
+                        currentConversation.Visibility = Visibility.Collapsed;
+                        separator2.Visibility = Visibility.Collapsed;
+                        Commands.ShowConversationSearchBox.Execute("find");
+                    }
+                }
+                //setMyConversationVisibility();
+            });
         }
         private void ShowConversationSearchBox(object mode)
         {
-            if (String.IsNullOrEmpty(rootPage.ConversationDetails.Jid))
+            Dispatcher.adopt(delegate
             {
-                current.Visibility = Visibility.Collapsed;
-                currentConversation.Visibility = Visibility.Collapsed;
-                separator2.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                current.Visibility = Visibility.Visible;
-                currentConversation.Visibility = Visibility.Visible;
-                separator2.Visibility = Visibility.Visible;
-            }
-            openCorrectTab((string)mode);            
+                if (String.IsNullOrEmpty(rootPage.ConversationDetails.Jid))
+                {
+                    current.Visibility = Visibility.Collapsed;
+                    currentConversation.Visibility = Visibility.Collapsed;
+                    separator2.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    current.Visibility = Visibility.Visible;
+                    currentConversation.Visibility = Visibility.Visible;
+                    separator2.Visibility = Visibility.Visible;
+                }
+                openCorrectTab((string)mode);
+            });
         }
         private void openMyConversations()
         {

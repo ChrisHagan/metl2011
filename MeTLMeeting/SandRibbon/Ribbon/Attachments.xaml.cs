@@ -56,8 +56,8 @@ namespace SandRibbon.Tabs
                 ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.NetworkController);
                 Commands.ReceiveFileResource.RegisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
-                Commands.JoinConversation.RegisterCommandToDispatcher(clearOutAttachmentsCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.JoinConversation.RegisterCommand(clearOutAttachmentsCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.FileUpload.RegisterCommand(fileUploadCommand);
             };
             Unloaded += (s, e) =>
@@ -73,12 +73,20 @@ namespace SandRibbon.Tabs
         {
             if (details.IsEmpty) return;
             if (details.IsJidEqual(rootPage.ConversationDetails.Jid) && details.isDeleted)
-                clearOutAttachments(null);
+                Dispatcher.adopt(delegate
+                {
+
+                    clearOutAttachments(null);
+                });
         }
         private void clearOutAttachments(object obj)
         {
-            files = new ObservableCollection<FileInfo>();
-            attachments.ItemsSource = files;
+            Dispatcher.adopt(delegate
+            {
+
+                files = new ObservableCollection<FileInfo>();
+                attachments.ItemsSource = files;
+            });
         }
 
         private void preparserAvailable(PreParser preParser)

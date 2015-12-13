@@ -267,31 +267,31 @@ namespace SandRibbon.Components
                 CommandBindings.Add(pasteCommandBinding);
                 CommandBindings.Add(copyCommandBinding);
                 CommandBindings.Add(cutCommandBinding);
-                Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(setInkCanvasModeCommand);
-                Commands.ReceiveStroke.RegisterCommandToDispatcher(receiveStrokeCommand);
-                Commands.ReceiveStrokes.RegisterCommandToDispatcher(receiveStrokesCommand);
+                Commands.SetInkCanvasMode.RegisterCommand(setInkCanvasModeCommand);
+                Commands.ReceiveStroke.RegisterCommand(receiveStrokeCommand);
+                Commands.ReceiveStrokes.RegisterCommand(receiveStrokesCommand);
                 Commands.ReceiveDirtyStrokes.RegisterCommand(receiveDirtyStrokesCommand);
                 Commands.ZoomChanged.RegisterCommand(zoomChangedCommand);
                 Commands.ReceiveImage.RegisterCommand(receiveImageCommand);
                 Commands.ReceiveDirtyImage.RegisterCommand(receiveDirtyImageCommand);
-                Commands.AddImage.RegisterCommandToDispatcher(addImageCommand);
-                Commands.ReceiveMoveDelta.RegisterCommandToDispatcher(receiveMoveDeltaCommand);
-                Commands.ReceiveTextBox.RegisterCommandToDispatcher(receiveTextBoxCommand);
+                Commands.AddImage.RegisterCommand(addImageCommand);
+                Commands.ReceiveMoveDelta.RegisterCommand(receiveMoveDeltaCommand);
+                Commands.ReceiveTextBox.RegisterCommand(receiveTextBoxCommand);
                 Commands.EstablishPrivileges.RegisterCommand(establishPrivilegesCommand);
                 Commands.SetTextCanvasMode.RegisterCommand(setTextCanvasModeCommand);
                 Commands.ReceiveDirtyText.RegisterCommand(receiveDirtyTextCommand);
-                Commands.SetContentVisibility.RegisterCommandToDispatcher<List<ContentVisibilityDefinition>>(setContentVisibilityCommand);
-                Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<SizeWithTarget>(extendCanvasBySizeCommand);
-                Commands.ExtendCanvasUp.RegisterCommandToDispatcher<object>(extendCanvasUpCommand);
-                Commands.ExtendCanvasDown.RegisterCommandToDispatcher<object>(extendCanvasDownCommand);
-                Commands.ImageDropped.RegisterCommandToDispatcher(imageDroppedCommand);
-                Commands.ImagesDropped.RegisterCommandToDispatcher(imagesDroppedCommand);
-                Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
-                Commands.DeleteSelectedItems.RegisterCommandToDispatcher(deleteSelectedItemsCommand);
+                Commands.SetContentVisibility.RegisterCommand(setContentVisibilityCommand);
+                Commands.ExtendCanvasBySize.RegisterCommand(extendCanvasBySizeCommand);
+                Commands.ExtendCanvasUp.RegisterCommand(extendCanvasUpCommand);
+                Commands.ExtendCanvasDown.RegisterCommand(extendCanvasDownCommand);
+                Commands.ImageDropped.RegisterCommand(imageDroppedCommand);
+                Commands.ImagesDropped.RegisterCommand(imagesDroppedCommand);
+                Commands.SetLayer.RegisterCommand(setLayerCommand);
+                Commands.DeleteSelectedItems.RegisterCommand(deleteSelectedItemsCommand);
                 Commands.SetPrivacyOfItems.RegisterCommand(setPrivacyOfItemsCommand);
-                Commands.SetDrawingAttributes.RegisterCommandToDispatcher(setDrawingAttributesCommand);
-                Commands.SetPenAttributes.RegisterCommandToDispatcher(setPenAttributesCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.SetDrawingAttributes.RegisterCommand(setDrawingAttributesCommand);
+                Commands.SetPenAttributes.RegisterCommand(setPenAttributesCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.ClipboardManager.RegisterCommand(clipboardManagerCommand);
                 clipboardManager.RegisterHandler(ClipboardAction.Paste, OnClipboardPaste, CanHandleClipboardPaste);
                 clipboardManager.RegisterHandler(ClipboardAction.Cut, OnClipboardCut, CanHandleClipboardCut);
@@ -340,22 +340,33 @@ namespace SandRibbon.Components
         double shift = 200;
         private void extendCanvasDown(object o)
         {
-            Height += shift;
+            Dispatcher.adopt(delegate
+            {
+                Height += shift;
+            });
         }
 
         private void extendCanvasUp(object o)
-        {            
-            Height += shift;
-            contentBuffer.logicalY -= shift;
-            contentBuffer.AdjustContent();
+        {
+            Dispatcher.adopt(delegate
+            {
+
+                Height += shift;
+                contentBuffer.logicalY -= shift;
+                contentBuffer.AdjustContent();
+            });
         }
 
         private void extendCanvasByFactor(SizeWithTarget obj)
         {
             if (_target == obj.Target)
             {
-                Height = Height * obj.Height;
-                Width = Width * obj.Width;
+                Dispatcher.adopt(delegate
+                {
+
+                    Height = Height * obj.Height;
+                    Width = Width * obj.Width;
+                });
             }
         }
 
@@ -464,8 +475,12 @@ namespace SandRibbon.Components
         {
             if (_target == newSize.Target)
             {
-                Height = newSize.Height;
-                Width = newSize.Width;
+                Dispatcher.adopt(delegate
+                {
+
+                    Height = newSize.Height;
+                    Width = newSize.Width;
+                });
             }
         }
 
@@ -498,33 +513,37 @@ namespace SandRibbon.Components
             if (me.ToLower() == GlobalConstants.PROJECTOR) return;
             html.IsHitTestVisible = false;
             Work.IsHitTestVisible = true;
-            switch (newLayer)
+            Dispatcher.adopt(delegate
             {
-                case "Select":
-                    Work.EditingMode = InkCanvasEditingMode.Select;
-                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
-                    Work.Cursor = Cursors.Arrow;
-                    break;
-                case "View":
-                    Work.EditingMode = InkCanvasEditingMode.GestureOnly;
-                    Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
-                    Work.Cursor = Cursors.Hand;
-                    break;
-                case "Text":
-                    Work.EditingMode = InkCanvasEditingMode.None;
-                    Work.UseCustomCursor = false;
-                    break;
-                case "Insert":
-                    Work.EditingMode = InkCanvasEditingMode.Select;
-                    Work.UseCustomCursor = false;
-                    Work.Cursor = Cursors.Arrow;
-                    break;
-                case "Sketch":
-                    Work.EditingMode = InkCanvasEditingMode.Ink;
-                    Work.UseCustomCursor = true;
-                    break;
-            }
-            setLayerForTextFor(Work);
+
+                switch (newLayer)
+                {
+                    case "Select":
+                        Work.EditingMode = InkCanvasEditingMode.Select;
+                        Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                        Work.Cursor = Cursors.Arrow;
+                        break;
+                    case "View":
+                        Work.EditingMode = InkCanvasEditingMode.GestureOnly;
+                        Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+                        Work.Cursor = Cursors.Hand;
+                        break;
+                    case "Text":
+                        Work.EditingMode = InkCanvasEditingMode.None;
+                        Work.UseCustomCursor = false;
+                        break;
+                    case "Insert":
+                        Work.EditingMode = InkCanvasEditingMode.Select;
+                        Work.UseCustomCursor = false;
+                        Work.Cursor = Cursors.Arrow;
+                        break;
+                    case "Sketch":
+                        Work.EditingMode = InkCanvasEditingMode.Ink;
+                        Work.UseCustomCursor = true;
+                        break;
+                }
+                setLayerForTextFor(Work);
+            });
         }
         private void setLayerForTextFor(InkCanvas canvas)
         {
@@ -668,7 +687,11 @@ namespace SandRibbon.Components
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            ClearAdorners();
+            Dispatcher.adopt(delegate
+            {
+
+                ClearAdorners();
+            });
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync(delegate
                   {
@@ -692,8 +715,11 @@ namespace SandRibbon.Components
         private void setInkCanvasMode(string modeString)
         {
             if (me == GlobalConstants.PROJECTOR) return;
-            Work.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
-            Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+            Dispatcher.adopt(delegate
+            {
+                Work.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
+                Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
+            });
         }
         private Double zoom = 1;
         private void ZoomChanged(Double zoom)
@@ -1214,23 +1240,27 @@ namespace SandRibbon.Components
         {
             if (logicalAttributes == null) return;
             if (me.ToLower() == GlobalConstants.PROJECTOR) return;
-            var zoomCompensatedAttributes = logicalAttributes.Clone();
-            try
+            Dispatcher.adopt(delegate
             {
-                zoomCompensatedAttributes.Width = logicalAttributes.Width * zoom;
-                zoomCompensatedAttributes.Height = logicalAttributes.Height * zoom;
-                var visualAttributes = logicalAttributes.Clone();
-                visualAttributes.Width = logicalAttributes.Width * 2;
-                visualAttributes.Height = logicalAttributes.Height * 2;
-                Work.UseCustomCursor = true;
-                Work.Cursor = CursorExtensions.generateCursor(visualAttributes);
-            }
-            catch (Exception e)
-            {
-                Trace.TraceInformation("Cursor failed (no crash):", e.Message);
-            }
-            setInkCanvasMode("Ink");
-            Work.DefaultDrawingAttributes = zoomCompensatedAttributes;
+
+                var zoomCompensatedAttributes = logicalAttributes.Clone();
+                try
+                {
+                    zoomCompensatedAttributes.Width = logicalAttributes.Width * zoom;
+                    zoomCompensatedAttributes.Height = logicalAttributes.Height * zoom;
+                    var visualAttributes = logicalAttributes.Clone();
+                    visualAttributes.Width = logicalAttributes.Width * 2;
+                    visualAttributes.Height = logicalAttributes.Height * 2;
+                    Work.UseCustomCursor = true;
+                    Work.Cursor = CursorExtensions.generateCursor(visualAttributes);
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceInformation("Cursor failed (no crash):", e.Message);
+                }
+                setInkCanvasMode("Ink");
+                Work.DefaultDrawingAttributes = zoomCompensatedAttributes;
+            });
         }
         private void SetPenAttributes(PenAttributes logicalAttributes)
         {
@@ -1288,17 +1318,20 @@ namespace SandRibbon.Components
                 return;
 
             Commands.UpdateContentVisibility.Execute(contentVisibility);
+            Dispatcher.adopt(delegate
+            {
 
-            ClearAdorners();
+                ClearAdorners();
 
-            var selectedStrokes = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
-            var selectedImages = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
-            var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
+                var selectedStrokes = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
+                var selectedImages = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
+                var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
 
-            ReAddFilteredContent(contentVisibility);
+                ReAddFilteredContent(contentVisibility);
 
-            if (me != GlobalConstants.PROJECTOR)
-                refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
+                if (me != GlobalConstants.PROJECTOR)
+                    refreshWorkSelect(selectedStrokes, selectedImages, selectedTextBoxes);
+            });
         }
 
         private void ReAddFilteredContent(List<ContentVisibilityDefinition> contentVisibility)
@@ -1315,19 +1348,22 @@ namespace SandRibbon.Components
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
-            var strokeTarget = _target;
-            foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
+            Dispatcher.adopt(delegate
             {
-                if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
-                    try
-                    {
-                        AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.ConversationDetails));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Exception while receiving stroke: {0}", e.Message);
-                    }
-            }
+                var strokeTarget = _target;
+                foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
+                {
+                    if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
+                        try
+                        {
+                            AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget, rootPage.ConversationDetails));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Exception while receiving stroke: {0}", e.Message);
+                        }
+                }
+            });
         }
 
         public void AddStrokeToCanvas(PrivateAwareStroke stroke)
@@ -1405,8 +1441,12 @@ namespace SandRibbon.Components
         }
         public void deleteSelectedItems(object obj)
         {
-            if (CanvasHasActiveFocus())
-                deleteSelectedElements(null, null);
+            Dispatcher.adopt(delegate
+            {
+
+                if (CanvasHasActiveFocus())
+                    deleteSelectedElements(null, null);
+            });
         }
 
         private UndoHistory.HistoricalAction changeSelectedInkPrivacy(IEnumerable<PrivateAwareStroke> selectedStrokes, Privacy newPrivacy, Privacy oldPrivacy)
@@ -1639,7 +1679,8 @@ namespace SandRibbon.Components
         {
             var inner = e.Stroke.GetBounds();
             var outer = new Rect(Work.RenderSize);
-            if (!outer.Contains(inner)) {
+            if (!outer.Contains(inner))
+            {
                 var d = 1;
             }
             var checksum = e.Stroke.sum().checksum;
@@ -1788,21 +1829,11 @@ namespace SandRibbon.Components
         {
             if (_target == "presentationSpace")
             {
-                // don't want to duplicate what has already been done locally
-                moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
-                /*
-                var inkIds = moveDelta.inkIds.Select(elemId => elemId.Identity).ToList();
-                if(inkIds.Count > 0)
-                  contentBuffer.adjustStrokesForMoveDelta(inkIds);
+                Dispatcher.adopt(delegate
+                {
 
-                var imageIds = moveDelta.imageIds.Select(elemId => elemId.Identity).ToList();
-                if(imageIds.Count > 0)
-                  contentBuffer.adjustImagesForMoveDelta(imageIds);
-
-                var textIds = moveDelta.textIds.Select(elemId => elemId.Identity).ToList();
-                if(textIds.Count > 0)
-                  contentBuffer.adjustTextsForMoveDelta(textIds);
-                 */
+                    moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
+                });
             }
         }
 
@@ -1896,12 +1927,15 @@ namespace SandRibbon.Components
         #region imagedrop
         private void addImageFromDisk(object obj)
         {
-            addResourceFromDisk((files) =>
+            Dispatcher.adopt(delegate
             {
-                var origin = new Point(0, 0);
-                int i = 0;
-                foreach (var file in files)
-                    handleDrop(file, origin, true, i++, (source, offset, count) => { return offset; });
+                addResourceFromDisk((files) =>
+                {
+                    var origin = new Point(0, 0);
+                    int i = 0;
+                    foreach (var file in files)
+                        handleDrop(file, origin, true, i++, (source, offset, count) => { return offset; });
+                });
             });
         }
 
@@ -1915,7 +1949,11 @@ namespace SandRibbon.Components
             try
             {
                 if (drop.Target.Equals(_target) && me != GlobalConstants.PROJECTOR)
-                    handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
+                    Dispatcher.adopt(delegate
+                    {
+
+                        handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
+                    });
             }
             catch (NotSetException)
             {
@@ -2633,11 +2671,13 @@ namespace SandRibbon.Components
 
             if (me != GlobalConstants.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
                 return;
-
-            if (targettedBox.slide == rootPage.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == GlobalConstants.PROJECTOR))
-                RemoveTextBoxWithMatchingId(targettedBox.identity);
-            if (targettedBox.slide == rootPage.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != GlobalConstants.PROJECTOR)))
-                DoText(targettedBox);
+            Dispatcher.adopt(delegate
+            {
+                if (targettedBox.slide == rootPage.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Private) && !targettedBox.HasSameAuthor(me)) || me == GlobalConstants.PROJECTOR))
+                    RemoveTextBoxWithMatchingId(targettedBox.identity);
+                if (targettedBox.slide == rootPage.Slide.id && ((targettedBox.HasSamePrivacy(Privacy.Public) || (targettedBox.HasSameAuthor(me)) && me != GlobalConstants.PROJECTOR)))
+                    DoText(targettedBox);
+            });
         }
 
         private bool CanvasHasActiveFocus()

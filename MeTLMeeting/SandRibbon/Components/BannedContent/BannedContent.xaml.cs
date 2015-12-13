@@ -38,7 +38,7 @@ namespace SandRibbon.Components.BannedContent
         public Color DisplayColor { get; private set; }
     }
 
-    public class PrivacyWrapper 
+    public class PrivacyWrapper
     {
         private TargettedSubmission targettedSubmission;
         private List<PrivateUser> privateusers = new List<PrivateUser>();
@@ -66,12 +66,12 @@ namespace SandRibbon.Components.BannedContent
             return displayName;
         }
 
-        public void UpdateDisplayNames(Dictionary<string,string> userMapping)
+        public void UpdateDisplayNames(Dictionary<string, string> userMapping)
         {
             var labelIndex = 1;
             foreach (var user in PrivateUsers)
             {
-                user.DisplayName = GenerateDisplayName(userMapping, user.UserName, ref labelIndex); 
+                user.DisplayName = GenerateDisplayName(userMapping, user.UserName, ref labelIndex);
             }
         }
 
@@ -81,28 +81,28 @@ namespace SandRibbon.Components.BannedContent
             set { privateusers = value; }
         }
 
-        public string url 
-        { 
-            get { return targettedSubmission.url; } 
+        public string url
+        {
+            get { return targettedSubmission.url; }
             set { targettedSubmission.url = value; }
         }
 
-        public long time 
+        public long time
         {
             get { return targettedSubmission.time; }
-            set { targettedSubmission.time = value; } 
+            set { targettedSubmission.time = value; }
         }
 
         public int slide
         {
             get { return targettedSubmission.slide; }
-            set { targettedSubmission.slide = value; } 
+            set { targettedSubmission.slide = value; }
         }
 
         public string author
         {
             get { return targettedSubmission.author; }
-            set { targettedSubmission.author = value; } 
+            set { targettedSubmission.author = value; }
         }
 
         public string title
@@ -119,7 +119,7 @@ namespace SandRibbon.Components.BannedContent
         public ObservableCollection<PrivacyWrapper> submissionList { get; private set; }
         public ObservableCollection<PrivateUser> blackList { get; private set; }
         private CollectionViewSource submissionsView;
-        private Dictionary<string, string> userMapping = new Dictionary<string,string>();
+        private Dictionary<string, string> userMapping = new Dictionary<string, string>();
         public SlideAwarePage rootPage { get; protected set; }
         public BannedContent(SlideAwarePage _rootPage)
         {
@@ -132,8 +132,8 @@ namespace SandRibbon.Components.BannedContent
             var closeMeCommand = new DelegateCommand<object>(closeMe);
             Loaded += (s, e) =>
             {
-                Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(receiveSubmissionCommand);
-                Commands.ShowConversationSearchBox.RegisterCommandToDispatcher<object>(closeMeCommand);
+                Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveSubmissionCommand);
+                Commands.ShowConversationSearchBox.RegisterCommand(closeMeCommand);
             };
             Unloaded += (s, e) =>
             {
@@ -144,7 +144,10 @@ namespace SandRibbon.Components.BannedContent
 
         private void closeMe(object obj)
         {
-            Close();
+            Dispatcher.adopt(delegate
+            {
+                Close();
+            });
         }
         private void JoinConversation(string jid)
         {
@@ -200,13 +203,15 @@ namespace SandRibbon.Components.BannedContent
 
             DataContext = this;
         }
-        
+
         private void ReceiveSubmission(TargettedSubmission submission)
         {
             if (submission.target != "bannedcontent")
                 return;
-
-            submissionList.Add(new PrivacyWrapper(submission, userMapping));
+            Dispatcher.adopt(delegate
+            {
+                submissionList.Add(new PrivacyWrapper(submission, userMapping));
+            });
         }
 
         private List<CheckBox> GetBannedUserCheckboxes()
@@ -234,12 +239,14 @@ namespace SandRibbon.Components.BannedContent
                 blackList.Add(user);
             }
         }
-        private class MergedUserInformation{
+        private class MergedUserInformation
+        {
             public string user;
             public string email;
             public string display;
             public Color colorName;
-            public MergedUserInformation(string username, string emailAddress, string displayName, Color color){
+            public MergedUserInformation(string username, string emailAddress, string displayName, Color color)
+            {
                 user = username;
                 email = emailAddress;
                 display = displayName;
