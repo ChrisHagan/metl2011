@@ -336,7 +336,8 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void SendAttendance(string where, Attendance att) {
+        public void SendAttendance(string where, Attendance att)
+        {
             Action work = delegate
             {
                 wire.SendAttendance(where, att);
@@ -376,7 +377,7 @@ namespace MeTLLib
                     try
                     {
                         var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
-                        a(GaugeStatus.InProgress,33);
+                        a(GaugeStatus.InProgress, 33);
                         wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                         a(GaugeStatus.InProgress, 66);
                         if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
@@ -406,11 +407,11 @@ namespace MeTLLib
                               };
             tryIfConnected(work);
         }
-        public void SendQuizAnswer(QuizAnswer qa,string jid)
+        public void SendQuizAnswer(QuizAnswer qa, string jid)
         {
             Action work = delegate
             {
-                wire.SendQuizAnswer(qa,jid);
+                wire.SendQuizAnswer(qa, jid);
             };
             tryIfConnected(work);
         }
@@ -510,7 +511,8 @@ namespace MeTLLib
         }
         public void WatchRoom(string slide)
         {
-            Action work = delegate {
+            Action work = delegate
+            {
                 wire.WatchRoom(slide);
             };
             tryIfConnected(work);
@@ -553,7 +555,7 @@ namespace MeTLLib
                     location.activeConversation = cd.Jid;
                     location.availableSlides = cd.Slides.Select(s => s.id).ToList();
                     if (location.availableSlides.Count > 0)
-                        location.currentSlide = location.availableSlides[0];                    
+                        location.currentSlide = location.availableSlides[0];
                     a(GaugeStatus.InProgress, 50);
                     wire.JoinConversation();
                     a(GaugeStatus.InProgress, 75);
@@ -642,7 +644,8 @@ namespace MeTLLib
 
             return ConversationDetails.Empty;
         }
-        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) {
+        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide)
+        {
             return tryUntilConnected<ConversationDetails>(() =>
             {
                 var newConv = conversationDetailsProvider.DuplicateSlide(details, slide);
@@ -650,7 +653,8 @@ namespace MeTLLib
                 return newConv;
             });
         }
-        public ConversationDetails DuplicateConversation(ConversationDetails conversation) {
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation)
+        {
             return tryUntilConnected<ConversationDetails>(() =>
             {
                 var newConv = conversationDetailsProvider.DuplicateConversation(conversation);
@@ -662,17 +666,29 @@ namespace MeTLLib
         public ConversationDetails AppendSlide(string Jid)
         {
             return tryUntilConnected<ConversationDetails>(() =>
-                conversationDetailsProvider.AppendSlide(Jid));
+            {
+                var newConv = conversationDetailsProvider.AppendSlide(Jid);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
             return tryUntilConnected<ConversationDetails>(() =>
-                conversationDetailsProvider.AppendSlideAfter(slide, Jid));
+            {
+                var newConv = conversationDetailsProvider.AppendSlideAfter(slide,Jid);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });            
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
             return tryUntilConnected<ConversationDetails>(() =>
-                conversationDetailsProvider.AppendSlideAfter(slide, Jid, type));
+            {
+                var newConv = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
         }
         #endregion
         #region UserCommands
