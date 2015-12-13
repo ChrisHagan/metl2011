@@ -31,7 +31,7 @@ namespace SandRibbon.Tabs.Groups
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
                 DataContext = this;
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 joinConversation(rootPage.ConversationDetails);
             };
             Unloaded += (s, e) =>
@@ -41,16 +41,11 @@ namespace SandRibbon.Tabs.Groups
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            NavigationIsLocked = details.Permissions.NavigationLocked;
-            /*
-            if (details.Permissions.studentCanPublish)
+            Dispatcher.adopt(delegate
             {
-                tutorialStyle.IsChecked = true;
-            }
-            else {
-                lectureStyle.IsChecked = true;
-            }
-            */
+
+                NavigationIsLocked = details.Permissions.NavigationLocked;
+            });
         }
         private void joinConversation(ConversationDetails details)
         {

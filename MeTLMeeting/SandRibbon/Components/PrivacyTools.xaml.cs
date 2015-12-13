@@ -44,7 +44,7 @@ namespace SandRibbon.Components
                 }
                 Commands.SetPrivacy.RegisterCommand(setPrivacyCommand);
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
-                Commands.TextboxFocused.RegisterCommandToDispatcher(textboxFocusedCommand);
+                Commands.TextboxFocused.RegisterCommand(textboxFocusedCommand);
                 privacyProperty.AddValueChanged(this, privacyChangedEventHandler);
 
 
@@ -84,7 +84,11 @@ namespace SandRibbon.Components
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
             if (info.Target == GlobalConstants.PRESENTATIONSPACE)
-                rootPage.UserConversationState.Privacy = info.IsPrivate ? Privacy.Private : Privacy.Public;
+                Dispatcher.adopt(delegate
+                {
+
+                    rootPage.UserConversationState.Privacy = info.IsPrivate ? Privacy.Private : Privacy.Public;
+                });
         }
 
         private void updateConversationDetails(ConversationDetails details)

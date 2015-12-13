@@ -6,22 +6,19 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Pages;
-using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
     public partial class PrintingHost : UserControl
     {
-        public static int THUMBNAIL_WIDTH = 512;
-        public SlideAwarePage rootPage { get; protected set; }
+        public static int THUMBNAIL_WIDTH = 512;        
         public PrintingHost()
         {
             InitializeComponent();
             var quizResultsGeneratedCommand = new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated);
             Loaded += (s, e) =>
             {                
-                Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(quizResultsGeneratedCommand);
+                Commands.QuizResultsAvailableForSnapshot.RegisterCommand(quizResultsGeneratedCommand);
             };
             Unloaded += (s, e) =>
             {
@@ -30,16 +27,20 @@ namespace SandRibbon.Components
         }
         private void QuizResultsGenerated(UnscaledThumbnailData quizData)
         {
-            var bitmap = BitmapFrame.Create(quizData.data);
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(bitmap);
-            var stream = new MemoryStream();
-            encoder.Save(stream);
-            var frombitmap = new Bitmap(stream);
-            stream.Close();
-            string path = QuizPath(quizData.id);
-            saveUnscaledBitmapToDisk(path, frombitmap);
-            Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
+            Dispatcher.adopt(delegate
+            {
+
+                var bitmap = BitmapFrame.Create(quizData.data);
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(bitmap);
+                var stream = new MemoryStream();
+                encoder.Save(stream);
+                var frombitmap = new Bitmap(stream);
+                stream.Close();
+                string path = QuizPath(quizData.id);
+                saveUnscaledBitmapToDisk(path, frombitmap);
+                Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
+            });
         }
         public string QuizPath(int id)
         {

@@ -86,7 +86,7 @@ namespace SandRibbon
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
-            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
+            Commands.SetUserOptions.RegisterCommand(new DelegateCommand<UserOptions>(SetUserOptions));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
             getDefaultSystemLanguage();
@@ -307,8 +307,12 @@ namespace SandRibbon
         }
         private void SetUserOptions(UserOptions options)
         {
-            //this next line should be removed.
-            SaveUserOptions(options);
+            //this next line should be removed.\
+            Dispatcher.adopt(delegate
+            {
+
+                SaveUserOptions(options);
+            });
         }
         private void SaveUserOptions(UserOptions options)
         {

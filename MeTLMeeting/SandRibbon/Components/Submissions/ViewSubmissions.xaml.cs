@@ -21,22 +21,30 @@ namespace SandRibbon.Components.Submissions
             controller = _controller;
             ConvertMeTLIdentityStringToImageSource = new ConvertMeTLIdentityStringToImageSource(controller);
             Submissions.ItemsSource = submissions;
-            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(close));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(close));
+            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(close));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(close));
             submissions = new ObservableCollection<TargettedSubmission>(userSubmissions);
             Submissions.ItemsSource = submissions;
         }
 
         private void close(object obj)
         {
-            Close();
+            Dispatcher.adopt(delegate
+            {
+
+                Close();
+            });
         }
         private void recieveSubmission(TargettedSubmission submission)
         {
             if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
                 return;
-            submissions.Add(submission);
+            Dispatcher.adopt(delegate
+            {
+
+                submissions.Add(submission);
+            });
         }
         
         private void importAllSubmissionsInBucket(object sender, ExecutedRoutedEventArgs e)

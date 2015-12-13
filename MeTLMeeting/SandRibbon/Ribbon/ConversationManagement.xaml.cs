@@ -32,7 +32,7 @@ namespace SandRibbon.Tabs
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConvCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConvCommand);
                 Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotCommand);
                 Commands.PreParserAvailable.RegisterCommand(preparserAvailableCommand);
                 Commands.ViewBannedContent.RegisterCommand(viewBannedContentCommand);
@@ -40,7 +40,7 @@ namespace SandRibbon.Tabs
             };
             Unloaded += (s, e) =>
             {
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConvCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConvCommand);
                 Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotCommand);
                 Commands.PreParserAvailable.RegisterCommand(preparserAvailableCommand);
                 Commands.ViewBannedContent.RegisterCommand(viewBannedContentCommand);
@@ -77,9 +77,12 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            editConversation.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
-            bannedContentManagement.Visibility = banContent.Visibility;
+            Dispatcher.adopt(delegate
+            {
+                editConversation.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
+                banContent.Visibility = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? Visibility.Visible : Visibility.Collapsed;
+                bannedContentManagement.Visibility = banContent.Visibility;
+            });
         }
 
         private void JoinConversation(string jid)

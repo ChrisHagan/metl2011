@@ -9,8 +9,8 @@ namespace SandRibbon.Tabs.Groups
         public ToolBox()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
             Commands.ChangeTextMode.RegisterCommand(new DelegateCommand<string>(changeTextMode));
 
         }
@@ -34,29 +34,37 @@ namespace SandRibbon.Tabs.Groups
         }
         private void SetLayer(string layer)
         {
-            hideAll();
-            this.Visibility = Visibility.Visible;
-            switch (layer)
+            Dispatcher.adopt(delegate
             {
-                case "Text":
-                    TextOptions.Visibility = Visibility.Visible;
-                    Commands.TogglePens.ExecuteAsync(false);
-                    break;
-                case "Insert":
-                    ImageOptions.Visibility = Visibility.Visible;
-                    Commands.TogglePens.ExecuteAsync(false);
-                    break;
-                default:
-                    this.Visibility = Visibility.Collapsed;
-                    Commands.TogglePens.ExecuteAsync(true);
-                    //InkOptions.Visibility = Visibility.Visible;
-                    break;
-            }
+
+                hideAll();
+                this.Visibility = Visibility.Visible;
+                switch (layer)
+                {
+                    case "Text":
+                        TextOptions.Visibility = Visibility.Visible;
+                        Commands.TogglePens.ExecuteAsync(false);
+                        break;
+                    case "Insert":
+                        ImageOptions.Visibility = Visibility.Visible;
+                        Commands.TogglePens.ExecuteAsync(false);
+                        break;
+                    default:
+                        this.Visibility = Visibility.Collapsed;
+                        Commands.TogglePens.ExecuteAsync(true);
+                        //InkOptions.Visibility = Visibility.Visible;
+                        break;
+                }
+            });
         }
         private void hideAll()
         {
-            TextOptions.Visibility = Visibility.Collapsed;
-            ImageOptions.Visibility = Visibility.Collapsed;
+            Dispatcher.adopt(delegate
+            {
+
+                TextOptions.Visibility = Visibility.Collapsed;
+                ImageOptions.Visibility = Visibility.Collapsed;
+            });
         }
     }
 }

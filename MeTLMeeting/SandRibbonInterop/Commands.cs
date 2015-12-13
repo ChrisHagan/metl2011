@@ -63,14 +63,8 @@ namespace SandRibbon
 
         public override void RegisterCommand(ICommand command)
         {
-            try
-            {
-                base.RegisterCommand(command);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("exception while registering command: " + e.Message);
-            }
+            if (RegisteredCommands.Contains(command)) return;
+            base.RegisterCommand(command);
         }
         public override void UnregisterCommand(ICommand command)
         {

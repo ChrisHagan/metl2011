@@ -180,10 +180,9 @@
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
-                <TabItem Header="Interact">
+                <TabItem Header="Interact" IsSelected="True">
                     <ContentPresenter>
                         <ContentPresenter.Content>
-
                             <components:RoleQuickControls />
                         </ContentPresenter.Content>
                     </ContentPresenter>
@@ -241,7 +240,7 @@
                                         </ScrollViewer>
                                     </Viewbox>
                                 </Grid>
-                                <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
+                                <components:ScrollBar x:Name="notesAdornerScroll" Target="notepad"/>
                                 <AdornerDecorator>
                                     <Canvas x:Name="notesPrivacyTools"/>
                                 </AdornerDecorator>

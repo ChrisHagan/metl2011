@@ -234,7 +234,7 @@ namespace SandRibbon.Pages.Conversations
             var conversation = NetworkController.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(NetworkController.credentials))
             {
-                //Commands.JoinConversation.Execute(conversation.Jid);
+                Commands.JoinConversation.Execute(conversation.Jid);
                 var userConversation = new UserConversationState();
                 NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, NetworkController, conversation));
             }

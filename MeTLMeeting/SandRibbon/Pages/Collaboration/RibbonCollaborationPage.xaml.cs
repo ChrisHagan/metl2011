@@ -318,7 +318,7 @@ namespace SandRibbon.Pages.Collaboration
             Loaded += (cs, ce) =>
             {
                 UserConversationState.ContentVisibility = ContentFilterVisibility.isGroupSlide(Slide) ? ContentFilterVisibility.defaultGroupVisibilities : ContentFilterVisibility.defaultVisibilities;             
-                Commands.SetLayer.RegisterCommandToDispatcher<string>(setLayerCommand);
+                Commands.SetLayer.RegisterCommand(setLayerCommand);
                 Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);
                 Commands.DuplicateConversation.RegisterCommand(duplicateConversationCommand);
                 Commands.AddPrivacyToggleButton.RegisterCommand(addPrivacyToggleButtonCommand);
@@ -327,7 +327,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.OriginalView.RegisterCommand(originalViewCommand);
                 Commands.ZoomIn.RegisterCommand(zoomInCommand);
                 Commands.ZoomOut.RegisterCommand(zoomOutCommand);
-                Commands.SetZoomRect.RegisterCommandToDispatcher(setZoomRectCommand);
+                Commands.SetZoomRect.RegisterCommand(setZoomRectCommand);
                 Commands.SetPenAttributes.RegisterCommand(setPenAttributesCommand);
                 Commands.RequestReplacePenAttributes.RegisterCommand(requestReplacePenAttributesCommand);
                 Commands.ReplacePenAttributes.RegisterCommand(replacePenAttributesCommand);
@@ -338,6 +338,7 @@ namespace SandRibbon.Pages.Collaboration
                     {
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
                     };
+                notesAdornerScroll.ScrollViewer = notesScroll;
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);
@@ -394,17 +395,21 @@ namespace SandRibbon.Pages.Collaboration
 
         private void SetLayer(string layer)
         {
-            foreach (var group in new UIElement[] { inkGroup, textGroup, imageGroup })
+            Dispatcher.adopt(delegate
             {
-                group.Visibility = Visibility.Collapsed;
-            }
-            switch (layer)
-            {
-                case "Sketch": inkGroup.Visibility = Visibility.Visible; break;
-                case "Text": textGroup.Visibility = Visibility.Visible; break;
-                case "Image": imageGroup.Visibility = Visibility.Visible; break;
-                case "Html": imageGroup.Visibility = Visibility.Visible; break;
-            }
+
+                foreach (var group in new UIElement[] { inkGroup, textGroup, imageGroup })
+                {
+                    group.Visibility = Visibility.Collapsed;
+                }
+                switch (layer)
+                {
+                    case "Sketch": inkGroup.Visibility = Visibility.Visible; break;
+                    case "Text": textGroup.Visibility = Visibility.Visible; break;
+                    case "Image": imageGroup.Visibility = Visibility.Visible; break;
+                    case "Html": imageGroup.Visibility = Visibility.Visible; break;
+                }
+            });
         }
 
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
@@ -669,12 +674,16 @@ namespace SandRibbon.Pages.Collaboration
         }
         private void SetZoomRect(Rect viewbox)
         {
-            scroll.Width = viewbox.Width;
-            scroll.Height = viewbox.Height;
-            scroll.UpdateLayout();
-            scroll.ScrollToHorizontalOffset(viewbox.X);
-            scroll.ScrollToVerticalOffset(viewbox.Y);
-            //Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+            Dispatcher.adopt(delegate
+            {
+
+                scroll.Width = viewbox.Width;
+                scroll.Height = viewbox.Height;
+                scroll.UpdateLayout();
+                scroll.ScrollToHorizontalOffset(viewbox.X);
+                scroll.ScrollToVerticalOffset(viewbox.Y);
+                //Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+            });
         }
         protected bool canFitToView(object _unused)
         {

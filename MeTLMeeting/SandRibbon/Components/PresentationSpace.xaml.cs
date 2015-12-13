@@ -57,7 +57,8 @@ namespace SandRibbon.Components
             var sendScreenShotCommand = new DelegateCommand<ScreenshotDetails>(SendScreenShot);
             var banHammerSelectedItemsCommand = new DelegateCommand<object>(BanHammerSelectedItems);
             var mirrorPresentationSpaceCommand = new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace);
-            Loaded += (s, e) => {
+            Loaded += (s, e) =>
+            {
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
@@ -79,7 +80,8 @@ namespace SandRibbon.Components
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
             };
-            Unloaded += (s, e) => {
+            Unloaded += (s, e) =>
+            {
                 CommandBindings.Remove(undoCommandBinding);
                 CommandBindings.Remove(redoCommandBinding);
                 Commands.InitiateDig.UnregisterCommand(initiateDigCommand);
@@ -108,7 +110,8 @@ namespace SandRibbon.Components
                     {
                         Projector.Window.Show();
                     }
-                } catch
+                }
+                catch
                 {
                     Projector.Window.Close();
                 }
@@ -157,7 +160,7 @@ namespace SandRibbon.Components
                                  var conn = rootPage.NetworkController.client;
                                  var slide = rootPage.Slide;
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(slide.index + 1, rootPage.NetworkController.credentials.name, "bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, rootPage.ConversationDetails.Title, blacklisted, Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
+                                     Privacy.Private, -1L, hostedFileName, rootPage.ConversationDetails.Title, blacklisted, Globals.generateId(rootPage.NetworkController.credentials.name, hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -171,22 +174,25 @@ namespace SandRibbon.Components
 
         private void setUpSyncDisplay(int slide)
         {
-            if (!rootPage.UserConversationState.Synched) return;
-            if (slide == rootPage.Slide.id) return;
-            try
+            Dispatcher.adopt(delegate
             {
-                if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name) return;
-                if (rootPage.ConversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
-                Dispatcher.adoptAsync((Action)delegate
-                            {
-                                var adorner = GetAdorner();
-                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
-                            });
-            }
-            catch (NotSetException)
-            {
-                //You are listening to the channel but have not yet joined the room
-            }
+                if (!rootPage.UserConversationState.Synched) return;
+                if (slide == rootPage.Slide.id) return;
+                try
+                {
+                    if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name) return;
+                    if (rootPage.ConversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
+                    Dispatcher.adoptAsync((Action)delegate
+                                {
+                                    var adorner = GetAdorner();
+                                    AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
+                                });
+                }
+                catch (NotSetException)
+                {
+                    //You are listening to the channel but have not yet joined the room
+                }
+            });
         }
         private FrameworkElement GetAdorner()
         {
@@ -227,7 +233,7 @@ namespace SandRibbon.Components
                 }
             });
             return file;
-        }        
+        }
         private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
@@ -264,7 +270,7 @@ namespace SandRibbon.Components
                     });
                 }, "renderCanvas", "frontend");
             }
-        }       
+        }
         private static System.Windows.Forms.Screen getSecondaryScreen()
         {
             foreach (System.Windows.Forms.Screen s in System.Windows.Forms.Screen.AllScreens)

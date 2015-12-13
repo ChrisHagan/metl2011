@@ -548,17 +548,12 @@ namespace MeTLLib
                 auditor.wrapAction((a =>
                 {
                     if (String.IsNullOrEmpty(conversation)) return;
-//                    Trace.TraceInformation("JoinConversation {0}", conversation);
                     var cd = conversationDetailsProvider.DetailsOf(conversation);
                     a(GaugeStatus.InProgress, 25);
                     location.activeConversation = cd.Jid;
                     location.availableSlides = cd.Slides.Select(s => s.id).ToList();
                     if (location.availableSlides.Count > 0)
-                        location.currentSlide = location.availableSlides[0];
-                    else
-                    {
-                        Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
-                    }
+                        location.currentSlide = location.availableSlides[0];                    
                     a(GaugeStatus.InProgress, 50);
                     wire.JoinConversation();
                     a(GaugeStatus.InProgress, 75);

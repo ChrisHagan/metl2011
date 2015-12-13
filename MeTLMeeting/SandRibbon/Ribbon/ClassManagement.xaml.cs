@@ -21,14 +21,18 @@ namespace SandRibbon.Tabs
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateCommand);
             };
             Commands.UpdateConversationDetails.UnregisterCommand(updateCommand);
         }
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            manageBlackList.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
+            Dispatcher.adopt(delegate
+            {
+
+                manageBlackList.Visibility = details.Author == rootPage.NetworkController.credentials.name ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)

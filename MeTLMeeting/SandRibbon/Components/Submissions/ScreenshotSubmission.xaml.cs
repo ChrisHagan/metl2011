@@ -39,7 +39,7 @@ namespace SandRibbon.Components.Submissions
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
                 Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveScreenshotSubmissionCommand);
-                Commands.UpdateConversationDetails.RegisterCommandToDispatcher(updateConversationDetailsCommand);
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
                 Commands.ViewSubmissions.RegisterCommand(viewSubmissionsCommand);
                 Commands.RequestScreenshotSubmission.RegisterCommand(requestScreenshotSubmissionCommand);
@@ -72,16 +72,20 @@ namespace SandRibbon.Components.Submissions
         private void detailsChanged(ConversationDetails details)
         {
             if (ConversationDetails.Empty.Equals(details)) return;
-            try
+            Dispatcher.adopt(delegate
             {
-                if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name)
-                    amTeacher();
-                else
-                    amStudent();
-            }
-            catch(NotSetException)
-            {
-            }
+
+                try
+                {
+                    if (rootPage.ConversationDetails.Author == rootPage.NetworkController.credentials.name)
+                        amTeacher();
+                    else
+                        amStudent();
+                }
+                catch (NotSetException)
+                {
+                }
+            });
       
         }
         private void conversationChanged(object details)

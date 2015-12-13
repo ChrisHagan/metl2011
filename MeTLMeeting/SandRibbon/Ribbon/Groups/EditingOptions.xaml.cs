@@ -9,48 +9,52 @@ namespace SandRibbon.Tabs.Groups
         public EditingOptions()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
         }
         private void SetLayer(string mode)
         {
-            hideAll();
-            switch (mode)
+            Dispatcher.adopt(delegate
             {
-                case "Select":
-                    this.Visibility = Visibility.Collapsed;
-                    penColors.Visibility = Visibility.Collapsed;
-                    toolBox.Visibility = Visibility.Collapsed;
-                    //textTools.Visibility = Visibility.Collapsed;
-                    break;
-                case "Sketch":
-                    this.Visibility = Visibility.Visible;
-                    penColors.Visibility = Visibility.Visible;
-                    toolBox.Visibility = Visibility.Collapsed;
-                    //textTools.Visibility = Visibility.Collapsed;
-                    Header = "Ink Tools";
-                    break;
-                case "Text":
-                    this.Visibility = Visibility.Visible;
-                    penColors.Visibility = Visibility.Collapsed;
-                    toolBox.Visibility = Visibility.Visible;
-                    //textTools.Visibility = Visibility.Visible;
-                    Header = "Text Tools";
-                    break;
-                case "Insert":
-                    this.Visibility = Visibility.Visible;
-                    penColors.Visibility = Visibility.Collapsed;
-                    toolBox.Visibility = Visibility.Visible;
-                    //textTools.Visibility = Visibility.Collapsed;
-                    Header = "Image Tools";
-                    break;
-                case "View":
-                    this.Visibility = Visibility.Collapsed;
-                    penColors.Visibility = Visibility.Collapsed;
-                    toolBox.Visibility = Visibility.Collapsed;
-                    //textTools.Visibility = Visibility.Collapsed;
-                    Header = "View Tools";
-                    break;
-            }
+
+                hideAll();
+                switch (mode)
+                {
+                    case "Select":
+                        this.Visibility = Visibility.Collapsed;
+                        penColors.Visibility = Visibility.Collapsed;
+                        toolBox.Visibility = Visibility.Collapsed;
+                        //textTools.Visibility = Visibility.Collapsed;
+                        break;
+                    case "Sketch":
+                        this.Visibility = Visibility.Visible;
+                        penColors.Visibility = Visibility.Visible;
+                        toolBox.Visibility = Visibility.Collapsed;
+                        //textTools.Visibility = Visibility.Collapsed;
+                        Header = "Ink Tools";
+                        break;
+                    case "Text":
+                        this.Visibility = Visibility.Visible;
+                        penColors.Visibility = Visibility.Collapsed;
+                        toolBox.Visibility = Visibility.Visible;
+                        //textTools.Visibility = Visibility.Visible;
+                        Header = "Text Tools";
+                        break;
+                    case "Insert":
+                        this.Visibility = Visibility.Visible;
+                        penColors.Visibility = Visibility.Collapsed;
+                        toolBox.Visibility = Visibility.Visible;
+                        //textTools.Visibility = Visibility.Collapsed;
+                        Header = "Image Tools";
+                        break;
+                    case "View":
+                        this.Visibility = Visibility.Collapsed;
+                        penColors.Visibility = Visibility.Collapsed;
+                        toolBox.Visibility = Visibility.Collapsed;
+                        //textTools.Visibility = Visibility.Collapsed;
+                        Header = "View Tools";
+                        break;
+                }
+            });
         }
         private void hideAll()
         {

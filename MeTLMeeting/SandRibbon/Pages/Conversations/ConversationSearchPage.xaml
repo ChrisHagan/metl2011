@@ -99,16 +99,6 @@
                 <Button Click="AnalyzeSelectedConversations" Content="Analyze selected conversations" Style="{DynamicResource secondaryChoice}" Margin="15 0"/>
                 <Button Click="SynchronizeToOneNote" Content="Send selected conversations to OneNote" Style="{DynamicResource secondaryChoice}" Margin="15 0"/>
             </StackPanel>
-            <TextBlock Text="Import conversation" Style="{DynamicResource subHeading}" Margin="{DynamicResource nearBottom}"/>
-            <WrapPanel x:Name="pptChoices" Margin="{DynamicResource clearBottom}">
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.IMAGE}"
-                        Style="{DynamicResource secondaryChoice}" Content="PowerPoint" Margin="15 0">
-                </Button>
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.SHAPES}"
-                        Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (flexible)" />
-                <Button Command="{x:Static api:Commands.ImportPowerpoint}" CommandParameter="{x:Static ppType:PowerPointLoader.HIGHDEFIMAGE}"
-                        Style="{DynamicResource secondaryChoice}" Margin="15 0" Content="PowerPoint (high quality)" />
-            </WrapPanel>
         </Grid>
     </ScrollViewer>
 </page:ServerAwarePage>
