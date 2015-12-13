@@ -2187,7 +2187,12 @@ namespace SandRibbon.Components
                 MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
+            if (origin.X < 50)
+                origin.X = 50;
+            if (origin.Y < 50)
+                origin.Y = 50;
             var newPoint = OffsetNegativeCartesianPointTranslate(origin);
+            // should calculate the original image dimensions before sending it away.
             var width = 320;
             var height = 240;
             rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, newPoint.X,newPoint.Y, width,height, fileName));

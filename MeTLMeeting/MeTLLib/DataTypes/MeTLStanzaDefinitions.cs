@@ -1381,7 +1381,7 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
-            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, double X, double Y, double Height, double Width, string File)
+            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, double X, double Y, double Width, double Height, string File)
             {
                 slide = Slide;
                 author = Author;
