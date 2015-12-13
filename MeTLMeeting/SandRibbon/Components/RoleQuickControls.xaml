@@ -10,7 +10,7 @@
              xmlns:components="clr-namespace:SandRibbon.Components"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:tabs="clr-namespace:SandRibbon.Tabs"             
-             Height="Auto" MaxWidth="200"
+             Height="Auto"
              >
     <UserControl.Resources>
         <sys:Double x:Key="splitter">5</sys:Double>
@@ -25,12 +25,12 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource clearBottom}">
-                    <TextBlock Text="What can students do?" Style="{StaticResource minorHeading}" Margin="{DynamicResource nearBottom}"/>
+                    <TextBlock Text="Students can" Style="{StaticResource heading}" Margin="{DynamicResource nearBottom}"/>
                     <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False"  Content="Publish quizzes"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="Attach files"></CheckBox>
                     <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="Add slides"></CheckBox>
-                    <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="List participants"></CheckBox>
+                    <CheckBox Checked="StudentsCanPublishChecked" IsEnabled="False" Content="Identify each other"></CheckBox>
                     <CheckBox x:Name="studentMustFollowTeacherCheckbox" Click="StudentsMustFollowTeacherChecked" Content="Move freely"></CheckBox>
                 </Grid>
                 <GridSplitter Height="{StaticResource splitter}" HorizontalAlignment="Stretch"/>
@@ -47,7 +47,7 @@
                 </WrapPanel>
             </Grid>
             <Grid layout:GridLayout.ItemsPerRow="1" x:Name="participantQuickControls">
-                <TextBlock Text="What will you do?" Style="{StaticResource minorHeading}" />
+                <TextBlock Text="What are you doing?" Style="{StaticResource minorHeading}" />
                 <WrapPanel>
                     <RibbonToggleButton Label="Follow teacher" LargeImageSource="\Resources\appbar.lock.png" SmallImageSource="\Resources\appbar.lock.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
                     <RibbonButton x:Name="submitSubmission" 

@@ -34,8 +34,8 @@
                     <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Border.Background" Value="{DynamicResource AccentColor2Brush}"/>
-                            <Setter Property="Border.BorderThickness" Value="3"/>
+                            <Setter Property="Border.BorderBrush" Value="{DynamicResource HighlightBrush}"/>
+                            <Setter Property="Border.BorderThickness" Value="5"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>

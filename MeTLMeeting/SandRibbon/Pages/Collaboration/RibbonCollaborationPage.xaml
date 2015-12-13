@@ -155,7 +155,7 @@
         </Ribbon>
         <Grid x:Name="columns" VerticalAlignment="Stretch" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="*" MaxWidth="230"/>
+                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="*" MaxWidth="300"/>
                 <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
                 <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
                 <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
@@ -169,18 +169,18 @@
 
             
             <TabControl Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
-                <TabItem Header="Filter">
+                <TabItem Header="Filters">
                     <ContentPresenter>
                         <ContentPresenter.Content>
 
                             <Grid layout:GridLayout.ItemsPerRow="1">
-                                <TextBlock Text="What do you want to see?" Style="{StaticResource minorHeading}" />
+                                <TextBlock Text="You see" Style="{StaticResource heading}" />
                                 <components:ContentVisibility/>
                             </Grid>
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
-                <TabItem Header="Interact" IsSelected="True">
+                <TabItem Header="Interactions" IsSelected="True">
                     <ContentPresenter>
                         <ContentPresenter.Content>
                             <components:RoleQuickControls />
