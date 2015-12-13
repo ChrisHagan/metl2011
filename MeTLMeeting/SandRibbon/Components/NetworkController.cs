@@ -328,12 +328,17 @@ namespace SandRibbon.Components
 
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            if (e.conversationDetails != null && e.conversationDetails.Jid == client.location.activeConversation)
-                Commands.UpdateConversationDetails.Execute(e.conversationDetails);
-            else
+            Application.Current.Dispatcher.adopt(() =>
             {
-                Application.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
-            }
+                if (e.conversationDetails != null && e.conversationDetails.Jid == client.location.activeConversation)
+                {
+                    Commands.UpdateConversationDetails.Execute(e.conversationDetails);
+                }
+                else
+                {
+                    Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
+                }
+            });
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {

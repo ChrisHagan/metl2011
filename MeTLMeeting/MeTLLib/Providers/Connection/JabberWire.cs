@@ -592,40 +592,11 @@ namespace MeTLLib.Providers.Connection
             }
         }
         public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
-        {
-            //var rooms = new List<Jid>();
+        {            
             foreach (var roomJid in currentRooms.ToList())
             {
                 leaveRoom(roomJid);
-            }
-            /*
-            if (location != null)
-            {
-                rooms.AddRange(
-                    new[]{
-                        new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
-                        new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
-                    });
-                if (location.currentSlide != 1 && location.activeConversation != "0" && location.availableSlides.Exists(s => s == location.currentSlide))
-                    SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), false, -1L));
-            }
-            if (!stayInActiveConversation)
-            {
-                rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
-                if (location != null && location.activeConversation != null && location.activeConversation != "0")
-                    SendAttendance("global", new Attendance(credentials.name, location.activeConversation, false, -1L));
-            }
-            if (!stayInGlobal)
-            {
-                rooms.Add(new Jid(metlServerAddress.globalMuc));
-                //rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
-            }
-
-            foreach (var room in rooms)
-            {
-                leaveRoom(room);
-            }
-            */
+            }         
         }
         private bool isLocationValid()
         {
@@ -658,42 +629,14 @@ namespace MeTLLib.Providers.Connection
         }
         private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
         {
-            /*
-            if (!fastJoin)
-            {
-                leaveRooms();
-            //    joinRoom(new Jid(metlServerAddress.globalMuc));
-            }
-            */
+            currentRooms.Add(new Jid("global", metlServerAddress.muc, jid.Resource));            
             var cRooms = new Jid[currentRooms.Count()];
             currentRooms.CopyTo(cRooms, 0);
             leaveRooms();
             foreach (var roomJid in cRooms)
             {
                 joinRoom(roomJid);
-            }
-            /*
-            if (isLocationValid())
-            {
-                var rooms = new List<Jid>();
-                if (!alreadyInConversation)
-                {
-                    rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
-                }
-                rooms.AddRange(new[]
-                {
-                    //new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
-                    new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
-                    new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
-                });
-                foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
-                {
-                    joinRoom(room);
-                }
-                SendAttendance("global", new Attendance(credentials.name, location.activeConversation, true, -1L));
-                SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), true, -1L));
-            }
-            */
+            }            
         }
         protected HashSet<Jid> currentRooms = new HashSet<Jid>();
         private void joinRoom(Jid room)
@@ -1110,43 +1053,36 @@ namespace MeTLLib.Providers.Connection
             //    stanza(element.slide.ToString(), new MeTLStanzas.DirtyInk(element));
             stanza(new MeTLStanzas.DirtyInk(element));
         }
-        public virtual void ReceiveCommand(string message)
+        public virtual void ReceiveCommand(Element element)
         {
             try
             {
-                if (message.Length == 0) return;
-                var parts = message.Split(new[] { " " }, 2, StringSplitOptions.RemoveEmptyEntries);
-                switch (parts[0].ToUpper())
+                /*
+                <author xmlns="monash:metl">teacher</author>
+                <audiences xmlns="monash:metl" />
+                <command xmlns="monash:metl">/UPDATE_CONVERSATION_DETAILS</command>
+                <parameters xmlns="monash:metl"><parameter>20000</parameter></parameters>
+                */
+                var command = element.SelectSingleElement("command").InnerXml;
+                switch (command)
                 {
                     case TEACHER_IN_CONVERSATION:
-                        handleTeacherInConversation(parts);
+                        handleTeacherInConversation(element);
                         break;
                     case SYNC_MOVE:
-                        handleSyncMoveReceived(parts);
+                        handleSyncMoveReceived(element);
                         break;
                     case UPDATE_CONVERSATION_DETAILS:
-                        handleConversationDetailsUpdated(parts);
+                        handleConversationDetailsUpdated(element);
                         break;
                     case GO_TO_SLIDE:
-                        handleGoToSlide(parts);
-                        break;
-                    case WAKEUP:
-                        handleWakeUp(parts);
-                        break;
-                    case SLEEP:
-                        handleSleep(parts);
-                        break;
-                    case PING:
-                        handlePing(parts);
-                        break;
-                    case PONG:
-                        handlePong(parts);
-                        break;
+                        handleGoToSlide(element);
+                        break;                    
                     case UPDATE_SLIDE_COLLECTION:
-                        handleUpdateSlideCollection(parts);
+                        handleUpdateSlideCollection(element);
                         break;
                     default:
-                        handleUnknownMessage(message);
+                        handleUnknownMessage(element);
                         break;
                 }
             }
@@ -1163,11 +1099,11 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.handlePong(parts);
         }
-        public virtual void handleUpdateSlideCollection(string[] parts)
+        public virtual void handleUpdateSlideCollection(Element el)
         {
             try
             {
-                receiveEvents.receiveUpdatedSlideCollection(Int32.Parse(parts[1]));
+                receiveEvents.receiveUpdatedSlideCollection(Int32.Parse(el.SelectElements("parameter", true).Item(0).InnerXml));
             }
             catch (Exception e)
             {
@@ -1178,9 +1114,9 @@ namespace MeTLLib.Providers.Connection
         {
             JoinConversation(parts[1]);
         }*/
-        public virtual void handleGoToSlide(string[] parts)
+        public virtual void handleGoToSlide(Element el)
         {
-            var id = Int32.Parse(parts[1]);
+            var id = Int32.Parse(el.SelectElements("parameter", true).Item(0).InnerXml);
             var desiredConversation = Slide.ConversationFor(id).ToString();
             MoveTo(id);
         }
@@ -1229,9 +1165,10 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError("Wire received error message: {0}", message);
                 return;
             }
-            if (message.SelectSingleElement("body") != null)
+            var command = message.SelectSingleElement("command");
+            if (command != null)
             {
-                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                ReceiveCommand(command);
                 return;
             }
 
@@ -1275,9 +1212,9 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError("Wire received error message: {0}", message);
                 return;
             }
-            if (message.SelectSingleElement("body") != null)
+            if (message.SelectSingleElement("command") != null)
             {
-                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                ReceiveCommand(message.SelectSingleElement("command"));
                 return;
             }
             if (messageOrigin == MessageOrigin.Live)
@@ -1451,25 +1388,25 @@ namespace MeTLLib.Providers.Connection
             var muc = new MucManager(conn);
             muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
         }
-        private void handleTeacherInConversation(string[] parts)
+        private void handleTeacherInConversation(Element el)
         {
-            var where = parts[1];
+            var where = el.SelectElements("parameter",true).Item(0).InnerXml;
             receiveEvents.teacherStatusRequest(where, "");
         }
-        private void handleSyncMoveReceived(string[] parts)
+        private void handleSyncMoveReceived(Element el)
         {
-            var where = Int32.Parse(parts[1]);
+            var where = Int32.Parse(el.SelectElements("parameter", true).Item(0).InnerXml);
             receiveEvents.syncMoveRequested(where);
         }
-        private void handleConversationDetailsUpdated(string[] parts)
+        private void handleConversationDetailsUpdated(Element el)
         {
-            var jid = parts[1];
+            var jid = el.SelectElements("parameter", true).Item(0).InnerXml;
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
             receiveEvents.receiveConversationDetails(newDetails);
         }
-        protected virtual void handleUnknownMessage(string message)
+        protected virtual void handleUnknownMessage(Element el)
         {
-            Trace.TraceWarning(string.Format("Received unknown message: {0}", message));
+            Trace.TraceWarning(string.Format("Received unknown message: {0}", el.ToString()));
         }
 
         public void LoadSubmissions(string conversationJid)

@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using agsXMPP.Xml.Dom;
 //using Ninject;
 
 namespace MeTLLib.Providers.Connection
@@ -135,7 +136,7 @@ namespace MeTLLib.Providers.Connection
         {
             files.Add(resource.fileResource);
         }
-        public override void ReceiveCommand(string message)
+        public override void ReceiveCommand(Element el)
         {//Preparsers don't care about commands, they're not a valid part of history.
             return;
         }

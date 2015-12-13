@@ -2,16 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using MeTLLib.DataTypes;
-using SandRibbon.Components;
-using SandRibbon.Components.Pedagogicometry;
 using System.Drawing;
-using TextInformation = SandRibbon.Components.TextInformation;
 using SandRibbonObjects;
-using SandRibbon.Components.Utility;
-using SandRibbon.Pages.Conversations.Models;
 using SandRibbon.Profiles;
 using SandRibbon.Pages.Collaboration.Palettes;
-using Awesomium.Core;
 
 namespace SandRibbon.Providers
 {
