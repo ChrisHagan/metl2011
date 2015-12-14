@@ -63,8 +63,15 @@ namespace SandRibbon.Pages.Collaboration
             };
             conversation.CalculateLocations();            
             processing.Maximum = conversation.Locations.Count;
-            conversation.LocationAnalyzed += () => processing.Value++;
-            conversation.AnalyzeLocations();
+            conversation.LocationAnalyzed += () => Dispatcher.adopt(delegate
+            {
+                processing.Value++;
+            });
+            var t = new System.Threading.ThreadStart(() =>
+            {
+                conversation.AnalyzeLocations();
+            });
+            new System.Threading.Thread(t).Start();
         }
 
         private void SlideSelected(object sender, RoutedEventArgs e)

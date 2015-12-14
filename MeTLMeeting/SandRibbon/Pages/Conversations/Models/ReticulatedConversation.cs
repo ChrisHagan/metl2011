@@ -15,7 +15,7 @@ namespace SandRibbon.Pages.Conversations.Models
 {
     public class Participation : DependencyObject
     {
-        public ObservableCollection<LocatedActivity> Activity { get; set; } = new ObservableCollection<LocatedActivity>();        
+        public ObservableCollection<LocatedActivity> Activity { get; set; } = new ObservableCollection<LocatedActivity>();
         public ILookup<string, LocatedActivity> Participants { get; internal set; }
     }
     public class VmSlide : DependencyObject
@@ -29,7 +29,7 @@ namespace SandRibbon.Pages.Conversations.Models
         {
             get { return (LocatedActivity)GetValue(AggregateProperty); }
             set { SetValue(AggregateProperty, value); }
-        }        
+        }
         public static readonly DependencyProperty AggregateProperty =
             DependencyProperty.Register("Aggregate", typeof(LocatedActivity), typeof(VmSlide), new PropertyMetadata(null));
 
@@ -102,12 +102,15 @@ namespace SandRibbon.Pages.Conversations.Models
         }
 
         public void AnalyzeLocations()
-        {        
+        {
             foreach (var slide in Locations)
             {
                 var description = networkController.client.historyProvider.Describe(slide.Slide.id);
                 LocationAnalyzed?.Invoke();
-                slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices);                
+                Dispatcher.adopt(delegate
+                {
+                    slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices);
+                });
             }
         }
 
@@ -141,7 +144,7 @@ namespace SandRibbon.Pages.Conversations.Models
             {
                 inc(tallies, i.author);
                 authors.Add(i.author);
-            }            
+            }
             return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, authors.Count));
         }
     }
