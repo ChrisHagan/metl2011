@@ -22,13 +22,6 @@
     </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Command="{x:Static api:Commands.CreateDummyCard}">
-                <Rectangle Width="20" Height="20">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_alert}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-            </Button>
             <Button Command="{x:Static api:Commands.LaunchDiagnosticWindow}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>

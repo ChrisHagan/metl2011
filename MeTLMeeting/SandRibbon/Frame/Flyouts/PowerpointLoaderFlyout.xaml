@@ -19,7 +19,7 @@
         <ItemsControl x:Name="progresses" Width="Auto" HorizontalAlignment="Stretch">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Width="Auto" HorizontalAlignment="Stretch">
+                    <StackPanel Width="Auto" HorizontalAlignment="Stretch" Visibility="{Binding Visible}">
                         <Label Content="{Binding Category}" Width="Auto" HorizontalAlignment="Stretch"/>
                         <ProgressBar Value="{Binding Count}" Maximum="{Binding Total}" Width="Auto" HorizontalAlignment="Stretch"/>
                         <TextBlock Text="{Binding Description}" Width="Auto" HorizontalAlignment="Stretch"/>

@@ -200,12 +200,12 @@ namespace SandRibbon.Utils
             onProgress(SERVER, "sending to server", 1, 2);
             var remoteString = networkController.client.resourceProvider.securePutData(networkController.config.importPowerpointFlexible(file), fileBytes);
             onProgress(SERVER, "server response available", 2, 2);
-            onProgress(LOCAL, "ready to parse server response", localCount++, localTotal);
+            onProgress(LOCAL, "parsing server response", localCount++, localTotal);
             var convXml = XElement.Parse(remoteString);
             onProgress(LOCAL, "server response parsed", localCount++, localTotal);
             var finalConv = ConversationDetails.ReadXml(convXml);
-            onProgress(LOCAL, "local conversation ready", localCount++, localTotal);
-            onProgress(TOTAL, "remote conversation ready", totalCount++, totalTotal);
+            onProgress(LOCAL, "local conversation ready", localTotal, localTotal);
+            onProgress(TOTAL, "remote conversation ready", totalTotal, totalTotal);
             onComplete(finalConv);
             return finalConv;
         }
@@ -221,12 +221,12 @@ namespace SandRibbon.Utils
             onProgress(SERVER, "sending to server", 1, 2);
             var remoteString = networkController.client.resourceProvider.securePutData(networkController.config.importPowerpoint(file, MaginificationRating), fileBytes);
             onProgress(SERVER, "server response available", 2, 2);
-            onProgress(LOCAL, "ready to parse server response", localCount++, localTotal);
+            onProgress(LOCAL, "parsing server response", localCount++, localTotal);
             var convXml = XElement.Parse(remoteString);
             onProgress(LOCAL, "server response parsed", localCount++, localTotal);
             var finalConv = ConversationDetails.ReadXml(convXml);
-            onProgress(LOCAL, "local conversation ready", localCount++, localTotal);
-            onProgress(TOTAL, "remote conversation ready", totalCount++, totalTotal);
+            onProgress(LOCAL, "local conversation ready", localTotal, localTotal);
+            onProgress(TOTAL, "remote conversation ready", totalTotal, totalTotal);
             onComplete(finalConv);
             return finalConv;
         }
@@ -264,19 +264,12 @@ namespace SandRibbon.Utils
                     var slideJid = startingJid + slide.SlideIndex;
                     var tempFile = currentWorkingDirectory + "background" + (++resource).ToString() + ".jpg";
                     onProgress(SLIDE, "hiding instructor content", slideCount++, slideTotal);
-                    /*
-
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                    {
-                        shape.Visible = MsoTriState.msoFalse;
-                    }
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
                             shape.Visible = MsoTriState.msoFalse;
                         else shape.Visible = MsoTriState.msoTrue;
                     }
-                    */
                     onProgress(SLIDE, "snapshotting slide", slideCount++, slideTotal);
                     slide.Export(tempFile, "JPG", (int)backgroundWidth, (int)backgroundHeight);
                     var history = new XElement("history");
@@ -323,7 +316,7 @@ namespace SandRibbon.Utils
                     history.Add(message(imageElem));
                     onProgress(SLIDE, "adding metl content to slide", slideCount++, slideTotal);
                     histories.Add(history);
-                    onProgress(SLIDE, "adding slide to history", slideCount++, slideTotal);
+                    onProgress(SLIDE, "slide parse completed", slideTotal, slideTotal);
                 }
                 onProgress(LOCAL, "constructing server request", localCount++, localTotal);
                 convXml.Add(conversation.WriteXml());
@@ -338,8 +331,8 @@ namespace SandRibbon.Utils
                 var remoteConvXml = XElement.Parse(remoteConvString);
                 onProgress(LOCAL, "parsing conversation", localCount++, localTotal);
                 var remoteConv = ConversationDetails.ReadXml(remoteConvXml);
-                onProgress(LOCAL, "remote conversation ready", localCount++, localTotal);
-                onProgress(TOTAL, "remote conversation ready", totalCount++, totalTotal);
+                onProgress(LOCAL, "remote conversation ready", localTotal, localTotal);
+                onProgress(TOTAL, "remote conversation ready", totalTotal, totalTotal);
                 onComplete(remoteConv);
                 return remoteConv;
             }
@@ -389,6 +382,7 @@ namespace SandRibbon.Utils
                         var slideCount = 0;
                         var slideTotal = 6;
                         slideTotal = slide.Shapes.Count + slideTotal;
+                        onProgress(LOCAL, "parsing slide: " + slide.SlideIndex, localCount++, localTotal);
                         onProgress(SLIDE, "parsing slide", slideCount, slideTotal);
                         var shapeCount = 0;
                         if (backgroundHeight != Convert.ToInt32(slide.Master.Height))
@@ -396,9 +390,6 @@ namespace SandRibbon.Utils
                         if (backgroundWidth != Convert.ToInt32(slide.Master.Width))
                             backgroundWidth = Convert.ToInt32(slide.Master.Width);
                         var slideJid = startingJid + slide.SlideIndex;
-                        var tempFile = currentWorkingDirectory + "background" + (++resource).ToString() + ".jpg";
-                        slide.Export(tempFile, "JPG", (int)backgroundWidth, (int)backgroundHeight);
-                        onProgress(SLIDE, "", slideCount++, slideTotal);
                         var history = new XElement("history");
                         history.Add(new XAttribute("jid", slideJid.ToString()));
                         var bgImageElem = new XElement("image");
@@ -410,20 +401,14 @@ namespace SandRibbon.Utils
                             backgroundWidth,
                             backgroundHeight));
 
-                        onProgress(SLIDE, "", slideCount++, slideTotal);
+                        onProgress(SLIDE, "slide added to conversation", slideCount++, slideTotal);
                         var backgroundFile = currentWorkingDirectory + "background" + (++resource) + ".jpg";
                         foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                         {
                             shape.Visible = MsoTriState.msoFalse;
                         }
                         slide.Export(backgroundFile, "JPG", backgroundWidth, backgroundHeight);
-                        foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                        {
-                            if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
-                                shape.Visible = MsoTriState.msoFalse;
-                            else shape.Visible = MsoTriState.msoTrue;
-                        }
-                        onProgress(SLIDE, "", slideCount++, slideTotal);
+                        onProgress(SLIDE, "background snapshotted", slideCount++, slideTotal);
                         var imageIdentity = string.Format("{0}:{1}:{2}", networkController.credentials.name, DateTimeFactory.Now().Ticks, shapeCount++);
                         var tag = new ImageTag
                         {
@@ -442,7 +427,7 @@ namespace SandRibbon.Utils
                             new KeyValuePair<string, string>(MeTLStanzas.targetTag,GlobalConstants.PRESENTATIONSPACE),
                             new KeyValuePair<string, string>(MeTLStanzas.privacyTag,Privacy.Public.ToString()),
                             new KeyValuePair<string, string>(MeTLStanzas.slideTag,slideJid.ToString()),
-                            new KeyValuePair<string, string>(MeTLStanzas.identityTag,tempFile),
+                            new KeyValuePair<string, string>(MeTLStanzas.identityTag,imageIdentity),
                             new KeyValuePair<string, string>(MeTLStanzas.tagTag,JsonConvert.SerializeObject(tag)),
                             new KeyValuePair<string, string>(MeTLStanzas.Image.widthTag,backgroundWidth.ToString()),
                             new KeyValuePair<string, string>(MeTLStanzas.Image.heightTag,backgroundHeight.ToString()),
@@ -452,9 +437,9 @@ namespace SandRibbon.Utils
                         {
                             bgImageElem.Add(new XElement(kvp.Key, kvp.Value));
                         });
-                        File.Delete(tempFile);
+                        File.Delete(backgroundFile);
                         history.Add(message(bgImageElem));
-                        onProgress(SLIDE, "", slideCount++, slideTotal);
+                        onProgress(SLIDE, "background image added", slideCount++, slideTotal);
                         var z = 0;
                         var SortedShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
                         foreach (var shapeObj in slide.Shapes)
@@ -463,127 +448,133 @@ namespace SandRibbon.Utils
                         {
                             var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
                             string tags;
-                            if (shape.Type == MsoShapeType.msoInkComment)
-                                tags = shape.Tags.ToString();
-                            //the ink doesn't appear to have vertices - I can't find the actual ink data
-                            if (shape.Type == MsoShapeType.msoPlaceholder)
-                                //there're two of these on my sample slide.  They become the textboxes that have text in them, if you use the template's textbox placeholders.  Otherwise they'd be textboxes instead.
-                                tags = shape.Tags.ToString();
-
-                            else if ((shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") || shape.Visible == FALSE)
+                            try
                             {
-                                try
+                                var shapePrivacy = (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") ? Privacy.Private : Privacy.Public;
+                                if (HasExportableText(shape))
                                 {
-                                    var shapePrivacy = ((shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") || shape.Visible == FALSE) ? Privacy.Private : Privacy.Public;
-                                    if (HasExportableText(shape))
+                                    var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
+                                    if (textFrame.HasText == MsoTriState.msoTrue)
                                     {
-                                        //This should be used to create a RichTextbox, not a textbox, so that it can correctly represent PPT textboxes. 
-                                        var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
-                                        if (textFrame.HasText == MsoTriState.msoTrue)
+                                        var flowDoc = new System.Windows.Documents.FlowDocument();
+                                        var block = new System.Windows.Documents.Paragraph();
+                                        flowDoc.Blocks.Add(block);
+                                        foreach (TextRange run in textFrame.TextRange.Runs())
                                         {
-                                            int pptcolour;
-                                            if (textFrame.TextRange.Text.Length > 0)
-                                                pptcolour = textFrame.TextRange.Runs(0, 1).Font.Color.RGB;
-                                            else
-                                                pptcolour = textFrame.TextRange.Font.Color.RGB;
-                                            var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
-                                            var safeColour = (new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B }).ToString();
-                                            string safeFont = "arial";
-                                            if (textFrame.TextRange.Font.Name != null)
-                                                safeFont = textFrame.TextRange.Font.Name;
-
-                                            var shapeX = shape.Left;
-                                            var shapeY = shape.Top;
-                                            var fontSizeFactor = 1.0;
-                                            // overrides for the notepad target
-                                            var speakerNotes = shape.Tags["speakerNotes"];
-                                            var target = "presentationSpace";
-                                            if (!string.IsNullOrEmpty(speakerNotes) && speakerNotes == "true")
-                                            {
-                                                target = "notepad";
-                                            }
-                                            if (target == "notepad")
-                                            {
-                                                shapeX = 5;
-                                                shapeY = 5;
-                                                fontSizeFactor = 2.0;
-                                            }
-                                            var textElem = new XElement("text");
-                                            var shapeTag = new TextTag
-                                            {
-                                                id = string.Format("{0}:{1}:{2}", networkController.credentials.name, DateTimeFactory.Now().Ticks, 1),
-                                                author = networkController.credentials.name,
-                                                privacy = shapePrivacy
-                                            };
-                                            new List<KeyValuePair<string, string>> {
-                                            new KeyValuePair<string, string>(MeTLStanzas.TextBox.textTag,textFrame.TextRange.Text.Replace('\v','\n')),
+                                            var textRun = new System.Windows.Documents.Run(run.Text);
+                                            var fontFamily = new FontFamily("arial");
+                                            try { 
+                                                fontFamily = new FontFamily(run.Font.Name);
+                                            } catch { }
+                                            textRun.FontFamily = fontFamily;
+                                            textRun.FontSize = run.Font.Size;
+                                            block.Inlines.Add(textRun);
+                                            //textRun.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(run.Font.Color.RGB.ToString()));
+                                        }
+                                        var xamlTextRange = new System.Windows.Documents.TextRange(flowDoc.ContentStart, flowDoc.ContentEnd);
+                                        var xamlText = "";
+                                        using (var ms = new MemoryStream())
+                                        {
+                                            xamlTextRange.Save(ms, DataFormats.Xaml);
+                                            ms.Position = 0;
+                                            xamlText = new StreamReader(ms).ReadToEnd();
+                                        }
+                                        var shapeX = shape.Left;
+                                        var shapeY = shape.Top;
+                                        var fontSizeFactor = 1.0;
+                                        // overrides for the notepad target
+                                        var speakerNotes = shape.Tags["speakerNotes"];
+                                        var target = "presentationSpace";
+                                        if (!string.IsNullOrEmpty(speakerNotes) && speakerNotes == "true")
+                                        {
+                                            target = "notepad";
+                                        }
+                                        if (target == "notepad")
+                                        {
+                                            shapeX = 5;
+                                            shapeY = 5;
+                                            fontSizeFactor = 2.0;
+                                        }
+                                        var textElem = new XElement("textbox");
+                                        var shapeTag = new TextTag
+                                        {
+                                            id = string.Format("{0}:{1}:{2}", networkController.credentials.name, DateTimeFactory.Now().Ticks, shapeCount++),
+                                            author = networkController.credentials.name,
+                                            privacy = shapePrivacy
+                                        };
+                                        new List<KeyValuePair<string, string>> {
+                                            new KeyValuePair<string, string>(MeTLStanzas.TextBox.textTag,xamlText),
                                             new KeyValuePair<string, string>(MeTLStanzas.authorTag,networkController.credentials.name),
                                             new KeyValuePair<string, string>(MeTLStanzas.targetTag,target),
                                             new KeyValuePair<string, string>(MeTLStanzas.privacyTag,shapePrivacy.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.slideTag,slideJid.ToString()),
-                                            new KeyValuePair<string, string>(MeTLStanzas.identityTag,tag.id),
+                                            new KeyValuePair<string, string>(MeTLStanzas.identityTag,shapeTag.id),
                                             new KeyValuePair<string, string>(MeTLStanzas.tagTag,JsonConvert.SerializeObject(shapeTag)),
                                             new KeyValuePair<string, string>(MeTLStanzas.TextBox.widthTag,shape.Width.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.TextBox.heightTag,shape.Height.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.xTag,shapeX.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.yTag,shapeY.ToString()),
-                                            new KeyValuePair<string,string>(MeTLStanzas.TextBox.familyTag,safeFont),
+                                            new KeyValuePair<string,string>(MeTLStanzas.TextBox.familyTag,"arial"),
                                             new KeyValuePair<string,string>(MeTLStanzas.TextBox.sizeTag,(textFrame.TextRange.Font.Size * fontSizeFactor).ToString()),
-                                            new KeyValuePair<string,string>(MeTLStanzas.TextBox.colorTag,safeColour),
+                                            new KeyValuePair<string,string>(MeTLStanzas.TextBox.colorTag,"#FF000000"),
                                             new KeyValuePair<string,string>(MeTLStanzas.TextBox.decorationTag, "None"),
                                             new KeyValuePair<string,string>(MeTLStanzas.TextBox.weightTag, "Normal"),
                                             new KeyValuePair<string,string>(MeTLStanzas.TextBox.styleTag, "Normal")
-
                                         }.ForEach(kvp =>
                                         {
                                             textElem.Add(new XElement(kvp.Key, kvp.Value));
                                         });
-                                            history.Add(message(textElem));
-                                        }
+                                        history.Add(message(textElem));
                                     }
-                                    else
-                                    {
-                                        var shapeFile = currentWorkingDirectory + "background" + (++resource).ToString() + ".jpg";
-                                        shape.Export(shapeFile, PpShapeFormat.ppShapeFormatJPG, backgroundWidth, backgroundHeight, PpExportMode.ppRelativeToSlide);
+                                }
+                                else
+                                {
 
-                                        var imageElem = new XElement("image");
-                                        var thisImageIdentity = string.Format("{0}:{1}:{2}", networkController.credentials.name, DateTimeFactory.Now().Ticks, 1);
-                                        var shapeTag = new ImageTag
-                                        {
-                                            id = thisImageIdentity,
-                                            author = networkController.credentials.name,
-                                            privacy = shapePrivacy,
-                                            isBackground = false,
-                                            resourceIdentity = thisImageIdentity,
-                                            zIndex = z++ 
-                                        };
-                                        new List<KeyValuePair<string, string>> {
+                                    var magnification = 4;
+                                    shape.Visible = MsoTriState.msoTrue;
+                                    var shapeWidth = Convert.ToInt32(shape.Width);
+                                    var shapeHeight = Convert.ToInt32(shape.Height);
+                                    var shapeNumber = shapeCount++;
+                                    var shapeFile = currentWorkingDirectory + "shape" + shapeNumber.ToString() + ".png";
+                                    shape.Export(shapeFile, PpShapeFormat.ppShapeFormatPNG, shapeWidth * magnification, shapeHeight * magnification, PpExportMode.ppRelativeToSlide);
+
+                                    var imageElem = new XElement("image");
+                                    var thisImageIdentity = string.Format("{0}:{1}:{2}", networkController.credentials.name, DateTimeFactory.Now().Ticks, shapeNumber);
+                                    var shapeTag = new ImageTag
+                                    {
+                                        id = thisImageIdentity,
+                                        author = networkController.credentials.name,
+                                        privacy = shapePrivacy,
+                                        isBackground = false,
+                                        resourceIdentity = thisImageIdentity,
+                                        zIndex = z++
+                                    };
+                                    new List<KeyValuePair<string, string>> {
                                             new KeyValuePair<string, string>("imageBytes",System.Convert.ToBase64String(File.ReadAllBytes(shapeFile))),
                                             new KeyValuePair<string, string>(MeTLStanzas.authorTag,networkController.credentials.name),
                                             new KeyValuePair<string, string>(MeTLStanzas.targetTag,GlobalConstants.PRESENTATIONSPACE),
                                             new KeyValuePair<string, string>(MeTLStanzas.privacyTag,shapePrivacy.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.slideTag,slideJid.ToString()),
-                                            new KeyValuePair<string, string>(MeTLStanzas.identityTag,tempFile),
+                                            new KeyValuePair<string, string>(MeTLStanzas.identityTag,thisImageIdentity),
                                             new KeyValuePair<string, string>(MeTLStanzas.tagTag,JsonConvert.SerializeObject(shapeTag)),
-                                            new KeyValuePair<string, string>(MeTLStanzas.Image.widthTag,shape.Width.ToString()),
-                                            new KeyValuePair<string, string>(MeTLStanzas.Image.heightTag,shape.Height.ToString()),
+                                            new KeyValuePair<string, string>(MeTLStanzas.Image.widthTag,shapeWidth.ToString()),
+                                            new KeyValuePair<string, string>(MeTLStanzas.Image.heightTag,shapeHeight.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.xTag,shape.Left.ToString()),
                                             new KeyValuePair<string, string>(MeTLStanzas.yTag,shape.Top.ToString())
                                         }.ForEach(kvp =>
                                         {
                                             imageElem.Add(new XElement(kvp.Key, kvp.Value));
                                         });
-                                        File.Delete(shapeFile);
-                                        history.Add(message(imageElem));
-                                    }
+                                    File.Delete(shapeFile);
+                                    history.Add(message(imageElem));
                                 }
-                                catch (Exception exc)
-                                {
+                            }
+                            catch (Exception exc)
+                            {
 
-                                }
-                                onProgress(SLIDE, "", slideCount++, slideTotal);
                             }
                         }
+                        onProgress(SLIDE, "slide parse completed", slideTotal, slideTotal);
                         histories.Add(history);
                     }
                     catch (Exception ex)
@@ -594,8 +585,7 @@ namespace SandRibbon.Utils
                 onProgress(LOCAL, "constructing server request", localCount++, localTotal);
                 convXml.Add(conversation.WriteXml());
                 convXml.Add(histories);
-                onProgress(LOCAL, "sending request", localCount++, localTotal);
-
+                onProgress(LOCAL, "request ready to send to server", localCount++, localTotal);
                 var url = networkController.config.importConversation();
                 onProgress(SERVER, "ready to send to server", 0, localTotal);
                 onProgress(SERVER, "sending to server", 1, 2);
@@ -605,8 +595,8 @@ namespace SandRibbon.Utils
                 var removeConvXml = XElement.Parse(remoteConvString);
                 onProgress(LOCAL, "parsing conversation", localCount++, localTotal);
                 var remoteConv = ConversationDetails.ReadXml(removeConvXml);
-                onProgress(LOCAL, "remote conversation ready", localCount++, localTotal);
-                onProgress(TOTAL, "remote conversation ready", totalCount++, totalTotal);
+                onProgress(LOCAL, "remote conversation ready", localTotal, localTotal);
+                onProgress(TOTAL, "remote conversation ready", totalTotal, totalTotal);
                 onComplete(remoteConv);
                 return remoteConv;
             }
