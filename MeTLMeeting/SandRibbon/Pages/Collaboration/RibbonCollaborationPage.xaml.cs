@@ -342,11 +342,14 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);
-                NetworkController.client.SneakInto(ConversationDetails.Jid);
-                NetworkController.client.SendAttendance("global",new Attendance(NetworkController.credentials.name,ConversationDetails.Jid.ToString(),true,-1));
+
+                NetworkController.client.SneakInto("global");
+                NetworkController.client.SneakInto(ConversationDetails.Jid);                
                 NetworkController.client.SneakInto(Slide.id.ToString());
-                NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), true, -1));
                 NetworkController.client.SneakInto(Slide.id.ToString() + NetworkController.credentials.name);
+
+                NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), true, -1));
+                NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), true, -1));                
             };
             this.Unloaded += (ps, pe) =>
             {                
@@ -368,11 +371,14 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
                 UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
+
                 NetworkController.client.SneakOutOf(Slide.id.ToString() + NetworkController.credentials.name);
-                NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), false, -1));
                 NetworkController.client.SneakOutOf(Slide.id.ToString());
+
+                NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), false, -1));                
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), false, -1));
                 NetworkController.client.SneakOutOf(ConversationDetails.Jid);
+                NetworkController.client.SneakOutOf("global");
             };
         }        
 
