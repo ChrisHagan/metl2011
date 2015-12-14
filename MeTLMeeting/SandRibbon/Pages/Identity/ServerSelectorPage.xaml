@@ -5,11 +5,13 @@
       xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
       xmlns:page="clr-namespace:SandRibbon.Pages"
       xmlns:layout="clr-namespace:SandRibbon.Layout"
+      xmlns:macros="clr-namespace:SandRibbon.Pages.Macros"
       Title="Server selection">
     <Page.Resources>
         <Style x:Key="lowProfileButton" TargetType="{x:Type Button}">
             <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
     </Page.Resources>
     <Grid>
@@ -26,14 +28,15 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}" Visibility="{Binding Path=visible}" IsEnabled="{Binding Path=enabled}"
+                    <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}" Visibility="{Binding Path=visible}" 
+                            IsEnabled="{Binding Path=enabled}"                            
                             MaxWidth="400">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                             <Grid layout:GridLayout.ItemsPerRow="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                 <Image Source="{Binding Path=imageUri}" Margin="{StaticResource clearHorizontal}" Height="300"/>
                                 <TextBlock HorizontalAlignment="Center" Text="{Binding Path=name}" Margin="{StaticResource clearTop}" Style="{DynamicResource heading}"/>
                             </Grid>
-                            <Image Source="\Resources\appbar.heart.break.png" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <macros:IconControl Content="appbar_heart_break" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </Grid>
                     </Button>
                 </DataTemplate>
@@ -41,7 +44,7 @@
         </ItemsControl>
         <Grid Grid.Row="1" x:Name="internetCheckLabel" layout:GridLayout.ItemsPerRow="1" IsHitTestVisible="False">
             <Label >No MeTL servers available.  Please check your internet connection.</Label>
-            <Image Source="\Resources\appbar.network.port.disconnect.png" Height="200"/>
+            <macros:IconControl Content="appbar_network_port_disconnect" Height="200"/>
         </Grid>
     </Grid>
 </page:GlobalAwarePage>
