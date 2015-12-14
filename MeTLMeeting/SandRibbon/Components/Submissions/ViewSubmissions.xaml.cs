@@ -25,7 +25,7 @@ namespace SandRibbon.Components.Submissions
             submissions = new ObservableCollection<TargettedSubmission>(userSubmissions);
             Submissions.ItemsSource = submissions;
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(close));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<string>(close));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(close));
         }
 

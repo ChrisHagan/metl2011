@@ -14,7 +14,6 @@ namespace SandRibbon.Components
     public class NetworkController
     {
         public IClientBehaviour client { get; protected set; }
-        private Action deregister;
         public MetlConfiguration config { get; protected set; }
         public Credentials credentials { get; protected set; }
         public NetworkController(MetlConfiguration _config)
@@ -71,12 +70,9 @@ namespace SandRibbon.Components
         {
             //Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.MoveToCollaborationPage.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.WatchRoom.RegisterCommand(new DelegateCommand<string>(WatchRoom));
-            Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
-            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
             Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyStroke));
@@ -89,9 +85,7 @@ namespace SandRibbon.Components
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
             Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
-            Commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));
-            Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
-            Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
+            Commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));            
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
@@ -129,21 +123,10 @@ namespace SandRibbon.Components
         private void JoinConversation(string jid)
         {
             Commands.CheckExtendedDesktop.ExecuteAsync(null);
-            client.JoinConversation(jid);
         }
         private void WatchRoom(string slide) {
             client.WatchRoom(slide);
-        }
-        private void MoveTo(int slide)
-        {
-            client.MoveTo(slide);
-        }
-        private void SendChatMessage(object _obj)
-        {
-        }
-        private void SendDirtyAutoshape(TargettedDirtyElement tde)
-        {
-        }
+        }   
         private void SendDirtyImage(TargettedDirtyElement tde)
         {
             client.SendDirtyImage(tde);
@@ -206,15 +189,7 @@ namespace SandRibbon.Components
         private void SendMoveDelta(TargettedMoveDelta moveDelta)
         {
             client.SendMoveDelta(moveDelta);
-        }
-        private void SneakInto(string room)
-        {
-            client.SneakInto(room);
-        }
-        private void SneakOutOf(string room)
-        {
-            client.SneakOutOf(room);
-        }
+        }        
         #endregion
 
         #region events

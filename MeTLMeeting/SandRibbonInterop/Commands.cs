@@ -352,9 +352,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand("SyncedMoveRequested",0);
         public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand("SendSyncMove");
         public static DefaultableCompositeCommand MoveToCollaborationPage = new DefaultableCompositeCommand("MoveToCollaborationPage",0);
-        public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand("SneakInto");
-        public static DefaultableCompositeCommand SneakIntoAndDo = new DefaultableCompositeCommand("SneakIntoAndDo");
-        public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand("SneakOutOf");
         public static DefaultableCompositeCommand PreParserAvailable = new DefaultableCompositeCommand("PreParserAvaialble");
         public static DefaultableCompositeCommand SignedRegions = new DefaultableCompositeCommand("SignedRegions");
         public static DefaultableCompositeCommand ConversationPreParserAvailable = new DefaultableCompositeCommand("ConversationPreParserAvailable");
@@ -362,7 +359,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand("MoveToNext");
         public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand("SetConversationPermissions");
         public static DefaultableCompositeCommand ToggleNavigationLock = new DefaultableCompositeCommand("ToggleNavigationLock");
-        public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand("JoinConversation");
+        public static DefaultableCompositeCommand JoiningConversation = new DefaultableCompositeCommand("JoinConversation");
         public static DefaultableCompositeCommand LeaveConversation = new DefaultableCompositeCommand("LeaveConversation");
         public static DefaultableCompositeCommand LeaveLocation = new DefaultableCompositeCommand("LeaveLocation");
         public static DefaultableCompositeCommand SendDirtyConversationDetails = new DefaultableCompositeCommand("SendDirtyConversationDetails");

@@ -112,7 +112,7 @@ namespace SandRibbon.Quizzing
             DataContext = thisQuiz;
 
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => {
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<object>((_unused) => {
                 Dispatcher.adopt(delegate
                 {
                     Close();

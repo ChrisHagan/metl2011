@@ -38,7 +38,7 @@ namespace SandRibbon.Quizzing
             question.GotFocus += selectAll;
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.CreateQuizStructure.RegisterCommand(new DelegateCommand<object>(CreateQuizQuestion, canCreateQuizQuestion));
             question.Focus();
             Loaded += (ps, pe) =>
@@ -48,7 +48,7 @@ namespace SandRibbon.Quizzing
         }
         private void JoinConversation(object obj)
         {
-            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoiningConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             Dispatcher.adopt(delegate
             {
 
@@ -58,7 +58,7 @@ namespace SandRibbon.Quizzing
         private void Close(object sender, RoutedEventArgs e)
         {
             Commands.CreateQuizStructure.UnregisterCommand(new DelegateCommand<object>(CreateQuizQuestion,canCreateQuizQuestion));
-            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoiningConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             this.Close();
         }
         private bool canCreateQuizQuestion(object _sender)

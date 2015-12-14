@@ -68,6 +68,7 @@ namespace SandRibbon.Pages.Conversations
             Loaded += (s,e) => {
                 Commands.ImportPowerpoint.RegisterCommand(importConversationCommand);
                 Commands.BrowseOneNote.RegisterCommand(browseOneNoteCommand);
+                NetworkController.client.SneakInto("global");
             };
             Unloaded += (s,e) => {
                 Commands.ImportPowerpoint.UnregisterCommand(importConversationCommand);
@@ -234,7 +235,14 @@ namespace SandRibbon.Pages.Conversations
             var conversation = NetworkController.client.DetailsOf(requestedConversation.Jid);
             if (conversation.UserHasPermission(NetworkController.credentials))
             {
-                Commands.JoinConversation.Execute(conversation.Jid);
+                var oldLoc = NetworkController.client.location.activeConversation;
+                var newLoc = requestedConversation.Jid;
+                /*Pretty amazingly gross violation of the Law of Demeter.  But let's try to be deterministic when it comes to network behaviour.  We can be advisory with commands for moving and joining*/
+                NetworkController.client.SneakOutOf(oldLoc);         
+                NetworkController.client.location.activeConversation = newLoc;        
+                NetworkController.client.SneakInto(newLoc);                
+
+                Commands.JoiningConversation.Execute(conversation.Jid);
                 var userConversation = new UserConversationState();
                 NavigationService.Navigate(new ConversationOverviewPage(UserGlobalState, UserServerState, userConversation, NetworkController, conversation));
             }
@@ -292,33 +300,6 @@ namespace SandRibbon.Pages.Conversations
             var dat = ConvertToSearchConversationDetails(y);
             return -1 * dis.Created.CompareTo(dat.Created);
         }
-    }
-
-
-    /// <summary>
-    /// The ItemsView is the same as the ItemsControl but provides an Automation ID.
-    /// </summary>
-    public class ItemsView : ItemsControl
-    {
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new ItemsViewAutomationPeer(this);
-        }
-    }
-
-    public class ItemsViewAutomationPeer : FrameworkElementAutomationPeer
-    {
-        private readonly ItemsView itemsView;
-
-        public ItemsViewAutomationPeer(ItemsView itemsView) : base(itemsView)
-        {
-            this.itemsView = itemsView;
-        }
-
-        protected override string GetAutomationIdCore()
-        {
-            return itemsView.Name;
-        }
-    }
+    }    
+   
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

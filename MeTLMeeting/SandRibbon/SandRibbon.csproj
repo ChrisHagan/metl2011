@@ -420,19 +420,12 @@
     <Compile Include="Ribbon\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\Groups\EditingOptions.xaml.cs" />
     <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\Logic.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
       <DependentUpon>UndoHistoryVisualiserWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Automation\MultipleClientLauncher.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Automation\StrokeHarvester.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -750,10 +743,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\Groups\EditingOptions.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -845,12 +834,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimplePenTools.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Groups\ToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -997,10 +980,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Automation\AutomationPeers\ConversationListingAutomationPeer.cs" />
-    <Compile Include="Automation\MultipleClientLauncher.xaml.cs">
-      <DependentUpon>MultipleClientLauncher.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
     </Compile>
@@ -1113,9 +1092,6 @@
     </Compile>
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\ToolBox.xaml.cs">
-      <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SyncDisplay.xaml.cs">
       <DependentUpon>SyncDisplay.xaml</DependentUpon>

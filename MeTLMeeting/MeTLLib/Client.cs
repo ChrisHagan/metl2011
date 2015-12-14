@@ -60,7 +60,6 @@ namespace MeTLLib
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void WatchRoom(string slide);
-        void JoinConversation(string conversation);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
         void LoadQuizzes(string conversationJid);
@@ -129,7 +128,6 @@ namespace MeTLLib
         public string UploadResource(Uri uri, string slideId) { return ""; }
         public void AsyncRetrieveHistoryOf(int room) { }
         public void MoveTo(int slide) { }
-        public void JoinConversation(string conversation) { }
         public void LeaveLocation() { }
         public void LoadQuiz(int convesationJid, long quizId) { }
         public void LoadQuizzes(string conversationJid) { }
@@ -521,12 +519,7 @@ namespace MeTLLib
             tryIfConnected(work);
         }
         public void MoveTo(int slide)
-        {
-            Action work = delegate
-            {
-                wire.MoveTo(slide);
-            };
-            tryIfConnected(work);
+        {          
         }
         public void LeaveAllRooms()
         {
@@ -545,28 +538,7 @@ namespace MeTLLib
                     wire.resetLocation();
             };
             tryIfConnected(work);
-        }
-        public void JoinConversation(string conversation)
-        {
-            Action work = delegate
-            {
-                auditor.wrapAction((a =>
-                {
-                    if (String.IsNullOrEmpty(conversation)) return;
-                    var cd = conversationDetailsProvider.DetailsOf(conversation);
-                    a(GaugeStatus.InProgress, 25);
-                    location.activeConversation = cd.Jid;
-                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                    if (location.availableSlides.Count > 0)
-                        location.currentSlide = location.availableSlides[0];
-                    a(GaugeStatus.InProgress, 50);
-                    wire.JoinConversation();
-                    a(GaugeStatus.InProgress, 75);
-                    events.receiveConversationDetails(cd);
-                }), "joinConversation: " + conversation, "clientConnection");
-            };
-            tryIfConnected(work);
-        }
+        }        
         public void SneakInto(string room)
         {
             Action work = delegate
@@ -680,7 +652,8 @@ namespace MeTLLib
             return tryUntilConnected<ConversationDetails>(() =>
             {
                 var newConv = conversationDetailsProvider.AppendSlideAfter(slide,Jid);
-                events.receiveConversationDetails(newConv);
+                /*If you don't fire this on yourself, you'll have to wait until it comes back dirty.  Then you'll know that everyone else has it too.*/
+                //events.receiveConversationDetails(newConv);
                 return newConv;
             });            
         }

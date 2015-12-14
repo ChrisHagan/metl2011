@@ -400,7 +400,7 @@ namespace SandRibbon.Tabs.Groups
             SetupPreviousColoursWithDefaults();
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(SetDrawingAttributes));
 
             Commands.SaveUIState.RegisterCommand(new DelegateCommand<object>(SaveUIState));
