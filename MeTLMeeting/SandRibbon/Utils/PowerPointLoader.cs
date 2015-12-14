@@ -468,8 +468,11 @@ namespace SandRibbon.Utils
                                             } catch { }
                                             textRun.FontFamily = fontFamily;
                                             textRun.FontSize = run.Font.Size;
+                                            var pptcolour = run.Font.Color.RGB;
+                                            var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
+                                            var safeColour = new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B };
+                                            textRun.Foreground = new SolidColorBrush(safeColour);
                                             block.Inlines.Add(textRun);
-                                            //textRun.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(run.Font.Color.RGB.ToString()));
                                         }
                                         var xamlTextRange = new System.Windows.Documents.TextRange(flowDoc.ContentStart, flowDoc.ContentEnd);
                                         var xamlText = "";
