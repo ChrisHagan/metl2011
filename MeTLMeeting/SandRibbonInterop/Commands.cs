@@ -139,7 +139,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ViewSubmissions = new DefaultableCompositeCommand("ViewSubmissions");
         public static DefaultableCompositeCommand ViewBannedContent = new DefaultableCompositeCommand("ViewBannedContent");
         public static DefaultableCompositeCommand Reconnecting = new DefaultableCompositeCommand("Reconnecting");
-        public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand("LeaveAllRooms");
+        public static DefaultableCompositeCommand ShuttingDown = new DefaultableCompositeCommand("LeaveAllRooms");
         public static DefaultableCompositeCommand BackstageModeChanged = new DefaultableCompositeCommand("BackstageModeChanged");
         public static DefaultableCompositeCommand UpdatePowerpointProgress = new DefaultableCompositeCommand("UpdatePowerpointProgress");
         public static DefaultableCompositeCommand ShowOptionsDialog = new DefaultableCompositeCommand("ShowOptionsDialog");

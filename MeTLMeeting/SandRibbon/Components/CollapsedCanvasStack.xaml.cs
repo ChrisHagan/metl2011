@@ -1807,10 +1807,10 @@ namespace SandRibbon.Components
             var translatedStroke = OffsetNegativeCartesianStrokeTranslate(stroke);
             var privateRoom = string.Format("{0}{1}", rootPage.Slide.id, translatedStroke.tag().author);
             if (thisPrivacy == Privacy.Private && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && me != translatedStroke.tag().author)
-                rootPage.NetworkController.client.SneakInto(privateRoom);
+                rootPage.NetworkController.client.JoinRoom(privateRoom);
             Commands.SendStroke.Execute(new TargettedStroke(rootPage.Slide.id, translatedStroke.tag().author, _target, translatedStroke.tag().privacy, translatedStroke.tag().id, translatedStroke.tag().timestamp, translatedStroke, translatedStroke.tag().startingSum));
             if (thisPrivacy == Privacy.Private && rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) && me != stroke.tag().author)
-                rootPage.NetworkController.client.SneakOutOf(privateRoom);
+                rootPage.NetworkController.client.LeaveRoom(privateRoom);
         }
         #endregion
         #region Images

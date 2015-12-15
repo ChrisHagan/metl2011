@@ -31,7 +31,7 @@ namespace MeTLLib
         HttpResourceProvider resourceProvider { get; }
         void AskForTeachersStatus(string teacher, string where);
         Location location { get; }
-        void LeaveAllRooms();
+        void HandleShutdown();
         string UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
         void LeaveConversation(string conversation);
         void UpdateSlideCollection(Int32 conversationJid);
@@ -74,8 +74,8 @@ namespace MeTLLib
         ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide);
         ConversationDetails DuplicateConversation(ConversationDetails conversation);
         ConversationDetails DetailsOf(String jid);
-        void SneakInto(string room);
-        void SneakOutOf(string room);
+        void JoinRoom(string room);
+        void LeaveRoom(string room);
         string NoAuthUploadResource(Uri file, int Room);
         string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
         string NoAuthUploadResource(byte[] data, string filename, int Room);
@@ -99,7 +99,7 @@ namespace MeTLLib
         public HttpResourceProvider resourceProvider { get; }
         protected static readonly Uri DisconnectedUri = new Uri("noscheme://not.a.uri");
         public Location location { get { return Location.Empty; } }
-        public void LeaveAllRooms() { }
+        public void HandleShutdown() { }
         public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return ""; }
         public void LeaveConversation(string conversation) { }
         public void UpdateSlideCollection(Int32 conversationJid) { }
@@ -142,8 +142,8 @@ namespace MeTLLib
         public ConversationDetails DetailsOf(String jid) { return ConversationDetails.Empty; }
         public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) { return ConversationDetails.Empty; }
         public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
-        public void SneakInto(string room) { }
-        public void SneakOutOf(string room) { }
+        public void JoinRoom(string room) { }
+        public void LeaveRoom(string room) { }
         public string NoAuthUploadResource(Uri file, int Room) { return ""; }
         public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return ""; }
         public string NoAuthUploadResource(byte[] data, string filename, int Room) { return ""; }
@@ -521,7 +521,7 @@ namespace MeTLLib
         public void MoveTo(int slide)
         {          
         }
-        public void LeaveAllRooms()
+        public void HandleShutdown()
         {
             Action work = delegate
             {
@@ -539,21 +539,25 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }        
-        public void SneakInto(string room)
+        public void JoinRoom(string room)
         {
             Action work = delegate
             {
-                if (String.IsNullOrEmpty(room)) return;
-                wire.SneakInto(room);
+                if (String.IsNullOrEmpty(room))
+                {
+                    Trace.TraceError("ERROR: Cannot join empty room");
+                    return;
+                }
+                wire.JoinRoom(room);
             };
             tryIfConnected(work);
         }
-        public void SneakOutOf(string room)
+        public void LeaveRoom(string room)
         {
             Action work = delegate
             {
                 if (String.IsNullOrEmpty(room)) return;
-                wire.SneakOutOf(room);
+                wire.LeaveRoom(room);
             };
             tryIfConnected(work);
         }

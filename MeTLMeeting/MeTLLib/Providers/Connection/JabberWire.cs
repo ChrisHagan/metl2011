@@ -13,6 +13,7 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
 using MeTLLib.Utilities;
 using System.Net;
+using System.ComponentModel;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -165,7 +166,7 @@ namespace MeTLLib.Providers.Connection
         Live
     }
 
-    public partial class JabberWire
+    public partial class JabberWire : INotifyPropertyChanged
     {
         protected const string WORM = "/WORM_MOVES";
         protected const string SUBMISSION = "/SUBMISSION";
@@ -577,17 +578,18 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceWarning(string.Format("++++: JabberWire::Reset: Called {0} times.", resetInProgress));
             }
         }
-        public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
+        public void leaveRooms()
         {            
-            foreach (var roomJid in currentRooms.ToList())
+            foreach (var roomJid in CurrentRooms.ToList())
             {
                 leaveRoom(roomJid);
-            }         
-        }   
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
+        }
         private void leaveRoom(Jid room)
-        {
-            Trace.TraceInformation("Leaving room {0}", room);
-            currentRooms.Remove(room);
+        {            
+            CurrentRooms.Remove(room);            
+            Trace.TraceInformation("Leaving room {0} leaves {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
         }
@@ -601,6 +603,7 @@ namespace MeTLLib.Providers.Connection
         public void WatchRoom(string slide)
         {
             joinRoom(new Jid(slide, metlServerAddress.muc,jid.Resource));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
             historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
@@ -610,23 +613,23 @@ namespace MeTLLib.Providers.Connection
                     },
                     slide);
         }
-        private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
-        {            
-            var cRooms = new Jid[currentRooms.Count()];
-            currentRooms.CopyTo(cRooms, 0);            
-            foreach (var roomJid in cRooms)
+        private void joinRooms()
+        {                        
+            foreach (var roomJid in CurrentRooms)
             {
                 joinRoom(roomJid);
-            }            
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
-        protected HashSet<Jid> currentRooms = new HashSet<Jid>();
+        public HashSet<Jid> CurrentRooms { get; protected set; } = new HashSet<Jid>();       
         private void joinRoom(Jid room)
         {
+            Trace.TraceInformation("Joining room {0}", room);
             try
             {                
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
-                currentRooms.Add(room);
+                CurrentRooms.Add(room);                
             }
             catch (Exception e)
             {
@@ -891,6 +894,7 @@ namespace MeTLLib.Providers.Connection
                 stanza(fileConversation.ToString(), fileResource);
                 if (fileConversation != location.activeConversation)
                     leaveRoom(fileConversationJid);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
             }
         }
         protected int pingTimeout = 30 * 1000; // 30 seconds
@@ -1042,6 +1046,8 @@ namespace MeTLLib.Providers.Connection
 
         public List<MeTLStanzas.TimestampedMeTLElement> unOrderedMessages = new List<MeTLStanzas.TimestampedMeTLElement>();
         List<MeTLStanzas.TimestampedMeTLElement> orderedMessages = new List<MeTLStanzas.TimestampedMeTLElement>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void ReceiveAndSortMessages()
         {
@@ -1279,17 +1285,14 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.receiveDirtyLiveWindow(element);
         }
-        public void SneakInto(string room)
-        {
-            var muc = new MucManager(conn);
+        public void JoinRoom(string room)
+        {            
             joinRoom(new Jid(room + "@" + metlServerAddress.muc));
-            Trace.TraceInformation("Joining room {0}", room);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
-        public void SneakOutOf(string room)
+        public void LeaveRoom(string room)
         {
-            var muc = new MucManager(conn);
-            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
-            Trace.TraceInformation("Leaving room {0}", room);
+            leaveRoom(new Jid(room + "@" + metlServerAddress.muc));
         }
         private void handleTeacherInConversation(Element el)
         {

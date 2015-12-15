@@ -1,12 +1,8 @@
-﻿using System;
-using MeTLLib;
+﻿using MeTLLib;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
 using Application = System.Windows.Application;
-using System.Diagnostics;
 using System.Collections.Generic;
-using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.Conversations;
 
 namespace SandRibbon.Components
@@ -86,7 +82,7 @@ namespace SandRibbon.Components
             Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
             Commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));            
-            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
+            Commands.ShuttingDown.RegisterCommand(new DelegateCommand<object>(handleShutdown));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
@@ -111,10 +107,10 @@ namespace SandRibbon.Components
         {
             client.SendSyncMove(slide);
         }
-        private void leaveAllRooms(object _obj)
+        private void handleShutdown(object _obj)
         {
             detachFromClient(); // don't care about events anymore
-            client.LeaveAllRooms();
+            client.HandleShutdown();
         }
         private void LeaveConversation(string Jid)
         {

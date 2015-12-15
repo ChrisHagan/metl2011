@@ -60,34 +60,18 @@ namespace SandRibbon
             App.CloseSplashScreen();
         }
 
-        /*
-        public void Log(string message)
-        {
-            if (String.IsNullOrEmpty(message)) return;
-            logs.Add(new LogMessage
-            {
-                content = message,
-                user = Globals.me,
-                slide = Globals.location.currentSlide,
-                timestamp = DateTime.Now.Ticks
-            });
-        }
-        */
         private void DoConstructor()
         {
-            //Commands.Mark.RegisterCommand(new DelegateCommand<string>(Log));
-
-            Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
-
             Commands.MeTLType.DefaultValue = GlobalConstants.METL;
             Title = Strings.Global_ProductName;
             //Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
+
+            Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
 
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
             Commands.SetUserOptions.RegisterCommand(new DelegateCommand<UserOptions>(SetUserOptions));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
 
             getDefaultSystemLanguage();
             displayDispatcherTimer = createExtendedDesktopTimer();
@@ -290,34 +274,15 @@ namespace SandRibbon
                 //Log(string.Format("Failure in language set: {0}", e.Message));
             }
         }
-        private void HelpBinding(object sender, EventArgs e)
-        {
-            LaunchHelp(null);
-        }
-
-        private void LaunchHelp(object _arg)
-        {
-            try
-            {
-                Process.Start("http://monash.edu/eeducation/metl/help.html");
-            }
-            catch (Exception)
-            {
-            }
-        }
         private void SetUserOptions(UserOptions options)
         {
-            //this next line should be removed.\
             Dispatcher.adopt(delegate
             {
-
                 SaveUserOptions(options);
             });
         }
         private void SaveUserOptions(UserOptions options)
         {
-            //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
-            //App.controller.client.SaveUserOptions(Globals.me, options);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -329,16 +294,9 @@ namespace SandRibbon
         {
             mainFrame.Navigate(new CommandBarConfigurationPage());
         }
-        protected void ShowDiagnosticsWindow(object sender, RoutedEventArgs e)
-        {
-            launchDiagnosticsWindow(null);
-        }
         protected void launchDiagnosticsWindow(object _unused)
         {
-            if (App.diagnosticWindow == null)
-            {
-                App.diagnosticWindow = new DiagnosticWindow();
-            }
+            App.diagnosticWindow = new DiagnosticWindow(App.diagnosticController);
             App.diagnosticWindow.Show();
         }
     }

@@ -61,7 +61,7 @@
                 <DataGridTextColumn Header="TotalProcessorTime" Binding="{Binding TotalProcessorTime, Mode=OneTime}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <ScrollViewer  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+        <ScrollViewer  Grid.Row="2" Grid.Column="0">
             <ListView x:Name="commands">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -73,6 +73,13 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollViewer>
+        <ListView x:Name="rooms" Grid.Row="2" Grid.Column="2" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <TextBox x:Name="console" Grid.Row="0" Grid.Column="2" />
         <ItemsControl x:Name="inProgress" Grid.Row="1" Grid.Column="2">
             <ItemsControl.ItemsPanel>

@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using MeTLLib;
 using System.Collections.Concurrent;
 using Akka.Actor;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Components
 {
@@ -198,16 +199,21 @@ namespace SandRibbon.Components
         public ObservableCollection<DiagnosticGauge> gaugeSource = new ObservableCollection<DiagnosticGauge>();
         public ObservableCollection<DiagnosticGauge> inProgressSource = new ObservableCollection<DiagnosticGauge>();
         public ObservableCollection<DiagnosticMessage> messageSource = new ObservableCollection<DiagnosticMessage>();
+        public List<string> currentRooms = new List<string>();
         //public IActorRef diagDisplayReceiver = App.actorSystem.ActorOf<DiagnosticWindowReceiver>("diagnosticWindow");
         protected double refreshInterval = 5 * 1000;
         //protected DiagnosticReceiver receiver = new DiagnosticReceiver((m) => { }, (g) => { });
         // protected DiagnosticDisplay dd = new DiagnosticDisplay();
-        public DiagnosticWindow()
+        public DiagnosticWindow(NetworkController controller)
         {
             InitializeComponent();
             gauges.ItemsSource = gaugeSource;
             messages.ItemsSource = messageSource;
             inProgress.ItemsSource = inProgressSource;
+            if (controller != null)
+            {
+                controller.client.jabberWireFactory.wire().PropertyChanged += wirePropertyChanged;
+            }
             //commands.ItemsSource = DefaultableCompositeCommand.Registrations.Commands;
             /*
             Commands.DiagnosticGaugesUpdated.RegisterCommand(new DelegateCommand<List<DiagnosticGauge>>(gs => {
@@ -291,6 +297,16 @@ namespace SandRibbon.Components
                 });
             };
             timer.Start();
+        }
+
+        private void wirePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var source = sender as JabberWire;
+            switch (e.PropertyName)
+            {
+                case "CurrentRooms": rooms.ItemsSource = source.CurrentRooms.Select(r => r.ToString());  break;
+                default:break;
+            }
         }
     }
 }

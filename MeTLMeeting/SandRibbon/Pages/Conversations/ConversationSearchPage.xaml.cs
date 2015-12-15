@@ -68,7 +68,7 @@ namespace SandRibbon.Pages.Conversations
             Loaded += (s,e) => {
                 Commands.ImportPowerpoint.RegisterCommand(importConversationCommand);
                 Commands.BrowseOneNote.RegisterCommand(browseOneNoteCommand);
-                NetworkController.client.SneakInto("global");
+                NetworkController.client.JoinRoom("global");
             };
             Unloaded += (s,e) => {
                 Commands.ImportPowerpoint.UnregisterCommand(importConversationCommand);
@@ -237,10 +237,11 @@ namespace SandRibbon.Pages.Conversations
             {
                 var oldLoc = NetworkController.client.location.activeConversation;
                 var newLoc = requestedConversation.Jid;
-                /*Pretty amazingly gross violation of the Law of Demeter.  But let's try to be deterministic when it comes to network behaviour.  We can be advisory with commands for moving and joining*/
-                NetworkController.client.SneakOutOf(oldLoc);         
+                /*Pretty amazingly gross violation of the Law of Demeter.  But let's try to be deterministic when it comes to network behaviour.  
+                We can be advisory with commands for moving and joining*/
+                NetworkController.client.LeaveRoom(oldLoc);         
                 NetworkController.client.location.activeConversation = newLoc;        
-                NetworkController.client.SneakInto(newLoc);                
+                NetworkController.client.JoinRoom(newLoc);                
 
                 Commands.JoiningConversation.Execute(conversation.Jid);
                 var userConversation = new UserConversationState();

@@ -143,6 +143,7 @@ namespace SandRibbon.Pages.Login
                             var credentials = new Credentials(newServer.xmppUsername, newServer.xmppPassword, authGroups, emailAddress);
                             credentials.cookie = JSESSIONID;
                             var controller = new NetworkController(newServer);
+                            App.diagnosticController = controller;
                             controller.connect(credentials);
                             if (!controller.client.Connect(credentials))
                             {

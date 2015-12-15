@@ -41,7 +41,6 @@ namespace MeTLLib.Providers.Structure
             credentials = creds;
             jabberWireFactory = _jabberWireFactory;
         }
-        private static readonly string DETAILS = "details.xml";
         public bool isAccessibleToMe(string jid)
         {
             var myGroups = credentials.authorizedGroups.Select(g => g.groupKey.ToLower());
