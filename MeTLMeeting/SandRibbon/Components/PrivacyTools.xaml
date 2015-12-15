@@ -1,14 +1,14 @@
 ﻿<RibbonGroup x:Class="SandRibbon.Components.PrivacyTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-                xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     VerticalAlignment="Top"
-    HorizontalAlignment="Right"
-    AutomationProperties.AutomationId="privacyTools"
-    >
-    <RibbonRadioButton GroupName="privacyButtons" x:Name="publicMode" ToolTip="{DynamicResource WorkPubliclyToolTip}" Command="{x:Static api:Commands.SetPrivacy}" 
-                       CommandParameter="public" Label="Work publicly" SmallImageSource="\Resources\Collaborate.png" LargeImageSource="\Resources\Collaborate.png"></RibbonRadioButton>
-    <RibbonRadioButton GroupName="privacyButtons" x:Name="privateMode" ToolTip="{DynamicResource WorkPrivatelyToolTip}" 
-                       Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private" Label="Work privately" SmallImageSource="\Resources\NoCollaborate.png" LargeImageSource="\Resources\NoCollaborate.png"></RibbonRadioButton>
+    HorizontalAlignment="Right">
+    <RibbonRadioButton GroupName="privacyButtons" x:Name="publicMode" ToolTip="{DynamicResource WorkPubliclyToolTip}" Label="Work publicly" 
+                       SmallImageSource="\Resources\Collaborate.png" LargeImageSource="\Resources\Collaborate.png" 
+                       Click="publicMode_Click" />
+    <RibbonRadioButton GroupName="privacyButtons" x:Name="privateMode" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Label="Work privately"                        
+                       SmallImageSource="\Resources\NoCollaborate.png" LargeImageSource="\Resources\NoCollaborate.png" 
+                       Click="privateMode_Click"/>
 </RibbonGroup>
