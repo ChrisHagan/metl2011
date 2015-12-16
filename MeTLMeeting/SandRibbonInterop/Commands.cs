@@ -65,7 +65,8 @@ namespace SandRibbon
                 isSet = true;
                 commandValue = value;
             }
-        }
+        }        
+
         public DefaultableCompositeCommand(string label)
         {
             this.Label = label;
