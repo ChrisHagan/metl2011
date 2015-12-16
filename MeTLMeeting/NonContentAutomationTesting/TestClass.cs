@@ -1,10 +1,7 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TestStack.White;
+using TestStack.White.Factory;
 
 namespace NonContentAutomationTesting
 {
@@ -13,13 +10,10 @@ namespace NonContentAutomationTesting
     {
         [Test]
         public void TestMethod()
-        {
-            /*
-            var applicationDirectory = TestContext.CurrentContext.TestDirectory;
-            var applicationPath = Path.Combine(applicationDirectory, "MeTL.exe");
-            var application = Application.Launch(applicationPath);
-            var window = application.GetWindow("bar", InitializeOption.NoCache);
-            */
+        {                        
+            var applicationPath = Path.Combine("C:","sandbox","saintLeo","sluBeta","MeTLMeeting","SandRibbon","bin","Debug","MeTL.exe");
+            var application = Application.Launch(applicationPath);            
+            var window = application.GetWindow("MeTL - Server selection", InitializeOption.NoCache);         
             Assert.Pass("Your first passing test");
         }
     }

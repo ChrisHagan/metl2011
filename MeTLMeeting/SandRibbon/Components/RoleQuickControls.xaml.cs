@@ -89,7 +89,6 @@ namespace SandRibbon.Components
                     var teacherSlide = (int)rootPage.UserConversationState.TeacherSlide;
                     if (rootPage.ConversationDetails.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                         rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState,rootPage.UserServerState,rootPage.UserConversationState,rootPage.ConversationState,new UserSlideState(),rootPage.NetworkController, rootPage.ConversationDetails,rootPage.ConversationDetails.Slides.First(s => s.id == teacherSlide)));
-                        //Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException) { }
             }            

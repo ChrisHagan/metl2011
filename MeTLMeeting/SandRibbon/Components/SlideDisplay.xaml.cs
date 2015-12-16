@@ -437,8 +437,9 @@ namespace SandRibbon.Components
                 var selected = (Slide)addedItems[0];
                 if (isWithinTeachersRange(selected))
                 {                                        
-                    Commands.SendSyncMove.ExecuteAsync(selected.id);                    
-                    rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
+                    Commands.SendSyncMove.ExecuteAsync(selected.id);
+                    rootPage.NetworkController.client.MoveTo(selected.id);
+                    //rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
                 }
                 else if (sender is ListBox)
                 {
