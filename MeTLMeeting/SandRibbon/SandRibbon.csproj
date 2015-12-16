@@ -21,7 +21,7 @@
     <ManifestKeyFile>SandRibbon_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
@@ -51,7 +51,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>406</ApplicationRevision>
+    <ApplicationRevision>409</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>2.0.0.406</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.409</MinimumRequiredVersion>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>

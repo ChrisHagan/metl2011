@@ -34,8 +34,11 @@ namespace SandRibbon
         }
 
         public void remove(string key) {
-            registrations[key]--;
-            Dispatcher.Invoke(()=>Commands = registrations);
+            if (registrations.ContainsKey(key))
+            {
+                registrations[key]--;
+                Dispatcher.Invoke(() => Commands = registrations);
+            }
         }
     }
     public class DefaultableCompositeCommand : CompositeCommand
