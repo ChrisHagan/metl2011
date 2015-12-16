@@ -353,6 +353,9 @@ namespace SandRibbon
         /*Moving is a metaphor which implies that I am only in one location.  Watching can happen to many places.*/
         public static DefaultableCompositeCommand WatchRoom = new DefaultableCompositeCommand("WatchRoom");
 
+        public static DefaultableCompositeCommand MovingTo = new DefaultableCompositeCommand("Moving to");
+        public static DefaultableCompositeCommand JoiningConversation = new DefaultableCompositeCommand("JoinConversation");
+
         public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand("SyncedMoveRequested",0);
         public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand("SendSyncMove");
         public static DefaultableCompositeCommand MoveToCollaborationPage = new DefaultableCompositeCommand("MoveToCollaborationPage",0);
@@ -363,7 +366,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand("MoveToNext");
         public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand("SetConversationPermissions");
         public static DefaultableCompositeCommand ToggleNavigationLock = new DefaultableCompositeCommand("ToggleNavigationLock");
-        public static DefaultableCompositeCommand JoiningConversation = new DefaultableCompositeCommand("JoinConversation");
         public static DefaultableCompositeCommand LeaveConversation = new DefaultableCompositeCommand("LeaveConversation");
         public static DefaultableCompositeCommand LeaveLocation = new DefaultableCompositeCommand("LeaveLocation");
         public static DefaultableCompositeCommand SendDirtyConversationDetails = new DefaultableCompositeCommand("SendDirtyConversationDetails");

@@ -1673,7 +1673,7 @@ namespace SandRibbon.Components
             Work.Strokes.Clear();
 
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(rootPage.UserConversationState.ContentVisibility);//contentBuffer.CurrentContentVisibility);
+            ReAddFilteredContent(rootPage.UserConversationState.ContentVisibility);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
