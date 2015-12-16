@@ -1950,18 +1950,13 @@ namespace SandRibbon.Components
         }
         private void imageDropped(ImageDrop drop)
         {
-            try
+            if (drop.Target.Equals(_target) && me != GlobalConstants.PROJECTOR)
             {
-                if (drop.Target.Equals(_target) && me != GlobalConstants.PROJECTOR)
-                    Dispatcher.adopt(delegate
-                    {
+                Dispatcher.adopt(delegate
+                {
 
-                        handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
-                    });
-            }
-            catch (NotSetException)
-            {
-                //YAY
+                    handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
+                });
             }
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
@@ -2195,7 +2190,7 @@ namespace SandRibbon.Components
             // should calculate the original image dimensions before sending it away.
             var width = 320;
             var height = 240;
-            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, newPoint.X,newPoint.Y, width,height, fileName));
+            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, newPoint.X, newPoint.Y, width, height, fileName));
         }
 
         public MeTLImage createImageFromUri(Uri uri, bool useDefaultMargin)

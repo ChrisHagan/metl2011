@@ -313,68 +313,70 @@ namespace SandRibbon.Components
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyAutoShape.ExecuteAsync(e.dirtyElement);
+            Commands.ReceiveDirtyAutoShape.Execute(e.dirtyElement);
         }
         private void dirtyImageAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyImage.ExecuteAsync(e.dirtyElement);
+            Commands.ReceiveDirtyImage.Execute(e.dirtyElement);
         }
         private void dirtyLiveWindowAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyLiveWindow.ExecuteAsync(e.dirtyElement);
+            Commands.ReceiveDirtyLiveWindow.Execute(e.dirtyElement);
         }
         private void dirtyStrokeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyStrokes.ExecuteAsync(new[] { e.dirtyElement });
+            Commands.ReceiveDirtyStrokes.Execute(new[] { e.dirtyElement });
         }
         private void dirtyTextBoxAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyText.ExecuteAsync(e.dirtyElement);
+            Commands.ReceiveDirtyText.Execute(e.dirtyElement);
         }
         private void discoAvailable(object sender, DiscoAvailableEventArgs e)
         {
         }
         private void fileAvailable(object sender, FileAvailableEventArgs e)
         {
-            Commands.ReceiveFileResource.ExecuteAsync(e.file);
+            Commands.ReceiveFileResource.Execute(e.file);
         }
         private void imageAvailable(object sender, ImageAvailableEventArgs e)
         {
-            Commands.ReceiveImage.ExecuteAsync(e.image);
+            Commands.ReceiveImage.Execute(e.image);
         }
         private void moveDeltaAvailable(object sender, MoveDeltaAvailableEventArgs e)
         {
-            Commands.ReceiveMoveDelta.ExecuteAsync(e.moveDelta);
+            Commands.ReceiveMoveDelta.Execute(e.moveDelta);
         }
         private void liveWindowAvailable(object sender, LiveWindowAvailableEventArgs e)
         {
-            Commands.ReceiveLiveWindow.ExecuteAsync(e.livewindow);
+            Commands.ReceiveLiveWindow.Execute(e.livewindow);
         }
         private void preParserAvailable(object sender, PreParserAvailableEventArgs e)
         {
-            Commands.PreParserAvailable.ExecuteAsync(e.parser);
+            Commands.PreParserAvailable.Execute(e.parser);
         }
         private void quizAnswerAvailable(object sender, QuizAnswerAvailableEventArgs e)
         {
-            Commands.ReceiveQuizAnswer.ExecuteAsync(e.QuizAnswer);
+            Commands.ReceiveQuizAnswer.Execute(e.QuizAnswer);
         }
         private void quizQuestionAvailable(object sender, QuizQuestionAvailableEventArgs e)
-        { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
+        {
+            Commands.ReceiveQuiz.Execute(e.quizQuestion);
+        }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
             Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {
-            Commands.ReceiveStroke.ExecuteAsync(e.stroke);
+            Commands.ReceiveStroke.Execute(e.stroke);
         }
         private void submissionAvailable(object sender, SubmissionAvailableEventArgs e)
         {
-            Commands.ReceiveScreenshotSubmission.ExecuteAsync(e.submission);
+            Commands.ReceiveScreenshotSubmission.Execute(e.submission);
         }
         private void textBoxAvailable(object sender, TextBoxAvailableEventArgs e)
         {
-            Commands.ReceiveTextBox.ExecuteAsync(e.textBox);
+            Commands.ReceiveTextBox.Execute(e.textBox);
         }
         #endregion
     }

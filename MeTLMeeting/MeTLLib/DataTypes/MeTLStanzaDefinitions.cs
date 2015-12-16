@@ -2083,13 +2083,13 @@ namespace MeTLLib.DataTypes
                 return () => forceEvaluation();
             }
             public MeTLImage forceEvaluationForPrinting()
-            {
+            {//Broken.  We're moving printing serverside anyway
                 MeTLImage image = new MeTLImage
                 {
                     Tag = "FOR_PRINTING_ONLY::::" + this.tag,
                     Height = this.height,
-                    Width = this.width,
-                    Source = this.asynchronouslyLoadImageData()
+                    Width = this.width
+                    //Source = this.asynchronouslyLoadImageData()
                 };
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
@@ -2107,34 +2107,14 @@ namespace MeTLLib.DataTypes
                     Source = BackupSource,
                     Stretch = Stretch.Fill
                 };
-                RoutedEventHandler handler = null;
-                handler = delegate
-                {
-                    image.Loaded -= handler;
-                    ThreadPool.UnsafeQueueUserWorkItem(delegate
+                image.Dispatcher.Invoke((Action)delegate
                     {
-                        if (image == null) return;//This might have been GCed if they moved conversations
-                        image.Dispatcher.Invoke((Action)delegate
-                                {
-                                    try
-                                    {
-                                        var newSource = asynchronouslyLoadImageData();
-                                        var oldTag = image.Tag;
-                                        if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                                            image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                                        image.Source = newSource;
-                                        // Having next two lines causes bug #1480 but partially fixes #1435
-                                        //image.Height = newSource.Height;
-                                        //image.Width = newSource.Width;
-                                    }
-                                    catch (InvalidOperationException)
-                                    {
-                                        Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::forceEvaluation - couldn't find a dispatcher");
-                                    }
-                                });
-                    }, null);
-                };
-                image.Loaded += handler;
+                        var source = new BitmapImage();                        
+                        source.BeginInit();
+                        source.StreamSource = new MemoryStream(asynchronouslyLoadImageData());
+                        source.EndInit();
+                        image.Source = source;
+                    });
                 image.tag(BuildImageTagFromXml(tag));
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
@@ -2153,29 +2133,19 @@ namespace MeTLLib.DataTypes
                 return imageTag;
             }
 
-            public ImageSource asynchronouslyLoadImageData()
+            public Byte[] asynchronouslyLoadImageData()
             {
-                var image = new BitmapImage();
                 try
                 {
                     var path = server.getResource(GetTag(sourceTag));
-                    //                    var path = server.getImage(GetTag(slideTag), GetTag(identityTag));
-                    //var path = server.getImage(GetTag(slideTag), GetTag(sourceTag)); //this was the original
                     var bytes = provider.secureGetData(path);
-                    if (bytes.Length == 0) return null;
-                    var stream = new MemoryStream(bytes);
-                    image.BeginInit();
-                    image.UriSource = path;
-                    image.StreamSource = stream;
-                    image.EndInit();
-                    image.Freeze();//Going to be handed back to the dispatcher
+                    return bytes;
                 }
                 catch (Exception e)
                 {
                     Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}", DateTime.Now, DateTime.Now.Millisecond, e.Message);
-                    //Who knows what sort of hell is lurking in our history
+                    return new Byte[0];
                 }
-                return image;
             }
             public TargettedImage Img
             {

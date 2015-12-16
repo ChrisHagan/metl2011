@@ -320,10 +320,10 @@ namespace MeTLLib.Providers.Connection
             conn.OnStreamError += ElementError;
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
-/*
+/**/
             conn.OnReadXml += ReadXml;
             conn.OnWriteXml += WriteXml;
-*/
+/**/
         }
 
         private void SendPing(string who)
