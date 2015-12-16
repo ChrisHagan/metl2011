@@ -1846,7 +1846,7 @@ namespace SandRibbon.Components
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
-                        Dispatcher.adoptAsync(() =>
+                        Dispatcher.adopt(() =>
                         {
                             try
                             {
@@ -1875,22 +1875,7 @@ namespace SandRibbon.Components
                 Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });
-        }
-        /*
-                private MeTLImage NegativeCartesianImageTranslate(MeTLImage incomingImage)
-                {
-                    return contentBuffer.adjustImage(incomingImage, (i) =>
-                    {
-                        var translateX = ReturnPositiveValue(contentBuffer.logicalX);
-                        var translateY = ReturnPositiveValue(contentBuffer.logicalY);
-                        InkCanvas.SetLeft(i, (InkCanvas.GetLeft(i) + translateX));
-                        InkCanvas.SetTop(i, (InkCanvas.GetTop(i) + translateY));
-                        i.offsetX = contentBuffer.logicalX;
-                        i.offsetY = contentBuffer.logicalY;
-                        return i;
-                    });
-                }
-                */
+        }        
         private MeTLImage OffsetNegativeCartesianImageTranslate(MeTLImage image)
         {
             var newImage = image.Clone();
@@ -2926,25 +2911,7 @@ namespace SandRibbon.Components
             rootPage.UserConversationState.UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
-        /*
-        private void MoveTo(int _slide)
-        {
-            if (contentBuffer != null)
-            {
-                contentBuffer.Clear();
-            }
-            if (moveDeltaProcessor != null)
-            {
-                moveDeltaProcessor.clearRememberedSentMoveDeltas();
-            }
-            if (myTextBox != null)
-            {
-                var textBox = myTextBox;
-                textBox.Focusable = false;
-            }
-            myTextBox = null;
-        }
-        */
+                
         public void Flush()
         {
             ClearAdorners();
@@ -2955,11 +2922,6 @@ namespace SandRibbon.Components
             //Negative Cartesian Resolution - Changing the co-ordinates to 0,0
             contentBuffer.logicalX = 0.0;
             contentBuffer.logicalY = 0.0;
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new CollapsedCanvasStackAutomationPeer(this);
-        }
+        }        
     }
 }

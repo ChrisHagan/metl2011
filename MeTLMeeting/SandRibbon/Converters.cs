@@ -567,30 +567,7 @@ namespace SandRibbon
         {
             return value;
         }
-    }
-    public class ConvertMeTLIdentityStringToImageSource : IValueConverter
-    {
-        public NetworkController controller { get; protected set; }
-        public ConvertMeTLIdentityStringToImageSource(NetworkController _controller)
-        {
-            controller = _controller;
-        }
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var uri = controller.config.getResource(value.ToString());
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            //bitmap.UriSource = uri;
-            bitmap.StreamSource = new System.IO.MemoryStream(controller.client.resourceProvider.secureGetData(uri));
-            bitmap.EndInit();
-            return bitmap;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value;
-        }
-    }
+    }    
     public class ColorToBrushConverter : IValueConverter
     {
         private static readonly int INCREMENT = 20;
