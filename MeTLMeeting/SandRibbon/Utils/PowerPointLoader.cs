@@ -126,7 +126,6 @@ namespace SandRibbon.Utils
             {
                 onProgress(TOTAL, "import starting", 0, totalTotal);
                 onProgress(TOTAL, "powerpoint running check", totalCount++, totalTotal);
-                var app = GetPowerPointApplication();
                 onProgress(TOTAL, "powerpoint installation check", totalCount++, totalTotal);
                 onProgress(TOTAL, "ready to begin", totalCount++, totalTotal);
                 switch (spec.Type)
@@ -134,6 +133,7 @@ namespace SandRibbon.Utils
                     case PowerpointImportType.HighDefImage:
                         if (isHealthy())
                         {
+                            var app = GetPowerPointApplication();
                             LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, onProgress, onComplete, totalCount, totalTotal);
                         }
                         else
@@ -144,6 +144,7 @@ namespace SandRibbon.Utils
                     case PowerpointImportType.Image:
                         if (isHealthy())
                         {
+                            var app = GetPowerPointApplication();
                             LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, onProgress, onComplete, totalCount, totalTotal);
                         }
                         else
@@ -154,6 +155,7 @@ namespace SandRibbon.Utils
                     case PowerpointImportType.Shapes:
                         if (isHealthy())
                         {
+                            var app = GetPowerPointApplication();
                             LoadPowerpoint(app, spec.File, onProgress, onComplete, totalCount, totalTotal);
                         }
                         else
