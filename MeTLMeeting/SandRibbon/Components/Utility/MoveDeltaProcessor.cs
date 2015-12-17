@@ -8,7 +8,6 @@
     using System.Windows.Ink;
     using System.Windows.Media;
     using MeTLLib.DataTypes;
-    using System.Collections.ObjectModel;
 
     public abstract class MoveDeltaProcessor
     {
@@ -17,7 +16,7 @@
         public string Target { get; private set; }
         public ConversationDetails details { get; protected set; }
 
-        public ContentBuffer contentBuffer { get; private set; }
+        public ContentBuffer contentBuffer { get; set; }
         public string me { get; protected set; }
 
         protected MoveDeltaProcessor(InkCanvas canvas, string target, ContentBuffer contentBuffer, ConversationDetails _details, string _me)

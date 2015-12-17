@@ -245,8 +245,7 @@ namespace SandRibbon.Components
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
-                }
-                Contextualise();
+                }                
                 CommandBindings.Add(deleteCommandBinding);
                 CommandBindings.Add(pasteCommandBinding);
                 CommandBindings.Add(copyCommandBinding);
@@ -281,6 +280,20 @@ namespace SandRibbon.Components
                 clipboardManager.RegisterHandler(ClipboardAction.Cut, OnClipboardCut, CanHandleClipboardCut);
                 clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
                 Globals.CanvasClipboardFocusChanged += CanvasClipboardFocusChanged;
+                Dispatcher.adopt(delegate
+                {
+                    if (_target == null)
+                    {
+                        _target = (string)FindResource("target");
+                        _defaultPrivacy = (Privacy)FindResource("defaultPrivacy");
+
+                        if (_target == "presentationSpace")
+                        {
+                            Globals.CurrentCanvasClipboardFocus = _target;
+                        }                        
+                    }
+                    Contextualise();
+                });
             };
             Unloaded += (s, e) =>
             {
@@ -325,21 +338,15 @@ namespace SandRibbon.Components
         {
             contentBuffer = new ContentBuffer(rootPage);
             me = rootPage.NetworkController.credentials.name;
-            Dispatcher.adopt(delegate
+            if (moveDeltaProcessor == null)
             {
-                if (_target == null)
-                {
-                    _target = (string)FindResource("target");
-                    _defaultPrivacy = (Privacy)FindResource("defaultPrivacy");
-
-                    if (_target == "presentationSpace")
-                    {
-                        Globals.CurrentCanvasClipboardFocus = _target;
-                    }
-
-                    moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
-                }
-            });
+                moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            }
+            else
+            {
+                moveDeltaProcessor.contentBuffer = contentBuffer;
+            }
+            
         }
 
         double shift = 200;
@@ -384,7 +391,7 @@ namespace SandRibbon.Components
         private void BroadcastRegions(ContentBuffer buffer)
         {
             var regions = new List<SignedBounds>();
-            regions.AddRange(buffer.strokes.Strokes.Select(s => s.signedBounds()));
+            regions.AddRange(buffer.strokeFilter.Strokes.Select(s => s.signedBounds()));
             Commands.SignedRegions.Execute(regions);
         }
         private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
@@ -1880,7 +1887,7 @@ namespace SandRibbon.Components
                 Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });
-        }        
+        }
         private MeTLImage OffsetNegativeCartesianImageTranslate(MeTLImage image)
         {
             var newImage = image.Clone();
@@ -2916,7 +2923,7 @@ namespace SandRibbon.Components
             rootPage.UserConversationState.UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
-                
+
         public void Flush()
         {
             ClearAdorners();
@@ -2927,6 +2934,6 @@ namespace SandRibbon.Components
             //Negative Cartesian Resolution - Changing the co-ordinates to 0,0
             contentBuffer.logicalX = 0.0;
             contentBuffer.logicalY = 0.0;
-        }        
+        }
     }
 }

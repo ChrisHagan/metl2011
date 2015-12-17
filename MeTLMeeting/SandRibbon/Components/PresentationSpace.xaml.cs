@@ -100,12 +100,14 @@ namespace SandRibbon.Components
 
             rootPage.Slide = rootPage.ConversationDetails.Slides.Where(s => s.id == loc).First();
             stack.rootPage = rootPage;
-            stack.Contextualise();
+            
             workStack.Flush();
             workQueue.Clear();
+            stack.Contextualise();
+
             workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), loc.ToString()));
             workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, loc)));
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid));           
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid));            
             while (workQueue.Count() > 0)
             {                
                 Dispatcher.Invoke(workQueue.Dequeue());

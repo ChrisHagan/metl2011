@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Ink;
 using System.Windows;
-using SandRibbon.Providers;
 using MeTLLib.DataTypes;
-using System.Diagnostics;
-using SandRibbon.Utils;
 using System.ComponentModel;
 using SandRibbon.Pages;
 

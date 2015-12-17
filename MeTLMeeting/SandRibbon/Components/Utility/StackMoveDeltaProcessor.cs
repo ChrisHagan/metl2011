@@ -1,14 +1,7 @@
 ﻿namespace SandRibbon.Components.Utility
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using MeTLLib.DataTypes;
-    using SandRibbon.Providers;
-    using System.Windows.Media;
     using System.Windows.Controls;
-    using System.Windows.Ink;
 
     public class StackMoveDeltaProcessor : MoveDeltaProcessor
     {
