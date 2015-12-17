@@ -205,7 +205,7 @@ namespace SandRibbon.Components
             }
         }
 
-        public SlideAwarePage rootPage { get; protected set; }
+        public SlideAwarePage rootPage { get; set; }
         public CollapsedCanvasStack()
         {
             InitializeComponent();
@@ -246,23 +246,7 @@ namespace SandRibbon.Components
                 {
                     rootPage = DataContext as SlideAwarePage;
                 }
-                contentBuffer = new ContentBuffer(rootPage);
-                me = rootPage.NetworkController.credentials.name;
-                Dispatcher.adopt(delegate
-                {
-                    if (_target == null)
-                    {
-                        _target = (string)FindResource("target");
-                        _defaultPrivacy = (Privacy)FindResource("defaultPrivacy");
-
-                        if (_target == "presentationSpace")
-                        {
-                            Globals.CurrentCanvasClipboardFocus = _target;
-                        }
-
-                        moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
-                    }
-                });
+                Contextualise();
                 CommandBindings.Add(deleteCommandBinding);
                 CommandBindings.Add(pasteCommandBinding);
                 CommandBindings.Add(copyCommandBinding);
@@ -335,6 +319,27 @@ namespace SandRibbon.Components
             //For development
             if (_target == "presentationSpace" && me != GlobalConstants.PROJECTOR)
                 rootPage.UserConversationState.UndoHistory.ShowVisualiser(Window.GetWindow(this));
+        }
+
+        public void Contextualise()
+        {
+            contentBuffer = new ContentBuffer(rootPage);
+            me = rootPage.NetworkController.credentials.name;
+            Dispatcher.adopt(delegate
+            {
+                if (_target == null)
+                {
+                    _target = (string)FindResource("target");
+                    _defaultPrivacy = (Privacy)FindResource("defaultPrivacy");
+
+                    if (_target == "presentationSpace")
+                    {
+                        Globals.CurrentCanvasClipboardFocus = _target;
+                    }
+
+                    moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                }
+            });
         }
 
         double shift = 200;

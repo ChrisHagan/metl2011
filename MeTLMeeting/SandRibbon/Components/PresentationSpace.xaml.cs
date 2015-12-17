@@ -98,6 +98,9 @@ namespace SandRibbon.Components
         {
             var p = rootPage.NetworkController.client.historyProvider;
 
+            rootPage.Slide = rootPage.ConversationDetails.Slides.Where(s => s.id == loc).First();
+            stack.rootPage = rootPage;
+            stack.Contextualise();
             workStack.Flush();
             workQueue.Clear();
             workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), loc.ToString()));
