@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>2.0.0.409</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.406</MinimumRequiredVersion>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -89,7 +89,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL</ProductName>
-    <InstallUrl>http://setup.stackableregiments.com/windowsClients/metl2016/</InstallUrl>
+    <InstallUrl>http://metl-backend.stackableregiments.com/MeTL/</InstallUrl>
     <UpdateUrl>http://setup.stackableregiments.com/windowsClients/metl2016/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
     <Prefer32Bit>false</Prefer32Bit>

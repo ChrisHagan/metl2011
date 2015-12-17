@@ -344,11 +344,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.ShowProjector.Execute(null);
 
                 NetworkController.client.location.activeConversation = ConversationDetails.Jid;
-                NetworkController.client.location.currentSlide = Slide.id;
-                                
-                NetworkController.client.JoinRoom(Slide.id.ToString());
-                NetworkController.client.JoinRoom(Slide.id.ToString() + NetworkController.credentials.name);
-
+                
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), true, -1));
                 NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), true, -1));                
             };

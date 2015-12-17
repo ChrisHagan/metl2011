@@ -434,22 +434,33 @@ namespace SandRibbon.Components
             var addedItems = e.AddedItems;
             if (addedItems.Count > 0)
             {
-                var removedItems = e.RemovedItems;
+                var removed = e.RemovedItems;         
                 var selected = (Slide)addedItems[0];
                 if (isWithinTeachersRange(selected))
                 {
                     rootPage.Slide = selected;
+                    rootPage.NetworkController.client.location.currentSlide = selected.id;
+
                     checkMovementLimits();
+
+                    foreach (var left in removed) {
+                        var s = left as Slide;
+                        rootPage.NetworkController.client.LeaveRoom(s.id.ToString());
+                        rootPage.NetworkController.client.LeaveRoom(s.id.ToString() + rootPage.NetworkController.credentials.name);
+                    }                    
+                    
+                    rootPage.NetworkController.client.JoinRoom(selected.id.ToString());
+                    rootPage.NetworkController.client.JoinRoom(selected.id.ToString() + rootPage.NetworkController.credentials.name);
+
                     Commands.SendSyncMove.Execute(selected.id);
-                    rootPage.NetworkController.client.MoveTo(selected.id);
                     Commands.MovingTo.Execute(selected.id);                    
                     //rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
                 }
                 else if (sender is ListBox)
                 {
-                    if (removedItems.Count > 0)
+                    if (removed.Count > 0)
                     {
-                        ((ListBox)sender).SelectedItem = removedItems[0];
+                        ((ListBox)sender).SelectedItem = removed[0];
                     }
                 }
             }

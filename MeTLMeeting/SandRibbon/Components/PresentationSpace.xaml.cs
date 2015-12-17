@@ -107,8 +107,7 @@ namespace SandRibbon.Components
             workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, loc)));
             workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid));           
             while (workQueue.Count() > 0)
-            {
-                Trace.TraceInformation("Presentation work queue {0} to {1}", workQueue.Count,loc);
+            {                
                 Dispatcher.Invoke(workQueue.Dequeue());
             }
         }
