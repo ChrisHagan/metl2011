@@ -1843,7 +1843,6 @@ namespace SandRibbon.Components
             {
                 Dispatcher.adopt(delegate
                 {
-
                     moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
                 });
             }
@@ -1878,7 +1877,6 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, MeTLImage image)
         {
             if (canvas.ImageChildren().Any(i => ((MeTLImage)i).tag().id == image.tag().id)) return;
-            //NegativeCartesianImageTranslate(image);
             contentBuffer.AddImage(image, (img) =>
             {
                 var imageToAdd = img as MeTLImage;
@@ -2187,7 +2185,7 @@ namespace SandRibbon.Components
             // should calculate the original image dimensions before sending it away.
             var width = 320;
             var height = 240;
-            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, newPoint.X, newPoint.Y, width, height, fileName));
+            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, rootPage.UserConversationState.Privacy, newPoint.X, newPoint.Y, width, height, fileName));
         }
 
         public MeTLImage createImageFromUri(Uri uri, bool useDefaultMargin)

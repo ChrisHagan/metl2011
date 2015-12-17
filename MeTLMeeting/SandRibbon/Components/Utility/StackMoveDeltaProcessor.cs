@@ -19,9 +19,7 @@
 
         protected override void RemoveStroke(PrivateAwareStroke stroke)
         {
-            ContentBuffer.RemoveStroke(stroke, (col) => Canvas.Strokes.Remove(col));
-            // hopefully don't need to keep track of checksums anymore and can just use the stroke's identity
-            //contentBuffer.RemoveStrokeChecksum(stroke, (cs) => strokeChecksums.Remove(cs));
+            ContentBuffer.RemoveStroke(stroke, (col) => Canvas.Strokes.Remove(col));        
         }
 
         protected override void RemoveImage(MeTLImage image) 
