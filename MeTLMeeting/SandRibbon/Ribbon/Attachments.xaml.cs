@@ -56,7 +56,7 @@ namespace SandRibbon.Tabs
                 ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.NetworkController);
                 Commands.ReceiveFileResource.RegisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
-                Commands.JoinConversation.RegisterCommand(clearOutAttachmentsCommand);
+                Commands.JoiningConversation.RegisterCommand(clearOutAttachmentsCommand);
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.FileUpload.RegisterCommand(fileUploadCommand);
             };
@@ -64,7 +64,7 @@ namespace SandRibbon.Tabs
             {
                 Commands.ReceiveFileResource.UnregisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
-                Commands.JoinConversation.UnregisterCommand(clearOutAttachmentsCommand);
+                Commands.JoiningConversation.UnregisterCommand(clearOutAttachmentsCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.FileUpload.UnregisterCommand(fileUploadCommand);
             };

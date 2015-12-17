@@ -21,7 +21,7 @@
     <ManifestKeyFile>SandRibbon_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
@@ -51,7 +51,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>406</ApplicationRevision>
+    <ApplicationRevision>409</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>2.0.0.406</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.409</MinimumRequiredVersion>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -205,6 +205,10 @@
     </Reference>
     <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\squirrel.windows.1.2.1\lib\Net45\NuGet.Squirrel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OxyPlot, Version=2014.1.546.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
@@ -420,19 +424,12 @@
     <Compile Include="Ribbon\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\Groups\EditingOptions.xaml.cs" />
     <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\Logic.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
       <DependentUpon>UndoHistoryVisualiserWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Automation\MultipleClientLauncher.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Automation\StrokeHarvester.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -450,10 +447,6 @@
     <Page Include="Frame\Flyouts\DiagnosticsFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\ResourceDictionaries\ToolTips_en-gb.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Frame\Flyouts\Flyouts.xaml">
       <SubType>Designer</SubType>
@@ -622,14 +615,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\ResourceDictionaries\ToolTips_ar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\ResourceDictionaries\ToolTips_en-US.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\RoleQuickControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -750,10 +735,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\Groups\EditingOptions.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -845,12 +826,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimplePenTools.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Groups\ToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -997,10 +972,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Automation\AutomationPeers\ConversationListingAutomationPeer.cs" />
-    <Compile Include="Automation\MultipleClientLauncher.xaml.cs">
-      <DependentUpon>MultipleClientLauncher.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
     </Compile>
@@ -1113,9 +1084,6 @@
     </Compile>
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\ToolBox.xaml.cs">
-      <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SyncDisplay.xaml.cs">
       <DependentUpon>SyncDisplay.xaml</DependentUpon>

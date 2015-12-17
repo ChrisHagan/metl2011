@@ -5,45 +5,57 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
+using System.Windows.Media.Imaging;
+using System.Linq;
 
 namespace SandRibbon.Components.Submissions
 {
+    public class DisplayableSubmission
+    {
+        public BitmapImage image { get; set; }
+        public string authorName { get; set; }
+    }
     public partial class ViewSubmissions : Window
     {
-        public ObservableCollection<TargettedSubmission> submissions { get; set; }
-        public ConvertMeTLIdentityStringToImageSource ConvertMeTLIdentityStringToImageSource
-        {
-            get; protected set;
-        }
+        public ObservableCollection<DisplayableSubmission> submissions { get; set; }        
         public NetworkController controller { get; protected set; }
         public ViewSubmissions(NetworkController _controller, List<TargettedSubmission> userSubmissions)
         {
             InitializeComponent();
             controller = _controller;
-            ConvertMeTLIdentityStringToImageSource = new ConvertMeTLIdentityStringToImageSource(controller);
-            submissions = new ObservableCollection<TargettedSubmission>(userSubmissions);
+            submissions = new ObservableCollection<DisplayableSubmission>(userSubmissions.Select(load));
             Submissions.ItemsSource = submissions;
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(close));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<string>(close));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(close));
         }
+
+        private DisplayableSubmission load(TargettedSubmission submission) {
+            var uri = controller.config.getResource(submission.url);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = new System.IO.MemoryStream(controller.client.resourceProvider.secureGetData(uri));
+            bitmap.EndInit();
+            return new DisplayableSubmission
+            {
+                image = bitmap,
+                authorName = submission.author
+            };
+        }    
 
         private void close(object obj)
         {
             Dispatcher.adopt(delegate
             {
-
                 Close();
             });
         }
         private void recieveSubmission(TargettedSubmission submission)
         {
-            if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
-                return;
+            if (String.IsNullOrEmpty(submission.target) || submission.target != "submission") return;
             Dispatcher.adopt(delegate
             {
-                submissions.Add(submission);
+                submissions.Add(load(submission));
             });
         }
 

@@ -19,7 +19,7 @@ namespace SandRibbon
             InitializeComponent();
             from.ItemsSource = fromStack;
             Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<object>(PreParserAvailable));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));

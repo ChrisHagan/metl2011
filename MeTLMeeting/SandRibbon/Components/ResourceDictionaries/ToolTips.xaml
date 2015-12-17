@@ -2,12 +2,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:resources="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     >
+    <resources:MeTLImageToolTip x:Key="ResetPenToDefaultToolTip" 
+                                        TitleText="DuplicateConversationToolTip"
+                                        ContentText="Copy all your public content to a new conversation.  This is a clean copy."/>        
     <resources:MeTLImageToolTip x:Key="LaunchDiagnosticWindowToolTip" 
                                         TitleText="Display Diagnostics"
-                                        ContentText="Open a window with diagnostic information which may be of interest to technical support teams."/>
-    <resources:MeTLImageToolTip x:Key="ResetPenToDefaultToolTip" 
-                                        TitleText="Reset pen"
-                                        ContentText="Return this pen to its original colour and width."/>
+                                        ContentText="Open a window with diagnostic information which may be of interest to technical support teams."/>    
     <resources:MeTLImageToolTip x:Key="DisplaySubmissionToolTip" 
                                         TitleText="Show submission"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 

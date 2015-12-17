@@ -12,8 +12,8 @@ using agsXMPP.Xml.Dom;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
 using MeTLLib.Utilities;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Net;
+using System.ComponentModel;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -166,7 +166,7 @@ namespace MeTLLib.Providers.Connection
         Live
     }
 
-    public partial class JabberWire
+    public partial class JabberWire : INotifyPropertyChanged
     {
         protected const string WORM = "/WORM_MOVES";
         protected const string SUBMISSION = "/SUBMISSION";
@@ -191,14 +191,7 @@ namespace MeTLLib.Providers.Connection
         private Timer heartbeat;
         protected Jid jid;
         public bool activeWire { get; private set; }
-
-        private void registerCommands()
-        {
-            //Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
-            //Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
-            //Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
-            //Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
-        }
+    
         public ResourceCache cache;
         public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active, IAuditor _auditor)
         {
@@ -302,7 +295,6 @@ namespace MeTLLib.Providers.Connection
                 conn.OnLogin -= OnLogin;
                 conn.OnMessage -= OnMessage;
                 conn.OnSocketError -= HandlerError;
-                //conn.OnSocketError -= Disconnect;
                 conn.OnError -= HandlerError;
                 conn.OnRegisterError -= ElementError;
                 conn.OnStreamError -= ElementError;
@@ -323,7 +315,6 @@ namespace MeTLLib.Providers.Connection
             conn.OnMessage += OnMessage;
             conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
-            //conn.OnSocketError += Disconnect;
             conn.OnError += HandlerError;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
@@ -459,17 +450,13 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void ReadXml(object sender, string xml)
         {
-//#if DEBUG_VERBOSE
             if (!xml.Contains("/WORM_MOVES"))
                 Trace.TraceInformation("IN:" + xml);
-//#endif
         }
         protected virtual void WriteXml(object sender, string xml)
         {
-//#if DEBUG_VERBOSE
             if (!xml.Contains("/WORM_MOVES"))
                 Trace.TraceInformation("OUT:" + xml);
-//#endif
         }
         private void OnClose(object sender)
         {
@@ -591,20 +578,18 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceWarning(string.Format("++++: JabberWire::Reset: Called {0} times.", resetInProgress));
             }
         }
-        public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
+        public void leaveRooms()
         {            
-            foreach (var roomJid in currentRooms.ToList())
+            foreach (var roomJid in CurrentRooms.ToList())
             {
                 leaveRoom(roomJid);
-            }         
-        }
-        private bool isLocationValid()
-        {
-            return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0 && !location.ValueEquals(Location.Empty));
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
         private void leaveRoom(Jid room)
-        {
-            currentRooms.Remove(room);
+        {            
+            CurrentRooms.Remove(room);            
+            Trace.TraceInformation("Leaving room {0} leaves {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
         }
@@ -618,6 +603,7 @@ namespace MeTLLib.Providers.Connection
         public void WatchRoom(string slide)
         {
             joinRoom(new Jid(slide, metlServerAddress.muc,jid.Resource));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
             historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
@@ -627,26 +613,23 @@ namespace MeTLLib.Providers.Connection
                     },
                     slide);
         }
-        private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
-        {
-            currentRooms.Add(new Jid("global", metlServerAddress.muc, jid.Resource));            
-            var cRooms = new Jid[currentRooms.Count()];
-            currentRooms.CopyTo(cRooms, 0);
-            leaveRooms();
-            foreach (var roomJid in cRooms)
+        private void joinRooms()
+        {                        
+            foreach (var roomJid in CurrentRooms)
             {
                 joinRoom(roomJid);
-            }            
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
-        protected HashSet<Jid> currentRooms = new HashSet<Jid>();
+        public HashSet<Jid> CurrentRooms { get; protected set; } = new HashSet<Jid>();       
         private void joinRoom(Jid room)
         {
+            Trace.TraceInformation("Joining room {0}", room);
             try
-            {
-                Trace.WriteLine(String.Format("Jabberwire::JoinRoom => Joining room {0}", room));
+            {                
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
-                currentRooms.Add(room);
+                CurrentRooms.Add(room);                
             }
             catch (Exception e)
             {
@@ -759,67 +742,7 @@ namespace MeTLLib.Providers.Connection
                     credentials.name,
                     where.ToString());
             }, "getHistory", "xmpp");
-        }
-
-        public void JoinConversation()
-        {
-            try
-            {
-                leaveRooms();
-                joinRooms();
-            }
-            catch (Exception e)
-            {
-                Trace.TraceInformation("CRASH: MeTLLib::JabberWire:JoinConversation {0}", e.Message);
-            }
-        }
-
-        public void MoveTo(int where)
-        {
-            auditor.wrapAction((a) =>
-            {
-
-                try
-                {
-                    a(GaugeStatus.InProgress, 12);
-                    leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
-                    a(GaugeStatus.InProgress, 24);                    
-                    a(GaugeStatus.InProgress, 36);
-                    var oldLocation = location.currentSlide.ToString();
-                    location.currentSlide = where;                    
-                    joinRooms(fastJoin: true, alreadyInConversation: true);
-                    a(GaugeStatus.InProgress, 48);
-                    cachedHistoryProvider.ClearCache(oldLocation);
-                    a(GaugeStatus.InProgress, 60);
-                    cachedHistoryProvider.ClearCache(where.ToString());
-                    a(GaugeStatus.InProgress, 72);
-                    historyProvider.Retrieve<PreParser>(
-                        onStart,
-                        onProgress,
-                        finishedParser =>
-                        {
-                            receiveEvents.receivePreParser(finishedParser);
-                            cachedHistoryProvider.PopulateFromHistory(finishedParser);
-                        },
-                        location.currentSlide.ToString());
-                    a(GaugeStatus.InProgress, 84);
-                    historyProvider.RetrievePrivateContent<PreParser>(
-                        onStart,
-                        onProgress,
-                        finishedParser =>
-                        {
-                            receiveEvents.receivePreParser(finishedParser);
-                            cachedHistoryProvider.PopulateFromHistory(finishedParser);
-                        },
-                        credentials.name,
-                        location.currentSlide.ToString());
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
-                }
-            }, "moveTo", "xmpp");
-        }
+        }       
 
         private void MoveDeltaSeparator(TargettedMoveDelta tmd)
         {
@@ -971,6 +894,7 @@ namespace MeTLLib.Providers.Connection
                 stanza(fileConversation.ToString(), fileResource);
                 if (fileConversation != location.activeConversation)
                     leaveRoom(fileConversationJid);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
             }
         }
         protected int pingTimeout = 30 * 1000; // 30 seconds
@@ -1057,12 +981,6 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                /*
-                <author xmlns="monash:metl">teacher</author>
-                <audiences xmlns="monash:metl" />
-                <command xmlns="monash:metl">/UPDATE_CONVERSATION_DETAILS</command>
-                <parameters xmlns="monash:metl"><parameter>20000</parameter></parameters>
-                */
                 var command = element.SelectSingleElement("command").InnerXml;
                 switch (command)
                 {
@@ -1074,10 +992,7 @@ namespace MeTLLib.Providers.Connection
                         break;
                     case UPDATE_CONVERSATION_DETAILS:
                         handleConversationDetailsUpdated(element);
-                        break;
-                    case GO_TO_SLIDE:
-                        handleGoToSlide(element);
-                        break;                    
+                        break;                                      
                     case UPDATE_SLIDE_COLLECTION:
                         handleUpdateSlideCollection(element);
                         break;
@@ -1110,16 +1025,6 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError("wire received inappropriate jid in updateSlideCollection: " + e.Message);
             }
         }
-        /*public virtual void handleGoToConversation(string[] parts)
-        {
-            JoinConversation(parts[1]);
-        }*/
-        public virtual void handleGoToSlide(Element el)
-        {
-            var id = Int32.Parse(el.SelectElements("parameter", true).Item(0).InnerXml);
-            var desiredConversation = Slide.ConversationFor(id).ToString();
-            MoveTo(id);
-        }
         public virtual void handleWakeUp(string[] parts)
         {
             //Commands.ReceiveWakeUp.Execute(null);
@@ -1141,6 +1046,8 @@ namespace MeTLLib.Providers.Connection
 
         public List<MeTLStanzas.TimestampedMeTLElement> unOrderedMessages = new List<MeTLStanzas.TimestampedMeTLElement>();
         List<MeTLStanzas.TimestampedMeTLElement> orderedMessages = new List<MeTLStanzas.TimestampedMeTLElement>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void ReceiveAndSortMessages()
         {
@@ -1378,15 +1285,14 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.receiveDirtyLiveWindow(element);
         }
-        public void SneakInto(string room)
-        {
-            var muc = new MucManager(conn);
+        public void JoinRoom(string room)
+        {            
             joinRoom(new Jid(room + "@" + metlServerAddress.muc));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
-        public void SneakOutOf(string room)
+        public void LeaveRoom(string room)
         {
-            var muc = new MucManager(conn);
-            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
+            leaveRoom(new Jid(room + "@" + metlServerAddress.muc));
         }
         private void handleTeacherInConversation(Element el)
         {

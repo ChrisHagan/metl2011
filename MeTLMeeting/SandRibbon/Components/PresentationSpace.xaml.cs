@@ -17,15 +17,12 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
-using SandRibbon.Components.Pedagogicometry;
 using Image = System.Windows.Controls.Image;
 using SandRibbon.Quizzing;
 using System.Windows.Media.Effects;
-using SandRibbon.Pages.Collaboration;
-using SandRibbon.Pages.Collaboration.Models;
-using SandRibbon.Pages.Collaboration.Layout;
 using MeTLLib.Providers.Connection;
 using SandRibbon.Pages;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {
@@ -39,7 +36,7 @@ namespace SandRibbon.Components
             }
         }
         public SlideAwarePage rootPage { get; protected set; }
-
+        public Queue<Action> workQueue = new Queue<Action>();
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
@@ -57,6 +54,7 @@ namespace SandRibbon.Components
             var sendScreenShotCommand = new DelegateCommand<ScreenshotDetails>(SendScreenShot);
             var banHammerSelectedItemsCommand = new DelegateCommand<object>(BanHammerSelectedItems);
             var mirrorPresentationSpaceCommand = new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace);
+            var movingToCommand = new DelegateCommand<int>(MovingTo);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
@@ -75,10 +73,8 @@ namespace SandRibbon.Components
                 Commands.GenerateScreenshot.RegisterCommand(sendScreenShotCommand);
                 Commands.BanhammerSelectedItems.RegisterCommand(banHammerSelectedItemsCommand);
                 Commands.MirrorPresentationSpace.RegisterCommand(mirrorPresentationSpaceCommand);
+                Commands.MovingTo.RegisterCommand(movingToCommand);
                 Commands.AllStaticCommandsAreRegistered();
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.Slide.id.ToString());
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, rootPage.Slide.id.ToString()));
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
             };
             Unloaded += (s, e) =>
             {
@@ -94,7 +90,27 @@ namespace SandRibbon.Components
                 Commands.GenerateScreenshot.UnregisterCommand(sendScreenShotCommand);
                 Commands.BanhammerSelectedItems.UnregisterCommand(banHammerSelectedItemsCommand);
                 Commands.MirrorPresentationSpace.UnregisterCommand(mirrorPresentationSpaceCommand);
+                Commands.MovingTo.UnregisterCommand(movingToCommand);
             };
+        }
+
+        private void MovingTo(int loc)
+        {
+            var p = rootPage.NetworkController.client.historyProvider;
+
+            rootPage.Slide = rootPage.ConversationDetails.Slides.Where(s => s.id == loc).First();
+            stack.rootPage = rootPage;
+            stack.Contextualise();
+            workStack.Flush();
+            workQueue.Clear();
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), loc.ToString()));
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, loc)));
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid));           
+            while (workQueue.Count() > 0)
+            {
+                Trace.TraceInformation("Presentation work queue {0} to {1}", workQueue.Count,loc);
+                Dispatcher.Invoke(workQueue.Dequeue());
+            }
         }
         private void MirrorPresentationSpace(object obj)
         {
@@ -234,42 +250,27 @@ namespace SandRibbon.Components
             });
             return file;
         }
-        private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            lock (preParserRenderingLock)
+            Trace.TraceInformation("Parser for {0}",parser.location.currentSlide);
+            App.auditor.wrapAction(a =>
             {
-                App.auditor.wrapAction(a =>
+                try
                 {
-                    Dispatcher.adopt(delegate
-                    {
-                        try
-                        {
-                            BeginInit();
-                            a(GaugeStatus.InProgress, 25);
-                            stack.ReceiveStrokes(parser.ink);
-                            a(GaugeStatus.InProgress, 50);
-                            stack.ReceiveImages(parser.images.Values);
-                            a(GaugeStatus.InProgress, 75);
-                            foreach (var text in parser.text.Values)
-                                stack.DoText(text);
-                            /*foreach (var moveDelta in parser.moveDeltas)
-                                stack.ReceiveMoveDelta(moveDelta, processHistory: true);
-                            */
-                            stack.RefreshCanvas();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("exception in parser: {0}", e.Message);
-                        }
-                        finally
-                        {
-                            EndInit();
-                        }
-
-                    });
-                }, "renderCanvas", "frontend");
-            }
+                    a(GaugeStatus.InProgress, 25);
+                    stack.ReceiveStrokes(parser.ink);
+                    a(GaugeStatus.InProgress, 50);
+                    stack.ReceiveImages(parser.images.Values);
+                    a(GaugeStatus.InProgress, 75);
+                    foreach (var text in parser.text.Values)
+                        stack.DoText(text);
+                    stack.RefreshCanvas();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("exception in parser: {0}", e.Message);
+                }
+            }, "renderCanvas", "frontend");
         }
         private static System.Windows.Forms.Screen getSecondaryScreen()
         {

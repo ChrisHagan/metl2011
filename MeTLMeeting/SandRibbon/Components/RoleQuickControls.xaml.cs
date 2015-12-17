@@ -30,7 +30,7 @@ namespace SandRibbon.Components
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
-                }                
+                }
                 ConversationDetails = rootPage.ConversationDetails;
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.RegisterCommand(setSyncCommand);
@@ -81,18 +81,16 @@ namespace SandRibbon.Components
         }
         private void SetSync(bool sync)
         {
-            syncButton.IsChecked = rootPage.UserConversationState.Synched; 
+            syncButton.IsChecked = rootPage.UserConversationState.Synched;
             if (rootPage.UserConversationState.Synched)
-            {                
-                try
+            {
+                var teacherSlide = (int)rootPage.UserConversationState.TeacherSlide;
+                if (rootPage.ConversationDetails.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                 {
-                    var teacherSlide = (int)rootPage.UserConversationState.TeacherSlide;
-                    if (rootPage.ConversationDetails.Slides.Select(s => s.id).Contains(teacherSlide) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
-                        rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState,rootPage.UserServerState,rootPage.UserConversationState,rootPage.ConversationState,new UserSlideState(),rootPage.NetworkController, rootPage.ConversationDetails,rootPage.ConversationDetails.Slides.First(s => s.id == teacherSlide)));
-                        //Commands.MoveToCollaborationPage.Execute((int)Globals.teacherSlide);
+                    rootPage.Slide = rootPage.ConversationDetails.Slides.Where(s => s.id == teacherSlide).First();
+                    rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, rootPage.ConversationDetails.Slides.First(s => s.id == teacherSlide)));
                 }
-                catch (NotSetException) { }
-            }            
+            }
         }
         private void toggleSync(object _unused)
         {
@@ -109,7 +107,7 @@ namespace SandRibbon.Components
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 rootPage.NetworkController.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.Slide.id, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name,hostedFileName)));
+                (rootPage.Slide.id, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name, hostedFileName)));
                 MeTLMessage.Information("Submission sent to " + rootPage.ConversationDetails.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
@@ -123,7 +121,7 @@ namespace SandRibbon.Components
 
         private void duplicatePage_Click(object sender, RoutedEventArgs e)
         {
-            Commands.DuplicateSlide.Execute(new KeyValuePair<ConversationDetails, Slide>(rootPage.ConversationDetails,rootPage.Slide));            
+            Commands.DuplicateSlide.Execute(new KeyValuePair<ConversationDetails, Slide>(rootPage.ConversationDetails, rootPage.Slide));
         }
     }
 }

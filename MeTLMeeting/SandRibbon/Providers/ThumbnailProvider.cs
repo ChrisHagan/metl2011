@@ -107,7 +107,7 @@ namespace SandRibbon.Providers
                                 {
                                     if (stream.Length == 0)
                                     {
-                                        App.Now(string.Format("Error loading thumbnail: zero length image"));
+                                        //App.Now(string.Format("Error loading thumbnail: zero length image"));
                                         g(GaugeStatus.Failed, 100);
                                     }
                                     else

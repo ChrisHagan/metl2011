@@ -29,7 +29,7 @@ namespace SandRibbon.Components.SimpleImpl
         public SimpleModeSwitcher()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoiningConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             Commands.SaveUIState.RegisterCommand(new DelegateCommand<object>(SaveUIState));
             Commands.RestoreUIState.RegisterCommand(new DelegateCommand<object>(RestoreUIState));

@@ -108,13 +108,14 @@ namespace SandRibbon.Components
                 thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides);
                 slides.ItemsSource = thumbnailList;
                 /*Observe this ordering or you'll fall into an infinite loop*/
-                slides.SelectedItem = rootPage.Slide;
+                
                 slides.SelectionChanged += slides_SelectionChanged;
+                slides.SelectedItem = rootPage.Slide;
 
                 SlideIndex = new SlideIndexConverter();
                 myMaxSlideIndex = -1;
                 TeachersCurrentSlideIndex = -1;
-                IsNavigationLocked = calculateNavigationLocked();                
+                IsNavigationLocked = calculateNavigationLocked();
                 slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
 
                 Commands.SyncedMoveRequested.RegisterCommand(moveToTeacherCommand);
@@ -191,7 +192,7 @@ namespace SandRibbon.Components
                 refresher.Stop();
                 refresher.Start();
             }
-        }        
+        }
 
         private void HandlePaste(object obj)
         {
@@ -252,7 +253,7 @@ namespace SandRibbon.Components
                    d.Permissions.NavigationLocked &&
                    Globals.AuthorOnline(d.Author) &&
                    Globals.AuthorInRoom(d.Author, d.Jid);
-        }        
+        }
         private bool canAddSlide(object _slide)
         {
             if (rootPage.ConversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
@@ -281,7 +282,7 @@ namespace SandRibbon.Components
         private int calculateMaxIndex(int myIndex, int index)
         {
             return myIndex > index ? myIndex : index;
-        }        
+        }
         private const int defaultFirstSlideIndex = 0;
         public static readonly DependencyProperty FirstSlideIndexProperty = DependencyProperty.Register("FirstSlideIndex", typeof(int), typeof(SlideDisplay), new PropertyMetadata(defaultFirstSlideIndex));
         public int FirstSlideIndex
@@ -300,11 +301,11 @@ namespace SandRibbon.Components
 
                 TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
                 checkMovementLimits();
-                var action = (Action)(() => Dispatcher.adoptAsync(() =>
-                                                                      {
-                                                                          var index = rootPage.ConversationDetails.Slides.First(s => s.id == where).index;
-                                                                          slides.SelectedIndex = index;
-                                                                      }));
+                var action = (Action)(() => Dispatcher.adopt(() =>
+                {
+                    var index = rootPage.ConversationDetails.Slides.First(s => s.id == where).index;
+                    slides.SelectedIndex = index;
+                }));
                 GlobalTimers.SetSyncTimer(action);
             });
         }
@@ -325,7 +326,7 @@ namespace SandRibbon.Components
         }
         private void selectPrevious(object _object)
         {
-            if(isPrevious(_object))slides.SelectedIndex -= 1;            
+            if (isPrevious(_object)) slides.SelectedIndex -= 1;
         }
         private bool isNext(object _object)
         {
@@ -336,11 +337,11 @@ namespace SandRibbon.Components
                 var canNav = !isAtEnd && slideLockNav;
                 return canNav;
             }
-            else return false;            
-        }        
+            else return false;
+        }
         private void selectNext(object _object)
         {
-            if(isNext(_object)) slides.SelectedIndex += 1;            
+            if (isNext(_object)) slides.SelectedIndex += 1;
         }
         private void reorderSlides(int conversationJid)
         {
@@ -436,9 +437,13 @@ namespace SandRibbon.Components
                 var removedItems = e.RemovedItems;
                 var selected = (Slide)addedItems[0];
                 if (isWithinTeachersRange(selected))
-                {                                        
-                    Commands.SendSyncMove.ExecuteAsync(selected.id);                    
-                    rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
+                {
+                    rootPage.Slide = selected;
+                    checkMovementLimits();
+                    Commands.SendSyncMove.Execute(selected.id);
+                    rootPage.NetworkController.client.MoveTo(selected.id);
+                    Commands.MovingTo.Execute(selected.id);                    
+                    //rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
                 }
                 else if (sender is ListBox)
                 {
@@ -448,6 +453,6 @@ namespace SandRibbon.Components
                     }
                 }
             }
-        }        
+        }
     }
 }

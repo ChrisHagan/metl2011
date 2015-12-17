@@ -31,7 +31,7 @@ namespace MeTLLib
         HttpResourceProvider resourceProvider { get; }
         void AskForTeachersStatus(string teacher, string where);
         Location location { get; }
-        void LeaveAllRooms();
+        void HandleShutdown();
         string UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
         void LeaveConversation(string conversation);
         void UpdateSlideCollection(Int32 conversationJid);
@@ -60,7 +60,6 @@ namespace MeTLLib
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void WatchRoom(string slide);
-        void JoinConversation(string conversation);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
         void LoadQuizzes(string conversationJid);
@@ -75,8 +74,8 @@ namespace MeTLLib
         ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide);
         ConversationDetails DuplicateConversation(ConversationDetails conversation);
         ConversationDetails DetailsOf(String jid);
-        void SneakInto(string room);
-        void SneakOutOf(string room);
+        void JoinRoom(string room);
+        void LeaveRoom(string room);
         string NoAuthUploadResource(Uri file, int Room);
         string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
         string NoAuthUploadResource(byte[] data, string filename, int Room);
@@ -100,7 +99,7 @@ namespace MeTLLib
         public HttpResourceProvider resourceProvider { get; }
         protected static readonly Uri DisconnectedUri = new Uri("noscheme://not.a.uri");
         public Location location { get { return Location.Empty; } }
-        public void LeaveAllRooms() { }
+        public void HandleShutdown() { }
         public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return ""; }
         public void LeaveConversation(string conversation) { }
         public void UpdateSlideCollection(Int32 conversationJid) { }
@@ -129,7 +128,6 @@ namespace MeTLLib
         public string UploadResource(Uri uri, string slideId) { return ""; }
         public void AsyncRetrieveHistoryOf(int room) { }
         public void MoveTo(int slide) { }
-        public void JoinConversation(string conversation) { }
         public void LeaveLocation() { }
         public void LoadQuiz(int convesationJid, long quizId) { }
         public void LoadQuizzes(string conversationJid) { }
@@ -144,8 +142,8 @@ namespace MeTLLib
         public ConversationDetails DetailsOf(String jid) { return ConversationDetails.Empty; }
         public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) { return ConversationDetails.Empty; }
         public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
-        public void SneakInto(string room) { }
-        public void SneakOutOf(string room) { }
+        public void JoinRoom(string room) { }
+        public void LeaveRoom(string room) { }
         public string NoAuthUploadResource(Uri file, int Room) { return ""; }
         public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return ""; }
         public string NoAuthUploadResource(byte[] data, string filename, int Room) { return ""; }
@@ -521,14 +519,9 @@ namespace MeTLLib
             tryIfConnected(work);
         }
         public void MoveTo(int slide)
-        {
-            Action work = delegate
-            {
-                wire.MoveTo(slide);
-            };
-            tryIfConnected(work);
+        {          
         }
-        public void LeaveAllRooms()
+        public void HandleShutdown()
         {
             Action work = delegate
             {
@@ -545,43 +538,26 @@ namespace MeTLLib
                     wire.resetLocation();
             };
             tryIfConnected(work);
-        }
-        public void JoinConversation(string conversation)
+        }        
+        public void JoinRoom(string room)
         {
             Action work = delegate
             {
-                auditor.wrapAction((a =>
+                if (String.IsNullOrEmpty(room))
                 {
-                    if (String.IsNullOrEmpty(conversation)) return;
-                    var cd = conversationDetailsProvider.DetailsOf(conversation);
-                    a(GaugeStatus.InProgress, 25);
-                    location.activeConversation = cd.Jid;
-                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                    if (location.availableSlides.Count > 0)
-                        location.currentSlide = location.availableSlides[0];
-                    a(GaugeStatus.InProgress, 50);
-                    wire.JoinConversation();
-                    a(GaugeStatus.InProgress, 75);
-                    events.receiveConversationDetails(cd);
-                }), "joinConversation: " + conversation, "clientConnection");
+                    Trace.TraceError("ERROR: Cannot join empty room");
+                    return;
+                }
+                wire.JoinRoom(room);
             };
             tryIfConnected(work);
         }
-        public void SneakInto(string room)
+        public void LeaveRoom(string room)
         {
             Action work = delegate
             {
                 if (String.IsNullOrEmpty(room)) return;
-                wire.SneakInto(room);
-            };
-            tryIfConnected(work);
-        }
-        public void SneakOutOf(string room)
-        {
-            Action work = delegate
-            {
-                if (String.IsNullOrEmpty(room)) return;
-                wire.SneakOutOf(room);
+                wire.LeaveRoom(room);
             };
             tryIfConnected(work);
         }
@@ -680,7 +656,8 @@ namespace MeTLLib
             return tryUntilConnected<ConversationDetails>(() =>
             {
                 var newConv = conversationDetailsProvider.AppendSlideAfter(slide,Jid);
-                events.receiveConversationDetails(newConv);
+                /*If you don't fire this on yourself, you'll have to wait until it comes back dirty.  Then you'll know that everyone else has it too.*/
+                //events.receiveConversationDetails(newConv);
                 return newConv;
             });            
         }

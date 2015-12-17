@@ -35,7 +35,7 @@ namespace SandRibbon.Components.Utility
         static GlobalTimers()
         {
             timedActions = new ChangeSlideTimedAction();
-            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => ShutdownTimers()));
+            Commands.ShuttingDown.RegisterCommand(new DelegateCommand<object>((_unused) => ShutdownTimers()));
         }
 
         static void ShutdownTimers()

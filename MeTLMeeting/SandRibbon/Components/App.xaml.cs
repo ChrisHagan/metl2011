@@ -121,6 +121,8 @@ namespace SandRibbon
                 "The operation completed successfully",
                 "Thread was being aborted."
             };
+        internal static NetworkController diagnosticController { get; set; }
+
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
@@ -135,7 +137,7 @@ namespace SandRibbon
         {
             try
             {
-                Commands.LeaveAllRooms.Execute(null);
+                Commands.ShuttingDown.Execute(null);
             }
             catch (Exception) { }
             if (App.diagnosticWindow != null)
