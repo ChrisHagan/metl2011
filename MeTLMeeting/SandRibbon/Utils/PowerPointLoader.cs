@@ -19,6 +19,8 @@ using MeTLLib;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using SandRibbon.Components.Utility;
+using System.Xml;
+using System.Text;
 
 namespace SandRibbon.Utils
 {
@@ -73,7 +75,10 @@ namespace SandRibbon.Utils
     {
         HighDefImage,
         Image,
-        Shapes
+        Shapes,
+        ServerSideHighDefImage,
+        ServerSideImage,
+        ServerSideShapes
     }
 
     public class PowerPointLoader
@@ -81,6 +86,9 @@ namespace SandRibbon.Utils
         public static readonly PowerpointImportType SHAPES = PowerpointImportType.Shapes;
         public static readonly PowerpointImportType IMAGE = PowerpointImportType.Image;
         public static readonly PowerpointImportType HIGHDEFIMAGE = PowerpointImportType.HighDefImage;
+        public static readonly PowerpointImportType SERVERSIDESHAPES = PowerpointImportType.ServerSideShapes;
+        public static readonly PowerpointImportType SERVERSIDEIMAGE = PowerpointImportType.ServerSideImage;
+        public static readonly PowerpointImportType SERVERSIDEHIGHDEFIMAGE = PowerpointImportType.ServerSideHighDefImage;
         private const MsoTriState FALSE = MsoTriState.msoFalse;
         private const MsoTriState TRUE = MsoTriState.msoTrue;
         public NetworkController networkController { get; protected set; }
@@ -93,6 +101,22 @@ namespace SandRibbon.Utils
         protected static readonly string SLIDE = "slide";
         protected static readonly string SERVER = "server";
 
+        public bool isHealthy()
+        {
+            var healthy = true;
+            if (IsPowerPointRunning())
+            {
+                MeTLMessage.Error("Microsoft Powerpoint is already running.  Using serverside import instead.  This may result in some missing elements (wordart, clipped images, etc).  Please close Microsoft Powerpoint before importing presentations.");
+                healthy = false;
+            }
+            var app = GetPowerPointApplication();
+            if (app == null)
+            {
+                MeTLMessage.Error("MeTL prefers Microsoft PowerPoint to be installed to import a presentation.  Using serverside import instead.  This may result in some missing elements (wordart, clipped images, etc).  For more accurate import of Microsoft Powerpoint files, please install Microsoft Powerpoint.");
+                healthy = false;
+            }
+            return healthy;
+        }
         public void UploadPowerpoint(PowerpointSpec spec, Action<string, string, int, int> onProgress, Action<ConversationDetails> onComplete)
         {
             var totalCount = 0;
@@ -101,25 +125,14 @@ namespace SandRibbon.Utils
             try
             {
                 onProgress(TOTAL, "import starting", 0, totalTotal);
-                var healthy = true;
-                if (IsPowerPointRunning())
-                {
-                    MeTLMessage.Error("Microsoft Powerpoint is already running.  Using serverside import instead.  This may result in some missing elements (wordart, clipped images, etc).  Please close Microsoft Powerpoint before importing presentations.");
-                    healthy = false;
-                }
                 onProgress(TOTAL, "powerpoint running check", totalCount++, totalTotal);
                 var app = GetPowerPointApplication();
                 onProgress(TOTAL, "powerpoint installation check", totalCount++, totalTotal);
-                if (app == null)
-                {
-                    MeTLMessage.Error("MeTL prefers Microsoft PowerPoint to be installed to import a presentation.  Using serverside import instead.  This may result in some missing elements (wordart, clipped images, etc).  For more accurate import of Microsoft Powerpoint files, please install Microsoft Powerpoint.");
-                    healthy = false;
-                }
                 onProgress(TOTAL, "ready to begin", totalCount++, totalTotal);
                 switch (spec.Type)
                 {
                     case PowerpointImportType.HighDefImage:
-                        if (healthy)
+                        if (isHealthy())
                         {
                             LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, onProgress, onComplete, totalCount, totalTotal);
                         }
@@ -129,7 +142,7 @@ namespace SandRibbon.Utils
                         }
                         break;
                     case PowerpointImportType.Image:
-                        if (healthy)
+                        if (isHealthy())
                         {
                             LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, onProgress, onComplete, totalCount, totalTotal);
                         }
@@ -139,7 +152,7 @@ namespace SandRibbon.Utils
                         }
                         break;
                     case PowerpointImportType.Shapes:
-                        if (healthy)
+                        if (isHealthy())
                         {
                             LoadPowerpoint(app, spec.File, onProgress, onComplete, totalCount, totalTotal);
                         }
@@ -148,10 +161,18 @@ namespace SandRibbon.Utils
                             LoadPowerpointFromServer(spec.File, onProgress, onComplete, totalCount, totalTotal);
                         }
                         break;
+                    case PowerpointImportType.ServerSideHighDefImage:
+                        LoadPowerpointAsFlatSlidesFromServer(spec.File, spec.Magnification, onProgress, onComplete, totalCount, totalTotal);
+                        break;
+                    case PowerpointImportType.ServerSideImage:
+                        LoadPowerpointAsFlatSlidesFromServer(spec.File, spec.Magnification, onProgress, onComplete, totalCount, totalTotal);
+                        break;
+                    case PowerpointImportType.ServerSideShapes:
+                        LoadPowerpointFromServer(spec.File, onProgress, onComplete, totalCount, totalTotal);
+                        break;
                     default:
                         onComplete(ConversationDetails.Empty);
                         break;
-
                 }
             }
             catch (Exception ex)
@@ -318,6 +339,8 @@ namespace SandRibbon.Utils
                     histories.Add(history);
                     onProgress(SLIDE, "slide parse completed", slideTotal, slideTotal);
                 }
+                if (ppt != null)
+                    ppt.Close();
                 onProgress(LOCAL, "constructing server request", localCount++, localTotal);
                 convXml.Add(conversation.WriteXml());
                 convXml.Add(histories);
@@ -338,12 +361,9 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                return LoadPowerpointAsFlatSlidesFromServer(file, MagnificationRating, onProgress, onComplete, totalCount, totalTotal);
-            }
-            finally
-            {
                 if (ppt != null)
                     ppt.Close();
+                return LoadPowerpointAsFlatSlidesFromServer(file, MagnificationRating, onProgress, onComplete, totalCount, totalTotal);
             }
         }
 
@@ -461,18 +481,55 @@ namespace SandRibbon.Utils
                                         flowDoc.Blocks.Add(block);
                                         foreach (TextRange run in textFrame.TextRange.Runs())
                                         {
-                                            var textRun = new System.Windows.Documents.Run(run.Text);
-                                            var fontFamily = new FontFamily("arial");
-                                            try { 
-                                                fontFamily = new FontFamily(run.Font.Name);
-                                            } catch { }
-                                            textRun.FontFamily = fontFamily;
-                                            textRun.FontSize = run.Font.Size;
-                                            var pptcolour = run.Font.Color.RGB;
-                                            var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
-                                            var safeColour = new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B };
-                                            textRun.Foreground = new SolidColorBrush(safeColour);
-                                            block.Inlines.Add(textRun);
+                                            var separateLines = run.Text.Split('\v', '\r', '\n');
+                                            var firstLine = true;
+                                            foreach (var line in separateLines)
+                                            {
+                                                var textRun = new System.Windows.Documents.Run(line);
+                                                var fontFamily = new FontFamily("arial");
+                                                try
+                                                {
+                                                    fontFamily = new FontFamily(run.Font.Name);
+                                                }
+                                                catch { }
+                                                textRun.FontFamily = fontFamily;
+                                                textRun.FontSize = run.Font.Size;
+                                                var pptcolour = run.Font.Color.RGB;
+                                                if (run.Font.Bold == MsoTriState.msoTrue)
+                                                {
+                                                    textRun.FontWeight = FontWeights.Bold;
+                                                }
+                                                if (run.Font.Italic == MsoTriState.msoTrue)
+                                                {
+                                                    textRun.FontStyle = FontStyles.Italic;
+                                                }
+                                                if (run.Font.Underline == MsoTriState.msoTrue)
+                                                {
+                                                    textRun.TextDecorations.Add(TextDecorations.Underline);
+                                                }
+                                                if (run.Font.Subscript == MsoTriState.msoTrue)
+                                                {
+                                                    textRun.Typography.Variants = FontVariants.Subscript;
+                                                }
+                                                if (run.Font.Superscript == MsoTriState.msoTrue)
+                                                {
+                                                    textRun.Typography.Variants = FontVariants.Superscript;
+                                                }
+                                                var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
+                                                var safeColour = new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B };
+                                                textRun.Foreground = new SolidColorBrush(safeColour);
+                                                if (firstLine == true)
+                                                {
+                                                    firstLine = false;
+                                                    block.Inlines.Add(textRun);
+                                                }
+                                                else
+                                                {
+                                                    block = new System.Windows.Documents.Paragraph();
+                                                    flowDoc.Blocks.Add(block);
+                                                    block.Inlines.Add(textRun);
+                                                }
+                                            }
                                         }
                                         var xamlTextRange = new System.Windows.Documents.TextRange(flowDoc.ContentStart, flowDoc.ContentEnd);
                                         var xamlText = "";
@@ -532,8 +589,21 @@ namespace SandRibbon.Utils
                                 }
                                 else
                                 {
-
-                                    var magnification = 4;
+                                    var verySmall = 16;
+                                    var small = 32;
+                                    var medium = 64;
+                                    var normal = 128;
+                                    var magnification = 1;
+                                    if ((shape.Width < verySmall || shape.Height < verySmall) && !(shape.Height > small || shape.Width > small))
+                                    {
+                                        magnification = 4;
+                                    } else if ((shape.Width < small || shape.Height < small) && !(shape.Height > medium || shape.Width > medium))
+                                    {
+                                        magnification = 3;
+                                    } else if ((shape.Width < medium || shape.Height < medium) && !(shape.Height > normal || shape.Width > normal))
+                                    {
+                                        magnification = 2;
+                                    }
                                     shape.Visible = MsoTriState.msoTrue;
                                     var shapeWidth = Convert.ToInt32(shape.Width);
                                     var shapeHeight = Convert.ToInt32(shape.Height);
@@ -574,7 +644,7 @@ namespace SandRibbon.Utils
                             }
                             catch (Exception exc)
                             {
-
+                                Console.WriteLine(exc.Message);
                             }
                         }
                         onProgress(SLIDE, "slide parse completed", slideTotal, slideTotal);
@@ -582,9 +652,12 @@ namespace SandRibbon.Utils
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine(ex.Message);
                         //not yet sure what to do here
                     }
                 }
+                if (ppt != null)
+                    ppt.Close();
                 onProgress(LOCAL, "constructing server request", localCount++, localTotal);
                 convXml.Add(conversation.WriteXml());
                 convXml.Add(histories);
@@ -592,7 +665,49 @@ namespace SandRibbon.Utils
                 var url = networkController.config.importConversation();
                 onProgress(SERVER, "ready to send to server", 0, localTotal);
                 onProgress(SERVER, "sending to server", 1, 2);
-                var remoteConvString = networkController.client.resourceProvider.securePutData(url, System.Text.Encoding.UTF8.GetBytes(convXml.ToString()));
+                /*
+                string convXmlString = "";
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    new System.Xml.Serialization.XmlSerializer(typeof(XElement)).Serialize(ms, convXml);
+                    ms.Position = 0;
+                    using (StreamReader sr = new StreamReader(ms))
+                    {
+                        convXmlString = sr.ReadToEnd();
+                    }
+                }
+
+                var convBytes = System.Text.Encoding.UTF8.GetBytes(convXmlString);
+                */
+
+                //byte[] convBytes;
+                /*
+                var settings = new XmlWriterSettings();
+                var builder = new StringBuilder(100 * 1024 * 1024); // 100MB stringbuilder?
+                using (XmlWriter writer = XmlWriter.Create(builder, settings))
+                {
+                    convXml.WriteTo(writer);
+                }
+                var convBytes = System.Text.Encoding.UTF8.GetBytes(builder.ToString());
+                */
+/*                
+                var convBytes = new byte[0];
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    var saveOptions = new SaveOptions();
+                    convXml.Save(stream,saveOptions);
+                    convBytes = stream.ToArray();
+
+                    //var twriter = new StreamWriter(stream, System.Text.Encoding.UTF8);
+                    //System.Xml.XmlWriter writer = new System.Xml.XmlTextWriter(twriter);
+                    //                    convXml.WriteTo(writer);
+                    //                    convBytes = stream.ToArray();
+                    //convXml.WriteTo
+                }
+                */
+                var convXmlString = convXml.ToString();
+                var convBytes = System.Text.Encoding.UTF8.GetBytes(convXmlString);
+                var remoteConvString = networkController.client.resourceProvider.securePutData(url, convBytes);
                 onProgress(SERVER, "server response available", 2, 2);
                 onProgress(LOCAL, "parsing server response", localCount++, localTotal);
                 var removeConvXml = XElement.Parse(remoteConvString);
@@ -605,12 +720,9 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                return LoadPowerpointFromServer(file, onProgress, onComplete, totalCount, totalTotal);
-            }
-            finally
-            {
                 if (ppt != null)
                     ppt.Close();
+                return LoadPowerpointFromServer(file, onProgress, onComplete, totalCount, totalTotal);
             }
         }
 

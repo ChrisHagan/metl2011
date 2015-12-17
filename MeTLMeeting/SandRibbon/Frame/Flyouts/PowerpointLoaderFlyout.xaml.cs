@@ -82,6 +82,7 @@ namespace SandRibbon.Frame.Flyouts
         public NetworkController NetworkController { get; protected set; }
         public UserGlobalState UserGlobalState { get; protected set; }
         public UserServerState UserServerState { get; protected set; }
+        public PowerPointLoader loader { get; protected set; }
         public PowerpointLoaderFlyout(NavigationService navigationService, NetworkController networkController, UserGlobalState userGlobalState, UserServerState userServerState) 
         {
             NavigationService = navigationService;
@@ -90,6 +91,7 @@ namespace SandRibbon.Frame.Flyouts
             UserServerState = userServerState;
             InitializeComponent();
             Title = "Import Powerpoint into " + NetworkController.config.name;
+            loader = new PowerPointLoader(NetworkController);
             Loaded += (s, e) =>
             {
                 var initialDirectory = "";
@@ -118,7 +120,10 @@ namespace SandRibbon.Frame.Flyouts
                     pptFile = null;
                     CloseFlyout();
                 }
-                importTypes.ItemsSource = new ObservableCollection<PowerpointImportType> { PowerpointImportType.Image, PowerpointImportType.HighDefImage, PowerpointImportType.Shapes };
+                importTypes.ItemsSource = loader.IsPowerPointInstalled() ?
+                    new ObservableCollection<PowerpointImportType> { PowerpointImportType.Image, PowerpointImportType.HighDefImage, PowerpointImportType.Shapes, PowerpointImportType.ServerSideImage, PowerpointImportType.ServerSideHighDefImage, PowerpointImportType.ServerSideShapes } :
+                    new ObservableCollection<PowerpointImportType> { PowerpointImportType.ServerSideImage, PowerpointImportType.ServerSideHighDefImage, PowerpointImportType.ServerSideShapes };
+                
             };         
         }
 
@@ -126,7 +131,6 @@ namespace SandRibbon.Frame.Flyouts
         {
             importTypes.Visibility = Visibility.Collapsed;
             var pptImportType = (PowerpointImportType)((FrameworkElement)sender).DataContext;
-            var loader = new PowerPointLoader(NetworkController);
 
             var totalProgress = new ppProgressInfo("total");
             var localProgress = new ppProgressInfo("local");
@@ -178,7 +182,7 @@ namespace SandRibbon.Frame.Flyouts
             {
                 File = pptFile,
                 Type = pptImportType,
-                Magnification = pptImportType == PowerpointImportType.HighDefImage ? 3 : 1
+                Magnification = pptImportType == PowerpointImportType.HighDefImage || pptImportType == PowerpointImportType.ServerSideHighDefImage ? 3 : 1
                 
             };
             var pptThread = new System.Threading.Thread(new System.Threading.ThreadStart(delegate {
