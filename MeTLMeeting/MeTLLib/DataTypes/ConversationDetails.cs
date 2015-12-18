@@ -484,7 +484,13 @@ namespace MeTLLib.DataTypes
         public string conversationGroup = "";
         //private static string CONVERSATIONGROUP = "conversationGroup";
         public bool NavigationLocked;
-        private static string NAVIGATIONLOCKED = "navigationlocked";
+        private static string NAVIGATIONLOCKED = "navigationlocked";        
+        public bool studentsCanViewQuizResults = false;
+        public bool studentsCanDisplayQuizResults = false;
+        public bool studentsCanDisplayQuiz = false;
+        public bool studentsCanViewQuiz = false;
+        public bool studentsCanAnswerQuiz = false;
+
         public static Permissions ReadXml(XElement doc)
         {
             var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).ValueOrDefault("false"));

@@ -10,12 +10,13 @@
     xmlns:logic="clr-namespace:SandRibbon.Utils"
     xmlns:core="clr-namespace:System;assembly=mscorlib">
     <RibbonGroup Header="Create" x:Name="quizRibbonGroup" LargeImageSource="\Resources\Quizzes.png">
-        <RibbonButton Click="CreateQuiz" ToolTip="{DynamicResource CreateQuizToolTip}"
+        <RibbonButton Command="{x:Static api:Commands.CreateQuiz}" ToolTip="{DynamicResource CreateQuizToolTip}"
                           LargeImageSource="\Resources\NewQuiz.png" SmallImageSource="\Resources\NewQuiz.png" Label="New">
         </RibbonButton>
     </RibbonGroup>
     <RibbonGroup Header="Results" x:Name="results">
-        <RibbonButton Click="OpenResults" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}" />
+        <RibbonButton Command="{x:Static api:Commands.ViewQuizResults}" LargeImageSource="\Resources\Results.png" SmallImageSource="\Resources\Results.png" Label="Results" 
+                      ToolTip="{DynamicResource ViewQuizResultsToolTip}" />
     </RibbonGroup>
     <RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
         <dict:QuizContainer x:Name="quizzes">
@@ -38,7 +39,7 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-                                            <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
+                                            <Button x:Name="quiz" Command="{x:Static api:Commands.OpenQuiz}" MaxWidth="100" >
                                                 <Button.ToolTip>
                                                     <dict:MeTLImageToolTip TitleText="View poll" 
                                                                            ImageSource="\Resources\Ribbon-Quiz.png"

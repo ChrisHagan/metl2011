@@ -53,6 +53,41 @@ namespace SandRibbon.Components
             cd.Permissions.studentCanPublish = studentsCanPublishValue;
             rootPage.NetworkController.client.UpdateConversationDetails(cd);
         }
+        private void StudentsCanViewQuizzesChecked(object sender, RoutedEventArgs e)
+        {
+            var val= (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentsCanViewQuiz = val;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+        private void StudentsCanAnswerQuizzesChecked(object sender, RoutedEventArgs e)
+        {
+            var val = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentsCanAnswerQuiz = val;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+        private void StudentsCanDisplayQuizzesChecked(object sender, RoutedEventArgs e)
+        {
+            var val = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentsCanDisplayQuiz = val;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+        private void StudentsCanViewQuizResultsChecked(object sender, RoutedEventArgs e)
+        {
+            var val = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentsCanViewQuiz= val;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+        private void StudentsCanDisplayQuizResultsChecked(object sender, RoutedEventArgs e)
+        {
+            var val = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentsCanDisplayQuizResults= val;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
         private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
         {
             var studentsMustFollowTeacherValue = (bool)(sender as CheckBox).IsChecked;

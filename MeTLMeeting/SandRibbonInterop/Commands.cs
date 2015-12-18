@@ -124,6 +124,8 @@ namespace SandRibbon
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand("Mark");
 
+        public static DefaultableCompositeCommand OpenQuiz = new DefaultableCompositeCommand("OpenQuiz");
+        public static DefaultableCompositeCommand ViewQuizResults = new DefaultableCompositeCommand("ViewQuizResults");
         public static DefaultableCompositeCommand WordCloud = new DefaultableCompositeCommand("WordCloud");
         public static DefaultableCompositeCommand BrowseOneNote = new DefaultableCompositeCommand("BrowseOneNote");
         public static DefaultableCompositeCommand ManuallyConfigureOneNote = new DefaultableCompositeCommand("ManuallyConfigureOneNote");

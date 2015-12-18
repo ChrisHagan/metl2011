@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Quizzing;
@@ -16,29 +15,60 @@ namespace SandRibbon.Tabs
     public partial class Quizzes : RibbonTab
     {
         public SlideAwarePage rootPage { get; protected set; }
+        public ConversationDetails cd
+        {
+            get; set;
+        }
         public Quizzes()
         {
             InitializeComponent();
+            var openQuizCommand = new DelegateCommand<QuizData>(openQuiz, canOpenQuiz);
             var receiveQuizCommand = new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz);
             var receiveQuizAnswerCommand = new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer);
-            var quizResultsSnapshotAvailableCommand = new DelegateCommand<string>(importQuizSnapshot);
+            var quizResultsSnapshotAvailableCommand = new DelegateCommand<string>(importQuizSnapshot);            
+            var viewQuizResultsCommand = new DelegateCommand<object>(viewQuizResults, canViewQuizResults);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
+                Commands.OpenQuiz.RegisterCommand(openQuizCommand);
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);
                 Commands.QuizResultsSnapshotAvailable.RegisterCommand(quizResultsSnapshotAvailableCommand);
+                Commands.ViewQuizResults.RegisterCommand(viewQuizResultsCommand);
                 quizzes.ItemsSource = rootPage.ConversationState.QuizData.activeQuizzes;
                 rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(() => { }, (i, j) => { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid);
             };
             Unloaded += (s, e) =>
             {
+                Commands.OpenQuiz.UnregisterCommand(openQuizCommand);
                 Commands.ReceiveQuiz.UnregisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.UnregisterCommand(receiveQuizAnswerCommand);
                 Commands.QuizResultsSnapshotAvailable.UnregisterCommand(quizResultsSnapshotAvailableCommand);
+                Commands.ViewQuizResults.UnregisterCommand(viewQuizResultsCommand);
             };
         }
+
+        private void viewQuizResults(object obj)
+        {
+            var viewQuizResults = new ViewQuizResults(rootPage.Slide, rootPage.ConversationState.QuizData.answers, rootPage.ConversationState.QuizData.activeQuizzes);
+            viewQuizResults.Owner = Window.GetWindow(this);
+            viewQuizResults.ShowDialog();
+        }
+
+        private bool canViewQuizResults(object arg)
+        {
+            var isAuthor = cd.isAuthor(rootPage.NetworkController.credentials.name);
+            var studentsCanViewResults = cd.Permissions.studentsCanViewQuizResults;
+            var resultsExist = rootPage.ConversationState.QuizData.answers.Count() > 0;
+            return resultsExist && (isAuthor || studentsCanViewResults);
+        }
+
+        private void updateConversationDetails(ConversationDetails cd)
+        {
+            this.cd = cd;
+        }
+
         protected void PreParserAvailable(PreParser parser)
         {
             parser.quizzes.ForEach(q =>
@@ -111,24 +141,14 @@ namespace SandRibbon.Tabs
             });
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
-        {
-            Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
+        {            
             Dispatcher.adoptAsync(() =>
             {
                 var quizDialog = new CreateAQuiz(rootPage.NetworkController, rootPage.ConversationDetails, rootPage.Slide, rootPage.ConversationState.QuizData.activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
-        }
-        private void quiz_Click(object sender, RoutedEventArgs e)
-        {
-            var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
-            Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
-
-            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz, rootPage.NetworkController, rootPage.ConversationDetails, rootPage.ConversationState, rootPage.Slide, rootPage.NetworkController.credentials.name);
-            viewEditAQuiz.Owner = Window.GetWindow(this);
-            viewEditAQuiz.ShowDialog();
-        }
+        }       
         private void importQuizSnapshot(string filename)
         {
             Commands.ImageDropped.Execute(new ImageDrop
@@ -140,17 +160,17 @@ namespace SandRibbon.Tabs
                 Target = "presentationSpace"
             });
         }
-        private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
+        private bool canOpenQuiz(QuizData quiz)
         {
-            var qd = rootPage.ConversationState.QuizData;
-            e.CanExecute = (qd.activeQuizzes != null && qd.activeQuizzes.Count > 0);
-        }
-        private void OpenResults(object sender, RoutedEventArgs e)
-        {
-            Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
-            var viewQuizResults = new ViewQuizResults(rootPage.Slide, rootPage.ConversationState.QuizData.answers, rootPage.ConversationState.QuizData.activeQuizzes);
-            viewQuizResults.Owner = Window.GetWindow(this);
-            viewQuizResults.ShowDialog();
+            return rootPage.ConversationDetails.Permissions.studentsCanViewQuiz || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name);
+        } 
+        private void openQuiz(QuizData quiz)
+        {            
+            var window = new ViewEditAQuiz(
+                quiz.activeQuizzes.First(), rootPage.NetworkController, cd, rootPage.ConversationState, 
+                rootPage.Slide, rootPage.NetworkController.credentials.name);
+            window.Owner = Application.Current.MainWindow;
+            window.Show();
         }
     }
 }
