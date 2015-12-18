@@ -33,6 +33,21 @@
             <Setter Property="Padding" Value="15" />
         </Style.Setters>
     </Style>
+    <Style x:Key="listedChoice" BasedOn="{StaticResource secondaryChoice}" TargetType="{x:Type Button}">
+        <Style.Setters>
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
     <Thickness Top="50" x:Key="space"/>
     <Thickness x:Key="nearBottom" Left="0" Right="0" Bottom="15" Top="0" />
     <Thickness x:Key="insetTopLeft" Left="50" Right="0" Bottom="0" Top="50" />

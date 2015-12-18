@@ -31,6 +31,7 @@ namespace SandRibbon.Tabs
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
+                cd = rootPage.ConversationDetails;
                 Commands.OpenQuiz.RegisterCommand(openQuizCommand);
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);

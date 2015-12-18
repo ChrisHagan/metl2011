@@ -149,7 +149,7 @@
             </RibbonTab>
             <tabs:Quizzes/>
             <tabs:Submissions/>
-            <tabs:Attachments/>            
+            <tabs:Attachments/>
             <tabs:Analytics/>
             <tabs:Plugins/>
         </Ribbon>
@@ -167,16 +167,21 @@
                 <RowDefinition Height="200" />
             </Grid.RowDefinitions>
 
-            
             <TabControl Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
                 <TabItem Header="Filters">
                     <ContentPresenter>
                         <ContentPresenter.Content>
-
                             <Grid layout:GridLayout.ItemsPerRow="1">
                                 <TextBlock Text="You see" Style="{StaticResource heading}" />
                                 <components:ContentVisibility/>
                             </Grid>
+                        </ContentPresenter.Content>
+                    </ContentPresenter>
+                </TabItem>
+                <TabItem Header="Permissions">
+                    <ContentPresenter>
+                        <ContentPresenter.Content>
+                            <components:PermissionControls />
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>

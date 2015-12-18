@@ -306,6 +306,9 @@
     <Compile Include="Components\PenCustomizationDialog.xaml.cs">
       <DependentUpon>PenCustomizationDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\PermissionControls.xaml.cs">
+      <DependentUpon>PermissionControls.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\PrivateNotepadSpace.xaml.cs">
       <DependentUpon>PrivateNotepadSpace.xaml</DependentUpon>
     </Compile>
@@ -437,6 +440,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PenCustomizationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\PermissionControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

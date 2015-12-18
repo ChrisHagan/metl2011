@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="SandRibbon.Components.PermissionControls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+             xmlns:layout="clr-namespace:SandRibbon.Layout"
+             xmlns:local="clr-namespace:SandRibbon.Components">
+    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
+        <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource clearBottom}">
+            <TextBlock Text="Students can" Style="{StaticResource heading}" Margin="{DynamicResource nearBottom}"/>
+            <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"></CheckBox>
+            <CheckBox x:Name="studentCanViewQuizzes" Click="StudentsCanViewQuizzesChecked" Content="View quizzes"></CheckBox>
+            <CheckBox x:Name="studentCanAnswerQuizzes" Click="StudentsCanAnswerQuizzesChecked" Content="Answer quizzes"></CheckBox>
+            <CheckBox x:Name="studentCanDisplayQuizzes" Click="StudentsCanDisplayQuizzesChecked" Content="Display quizzes"></CheckBox>
+            <CheckBox x:Name="studentCanViewQuizResults" Click="StudentsCanViewQuizResultsChecked" Content="View quiz results"></CheckBox>
+            <CheckBox x:Name="studentCanDisplayQuizResults" Click="StudentsCanDisplayQuizResultsChecked" Content="Display quiz results"></CheckBox>
+            <CheckBox Click="StudentsCanPublishChecked" IsEnabled="False"  Content="Publish quizzes"></CheckBox>
+            <CheckBox Click="StudentsCanPublishChecked" IsEnabled="False" Content="Attach files"></CheckBox>
+            <CheckBox Click="StudentsCanPublishChecked" IsEnabled="False" Content="Add slides"></CheckBox>
+            <CheckBox Click="StudentsCanPublishChecked" IsEnabled="False" Content="Identify each other"></CheckBox>
+            <CheckBox x:Name="studentMustFollowTeacherCheckbox" Click="StudentsMustFollowTeacherChecked" Content="Go to any page"></CheckBox>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
