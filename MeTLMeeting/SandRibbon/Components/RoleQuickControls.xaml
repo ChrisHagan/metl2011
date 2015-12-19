@@ -13,14 +13,15 @@
              Height="Auto">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <Grid layout:GridLayout.ItemsPerRow="1">
+            <TextBlock Style="{DynamicResource subHeading}" Text="You want to" />
+            <CheckBox Content="Follow teacher" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
             <Button x:Name="submitSubmission" Style="{DynamicResource listedChoice}" Content="Submit screenshot" Command="{x:Static api:Commands.RequestScreenshotSubmission}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
             <Button Content="Add page" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource AddSlideToolTip}"  x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-            <Button Content="Reorder pages" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource PageReorderToolTip}" Command="{x:Static api:Commands.EditConversation}" />
-            <Button Content="Manage bans" Style="{DynamicResource listedChoice}" Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>
             <Button x:Name="duplicatePage" Style="{DynamicResource listedChoice}" Content="Duplicate page" ToolTip="{DynamicResource DuplicateSlideToolTip}" Click="duplicatePage_Click" />
+            <Button Content="Reorder pages" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource PageReorderToolTip}" Command="{x:Static api:Commands.EditConversation}" />
             <Button Content="Duplicate conversation" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{Binding Path=ConversationDetails}"/>
-            <CheckBox Content="Follow teacher" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}"/>
             <CheckBox Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
+            <Button Content="Manage bans" Style="{DynamicResource listedChoice}" Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

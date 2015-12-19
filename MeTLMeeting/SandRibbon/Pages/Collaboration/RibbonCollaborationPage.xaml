@@ -11,6 +11,7 @@
       xmlns:layout="clr-namespace:SandRibbon.Layout"
       xmlns:collab="clr-namespace:SandRibbon.Pages.Collaboration.Layout"
       xmlns:tabs="clr-namespace:SandRibbon.Tabs"
+                          xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
       Title="Collaboration">
     <Page.Resources>
         <sys:Double x:Key="RibbonFontSize">14</sys:Double>
