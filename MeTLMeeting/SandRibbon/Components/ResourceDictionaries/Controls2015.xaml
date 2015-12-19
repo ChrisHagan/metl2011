@@ -34,13 +34,17 @@
         </Style.Setters>
     </Style>
     <Style x:Key="listedChoice" BasedOn="{StaticResource secondaryChoice}" TargetType="{x:Type Button}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+        </Style.Triggers>
         <Style.Setters>
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Margin" Value="25 15 0  10"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="Transparent">
+                        <Border Background="Transparent" BorderThickness="0 0 0 1" BorderBrush="Blue">
                             <ContentPresenter/>
                         </Border>
                     </ControlTemplate>
@@ -71,7 +75,7 @@
     <Style TargetType="TextBlock">
         <Setter Property="FontFamily" Value="/Resources/Cabin-Regular-TTF.ttf#Cabin" />
     </Style>
-           
+
     <Style TargetType="CheckBox">
         <Setter Property="LayoutTransform">
             <Setter.Value>
@@ -81,6 +85,6 @@
         <Setter Property="Margin" Value="0 10"/>
     </Style>
     <Style TargetType="{x:Type Label}">
-        <Setter Property="FontSize" Value="30" />                
+        <Setter Property="FontSize" Value="25" />
     </Style>
 </ResourceDictionary>

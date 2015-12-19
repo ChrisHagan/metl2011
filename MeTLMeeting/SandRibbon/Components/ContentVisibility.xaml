@@ -4,17 +4,21 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:SandRibbon"
+    xmlns:layout="clr-namespace:SandRibbon.Layout"
     x:Name="contentVisibility"        
     AutomationProperties.AutomationId="contentVisibility">
-    <ItemsControl x:Name="contentVisibilitySelectors">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <CheckBox ToolTip="{Binding Description}" Content="{Binding Label}">
-                    <CheckBox.IsChecked>
-                        <Binding Path="Subscribed" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
-                    </CheckBox.IsChecked>
-                </CheckBox> 
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <Grid layout:GridLayout.ItemsPerRow="1">
+    <TextBlock Text="You see" Style="{StaticResource subHeading}" />
+        <ItemsControl x:Name="contentVisibilitySelectors">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox ToolTip="{Binding Description}" Content="{Binding Label}">
+                        <CheckBox.IsChecked>
+                            <Binding Path="Subscribed" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
+                        </CheckBox.IsChecked>
+                    </CheckBox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
 </UserControl>

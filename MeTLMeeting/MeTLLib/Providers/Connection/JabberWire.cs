@@ -312,7 +312,7 @@ namespace MeTLLib.Providers.Connection
             conn.AutoAgents = false;
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
-            conn.OnMessage += OnMessage;
+            conn.OnMessage += OnMessage;            
             conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
             conn.OnError += HandlerError;

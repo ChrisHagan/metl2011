@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SandRibbon.Components">
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
         <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource clearBottom}">
-            <TextBlock Text="Students can" Style="{StaticResource heading}" Margin="{DynamicResource nearBottom}"/>
+            <TextBlock Text="Students can" Style="{StaticResource subHeading}" Margin="{DynamicResource nearBottom}"/>
             <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"></CheckBox>
             <CheckBox x:Name="studentCanViewQuizzes" Click="StudentsCanViewQuizzesChecked" Content="View quizzes"></CheckBox>
             <CheckBox x:Name="studentCanAnswerQuizzes" Click="StudentsCanAnswerQuizzesChecked" Content="Answer quizzes"></CheckBox>

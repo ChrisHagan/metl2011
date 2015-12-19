@@ -172,7 +172,6 @@
                     <ContentPresenter>
                         <ContentPresenter.Content>
                             <Grid layout:GridLayout.ItemsPerRow="1">
-                                <TextBlock Text="You see" Style="{StaticResource heading}" />
                                 <components:ContentVisibility/>
                             </Grid>
                         </ContentPresenter.Content>
