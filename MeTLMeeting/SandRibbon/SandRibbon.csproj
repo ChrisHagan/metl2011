@@ -118,8 +118,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="agsXMPP, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
-      <HintPath>lib\agsXMPP.dll</HintPath>
+    <Reference Include="agsXMPP, Version=1.1.1.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
+      <HintPath>..\packages\agsXMPP.1.1.1.0\lib\agsXMPP.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Akka">
       <HintPath>lib\Akka.dll</HintPath>

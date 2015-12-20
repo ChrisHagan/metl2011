@@ -14,6 +14,7 @@ namespace SandRibbon.Components
         public Credentials credentials { get; protected set; }
         public NetworkController(MetlConfiguration _config)
         {
+            App.networkControllers.Add(this);
             config = _config;
         }
         public ConversationSearchPage conversationSearchPage { get; protected set; }

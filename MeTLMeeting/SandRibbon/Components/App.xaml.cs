@@ -132,6 +132,7 @@ namespace SandRibbon
                 MeTLMessage.Error(string.Format("MeTL has encountered an unrecoverable error:\n{0}", detail));
             }
         }
+        public static List<NetworkController> networkControllers = new List<NetworkController>();
         void Current_Exit(object sender, ExitEventArgs e)
         {
             try
@@ -139,6 +140,14 @@ namespace SandRibbon
                 Commands.ShuttingDown.Execute(null);
             }
             catch (Exception) { }
+            foreach (var nc in networkControllers.ToList())
+            {
+                try
+                {
+                    nc.client.Disconnect();
+                }
+                catch { }
+            }
             if (App.diagnosticWindow != null)
             {
                 diagnosticWindow.Dispatcher.adopt(delegate
