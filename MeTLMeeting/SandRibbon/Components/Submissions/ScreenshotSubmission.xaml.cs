@@ -41,8 +41,10 @@ namespace SandRibbon.Components.Submissions
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
                 Commands.ViewSubmissions.RegisterCommand(viewSubmissionsCommand);
-                Commands.RequestScreenshotSubmission.RegisterCommand(requestScreenshotSubmissionCommand);
+                Commands.SubmitScreenshotSubmission.RegisterCommand(requestScreenshotSubmissionCommand);
                 conversationChanged(null);
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(delegate { }, delegate { }, 
+                    PreParserAvailable, rootPage.ConversationDetails.Jid);
             };
             Unloaded += (s, e) =>
             {
@@ -50,14 +52,12 @@ namespace SandRibbon.Components.Submissions
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
                 Commands.ViewSubmissions.UnregisterCommand(viewSubmissionsCommand);
-                Commands.RequestScreenshotSubmission.UnregisterCommand(requestScreenshotSubmissionCommand);
+                Commands.SubmitScreenshotSubmission.UnregisterCommand(requestScreenshotSubmissionCommand);
             };
         }
         private void viewSubmissions(object _obj)
-        {
-            var view = new ViewSubmissions(rootPage.NetworkController, submissionList);
-            view.Owner = Window.GetWindow(this);
-            view.Show();
+        {            
+            rootPage.NavigationService.Navigate(new ViewSubmissions(rootPage));     
         }
         private bool canViewSubmissions(object _e)
         {

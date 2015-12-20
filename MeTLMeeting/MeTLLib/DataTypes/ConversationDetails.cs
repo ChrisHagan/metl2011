@@ -482,9 +482,19 @@ namespace MeTLLib.DataTypes
         public bool usersAreCompulsorilySynced = true;
         private static string ALLSYNC = "usersAreCompulsorilySynced";
         public string conversationGroup = "";
+        private static string CANVIEWQUIZ = "studentCanViewQuiz";
+        private static string CANDISPLAYQUIZRESULTS = "studentCanDisplayQuizResults";
+        private static string CANDISPLAYQUIZ = "studentCanDisplayQuiz";
+        private static string CANANSWERQUIZ = "studentCanAnswerQuiz";
         //private static string CONVERSATIONGROUP = "conversationGroup";
         public bool NavigationLocked;
         private static string NAVIGATIONLOCKED = "navigationlocked";
+        public bool studentsCanViewQuizResults = false;
+        public bool studentsCanDisplayQuizResults = false;
+        public bool studentsCanDisplayQuiz = false;
+        public bool studentsCanViewQuiz = false;
+        public bool studentsCanAnswerQuiz = false;
+
         public static Permissions ReadXml(XElement doc)
         {
             var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).ValueOrDefault("false"));
@@ -495,6 +505,11 @@ namespace MeTLLib.DataTypes
             var permission = new Permissions("custom", studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
             if (doc.Element(NAVIGATIONLOCKED) != null)
                 permission.NavigationLocked = Boolean.Parse(doc.Element(NAVIGATIONLOCKED).Value);
+            permission.studentsCanViewQuizResults = Boolean.Parse(doc.Element(CANVIEWQUIZ).ValueOrDefault("false")); ;
+            permission.studentsCanDisplayQuizResults = Boolean.Parse(doc.Element(CANDISPLAYQUIZRESULTS).ValueOrDefault("false")); ;
+            permission.studentsCanDisplayQuiz = Boolean.Parse(doc.Element(CANDISPLAYQUIZ).ValueOrDefault("false")); ;
+            permission.studentsCanViewQuiz = Boolean.Parse(doc.Element(CANVIEWQUIZ).ValueOrDefault("true")); ;
+            permission.studentsCanAnswerQuiz = Boolean.Parse(doc.Element(CANANSWERQUIZ).ValueOrDefault("true")); ;
             return permission;
         }
         public XElement WriteXml()
@@ -503,7 +518,13 @@ namespace MeTLLib.DataTypes
                 new XElement(NAVIGATIONLOCKED, NavigationLocked),
                 new XElement(CANSHOUT, studentCanPublish),
                 new XElement(CANFRIEND, studentCanOpenFriends),
-                new XElement(ALLSYNC, usersAreCompulsorilySynced));
+                new XElement(ALLSYNC, usersAreCompulsorilySynced),
+                new XElement(CANVIEWQUIZ,studentsCanViewQuiz),
+                new XElement(CANDISPLAYQUIZRESULTS,studentsCanDisplayQuizResults),
+                new XElement(CANDISPLAYQUIZ,studentsCanDisplayQuiz),
+                new XElement(CANVIEWQUIZ,studentsCanViewQuiz),
+                new XElement(CANANSWERQUIZ,studentsCanAnswerQuiz)
+                );
         }
     }
     public class Group : INotifyPropertyChanged

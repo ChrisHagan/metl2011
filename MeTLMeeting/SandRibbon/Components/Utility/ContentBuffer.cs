@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Ink;
 using System.Windows;
 using System.Windows.Media;
-using MeTLLib.Providers.Connection;
-using SandRibbon.Providers;
 using MeTLLib.DataTypes;
-using System.Diagnostics;
 using SandRibbon.Pages;
 
 namespace SandRibbon.Components.Utility
@@ -16,31 +12,9 @@ namespace SandRibbon.Components.Utility
     public class ContentBuffer
     {
         public SlideAwarePage rootPage { get; protected set; }
-        private StrokeFilter strokeFilter;
-        private ImageFilter imageFilter;
-        private TextFilter textFilter;
-
-        public StrokeFilter strokes
-        {
-            get
-            {
-                return strokeFilter;
-            }
-        }
-        public ImageFilter images
-        {
-            get
-            {
-                return imageFilter;
-            }
-        }
-        public TextFilter texts
-        {
-            get
-            {
-                return textFilter;
-            }
-        }
+        public StrokeFilter strokeFilter;
+        public ImageFilter imageFilter;
+        public TextFilter textFilter;
 
         // used to create a snapshot for undo/redo
         private ImageFilter imageDeltaCollection;
@@ -111,15 +85,6 @@ namespace SandRibbon.Components.Utility
             imageFilter.Images.ForEach(i => adjustImage((MeTLImage)i, im => im));            
         }
 
-        public void Clear()
-        {
-            strokeFilter.Clear();
-            imageFilter.Clear();
-            textFilter.Clear();
-
-            imageDeltaCollection.Clear();
-            strokeDeltaFilter.Clear();
-        }
         public void ClearStrokes(Action modifyVisibleContainer)
         {
             strokeFilter.Clear();
@@ -405,12 +370,7 @@ namespace SandRibbon.Components.Utility
         {
             imageDeltaCollection.Add(images, modifyUndoContainer);
         }
-        public void ClearElements(Action modifyVisibleContainer)
-        {
-            imageFilter.Clear();
-            textFilter.Clear();
-            modifyVisibleContainer();
-        }
+
         public MeTLImage adjustImage(MeTLImage image, Func<MeTLImage, MeTLImage> adjustment)
         {
             reassociateImageToCanvas(image);
@@ -478,7 +438,6 @@ namespace SandRibbon.Components.Utility
             if (element is MeTLImage)
             {
                 var elem = element as MeTLImage;
-                //Debug.Assert((element as MeTLImage) != null);
                 adjustImage(elem, i => i);
                 imageFilter.Add(elem, modifyVisibleContainer);
             }
@@ -488,7 +447,6 @@ namespace SandRibbon.Components.Utility
         {
             if (element is MeTLImage)
             {
-                // Debug.Assert((element as MeTLImage) != null);
                 imageFilter.Remove(element as MeTLImage, modifyVisibleContainer);
             }
         }

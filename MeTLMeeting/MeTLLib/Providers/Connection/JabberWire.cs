@@ -308,7 +308,7 @@ namespace MeTLLib.Providers.Connection
             this.conn = new MeTLXmppClientConnection(jid.Server,metlServerAddress.xmppHost);
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
-            conn.OnMessage += OnMessage;
+            conn.OnMessage += OnMessage;            
             conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
             conn.OnError += ErrorError;
@@ -1120,8 +1120,6 @@ namespace MeTLLib.Providers.Connection
             var message = node as Element;
             message = HandleRelativePaths(message);
 
-            var timestamp = TimeStampedMessage.getTimestamp(message);
-
             var element = new MeTLStanzas.TimestampedMeTLElement(message);
 
             if (message.GetAttribute("type") == "error")
@@ -1136,16 +1134,10 @@ namespace MeTLLib.Providers.Connection
             }
             if (messageOrigin == MessageOrigin.Live)
             {
-                //cachedHistoryProvider.HandleMessage(location.currentSlide, message, timestamp);
                 cachedHistoryProvider.HandleMessage(location.currentSlide, element);
             }
-
-
             ActOnUntypedMessage(element);
-            //ActOnUntypedMessage(message, timestamp);
-        }
-
-        //public void ActOnUntypedMessage(Element message, long timestamp)
+        }        
         public void ActOnUntypedMessage(MeTLStanzas.TimestampedMeTLElement timestampedElement)
         {
             foreach (var status in timestampedElement.element.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))

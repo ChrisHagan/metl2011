@@ -22,7 +22,6 @@ namespace SandRibbon.Components
         public RoleQuickControls()
         {
             InitializeComponent();
-            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdatedConversationDetails);
             var setSyncCommand = new DelegateCommand<bool>(SetSync);
             var toggleSyncCommand = new DelegateCommand<object>(toggleSync);
             Loaded += (s, e) =>
@@ -32,53 +31,17 @@ namespace SandRibbon.Components
                     rootPage = DataContext as SlideAwarePage;
                 }
                 ConversationDetails = rootPage.ConversationDetails;
-                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.RegisterCommand(setSyncCommand);
                 Commands.SetSync.Execute(false);
                 Commands.ToggleSync.RegisterCommand(toggleSyncCommand);
-                UpdatedConversationDetails(rootPage.ConversationDetails);
             };
             Unloaded += (s, e) =>
             {
-                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.UnregisterCommand(setSyncCommand);
                 Commands.ToggleSync.UnregisterCommand(toggleSyncCommand);
             };
         }
-
-        private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
-        {
-            var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
-            var cd = rootPage.ConversationDetails;
-            cd.Permissions.studentCanPublish = studentsCanPublishValue;
-            rootPage.NetworkController.client.UpdateConversationDetails(cd);
-        }
-        private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
-        {
-            var studentsMustFollowTeacherValue = (bool)(sender as CheckBox).IsChecked;
-            var cd = rootPage.ConversationDetails;
-            cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
-            rootPage.NetworkController.client.UpdateConversationDetails(cd);
-        }
-        protected void UpdatedConversationDetails(ConversationDetails conv)
-        {
-            Dispatcher.adopt(delegate
-            {
-                if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
-                {
-                    ownerQuickControls.Visibility = Visibility.Visible;
-                    participantQuickControls.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    ownerQuickControls.Visibility = Visibility.Collapsed;
-                    participantQuickControls.Visibility = Visibility.Visible;
-
-                }
-                studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanPublish;
-                studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
-            }); ;
-        }
+        
         private void SetSync(bool sync)
         {
             syncButton.IsChecked = rootPage.UserConversationState.Synched;

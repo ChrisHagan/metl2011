@@ -1,14 +1,7 @@
 ﻿namespace SandRibbon.Components.Utility
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using MeTLLib.DataTypes;
-    using SandRibbon.Providers;
-    using System.Windows.Media;
     using System.Windows.Controls;
-    using System.Windows.Ink;
 
     public class StackMoveDeltaProcessor : MoveDeltaProcessor
     {
@@ -26,9 +19,7 @@
 
         protected override void RemoveStroke(PrivateAwareStroke stroke)
         {
-            ContentBuffer.RemoveStroke(stroke, (col) => Canvas.Strokes.Remove(col));
-            // hopefully don't need to keep track of checksums anymore and can just use the stroke's identity
-            //contentBuffer.RemoveStrokeChecksum(stroke, (cs) => strokeChecksums.Remove(cs));
+            ContentBuffer.RemoveStroke(stroke, (col) => Canvas.Strokes.Remove(col));        
         }
 
         protected override void RemoveImage(MeTLImage image) 

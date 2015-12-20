@@ -5,14 +5,11 @@ using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers.Structure;
 using MeTLLib.DataTypes;
-using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
 //using Ninject;
 using agsXMPP.Xml.Dom;
 using System.Net;
-using System.Xml.Linq;
-using System.Web;
 
 namespace MeTLLib
 {
@@ -58,7 +55,6 @@ namespace MeTLLib
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         string UploadResource(Uri uri, string slideId);
         void AsyncRetrieveHistoryOf(int room);
-        void MoveTo(int slide);
         void WatchRoom(string slide);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
@@ -518,9 +514,7 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void MoveTo(int slide)
-        {          
-        }
+
         public void HandleShutdown()
         {
             Action work = delegate

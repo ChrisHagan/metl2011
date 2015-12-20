@@ -34,10 +34,10 @@ namespace SandRibbon.Components
                 privacyProperty.AddValueChanged(this, privacyChangedEventHandler);
 
                 var details = rootPage.ConversationDetails;
-                var userConv = rootPage.UserConversationState;
+                var userConv = rootPage.UserConversationState;                
                 constrainChoice(
                     details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanPublish, 
-                    userConv.Privacy);                
+                    userConv.Privacy == Privacy.NotSet ? Privacy.Public : Privacy.NotSet);                
             };
             Unloaded += (s, e) =>
             {
@@ -63,6 +63,10 @@ namespace SandRibbon.Components
             {
                 publicMode.IsEnabled = false;
                 privateMode.IsChecked = true;
+            }
+            if (rootPage.UserConversationState.Privacy == Privacy.NotSet)
+            {
+                rootPage.UserConversationState.Privacy = requestedPrivacy;
             }
         }
 

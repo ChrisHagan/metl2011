@@ -56,14 +56,7 @@ namespace SandRibbon.Components.BannedContent
 
         private string GenerateDisplayName(Dictionary<string, string> userMapping, string userName, ref int labelIndex)
         {
-            return userName;
-            var displayName = "";
-            if (!userMapping.TryGetValue(userName, out displayName))
-            {
-                displayName = String.Format("User {0}", labelIndex++);
-                userMapping.Add(userName, displayName);
-            }
-            return displayName;
+            return userName;            
         }
 
         public void UpdateDisplayNames(Dictionary<string, string> userMapping)

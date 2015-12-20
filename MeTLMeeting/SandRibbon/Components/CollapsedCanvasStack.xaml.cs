@@ -245,8 +245,7 @@ namespace SandRibbon.Components
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
-                }
-                Contextualise();
+                }                
                 CommandBindings.Add(deleteCommandBinding);
                 CommandBindings.Add(pasteCommandBinding);
                 CommandBindings.Add(copyCommandBinding);
@@ -281,6 +280,20 @@ namespace SandRibbon.Components
                 clipboardManager.RegisterHandler(ClipboardAction.Cut, OnClipboardCut, CanHandleClipboardCut);
                 clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
                 Globals.CanvasClipboardFocusChanged += CanvasClipboardFocusChanged;
+                Dispatcher.adopt(delegate
+                {
+                    if (_target == null)
+                    {
+                        _target = (string)FindResource("target");
+                        _defaultPrivacy = (Privacy)FindResource("defaultPrivacy");
+
+                        if (_target == "presentationSpace")
+                        {
+                            Globals.CurrentCanvasClipboardFocus = _target;
+                        }                        
+                    }
+                    Contextualise();
+                });
             };
             Unloaded += (s, e) =>
             {
@@ -325,21 +338,15 @@ namespace SandRibbon.Components
         {
             contentBuffer = new ContentBuffer(rootPage);
             me = rootPage.NetworkController.credentials.name;
-            Dispatcher.adopt(delegate
+            if (moveDeltaProcessor == null)
             {
-                if (_target == null)
-                {
-                    _target = (string)FindResource("target");
-                    _defaultPrivacy = (Privacy)FindResource("defaultPrivacy");
-
-                    if (_target == "presentationSpace")
-                    {
-                        Globals.CurrentCanvasClipboardFocus = _target;
-                    }
-
-                    moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
-                }
-            });
+                moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+            }
+            else
+            {
+                moveDeltaProcessor.contentBuffer = contentBuffer;
+            }
+            
         }
 
         double shift = 200;
@@ -384,7 +391,7 @@ namespace SandRibbon.Components
         private void BroadcastRegions(ContentBuffer buffer)
         {
             var regions = new List<SignedBounds>();
-            regions.AddRange(buffer.strokes.Strokes.Select(s => s.signedBounds()));
+            regions.AddRange(buffer.strokeFilter.Strokes.Select(s => s.signedBounds()));
             Commands.SignedRegions.Execute(regions);
         }
         private Privacy canvasAlignedPrivacy(Privacy incomingPrivacy)
@@ -1836,7 +1843,6 @@ namespace SandRibbon.Components
             {
                 Dispatcher.adopt(delegate
                 {
-
                     moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
                 });
             }
@@ -1871,7 +1877,6 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, MeTLImage image)
         {
             if (canvas.ImageChildren().Any(i => ((MeTLImage)i).tag().id == image.tag().id)) return;
-            //NegativeCartesianImageTranslate(image);
             contentBuffer.AddImage(image, (img) =>
             {
                 var imageToAdd = img as MeTLImage;
@@ -1880,7 +1885,7 @@ namespace SandRibbon.Components
                 Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });
-        }        
+        }
         private MeTLImage OffsetNegativeCartesianImageTranslate(MeTLImage image)
         {
             var newImage = image.Clone();
@@ -2180,7 +2185,7 @@ namespace SandRibbon.Components
             // should calculate the original image dimensions before sending it away.
             var width = 320;
             var height = 240;
-            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, currentPrivacy, newPoint.X, newPoint.Y, width, height, fileName));
+            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, rootPage.UserConversationState.Privacy, newPoint.X, newPoint.Y, width, height, fileName));
         }
 
         public MeTLImage createImageFromUri(Uri uri, bool useDefaultMargin)
@@ -2916,7 +2921,7 @@ namespace SandRibbon.Components
             rootPage.UserConversationState.UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
-                
+
         public void Flush()
         {
             ClearAdorners();
@@ -2927,6 +2932,6 @@ namespace SandRibbon.Components
             //Negative Cartesian Resolution - Changing the co-ordinates to 0,0
             contentBuffer.logicalX = 0.0;
             contentBuffer.logicalY = 0.0;
-        }        
+        }
     }
 }
