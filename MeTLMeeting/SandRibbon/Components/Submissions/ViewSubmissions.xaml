@@ -20,14 +20,15 @@
         </Grid.RowDefinitions>
         <TextBlock Style="{DynamicResource heading}" Text="Submitted screenshots" Margin="{DynamicResource nearBottom}" 
                    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
-        <DataGrid Grid.Column="0" Grid.Row="1" x:Name="Submissions" AutoGenerateColumns="False" SelectionChanged="Submissions_SelectionChanged"
+        <DataGrid Grid.Column="0" Grid.Row="1" x:Name="Submissions" AutoGenerateColumns="False" 
+                  SelectionChanged="Submissions_SelectionChanged"                  
                   CanUserAddRows="False" CanUserDeleteRows="False"
                   ItemsSource="{Binding}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Click="CheckBox_Click"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -50,9 +51,11 @@
         <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Width="50"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                       ShowsPreview="True" Visibility="Visible"  />
-        <Image x:Name="preview" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3"/>
-        <Button Grid.Row="2" Grid.Column="0" ToolTip="{DynamicResource DisplaySubmissionToolTip}" 
+        <Image x:Name="preview" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"/>
+        <Grid  Grid.Row="2" Grid.Column="0" >
+            <Button ToolTip="{DynamicResource DisplaySubmissionToolTip}" 
                 Command="{x:Static api:Commands.ImportSubmissions}" 
                 HorizontalAlignment="Right" Content="Insert selected submissions" />
+        </Grid>
     </Grid>
 </Page>
