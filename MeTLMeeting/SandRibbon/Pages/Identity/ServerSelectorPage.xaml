@@ -29,12 +29,18 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Click="ServerSelected" Style="{DynamicResource lowProfileButton}" Visibility="{Binding Path=visible}" 
-                            IsEnabled="{Binding Path=enabled}"                            
+                            IsEnabled="{Binding Path=enabled}"  Margin="0 50"                           
                             MaxWidth="400">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
-                            <Grid layout:GridLayout.ItemsPerRow="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
-                                <Image Source="{Binding Path=imageUri}" Margin="{StaticResource clearHorizontal}" Height="300"/>
-                                <TextBlock HorizontalAlignment="Center" Text="{Binding Path=name}" Margin="{StaticResource clearTop}" Style="{DynamicResource heading}"/>
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Viewbox Grid.Row="0">
+                                    <Image Source="{Binding Path=imageUri}" Margin="{StaticResource clearHorizontal}" Height="300"/>
+                                </Viewbox>
+                                <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding Path=name}" Margin="{StaticResource clearTop}" Style="{DynamicResource heading}"/>
                             </Grid>
                             <macros:IconControl Content="appbar_heart_break" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </Grid>

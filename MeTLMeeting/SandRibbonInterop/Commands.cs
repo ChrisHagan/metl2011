@@ -183,12 +183,11 @@ namespace SandRibbon
         public static DefaultableCompositeCommand RemoveHighlight = new DefaultableCompositeCommand("RemoveHighlight");
 
         public static DefaultableCompositeCommand ServersDown = new DefaultableCompositeCommand("ServersDown");
-        public static DefaultableCompositeCommand RequestScreenshotSubmission = new DefaultableCompositeCommand("RequestScreenshotSubmission");
+        public static DefaultableCompositeCommand SubmitScreenshotSubmission = new DefaultableCompositeCommand("SubmitScreenshotSubmission");
         public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand("GenerateScreenshot");
         public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand("ScreenshotGenerated");
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand("SendScreenshotSubmission");
         public static DefaultableCompositeCommand ReceiveScreenshotSubmission = new DefaultableCompositeCommand("ReceiveScreenshotSubmission");
-        public static DefaultableCompositeCommand ImportSubmission = new DefaultableCompositeCommand("ImportSubmission");
         public static DefaultableCompositeCommand ImportSubmissions = new DefaultableCompositeCommand("ImportSubmissions");
         public static DefaultableCompositeCommand SaveFile = new DefaultableCompositeCommand("SaveFile");
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForTextTools = new DefaultableCompositeCommand("DummyCommandToProcessCanExecuteForTextTools");

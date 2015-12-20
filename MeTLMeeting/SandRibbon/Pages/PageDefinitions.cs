@@ -8,7 +8,6 @@ using SandRibbon.Utils;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 
 namespace SandRibbon.Pages
 {
@@ -58,6 +57,8 @@ namespace SandRibbon.Pages
         }
         public static readonly DependencyProperty QuizDataProperty =
             DependencyProperty.Register("QuizData", typeof(QuizData), typeof(ConversationState), new PropertyMetadata(new QuizData()));
+
+        
     }
     public class UserConversationState : DependencyObject
     {

@@ -2,12 +2,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+      xmlns:layout="clr-namespace:SandRibbon.Layout"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
     
     <StackPanel Orientation="Horizontal">
         <RibbonButton x:Name="submitSubmission" 
                 Label="Submit a screenshot" LargeImageSource="\Resources\SendSubmission.png"
-                      Command="{x:Static api:Commands.RequestScreenshotSubmission}"
+                      Command="{x:Static api:Commands.SubmitScreenshotSubmission}"
                                   ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
         <RibbonButton x:Name="viewSubmission" Command="{x:Static api:Commands.ViewSubmissions}" 
                                   Label="View Submissions" LargeImageSource="\Resources\ViewSubmission.png"
