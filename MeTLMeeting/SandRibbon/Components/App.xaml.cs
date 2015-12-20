@@ -8,12 +8,11 @@ using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
-using SandRibbon.Providers;
 using System.Collections.Generic;
 using System.IO;
 using Akka.Actor;
 
-//[assembly: UIPermission(SecurityAction.RequestMinimum)]
+//[assembly: UIPermission(SecurityAction.RequestMinimum)s]
 
 namespace SandRibbon
 {

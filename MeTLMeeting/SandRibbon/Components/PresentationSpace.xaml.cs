@@ -170,14 +170,16 @@ namespace SandRibbon.Components
         private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
         {
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            DelegateCommand<string> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
+            DelegateCommand<ScreenshotDetails> sendScreenshot = null;
+            sendScreenshot = new DelegateCommand<ScreenshotDetails>(details=>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = rootPage.NetworkController.client;
                                  var slide = rootPage.Slide;
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(slide.index + 1, rootPage.NetworkController.credentials.name, "bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, rootPage.ConversationDetails.Title, blacklisted, Globals.generateId(rootPage.NetworkController.credentials.name, hostedFileName)));
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(
+                                     slide.index + 1, rootPage.NetworkController.credentials.name, "bannedcontent",
+                                     Privacy.Private, details.time, details.filename, rootPage.ConversationDetails.Title, blacklisted, 
+                                     Globals.generateId(rootPage.NetworkController.credentials.name, details.filename)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -226,7 +228,7 @@ namespace SandRibbon.Components
         {
             Commands.ScreenshotGenerated.Execute(generateScreenshot(details));
         }
-        private string generateScreenshot(ScreenshotDetails details)
+        private ScreenshotDetails generateScreenshot(ScreenshotDetails details)
         {
             var dpi = 96;
             var file = "";
@@ -249,7 +251,8 @@ namespace SandRibbon.Components
                     encoder.Save(stream);
                 }
             });
-            return file;
+            details.filename = file;
+            return details;
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {

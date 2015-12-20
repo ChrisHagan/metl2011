@@ -41,7 +41,7 @@ namespace SandRibbon.Components
                 Commands.ToggleSync.UnregisterCommand(toggleSyncCommand);
             };
         }
-        
+
         private void SetSync(bool sync)
         {
             syncButton.IsChecked = rootPage.UserConversationState.Synched;
@@ -65,12 +65,14 @@ namespace SandRibbon.Components
         {
             Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            DelegateCommand<string> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
+            DelegateCommand<ScreenshotDetails> sendScreenshot = null;
+            sendScreenshot = new DelegateCommand<ScreenshotDetails>(details =>
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 rootPage.NetworkController.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.Slide.id, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name, hostedFileName)));
+                (rootPage.Slide.id, rootPage.NetworkController.credentials.name, "submission",
+                Privacy.Public, details.time, details.filename, details.message,
+                new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name, details.filename)));
                 MeTLMessage.Information("Submission sent to " + rootPage.ConversationDetails.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

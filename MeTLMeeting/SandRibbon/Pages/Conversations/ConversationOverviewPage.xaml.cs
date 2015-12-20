@@ -78,8 +78,8 @@ namespace SandRibbon.Pages.Collaboration
         {
             var element = sender as FrameworkElement;
             var slide = element.DataContext as VmSlide;
-            //Commands.MoveToCollaborationPage.Execute(slide.Slide.id);
             var userSlide = new UserSlideState();
+            var globalState = new UserGlobalState();
             NavigationService.Navigate(new RibbonCollaborationPage(UserGlobalState, UserServerState, UserConversationState, new ConversationState(), userSlide, NetworkController, slide.Details, slide.Slide));            
         }
     }    

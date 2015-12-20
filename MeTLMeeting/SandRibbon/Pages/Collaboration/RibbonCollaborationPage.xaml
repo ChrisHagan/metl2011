@@ -83,7 +83,7 @@
                     <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png" SmallImageSource="/Resources/appbar.image.ants.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Select"/>
                     <RibbonRadioButton GroupName="mode" Label="View" LargeImageSource="/Resources/appbar.cursor.hand.png" SmallImageSource="/Resources/appbar.cursor.hand.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="View" />
                 </RibbonGroup>
-                <RibbonGroup Header="Edit">
+                <RibbonGroup Header="EDIT">
                     <RibbonGroup.GroupSizeDefinitions>
                         <RibbonGroupSizeDefinition>
                             <RibbonControlSizeDefinition ImageSize="Large" IsLabelVisible="True"/>

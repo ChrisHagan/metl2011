@@ -24,13 +24,21 @@
                   CanUserAddRows="False" CanUserDeleteRows="False"
                   ItemsSource="{Binding}">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding Path=IsSelected}"/>
-                <DataGridTextColumn Binding="{Binding Path=Author}" Header="Author"/>
-                <DataGridTemplateColumn Header="Preview">
+                <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Viewbox MaxHeight="100">
-                                <Image Source="{Binding Path=Image}" />
+                            <CheckBox IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Path=Author}" Header="Author"/>
+                <DataGridTemplateColumn Header="Preview" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Viewbox Width="Auto">
+                                <Border BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1">
+                                    <Image Source="{Binding Path=Image}" Width="640"/>
+                                </Border>
                             </Viewbox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

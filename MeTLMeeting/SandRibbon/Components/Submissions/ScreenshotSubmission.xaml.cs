@@ -11,6 +11,9 @@ using System.Diagnostics;
 using SandRibbon.Components.Utility;
 using System.Windows.Media;
 using SandRibbon.Pages;
+using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.Controls;
+using System.Threading.Tasks;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -20,6 +23,7 @@ namespace SandRibbon.Components.Submissions
         public long time;
         public bool showPrivate;
         public Size dimensions;
+        internal string filename;
     }
     public partial class ScreenshotSubmission : UserControl
     {
@@ -32,7 +36,7 @@ namespace SandRibbon.Components.Submissions
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(detailsChanged);
             var preParserAvailableCommand = new DelegateCommand<PreParser>(PreParserAvailable);
             var viewSubmissionsCommand = new DelegateCommand<object>(viewSubmissions, canViewSubmissions);
-            var requestScreenshotSubmissionCommand = new DelegateCommand<object>(generateScreenshot, canGenerateScreenshot);
+            var beginScreenshotSubmissionCommand = new DelegateCommand<object>(generateScreenshot, canGenerateScreenshot);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
@@ -41,9 +45,9 @@ namespace SandRibbon.Components.Submissions
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
                 Commands.ViewSubmissions.RegisterCommand(viewSubmissionsCommand);
-                Commands.SubmitScreenshotSubmission.RegisterCommand(requestScreenshotSubmissionCommand);
+                Commands.SubmitScreenshotSubmission.RegisterCommand(beginScreenshotSubmissionCommand);
                 conversationChanged(null);
-                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(delegate { }, delegate { }, 
+                rootPage.NetworkController.client.historyProvider.Retrieve<PreParser>(delegate { }, delegate { },
                     PreParserAvailable, rootPage.ConversationDetails.Jid);
             };
             Unloaded += (s, e) =>
@@ -52,12 +56,12 @@ namespace SandRibbon.Components.Submissions
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
                 Commands.ViewSubmissions.UnregisterCommand(viewSubmissionsCommand);
-                Commands.SubmitScreenshotSubmission.UnregisterCommand(requestScreenshotSubmissionCommand);
+                Commands.SubmitScreenshotSubmission.UnregisterCommand(beginScreenshotSubmissionCommand);
             };
         }
         private void viewSubmissions(object _obj)
-        {            
-            rootPage.NavigationService.Navigate(new ViewSubmissions(rootPage));     
+        {
+            rootPage.NavigationService.Navigate(new ViewSubmissions(rootPage));
         }
         private bool canViewSubmissions(object _e)
         {
@@ -115,23 +119,26 @@ namespace SandRibbon.Components.Submissions
         {
             return true;
         }
-        protected void generateScreenshot(object _unused)
+        protected async void generateScreenshot(object _unused)
         {
             Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            DelegateCommand<string> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
+            DelegateCommand<ScreenshotDetails> sendScreenshot = null;
+            sendScreenshot = new DelegateCommand<ScreenshotDetails>(details=>
             {
                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                 rootPage.NetworkController.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                (rootPage.NetworkController.client.location.currentSlide, rootPage.NetworkController.credentials.name, "submission", Privacy.Public, -1L, hostedFileName, rootPage.ConversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name, hostedFileName)));
+                (rootPage.NetworkController.client.location.currentSlide, rootPage.NetworkController.credentials.name, 
+                "submission", Privacy.Public, details.time, details.filename, details.message, 
+                new Dictionary<string, Color>(), Globals.generateId(rootPage.NetworkController.credentials.name, details.filename)));
                 MeTLMessage.Information("Submission sent to " + rootPage.ConversationDetails.Author);
             });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
-            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
+            var message = await DialogManager.ShowInputAsync(App.Current.MainWindow as MetroWindow, "Submit a screenshot", "You may add a message for the teacher here");
+            Commands.GenerateScreenshot.Execute(new ScreenshotDetails
             {
                 time = time,
-                message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.NetworkController.credentials.name),
+                message = message,
                 showPrivate = true
             });
         }

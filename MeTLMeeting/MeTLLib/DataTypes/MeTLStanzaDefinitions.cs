@@ -1668,21 +1668,16 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    //var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var url = GetTag(URL);
-                    //                    var url = server.protocol + "://" + server.host + ":"+ server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
+                    var timestamp = HasTag(TIME) ? long.Parse(GetTag(TIME)) : -1L;
+                    var privacy = (Privacy)GetTagEnum(privacyTag, typeof(Privacy));
                     var slideInt = 0;
-                    try
-                    {
-                        slideInt = Int32.Parse(GetTag(slideTag));
-                    }
-                    catch
-                    {
-
-                    }
-                    var submission = new TargettedSubmission(slideInt, GetTag(AUTHOR), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), long.Parse(timestamp), GetTag(identityTag), url, GetTag(TITLE), long.Parse(GetTag(TIME)), new List<MeTLStanzas.BlackListedUser>());
-
+                    Int32.TryParse(GetTag(slideTag),out slideInt);                    
+                    var submission = new TargettedSubmission(slideInt, GetTag(AUTHOR), GetTag(targetTag), 
+                        privacy, timestamp, 
+                        GetTag(identityTag),                         
+                        url, GetTag(TITLE), timestamp, 
+                        new List<MeTLStanzas.BlackListedUser>());
                     if (HasTag(BLACKLIST))
                     {
                         foreach (var node in ChildNodes)
@@ -1691,12 +1686,10 @@ namespace MeTLLib.DataTypes
                                 submission.blacklisted.Add(((BlackList)node).parameters);
                         }
                     }
-
                     return submission;
                 }
                 set
                 {
-                    //var strippedUrl = INodeFix.StripServer(value.url);
                     SetTag(AUTHOR, value.author);
                     SetTag(URL, value.url);// strippedUrl);
                     SetTag(TITLE, value.title);

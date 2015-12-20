@@ -1,38 +1,20 @@
-﻿using Microsoft.Windows.Controls.Ribbon;
-using MeTLLib;
-using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
+﻿using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
-using SandRibbon.Components.Utility;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages.ServerSelection;
 using SandRibbon.Properties;
 using SandRibbon.Providers;
-using SandRibbon.Utils;
-using SandRibbon.Utils.Connection;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using SandRibbon.Pages.Collaboration.Palettes;
 using MahApps.Metro.Controls;
 using SandRibbon.Pages.Conversations.Models;
-using System.Web;
-using Awesomium.Windows.Controls;
 using Microsoft.Win32;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using Awesomium.Core;
-using System.Windows.Navigation;
-using SandRibbon.Pages.Conversations;
-using SandRibbon.Pages.Integration;
-using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages;
 using SandRibbon.Frame.Flyouts;
 using System.Collections.ObjectModel;
@@ -64,7 +46,6 @@ namespace SandRibbon
         {
             Commands.MeTLType.DefaultValue = GlobalConstants.METL;
             Title = Strings.Global_ProductName;
-            //Commands.WordCloud.RegisterCommand(new DelegateCommand<object>(WordCloud));
 
             Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticsWindow));
 
@@ -96,7 +77,7 @@ namespace SandRibbon
                 catch { }
             };
         }
-
+        
         protected void SetTitle(string newTitle)
         {
             this.Title = "MeTL - " + newTitle;
@@ -145,13 +126,9 @@ namespace SandRibbon
         private void openProjectorWindow(object _unused)
         {
             Commands.MirrorPresentationSpace.Execute(this);
-        }
-        /*
-        private void WordCloud(object obj)
-        {
-            mainFrame.Navigate(new TagCloudPage(App.controller));
-        }
-        */
+        }       
+        
+        
         private void serializeConversationToOneNote(OneNoteSynchronizationSet obj)
         {
             mainFrame.Navigate(obj.networkController.conversationSearchPage);// new ConversationSearchPage(obj.networkController));
