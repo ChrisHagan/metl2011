@@ -187,11 +187,11 @@ namespace MeTLLib.Providers.Connection
         protected IWebClientFactory webClientFactory;
         protected HttpResourceProvider resourceProvider;
         protected static string privacy = "PUBLIC";
-        private XmppClientConnection conn;
+        private MeTLXmppClientConnection conn;
         private Timer heartbeat;
         protected Jid jid;
         public bool activeWire { get; private set; }
-    
+
         public ResourceCache cache;
         public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active, IAuditor _auditor)
         {
@@ -286,7 +286,6 @@ namespace MeTLLib.Providers.Connection
             else
                 receiveEvents.statusChanged(false, this.credentials);
         }
-
         private void makeAvailableNewSocket()
         {
             if (this.conn != null)
@@ -295,37 +294,35 @@ namespace MeTLLib.Providers.Connection
                 conn.OnLogin -= OnLogin;
                 conn.OnMessage -= OnMessage;
                 conn.OnSocketError -= HandlerError;
-                conn.OnError -= HandlerError;
+                //conn.OnError -= HandlerError;
+                conn.OnError -= ErrorError;
                 conn.OnRegisterError -= ElementError;
                 conn.OnStreamError -= ElementError;
                 conn.OnClose -= OnClose;
                 conn.OnIq -= OnIq;
-/*
-                conn.OnReadXml -= ReadXml;
-                conn.OnWriteXml -= WriteXml;
-*/
+                /*
+                                conn.OnReadXml -= ReadXml;
+                                conn.OnWriteXml -= WriteXml;
+                */
             }
-            this.conn = new XmppClientConnection(jid.Server);
-            conn.ConnectServer = metlServerAddress.xmppHost;
-            conn.UseStartTLS = true;
-            conn.UseSSL = false;
-            conn.AutoAgents = false;
+            this.conn = new MeTLXmppClientConnection(jid.Server,metlServerAddress.xmppHost);
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
             conn.OnMessage += OnMessage;
             conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
-            conn.OnError += HandlerError;
+            conn.OnError += ErrorError;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
-/*
-            conn.OnReadXml += ReadXml;
-            conn.OnWriteXml += WriteXml;
-*/
-        }
+            Console.WriteLine("XmppConnection: " + conn.description);
+            /*
 
+                        conn.OnReadXml += ReadXml;
+                        conn.OnWriteXml += WriteXml;
+            */
+        }
         private void SendPing(string who)
         {
             directCommand(who, string.Format("{0} {1}", PING, credentials.name));
@@ -375,6 +372,7 @@ namespace MeTLLib.Providers.Connection
                 StartConnectionTimeoutTimer();
                 a(GaugeStatus.InProgress, 66);
                 conn.Open(jid.User, credentials.password, resource, 1);
+                Console.WriteLine("XmppConnection: " + conn.description);
             }, "openConnection", "xmpp");
         }
 
@@ -403,15 +401,16 @@ namespace MeTLLib.Providers.Connection
             }
             if (iq.Type == IqType.result && unrespondedPings.Contains(iq.Id))
             {
+                Trace.TraceError("XmppConnection pinging: " + conn.description);
                 unrespondedPings.RemoveAll(s => s == iq.Id);
                 Console.WriteLine("result ping IQ received: " + iq.ToString());
             }
-            if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping" )
+            if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping")
             {
                 if (iq.Type == IqType.error)
                 {
                     Console.WriteLine("error ping IQ received: " + iq.ToString());
-                }               
+                }
                 else
                 {
                     var pong = new agsXMPP.protocol.component.IQ(IqType.result, iq.To, iq.From);
@@ -420,9 +419,16 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
+        private void ErrorError(object sender, Exception ex)
+        {
+            Trace.TraceError(String.Format("XmppConnection ErrorError: {0}\nException: {1}",conn.description,ex.Message));
+            Reset("JabberWire::ErrorError");
+        }
+
         private void HandlerError(object sender, Exception ex)
         {
             Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Handler error: {0}", ex.Message));
+            Trace.TraceError("XmppConnection: " + conn.description);
             Reset("JabberWire::HandlerError");
         }
         private void Disconnect(object sender, Exception ex)
@@ -546,6 +552,7 @@ namespace MeTLLib.Providers.Connection
             if (1 == Interlocked.Increment(ref resetInProgress))
             {
                 Trace.TraceWarning(string.Format("JabberWire::Reset.  {0}", caller));
+                Trace.TraceWarning("XmppConnection: " + conn.description);
                 if (conn != null)
                     switch (conn.XmppConnectionState)
                     {
@@ -579,7 +586,7 @@ namespace MeTLLib.Providers.Connection
             }
         }
         public void leaveRooms()
-        {            
+        {
             foreach (var roomJid in CurrentRooms.ToList())
             {
                 leaveRoom(roomJid);
@@ -587,8 +594,8 @@ namespace MeTLLib.Providers.Connection
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
         private void leaveRoom(Jid room)
-        {            
-            CurrentRooms.Remove(room);            
+        {
+            CurrentRooms.Remove(room);
             Trace.TraceInformation("Leaving room {0} leaves {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
@@ -602,34 +609,35 @@ namespace MeTLLib.Providers.Connection
         }
         public void WatchRoom(string slide)
         {
-            joinRoom(new Jid(slide, metlServerAddress.muc,jid.Resource));
+            joinRoom(new Jid(slide, metlServerAddress.muc, jid.Resource));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
             historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
-                    finishedParser => {
+                    finishedParser =>
+                    {
                         receiveEvents.receivePreParser(finishedParser);
                         cachedHistoryProvider.PopulateFromHistory(finishedParser);
                     },
                     slide);
         }
         private void joinRooms()
-        {                        
+        {
             foreach (var roomJid in CurrentRooms)
             {
                 joinRoom(roomJid);
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
-        public HashSet<Jid> CurrentRooms { get; protected set; } = new HashSet<Jid>();       
+        public HashSet<Jid> CurrentRooms { get; protected set; } = new HashSet<Jid>();
         private void joinRoom(Jid room)
         {
             Trace.TraceInformation("Joining room {0}", room);
             try
-            {                
+            {
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
-                CurrentRooms.Add(room);                
+                CurrentRooms.Add(room);
             }
             catch (Exception e)
             {
@@ -714,9 +722,10 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                return auditor.wrapFunction((a) => {
+                return auditor.wrapFunction((a) =>
+                {
                     var serverStatus = webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower();
-                    return conn.Authenticated &&  serverStatus == "ok";
+                    return conn.Authenticated && serverStatus == "ok";
                 }, "healthCheck", "xmpp");
             }
             catch (Exception e)
@@ -742,7 +751,7 @@ namespace MeTLLib.Providers.Connection
                     credentials.name,
                     where.ToString());
             }, "getHistory", "xmpp");
-        }       
+        }
 
         private void MoveDeltaSeparator(TargettedMoveDelta tmd)
         {
@@ -903,13 +912,14 @@ namespace MeTLLib.Providers.Connection
         {
             if (pingTimer == null)
             {
-                pingTimer = new Timer((_state) => {
+                pingTimer = new Timer((_state) =>
+                {
                     var pingIq = new IQ(IqType.get, jid, new Jid(metlServerAddress.xmppDomain));
                     pingIq.AddChild(new agsXMPP.protocol.extensions.ping.Ping());
                     pingIq.GenerateId();
                     unrespondedPings.Add(pingIq.Id);
                     conn.Send(pingIq);// new agsXMPP.protocol.extensions.ping.PingIq(new Jid(metlServerAddress.xmppDomain),jid));
-                }, null, Timeout.Infinite, Timeout.Infinite);
+            }, null, Timeout.Infinite, Timeout.Infinite);
             }
             pingTimer.Change(pingTimeout, pingTimeout);
         }
@@ -992,7 +1002,7 @@ namespace MeTLLib.Providers.Connection
                         break;
                     case UPDATE_CONVERSATION_DETAILS:
                         handleConversationDetailsUpdated(element);
-                        break;                                      
+                        break;
                     case UPDATE_SLIDE_COLLECTION:
                         handleUpdateSlideCollection(element);
                         break;
@@ -1286,7 +1296,7 @@ namespace MeTLLib.Providers.Connection
             receiveEvents.receiveDirtyLiveWindow(element);
         }
         public void JoinRoom(string room)
-        {            
+        {
             joinRoom(new Jid(room + "@" + metlServerAddress.muc));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
         }
@@ -1296,7 +1306,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void handleTeacherInConversation(Element el)
         {
-            var where = el.SelectElements("parameter",true).Item(0).InnerXml;
+            var where = el.SelectElements("parameter", true).Item(0).InnerXml;
             receiveEvents.teacherStatusRequest(where, "");
         }
         private void handleSyncMoveReceived(Element el)
