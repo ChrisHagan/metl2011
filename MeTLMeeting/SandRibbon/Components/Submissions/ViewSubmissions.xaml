@@ -48,7 +48,7 @@
                 <DataGridTextColumn Binding="{Binding Path=Date}" Header="Time"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Width="50"
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="50"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                       ShowsPreview="True" Visibility="Visible"  />
         <Image x:Name="preview" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"/>

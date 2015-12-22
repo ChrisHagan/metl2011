@@ -2147,7 +2147,7 @@ namespace MeTLLib.DataTypes
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
                     Int32.TryParse(GetTag(slideTag), out slideInt);
-                    var targettedImage = new TargettedImage(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(timestamp));
+                    var targettedImage = new TargettedImage(slideInt, GetTag(authorTag), GetTag(targetTag), (Privacy)GetTagEnum(privacyTag, typeof(Privacy)), this, GetTag(identityTag), long.Parse(timestamp,System.Globalization.NumberStyles.Float));
                     return targettedImage;
                 }
                 set

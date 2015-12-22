@@ -216,7 +216,8 @@ namespace SandRibbon.Components
             var receiveStrokesCommand = new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes);
             var receiveDirtyStrokesCommand = new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes);
             var zoomChangedCommand = new DelegateCommand<double>(ZoomChanged);
-            var receiveImageCommand = new DelegateCommand<TargettedImage>((image) => ReceiveImages(new[] { image }));
+            var receiveImageCommand = new DelegateCommand<TargettedImage>((image) => 
+            ReceiveImages(new[] { image }));
             var receiveDirtyImageCommand = new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage);
             var addImageCommand = new DelegateCommand<object>(addImageFromDisk);
             var receiveMoveDeltaCommand = new DelegateCommand<TargettedMoveDelta>((moveDelta) => { ReceiveMoveDelta(moveDelta); });

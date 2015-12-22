@@ -45,7 +45,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="Transparent" BorderThickness="0 0 0 1" BorderBrush="Blue">
+                        <Border Background="Transparent" BorderThickness="0 0 0 0.5" BorderBrush="Black">
                             <ContentPresenter/>
                         </Border>
                     </ControlTemplate>

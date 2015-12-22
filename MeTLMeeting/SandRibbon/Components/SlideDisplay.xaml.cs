@@ -454,7 +454,6 @@ namespace SandRibbon.Components
 
                     Commands.SendSyncMove.Execute(selected.id);
                     Commands.MovingTo.Execute(selected.id);                    
-                    //rootPage.NavigationService.Navigate(new RibbonCollaborationPage(rootPage.UserGlobalState, rootPage.UserServerState, rootPage.UserConversationState, rootPage.ConversationState, new UserSlideState(), rootPage.NetworkController, rootPage.ConversationDetails, (Slide)e.AddedItems[0]));
                 }
                 else if (sender is ListBox)
                 {

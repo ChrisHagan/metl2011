@@ -10,6 +10,8 @@ using SandRibbon.Pages;
 using MeTLLib.Providers.Connection;
 using System.Linq;
 using System.Diagnostics;
+using SandRibbonObjects;
+using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -33,9 +35,9 @@ namespace SandRibbon.Components.Submissions
     }
     public partial class ViewSubmissions : Page
     {
-        public ConversationAwarePage rootPage;
+        public SlideAwarePage rootPage;
         public ObservableCollection<DisplayableSubmission> submissions { get; set; } = new ObservableCollection<DisplayableSubmission>();
-        public ViewSubmissions(ConversationAwarePage rootPage)
+        public ViewSubmissions(SlideAwarePage rootPage)
         {
             InitializeComponent();
             this.rootPage = rootPage;
@@ -89,23 +91,37 @@ namespace SandRibbon.Components.Submissions
 
         private void importAllSubmissionsInBucket(object obj)
         {
+            rootPage.NetworkController.client.JoinRoom(rootPage.Slide.id.ToString());
             var items = Submissions.SelectedItems;
             var imagesToDrop = new List<ImageDrop>();
             var height = 0;
             foreach (var elem in items)
             {
-                var image = (DisplayableSubmission)elem;
-                imagesToDrop.Add(new ImageDrop
-                {
-                    Filename = image.Url.ToString(),
-                    Target = "presentationSpace",
-                    Point = new Point(0, height),
-                    Position = 1,
-                    OverridePoint = true
-                });
+                var item = elem as DisplayableSubmission;           
+                rootPage.NetworkController.client.SendImage(new TargettedImage(
+                    rootPage.Slide.id,
+                    rootPage.NetworkController.credentials.name,
+                    "presentationSpace",
+                    Privacy.Public,                  
+                    item.Url.ToString(),
+                    0,
+                    height,
+                    item.Image.Width,
+                    item.Image.Height,
+                    item.Url.ToString(),
+                    -1L
+                    ));                
                 height += 540;
             }
-            Commands.ImagesDropped.Execute(imagesToDrop);
+            NavigationService.Navigate(new RibbonCollaborationPage(
+                rootPage.UserGlobalState, 
+                rootPage.UserServerState, 
+                rootPage.UserConversationState, 
+                rootPage.ConversationState, 
+                rootPage.UserSlideState, 
+                rootPage.NetworkController, 
+                rootPage.ConversationDetails, 
+                rootPage.Slide));
         }
         private bool canImportSubmission(object obj)
         {
