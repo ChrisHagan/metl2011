@@ -10,7 +10,6 @@ using SandRibbon.Pages;
 using MeTLLib.Providers.Connection;
 using System.Linq;
 using System.Diagnostics;
-using SandRibbonObjects;
 using SandRibbon.Pages.Collaboration;
 
 namespace SandRibbon.Components.Submissions
@@ -29,6 +28,7 @@ namespace SandRibbon.Components.Submissions
         }
 
         public Uri Url { get; internal set; }
+        public string Source { get; internal set; }
 
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected", typeof(bool), typeof(DisplayableSubmission), new PropertyMetadata(false));
@@ -73,6 +73,7 @@ namespace SandRibbon.Components.Submissions
             return new DisplayableSubmission
             {
                 Image = bitmap,
+                Source=submission.url,
                 Url = uri,
                 Author = submission.author,
                 Message = submission.title,
@@ -103,12 +104,12 @@ namespace SandRibbon.Components.Submissions
                     rootPage.NetworkController.credentials.name,
                     "presentationSpace",
                     Privacy.Public,                  
-                    item.Url.ToString(),
+                    item.Source,
                     0,
                     height,
                     item.Image.Width,
                     item.Image.Height,
-                    item.Url.ToString(),
+                    item.Source,
                     -1L
                     ));                
                 height += 540;

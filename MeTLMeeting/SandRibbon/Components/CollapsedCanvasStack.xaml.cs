@@ -2186,7 +2186,8 @@ namespace SandRibbon.Components
             // should calculate the original image dimensions before sending it away.
             var width = 320;
             var height = 240;
-            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, rootPage.UserConversationState.Privacy, newPoint.X, newPoint.Y, width, height, fileName));
+            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, 
+                rootPage.UserConversationState.Privacy, newPoint.X, newPoint.Y, width, height, fileName));
         }
 
         public MeTLImage createImageFromUri(Uri uri, bool useDefaultMargin)
