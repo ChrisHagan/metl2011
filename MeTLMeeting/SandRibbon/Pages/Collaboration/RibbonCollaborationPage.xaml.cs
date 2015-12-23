@@ -3,6 +3,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Windows.Controls.Ribbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
+using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages.Collaboration.Layout;
 using SandRibbon.Pages.Conversations;
 using SandRibbon.Providers;
@@ -314,6 +315,7 @@ namespace SandRibbon.Pages.Collaboration
             }, pa => pa.mode != InkCanvasEditingMode.EraseByPoint && pa.mode != InkCanvasEditingMode.EraseByStroke);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
+            var wordCloudCommand = new DelegateCommand<object>(openWordCloud);
             
             Loaded += (cs, ce) =>
             {
@@ -334,6 +336,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestResetPenAttributes.RegisterCommand(requestResetPenAttributesCommand);
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.RegisterCommand(proxyMirrorPresentationSpaceCommand);
+                Commands.WordCloud.RegisterCommand(wordCloudCommand);
                 scroll.ScrollChanged += (s, e) =>
                     {
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
@@ -365,6 +368,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.RequestResetPenAttributes.UnregisterCommand(requestResetPenAttributesCommand);
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.UnregisterCommand(proxyMirrorPresentationSpaceCommand);
+                Commands.WordCloud.UnregisterCommand(wordCloudCommand);
                 UserConversationState.ContentVisibility = ContentFilterVisibility.defaultVisibilities;
 
                 NetworkController.client.LeaveRoom(Slide.id.ToString() + NetworkController.credentials.name);
@@ -373,7 +377,12 @@ namespace SandRibbon.Pages.Collaboration
                 NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), false, -1));                
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), false, -1));
             };
-        }        
+        }
+
+        private void openWordCloud(object obj)
+        {
+            NavigationService.Navigate(new TagCloudPage(NetworkController, ConversationDetails, UserGlobalState, UserServerState));
+        }
 
         private void UpdateConversationDetails(ConversationDetails cd)
         {

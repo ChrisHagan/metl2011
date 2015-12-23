@@ -317,11 +317,11 @@ namespace MeTLLib.Providers.Connection
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
             Console.WriteLine("XmppConnection: " + conn.description);
-            /**/
+            /*
 
                         conn.OnReadXml += ReadXml;
                         conn.OnWriteXml += WriteXml;
-            /**/
+            */
         }
         private void SendPing(string who)
         {
