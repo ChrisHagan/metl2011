@@ -2,25 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Media;
 using System.Xml.Linq;
-using Microsoft.Office.Core;
-using Microsoft.Office.Interop.PowerPoint;
-using PowerPoint = Microsoft.Office.Interop.PowerPoint;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using System.Windows;
 using SandRibbon.Components;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
-using MeTLLib;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using SandRibbon.Components.Utility;
-using System.Xml;
-using System.Text;
+using NetOffice.OfficeApi.Enums;
+using PowerPoint = NetOffice.PowerPointApi;
+using NetOffice.PowerPointApi.Enums;
 
 namespace SandRibbon.Utils
 {
@@ -255,7 +249,7 @@ namespace SandRibbon.Utils
         }
         public ConversationDetails LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, int MagnificationRating, Action<string, string, int, int> onProgress, Action<ConversationDetails> onComplete, int totalCount, int totalTotal)
         {
-            Presentation ppt = null;
+            PowerPoint.Presentation ppt = null;
             var resource = 1;
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
 
@@ -278,7 +272,7 @@ namespace SandRibbon.Utils
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
                 var slidesCount = ppt.Slides.Count;
                 var localTotal = slidesCount + 6;
-                foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
+                foreach (PowerPoint.Slide slide in ppt.Slides)
                 {
                     var slideCount = 0;
                     var slideTotal = 7;
@@ -287,7 +281,7 @@ namespace SandRibbon.Utils
                     var slideJid = startingJid + slide.SlideIndex;
                     var tempFile = currentWorkingDirectory + "background" + (++resource).ToString() + ".jpg";
                     onProgress(SLIDE, "hiding instructor content", slideCount++, slideTotal);
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                    foreach (PowerPoint.Shape shape in slide.Shapes)
                     {
                         if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
                             shape.Visible = MsoTriState.msoFalse;
@@ -371,7 +365,7 @@ namespace SandRibbon.Utils
 
         public ConversationDetails LoadPowerpoint(PowerPoint.Application app, string file, Action<string, string, int, int> onProgress, Action<ConversationDetails> onComplete, int totalCount, int totalTotal)
         {
-            Presentation ppt = null;
+            PowerPoint.Presentation ppt = null;
             var resource = 1;
             var convXml = new XElement("export");
             var histories = new XElement("histories");
@@ -397,7 +391,7 @@ namespace SandRibbon.Utils
                 var backgroundHeight = (int)ppt.SlideMaster.Height;
                 localTotal = localTotal + ppt.Slides.Count;
                 onProgress(LOCAL, "parsing slides", localCount++, localTotal);
-                foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
+                foreach (PowerPoint.Slide slide in ppt.Slides)
                 {
                     try
                     {
@@ -425,7 +419,7 @@ namespace SandRibbon.Utils
 
                         onProgress(SLIDE, "slide added to conversation", slideCount++, slideTotal);
                         var backgroundFile = currentWorkingDirectory + "background" + (++resource) + ".jpg";
-                        foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                        foreach (PowerPoint.Shape shape in slide.Shapes)
                         {
                             shape.Visible = MsoTriState.msoFalse;
                         }
@@ -463,25 +457,25 @@ namespace SandRibbon.Utils
                         history.Add(message(bgImageElem));
                         onProgress(SLIDE, "background image added", slideCount++, slideTotal);
                         var z = 0;
-                        var SortedShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
+                        var SortedShapes = new List<PowerPoint.Shape>();
                         foreach (var shapeObj in slide.Shapes)
-                            SortedShapes.Add((Microsoft.Office.Interop.PowerPoint.Shape)shapeObj);
+                            SortedShapes.Add((PowerPoint.Shape)shapeObj);
                         foreach (var shapeObj in from p in SortedShapes orderby (p.ZOrderPosition) select p)
                         {
-                            var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
+                            var shape = (PowerPoint.Shape)shapeObj;
                             string tags;
                             try
                             {
                                 var shapePrivacy = (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") ? Privacy.Private : Privacy.Public;
                                 if (HasExportableText(shape))
                                 {
-                                    var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
+                                    var textFrame = (PowerPoint.TextFrame)shape.TextFrame;
                                     if (textFrame.HasText == MsoTriState.msoTrue)
                                     {
                                         var flowDoc = new System.Windows.Documents.FlowDocument();
                                         var block = new System.Windows.Documents.Paragraph();
                                         flowDoc.Blocks.Add(block);
-                                        foreach (TextRange run in textFrame.TextRange.Runs())
+                                        foreach (PowerPoint.TextRange run in textFrame.TextRange.Runs())
                                         {
                                             var separateLines = run.Text.Split('\v', '\r', '\n');
                                             var firstLine = true;
