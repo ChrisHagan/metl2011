@@ -39,7 +39,7 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-                                            <Button x:Name="quiz" Command="{x:Static api:Commands.OpenQuiz}" MaxWidth="100" >
+                                            <Button x:Name="quiz" Command="{x:Static api:Commands.OpenQuiz}" CommandParameter="{Binding}" MaxWidth="100" >
                                                 <Button.ToolTip>
                                                     <dict:MeTLImageToolTip TitleText="View poll" 
                                                                            ImageSource="\Resources\Ribbon-Quiz.png"

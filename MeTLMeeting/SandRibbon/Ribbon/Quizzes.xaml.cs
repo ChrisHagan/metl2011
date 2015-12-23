@@ -22,7 +22,8 @@ namespace SandRibbon.Tabs
         public Quizzes()
         {
             InitializeComponent();
-            var openQuizCommand = new DelegateCommand<QuizData>(openQuiz, canOpenQuiz);
+            var createQuizCommand = new DelegateCommand<object>(createQuiz,canCreateQuiz);
+            var openQuizCommand = new DelegateCommand<QuizQuestion>(openQuiz, canOpenQuiz);
             var receiveQuizCommand = new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz);
             var receiveQuizAnswerCommand = new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer);
             var quizResultsSnapshotAvailableCommand = new DelegateCommand<string>(importQuizSnapshot);            
@@ -32,6 +33,7 @@ namespace SandRibbon.Tabs
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
                 cd = rootPage.ConversationDetails;
+                Commands.CreateQuiz.RegisterCommand(createQuizCommand);
                 Commands.OpenQuiz.RegisterCommand(openQuizCommand);
                 Commands.ReceiveQuiz.RegisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.RegisterCommand(receiveQuizAnswerCommand);
@@ -42,6 +44,7 @@ namespace SandRibbon.Tabs
             };
             Unloaded += (s, e) =>
             {
+                Commands.CreateQuiz.UnregisterCommand(createQuizCommand);
                 Commands.OpenQuiz.UnregisterCommand(openQuizCommand);
                 Commands.ReceiveQuiz.UnregisterCommand(receiveQuizCommand);
                 Commands.ReceiveQuizAnswer.UnregisterCommand(receiveQuizAnswerCommand);
@@ -100,6 +103,7 @@ namespace SandRibbon.Tabs
                     var newList = new ObservableCollection<QuizAnswer> { answer };
                     qd.answers.Add(answer.id, newList);
                 }
+                Commands.RequerySuggested(Commands.ViewQuizResults);
             });
         }
         private void ReceiveQuiz(QuizQuestion quiz)
@@ -141,7 +145,7 @@ namespace SandRibbon.Tabs
                 quizzes.ScrollToEnd();
             });
         }
-        private void CreateQuiz(object sender, RoutedEventArgs e)
+        private void createQuiz(object sender)
         {            
             Dispatcher.adoptAsync(() =>
             {
@@ -149,7 +153,10 @@ namespace SandRibbon.Tabs
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
-        }       
+        }
+        private bool canCreateQuiz(object sender) {
+            return rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || rootPage.ConversationDetails.Permissions.studentsCanCreateQuiz;
+        } 
         private void importQuizSnapshot(string filename)
         {
             Commands.ImageDropped.Execute(new ImageDrop
@@ -161,14 +168,14 @@ namespace SandRibbon.Tabs
                 Target = "presentationSpace"
             });
         }
-        private bool canOpenQuiz(QuizData quiz)
+        private bool canOpenQuiz(QuizQuestion quiz)
         {
             return rootPage.ConversationDetails.Permissions.studentsCanViewQuiz || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name);
         } 
-        private void openQuiz(QuizData quiz)
+        private void openQuiz(QuizQuestion quiz)
         {            
             var window = new ViewEditAQuiz(
-                quiz.activeQuizzes.First(), rootPage.NetworkController, cd, rootPage.ConversationState, 
+                quiz, rootPage.NetworkController, cd, rootPage.ConversationState, 
                 rootPage.Slide, rootPage.NetworkController.credentials.name);
             window.Owner = Application.Current.MainWindow;
             window.Show();

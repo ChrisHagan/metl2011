@@ -486,6 +486,7 @@ namespace MeTLLib.DataTypes
         private static string CANDISPLAYQUIZRESULTS = "studentCanDisplayQuizResults";
         private static string CANDISPLAYQUIZ = "studentCanDisplayQuiz";
         private static string CANANSWERQUIZ = "studentCanAnswerQuiz";
+        private static string CANCREATEQUIZ = "studentCanCreateQuiz";
         //private static string CONVERSATIONGROUP = "conversationGroup";
         public bool NavigationLocked;
         private static string NAVIGATIONLOCKED = "navigationlocked";
@@ -494,6 +495,7 @@ namespace MeTLLib.DataTypes
         public bool studentsCanDisplayQuiz = false;
         public bool studentsCanViewQuiz = false;
         public bool studentsCanAnswerQuiz = false;
+        public bool studentsCanCreateQuiz = false;
 
         public static Permissions ReadXml(XElement doc)
         {
@@ -510,6 +512,8 @@ namespace MeTLLib.DataTypes
             permission.studentsCanDisplayQuiz = Boolean.Parse(doc.Element(CANDISPLAYQUIZ).ValueOrDefault("false")); ;
             permission.studentsCanViewQuiz = Boolean.Parse(doc.Element(CANVIEWQUIZ).ValueOrDefault("true")); ;
             permission.studentsCanAnswerQuiz = Boolean.Parse(doc.Element(CANANSWERQUIZ).ValueOrDefault("true")); ;
+            permission.studentsCanCreateQuiz = Boolean.Parse(doc.Element(CANCREATEQUIZ).ValueOrDefault("false")); ;
+
             return permission;
         }
         public XElement WriteXml()
@@ -523,7 +527,8 @@ namespace MeTLLib.DataTypes
                 new XElement(CANDISPLAYQUIZRESULTS,studentsCanDisplayQuizResults),
                 new XElement(CANDISPLAYQUIZ,studentsCanDisplayQuiz),
                 new XElement(CANVIEWQUIZ,studentsCanViewQuiz),
-                new XElement(CANANSWERQUIZ,studentsCanAnswerQuiz)
+                new XElement(CANANSWERQUIZ,studentsCanAnswerQuiz),
+                new XElement(CANCREATEQUIZ, studentsCanCreateQuiz)
                 );
         }
     }
