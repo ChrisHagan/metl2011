@@ -348,7 +348,8 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);
-                
+
+                SetWindowTitle(ConversationDetails);   
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), true, -1));
                 NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), true, -1));                
             };
@@ -405,6 +406,17 @@ namespace SandRibbon.Pages.Collaboration
             {
                 ConversationDetails = cd;
             }
+            SetWindowTitle(cd);
+        }
+
+        private void SetWindowTitle(ConversationDetails cd)
+        {
+            Commands.SetWindowTitle.Execute(
+                            string.Format("{0} is working in {1}'s '{2}' with collaboration {3}",
+                            NetworkController.credentials.name,
+                            cd.Author,
+                            cd.Title,
+                            cd.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED"));
         }
 
         protected void openProjectorWindow(MainWindow window)

@@ -497,7 +497,7 @@ namespace MeTLLib.DataTypes
         public bool studentsCanAnswerQuiz = false;
         public bool studentsCanCreateQuiz = false;
         private static string CANPUBLISH = "studentCanPublish";
-        public bool? studentCanWorkPublicly;
+        public bool studentCanWorkPublicly = false;
 
         public static Permissions ReadXml(XElement doc)
         {

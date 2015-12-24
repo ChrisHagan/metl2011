@@ -397,6 +397,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand BanhammerActive = new DefaultableCompositeCommand("BanhammerActive");
         public static DefaultableCompositeCommand ManageBannedContent = new DefaultableCompositeCommand("ManageBannedContent");
 
+        public static DefaultableCompositeCommand SetWindowTitle = new DefaultableCompositeCommand("SetWindowTitle");
         public static DefaultableCompositeCommand ImportPowerpoint = new DefaultableCompositeCommand("ImportPowerpoint");
         public static DefaultableCompositeCommand UploadPowerpoint = new DefaultableCompositeCommand("UploadPowerpoint");
         public static DefaultableCompositeCommand PowerpointFinished = new DefaultableCompositeCommand("PowerpointFinished");
@@ -463,7 +464,7 @@ namespace SandRibbon
                     .Select(f => (DefaultableCompositeCommand)f.GetValue(null));
             }
         }
-
+        
 
         public static IEnumerable<ICommand> allHandlers()
         {
