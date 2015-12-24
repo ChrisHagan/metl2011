@@ -31,7 +31,7 @@ namespace SandRibbon.Components
 
                 if (mode.AdornerTarget == GlobalConstants.PRESENTATIONSPACE)
                 {
-                    if ((!rootPage.ConversationDetails.Permissions.studentCanPublish || rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
+                    if ((!rootPage.ConversationDetails.Permissions.studentCanUploadAttachment || rootPage.ConversationDetails.blacklist.Contains(rootPage.NetworkController.credentials.name)) && !rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name))
                     {
                         showButton.Visibility = Visibility.Collapsed;
                         hideButton.Visibility = Visibility.Collapsed;

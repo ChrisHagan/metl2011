@@ -165,7 +165,7 @@ namespace SandRibbon.Components.Utility
                     }), stroke.DrawingAttributes.Width * 4);
             this.target = target; 
             this.tag(stroke.tag());
-            shouldShowPrivacy = (this.tag().author == details.Author || details.Permissions.studentCanPublish); //move this logic out of here because this doesn't have access to instance state.
+            shouldShowPrivacy = (this.tag().author == details.Author || details.Permissions.studentCanUploadAttachment); //move this logic out of here because this doesn't have access to instance state.
             
             if (!isPrivate) return;
 

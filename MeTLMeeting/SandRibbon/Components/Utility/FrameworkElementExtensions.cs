@@ -22,7 +22,7 @@
 
         public static void ApplyPrivacyStyling(this FrameworkElement element, ContentBuffer contentBuffer, string target, Privacy newPrivacy, ConversationDetails details, string me)
         {
-            if ((!details.Permissions.studentCanPublish && !details.isAuthor(me)) || (target == "notepad"))
+            if ((!details.Permissions.studentCanUploadAttachment && !details.isAuthor(me)) || (target == "notepad"))
             {
                 element.RemovePrivacyStyling(contentBuffer); 
                 return;
