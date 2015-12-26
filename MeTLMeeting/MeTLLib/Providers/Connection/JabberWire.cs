@@ -187,7 +187,7 @@ namespace MeTLLib.Providers.Connection
         protected IWebClientFactory webClientFactory;
         protected HttpResourceProvider resourceProvider;
         protected static string privacy = "PUBLIC";
-        private MeTLXmppClientConnection conn;
+        protected MeTLXmppClientConnection conn;
         private Timer heartbeat;
         protected Jid jid;
         public bool activeWire { get; private set; }
@@ -360,6 +360,10 @@ namespace MeTLLib.Providers.Connection
         {
             auditor.wrapAction((a) =>
             {
+                if (pingTimer != null)
+                    pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                if (heartbeat != null)
+                    heartbeat.Change(Timeout.Infinite, Timeout.Infinite);
                 var resource = DateTimeFactory.Now().Ticks.ToString();
                 jid.Resource = resource;
                 makeAvailableNewSocket();
@@ -381,6 +385,10 @@ namespace MeTLLib.Providers.Connection
             receiveEvents.statusChanged(true, this.credentials);
             joinRooms();
             catchUpDisconnectedWork();
+            if (heartbeat != null)
+                heartbeat.Change(HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
+            if (pingTimer != null)
+                pingTimer.Change(pingTimeout, pingTimeout);
         }
 
         private void OnPresence(object sender, Presence pres)
@@ -549,6 +557,7 @@ namespace MeTLLib.Providers.Connection
 
         private void Reset(string caller)
         {
+            return; //for testing of the new agsModule
             if (1 == Interlocked.Increment(ref resetInProgress))
             {
                 Trace.TraceWarning(string.Format("JabberWire::Reset.  {0}", caller));
