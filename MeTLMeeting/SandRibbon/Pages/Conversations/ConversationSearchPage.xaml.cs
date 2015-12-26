@@ -239,7 +239,10 @@ namespace SandRibbon.Pages.Conversations
                 var newLoc = requestedConversation.Jid;
                 /*Pretty amazingly gross violation of the Law of Demeter.  But let's try to be deterministic when it comes to network behaviour.  
                 We can be advisory with commands for moving and joining*/
-                NetworkController.client.LeaveRoom(oldLoc);         
+                if (oldLoc != "0")
+                {
+                    NetworkController.client.LeaveRoom(oldLoc);
+                }
                 NetworkController.client.location.activeConversation = newLoc;        
                 NetworkController.client.JoinRoom(newLoc);                
 
