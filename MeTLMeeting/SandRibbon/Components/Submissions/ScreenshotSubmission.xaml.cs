@@ -24,6 +24,7 @@ namespace SandRibbon.Components.Submissions
         public bool showPrivate;
         public Size dimensions;
         internal string filename;
+        internal int slide;
     }
     public partial class ScreenshotSubmission : UserControl
     {
@@ -137,6 +138,7 @@ namespace SandRibbon.Components.Submissions
             var message = await DialogManager.ShowInputAsync(App.Current.MainWindow as MetroWindow, "Submit a screenshot", "You may add a message for the teacher here");
             Commands.GenerateScreenshot.Execute(new ScreenshotDetails
             {
+                slide = rootPage.Slide.id,
                 time = time,
                 message = message,
                 showPrivate = true

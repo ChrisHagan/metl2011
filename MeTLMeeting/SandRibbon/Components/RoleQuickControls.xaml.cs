@@ -78,6 +78,7 @@ namespace SandRibbon.Components
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
+                slide = rootPage.Slide.id,
                 time = time,
                 message = string.Format("Submission by {1} at {0}", new DateTime(time), rootPage.NetworkController.credentials.name),
                 showPrivate = true

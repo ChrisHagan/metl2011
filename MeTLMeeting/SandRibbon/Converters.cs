@@ -557,7 +557,6 @@ namespace SandRibbon
             var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
-            //bitmap.UriSource = uri;
             bitmap.StreamSource = new System.IO.MemoryStream(controller.client.resourceProvider.secureGetData(uri));
             bitmap.EndInit();
             return bitmap;

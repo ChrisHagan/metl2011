@@ -184,6 +184,7 @@ namespace SandRibbon.Components
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
+                slide = rootPage.Slide.id,
                 time = time,
                 message = string.Format("Banned content submission at {0}", new DateTime(time)),
                 showPrivate = false,

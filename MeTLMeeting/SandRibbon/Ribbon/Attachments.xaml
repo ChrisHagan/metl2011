@@ -44,14 +44,12 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Button Click="saveFile" PreviewMouseRightButtonUp="saveFile">
+                        <Button Click="saveFile">
                             <Button.ToolTip>
-                                <dict:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={StaticResource ConvertStringToImageSource}}" 
-                                                                    TitleText="{Binding Path=filename}"
+                                <dict:MeTLImageToolTip TitleText="{Binding Path=filename}"
                                                                     ContentText="{Binding Path=tooltip}"/>
                         </Button.ToolTip>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding Path=fileImage, Converter={Binding ConvertStringToImageSource}}" />
                                 <Label Content="{Binding Path=filename}"/>
                         </StackPanel>
                         </Button>

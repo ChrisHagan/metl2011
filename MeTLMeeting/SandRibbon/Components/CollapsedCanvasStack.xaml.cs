@@ -2855,7 +2855,7 @@ namespace SandRibbon.Components
                 text = HandleTextCopyRedo(selectedElements, selectedText);
             }
             var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes.Select(s => s as Stroke).ToList());
-            Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage, text, images, copiedStrokes));
+            Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage.Slide.id, rootPage.NetworkController.credentials.name,text, images, copiedStrokes));
         }
         private void HandleImageCutUndo(IEnumerable<MeTLImage> selectedImages)
         {
@@ -2907,7 +2907,7 @@ namespace SandRibbon.Components
                 ClearAdorners();
                 var images = HandleImageCutRedo(selectedImages);
                 var ink = HandleInkCutRedo(strokesToCut);
-                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage, new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
+                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage.Slide.id,rootPage.NetworkController.credentials.name,new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
             };
             Action undo = () =>
             {

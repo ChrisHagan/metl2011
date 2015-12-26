@@ -73,7 +73,7 @@ namespace SandRibbon.Components
         private void updateConversationDetails(ConversationDetails details)
         {
             var userConv = rootPage.UserConversationState;
-            var canChoose = details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanUploadAttachment;
+            var canChoose = details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanWorkPublicly;
             constrainChoice(canChoose, userConv.Privacy);            
         }
         private void publicMode_Click(object sender, RoutedEventArgs e)

@@ -69,12 +69,15 @@ namespace SandRibbon.Components
         public IEnumerable<String> _InkAsString;
         public static string Type = "MeTLClipboardData";
         public SlideAwarePage rootPage;
-        public MeTLClipboardData(SlideAwarePage _rootPage, IEnumerable<string> text, IEnumerable<BitmapSource> images, List<Stroke> ink)
+        public int slide;
+        public string author;
+        public MeTLClipboardData(int slide, string author, IEnumerable<string> text, IEnumerable<BitmapSource> images, List<Stroke> ink)
         {
-            rootPage = _rootPage;
             Text = text;
             Images = images;
             Ink = ink;
+            this.slide = slide;
+            this.author = author;
         }
 
         public IEnumerable<String> Text;
