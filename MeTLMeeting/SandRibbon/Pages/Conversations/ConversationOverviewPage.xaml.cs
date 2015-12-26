@@ -1,7 +1,5 @@
-﻿using MeTLLib;
-using MeTLLib.DataTypes;
+﻿using MeTLLib.DataTypes;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Linq;
 using System.Globalization;
@@ -26,6 +24,11 @@ namespace SandRibbon.Pages.Collaboration
             this.voices = voices;
         }
 
+        public LocatedActivity(string name, int slide, int activityCount, int voices, int attendees) : this(name, slide, activityCount, voices)
+        {
+            this.attendees = attendees;
+        }
+
         public int activityCount
         {
             get { return (int)GetValue(activityCountProperty); }
@@ -42,6 +45,16 @@ namespace SandRibbon.Pages.Collaboration
         
         public static readonly DependencyProperty voicesProperty =
             DependencyProperty.Register("voices", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
+
+        public int attendees
+        {
+            get { return (int)GetValue(attendeesProperty); }
+            set { SetValue(attendeesProperty, value); }
+        }
+        public static readonly DependencyProperty attendeesProperty =
+            DependencyProperty.Register("attendees", typeof(int), typeof(LocatedActivity), new PropertyMetadata(0));
+
+
     };
     public partial class ConversationOverviewPage : ConversationAwarePage
     {

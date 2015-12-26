@@ -3,10 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"       
       xmlns:layout="clr-namespace:SandRibbon.Layout"      
-      xmlns:pages="clr-namespace:SandRibbon.Pages"                             
-
+      xmlns:pages="clr-namespace:SandRibbon.Pages"                               
       xmlns:components="clr-namespace:SandRibbon.Components"
       xmlns:local="clr-namespace:SandRibbon.Pages.Analytics"
+      x:Name="root"                 
       Title="ConversationComparisonPage">
     <Page.Resources>
         <components:UrlForSlideConverter x:Key="renderer" />
@@ -17,7 +17,7 @@
         <Label Content="What are you hoping to discover?" />
         <Label Content="What is happening on specific slides right now?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
         <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding Path=SlideContexts}">
+            <ItemsControl ItemsSource="{Binding Path=WatchedSpaces}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />
@@ -26,7 +26,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Viewbox Height="300">
-                            <components:PresentationSpace />
+                            <ContentControl Content="{Binding}" />
                         </Viewbox>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -78,7 +78,14 @@
                                                     </Rectangle.Fill>
                                                 </Rectangle>
                                             </Viewbox>
-                                            <Image Grid.ColumnSpan="2" Source="{Binding Path=Slide.id, Converter={StaticResource renderer}}" />
+                                            <Image Grid.ColumnSpan="2">
+                                                <Image.Source>
+                                                    <MultiBinding Converter="{StaticResource renderer}">
+                                                        <Binding Path="Slide.id" />
+                                                        <Binding ElementName="root" Path="DataContext.NetworkController" />
+                                                    </MultiBinding>
+                                                </Image.Source>
+                                            </Image>
                                         </Grid>
                                     </Button>
                                 </DataTemplate>
@@ -103,6 +110,7 @@
                                         <DataGridTextColumn Header="Index" Binding="{Binding Path=index}" />
                                         <DataGridTextColumn Header="Username" Binding="{Binding Path=name}" />
                                         <DataGridTextColumn Header="Activity" Binding="{Binding Path=activityCount}" />
+                                        <DataGridTextColumn Header="Attendees" Binding="{Binding Path=attendees}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </DataTemplate>

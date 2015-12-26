@@ -6,6 +6,8 @@
     <sys:Double x:Key="l">40</sys:Double>
     <sys:Double x:Key="m">22</sys:Double>
     <sys:Double x:Key="s">18</sys:Double>
+    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">50</sys:Double>
+    <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">50</sys:Double>
     <Style x:Key="heading" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="/Resources/advent-pro.thin.ttf#Advent Pro" />
         <Setter Property="FontSize" Value="40" />

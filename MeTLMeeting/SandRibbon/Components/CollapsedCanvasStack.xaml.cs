@@ -341,7 +341,7 @@ namespace SandRibbon.Components
             me = rootPage.NetworkController.credentials.name;
             if (moveDeltaProcessor == null)
             {
-                moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, rootPage.NetworkController.credentials.name);
+                moveDeltaProcessor = new StackMoveDeltaProcessor(Work, contentBuffer, _target, rootPage.ConversationDetails, me);
             }
             else
             {

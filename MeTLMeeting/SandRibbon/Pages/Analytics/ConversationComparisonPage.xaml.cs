@@ -1,17 +1,14 @@
 ﻿using MeTLLib.DataTypes;
-using SandRibbon.Pages.Collaboration.Models;
 using SandRibbon.Pages.Conversations.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System;
 using System.Globalization;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Components;
-using System.Windows.Navigation;
 
 namespace SandRibbon.Pages.Analytics
 {
@@ -29,11 +26,13 @@ namespace SandRibbon.Pages.Analytics
     }
     public partial class ConversationComparisonPage : ServerAwarePage
     {
-        public ConversationComparisonPage(UserGlobalState _userGlobal, UserServerState _userServer, NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
+        UserConversationState UserConversationState { get; set; }
+        public ConversationComparisonPage(UserGlobalState _userGlobal, UserServerState _userServer, UserConversationState _userConversation, NetworkController _networkController, IEnumerable<SearchConversationDetails> cs)
         {
             NetworkController = _networkController;
             UserGlobalState = _userGlobal;
             UserServerState = _userServer;
+            UserConversationState = _userConversation;
             InitializeComponent();
             DataContext = new ConversationComparableCorpus(NetworkController,cs);
         }
@@ -42,16 +41,21 @@ namespace SandRibbon.Pages.Analytics
             var context = DataContext as ConversationComparableCorpus;
             var source = sender as FrameworkElement;
             var slide = source.DataContext as VmSlide;
-            if (!(context.SlideContexts.Any(s => s.context.Slide == slide.Slide.id)))
+            if (!(context.WatchedSpaces.Any(s => (s.DataContext as SlideAwarePage).Slide.id == slide.Slide.id)))
             {
-                context.SlideContexts.Add(new ToolableSpaceModel
+                context.WatchedSpaces.Add(new PresentationSpace
                 {
-                    context = new VisibleSpaceModel
+                    DataContext = new SlideAwarePage
                     {
-                        Slide = slide.Slide.id
+                        NetworkController = NetworkController,
+                        ConversationDetails = slide.Details,
+                        Slide = slide.Slide,
+                        UserGlobalState = UserGlobalState,
+                        UserServerState = UserServerState,
+                        UserConversationState = UserConversationState
                     }
                 });
-                Commands.WatchRoom.Execute(slide.Slide.id.ToString());
+                //Commands.WatchRoom.Execute(slide.Slide.id.ToString());
             }
         }
 
@@ -69,14 +73,27 @@ namespace SandRibbon.Pages.Analytics
         {
             return UserGlobalState;
         }
-
-        public NavigationService getNavigationService()
-        {
-            throw new NotImplementedException();
-        }
     }
     public class ConversationComparableCorpus : DependencyObject
     {
+        public ObservableCollection<PresentationSpace> WatchedSpaces
+        {
+            get { return (ObservableCollection<PresentationSpace>)GetValue(WatchedSpacesProperty); }
+            set { SetValue(WatchedSpacesProperty, value); }
+        }
+        public static readonly DependencyProperty WatchedSpacesProperty =
+            DependencyProperty.Register("WatchedSpaces", typeof(ObservableCollection<PresentationSpace>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<PresentationSpace>()));
+
+
+        public NetworkController NetworkController
+        {
+            get { return (NetworkController)GetValue(NetworkControllerProperty); }
+            set { SetValue(NetworkControllerProperty, value); }
+        }
+        
+        public static readonly DependencyProperty NetworkControllerProperty =
+            DependencyProperty.Register("NetworkController", typeof(NetworkController), typeof(ConversationComparableCorpus), new PropertyMetadata(null));
+        
         public ObservableCollection<ReticulatedConversation> Conversations
         {
             get { return (ObservableCollection<ReticulatedConversation>)GetValue(ConversationsProperty); }
@@ -85,14 +102,7 @@ namespace SandRibbon.Pages.Analytics
         public static readonly DependencyProperty ConversationsProperty =
             DependencyProperty.Register("Conversations", typeof(ObservableCollection<ReticulatedConversation>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ReticulatedConversation>()));
 
-        public ObservableCollection<ToolableSpaceModel> SlideContexts
-        {
-            get { return (ObservableCollection<ToolableSpaceModel>)GetValue(SlideContextsProperty); }
-            set { SetValue(SlideContextsProperty, value); }
-        }
-        public static readonly DependencyProperty SlideContextsProperty =
-            DependencyProperty.Register("SlideContexts", typeof(ObservableCollection<ToolableSpaceModel>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ToolableSpaceModel>()));
-
+       
         public ConversationComparableCorpus(NetworkController _networkController, IEnumerable<SearchConversationDetails> cds)
         {            
             foreach (var c in cds)
@@ -101,6 +111,7 @@ namespace SandRibbon.Pages.Analytics
                     networkController = _networkController,
                     PresentationPath = c
                 };
+                NetworkController = _networkController;
                 Conversations.Add(conversation);
                 conversation.CalculateLocations();
                 conversation.AnalyzeLocations();

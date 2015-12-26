@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows;
 using agsXMPP.Xml;
-using Ionic.Zip;
-using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using System.Xml.Linq;
-//using Ninject;
 
 namespace MeTLLib.Providers
 {

@@ -2104,7 +2104,7 @@ namespace MeTLLib.DataTypes
                     {
                         var source = new BitmapImage();                        
                         source.BeginInit();
-                        source.StreamSource = new MemoryStream(asynchronouslyLoadImageData());
+                        source.StreamSource = new MemoryStream(loadImageData());
                         source.EndInit();
                         image.Source = source;
                     });
@@ -2126,7 +2126,7 @@ namespace MeTLLib.DataTypes
                 return imageTag;
             }
 
-            public Byte[] asynchronouslyLoadImageData()
+            public Byte[] loadImageData()
             {
                 try
                 {

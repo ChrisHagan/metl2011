@@ -1,14 +1,11 @@
-﻿using MeTLLib;
-using MeTLLib.DataTypes;
+﻿using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
-using Newtonsoft.Json.Linq;
 using SandRibbon.Components;
 using SandRibbon.Pages.Collaboration;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Windows;
 
 namespace SandRibbon.Pages.Conversations.Models
@@ -109,7 +106,8 @@ namespace SandRibbon.Pages.Conversations.Models
                 LocationAnalyzed?.Invoke();
                 Dispatcher.adopt(delegate
                 {
-                    slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices);
+                    slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices,description.attendees);
+                    Participation.Add(slide.Aggregate);
                 });
             }
         }
@@ -124,28 +122,6 @@ namespace SandRibbon.Pages.Conversations.Models
             {
                 dict[author]++;
             }
-        }
-
-        private IEnumerable<LocatedActivity> process(PreParser p)
-        {
-            var tallies = new Dictionary<string, int>();
-            var authors = new HashSet<string>();
-            foreach (var s in p.ink)
-            {
-                inc(tallies, s.author);
-                authors.Add(s.author);
-            }
-            foreach (var t in p.text.Values)
-            {
-                inc(tallies, t.author);
-                authors.Add(t.author);
-            }
-            foreach (var i in p.images.Values)
-            {
-                inc(tallies, i.author);
-                authors.Add(i.author);
-            }
-            return tallies.Select(kv => new LocatedActivity(kv.Key, p.location.currentSlide, kv.Value, authors.Count));
         }
     }
 
