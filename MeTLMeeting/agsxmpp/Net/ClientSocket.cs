@@ -300,40 +300,43 @@ namespace agsXMPP.Net
 		/// <param name="protocol"></param>		
         private bool InitSSL(SslProtocols protocol)
 		{            
-			m_SSLStream = new SslStream(
-                m_Stream,
-                false,
-                new RemoteCertificateValidationCallback(ValidateCertificate),
-                null,
-                EncryptionPolicy.RequireEncryption
-            );
-            try
+            lock (this)
             {
-                m_SSLStream.AuthenticateAsClient(base.Address, null, protocol, true);
-                // Display the properties and settings for the authenticated stream.
-                DisplaySecurityLevel(m_SSLStream);
-                DisplaySecurityServices(m_SSLStream);
-                DisplayCertificateInformation(m_SSLStream);
-                DisplayStreamProperties(m_SSLStream);
-
-            } 
-            catch (AuthenticationException e)
-            {
-                
-                if (e.InnerException != null)
+                m_SSLStream = new SslStream(
+                    m_Stream,
+                    false,
+                    new RemoteCertificateValidationCallback(ValidateCertificate),
+                    null,
+                    EncryptionPolicy.RequireEncryption
+                );
+                try
                 {
-                    Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
-                }
-                //Console.WriteLine ("Authentication failed - closing the connection.");
-                //client.Close();
-                Disconnect();
-                return false;
-            }
+                    m_SSLStream.AuthenticateAsClient(base.Address, null, protocol, true);
+                    // Display the properties and settings for the authenticated stream.
+                    DisplaySecurityLevel(m_SSLStream);
+                    DisplaySecurityServices(m_SSLStream);
+                    DisplayCertificateInformation(m_SSLStream);
+                    DisplayStreamProperties(m_SSLStream);
 
-            m_NetworkStream = m_SSLStream;
-			m_SSL = true;
-            
-            return true;
+                }
+                catch (AuthenticationException e)
+                {
+
+                    if (e.InnerException != null)
+                    {
+                        Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
+                    }
+                    //Console.WriteLine ("Authentication failed - closing the connection.");
+                    //client.Close();
+                    Disconnect();
+                    return false;
+                }
+
+                m_NetworkStream = m_SSLStream;
+                m_SSL = true;
+
+                return true;
+            }
 		}
 
 
@@ -575,6 +578,8 @@ namespace agsXMPP.Net
                 }
                 else
                 {
+                    // why disconnect just because the latest read came up with zero bytes?
+                    Console.WriteLine("not disconnecting even though the socket was empty");
                     Disconnect();
                 }
             }
@@ -607,8 +612,9 @@ namespace agsXMPP.Net
                         m_PendingSend = false;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    if (!(ex is InvalidOperationException && ex.Message == "EndWrite can only be called once for each asynchronous operation."))
                     Disconnect();
                 }
             }

@@ -685,7 +685,13 @@ namespace MeTLLib
         {
             try
             {
-                action();
+                if (wire.IsConnected())
+                {
+                    action();
+                } else
+                {
+                    requeue(action);
+                }
             }
             catch (WebException e)
             {

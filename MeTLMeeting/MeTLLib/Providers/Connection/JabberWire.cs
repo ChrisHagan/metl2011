@@ -733,8 +733,7 @@ namespace MeTLLib.Providers.Connection
             {
                 return auditor.wrapFunction((a) =>
                 {
-                    var serverStatus = webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower();
-                    return conn.Authenticated && serverStatus == "ok";
+                    return conn.XmppConnectionState ==  XmppConnectionState.SessionStarted && webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok"; //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
                 }, "healthCheck", "xmpp");
             }
             catch (Exception e)

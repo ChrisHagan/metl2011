@@ -279,7 +279,7 @@ namespace agsXMPP
 
             this.FireOnReadXml(this, xml);
 
-            protocol.Stream st = (protocol.Stream)e;
+            protocol.Stream st = e as protocol.Stream; //fixed this because casting throws exceptions, whereas 'as' might simply return null, which was clearly ags's intention.
             if (st != null)
             {
                 m_StreamId = st.StreamId;
