@@ -20,7 +20,7 @@ namespace SandRibbon.Components
                 var requestedPrivacy = rootPage.UserConversationState.Privacy;
                 var conversation = rootPage.ConversationDetails;
                 var me = rootPage.NetworkController.credentials.name;
-                constrainChoice(conversation.isAuthor(me) || conversation.Permissions.studentCanPublish, requestedPrivacy);
+                constrainChoice(conversation.isAuthor(me) || conversation.Permissions.studentCanUploadAttachment, requestedPrivacy);
 
             });
             var privacyProperty = DependencyPropertyDescriptor.FromProperty(UserConversationState.PrivacyProperty, typeof(UserConversationState));
@@ -36,7 +36,7 @@ namespace SandRibbon.Components
                 var details = rootPage.ConversationDetails;
                 var userConv = rootPage.UserConversationState;                
                 constrainChoice(
-                    details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanPublish, 
+                    details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanUploadAttachment, 
                     userConv.Privacy == Privacy.NotSet ? Privacy.Public : Privacy.NotSet);                
             };
             Unloaded += (s, e) =>
@@ -73,7 +73,7 @@ namespace SandRibbon.Components
         private void updateConversationDetails(ConversationDetails details)
         {
             var userConv = rootPage.UserConversationState;
-            var canChoose = details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanPublish;
+            var canChoose = details.isAuthor(rootPage.NetworkController.credentials.name) || details.Permissions.studentCanUploadAttachment;
             constrainChoice(canChoose, userConv.Privacy);            
         }
         private void publicMode_Click(object sender, RoutedEventArgs e)

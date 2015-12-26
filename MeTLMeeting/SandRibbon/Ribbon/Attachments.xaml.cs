@@ -2,21 +2,16 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Threading;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
-using SandRibbon.Providers;
 using Button = System.Windows.Controls.Button;
-using MessageBox = System.Windows.MessageBox;
 using SandRibbon.Components.Utility;
-using System.Collections.Generic;
 using MeTLLib.Providers;
 using SandRibbon.Utils;
-using MeTLLib;
 using System.Windows.Controls.Ribbon;
 using SandRibbon.Pages;
 
@@ -35,7 +30,6 @@ namespace SandRibbon.Tabs
     }
     public partial class Attachments :RibbonTab 
     {
-        public ConvertStringToImageSource ConvertStringToImageSource { get; protected set; }
         private ObservableCollection<FileInfo> files;
         public SlideAwarePage rootPage { get; protected set; } 
         public Attachments()
@@ -45,48 +39,20 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             var receiveFilesCommand = new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile);
             var preParserAvailableCommand = new DelegateCommand<PreParser>(preparserAvailable);
-            var clearOutAttachmentsCommand = new DelegateCommand<object>(clearOutAttachments);
-            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
-            var fileUploadCommand = new DelegateCommand<object>((_unused) => { UploadFile(); });
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
                     rootPage = DataContext as SlideAwarePage;
+                Resources.Add("ConvertStringToImage",new ConvertStringToImageSource(rootPage.NetworkController));
                 DataContext = this;
-                ConvertStringToImageSource = new ConvertStringToImageSource(rootPage.NetworkController);
                 Commands.ReceiveFileResource.RegisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.RegisterCommand(preParserAvailableCommand);
-                Commands.JoiningConversation.RegisterCommand(clearOutAttachmentsCommand);
-                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
-                Commands.FileUpload.RegisterCommand(fileUploadCommand);
             };
             Unloaded += (s, e) =>
             {
                 Commands.ReceiveFileResource.UnregisterCommand(receiveFilesCommand);
                 Commands.PreParserAvailable.UnregisterCommand(preParserAvailableCommand);
-                Commands.JoiningConversation.UnregisterCommand(clearOutAttachmentsCommand);
-                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
-                Commands.FileUpload.UnregisterCommand(fileUploadCommand);
             };
-        }
-        private void UpdateConversationDetails(ConversationDetails details)
-        {
-            if (details.IsEmpty) return;
-            if (details.IsJidEqual(rootPage.ConversationDetails.Jid) && details.isDeleted)
-                Dispatcher.adopt(delegate
-                {
-
-                    clearOutAttachments(null);
-                });
-        }
-        private void clearOutAttachments(object obj)
-        {
-            Dispatcher.adopt(delegate
-            {
-
-                files = new ObservableCollection<FileInfo>();
-                attachments.ItemsSource = files;
-            });
         }
 
         private void preparserAvailable(PreParser preParser)
@@ -142,12 +108,6 @@ namespace SandRibbon.Tabs
                                                                                    (Action)(() => MeTLMessage.Information(string.Format("Finished downloading {0}.", saveFile.FileName))));
                 backgroundWorker.RunWorkerAsync();
             }
-        }
-
-        private void UploadFile()
-        {
-            var upload = new OpenFileForUpload(Window.GetWindow(this), rootPage.NetworkController, rootPage.ConversationDetails,rootPage.Slide);
-            upload.AddResourceFromDisk();
         }
     }
 }

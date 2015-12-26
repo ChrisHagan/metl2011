@@ -402,14 +402,14 @@ namespace MeTLLib.DataTypes
         {
             Label = newLabel;
             studentCanOpenFriends = newStudentsCanOpenFriends;
-            studentCanPublish = newStudentsCanPublish;
+            studentCanUploadAttachment = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
         }
         public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced, String newConversationGroup)
         {
             Label = newLabel;
             studentCanOpenFriends = newStudentsCanOpenFriends;
-            studentCanPublish = newStudentsCanPublish;
+            studentCanUploadAttachment = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
             conversationGroup = newConversationGroup;
         }
@@ -426,7 +426,7 @@ namespace MeTLLib.DataTypes
         {
             var typeOfPermissions = new[] { LECTURE_PERMISSIONS, LABORATORY_PERMISSIONS, TUTORIAL_PERMISSIONS, MEETING_PERMISSIONS }.Where(
                    p => p.studentCanOpenFriends == permissions.studentCanOpenFriends &&
-                       p.studentCanPublish == permissions.studentCanPublish &&
+                       p.studentCanUploadAttachment == permissions.studentCanUploadAttachment &&
                        p.usersAreCompulsorilySynced == permissions.usersAreCompulsorilySynced).FirstOrDefault();
             if (typeOfPermissions != null) return typeOfPermissions;
             return CUSTOM_PERMISSIONS;
@@ -445,7 +445,7 @@ namespace MeTLLib.DataTypes
             if (obj == null || !(obj is Permissions)) return false;
             var foreignPermissions = ((Permissions)obj);
             return ((foreignPermissions.studentCanOpenFriends == studentCanOpenFriends)
-                && (foreignPermissions.studentCanPublish == studentCanPublish)
+                && (foreignPermissions.studentCanUploadAttachment == studentCanUploadAttachment)
                 && (foreignPermissions.usersAreCompulsorilySynced == usersAreCompulsorilySynced));
         }
         public static Permissions CUSTOM_PERMISSIONS = new Permissions("custom", false, false, false);
@@ -458,14 +458,14 @@ namespace MeTLLib.DataTypes
         {
             Label = "tutorial";
             studentCanOpenFriends = true;
-            studentCanPublish = true;
+            studentCanUploadAttachment = true;
             usersAreCompulsorilySynced = false;
         }
         public void applyLectureStyle()
         {
             Label = "lecture";
             studentCanOpenFriends = false;
-            studentCanPublish = false;
+            studentCanUploadAttachment = false;
             usersAreCompulsorilySynced = true;
         }
         private static readonly Permissions[] OPTIONS = new[]{
@@ -475,8 +475,8 @@ namespace MeTLLib.DataTypes
             MEETING_PERMISSIONS};
         public static readonly string PERMISSIONS_TAG = "permissions";
         public string Label { get; set; }
-        public bool studentCanPublish = false;
-        private static string CANSHOUT = "studentCanPublish";
+        public bool studentCanUploadAttachment = false;
+        private static string STUDENTCANUPLOAD = "studentCanUploadAttachment";
         public bool studentCanOpenFriends = false;
         private static string CANFRIEND = "studentCanOpenFriends";
         public bool usersAreCompulsorilySynced = true;
@@ -496,10 +496,12 @@ namespace MeTLLib.DataTypes
         public bool studentsCanViewQuiz = false;
         public bool studentsCanAnswerQuiz = false;
         public bool studentsCanCreateQuiz = false;
+        private static string CANPUBLISH = "studentCanPublish";
+        public bool studentCanWorkPublicly = false;
 
         public static Permissions ReadXml(XElement doc)
         {
-            var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).ValueOrDefault("false"));
+            var studentCanPublish = Boolean.Parse(doc.Element(CANPUBLISH).ValueOrDefault("false"));
             var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).ValueOrDefault("false"));
             var usersAreCompulsorilySynced = false;
             if (doc.Element(ALLSYNC) != null)
@@ -513,6 +515,8 @@ namespace MeTLLib.DataTypes
             permission.studentsCanViewQuiz = Boolean.Parse(doc.Element(CANVIEWQUIZ).ValueOrDefault("true")); ;
             permission.studentsCanAnswerQuiz = Boolean.Parse(doc.Element(CANANSWERQUIZ).ValueOrDefault("true")); ;
             permission.studentsCanCreateQuiz = Boolean.Parse(doc.Element(CANCREATEQUIZ).ValueOrDefault("false")); ;
+            permission.studentCanUploadAttachment = Boolean.Parse(doc.Element(STUDENTCANUPLOAD).ValueOrDefault("false")); ;
+            permission.studentCanWorkPublicly = Boolean.Parse(doc.Element(CANPUBLISH).ValueOrDefault("false"));
 
             return permission;
         }
@@ -520,15 +524,16 @@ namespace MeTLLib.DataTypes
         {
             return new XElement(PERMISSIONS_TAG,
                 new XElement(NAVIGATIONLOCKED, NavigationLocked),
-                new XElement(CANSHOUT, studentCanPublish),
+                new XElement(CANPUBLISH,studentCanWorkPublicly),
                 new XElement(CANFRIEND, studentCanOpenFriends),
                 new XElement(ALLSYNC, usersAreCompulsorilySynced),
-                new XElement(CANVIEWQUIZ,studentsCanViewQuiz),
-                new XElement(CANDISPLAYQUIZRESULTS,studentsCanDisplayQuizResults),
-                new XElement(CANDISPLAYQUIZ,studentsCanDisplayQuiz),
-                new XElement(CANVIEWQUIZ,studentsCanViewQuiz),
-                new XElement(CANANSWERQUIZ,studentsCanAnswerQuiz),
-                new XElement(CANCREATEQUIZ, studentsCanCreateQuiz)
+                new XElement(CANVIEWQUIZ, studentsCanViewQuiz),
+                new XElement(CANDISPLAYQUIZRESULTS, studentsCanDisplayQuizResults),
+                new XElement(CANDISPLAYQUIZ, studentsCanDisplayQuiz),
+                new XElement(CANVIEWQUIZ, studentsCanViewQuiz),
+                new XElement(CANANSWERQUIZ, studentsCanAnswerQuiz),
+                new XElement(CANCREATEQUIZ, studentsCanCreateQuiz),
+                new XElement(STUDENTCANUPLOAD, studentCanUploadAttachment)
                 );
         }
     }

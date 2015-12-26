@@ -38,7 +38,7 @@
     <WebPageStaging>index_staging.html</WebPageStaging>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
+    <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -48,10 +48,11 @@
     <MapFileExtensions>false</MapFileExtensions>
     <SupportUrl>http://www.stackableregiments.com</SupportUrl>
     <PublisherName>Stackable Regiments</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>410</ApplicationRevision>
+    <ApplicationRevision>413</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -78,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>2.0.0.410</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.413</MinimumRequiredVersion>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -89,7 +90,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL</ProductName>
-    <InstallUrl>http://metl-backend.stackableregiments.com/MeTL/</InstallUrl>
+    <InstallUrl>http://setup.stackableregiments.com/windowsClients/metl2016/</InstallUrl>
     <UpdateUrl>http://setup.stackableregiments.com/windowsClients/metl2016/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
     <Prefer32Bit>false</Prefer32Bit>
@@ -463,6 +464,7 @@
     <Page Include="Components\ResourceDictionaries\Client\SaintLeoUniversity.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Page Include="Frame\Flyouts\DiagnosticsFlyout.xaml">
       <SubType>Designer</SubType>
@@ -471,6 +473,7 @@
     <Page Include="Frame\Flyouts\Flyouts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Page Include="Frame\Flyouts\InformationFlyout.xaml">
       <SubType>Designer</SubType>
@@ -594,6 +597,7 @@
     <Page Include="Pages\Macros\Macros.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Page Include="Pages\Conversations\ConversationEditPage.xaml">
       <SubType>Designer</SubType>
@@ -1263,7 +1267,6 @@
     <Resource Include="Resources\onenote.png" />
     <Resource Include="Resources\logo-metl-splash.png" />
     <Resource Include="Resources\logo-title-bar.png" />
-    <Resource Include="Resources\favicon-96x96.png" />
     <Resource Include="Resources\android-icon-144x144.png" />
     <Resource Include="Resources\android-icon-192x192.png" />
     <Resource Include="Resources\android-icon-36x36.png" />
@@ -2545,8 +2548,6 @@
     <Resource Include="Resources\Attachment symbol mine.png" />
     <Resource Include="Resources\Back arrow white mine.png" />
     <Resource Include="Resources\Delete symbol mine.png" />
-    <Resource Include="Resources\favicon-16x16.png" />
-    <Resource Include="Resources\favicon-32x32.png" />
     <Resource Include="Resources\globe.jpg" />
     <Resource Include="Resources\Hand tool mine 1.png" />
     <Resource Include="Resources\Help icon mine.png" />
@@ -2776,14 +2777,7 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
-    <PreBuildEvent>echo Cleaning publish directory
-    if not exist $(ProjectDir)\publish\nul goto nopublish
-    cd $(ProjectDir)
-    rd /S /Q $(ProjectDir)\publish
-    echo Completed.
-    goto success
-    :nopublish
-    echo Publish directory does not exist, skipping.
-    :success</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

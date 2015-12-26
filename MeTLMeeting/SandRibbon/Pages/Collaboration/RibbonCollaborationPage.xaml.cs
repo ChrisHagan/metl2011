@@ -7,6 +7,7 @@ using SandRibbon.Pages.Analytics;
 using SandRibbon.Pages.Collaboration.Layout;
 using SandRibbon.Pages.Conversations;
 using SandRibbon.Providers;
+using SandRibbon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -316,6 +317,7 @@ namespace SandRibbon.Pages.Collaboration
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateConversationDetails);
             var proxyMirrorPresentationSpaceCommand = new DelegateCommand<MainWindow>(openProjectorWindow);
             var wordCloudCommand = new DelegateCommand<object>(openWordCloud);
+            var uploadFileCommand = new DelegateCommand<object>(uploadFile, canUploadFile);
             
             Loaded += (cs, ce) =>
             {
@@ -337,6 +339,7 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.ProxyMirrorPresentationSpace.RegisterCommand(proxyMirrorPresentationSpaceCommand);
                 Commands.WordCloud.RegisterCommand(wordCloudCommand);
+                Commands.FileUpload.RegisterCommand(uploadFileCommand);
                 scroll.ScrollChanged += (s, e) =>
                     {
                         Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut, Commands.OriginalView, Commands.FitToView, Commands.FitToPageWidth);
@@ -345,12 +348,14 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.Execute("Sketch");
                 Commands.SetPenAttributes.Execute(penCollection[1]);
                 Commands.ShowProjector.Execute(null);
-                
+
+                SetWindowTitle(ConversationDetails);   
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), true, -1));
                 NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), true, -1));                
             };
             this.Unloaded += (ps, pe) =>
-            {                
+            {
+                Commands.FileUpload.UnregisterCommand(uploadFileCommand);
                 Commands.HideProjector.Execute(null);
                 Commands.SetLayer.UnregisterCommand(setLayerCommand);
                 Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);
@@ -379,6 +384,17 @@ namespace SandRibbon.Pages.Collaboration
             };
         }
 
+        private bool canUploadFile(object arg)
+        {
+            var isAuthor = ConversationDetails.isAuthor(NetworkController.credentials.name);
+            return isAuthor || ConversationDetails.Permissions.studentCanUploadAttachment;
+        }
+
+        private void uploadFile(object o)
+        {
+            var upload = new OpenFileForUpload(Window.GetWindow(this), NetworkController, ConversationDetails, Slide);
+            upload.AddResourceFromDisk();
+        }
         private void openWordCloud(object obj)
         {
             NavigationService.Navigate(new TagCloudPage(NetworkController, ConversationDetails, UserGlobalState, UserServerState));
@@ -390,6 +406,17 @@ namespace SandRibbon.Pages.Collaboration
             {
                 ConversationDetails = cd;
             }
+            SetWindowTitle(cd);
+        }
+
+        private void SetWindowTitle(ConversationDetails cd)
+        {
+            Commands.SetWindowTitle.Execute(
+                            string.Format("{0} is working in {1}'s '{2}' with collaboration {3}",
+                            NetworkController.credentials.name,
+                            cd.Author,
+                            cd.Title,
+                            cd.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED"));
         }
 
         protected void openProjectorWindow(MainWindow window)

@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:SandRibbon="clr-namespace:SandRibbon" >
@@ -47,7 +46,7 @@
                     <DataTemplate>
                         <Button Click="saveFile" PreviewMouseRightButtonUp="saveFile">
                             <Button.ToolTip>
-                                <dict:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={Binding ConvertStringToImageSource}}" 
+                                <dict:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={StaticResource ConvertStringToImageSource}}" 
                                                                     TitleText="{Binding Path=filename}"
                                                                     ContentText="{Binding Path=tooltip}"/>
                         </Button.ToolTip>

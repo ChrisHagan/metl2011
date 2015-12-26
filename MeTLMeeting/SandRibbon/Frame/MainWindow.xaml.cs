@@ -54,6 +54,7 @@ namespace SandRibbon
 
             Commands.SetUserOptions.RegisterCommand(new DelegateCommand<UserOptions>(SetUserOptions));
 
+            Commands.SetWindowTitle.RegisterCommand(new DelegateCommand<string>(SetTitle));
             getDefaultSystemLanguage();
             displayDispatcherTimer = createExtendedDesktopTimer();
 
@@ -68,19 +69,12 @@ namespace SandRibbon
                 refreshFlyoutState();
             });
             flyoutReminderTimer.Start();
-            mainFrame.Navigated += (s, e) =>
-            {
-                try
-                {
-                    SetTitle(((Page)e.Content).Title);
-                }
-                catch { }
-            };
+            
         }
         
         protected void SetTitle(string newTitle)
         {
-            this.Title = "MeTL - " + newTitle;
+            this.Title = newTitle;
         }
         protected ObservableCollection<FlyoutCard> flyoutCards = new ObservableCollection<FlyoutCard>();
         protected void createDummyCard(object obj)

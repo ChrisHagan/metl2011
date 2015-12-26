@@ -35,15 +35,20 @@ namespace SandRibbon.Components
         {            
             Dispatcher.adopt(delegate
             {
-                studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanPublish;
+                studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanWorkPublicly;
                 studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
+                studentCanUploadFiles.IsChecked = conv.Permissions.studentCanUploadAttachment;
+                studentCanAnswerQuizzes.IsChecked = conv.Permissions.studentsCanAnswerQuiz;
+                studentCanDisplayQuizResults.IsChecked = conv.Permissions.studentsCanDisplayQuizResults;
+                studentCanDisplayQuizzes.IsChecked = conv.Permissions.studentsCanDisplayQuiz;
+                studentCanViewQuizResults.IsChecked = conv.Permissions.studentsCanViewQuizResults;
             });
         }
         private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
         {
             var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
             var cd = rootPage.ConversationDetails;
-            cd.Permissions.studentCanPublish = studentsCanPublishValue;
+            cd.Permissions.studentCanWorkPublicly = studentsCanPublishValue;
             rootPage.NetworkController.client.UpdateConversationDetails(cd);
         }
         private void StudentsCanViewQuizzesChecked(object sender, RoutedEventArgs e)
@@ -86,6 +91,14 @@ namespace SandRibbon.Components
             var studentsMustFollowTeacherValue = (bool)(sender as CheckBox).IsChecked;
             var cd = rootPage.ConversationDetails;
             cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+
+        private void StudentsCanAttachFiles(object sender, RoutedEventArgs e)
+        {
+            var studentsCanAttachFiles = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentCanUploadAttachment= studentsCanAttachFiles;
             rootPage.NetworkController.client.UpdateConversationDetails(cd);
         }
     }
