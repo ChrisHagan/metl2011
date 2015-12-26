@@ -35,7 +35,7 @@
             </Grid.Style>
             <TextBox VerticalAlignment="Center" Margin="{StaticResource clearBottom}" Width="600"
                          Text="{Binding Path=question.Question,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
-            <StackPanel Orientation="Vertical" TextBlock.Foreground="Red">
+            <StackPanel Orientation="Vertical" TextBlock.Foreground="Red" x:Name="errors">
                 <TextBlock Visibility="{Binding Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Text="A quiz must have a question"/>
                 <TextBlock Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Text="Students have already answered this quiz"/>
                 <TextBlock Visibility="{Binding Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Text="A quiz must have more than one option to choose from"/>

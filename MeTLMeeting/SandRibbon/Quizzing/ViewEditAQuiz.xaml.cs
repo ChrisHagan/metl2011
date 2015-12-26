@@ -140,9 +140,9 @@ namespace SandRibbon.Quizzing
 
         private void populateImagePreview()
         {
-            if (String.IsNullOrEmpty(question.Url))
+            if (!String.IsNullOrEmpty(question.Url))
             {
-                var bytes = rootPage.NetworkController.client.resourceProvider.secureGetData(new Uri(question.Url, UriKind.Absolute));
+                var bytes = rootPage.NetworkController.client.resourceProvider.secureGetData(new Uri(question.Url));
                 Dispatcher.adopt(() =>
                 {
                     var image = new Image();
@@ -185,58 +185,49 @@ namespace SandRibbon.Quizzing
 
         public void DisplayQuiz(object sender, RoutedEventArgs e)
         {
-            var quizDisplay = new DisplayAQuiz(question);
-            /*We're literally snapshotting this element*/
-            quizDisplay.Show();
-
-            try
+            TeacherControls.Visibility = Visibility.Collapsed;
+            errors.Visibility = Visibility.Collapsed;
+            var quiz = this;
+            var dpi = 96;
+            var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
+            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
+            var dv = new DrawingVisual();
+            using (var context = dv.RenderOpen())
+                context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
+            bitmap.Render(dv);
+            var frame = BitmapFrame.Create(bitmap);
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(frame);
+            var tmpFile = Path.GetTempFileName();
+            using (var w = new StreamWriter(tmpFile))
             {
-                var quiz = quizDisplay.SnapshotHost;
-                var dpi = 96;
-                var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
-                var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
-                var dv = new DrawingVisual();
-                using (var context = dv.RenderOpen())
-                    context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
-                bitmap.Render(dv);
-                var frame = BitmapFrame.Create(bitmap);
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(frame);
-                var tmpFile = Path.GetTempFileName();
-                using (var w = new StreamWriter(tmpFile))
-                {
-                    encoder.Save(w.BaseStream);
-                }
-                var identity = rootPage.NetworkController.client.resourceUploader.uploadResource(rootPage.Slide.id.ToString(), "tmp", tmpFile);
-                rootPage.NetworkController.client.JoinRoom(rootPage.Slide.id.ToString());
-                rootPage.NetworkController.client.SendImage(new TargettedImage(
-                   rootPage.Slide.id,
-                   rootPage.NetworkController.credentials.name,
-                   "presentationSpace",
-                   Privacy.Public,
-                   identity,
-                   0,
-                   0,
-                   frame.Width,
-                   frame.Height,
-                   identity,
-                   -1L
-                   ));
+                encoder.Save(w.BaseStream);
+            }
+            var identity = rootPage.NetworkController.client.resourceUploader.uploadResource(rootPage.Slide.id.ToString(), "tmp", tmpFile);
+            rootPage.NetworkController.client.JoinRoom(rootPage.Slide.id.ToString());
+            rootPage.NetworkController.client.SendImage(new TargettedImage(
+               rootPage.Slide.id,
+               rootPage.NetworkController.credentials.name,
+               "presentationSpace",
+               Privacy.Public,
+               identity,
+               0,
+               0,
+               frame.Width,
+               frame.Height,
+               identity,
+               -1L
+               ));
 
-                NavigationService.Navigate(new RibbonCollaborationPage(
-                    rootPage.UserGlobalState,
-                    rootPage.UserServerState,
-                    rootPage.UserConversationState,
-                    rootPage.ConversationState,
-                    rootPage.UserSlideState,
-                    rootPage.NetworkController,
-                    rootPage.ConversationDetails,
-                    rootPage.Slide));
-            }
-            finally
-            {
-                quizDisplay.Close();
-            }
+            NavigationService.Navigate(new RibbonCollaborationPage(
+                rootPage.UserGlobalState,
+                rootPage.UserServerState,
+                rootPage.UserConversationState,
+                rootPage.ConversationState,
+                rootPage.UserSlideState,
+                rootPage.NetworkController,
+                rootPage.ConversationDetails,
+                rootPage.Slide));
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
