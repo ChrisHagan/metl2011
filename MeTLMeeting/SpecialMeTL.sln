@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbon", "SandRibbon\SandRibbon.csproj", "{0213D150-6485-4F40-AF80-5AC5E8BB10CC}"
 EndProject
@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceChangeEvent", "WpfResourceChangeEvent\ResourceChangeEvent\ResourceChangeEvent.csproj", "{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnnotatedImageInViewbox", "AnnotatedImageInViewbox\AnnotatedImageInViewbox.csproj", "{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "agsXMPP2013", "agsxmpp\agsXMPP2013.csproj", "{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}"
 EndProject
@@ -107,22 +105,6 @@ Global
 		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Release|Win32.Build.0 = Release|x86
 		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Release|x86.ActiveCfg = Release|x86
 		{8FB70C9B-54D8-4C05-B2DC-A5FC2F629E82}.Release|x86.Build.0 = Release|x86
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|Win32.Build.0 = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Debug|x86.Build.0 = Debug|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|Win32.ActiveCfg = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|Win32.Build.0 = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|x86.ActiveCfg = Release|Any CPU
-		{B8C32580-2EA2-4E9B-8FE0-62AE2F9B7D76}.Release|x86.Build.0 = Release|Any CPU
 		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

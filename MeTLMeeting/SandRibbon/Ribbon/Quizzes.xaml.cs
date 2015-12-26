@@ -173,12 +173,8 @@ namespace SandRibbon.Tabs
             return rootPage.ConversationDetails.Permissions.studentsCanViewQuiz || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name);
         } 
         private void openQuiz(QuizQuestion quiz)
-        {            
-            var window = new ViewEditAQuiz(
-                quiz, rootPage.NetworkController, cd, rootPage.ConversationState, 
-                rootPage.Slide, rootPage.NetworkController.credentials.name);
-            window.Owner = Application.Current.MainWindow;
-            window.Show();
+        {   
+            rootPage.NavigationService.Navigate(new ViewEditAQuiz(quiz,rootPage));
         }
     }
 }

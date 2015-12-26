@@ -60,14 +60,12 @@ namespace MeTLLib.Providers.Connection
         }
         protected string uploadResource(Uri path, string file, bool overwrite)
         {
-            //if (string.IsNullOrEmpty(path) throw new ArgumentNullException("path", "Argument cannot be null");
             if (string.IsNullOrEmpty(file)) throw new ArgumentNullException("file", "Argument cannot be null");
             try
             {
                 var fullPath = path;
                 var res = _httpResourceProvider.securePutData(fullPath, File.ReadAllBytes(file));//  securePutFile(fullPath, file);
                 return XElement.Parse(res).Value;
-                //return "https://" + url.Split(new[] { "://" }, System.StringSplitOptions.None)[1];
             }
             catch (WebException e)
             {

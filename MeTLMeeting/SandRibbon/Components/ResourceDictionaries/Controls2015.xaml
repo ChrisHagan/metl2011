@@ -55,6 +55,15 @@
     </Style>
     <Thickness Top="50" x:Key="space"/>
     <Thickness x:Key="nearBottom" Left="0" Right="0" Bottom="15" Top="0" />
+    <Thickness x:Key="nearRight" Left="0" Right="15" Bottom="0" Top="0" />
+    <Thickness x:Key="nearLeft" Left="15" Right="0" Bottom="0" Top="0" />
+    <Thickness x:Key="nearTop" Left="0" Right="0" Bottom="0" Top="15" />
+
+    <Thickness x:Key="clearBottom" Left="0" Right="0" Bottom="50" Top="0" />
+    <Thickness x:Key="clearRight" Left="0" Right="50" Bottom="0" Top="0" />
+    <Thickness x:Key="clearLeft" Left="50" Right="0" Bottom="0" Top="0" />
+    <Thickness x:Key="clearTop" Left="0" Right="0" Bottom="0" Top="50" />
+
     <Thickness x:Key="insetTopLeft" Left="50" Right="0" Bottom="0" Top="50" />
     <Style x:Key="medium" TargetType="{x:Type Label}">
         <Setter Property="FontSize" Value="20" />
