@@ -14,10 +14,10 @@
                 <DataTemplate>
                     <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource nearBottom}" Visibility="{Binding Path=Visibility}">
                         <TextBlock Style="{StaticResource subHeading}" Text="{Binding Path=Label}" />
-                        <TextBlock Text="{Binding Path=StrokeCount}" />
-                        <TextBlock Text="{Binding Path=TextCount}" />
-                        <TextBlock Text="{Binding Path=ImageCount}" />
-                        <Button Style="{StaticResource secondaryChoice}" Content="{Binding Path=AlternatePrivacy}"
+                        <TextBlock Text="{Binding Path=StrokeCount, StringFormat=Strokes: {0}}" />
+                        <TextBlock Text="{Binding Path=TextCount, StringFormat=Textboxes: {0}}" />
+                        <TextBlock Text="{Binding Path=ImageCount, StringFormat=Images: {0}}" />
+                        <Button Style="{StaticResource secondaryChoice}" Content="{Binding Path=ToggleLabel}"
                                 Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="{Binding Path=AlternatePrivacy}" />
                     </Grid>
                 </DataTemplate>

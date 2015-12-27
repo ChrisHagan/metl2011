@@ -1228,7 +1228,10 @@ namespace SandRibbon.Components
             ClearAdorners();
             var selectedStrokes = Work.GetSelectedStrokes();
             var selectedElements = Work.GetSelectedElements();
-            Commands.AddFlyoutCard.Execute(new CanvasSelectionFlyout(selectedStrokes, selectedElements));
+            if (selectedStrokes.Count + selectedElements.Count > 0)
+            {
+                Commands.AddFlyoutCard.Execute(new CanvasSelectionFlyout(selectedStrokes, selectedElements));
+            }
         }
         private void ClearAdorners()
         {
