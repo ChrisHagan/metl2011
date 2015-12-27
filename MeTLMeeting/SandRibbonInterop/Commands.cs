@@ -396,6 +396,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ReceiveChatMessage = new DefaultableCompositeCommand("ReceiveChatMessage");
         public static DefaultableCompositeCommand BanhammerActive = new DefaultableCompositeCommand("BanhammerActive");
         public static DefaultableCompositeCommand ManageBannedContent = new DefaultableCompositeCommand("ManageBannedContent");
+        public static DefaultableCompositeCommand ConversationSelectionChanged = new DefaultableCompositeCommand("ConversationSelectionChanged");
 
         public static DefaultableCompositeCommand SetWindowTitle = new DefaultableCompositeCommand("SetWindowTitle");
         public static DefaultableCompositeCommand ImportPowerpoint = new DefaultableCompositeCommand("ImportPowerpoint");
@@ -465,7 +466,6 @@ namespace SandRibbon
             }
         }
         
-
         public static IEnumerable<ICommand> allHandlers()
         {
             var handlers = new List<ICommand>();

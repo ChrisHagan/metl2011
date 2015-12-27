@@ -1,0 +1,14 @@
+﻿<flyouts:FlyoutCard x:Class="SandRibbon.Frame.Flyouts.ConversationOptionsFlyout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:local="clr-namespace:SandRibbon.Frame.Flyouts"
+             xmlns:layout="clr-namespace:SandRibbon.Layout"
+             xmlns:flyouts="clr-namespace:SandRibbon.Frame.Flyouts"
+             Title="Conversations"
+             ShowCloseButton="True">
+    <Grid layout:GridLayout.ItemsPerRow="1">
+        <Button Style="{StaticResource listedChoice}" Content="Analyze selected conversations" Click="AnalyzeSelectedConversations"/>
+        <Button Style="{StaticResource listedChoice}" Content="Send selected conversations" Click="SynchronizeToOneNote"/>
+    </Grid>
+</flyouts:FlyoutCard>

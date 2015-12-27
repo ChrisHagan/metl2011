@@ -346,6 +346,9 @@
     <Compile Include="Frame\Flyouts\CanvasSelectionFlyout.xaml.cs">
       <DependentUpon>CanvasSelectionFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frame\Flyouts\ConversationOptionsFlyout.xaml.cs">
+      <DependentUpon>ConversationOptionsFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frame\Flyouts\DiagnosticsFlyout.xaml.cs">
       <DependentUpon>DiagnosticsFlyout.xaml</DependentUpon>
     </Compile>
@@ -466,6 +469,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Page Include="Frame\Flyouts\CanvasSelectionFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Frame\Flyouts\ConversationOptionsFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

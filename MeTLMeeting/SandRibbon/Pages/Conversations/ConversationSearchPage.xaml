@@ -28,14 +28,6 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
-                <StackPanel Margin="{DynamicResource nearBottom}">
-                    <TextBlock Text="New conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
-                    <WrapPanel Margin="{DynamicResource clearBottom}">
-                        <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
-                        <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="15 0"/>
-                        <!--<Button Command="{x:Static api:Commands.BrowseOneNote}" Style="{DynamicResource secondaryChoice}" Content="Import OneNote" Margin="15 0"/>-->
-                    </WrapPanel>
-                </StackPanel >
                 <TextBlock Text="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                 <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
                  HorizontalAlignment="Left"
@@ -44,14 +36,17 @@
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"
                      Margin="{DynamicResource nearBottom}"/>
                 <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
-                          Unchecked="onlyMyConversations_Checked" Content="Only my conversations"
-                              Margin="{DynamicResource clearBottom}"/>
-
-                <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                          Unchecked="onlyMyConversations_Checked" Content="Only my conversations"/>
+                <Button Content="All my conversations" Style="{StaticResource listedChoice}" Click="SearchForMe"/>
+                <Border Margin="{DynamicResource clearTop}">
+                    <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                </Border>
             </Grid>
             <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"                  
-                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="{DynamicResource nearBottom}"
-                      GridLinesVisibility="None">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                      Margin="{DynamicResource nearBottom}"
+                      GridLinesVisibility="None"
+                      SelectionChanged="ConversationSelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Join conversation" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
@@ -95,10 +90,13 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <StackPanel Orientation="Horizontal">
-                <Button Click="AnalyzeSelectedConversations" Content="Analyze selected conversations" Style="{DynamicResource secondaryChoice}" Margin="15 0"/>
-                <Button Click="SynchronizeToOneNote" Content="Send selected conversations to OneNote" Style="{DynamicResource secondaryChoice}" Margin="15 0"/>
-            </StackPanel>
+            <StackPanel Margin="{DynamicResource nearBottom}">
+                <TextBlock Text="Start a new conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                <WrapPanel>
+                    <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
+                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="15 0"/>
+                </WrapPanel>
+            </StackPanel >
         </Grid>
     </ScrollViewer>
 </page:ServerAwarePage>

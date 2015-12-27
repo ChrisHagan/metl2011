@@ -254,29 +254,6 @@ namespace SandRibbon.Pages.Conversations
                 MeTLMessage.Information("You no longer have permission to view this conversation.");
         }
 
-        private void AnalyzeSelectedConversations(object sender, RoutedEventArgs e)
-        {
-            if (SearchResults.SelectedItems.Count > 0)
-            {
-                var userConversation = new UserConversationState();
-                NavigationService.Navigate(new ConversationComparisonPage(UserGlobalState, UserServerState, userConversation, NetworkController, SearchResults.SelectedItems.Cast<SearchConversationDetails>()));
-            }
-        }
-
-        private void SynchronizeToOneNote(object sender, RoutedEventArgs e)
-        {
-            var cs = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
-            if (cs.Count() > 0)
-            {
-                NavigationService.Navigate(new OneNoteAuthenticationPage(UserGlobalState,UserServerState,NetworkController,(ugs,uss,nc,oc) => new OneNoteSynchronizationPage(ugs,uss,nc,
-                new OneNoteSynchronizationSet
-                {
-                    config = oc,
-                    networkController = NetworkController,
-                    conversations = cs.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
-                }),UserServerState.OneNoteConfiguration));
-            }
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -284,6 +261,24 @@ namespace SandRibbon.Pages.Conversations
             NetworkController.client.CreateConversation(details);
             SearchInput.Text = details.Title;
             FillSearchResultsFromInput();
+        }
+
+        private void SearchForMe(object sender, RoutedEventArgs e)
+        {
+            SearchInput.Text = NetworkController.credentials.name;
+            onlyMyConversations.IsChecked = true;
+            FillSearchResultsFromInput();
+        }
+
+        private void ConversationSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var source = sender as DataGrid;
+            var selection = source.SelectedItems.Cast<SearchConversationDetails>();
+            Commands.ConversationSelectionChanged.Execute(selection);
+            if (selection.Count() > 0)
+            {
+                Commands.AddFlyoutCard.Execute(new ConversationOptionsFlyout(selection, NetworkController, NavigationService, UserGlobalState, UserServerState));
+            }
         }
     }
     public class ConversationComparator : System.Collections.IComparer
