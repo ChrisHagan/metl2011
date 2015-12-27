@@ -32,6 +32,7 @@ using SandRibbon.Pages.Collaboration.Layout;
 using Xceed.Wpf.Toolkit;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Frame.Flyouts;
 
 namespace SandRibbon.Components
 {
@@ -216,7 +217,7 @@ namespace SandRibbon.Components
             var receiveStrokesCommand = new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes);
             var receiveDirtyStrokesCommand = new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes);
             var zoomChangedCommand = new DelegateCommand<double>(ZoomChanged);
-            var receiveImageCommand = new DelegateCommand<TargettedImage>((image) => 
+            var receiveImageCommand = new DelegateCommand<TargettedImage>((image) =>
             ReceiveImages(new[] { image }));
             var receiveDirtyImageCommand = new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage);
             var addImageCommand = new DelegateCommand<object>(addImageFromDisk);
@@ -246,7 +247,7 @@ namespace SandRibbon.Components
                 if (rootPage == null)
                 {
                     rootPage = DataContext as SlideAwarePage;
-                }                
+                }
                 CommandBindings.Add(deleteCommandBinding);
                 CommandBindings.Add(pasteCommandBinding);
                 CommandBindings.Add(copyCommandBinding);
@@ -291,7 +292,7 @@ namespace SandRibbon.Components
                         if (_target == "presentationSpace")
                         {
                             Globals.CurrentCanvasClipboardFocus = _target;
-                        }                        
+                        }
                     }
                     Contextualise();
                 });
@@ -347,7 +348,7 @@ namespace SandRibbon.Components
             {
                 moveDeltaProcessor.contentBuffer = contentBuffer;
             }
-            
+
         }
 
         double shift = 200;
@@ -1227,26 +1228,14 @@ namespace SandRibbon.Components
             ClearAdorners();
             var selectedStrokes = Work.GetSelectedStrokes();
             var selectedElements = Work.GetSelectedElements();
-            if (selectedElements.Count == 0 && selectedStrokes.Count == 0) return;
-            var publicStrokes = selectedStrokes.Where(s => s.tag().privacy == Privacy.Public).ToList();
-            var publicImages = selectedElements.Where(i => (((i is Image) && ((Image)i).tag().privacy == Privacy.Public))).ToList();
-            var publicText = selectedElements.Where(i => (((i is MeTLTextBox) && ((MeTLTextBox)i).tag().privacy == Privacy.Public))).ToList();
-            var publicCount = publicStrokes.Count + publicImages.Count + publicText.Count;
-            var allElementsCount = selectedStrokes.Count + selectedElements.Count;
-            string privacyChoice;
-            if (publicCount == 0)
-                privacyChoice = "show";
-            else if (publicCount == allElementsCount)
-                privacyChoice = "hide";
-            else
-                privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(rootPage, privacyChoice, allElementsCount != 0, Work.GetSelectionBounds(), _target));
+            Commands.AddFlyoutCard.Execute(new CanvasSelectionFlyout(selectedStrokes, selectedElements));
         }
         private void ClearAdorners()
         {
             if (me != GlobalConstants.PROJECTOR)
-
-                Commands.RemovePrivacyAdorners.ExecuteAsync(_target);
+            {
+                Commands.RemovePrivacyAdorners.Execute(_target);
+            }
         }
         #endregion
         #region ink
@@ -2187,7 +2176,7 @@ namespace SandRibbon.Components
             // should calculate the original image dimensions before sending it away.
             var width = 320;
             var height = 240;
-            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target, 
+            rootPage.NetworkController.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(rootPage.Slide.id, rootPage.NetworkController.credentials.name, _target,
                 rootPage.UserConversationState.Privacy, newPoint.X, newPoint.Y, width, height, fileName));
         }
 
@@ -2856,7 +2845,7 @@ namespace SandRibbon.Components
                 text = HandleTextCopyRedo(selectedElements, selectedText);
             }
             var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes.Select(s => s as Stroke).ToList());
-            Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage.Slide.id, rootPage.NetworkController.credentials.name,text, images, copiedStrokes));
+            Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage.Slide.id, rootPage.NetworkController.credentials.name, text, images, copiedStrokes));
         }
         private void HandleImageCutUndo(IEnumerable<MeTLImage> selectedImages)
         {
@@ -2908,7 +2897,7 @@ namespace SandRibbon.Components
                 ClearAdorners();
                 var images = HandleImageCutRedo(selectedImages);
                 var ink = HandleInkCutRedo(strokesToCut);
-                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage.Slide.id,rootPage.NetworkController.credentials.name,new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
+                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(rootPage.Slide.id, rootPage.NetworkController.credentials.name, new List<String>(), images, ink.Select(s => s as Stroke).ToList()));
             };
             Action undo = () =>
             {

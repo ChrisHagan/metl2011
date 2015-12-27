@@ -1,0 +1,28 @@
+﻿<local:FlyoutCard x:Class="SandRibbon.Frame.Flyouts.CanvasSelectionFlyout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:layout="clr-namespace:SandRibbon.Layout"
+             xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" xmlns:Components="clr-namespace:SandRibbon.Components"
+             xmlns:local="clr-namespace:SandRibbon.Frame.Flyouts"
+             TextBlock.Foreground="Black"
+             Foreground="Black">
+    <Grid layout:GridLayout.ItemsPerRow="1">
+        <TextBlock Style="{StaticResource heading}" Text="Selection" Margin="{StaticResource nearBottom}"/>
+        <ItemsControl ItemsSource="{Binding Path=SelectionGroups}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid layout:GridLayout.ItemsPerRow="1" Margin="{StaticResource nearBottom}" Visibility="{Binding Path=Visibility}">
+                        <TextBlock Style="{StaticResource subHeading}" Text="{Binding Path=Label}" />
+                        <TextBlock Text="{Binding Path=StrokeCount}" />
+                        <TextBlock Text="{Binding Path=TextCount}" />
+                        <TextBlock Text="{Binding Path=ImageCount}" />
+                        <Button Style="{StaticResource secondaryChoice}" Content="{Binding Path=AlternatePrivacy}"
+                                Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="{Binding Path=AlternatePrivacy}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button Style="{StaticResource primaryChoice}" Command="{x:Static api:Commands.DeleteSelectedItems}" Content="Delete selected elements" />
+    </Grid>
+</local:FlyoutCard>

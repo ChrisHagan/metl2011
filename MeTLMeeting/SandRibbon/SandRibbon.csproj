@@ -347,6 +347,9 @@
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />
     <Compile Include="Components\Utility\TimedAction.cs" />
+    <Compile Include="Frame\Flyouts\CanvasSelectionFlyout.xaml.cs">
+      <DependentUpon>CanvasSelectionFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frame\Flyouts\DiagnosticsFlyout.xaml.cs">
       <DependentUpon>DiagnosticsFlyout.xaml</DependentUpon>
     </Compile>
@@ -462,6 +465,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Frame\Flyouts\CanvasSelectionFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Frame\Flyouts\DiagnosticsFlyout.xaml">
       <SubType>Designer</SubType>
@@ -623,12 +630,6 @@
     <Page Include="Components\Pedagogicometry\Pedagogicometer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\PrivacyToggleButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1006,9 +1007,6 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
-    <Compile Include="Components\PrivacyToggleButton.xaml.cs">
-      <DependentUpon>PrivacyToggleButton.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\ResourceDictionaries\TypedControlStylingEventHandlers.cs" />
     <Compile Include="Components\SlideDisplay.xaml.cs">
       <DependentUpon>SlideDisplay.xaml</DependentUpon>

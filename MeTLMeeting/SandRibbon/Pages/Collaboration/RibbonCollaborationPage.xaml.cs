@@ -262,8 +262,6 @@ namespace SandRibbon.Pages.Collaboration
             var setLayerCommand = new DelegateCommand<string>(SetLayer);
             var duplicateSlideCommand = new DelegateCommand<SlideAwarePage>(duplicateSlide, canDuplicateSlide);
             var duplicateConversationCommand = new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation);
-            var addPrivacyToggleButtonCommand = new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton);
-            var removePrivacyAdornersCommand = new DelegateCommand<string>((s) => RemovePrivacyAdorners(s));
             var fitToViewCommand = new DelegateCommand<object>(fitToView, canFitToView);
             var originalViewCommand = new DelegateCommand<object>(originalView, canOriginalView);
             var zoomInCommand = new DelegateCommand<object>(doZoomIn, canZoomIn);
@@ -312,8 +310,6 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.RegisterCommand(setLayerCommand);
                 Commands.DuplicateSlide.RegisterCommand(duplicateSlideCommand);
                 Commands.DuplicateConversation.RegisterCommand(duplicateConversationCommand);
-                Commands.AddPrivacyToggleButton.RegisterCommand(addPrivacyToggleButtonCommand);
-                Commands.RemovePrivacyAdorners.RegisterCommand(removePrivacyAdornersCommand);
                 Commands.FitToView.RegisterCommand(fitToViewCommand);
                 Commands.OriginalView.RegisterCommand(originalViewCommand);
                 Commands.ZoomIn.RegisterCommand(zoomInCommand);
@@ -347,8 +343,6 @@ namespace SandRibbon.Pages.Collaboration
                 Commands.SetLayer.UnregisterCommand(setLayerCommand);
                 Commands.DuplicateSlide.UnregisterCommand(duplicateSlideCommand);
                 Commands.DuplicateConversation.UnregisterCommand(duplicateConversationCommand);
-                Commands.AddPrivacyToggleButton.UnregisterCommand(addPrivacyToggleButtonCommand);
-                Commands.RemovePrivacyAdorners.UnregisterCommand(removePrivacyAdornersCommand);
                 Commands.FitToView.UnregisterCommand(fitToViewCommand);
                 Commands.OriginalView.UnregisterCommand(originalViewCommand);
                 Commands.ZoomIn.UnregisterCommand(zoomInCommand);
@@ -439,22 +433,6 @@ namespace SandRibbon.Pages.Collaboration
             });
         }
 
-        private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
-        {
-            Viewbox viewbox = null;
-            UIElement container = null;
-            GetViewboxAndCanvasFromTarget(info.AdornerTarget, out viewbox, out container);
-            Dispatcher.adoptAsync(() =>
-            {
-                var adornerRect = new Rect(container.TranslatePoint(info.ElementBounds.TopLeft, viewbox), container.TranslatePoint(info.ElementBounds.BottomRight, viewbox));
-                if (LessThan(adornerRect.Right, 0, 0.001) || GreaterThan(adornerRect.Right, viewbox.ActualWidth, 0.001)
-                    || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, viewbox.ActualHeight, 0.001))
-                    return;
-                var adornerLayer = AdornerLayer.GetAdornerLayer(viewbox);
-                adornerLayer.Add(new UIAdorner(viewbox, new PrivacyToggleButton(info, adornerRect)));
-            });
-        }
-
         private bool LessThan(double val1, double val2, double tolerance)
         {
             var difference = val2 * tolerance;
@@ -473,18 +451,6 @@ namespace SandRibbon.Pages.Collaboration
                 return null;
 
             return adornerLayer.GetAdorners(viewbox);
-        }
-
-        private void UpdatePrivacyAdorners(string targetName)
-        {
-            if (RemovePrivacyAdorners(targetName))
-                try
-                {
-                    var lastValue = Commands.AddPrivacyToggleButton.LastValue();
-                    if (lastValue != null)
-                        AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
-                }
-                catch (NotSetException) { }
         }
 
         private void GetViewboxAndCanvasFromTarget(string targetName, out Viewbox viewbox, out UIElement container)
@@ -534,13 +500,11 @@ namespace SandRibbon.Pages.Collaboration
 
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdatePrivacyAdorners(adornerScroll.Target);
             BroadcastZoom();
         }
 
         private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            UpdatePrivacyAdorners(adornerScroll.Target);
             BroadcastZoom();
         }
 
@@ -554,13 +518,11 @@ namespace SandRibbon.Pages.Collaboration
 
         private void notepadSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdatePrivacyAdorners(notesAdornerScroll.Target);
             BroadcastZoom();
         }
 
         private void notepadScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            UpdatePrivacyAdorners(notesAdornerScroll.Target);
             BroadcastZoom();
         }
         private void RibbonApplicationMenuItem_SearchConversations_Click(object sender, RoutedEventArgs e)

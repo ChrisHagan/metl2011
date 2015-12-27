@@ -164,7 +164,7 @@ namespace SandRibbon.Components
             }
             rootPage.NetworkController.client.UpdateConversationDetails(details);
             GenerateBannedContentScreenshot(authorColor);
-            Commands.DeleteSelectedItems.ExecuteAsync(null);
+            Commands.DeleteSelectedItems.Execute(null);
         }
 
         private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
