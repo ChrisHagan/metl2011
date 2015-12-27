@@ -438,9 +438,6 @@
     <Compile Include="Quizzing\ViewEditAQuiz.xaml.cs">
       <DependentUpon>ViewEditAQuiz.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\Groups\ContentVisibilityHost.xaml.cs">
-      <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\Logic.cs" />
@@ -754,10 +751,6 @@
     <Page Include="Ribbon\Groups\CollaborationControlsHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ribbon\Groups\ContentVisibilityHost.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>

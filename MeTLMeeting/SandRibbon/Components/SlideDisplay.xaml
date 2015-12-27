@@ -15,58 +15,58 @@
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </UserControl.Resources>
 
-    <ScrollViewer Height="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
-        <ListBox
+    <ListBox
              x:Name="slides"             
              OverridesDefaultStyle="False"
              Background="Transparent"
+            ScrollViewer.HorizontalScrollBarVisibility="Visible"
+            ScrollViewer.VerticalScrollBarVisibility="Disabled"
              HorizontalAlignment="Stretch" Width="Auto" Height="Auto">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Border.BorderBrush" Value="{DynamicResource HighlightBrush}"/>
-                            <Setter Property="Border.BorderThickness" Value="5"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Name="Border" VerticalAlignment="Stretch" BorderThickness="0.2" BorderBrush="{DynamicResource AccentColorBrush}">
-                        <Border.Width>
-                            <MultiBinding Converter="{x:Static my:Converters.multiply}">
-                                <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
-                                <Binding Source="{StaticResource inverseThumbAspect}"/>
-                            </MultiBinding>
-                        </Border.Width>
-                        <Border.Focusable>
-                            <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
-                                <Binding Path="index"/>
-                                <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
-                                <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
-                            </MultiBinding>
-                        </Border.Focusable>
-                        <Grid>
-                            <Viewbox IsHitTestVisible="False" HorizontalAlignment="Stretch">
-                                <Image Height="200" Width="320" x:Name="thumbnailImage"  />
-                            </Viewbox>
-                            <Border BorderBrush="{StaticResource PressedBorderBrush}"
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
+                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="true">
+                        <Setter Property="Border.BorderBrush" Value="{DynamicResource HighlightBrush}"/>
+                        <Setter Property="Border.BorderThickness" Value="5"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Border Name="Border" VerticalAlignment="Stretch" BorderThickness="0.2" BorderBrush="{DynamicResource AccentColorBrush}">
+                    <Border.Width>
+                        <MultiBinding Converter="{x:Static my:Converters.multiply}">
+                            <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                            <Binding Source="{StaticResource inverseThumbAspect}"/>
+                        </MultiBinding>
+                    </Border.Width>
+                    <Border.Focusable>
+                        <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
+                            <Binding Path="index"/>
+                            <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
+                            <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
+                        </MultiBinding>
+                    </Border.Focusable>
+                    <Grid>
+                        <Viewbox IsHitTestVisible="False" HorizontalAlignment="Stretch">
+                            <Image Height="200" Width="320" x:Name="thumbnailImage"  />
+                        </Viewbox>
+                        <Border BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Top" 
                                                 BorderThickness="1">
-                                <Label Content="{Binding Converter={StaticResource slideIndexConverter}}"/>
-                            </Border>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </ScrollViewer>
+                            <Label Content="{Binding Converter={StaticResource slideIndexConverter}}"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

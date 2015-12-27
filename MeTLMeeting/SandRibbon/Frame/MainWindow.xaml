@@ -11,9 +11,8 @@
     WindowButtonCommandsOverlayBehavior="HiddenTitleBar"
     AllowDrop="True"                           
     x:Name="ribbonWindow"
-                      ShowIconOnTitleBar="True"
-    Icon="/Resources/android-icon-192x192.png"
-                      >
+    ShowIconOnTitleBar="True"
+    Icon="/Resources/android-icon-192x192.png">
     <Controls:MetroWindow.InputBindings>
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>

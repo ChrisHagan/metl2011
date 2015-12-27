@@ -24,6 +24,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             var setSyncCommand = new DelegateCommand<bool>(SetSync);
             var toggleSyncCommand = new DelegateCommand<object>(toggleSync);
+            var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
@@ -31,15 +32,22 @@ namespace SandRibbon.Components
                     rootPage = DataContext as SlideAwarePage;
                 }
                 ConversationDetails = rootPage.ConversationDetails;
+                Commands.UpdateConversationDetails.RegisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.RegisterCommand(setSyncCommand);
                 Commands.SetSync.Execute(false);
                 Commands.ToggleSync.RegisterCommand(toggleSyncCommand);
             };
             Unloaded += (s, e) =>
             {
+                Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.UnregisterCommand(setSyncCommand);
                 Commands.ToggleSync.UnregisterCommand(toggleSyncCommand);
             };
+        }
+
+        private void updateConversationDetails(ConversationDetails obj)
+        {
+            studentCanPublishCheckbox.IsChecked = obj.Permissions.studentCanWorkPublicly;
         }
 
         private void SetSync(bool sync)
@@ -84,10 +92,25 @@ namespace SandRibbon.Components
                 showPrivate = true
             });
         }
-
-        private void duplicatePage_Click(object sender, RoutedEventArgs e)
+        private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
         {
-            Commands.DuplicateSlide.Execute(new KeyValuePair<ConversationDetails, Slide>(rootPage.ConversationDetails, rootPage.Slide));
+            var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentCanWorkPublicly = studentsCanPublishValue;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+
+        private void setPermissions(object sender, RoutedEventArgs e)
+        {
+            var destination = new PermissionControls();
+            destination.DataContext = rootPage;
+            rootPage.NavigationService.Navigate(destination);
+        }
+
+        private void setFilters(object sender, RoutedEventArgs e)
+        {
+            var destination = new ContentVisibility(rootPage.ConversationDetails,rootPage.Slide,rootPage.NetworkController.credentials,rootPage.IsAuthor);
+            Commands.AddFlyoutCard.Execute(destination);
         }
     }
 }

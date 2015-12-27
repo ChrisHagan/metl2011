@@ -1,35 +1,37 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Data;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
-using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Providers;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using SandRibbon.Components.Utility;
-using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
+using SandRibbon.Frame.Flyouts;
 
 namespace SandRibbon.Components
 {
-    public partial class ContentVisibility
+    public partial class ContentVisibility : FlyoutCard
     {
         public ObservableCollection<ContentVisibilityDefinition> visibilities = new ObservableCollection<ContentVisibilityDefinition>();
-        public SlideAwarePage rootPage { get; protected set; }
-        public ContentVisibility()
+        public ConversationDetails ConversationDetails { get; set; }
+        public Slide Slide { get; set; }
+        public bool IsAuthor { get; set; }
+        public Credentials Credentials { get; private set; }
+
+        public ContentVisibility(ConversationDetails ConversationDetails, Slide Slide, Credentials Credentials, bool IsAuthor)
         {
+            this.ConversationDetails = ConversationDetails;
+            this.Slide = Slide;
+            this.IsAuthor = IsAuthor;
+            this.Credentials = Credentials;
             InitializeComponent();
             contentVisibilitySelectors.ItemsSource = visibilities;
+            Title = "Content filters";
+            ShowCloseButton = true;
             var updateContentVisibilityCommand = new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh());
             Loaded += (s, e) =>
             {
-                if (rootPage == null)
-                    rootPage = DataContext as SlideAwarePage;            
                 Commands.UpdateContentVisibility.RegisterCommand(updateContentVisibilityCommand);
                 Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
                 DataContext = this;
@@ -45,11 +47,10 @@ namespace SandRibbon.Components
 
         protected void potentiallyRefresh()
         {
-            var conversation = rootPage.ConversationDetails;
-            var thisSlide = conversation.Slides.Find(s => s.id == rootPage.Slide.id);
+            var conversation = ConversationDetails;
+            var thisSlide = conversation.Slides.Find(s => s.id == Slide.id);
             Dispatcher.adopt(delegate
             {
-
                 if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
                 {
                     var oldGroupSets = groupSets;
@@ -61,7 +62,7 @@ namespace SandRibbon.Components
                             currentState.Add(vis.GroupId, vis.Subscribed);
                         }
                     }
-                    var newSlide = conversation.Slides.Find(s => s.id == rootPage.Slide.id);
+                    var newSlide = conversation.Slides.Find(s => s.id == Slide.id);
                     if (newSlide != null)
                     {
                         groupSets = newSlide.GroupSets;
@@ -73,9 +74,9 @@ namespace SandRibbon.Components
                             {
                                 var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
                                 var wasSubscribed = currentState[g.id];
-                                if (rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) || g.GroupMembers.Contains(rootPage.NetworkController.credentials.name))
+                                if (IsAuthor || g.GroupMembers.Contains(Credentials.name))
                                 {
-                                    var groupDescription = rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name) ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                    var groupDescription = IsAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
                                     newGroupDefs.Add(
                                         new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (sap, a, p, c, s) => g.GroupMembers.Contains(a))
                                     );

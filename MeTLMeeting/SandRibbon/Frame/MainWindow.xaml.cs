@@ -58,8 +58,8 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             displayDispatcherTimer = createExtendedDesktopTimer();
 
-            Commands.AddFlyoutCard.RegisterCommand(new DelegateCommand<FlyoutCard>(addFlyoutCard));
-            Commands.CloseFlyoutCard.RegisterCommand(new DelegateCommand<FlyoutCard>(closeFlyoutCard));
+            Commands.AddFlyoutCard.RegisterCommand(new DelegateCommand<object>(addFlyoutCard));
+            Commands.CloseFlyoutCard.RegisterCommand(new DelegateCommand<object>(closeFlyoutCard));
             Commands.CreateDummyCard.RegisterCommand(new DelegateCommand<object>(createDummyCard));
             cardControls.ItemsSource = flyoutCards;
             var flyoutReminderTimer = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.ApplicationIdle, this.Dispatcher);

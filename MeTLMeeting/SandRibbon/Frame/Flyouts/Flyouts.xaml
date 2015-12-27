@@ -9,11 +9,14 @@
     <ControlTemplate x:Key="flyoutCardControlTemplate" TargetType="{x:Type flyouts:FlyoutCard}">
         <Border Padding="5" Margin="2" Background="White" BorderBrush="Black" BorderThickness="1">
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel HorizontalAlignment="Stretch">
                     <StackPanel.Resources>
                         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
                     </StackPanel.Resources>
-                    <Button Command="{x:Static api:Commands.CloseFlyoutCard}" CommandParameter="{Binding DataContext}" Background="Red" Foreground="White" Content="X" Visibility="{Binding Path=ShowCloseButton, Converter={StaticResource BooleanToVisibilityConverter} }"/>
+                    <Button Command="{x:Static api:Commands.CloseFlyoutCard}" CommandParameter="{Binding DataContext}" 
+                            Background="Red" Foreground="White" 
+                            HorizontalAlignment="Right" Width="30" Content="X" 
+                            Visibility="{Binding Path=ShowCloseButton, Converter={StaticResource BooleanToVisibilityConverter} }"/>
                     <Label Content="{Binding Title}"/>
                 </StackPanel>
                 <ContentPresenter Content="{Binding Content}"/>

@@ -260,20 +260,7 @@ namespace SandRibbon.Pages.Collaboration
 
             InitializeComponent();            
             var setLayerCommand = new DelegateCommand<string>(SetLayer);
-            var duplicateSlideCommand = new DelegateCommand<object>((obj) =>
-            {
-                duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
-            }, (kvp) =>
-            {
-                try
-                {
-                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
-                }
-                catch
-                {
-                    return false;
-                }
-            });
+            var duplicateSlideCommand = new DelegateCommand<SlideAwarePage>(duplicateSlide, canDuplicateSlide);
             var duplicateConversationCommand = new DelegateCommand<ConversationDetails>(duplicateConversation, userMayAdministerConversation);
             var addPrivacyToggleButtonCommand = new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton);
             var removePrivacyAdornersCommand = new DelegateCommand<string>((s) => RemovePrivacyAdorners(s));
@@ -382,6 +369,11 @@ namespace SandRibbon.Pages.Collaboration
                 NetworkController.client.SendAttendance(ConversationDetails.Jid.ToString(), new Attendance(NetworkController.credentials.name, Slide.id.ToString(), false, -1));                
                 NetworkController.client.SendAttendance("global", new Attendance(NetworkController.credentials.name, ConversationDetails.Jid.ToString(), false, -1));
             };
+        }
+
+        private bool canDuplicateSlide(SlideAwarePage context)
+        {
+            return context.IsAuthor || context.ConversationDetails.Permissions.studentCanAddPage;
         }
 
         private bool canUploadFile(object arg)
@@ -775,12 +767,11 @@ namespace SandRibbon.Pages.Collaboration
         {
             Commands.SetTextColor.Execute((Color)((System.Windows.Controls.Ribbon.RibbonGalleryItem)e.NewValue).Content);
         }
-        private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
-        {
-            var kvp = new KeyValuePair<ConversationDetails, Slide>(ConversationDetails, Slide);
-            if (kvp.Key.UserHasPermission(NetworkController.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
+        private void duplicateSlide(SlideAwarePage context)
+        {   if (context.ConversationDetails.UserHasPermission(context.NetworkController.credentials) && 
+                context.ConversationDetails.Slides.Exists(s => s.id == context.Slide.id))
             {
-                NetworkController.client.DuplicateSlide(kvp.Key, kvp.Value);
+                NetworkController.client.DuplicateSlide(context.ConversationDetails, context.Slide);
             }
         }
         private void duplicateConversation(ConversationDetails _conversationToDuplicate)

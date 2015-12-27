@@ -168,31 +168,9 @@
                 <RowDefinition Height="150" />
             </Grid.RowDefinitions>
 
-            <TabControl Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
-                <TabItem Header="Actions" IsSelected="True">
-                    <ContentPresenter>
-                        <ContentPresenter.Content>
-                            <components:RoleQuickControls />
-                        </ContentPresenter.Content>
-                    </ContentPresenter>
-                </TabItem>
-                <TabItem Header="Permissions">
-                    <ContentPresenter>
-                        <ContentPresenter.Content>
-                            <components:PermissionControls />
-                        </ContentPresenter.Content>
-                    </ContentPresenter>
-                </TabItem>
-                <TabItem Header="Filters">
-                    <ContentPresenter>
-                        <ContentPresenter.Content>
-                            <Grid layout:GridLayout.ItemsPerRow="1">
-                                <components:ContentVisibility/>
-                            </Grid>
-                        </ContentPresenter.Content>
-                    </ContentPresenter>
-                </TabItem>
-            </TabControl>
+            <Grid Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
+                <components:RoleQuickControls />
+            </Grid>
             <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                           ShowsPreview="True" Width="40">
 

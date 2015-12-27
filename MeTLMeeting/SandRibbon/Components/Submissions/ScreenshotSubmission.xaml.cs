@@ -118,7 +118,7 @@ namespace SandRibbon.Components.Submissions
         }
         protected bool canGenerateScreenshot(object _unused)
         {
-            return true;
+            return rootPage.IsAuthor || rootPage.ConversationDetails.Permissions.studentCanSubmitScreenshot;
         }
         protected async void generateScreenshot(object _unused)
         {

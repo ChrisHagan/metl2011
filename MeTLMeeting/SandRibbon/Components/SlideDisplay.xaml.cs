@@ -363,6 +363,7 @@ namespace SandRibbon.Components
         {
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
+            slides.ScrollIntoView(slides.SelectedItem);
         }
         public void EditConversation(object _obj)
         {

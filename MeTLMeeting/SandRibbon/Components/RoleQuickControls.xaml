@@ -11,56 +11,54 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:tabs="clr-namespace:SandRibbon.Tabs"             
              Height="Auto">
+    <UserControl.Resources>
+        <Style x:Key="teacherOnlyButton" TargetType="Button" BasedOn="{StaticResource listedChoice}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsAuthor}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsAuthor}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="teacherOnlyCheckBox" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsAuthor}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsAuthor}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="studentOnlyCheckBox" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsAuthor}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsAuthor}" Value="False">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <Grid layout:GridLayout.ItemsPerRow="1">
+            <TextBlock Text="Students can" Style="{StaticResource subHeading}" Margin="{DynamicResource nearBottom}"/>
+            <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"  
+                      IsEnabled="{Binding Path=IsAuthor}" Margin="{DynamicResource nearBottom}" />
             <TextBlock Style="{DynamicResource subHeading}" Text="You want to" />
-            <Button Content="Add page" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource AddSlideToolTip}"  x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-            <Button x:Name="duplicatePage" Style="{DynamicResource listedChoice}" Content="Duplicate page" ToolTip="{DynamicResource DuplicateSlideToolTip}" Click="duplicatePage_Click" />
+            <Button Content="Add page" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource AddSlideToolTip}"  x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" CommandParameter="{Binding}" />
+            <Button x:Name="duplicatePage" Style="{DynamicResource listedChoice}" Content="Duplicate page" ToolTip="{DynamicResource DuplicateSlideToolTip}" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{Binding}" />
             <Button x:Name="submitSubmission" Style="{DynamicResource listedChoice}" Content="Submit screenshot" Command="{x:Static api:Commands.SubmitScreenshotSubmission}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
-            <CheckBox Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}">
-                <CheckBox.Style>
-                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsAuthor}" Value="True">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsAuthor}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </CheckBox.Style>
-            </CheckBox>
-            <CheckBox x:Name="syncButton" Content="Follow teacher" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}">
-                <CheckBox.Style>
-                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsAuthor}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsAuthor}" Value="False">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </CheckBox.Style>
-            </CheckBox>
-            <Button Content="Reorder pages" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource PageReorderToolTip}" Command="{x:Static api:Commands.EditConversation}" />
-            <Button Content="Duplicate conversation" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{Binding Path=ConversationDetails}"/>
-            <Button Content="Manage bans" Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource listedChoice}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsAuthor}" Value="True">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsAuthor}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+            <Button Style="{StaticResource teacherOnlyButton}" Content="Set conversation permissions" Click="setPermissions" />
+            <Button Style="{DynamicResource listedChoice}" Content="Filter what you see" Click="setFilters" />
+            <CheckBox Style="{StaticResource teacherOnlyCheckBox}" Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
+            <CheckBox Style="{StaticResource studentOnlyCheckBox}"  x:Name="syncButton" Content="Follow teacher" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}" />
+            <Button Style="{StaticResource teacherOnlyButton}" Content="Reorder pages" ToolTip="{DynamicResource PageReorderToolTip}" Command="{x:Static api:Commands.EditConversation}" />
+            <Button Style="{StaticResource teacherOnlyButton}" Content="Duplicate conversation" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{Binding Path=ConversationDetails}"/>
+            <Button Style="{StaticResource teacherOnlyButton}" Content="Manage bans" Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}" />
         </Grid>
     </ScrollViewer>
 </UserControl>

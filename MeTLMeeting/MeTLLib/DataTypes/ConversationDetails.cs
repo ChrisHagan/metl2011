@@ -394,7 +394,6 @@ namespace MeTLLib.DataTypes
                 ))),
                 blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
     public class Permissions
     {
@@ -498,6 +497,10 @@ namespace MeTLLib.DataTypes
         public bool studentsCanCreateQuiz = false;
         private static string CANPUBLISH = "studentCanPublish";
         public bool studentCanWorkPublicly = false;
+        private static string CANADDPAGE = "studentCanAddPage";
+        public bool studentCanAddPage = false;
+        private static string CANSUBMITSCREENSHOT = "studentCanSubmitScreenshot";
+        public bool studentCanSubmitScreenshot = false;
 
         public static Permissions ReadXml(XElement doc)
         {
@@ -517,6 +520,8 @@ namespace MeTLLib.DataTypes
             permission.studentsCanCreateQuiz = Boolean.Parse(doc.Element(CANCREATEQUIZ).ValueOrDefault("false")); ;
             permission.studentCanUploadAttachment = Boolean.Parse(doc.Element(STUDENTCANUPLOAD).ValueOrDefault("false")); ;
             permission.studentCanWorkPublicly = Boolean.Parse(doc.Element(CANPUBLISH).ValueOrDefault("false"));
+            permission.studentCanAddPage = Boolean.Parse(doc.Element(CANADDPAGE).ValueOrDefault("false"));
+            permission.studentCanSubmitScreenshot = Boolean.Parse(doc.Element(CANSUBMITSCREENSHOT).ValueOrDefault("true"));
 
             return permission;
         }
@@ -524,7 +529,7 @@ namespace MeTLLib.DataTypes
         {
             return new XElement(PERMISSIONS_TAG,
                 new XElement(NAVIGATIONLOCKED, NavigationLocked),
-                new XElement(CANPUBLISH,studentCanWorkPublicly),
+                new XElement(CANPUBLISH, studentCanWorkPublicly),
                 new XElement(CANFRIEND, studentCanOpenFriends),
                 new XElement(ALLSYNC, usersAreCompulsorilySynced),
                 new XElement(CANVIEWQUIZ, studentsCanViewQuiz),
@@ -533,7 +538,9 @@ namespace MeTLLib.DataTypes
                 new XElement(CANVIEWQUIZ, studentsCanViewQuiz),
                 new XElement(CANANSWERQUIZ, studentsCanAnswerQuiz),
                 new XElement(CANCREATEQUIZ, studentsCanCreateQuiz),
-                new XElement(STUDENTCANUPLOAD, studentCanUploadAttachment)
+                new XElement(STUDENTCANUPLOAD, studentCanUploadAttachment),
+                new XElement(CANADDPAGE, studentCanAddPage),
+                new XElement(CANSUBMITSCREENSHOT,studentCanSubmitScreenshot)
                 );
         }
     }

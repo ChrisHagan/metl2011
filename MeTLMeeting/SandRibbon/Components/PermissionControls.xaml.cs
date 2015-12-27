@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace SandRibbon.Components
 {
-    public partial class PermissionControls : UserControl
+    public partial class PermissionControls : Page
     {
         public SlideAwarePage rootPage { get; protected set; }
         public ConversationDetails ConversationDetails { get; protected set; }
@@ -42,6 +42,7 @@ namespace SandRibbon.Components
                 studentCanDisplayQuizResults.IsChecked = conv.Permissions.studentsCanDisplayQuizResults;
                 studentCanDisplayQuizzes.IsChecked = conv.Permissions.studentsCanDisplayQuiz;
                 studentCanViewQuizResults.IsChecked = conv.Permissions.studentsCanViewQuizResults;
+                studentCanAddSlides.IsChecked = conv.Permissions.studentCanAddPage;
             });
         }
         private void StudentsCanPublishChecked(object sender, RoutedEventArgs e)
@@ -99,6 +100,14 @@ namespace SandRibbon.Components
             var studentsCanAttachFiles = (bool)(sender as CheckBox).IsChecked;
             var cd = rootPage.ConversationDetails;
             cd.Permissions.studentCanUploadAttachment= studentsCanAttachFiles;
+            rootPage.NetworkController.client.UpdateConversationDetails(cd);
+        }
+
+        private void StudentCanAddSlides(object sender, RoutedEventArgs e)
+        {
+            var studentsCanAddSlides = (bool)(sender as CheckBox).IsChecked;
+            var cd = rootPage.ConversationDetails;
+            cd.Permissions.studentCanAddPage= studentsCanAddSlides;
             rootPage.NetworkController.client.UpdateConversationDetails(cd);
         }
     }
