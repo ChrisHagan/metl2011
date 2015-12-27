@@ -42,9 +42,9 @@
         <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
     </UserControl.InputBindings>
-    <Grid x:Name="canvasStack" Background="White">
-        <Border x:Name="ClipboardFocus" BorderThickness="2" BorderBrush="Red">
-            <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    <Grid x:Name="canvasStack">
+        <Border x:Name="ClipboardFocus">
+            <Utility:MeTLInkCanvas x:Name="Work" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Border>
     </Grid>
 </UserControl>

@@ -221,7 +221,7 @@ namespace SandRibbon
             {
                 Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
         }
@@ -240,7 +240,7 @@ namespace SandRibbon
                 mergedDicts[mergedDicts.IndexOf(currentToolTips)] = newDict;
             }
 
-            catch (Exception e)
+            catch (Exception)
             {
                 //Log(string.Format("Failure in language set: {0}", e.Message));
             }

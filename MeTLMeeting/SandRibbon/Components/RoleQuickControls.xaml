@@ -48,7 +48,7 @@
             <TextBlock Text="Students can" Style="{StaticResource subHeading}" Margin="{DynamicResource nearBottom}"/>
             <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"  
                       IsEnabled="{Binding Path=IsAuthor}" Margin="{DynamicResource nearBottom}" />
-            <TextBlock Style="{DynamicResource subHeading}" Text="You want to" />
+            <TextBlock Style="{DynamicResource subHeading}" Text="You can" />
             <Button Content="Add page" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource AddSlideToolTip}"  x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" CommandParameter="{Binding}" />
             <Button x:Name="duplicatePage" Style="{DynamicResource listedChoice}" Content="Duplicate page" ToolTip="{DynamicResource DuplicateSlideToolTip}" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{Binding}" />
             <Button x:Name="submitSubmission" Style="{DynamicResource listedChoice}" Content="Submit screenshot" Command="{x:Static api:Commands.SubmitScreenshotSubmission}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>

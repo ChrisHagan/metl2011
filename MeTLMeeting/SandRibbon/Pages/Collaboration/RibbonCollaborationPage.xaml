@@ -81,7 +81,6 @@
                     <RibbonRadioButton GroupName="mode" Label="Text" LargeImageSource="/Resources/appbar.text.serif.png" SmallImageSource="/Resources/appbar.text.serif.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Text"/>
                     <RibbonRadioButton GroupName="mode" Label="Image" LargeImageSource="/Resources/appbar.page.image.png" SmallImageSource="/Resources/appbar.page.image.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Image"/>
                     <RibbonRadioButton GroupName="mode" Label="Select" LargeImageSource="/Resources/appbar.image.ants.png" SmallImageSource="/Resources/appbar.image.ants.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="Select"/>
-                    <RibbonRadioButton GroupName="mode" Label="View" LargeImageSource="/Resources/appbar.cursor.hand.png" SmallImageSource="/Resources/appbar.cursor.hand.png" Command="{x:Static api:Commands.SetLayer}" CommandParameter="View" />
                 </RibbonGroup>
                 <RibbonGroup Header="EDIT">
                     <RibbonGroup.GroupSizeDefinitions>
@@ -156,11 +155,11 @@
         </Ribbon>
         <Grid x:Name="columns" VerticalAlignment="Stretch" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="340" />
+                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="250" />
                 <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
                 <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" Width="*"/>
                 <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
-                <ColumnDefinition x:Name="RHSDrawerDefinition" Width="340" />
+                <ColumnDefinition x:Name="RHSDrawerDefinition" Width="0" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -174,7 +173,7 @@
             <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                           ShowsPreview="True" Width="40">
             </GridSplitter>
-            <Grid Grid.Column="2" Grid.Row="0" >
+            <Grid Grid.Column="2" Grid.Row="0" Background="{StaticResource AccentColorBrush2}">
                 <Grid x:Name="adornerGrid">
                     <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
                         <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">

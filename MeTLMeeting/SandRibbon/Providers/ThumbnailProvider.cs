@@ -70,7 +70,7 @@ namespace SandRibbon.Providers
                   else
                       image.Source = emptyImage;
               }
-              catch (Exception e) { 
+              catch (Exception) { 
                       image.Source = emptyImage;
               }
           });

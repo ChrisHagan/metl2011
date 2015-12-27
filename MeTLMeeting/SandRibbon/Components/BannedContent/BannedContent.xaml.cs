@@ -165,7 +165,6 @@ namespace SandRibbon.Components.BannedContent
             var privateUsers = new List<PrivateUser>();
             var alphabetSeq = new EnglishAlphabetSequence();
 
-            var labelIndex = 0;
             foreach (var user in blacklist)
             {
                 var displayName = "";
