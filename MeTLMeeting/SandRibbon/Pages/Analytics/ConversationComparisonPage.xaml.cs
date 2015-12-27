@@ -9,16 +9,31 @@ using System;
 using System.Globalization;
 using SandRibbon.Pages.Collaboration;
 using SandRibbon.Components;
+using MeTLLib.Providers;
 
 namespace SandRibbon.Pages.Analytics
 {
-    public class ParticipantsEnumerator : IValueConverter
+    public class Counter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var participants = value as ILookup<string, LocatedActivity>;
-            return String.Join(",", participants.Select(p => p.Key));
+            var things = value as IEnumerable<string>;
+            return things.Count();
         }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class Lister : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var things = value as IEnumerable<string>;
+            return String.Join(",", things);
+        }
+
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
@@ -34,7 +49,7 @@ namespace SandRibbon.Pages.Analytics
             UserServerState = _userServer;
             UserConversationState = _userConversation;
             InitializeComponent();
-            DataContext = new ConversationComparableCorpus(NetworkController,cs);
+            DataContext = new ConversationComparableCorpus(NetworkController, cs);
         }
         private void SlideSelected(object sender, RoutedEventArgs e)
         {
@@ -84,15 +99,23 @@ namespace SandRibbon.Pages.Analytics
         public static readonly DependencyProperty WatchedSpacesProperty =
             DependencyProperty.Register("WatchedSpaces", typeof(ObservableCollection<PresentationSpace>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<PresentationSpace>()));
 
-
         public NetworkController NetworkController
         {
             get { return (NetworkController)GetValue(NetworkControllerProperty); }
             set { SetValue(NetworkControllerProperty, value); }
         }
-        
         public static readonly DependencyProperty NetworkControllerProperty =
             DependencyProperty.Register("NetworkController", typeof(NetworkController), typeof(ConversationComparableCorpus), new PropertyMetadata(null));
+
+        public ObservableCollection<HistorySummary> Histories
+        {
+            get { return (ObservableCollection<HistorySummary>)GetValue(HistoriesProperty); }
+            set { SetValue(HistoriesProperty, value); }
+        }
+        public static readonly DependencyProperty HistoriesProperty =
+                    DependencyProperty.Register("Histories", typeof(ObservableCollection<HistorySummary>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<HistorySummary>()));
+
+        public ObservableCollection<VmSlide> Locations { get; set; } = new ObservableCollection<VmSlide>();
         
         public ObservableCollection<ReticulatedConversation> Conversations
         {
@@ -101,20 +124,28 @@ namespace SandRibbon.Pages.Analytics
         }
         public static readonly DependencyProperty ConversationsProperty =
             DependencyProperty.Register("Conversations", typeof(ObservableCollection<ReticulatedConversation>), typeof(ConversationComparableCorpus), new PropertyMetadata(new ObservableCollection<ReticulatedConversation>()));
-
-       
-        public ConversationComparableCorpus(NetworkController _networkController, IEnumerable<SearchConversationDetails> cds)
-        {            
+        
+        public ConversationComparableCorpus(NetworkController networkController, IEnumerable<SearchConversationDetails> cds)
+        {
+            this.NetworkController = networkController;
             foreach (var c in cds)
             {
-                var conversation = new ReticulatedConversation{
-                    networkController = _networkController,
-                    PresentationPath = c
-                };
-                NetworkController = _networkController;
-                Conversations.Add(conversation);
-                conversation.CalculateLocations();
-                conversation.AnalyzeLocations();
+                Conversations.Add(new ReticulatedConversation
+                {
+                    PresentationPath = c,
+                    networkController = networkController
+                }.CalculateLocations().AnalyzeLocations());
+                                
+                foreach (var s in c.Slides)
+                {
+                    var description = networkController.client.historyProvider.Describe(s.id);
+                    Locations.Add(new VmSlide {
+                        Slide = s,
+                        Details = c,
+                        HistorySummary = description
+                    });
+                    Histories.Add(description);
+                }
             }
         }
     }

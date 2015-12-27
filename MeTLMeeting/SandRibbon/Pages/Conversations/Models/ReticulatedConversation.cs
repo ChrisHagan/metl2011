@@ -1,5 +1,4 @@
 ﻿using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
 using SandRibbon.Components;
 using SandRibbon.Pages.Collaboration;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using MeTLLib.Providers;
 
 namespace SandRibbon.Pages.Conversations.Models
 {
@@ -37,6 +37,17 @@ namespace SandRibbon.Pages.Conversations.Models
         }
         public static readonly DependencyProperty ParticipationProperty =
             DependencyProperty.Register("Participation", typeof(Participation), typeof(VmSlide), new PropertyMetadata(null));
+
+
+
+        public HistorySummary HistorySummary
+        {
+            get { return (HistorySummary)GetValue(HistorySummaryProperty); }
+            set { SetValue(HistorySummaryProperty, value); }
+        }
+        public static readonly DependencyProperty HistorySummaryProperty =
+            DependencyProperty.Register("HistorySummary", typeof(HistorySummary), typeof(VmSlide), new PropertyMetadata(null));
+        
     }
     public enum ConversationRelevance
     {
@@ -80,7 +91,7 @@ namespace SandRibbon.Pages.Conversations.Models
         public delegate void LocationAnalysis();
         public event LocationAnalysis LocationAnalyzed;
 
-        public void CalculateLocations()
+        public ReticulatedConversation CalculateLocations()
         {
             var locs = new List<VmSlide>();
             PresentationPath?.Slides.ForEach(s => locs.Add(new VmSlide { Details = PresentationPath, Slide = s, Relevance = ConversationRelevance.PRESENTATION_PATH }));
@@ -96,9 +107,10 @@ namespace SandRibbon.Pages.Conversations.Models
             {
                 Locations.Add(loc);
             }
+            return this;
         }
 
-        public void AnalyzeLocations()
+        public ReticulatedConversation AnalyzeLocations()
         {
             foreach (var slide in Locations)
             {
@@ -106,10 +118,11 @@ namespace SandRibbon.Pages.Conversations.Models
                 LocationAnalyzed?.Invoke();
                 Dispatcher.adopt(delegate
                 {
-                    slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.stanzaCount, description.voices,description.attendees);
+                    slide.Aggregate = new LocatedActivity("", slide.Slide.id, description.ActivityCount, description.Actors.Count(), description.Viewers.Count());
                     Participation.Add(slide.Aggregate);
                 });
             }
+            return this;
         }
 
         private void inc(Dictionary<string, int> dict, string author)

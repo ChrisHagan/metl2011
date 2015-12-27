@@ -10,114 +10,106 @@
       Title="ConversationComparisonPage">
     <Page.Resources>
         <components:UrlForSlideConverter x:Key="renderer" />
-        <local:ParticipantsEnumerator x:Key="participantsEnumerator" />
+        <local:Counter x:Key="Counter" />
+        <local:Lister x:Key="Lister" />
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </Page.Resources>
-    <Grid layout:GridLayout.ItemsPerRow="1">
-        <Label Content="What are you hoping to discover?" />
-        <Label Content="What is happening on specific slides right now?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
-        <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding Path=WatchedSpaces}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+    <ScrollViewer>
+        <Grid layout:GridLayout.ItemsPerRow="1">
+            <Label Content="What are you hoping to discover?" Margin="{StaticResource nearBottom}"/>
+            <Label Content="What is happening on specific slides right now?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Path=WatchedSpaces}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Viewbox Height="300">
+                                <ContentControl Content="{Binding}" />
+                            </Viewbox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Path=Conversations}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Viewbox Height="300">
-                            <ContentControl Content="{Binding}" />
-                        </Viewbox>
+                        <ScrollViewer>
+                            <ItemsControl ItemsSource="{Binding Path=Locations}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid layout:GridLayout.ColumnCount="{Binding Path=Locations.Count}" layout:GridLayout.RowCount="1" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ContentPresenter}">
+                                        <Setter Property="Grid.Column" Value="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Click="SlideSelected">
+                                            <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="4">
+                                                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                                            BorderThickness="0 0 0 1">
+                                                    <Border.BorderBrush>
+                                                        <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                                                    </Border.BorderBrush>
+                                                    <Label Content="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
+                                                </Border>
+                                                <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=HistorySummary.StanzaCount}" />
+                                                <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
+                                         Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
+                                         Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
+                                                    <Rectangle Width="200" Height="200" Margin="50">
+                                                        <Rectangle.Fill>
+                                                            <VisualBrush Visual="{StaticResource appbar_chat}" />
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
+                                                </Viewbox>
+                                                <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=HistorySummary.Voices}" />
+                                                <Viewbox Grid.Row="2" Grid.Column="1" 
+                                         Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
+                                         Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
+                                                    <Rectangle Width="200" Height="200" Margin="50">
+                                                        <Rectangle.Fill>
+                                                            <VisualBrush Visual="{StaticResource appbar_people_multiple}" />
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
+                                                </Viewbox>
+                                                <Image Grid.ColumnSpan="2">
+                                                    <Image.Source>
+                                                        <MultiBinding Converter="{StaticResource renderer}">
+                                                            <Binding Path="Slide.id" />
+                                                            <Binding ElementName="root" Path="DataContext.NetworkController" />
+                                                        </MultiBinding>
+                                                    </Image.Source>
+                                                </Image>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </ScrollViewer>
-        <ItemsControl ItemsSource="{Binding Path=Conversations}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ScrollViewer>
-                        <ItemsControl ItemsSource="{Binding Path=Locations}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <Grid layout:GridLayout.ColumnCount="{Binding Path=Locations.Count}" layout:GridLayout.RowCount="1" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemContainerStyle>
-                                <Style TargetType="{x:Type ContentPresenter}">
-                                    <Setter Property="Grid.Column" Value="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Click="SlideSelected" ToolTip="{Binding Path=Participation.Participants, Converter={StaticResource participantsEnumerator}}" >
-                                        <Grid layout:GridLayout.ColumnCount="2" layout:GridLayout.RowCount="4">
-                                            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                            BorderThickness="0 0 0 1">
-                                                <Border.BorderBrush>
-                                                    <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                                                </Border.BorderBrush>
-                                                <Label Content="{Binding Path=Slide, Converter={StaticResource slideIndexConverter}}" HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=Aggregate.activityCount}" />
-                                            <Viewbox Grid.Row="1" Grid.Column="1" Margin="10 0 0 0"
-                                         Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
-                                         Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
-                                                <Rectangle Width="200" Height="200" Margin="50">
-                                                    <Rectangle.Fill>
-                                                        <VisualBrush Visual="{StaticResource appbar_chat}" />
-                                                    </Rectangle.Fill>
-                                                </Rectangle>
-                                            </Viewbox>
-                                            <Label Grid.Row="2" Grid.Column="0" Content="{Binding Path=Aggregate.voices}" />
-                                            <Viewbox Grid.Row="2" Grid.Column="1" 
-                                         Height="{DynamicResource {x:Static SystemParameters.IconHeightKey}}" 
-                                         Width="{DynamicResource {x:Static SystemParameters.IconWidthKey}}">
-                                                <Rectangle Width="200" Height="200" Margin="50">
-                                                    <Rectangle.Fill>
-                                                        <VisualBrush Visual="{StaticResource appbar_people_multiple}" />
-                                                    </Rectangle.Fill>
-                                                </Rectangle>
-                                            </Viewbox>
-                                            <Image Grid.ColumnSpan="2">
-                                                <Image.Source>
-                                                    <MultiBinding Converter="{StaticResource renderer}">
-                                                        <Binding Path="Slide.id" />
-                                                        <Binding ElementName="root" Path="DataContext.NetworkController" />
-                                                    </MultiBinding>
-                                                </Image.Source>
-                                            </Image>
-                                        </Grid>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" />
-        <ScrollViewer>
-            <DataGrid ItemsSource="{Binding Path=Conversations}" Margin="{StaticResource clearTop}" 
-                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+            <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
+            <DataGrid ItemsSource="{Binding Path=Histories}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <DataGrid ItemsSource="{Binding Path=Participation}" 
-                                          AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Slide" Binding="{Binding Path=slide}" />
-                                        <DataGridTextColumn Header="Index" Binding="{Binding Path=index}" />
-                                        <DataGridTextColumn Header="Username" Binding="{Binding Path=name}" />
-                                        <DataGridTextColumn Header="Activity" Binding="{Binding Path=activityCount}" />
-                                        <DataGridTextColumn Header="Attendees" Binding="{Binding Path=attendees}" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Slide"  Binding="{Binding Path=Id}" />
+                    <DataGridTextColumn Header="Activity count" Binding="{Binding Path=ActivityCount}" />
+                    <DataGridTextColumn Header="Attendee count" Binding="{Binding Path=Viewers, Converter={StaticResource Counter}}" />
+                    <DataGridTextColumn Header="Participant count" Binding="{Binding Path=Actors, Converter={StaticResource Counter}}" />
+                    <DataGridTextColumn Header="Spectator count" Binding="{Binding Path=Spectators, Converter={StaticResource Counter}}" />
+                    <DataGridTextColumn Header="Spectators" Binding="{Binding Path=Spectators, Converter={StaticResource Lister}}" />
+                    <DataGridTextColumn Header="Participants" Binding="{Binding Path=Actors, Converter={StaticResource Lister}}" />
+                    <DataGridTextColumn Header="Attendees" Binding="{Binding Path=Viewers, Converter={StaticResource Lister}}" />
                 </DataGrid.Columns>
             </DataGrid>
-        </ScrollViewer>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </pages:ServerAwarePage>

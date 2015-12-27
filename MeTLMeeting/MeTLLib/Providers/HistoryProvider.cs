@@ -12,17 +12,23 @@ using System.Xml.Linq;
 
 namespace MeTLLib.Providers
 {
-    public class HistorySummary {
-        public int stanzaCount { get; set; }
-        public int voices { get; set; }
-        public int attendees { get; set; }
+    public class HistorySummary{
+        public int ActivityCount { get; set; }
+        public string Id { get; set; }
+        public List<String> Viewers { get; set; } = new List<String>();
+        public List<String> Actors { get; set; } = new List<String>();
+        public List<String> Spectators { get; set; } = new List<String>();
+
         public static HistorySummary parse(string xml) {
             var x = XElement.Parse(xml);
-            return new HistorySummary {
-                stanzaCount = Int32.Parse(x.Descendants("stanzaCount").First().Value),
-                voices = x.Descendants("publisher").Count(),
-                attendees = x.Descendants("occupant").Count()
+            var summary = new HistorySummary {
+                Id = x.Descendants("jid").First().Value,
+                ActivityCount = Int32.Parse(x.Descendants("stanzaCount").First().Value),
+                Viewers = x.Descendants("occupant").SelectMany(o => o.Descendants("name").Select(d => d.Value)).ToList(),
+                Actors = x.Descendants("publisher").SelectMany(o => o.Descendants("name").Select(d => d.Value)).ToList()
             };
+            summary.Spectators = summary.Viewers.Except(summary.Actors).ToList();
+            return summary;
         }        
     }
     public interface IHistoryProvider
