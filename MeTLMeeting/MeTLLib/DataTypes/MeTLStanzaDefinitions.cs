@@ -2100,14 +2100,18 @@ namespace MeTLLib.DataTypes
                     Source = BackupSource,
                     Stretch = Stretch.Fill
                 };
-                image.Dispatcher.Invoke((Action)delegate
-                    {
-                        var source = new BitmapImage();                        
-                        source.BeginInit();
-                        source.StreamSource = new MemoryStream(loadImageData());
-                        source.EndInit();
-                        image.Source = source;
-                    });
+                var bytes = loadImageData();
+                if (bytes.Length != 0)
+                {
+                    image.Dispatcher.Invoke((Action)delegate
+                        {
+                            var source = new BitmapImage();
+                            source.BeginInit();
+                            source.StreamSource = new MemoryStream(bytes);
+                            source.EndInit();
+                            image.Source = source;
+                        });
+                }
                 image.tag(BuildImageTagFromXml(tag));
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);

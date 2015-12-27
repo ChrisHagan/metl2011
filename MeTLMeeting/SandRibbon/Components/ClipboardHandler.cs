@@ -68,7 +68,6 @@ namespace SandRibbon.Components
         private IEnumerable<byte[]> _imagesAsBytes;
         public IEnumerable<String> _InkAsString;
         public static string Type = "MeTLClipboardData";
-        public SlideAwarePage rootPage;
         public int slide;
         public string author;
         public MeTLClipboardData(int slide, string author, IEnumerable<string> text, IEnumerable<BitmapSource> images, List<Stroke> ink)
@@ -146,7 +145,7 @@ namespace SandRibbon.Components
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
-                  var identity = Globals.generateId(rootPage.NetworkController.credentials.name,Guid.NewGuid().ToString());
+                  var identity = Globals.generateId(author,Guid.NewGuid().ToString());
                   stroke.tag(new StrokeTag(XmlStroke.Element(metl_ns + authorTag).Value, (Privacy)Enum.Parse(typeof(Privacy), XmlStroke.Element(metl_ns + privacyTag).Value, true), identity, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns + highlighterTag).Value), long.Parse(XmlStroke.Element(metl_ns + timestampTag).Value)));
                   strokes.Add(stroke);
               }
@@ -163,7 +162,7 @@ namespace SandRibbon.Components
                   newStroke.tag(new StrokeTag(newStroke.tag().author, newStroke.tag().privacy, newStroke.tag().id, newStroke.sum().checksum, newStroke.tag().isHighlighter,newStroke.tag().timestamp));
                   //this code will translate all strokes to a 0,0 starting point
                   //newStroke.StylusPoints = new StylusPointCollection(stroke.StylusPoints.Select(p => new StylusPoint((p.X - xShift), (p.Y - yShift), p.PressureFactor)));
-                  data.Add(new MeTLStanzas.Ink(new TargettedStroke(rootPage.Slide.id, newStroke.tag().author, "PresentationSpace", newStroke.tag().privacy, newStroke.tag().id, newStroke.tag().timestamp, newStroke, newStroke.tag().startingSum)).ToString()); 
+                  data.Add(new MeTLStanzas.Ink(new TargettedStroke(slide, newStroke.tag().author, "PresentationSpace", newStroke.tag().privacy, newStroke.tag().id, newStroke.tag().timestamp, newStroke, newStroke.tag().startingSum)).ToString()); 
               }
               _InkAsString = data;
           }

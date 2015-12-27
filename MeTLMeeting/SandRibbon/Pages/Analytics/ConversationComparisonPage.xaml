@@ -14,9 +14,10 @@
         <local:Lister x:Key="Lister" />
         <components:SlideIndexConverter x:Key="slideIndexConverter" />
     </Page.Resources>
-    <ScrollViewer>
+    <ScrollViewer Margin="{StaticResource insetTopLeft}">
         <Grid layout:GridLayout.ItemsPerRow="1">
             <Label Content="What are you hoping to discover?" Margin="{StaticResource nearBottom}"/>
+            <!--
             <Label Content="What is happening on specific slides right now?" Style="{StaticResource medium}" Margin="{StaticResource clearBottom}"/>
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding Path=WatchedSpaces}">
@@ -97,14 +98,16 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" Margin="{StaticResource clearTop}"/>
+            -->
+            <Label Content="What has happened in these conversations?" Style="{StaticResource medium}" />
             <DataGrid ItemsSource="{Binding Path=Histories}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
+                    <!--If we use the Counter converter, the column is not sortable on value-->
                     <DataGridTextColumn Header="Slide"  Binding="{Binding Path=Id}" />
                     <DataGridTextColumn Header="Activity count" Binding="{Binding Path=ActivityCount}" />
-                    <DataGridTextColumn Header="Attendee count" Binding="{Binding Path=Viewers, Converter={StaticResource Counter}}" />
-                    <DataGridTextColumn Header="Participant count" Binding="{Binding Path=Actors, Converter={StaticResource Counter}}" />
-                    <DataGridTextColumn Header="Spectator count" Binding="{Binding Path=Spectators, Converter={StaticResource Counter}}" />
+                    <DataGridTextColumn Header="Attendee count" Binding="{Binding Path=ViewersCount}" />
+                    <DataGridTextColumn Header="Participant count" Binding="{Binding Path=ActorsCount}" />
+                    <DataGridTextColumn Header="Spectator count" Binding="{Binding Path=SpectatorsCount}" />
                     <DataGridTextColumn Header="Spectators" Binding="{Binding Path=Spectators, Converter={StaticResource Lister}}" />
                     <DataGridTextColumn Header="Participants" Binding="{Binding Path=Actors, Converter={StaticResource Lister}}" />
                     <DataGridTextColumn Header="Attendees" Binding="{Binding Path=Viewers, Converter={StaticResource Lister}}" />

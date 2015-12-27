@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Composite.Presentation.Commands;
 
@@ -27,7 +28,6 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
-
             updateScrollBarButtonDistances();
             VScroll.SmallChange = 10;
             HScroll.SmallChange = 10;

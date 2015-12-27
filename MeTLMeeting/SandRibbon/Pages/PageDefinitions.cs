@@ -58,7 +58,7 @@ namespace SandRibbon.Pages
         public static readonly DependencyProperty QuizDataProperty =
             DependencyProperty.Register("QuizData", typeof(QuizData), typeof(ConversationState), new PropertyMetadata(new QuizData()));
 
-        
+
     }
     public class UserConversationState : DependencyObject
     {
@@ -128,8 +128,11 @@ namespace SandRibbon.Pages
     }
     public class GlobalAwarePage : Page
     {
-        public GlobalAwarePage() { }
         public UserGlobalState UserGlobalState { get; set; }
+        public GlobalAwarePage() : base() {
+            if (!Resources.Contains(SystemParameters.VerticalScrollBarWidth)) Resources.Add(SystemParameters.VerticalScrollBarWidth, 50);
+            if (!Resources.Contains(SystemParameters.HorizontalScrollBarHeight)) Resources.Add(SystemParameters.HorizontalScrollBarHeight, 50);
+        }
     }
     public class ServerAwarePage : GlobalAwarePage
     {
@@ -143,6 +146,13 @@ namespace SandRibbon.Pages
         public ConversationDetails ConversationDetails { get; set; }
         public UserConversationState UserConversationState { get; set; }
         public ConversationState ConversationState { get; set; }
+        public bool IsAuthor
+        {
+            get
+            {
+                return ConversationDetails.isAuthor(NetworkController.credentials.name);
+            }
+        }
     }
     public class SlideAwarePage : ConversationAwarePage
     {

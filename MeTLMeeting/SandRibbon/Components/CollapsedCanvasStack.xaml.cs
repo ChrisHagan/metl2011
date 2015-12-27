@@ -355,7 +355,9 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
+                contentBuffer.logicalY += shift;
                 Height += shift;
+                contentBuffer.AdjustContent();
             });
         }
 
@@ -363,9 +365,8 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-
-                Height += shift;
                 contentBuffer.logicalY -= shift;
+                Height += shift;
                 contentBuffer.AdjustContent();
             });
         }

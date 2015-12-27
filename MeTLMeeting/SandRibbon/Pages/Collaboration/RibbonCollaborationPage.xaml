@@ -156,25 +156,23 @@
         </Ribbon>
         <Grid x:Name="columns" VerticalAlignment="Stretch" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="*" MaxWidth="300"/>
+                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="340" />
                 <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
-                <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
+                <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" Width="*"/>
                 <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
                 <ColumnDefinition x:Name="RHSDrawerDefinition" Width="340" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="40" />
-                <RowDefinition Height="200" />
+                <RowDefinition Height="150" />
             </Grid.RowDefinitions>
 
             <TabControl Grid.Column="0" Grid.Row="0" x:Name="leftDrawer" Visibility="Visible">
-                <TabItem Header="Filters">
+                <TabItem Header="Actions" IsSelected="True">
                     <ContentPresenter>
                         <ContentPresenter.Content>
-                            <Grid layout:GridLayout.ItemsPerRow="1">
-                                <components:ContentVisibility/>
-                            </Grid>
+                            <components:RoleQuickControls />
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
@@ -185,10 +183,12 @@
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
-                <TabItem Header="Interactions" IsSelected="True">
+                <TabItem Header="Filters">
                     <ContentPresenter>
                         <ContentPresenter.Content>
-                            <components:RoleQuickControls />
+                            <Grid layout:GridLayout.ItemsPerRow="1">
+                                <components:ContentVisibility/>
+                            </Grid>
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
@@ -223,8 +223,8 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                             <Grid>
-                                <Button Content="+" VerticalAlignment="Top" Height="Auto" Command="{x:Static api:Commands.ExtendCanvasUp}"/>
-                                <Button Content="+" VerticalAlignment="Bottom" Height="Auto" Command="{x:Static api:Commands.ExtendCanvasDown}"/>
+                                <Button FontSize="30" Content="+" VerticalAlignment="Top" Height="Auto" Command="{x:Static api:Commands.ExtendCanvasUp}"/>
+                                <Button FontSize="30" Content="+" VerticalAlignment="Bottom" Height="Auto" Command="{x:Static api:Commands.ExtendCanvasDown}"/>
                             </Grid>
                         </Border>
                     </ControlTemplate>

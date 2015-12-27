@@ -16,9 +16,6 @@
     </UserControl.Resources>
 
     <ScrollViewer Height="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
-        <ScrollViewer.Resources>
-            <core:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">40</core:Double>
-        </ScrollViewer.Resources>
         <ListBox
              x:Name="slides"             
              OverridesDefaultStyle="False"

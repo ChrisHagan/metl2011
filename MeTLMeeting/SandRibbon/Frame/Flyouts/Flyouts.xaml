@@ -7,7 +7,7 @@
                     xmlns:viewModel="clr-namespace:SandRibbon.Pages.Conversations.Models">
                     
     <ControlTemplate x:Key="flyoutCardControlTemplate" TargetType="{x:Type flyouts:FlyoutCard}">
-        <Border Padding="5" Margin="2" Background="Pink" BorderBrush="Black" BorderThickness="1">
+        <Border Padding="5" Margin="2" Background="White" BorderBrush="Black" BorderThickness="1">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <StackPanel.Resources>

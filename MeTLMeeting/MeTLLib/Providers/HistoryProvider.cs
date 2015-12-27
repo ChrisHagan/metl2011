@@ -18,6 +18,9 @@ namespace MeTLLib.Providers
         public List<String> Viewers { get; set; } = new List<String>();
         public List<String> Actors { get; set; } = new List<String>();
         public List<String> Spectators { get; set; } = new List<String>();
+        public int ViewersCount { get { return Viewers.Count(); } }
+        public int ActorsCount { get { return Actors.Count(); } }
+        public int SpectatorsCount { get { return Spectators.Count(); } }
 
         public static HistorySummary parse(string xml) {
             var x = XElement.Parse(xml);
