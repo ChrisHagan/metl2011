@@ -142,7 +142,6 @@ namespace SandRibbon.Tabs
                 {
                     qd.activeQuizzes.Add(reindexQuiz);
                 }
-                quizzes.ScrollToEnd();
             });
         }
         private void createQuiz(object sender)

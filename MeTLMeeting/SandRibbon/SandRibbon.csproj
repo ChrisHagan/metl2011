@@ -142,10 +142,6 @@
       <HintPath>..\packages\DeltaCompressionDotNet.1.0.0\lib\net45\DeltaCompressionDotNet.PatchApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Divelements.SandRibbon, Version=2.0.1.2, Culture=neutral, PublicKeyToken=75b7ec17dd7c14c3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Divelements.SandRibbon.dll</HintPath>
-    </Reference>
     <Reference Include="HelixToolkit, Version=2015.1.629.0, Culture=neutral, PublicKeyToken=52aa3500039caf0d, processorArchitecture=MSIL">
       <HintPath>..\packages\HelixToolkit.2015.1.629\lib\portable-net4+sl4+wp71+win8\HelixToolkit.dll</HintPath>
       <Private>True</Private>
@@ -441,6 +437,9 @@
     <Compile Include="Quizzing\ViewEditAQuiz.xaml.cs">
       <DependentUpon>ViewEditAQuiz.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Ribbon\Submissions.xaml.cs">
+      <DependentUpon>Submissions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\LocalFileProvider.cs" />
     <Compile Include="Utils\ConversationDescriptor.cs" />
     <Compile Include="Utils\Logic.cs" />
@@ -488,12 +487,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Frame\ImportProgress.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Frame\ToolBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -739,47 +732,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\ClassManagement.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Ribbon\Attachments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\Groups\CollaborationControlsHost.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Ribbon\Groups\PrivacyToolsHost.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Submissions.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Ribbon\Groups\ZoomControlsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Groups\PenColors.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\ConversationConfigurationDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -825,30 +786,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\SimpleImpl\FeatureListing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\SimpleImpl\SimpleFriendsListing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\SimpleImpl\SimpleModeSwitcher.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\SimpleImpl\SimplePenTools.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\SyncDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -879,31 +816,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Ribbon\Groups\EditingModes.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Groups\Friends.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Ribbon\Groups\MiniMap.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Groups\Notes.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Ribbon\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -984,6 +897,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Ribbon\Submissions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Utils\UndoHistoryVisualiserWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -992,9 +909,6 @@
   <ItemGroup>
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Frame\ToolBar.xaml.cs">
-      <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Conversations\ConversationSearchPage.xaml.cs">
       <DependentUpon>ConversationSearchPage.xaml</DependentUpon>
@@ -1026,7 +940,6 @@
     <Compile Include="DispatcherExtensions.cs" />
     <Compile Include="Providers\Colors.cs" />
     <Compile Include="Providers\ColourInformationProvider.cs" />
-    <Compile Include="Providers\StoredUIState.cs" />
     <Compile Include="Providers\ThumbnailProvider.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AssessAQuiz.xaml.cs">
@@ -1051,27 +964,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\ClassManagement.xaml.cs">
-      <DependentUpon>ClassManagement.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Ribbon\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\Groups\CollaborationControlsHost.xaml.cs">
-      <DependentUpon>CollaborationControlsHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\PrivacyToolsHost.xaml.cs">
-      <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Submissions.xaml.cs">
-      <DependentUpon>Submissions.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Ribbon\Groups\ZoomControlsHost.xaml.cs">
       <DependentUpon>ZoomControlsHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\PenColors.xaml.cs" />
-    <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
-      <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PresentationSpace.xaml.cs">
       <DependentUpon>PresentationSpace.xaml</DependentUpon>
@@ -1088,18 +985,6 @@
     <Compile Include="Components\ScrollBar.xaml.cs">
       <DependentUpon>ScrollBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SimpleImpl\FeatureListing.xaml.cs">
-      <DependentUpon>FeatureListing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleFriendsListing.xaml.cs">
-      <DependentUpon>SimpleFriendsListing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleModeSwitcher.xaml.cs">
-      <DependentUpon>SimpleModeSwitcher.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
-      <DependentUpon>SimplePenTools.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\SyncDisplay.xaml.cs">
       <DependentUpon>SyncDisplay.xaml</DependentUpon>
     </Compile>
@@ -1114,20 +999,8 @@
     <Compile Include="Ribbon\Analytics.xaml.cs">
       <DependentUpon>Analytics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Ribbon\Groups\EditingModes.xaml.cs">
-      <DependentUpon>EditingModes.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\Friends.xaml.cs">
-      <DependentUpon>Friends.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Ribbon\Groups\MiniMap.xaml.cs">
       <DependentUpon>MiniMap.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Groups\Notes.xaml.cs">
-      <DependentUpon>Notes.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Ribbon\Home.xaml.cs">
-      <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ribbon\Plugins.xaml.cs">
       <DependentUpon>Plugins.xaml</DependentUpon>
@@ -1166,7 +1039,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Utils\UndoHistory.cs" />
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -2756,9 +2628,7 @@
   <ItemGroup>
     <Resource Include="Resources\splashScreen.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\Sandpit\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(TPath)" />
   <Target Name="AfterBuild">

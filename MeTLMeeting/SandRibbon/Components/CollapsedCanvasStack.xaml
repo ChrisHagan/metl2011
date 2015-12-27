@@ -2,7 +2,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:my="clr-namespace:SandRibbon"
-    xmlns:awesomium="http://schemas.awesomium.com/winfx"
     xmlns:providers="clr-namespace:SandRibbon.Providers"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" xmlns:Components="clr-namespace:SandRibbon.Components"
     xmlns:Utility="clr-namespace:SandRibbon.Components.Utility">
@@ -43,12 +42,9 @@
         <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
     </UserControl.InputBindings>
-    <Grid MinHeight="540" MinWidth="720" x:Name="canvasStack" Background="White">
-        <Border x:Name="ClipboardFocus" BorderThickness="2" BorderBrush="Transparent">
-            <Grid>
-                <awesomium:WebControl x:Name="html" Background="White" Visibility="Collapsed" IsHitTestVisible="False" />
-                <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" />
-            </Grid>
+    <Grid x:Name="canvasStack" Background="White">
+        <Border x:Name="ClipboardFocus" BorderThickness="2" BorderBrush="Red">
+            <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Border>
     </Grid>
 </UserControl>

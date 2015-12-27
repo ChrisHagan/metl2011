@@ -1,18 +1,13 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 using Xceed.Wpf.Toolkit;
-using System.Windows.Automation.Peers;
 using MeTLLib.DataTypes;
-using SandRibbon.Providers;
 using SandRibbonObjects;
 using SandRibbon.Pages.Collaboration.Layout;
 using System.Windows.Controls;
@@ -232,28 +227,6 @@ namespace SandRibbon.Components.Utility
         private void HandlePaste(ExecutedRoutedEventArgs args)
         {
             Commands.ClipboardManager.Execute(ClipboardAction.Paste);
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new MeTLInkCanvasAutomationPeer(this);
-        }
-    }
-    
-    public class MeTLInkCanvasAutomationPeer : InkCanvasAutomationPeer
-    {
-        public MeTLInkCanvasAutomationPeer(MeTLInkCanvas owner) : base(owner)
-        {
-        }
-
-        protected override string GetClassNameCore()
-        {
-            return "MeTLInkCanvas";
-        }
-
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        {
-            return base.GetAutomationControlTypeCore();
         }
     }
 }

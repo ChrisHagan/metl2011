@@ -11,7 +11,7 @@
       xmlns:layout="clr-namespace:SandRibbon.Layout"
       xmlns:collab="clr-namespace:SandRibbon.Pages.Collaboration.Layout"
       xmlns:tabs="clr-namespace:SandRibbon.Tabs"
-                          xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
+      xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"   
       Title="Collaboration">
     <Page.Resources>
         <sys:Double x:Key="RibbonFontSize">14</sys:Double>
@@ -173,26 +173,20 @@
             </Grid>
             <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Grid.Row="0" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                           ShowsPreview="True" Width="40">
-
             </GridSplitter>
             <Grid Grid.Column="2" Grid.Row="0" >
-                <Grid x:Name="adornerGrid" Margin="0,0,27,27">
-                    <Canvas x:Name="syncPageOverlay"/>
+                <Grid x:Name="adornerGrid">
                     <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
                         <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                             <Grid>
-                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                                <components:PresentationSpace Height="Auto" Width="Auto" x:Name="canvas"/>
                                 <collab:KunzweilerLens x:Name="lens" Width="{Binding ElementName=canvas, Path=ActualWidth}" Height="{Binding ElementName=canvas, Path=ActualHeight}" />
                             </Grid>
                         </ScrollViewer>
                     </Viewbox>
                     <Grid x:Name="dynamicContent" />
-                    <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
                 </Grid>
                 <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
-                <AdornerDecorator>
-                    <Canvas x:Name="privacyTools"/>
-                </AdornerDecorator>
             </Grid>
             <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40">
                 <GridSplitter.Template>

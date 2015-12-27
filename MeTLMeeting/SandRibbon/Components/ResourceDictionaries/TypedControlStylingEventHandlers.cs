@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Shapes;
 using MeTLLib.DataTypes;
-using Divelements.SandRibbon;
 
 namespace SandRibbon.Components.ResourceDictionaries
 {
@@ -213,14 +212,7 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty CollapseToSmallProperty =
             DependencyProperty.Register("CollapseToSmall", typeof(ButtonSize), typeof(CheckBox), new UIPropertyMetadata(ButtonSize.WhenGroupIsSmall));
 
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(CheckBox), new UIPropertyMetadata(RibbonGroupVariant.Large));
-
+  
         public InternalButtonSize InternalButtonSize
         {
             get { return (InternalButtonSize)GetValue(InternalButtonSizeProperty); }
@@ -291,14 +283,7 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty InternalButtonSizeProperty =
             DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(ToggleButton), new UIPropertyMetadata(InternalButtonSize.Large));
 
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(ToggleButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
-    }
+}
     public class RadioButton : System.Windows.Controls.RadioButton
     {
         public string Text
@@ -340,14 +325,6 @@ namespace SandRibbon.Components.ResourceDictionaries
         }
         public static readonly DependencyProperty InternalButtonSizeProperty =
             DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(RadioButton), new UIPropertyMetadata(InternalButtonSize.Large));
-
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(RadioButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
 
         public RadioButton()
             : base()
@@ -404,14 +381,7 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty InternalButtonSizeProperty =
             DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(Button), new UIPropertyMetadata(InternalButtonSize.Large));
 
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(Button), new UIPropertyMetadata(RibbonGroupVariant.Large));
-
+   
     }
     public class DrawerContent
     {
@@ -498,54 +468,7 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty InternalButtonSizeProperty =
             DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(DoubleButton), new UIPropertyMetadata(InternalButtonSize.Large));
 
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(DoubleButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
-
+    
     }
-    public class SlideViewingListBox : System.Windows.Controls.ListBox
-    {
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (Divelements.SandRibbon.RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(SlideViewingListBox), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
-
-    }
-    public class PenColorsListBox : System.Windows.Controls.ListBox
-    {
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (Divelements.SandRibbon.RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(PenColorsListBox), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
-
-    }
-    public class QuizContainer : System.Windows.Controls.ItemsControl
-    {
-        public RibbonGroupVariant ParentActiveVariant
-        {
-            get { return (Divelements.SandRibbon.RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
-            set { SetValue(ParentActiveVariantProperty, value); }
-        }
-        public static readonly DependencyProperty ParentActiveVariantProperty =
-            DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(QuizContainer), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
-        public void ScrollToEnd()
-        {
-            if (Items != null && Items.Count > 0)
-            {
-                var container = ItemContainerGenerator.ContainerFromItem(Items[Items.Count - 1]);
-                if (container != null)
-                    ((FrameworkElement)container).BringIntoView();
-            }
-        }
-    }
+ 
 }

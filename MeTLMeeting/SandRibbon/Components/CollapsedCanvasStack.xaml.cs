@@ -526,7 +526,6 @@ namespace SandRibbon.Components
         private void SetLayer(string newLayer)
         {
             if (me.ToLower() == GlobalConstants.PROJECTOR) return;
-            html.IsHitTestVisible = false;
             Work.IsHitTestVisible = true;
             Dispatcher.adopt(delegate
             {

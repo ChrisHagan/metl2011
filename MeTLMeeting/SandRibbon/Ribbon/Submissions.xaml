@@ -1,12 +1,11 @@
-﻿<RibbonTab KeyTip="S" Header="SUBMISSIONS"
-    x:Class="SandRibbon.Tabs.Submissions"
-    x:Name="SubmissionsTab"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
-    xmlns:core="clr-namespace:System;assembly=mscorlib"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon" >
-    <RibbonGroup Header="Submission" LargeImageSource="\Resources\Submissions.png">
-        <submissions:ScreenshotSubmission/>
+﻿<RibbonTab x:Class="SandRibbon.Tabs.Submissions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
+             xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+             Header="SUBMISSIONS">
+    <RibbonGroup Header="Screenshots">
+        <submissions:ScreenshotSubmission />
     </RibbonGroup>
 </RibbonTab>

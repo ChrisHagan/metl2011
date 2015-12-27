@@ -19,9 +19,9 @@
                       ToolTip="{DynamicResource ViewQuizResultsToolTip}" />
     </RibbonGroup>
     <RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" LargeImageSource="\Resources\Results.png">
-        <dict:QuizContainer x:Name="quizzes">
-            <dict:QuizContainer.Style>
-                <Style TargetType="{x:Type dict:QuizContainer}">
+        <ItemsControl x:Name="quizzes">
+            <ItemsControl.Style>
+                <Style TargetType="{x:Type ItemsControl}">
                     <Style.Setters>
                         <Setter Property="Template">
                             <Setter.Value>
@@ -77,12 +77,12 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </dict:QuizContainer.Style>
-            <dict:QuizContainer.ItemsPanel>
+            </ItemsControl.Style>
+            <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                 </ItemsPanelTemplate>
-            </dict:QuizContainer.ItemsPanel>
-        </dict:QuizContainer>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
     </RibbonGroup>
 </RibbonTab>

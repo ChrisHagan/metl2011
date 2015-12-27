@@ -1,29 +1,20 @@
 ﻿using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using Microsoft.Windows.Controls.Ribbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Utility;
 using SandRibbon.Pages.Analytics;
-using SandRibbon.Pages.Collaboration.Layout;
 using SandRibbon.Pages.Conversations;
-using SandRibbon.Providers;
 using SandRibbon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SandRibbon.Pages.Collaboration
 {
@@ -665,19 +656,16 @@ namespace SandRibbon.Pages.Collaboration
         {
             Dispatcher.adopt(delegate
             {
-
                 scroll.Width = viewbox.Width;
                 scroll.Height = viewbox.Height;
                 scroll.UpdateLayout();
                 scroll.ScrollToHorizontalOffset(viewbox.X);
                 scroll.ScrollToVerticalOffset(viewbox.Y);
-                //Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
             });
         }
         protected bool canFitToView(object _unused)
         {
             return scroll != null && !(double.IsNaN(scroll.Height) && double.IsNaN(scroll.Width) && double.IsNaN(canvas.Height) && double.IsNaN(canvas.Width));
-            //return scroll != null && (scroll.Height != double.NaN || scroll.Width != double.NaN || canvas.Height != double.NaN || canvas.Width != double.NaN);
         }
         protected void fitToView(object _unused)
         {
@@ -711,6 +699,7 @@ namespace SandRibbon.Pages.Collaboration
             {
                 var currentSlide = Slide;
                 if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
+                
                 scroll.Width = currentSlide.defaultWidth;
                 scroll.Height = currentSlide.defaultHeight;
                 if (canvas != null && canvas.stack != null && !Double.IsNaN(canvas.stack.offsetX) && !Double.IsNaN(canvas.stack.offsetY))

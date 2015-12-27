@@ -154,39 +154,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-
-    <Style TargetType="{x:Type SandRibbonInterop:RenderedLiveWindow}">
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type SandRibbonInterop:RenderedLiveWindow}">
-                    <Border CornerRadius="4" Padding="4" 
-                            BorderBrush="DarkGray" BorderThickness="1"
-                            Background="{StaticResource BackgroundBlueGradient}">
-                        <Rectangle Height="{TemplateBinding Height}" 
-                            Width="{TemplateBinding Width}" 
-                            Fill="{TemplateBinding RectFill}"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="{x:Type SandRibbonInterop:AutoShape}">
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type SandRibbonInterop:AutoShape}">
-                    <Grid>
-                        <Path Stretch="Fill" StrokeThickness="{TemplateBinding StrokeThickness}" Data="{TemplateBinding PathData}" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding Foreground}"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="{x:Type Button}" TargetType="Button">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
@@ -440,43 +407,7 @@
                             <Setter TargetName="icon" Property="Opacity" Value="0.2"/>
                             <Setter TargetName="text" Property="Opacity" Value="0.2"/>
                         </Trigger>
-                        <Trigger Property="dict:ToggleButton.ParentActiveVariant" Value="Large">
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Large"/>
-                        </Trigger>
-                        <Trigger Property="dict:ToggleButton.ParentActiveVariant" Value="Medium">
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Medium"/>
-                        </Trigger>
-                        <Trigger Property="dict:ToggleButton.ParentActiveVariant" Value="Small">
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Small"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:ToggleButton.CollapseToMedium" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant"  Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:ToggleButton.CollapseToSmall" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant" Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:ToggleButton.CollapseToMedium" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:ToggleButton.CollapseToSmall" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:ToggleButton.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
+                     
                         <Trigger Property="dict:ToggleButton.InternalButtonSize" Value="Large">
                             <Setter TargetName="icon" Property="Width" Value="40"/>
                             <Setter TargetName="text" Property="Visibility" Value="Visible"/>
@@ -549,43 +480,6 @@
                             <Setter TargetName="icon" Property="Opacity" Value="0.2"/>
                             <Setter TargetName="text" Property="Opacity" Value="0.2"/>
                         </Trigger>
-                        <Trigger Property="dict:RadioButton.ParentActiveVariant" Value="Large">
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Large"/>
-                        </Trigger>
-                        <Trigger Property="dict:RadioButton.ParentActiveVariant" Value="Medium">
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Medium"/>
-                        </Trigger>
-                        <Trigger Property="dict:RadioButton.ParentActiveVariant" Value="Small">
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Small"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:RadioButton.CollapseToMedium" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant"  Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:RadioButton.CollapseToSmall" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant" Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:RadioButton.CollapseToMedium" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:RadioButton.CollapseToSmall" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:RadioButton.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
                         <Trigger Property="dict:RadioButton.InternalButtonSize" Value="Large">
                             <Setter TargetName="icon" Property="Width" Value="40"/>
                             <Setter TargetName="text" Property="Visibility" Value="Visible"/>
@@ -617,7 +511,6 @@
     <Style TargetType="{x:Type dict:Button}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:Button}">
@@ -656,43 +549,6 @@
                             <Setter TargetName="icon" Property="Opacity" Value="0.2"/>
                             <Setter TargetName="text" Property="Opacity" Value="0.2"/>
                         </Trigger>
-                        <Trigger Property="dict:Button.ParentActiveVariant" Value="Large">
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Large"/>
-                        </Trigger>
-                        <Trigger Property="dict:Button.ParentActiveVariant" Value="Medium">
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Medium"/>
-                        </Trigger>
-                        <Trigger Property="dict:Button.ParentActiveVariant" Value="Small">
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Small"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:Button.CollapseToMedium" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant"  Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:Button.CollapseToSmall" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant" Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:Button.CollapseToMedium" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:Button.CollapseToSmall" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:Button.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
                         <Trigger Property="dict:Button.InternalButtonSize" Value="Large">
                             <Setter TargetName="icon" Property="Width" Value="40"/>
                             <Setter TargetName="text" Property="Visibility" Value="Visible"/>
@@ -808,7 +664,6 @@
     <Style TargetType="{x:Type dict:CheckBox}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:CheckBox}">
@@ -847,43 +702,6 @@
                             <Setter TargetName="icon" Property="Opacity" Value="0.2"/>
                             <Setter TargetName="text" Property="Opacity" Value="0.2"/>
                         </Trigger>
-                        <Trigger Property="dict:CheckBox.ParentActiveVariant" Value="Large">
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Large"/>
-                        </Trigger>
-                        <Trigger Property="dict:CheckBox.ParentActiveVariant" Value="Medium">
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Medium"/>
-                        </Trigger>
-                        <Trigger Property="dict:CheckBox.ParentActiveVariant" Value="Small">
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Small"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:CheckBox.CollapseToMedium" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant"  Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:CheckBox.CollapseToSmall" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant" Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:CheckBox.CollapseToMedium" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:CheckBox.CollapseToSmall" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:CheckBox.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
                         <Trigger Property="dict:CheckBox.InternalButtonSize" Value="Large">
                             <Setter TargetName="icon" Property="Width" Value="40"/>
                             <Setter TargetName="text" Property="Visibility" Value="Visible"/>
@@ -914,7 +732,6 @@
     <Style TargetType="{x:Type dict:DoubleButton}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:DoubleButton}">
@@ -958,43 +775,6 @@
                             <Setter TargetName="text" Property="Opacity" Value="0.2"/>
                             <Setter TargetName="DoubleButtonPopup" Property="IsOpen" Value="False"/>
                         </Trigger>
-                        <Trigger Property="dict:DoubleButton.ParentActiveVariant" Value="Large">
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Large"/>
-                        </Trigger>
-                        <Trigger Property="dict:DoubleButton.ParentActiveVariant" Value="Medium">
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Medium"/>
-                        </Trigger>
-                        <Trigger Property="dict:DoubleButton.ParentActiveVariant" Value="Small">
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Small"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:DoubleButton.CollapseToMedium" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant"  Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:DoubleButton.CollapseToSmall" Value="WhenGroupIsMedium"/>
-                                <Condition Property="ParentActiveVariant" Value="Medium"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:DoubleButton.CollapseToMedium" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Medium"/>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="dict:DoubleButton.CollapseToSmall" Value="WhenGroupIsSmall"/>
-                                <Condition Property="ParentActiveVariant" Value="Small"/>
-                            </MultiTrigger.Conditions>
-                            <Setter Property="dict:DoubleButton.InternalButtonSize" Value="Small"/>
-                        </MultiTrigger>
                         <Trigger Property="dict:DoubleButton.InternalButtonSize" Value="Large">
                             <Setter TargetName="icon" Property="Width" Value="40"/>
                             <Setter TargetName="text" Property="Visibility" Value="Visible"/>

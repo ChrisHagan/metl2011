@@ -1171,36 +1171,7 @@ namespace SandRibbon
             return 0;
         }
     }
-    public class AttributesToStringConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null)
-                return "";
-            var attributes = (SandRibbon.Tabs.Groups.PenColors.DrawingAttributesEntry)value;
-            var Pen = attributes.IsHighlighter ? "highlighter" : "pen";
-            var size = Math.Round(attributes.PenSize, 1);
-            return string.Format("A {0}, {1} {2} wide, of colour {3}.",
-                Pen,
-                size.ToString(),
-                size > 1 ? "points" : "point",
-                attributes.XAMLColorName);
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value != null)
-            {
-                double dblValue = System.Convert.ToDouble((string)value);
-                if (dblValue < 1 && dblValue > 0)
-                    return dblValue;
-                else if (dblValue > 1)
-                    return 1;
-                else return 0;
-            }
-            return 0;
-        }
-    }
-    public class DoubleTextConverter : IValueConverter
+       public class DoubleTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

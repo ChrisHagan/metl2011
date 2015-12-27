@@ -13,8 +13,6 @@ using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using Image = System.Windows.Controls.Image;
@@ -219,10 +217,6 @@ namespace SandRibbon.Components
             var element = (FrameworkElement)this;
             while (element.Parent != null && !(element.Name == "adornerGrid"))
                 element = (FrameworkElement)element.Parent;
-
-            foreach (var child in ((Grid)element).Children)
-                if (((FrameworkElement)child).Name == "syncPageOverlay")
-                    return (FrameworkElement)child;
             return null;
         }
         private void SendScreenShot(ScreenshotDetails details)
@@ -633,38 +627,8 @@ namespace SandRibbon.Components
 
             return rect;
         }
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new PresentationSpaceAutomationPeer(this);
-        }
     }
-    public class PresentationSpaceAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
-    {
-        public PresentationSpaceAutomationPeer(FrameworkElement parent) : base(parent) { }
-        public PresentationSpace PresentationSpace
-        {
-            get { return (PresentationSpace)base.Owner; }
-        }
-        public override object GetPattern(PatternInterface patternInterface)
-        {
-            if (patternInterface == PatternInterface.Value)
-                return this;
-            return base.GetPattern(patternInterface);
-        }
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
-        public string Value
-        {
-            get { return ""; } //automation peer will need to be constructed appropriately to access the right instance, if it is used that way.
-            //get { return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
-        }
-        public void SetValue(string value)
-        {
-            throw new NotImplementedException();
-        }
-    }
+  
     public class UnscaledThumbnailData
     {
         public int id;

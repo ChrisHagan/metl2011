@@ -1,8 +1,8 @@
-﻿using System.Windows.Controls.Ribbon;
+﻿using Microsoft.Windows.Controls.Ribbon;
 
 namespace SandRibbon.Tabs
 {
-    public partial class Submissions : RibbonTab
+    public partial class Submissions
     {
         public Submissions()
         {
