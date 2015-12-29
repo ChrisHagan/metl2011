@@ -16,7 +16,7 @@
     xmlns:conversation="clr-namespace:SandRibbon.Pages.Conversations"
     xmlns:p="clr-namespace:SandRibbon.Properties"
     xmlns:ppType="clr-namespace:SandRibbon.Utils"
-    Title="Server Overview"
+    Title="Conversation Search"
     x:Name="root">
     <Page.Resources>
         <conversation:VisibleToAuthor x:Key="visibleToAuthor" />
@@ -27,26 +27,37 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid layout:GridLayout.ItemsPerRow="1" Grid.Row="0">
-                <TextBlock Text="Join a conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
-                <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
+            <UniformGrid Rows="1" HorizontalAlignment="Stretch">
+                <StackPanel Margin="{DynamicResource nearBottom}">
+                    <TextBlock Text="Start a conversation" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                    <WrapPanel>
+                        <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
+                        <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="15 0"/>
+                    </WrapPanel>
+                </StackPanel >
+                <Grid layout:GridLayout.ItemsPerRow="1">
+                    <TextBlock Text="Join a conversation" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+                    <TextBox x:Name="SearchInput" PreviewKeyUp="OnPreviewKeyUp" MaxLength="50"                 
                  HorizontalAlignment="Left"
                  Width="250"
                  Padding="0 10"
                  Controls:TextBoxHelper.Watermark="Search for a conversation by person or title"
                      Margin="{DynamicResource nearBottom}"/>
-                <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
+                    <CheckBox x:Name="onlyMyConversations" Checked="onlyMyConversations_Checked" 
                           Unchecked="onlyMyConversations_Checked" Content="Only my conversations"/>
-                <Button Content="All my conversations" Style="{StaticResource listedChoice}" Click="SearchForMe"/>
-                <Border Margin="{DynamicResource clearTop}">
-                    <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
-                </Border>
-            </Grid>
-            <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"                  
+                    <Button Content="All my conversations" Style="{StaticResource listedChoice}" Click="SearchForMe"/>
+                </Grid>
+            </UniformGrid>
+            <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
+            <WrapPanel Margin="{DynamicResource nearBottom}">
+                <Button Style="{StaticResource secondaryChoice}" Content="Synchronize to OneNote" Command="{x:Static api:Commands.SynchronizeToOneNote}" Margin="15 0" />
+                <Button Style="{StaticResource secondaryChoice}" Content="Analyze selected conversations" Command="{x:Static api:Commands.AnalyzeSelectedConversations}" Margin="15 0"/>
+            </WrapPanel>
+            <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                          SelectionChanged="SearchResults_SelectionChanged"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-                      Margin="{DynamicResource nearBottom}"
-                      GridLinesVisibility="None"
-                      SelectionChanged="ConversationSelectionChanged">
+                      Margin="{DynamicResource clearBottom}"
+                      GridLinesVisibility="None">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Join conversation" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
@@ -90,13 +101,6 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <StackPanel Margin="{DynamicResource nearBottom}">
-                <TextBlock Text="Start a new conversation?" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
-                <WrapPanel>
-                    <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
-                    <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="15 0"/>
-                </WrapPanel>
-            </StackPanel >
         </Grid>
     </ScrollViewer>
 </page:ServerAwarePage>

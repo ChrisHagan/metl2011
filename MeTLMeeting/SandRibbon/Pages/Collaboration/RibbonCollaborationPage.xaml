@@ -202,6 +202,13 @@
                 </GridSplitter.Template>
             </GridSplitter>
             <TabControl Grid.Column="4" Grid.Row="0"  x:Name="rightDrawer" Background="Transparent">
+                <TabItem x:Name="ParticipantsTabItem" Header="Participants" IsSelected="True">
+                    <ContentPresenter>
+                        <ContentPresenter.Content>
+                            <components:Participants/>
+                        </ContentPresenter.Content>
+                    </ContentPresenter>
+                </TabItem>
                 <TabItem Header="Map">
                     <components:MiniMap DataContext="{Binding ElementName=scroll}" x:Name="LHSMiniMap"/>
                 </TabItem>
@@ -224,14 +231,7 @@
                         </ContentPresenter.Content>
                     </ContentPresenter>
                 </TabItem>
-                <TabItem x:Name="ParticipantsTabItem" Header="Participants" IsSelected="True">
-                    <ContentPresenter>
-                        <ContentPresenter.Content>
-                            <components:Participants/>
-                        </ContentPresenter.Content>
-                    </ContentPresenter>
-                </TabItem>
-            </TabControl>
+              </TabControl>
             <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="5" Grid.Row="1"
                           Height="Auto">
                 <GridSplitter.Template>

@@ -65,15 +65,31 @@ namespace SandRibbon.Pages.Conversations
             FillSearchResultsFromInput();
             var importConversationCommand = new DelegateCommand<object>(ImportPowerpoint);
             var browseOneNoteCommand = new DelegateCommand<object>(BrowseOneNote);
-            Loaded += (s,e) => {
+            var analyzeSelectedConversations = new DelegateCommand<object>(AnalyzeSelectedConversations, CanAnalyzeSelectedConversations);
+            var synchronizeToOneNoteCommand = new DelegateCommand<object>(SynchronizeToOneNote, CanSynchronizeToOneNote);
+            Loaded += (s, e) =>
+            {
                 Commands.ImportPowerpoint.RegisterCommand(importConversationCommand);
                 Commands.BrowseOneNote.RegisterCommand(browseOneNoteCommand);
+                Commands.AnalyzeSelectedConversations.RegisterCommand(analyzeSelectedConversations);
+                Commands.SynchronizeToOneNote.RegisterCommand(synchronizeToOneNoteCommand);
                 NetworkController.client.JoinRoom("global");
             };
-            Unloaded += (s,e) => {
+            Unloaded += (s, e) =>
+            {
                 Commands.ImportPowerpoint.UnregisterCommand(importConversationCommand);
                 Commands.BrowseOneNote.UnregisterCommand(browseOneNoteCommand);
             };
+        }
+
+        private bool CanSynchronizeToOneNote(object arg)
+        {
+            return SearchResults.SelectedItems.Count > 0;
+        }
+
+        private bool CanAnalyzeSelectedConversations(object arg)
+        {
+            return SearchResults.SelectedItems.Count > 0;
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -89,7 +105,7 @@ namespace SandRibbon.Pages.Conversations
         }
         private void ImportPowerpoint(object obj)
         {
-            Commands.AddFlyoutCard.Execute(new PowerpointLoaderFlyout(NavigationService,NetworkController,UserGlobalState,UserServerState));
+            Commands.AddFlyoutCard.Execute(new PowerpointLoaderFlyout(NavigationService, NetworkController, UserGlobalState, UserServerState));
         }
         private void BrowseOneNote(object obj)
         {
@@ -243,8 +259,8 @@ namespace SandRibbon.Pages.Conversations
                 {
                     NetworkController.client.LeaveRoom(oldLoc);
                 }
-                NetworkController.client.location.activeConversation = newLoc;        
-                NetworkController.client.JoinRoom(newLoc);                
+                NetworkController.client.location.activeConversation = newLoc;
+                NetworkController.client.JoinRoom(newLoc);
 
                 Commands.JoiningConversation.Execute(conversation.Jid);
                 var userConversation = new UserConversationState();
@@ -270,15 +286,29 @@ namespace SandRibbon.Pages.Conversations
             FillSearchResultsFromInput();
         }
 
-        private void ConversationSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AnalyzeSelectedConversations(object sender)
         {
-            var source = sender as DataGrid;
-            var selection = source.SelectedItems.Cast<SearchConversationDetails>();
-            Commands.ConversationSelectionChanged.Execute(selection);
-            if (selection.Count() > 0)
-            {
-                Commands.AddFlyoutCard.Execute(new ConversationOptionsFlyout(selection, NetworkController, NavigationService, UserGlobalState, UserServerState));
-            }
+            var userConversation = new UserConversationState();
+            var selection = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
+
+            NavigationService.Navigate(new ConversationComparisonPage(UserGlobalState, UserServerState, userConversation, NetworkController, selection));
+        }
+
+        private void SynchronizeToOneNote(object sender)
+        {
+            var selection = SearchResults.SelectedItems.Cast<SearchConversationDetails>();
+            NavigationService.Navigate(new OneNoteAuthenticationPage(UserGlobalState, UserServerState, NetworkController, (ugs, uss, nc, oc) => new OneNoteSynchronizationPage(ugs, uss, nc,
+               new OneNoteSynchronizationSet
+               {
+                   config = oc,
+                   networkController = NetworkController,
+                   conversations = selection.Select(c => new OneNoteSynchronization { Conversation = c, Progress = 0 })
+               }), UserServerState.OneNoteConfiguration));
+        }
+
+        private void SearchResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Commands.RequerySuggested(Commands.SynchronizeToOneNote, Commands.AnalyzeSelectedConversations);
         }
     }
     public class ConversationComparator : System.Collections.IComparer
@@ -300,6 +330,6 @@ namespace SandRibbon.Pages.Conversations
             var dat = ConvertToSearchConversationDetails(y);
             return -1 * dis.Created.CompareTo(dat.Created);
         }
-    }    
-   
+    }
+
 }

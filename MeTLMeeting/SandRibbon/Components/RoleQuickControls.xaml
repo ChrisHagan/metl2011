@@ -50,11 +50,11 @@
                       IsEnabled="{Binding Path=IsAuthor}" Margin="{DynamicResource nearBottom}" />
             <TextBlock Style="{DynamicResource subHeading}" Text="You can" />
             <Button Content="Add page" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource AddSlideToolTip}"  x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" CommandParameter="{Binding}" />
+            <CheckBox Style="{StaticResource teacherOnlyCheckBox}" Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
             <Button x:Name="duplicatePage" Style="{DynamicResource listedChoice}" Content="Duplicate page" ToolTip="{DynamicResource DuplicateSlideToolTip}" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{Binding}" />
             <Button x:Name="submitSubmission" Style="{DynamicResource listedChoice}" Content="Submit screenshot" Command="{x:Static api:Commands.SubmitScreenshotSubmission}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
             <Button Style="{StaticResource teacherOnlyButton}" Content="Set conversation permissions" Click="setPermissions" />
             <Button Style="{DynamicResource listedChoice}" Content="Filter what you see" Click="setFilters" />
-            <CheckBox Style="{StaticResource teacherOnlyCheckBox}" Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
             <CheckBox Style="{StaticResource studentOnlyCheckBox}"  x:Name="syncButton" Content="Follow teacher" ToolTip="{DynamicResource SyncToolTip}" Command="{x:Static api:Commands.ToggleSync}" />
             <Button Style="{StaticResource teacherOnlyButton}" Content="Reorder pages" ToolTip="{DynamicResource PageReorderToolTip}" Command="{x:Static api:Commands.EditConversation}" />
             <Button Style="{StaticResource teacherOnlyButton}" Content="Duplicate conversation" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{Binding Path=ConversationDetails}"/>

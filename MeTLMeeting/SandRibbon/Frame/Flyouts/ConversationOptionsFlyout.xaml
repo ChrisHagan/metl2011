@@ -6,9 +6,9 @@
              xmlns:layout="clr-namespace:SandRibbon.Layout"
              xmlns:flyouts="clr-namespace:SandRibbon.Frame.Flyouts"
              Title="Conversations"
-             ShowCloseButton="True">
+             ShowCloseButton="True" Foreground="Black">
     <Grid layout:GridLayout.ItemsPerRow="1">
-        <Button Style="{StaticResource listedChoice}" Content="Analyze selected conversations" Click="AnalyzeSelectedConversations"/>
-        <Button Style="{StaticResource listedChoice}" Content="Send selected conversations" Click="SynchronizeToOneNote"/>
+        <Button Style="{StaticResource primaryChoice}" Content="Analyze conversations" Click="AnalyzeSelectedConversations" Margin="{StaticResource nearBottom}" />
+        <Button Style="{StaticResource primaryChoice}" Content="Send to OneNote" Click="SynchronizeToOneNote"/>
     </Grid>
 </flyouts:FlyoutCard>

@@ -164,6 +164,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand MirrorVideo = new DefaultableCompositeCommand("MirrorVideo");
         public static DefaultableCompositeCommand VideoMirrorRefreshRectangle = new DefaultableCompositeCommand("VideoMirrorRefreshRectangle");
 
+        public static DefaultableCompositeCommand SynchronizeToOneNote = new DefaultableCompositeCommand("SynchronizeToOneNote");
         public static DefaultableCompositeCommand AnalyzeSelectedConversations = new DefaultableCompositeCommand("AnalyzeSelectedConversations");
         public static DefaultableCompositeCommand SendWakeUp = new DefaultableCompositeCommand("SendWakeUp");
         public static DefaultableCompositeCommand SendSleep = new DefaultableCompositeCommand("SendSleep");

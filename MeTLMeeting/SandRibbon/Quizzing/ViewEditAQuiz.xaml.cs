@@ -140,9 +140,12 @@ namespace SandRibbon.Quizzing
 
         private void populateImagePreview()
         {
-            if (!String.IsNullOrEmpty(question.Url))
+            if (String.IsNullOrEmpty(question.Url)) return;
+            if ("none" == question.Url) return;
+            try
             {
-                var bytes = rootPage.NetworkController.client.resourceProvider.secureGetData(new Uri(question.Url));
+                var url = new Uri(question.Url);
+                var bytes = rootPage.NetworkController.client.resourceProvider.secureGetData(url);
                 Dispatcher.adopt(() =>
                 {
                     var image = new Image();
@@ -158,6 +161,9 @@ namespace SandRibbon.Quizzing
 
                     imagePreviewContainer.Children.Add(image);
                 });
+            }
+            catch (UriFormatException e) {
+                Trace.TraceInformation(e.Message);
             }
         }
 
