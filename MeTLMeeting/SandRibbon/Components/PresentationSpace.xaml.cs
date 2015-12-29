@@ -52,7 +52,7 @@ namespace SandRibbon.Components
             var sendScreenShotCommand = new DelegateCommand<ScreenshotDetails>(SendScreenShot);
             var banHammerSelectedItemsCommand = new DelegateCommand<object>(BanHammerSelectedItems);
             var mirrorPresentationSpaceCommand = new DelegateCommand<object>(MirrorPresentationSpace, CanMirrorPresentationSpace);
-            var movingToCommand = new DelegateCommand<int>(MovingTo);
+            var movingToCommand = new DelegateCommand<Slide>(MovingTo);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
@@ -73,6 +73,7 @@ namespace SandRibbon.Components
                 Commands.MirrorPresentationSpace.RegisterCommand(mirrorPresentationSpaceCommand);
                 Commands.MovingTo.RegisterCommand(movingToCommand);
                 Commands.AllStaticCommandsAreRegistered();
+                rootPage.PreParserAvailable += PreParserAvailable;
             };
             Unloaded += (s, e) =>
             {
@@ -89,27 +90,15 @@ namespace SandRibbon.Components
                 Commands.BanhammerSelectedItems.UnregisterCommand(banHammerSelectedItemsCommand);
                 Commands.MirrorPresentationSpace.UnregisterCommand(mirrorPresentationSpaceCommand);
                 Commands.MovingTo.UnregisterCommand(movingToCommand);
+                rootPage.PreParserAvailable -= PreParserAvailable;
             };
         }
 
-        private void MovingTo(int loc)
+        private void MovingTo(Slide slide)
         {
-            var p = rootPage.NetworkController.client.historyProvider;
-
-            rootPage.Slide = rootPage.ConversationDetails.Slides.Where(s => s.id == loc).First();
             stack.rootPage = rootPage;
-            
-            workStack.Flush();
-            workQueue.Clear();
             stack.Contextualise();
-
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, PreParserAvailable, loc.ToString()));
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, PreParserAvailable, String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, loc)));
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, PreParserAvailable, rootPage.ConversationDetails.Jid));            
-            while (workQueue.Count() > 0)
-            {                
-                Dispatcher.InvokeAsync(workQueue.Dequeue());
-            }
+            workStack.Flush();
         }
         private void MirrorPresentationSpace(object obj)
         {
@@ -169,14 +158,14 @@ namespace SandRibbon.Components
         {
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<ScreenshotDetails> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<ScreenshotDetails>(details=>
+            sendScreenshot = new DelegateCommand<ScreenshotDetails>(details =>
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = rootPage.NetworkController.client;
                                  var slide = rootPage.Slide;
                                  conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(
                                      slide.index + 1, rootPage.NetworkController.credentials.name, "bannedcontent",
-                                     Privacy.Private, details.time, details.filename, rootPage.ConversationDetails.Title, blacklisted, 
+                                     Privacy.Private, details.time, details.filename, rootPage.ConversationDetails.Title, blacklisted,
                                      Globals.generateId(rootPage.NetworkController.credentials.name, details.filename)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
@@ -253,28 +242,32 @@ namespace SandRibbon.Components
         {
             App.auditor.wrapAction(a =>
             {
-                try
+                if (parser.location.currentSlide != rootPage.Slide.id)
                 {
-                    if (parser.location.currentSlide != rootPage.Slide.id)
+                    a(GaugeStatus.Failed, 100);
+                }
+                else {
+                    Dispatcher.adopt(delegate
                     {
-                        a(GaugeStatus.Failed, 100);
-                    }
-                    else {
-                        a(GaugeStatus.InProgress, 25);
-                        stack.ReceiveStrokes(parser.ink);
-                        a(GaugeStatus.InProgress, 50);
-                        stack.ReceiveImages(parser.images.Values);
-                        a(GaugeStatus.InProgress, 75);
-                        foreach (var text in parser.text.Values)
-                            stack.DoText(text);
-                        stack.RefreshCanvas();
-                    }
+                        try
+                        {
+                            a(GaugeStatus.InProgress, 25);
+                            stack.ReceiveStrokes(parser.ink);
+                            a(GaugeStatus.InProgress, 50);
+                            stack.ReceiveImages(parser.images.Values);
+                            a(GaugeStatus.InProgress, 75);
+                            foreach (var text in parser.text.Values)
+                                stack.DoText(text);
+                            stack.RefreshCanvas();
+                        }
+                        catch (Exception e)
+                        {
+                            Trace.TraceError("exception in parser: {0}", e.Message);
+                        }
+
+                    });
                 }
-                catch (Exception e)
-                {
-                    Trace.TraceError("exception in parser: {0}", e.Message);
-                }
-            }, "renderCanvas", "frontend");
+            }, "renderCanvas", "Presentation space handling preparser");
         }
         private static System.Windows.Forms.Screen getSecondaryScreen()
         {
@@ -633,7 +626,7 @@ namespace SandRibbon.Components
             return rect;
         }
     }
-  
+
     public class UnscaledThumbnailData
     {
         public int id;

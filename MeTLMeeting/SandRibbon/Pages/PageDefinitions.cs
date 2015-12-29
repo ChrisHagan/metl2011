@@ -8,6 +8,10 @@ using SandRibbon.Utils;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System;
+using MeTLLib.Providers.Connection;
+using System.Threading;
+using System.Diagnostics;
 
 namespace SandRibbon.Pages
 {
@@ -129,7 +133,8 @@ namespace SandRibbon.Pages
     public class GlobalAwarePage : Page
     {
         public UserGlobalState UserGlobalState { get; set; }
-        public GlobalAwarePage() : base() {
+        public GlobalAwarePage() : base()
+        {
             if (!Resources.Contains(SystemParameters.VerticalScrollBarWidth)) Resources.Add(SystemParameters.VerticalScrollBarWidth, 50);
             if (!Resources.Contains(SystemParameters.HorizontalScrollBarHeight)) Resources.Add(SystemParameters.HorizontalScrollBarHeight, 50);
         }
@@ -159,5 +164,49 @@ namespace SandRibbon.Pages
         public SlideAwarePage() { }
         public Slide Slide { get; set; }
         public UserSlideState UserSlideState { get; set; }
+
+        public delegate void PreParserHandler(PreParser p);
+        public event PreParserHandler PreParserAvailable;
+
+        public void PublishPreParser(PreParser p) {
+            PreParserAvailable?.Invoke(p);
+        }
+        private CancellationTokenSource canceller;
+        internal void MoveToSlide(Slide selected)
+        {
+            canceller?.Cancel();
+            canceller = new CancellationTokenSource();
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                if (Slide == selected) return;
+
+                var previousSlide = Slide;
+                Slide = selected;
+
+                NetworkController.client.LeaveRoom(previousSlide.id.ToString());
+                NetworkController.client.LeaveRoom(previousSlide.id.ToString() + NetworkController.credentials.name);
+
+                var cancellationToken = canceller.Token;
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    NetworkController.client.JoinRoom(Slide.id.ToString());
+                    NetworkController.client.JoinRoom(Slide.id.ToString() + NetworkController.credentials.name);
+                }
+                else {
+                    Trace.TraceInformation("Cancelling movement to slide {0} at xmpp", selected.id);
+                }
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    var p = NetworkController.client.historyProvider;
+                    p.Retrieve<PreParser>(delegate { }, delegate { }, PublishPreParser, Slide.id.ToString());
+                    p.Retrieve<PreParser>(delegate { }, delegate { }, PublishPreParser, String.Format("{0}/{1}", NetworkController.credentials.name, Slide.id));
+                }
+                else {
+                    Trace.TraceInformation("Cancelling movement to slide {0} at history", selected.id);
+                }
+            });
+            Commands.SendSyncMove.Execute(selected.id);
+            Commands.MovingTo.Execute(selected);
+        }
     }
 }

@@ -1834,7 +1834,7 @@ namespace SandRibbon.Components
         {
             if (_target == "presentationSpace")
             {
-                Dispatcher.adopt(delegate
+                Dispatcher.adoptAsync(delegate
                 {
                     moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
                 });
@@ -1850,7 +1850,7 @@ namespace SandRibbon.Components
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
-                        Dispatcher.adopt(() =>
+                        Dispatcher.adoptAsync(() =>
                         {
                             try
                             {
@@ -1860,7 +1860,7 @@ namespace SandRibbon.Components
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("Error in receiving image: {0}", e.Message);
+                                Trace.TraceError("Error in receiving image: {0}", e.Message);
                             }
                         });
                     }

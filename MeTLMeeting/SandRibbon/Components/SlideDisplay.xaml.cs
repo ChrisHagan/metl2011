@@ -13,6 +13,7 @@ using System.Windows.Data;
 using MeTLLib.Utilities;
 using System.Windows.Threading;
 using SandRibbon.Pages;
+using System.Threading;
 
 namespace SandRibbon.Components
 {
@@ -274,7 +275,7 @@ namespace SandRibbon.Components
         private void QueryReachable(int slide, bool _forceRefresh)
         {
             myMaxSlideIndex = calculateMaxIndex(myMaxSlideIndex, indexOf(slide));
-            checkMovementLimits();
+            UpdateNavigationControlLimits();
         }
 
         private int calculateMaxIndex(int myIndex, int index)
@@ -298,7 +299,7 @@ namespace SandRibbon.Components
             {
 
                 TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
-                checkMovementLimits();
+                UpdateNavigationControlLimits();
                 var action = (Action)(() => Dispatcher.adopt(() =>
                 {
                     var index = rootPage.ConversationDetails.Slides.First(s => s.id == where).index;
@@ -354,10 +355,10 @@ namespace SandRibbon.Components
                 {
                     thumbnailList.Add(slide);
                 }
-                checkMovementLimits();
+                UpdateNavigationControlLimits();
             });
         }
-        public void checkMovementLimits()
+        public void UpdateNavigationControlLimits()
         {
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
@@ -391,7 +392,7 @@ namespace SandRibbon.Components
             {
 
                 IsNavigationLocked = calculateNavigationLocked();
-                checkMovementLimits();
+                UpdateNavigationControlLimits();
                 if (thumbnailList.Count == 0)
                 {
                     var joined = false;
@@ -430,44 +431,25 @@ namespace SandRibbon.Components
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.auditor.wrapAction(g =>
+            var addedItems = e.AddedItems;
+            if (addedItems.Count > 0)
             {
-                g(MeTLLib.GaugeStatus.Started, 0);            
-                var addedItems = e.AddedItems;
-                if (addedItems.Count > 0)
+                var removed = e.RemovedItems;
+                var selected = (Slide)addedItems[0];
+                if (isWithinTeachersRange(selected))
                 {
-                    var removed = e.RemovedItems;
-                    var selected = (Slide)addedItems[0];
-                    if (isWithinTeachersRange(selected))
+                    UpdateNavigationControlLimits();
+
+                    rootPage.MoveToSlide(selected);                    
+                }
+                else if (sender is ListBox)
+                {
+                    if (removed.Count > 0)
                     {
-                        rootPage.Slide = selected;
-                        rootPage.NetworkController.client.location.currentSlide = selected.id;
-
-                        checkMovementLimits();
-
-                        foreach (var left in removed)
-                        {
-                            var s = left as Slide;
-                            rootPage.NetworkController.client.LeaveRoom(s.id.ToString());
-                            rootPage.NetworkController.client.LeaveRoom(s.id.ToString() + rootPage.NetworkController.credentials.name);
-                        }
-
-                        rootPage.NetworkController.client.JoinRoom(selected.id.ToString());
-                        rootPage.NetworkController.client.JoinRoom(selected.id.ToString() + rootPage.NetworkController.credentials.name);
-
-                        Commands.SendSyncMove.Execute(selected.id);
-                        Commands.MovingTo.Execute(selected.id);
-                    }
-                    else if (sender is ListBox)
-                    {
-                        if (removed.Count > 0)
-                        {
-                            ((ListBox)sender).SelectedItem = removed[0];
-                        }
+                        ((ListBox)sender).SelectedItem = removed[0];
                     }
                 }
-                g(MeTLLib.GaugeStatus.Completed, 100);
-            }, "Changed slide", "Navigation");
+            }
         }
     }
 }
