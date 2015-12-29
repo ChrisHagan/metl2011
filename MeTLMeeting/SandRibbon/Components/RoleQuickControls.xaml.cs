@@ -17,6 +17,8 @@ namespace SandRibbon.Components
 {
     public partial class RoleQuickControls : UserControl
     {
+        private object submissionList;
+
         public SlideAwarePage rootPage { get; protected set; }
         public ConversationDetails ConversationDetails { get; protected set; }
         public RoleQuickControls()
@@ -25,6 +27,7 @@ namespace SandRibbon.Components
             var setSyncCommand = new DelegateCommand<bool>(SetSync);
             var toggleSyncCommand = new DelegateCommand<object>(toggleSync);
             var updateConversationDetailsCommand = new DelegateCommand<ConversationDetails>(updateConversationDetails);
+            var banhammerActiveCommand = new DelegateCommand<bool>(setBanhammerMode,canSetBanhammerMode);
             Loaded += (s, e) =>
             {
                 if (rootPage == null)
@@ -36,13 +39,25 @@ namespace SandRibbon.Components
                 Commands.SetSync.RegisterCommand(setSyncCommand);
                 Commands.SetSync.Execute(false);
                 Commands.ToggleSync.RegisterCommand(toggleSyncCommand);
+                Commands.BanhammerActive.RegisterCommand(banhammerActiveCommand);
             };
             Unloaded += (s, e) =>
             {
                 Commands.UpdateConversationDetails.UnregisterCommand(updateConversationDetailsCommand);
                 Commands.SetSync.UnregisterCommand(setSyncCommand);
                 Commands.ToggleSync.UnregisterCommand(toggleSyncCommand);
+                Commands.BanhammerActive.UnregisterCommand(banhammerActiveCommand);
             };
+        }
+
+        private bool canSetBanhammerMode(bool arg)
+        {
+            return rootPage.IsAuthor;
+        }
+
+        private void setBanhammerMode(bool active)
+        {
+            rootPage.UserSlideState.BanhammerActive = active; 
         }
 
         private void updateConversationDetails(ConversationDetails obj)

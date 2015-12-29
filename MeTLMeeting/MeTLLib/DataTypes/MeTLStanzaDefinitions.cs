@@ -804,6 +804,7 @@ namespace MeTLLib.DataTypes
         public static class ElementParser {
             public static Privacy getPrivacy(Element element) {
                 var s = element.GetTag(privacyTag);
+                if (s == null) return Privacy.NotSet;
                 switch (s.ToLower()) {
                     case "public": return Privacy.Public;
                     case "private":return Privacy.Private;

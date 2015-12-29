@@ -13,7 +13,6 @@ using System.Windows.Data;
 using MeTLLib.Utilities;
 using System.Windows.Threading;
 using SandRibbon.Pages;
-using System.Threading;
 
 namespace SandRibbon.Components
 {
@@ -425,10 +424,6 @@ namespace SandRibbon.Components
                 }
             });
         }
-        private bool isWithinTeachersRange(Slide possibleSlide)
-        {
-            return (!IsNavigationLocked || (TeachersCurrentSlideIndex == -1 || possibleSlide.index <= TeachersCurrentSlideIndex));
-        }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var addedItems = e.AddedItems;
@@ -436,19 +431,8 @@ namespace SandRibbon.Components
             {
                 var removed = e.RemovedItems;
                 var selected = (Slide)addedItems[0];
-                if (isWithinTeachersRange(selected))
-                {
-                    UpdateNavigationControlLimits();
-
-                    rootPage.MoveToSlide(selected);                    
-                }
-                else if (sender is ListBox)
-                {
-                    if (removed.Count > 0)
-                    {
-                        ((ListBox)sender).SelectedItem = removed[0];
-                    }
-                }
+                UpdateNavigationControlLimits();
+                rootPage.MoveToSlide(selected);
             }
         }
     }

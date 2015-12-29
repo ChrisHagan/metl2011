@@ -178,14 +178,13 @@ namespace SandRibbon.Pages
             canceller = new CancellationTokenSource();
             ThreadPool.QueueUserWorkItem(delegate
             {
-                if (Slide == selected) return;
-
                 var previousSlide = Slide;
                 Slide = selected;
-
-                NetworkController.client.LeaveRoom(previousSlide.id.ToString());
-                NetworkController.client.LeaveRoom(previousSlide.id.ToString() + NetworkController.credentials.name);
-
+                if (previousSlide != selected)
+                {
+                    NetworkController.client.LeaveRoom(previousSlide.id.ToString());
+                    NetworkController.client.LeaveRoom(previousSlide.id.ToString() + NetworkController.credentials.name);
+                }
                 var cancellationToken = canceller.Token;
                 if (!cancellationToken.IsCancellationRequested)
                 {

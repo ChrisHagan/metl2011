@@ -6,11 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SandRibbon.Components;
-using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using System;
-
 
 namespace SandRibbon.Quizzing
 {

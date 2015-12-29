@@ -31,8 +31,8 @@
                 <StackPanel Margin="{DynamicResource nearBottom}">
                     <TextBlock Text="Start a conversation" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
                     <WrapPanel>
-                        <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" Margin="15 0"/>
-                        <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="15 0"/>
+                        <Button Click="Button_Click" Style="{DynamicResource primaryChoice}" Content="Create conversation" />
+                        <Button Command="{x:Static api:Commands.ImportPowerpoint}" Style="{DynamicResource secondaryChoice}" Content="Import PowerPoint" Margin="30 0"/>
                     </WrapPanel>
                 </StackPanel >
                 <Grid layout:GridLayout.ItemsPerRow="1">
@@ -50,19 +50,19 @@
             </UniformGrid>
             <TextBlock Text="Conversations" Style="{DynamicResource heading}" Margin="{DynamicResource nearBottom}"/>
             <WrapPanel Margin="{DynamicResource nearBottom}">
-                <Button Style="{StaticResource secondaryChoice}" Content="Synchronize to OneNote" Command="{x:Static api:Commands.SynchronizeToOneNote}" Margin="15 0" />
-                <Button Style="{StaticResource secondaryChoice}" Content="Analyze selected conversations" Command="{x:Static api:Commands.AnalyzeSelectedConversations}" Margin="15 0"/>
+                <Button Style="{StaticResource secondaryChoice}" Content="Synchronize to OneNote" Command="{x:Static api:Commands.SynchronizeToOneNote}" />
+                <Button Style="{StaticResource secondaryChoice}" Content="Analyze selected conversations" Command="{x:Static api:Commands.AnalyzeSelectedConversations}" Margin="30 0"/>
             </WrapPanel>
             <DataGrid x:Name="SearchResults" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                           SelectionChanged="SearchResults_SelectionChanged"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                       Margin="{DynamicResource clearBottom}"
-                      GridLinesVisibility="None">
+                      GridLinesVisibility="None" Width="Auto">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Join conversation" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush2}" Margin="0 5">
+                                <Button Click="JoinConversation" Background="{DynamicResource AccentColorBrush}" Margin="0 5" Height="45" Width="45">
                                     <Image Source="\Resources\appbar.door.enter.png" />
                                 </Button>
                             </DataTemplate>
@@ -93,7 +93,7 @@
                                                 <Binding ElementName="root" Path="NetworkController"/>
                                             </MultiBinding>
                                         </Button.Visibility>
-                                        <Image Source="\Resources\appbar.cog.png" />
+                                        <Image Source="\Resources\appbar.cog.png" Height="45" Width="45"/>
                                     </Button>
                                 </Grid>
                             </DataTemplate>

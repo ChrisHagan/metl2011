@@ -46,11 +46,12 @@
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <Grid layout:GridLayout.ItemsPerRow="1">
             <TextBlock Text="Students can" Style="{StaticResource subHeading}" Margin="{DynamicResource nearBottom}"/>
-            <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content"  
-                      IsEnabled="{Binding Path=IsAuthor}" Margin="{DynamicResource nearBottom}" />
+            <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" Content="Publish content" IsEnabled="{Binding Path=IsAuthor}" Margin="{DynamicResource nearBottom}" />
+            
             <TextBlock Style="{DynamicResource subHeading}" Text="You can" />
+            <CheckBox Style="{StaticResource teacherOnlyCheckBox}" Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.BanhammerActive}" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
+            
             <Button Content="Add page" Style="{DynamicResource listedChoice}" ToolTip="{DynamicResource AddSlideToolTip}"  x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" CommandParameter="{Binding}" />
-            <CheckBox Style="{StaticResource teacherOnlyCheckBox}" Content="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static api:Commands.ManageBannedContent}" />
             <Button x:Name="duplicatePage" Style="{DynamicResource listedChoice}" Content="Duplicate page" ToolTip="{DynamicResource DuplicateSlideToolTip}" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{Binding}" />
             <Button x:Name="submitSubmission" Style="{DynamicResource listedChoice}" Content="Submit screenshot" Command="{x:Static api:Commands.SubmitScreenshotSubmission}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
             <Button Style="{StaticResource teacherOnlyButton}" Content="Set conversation permissions" Click="setPermissions" />
