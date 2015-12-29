@@ -69,7 +69,6 @@ namespace SandRibbon.Components
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
             Commands.JoiningConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.WatchRoom.RegisterCommand(new DelegateCommand<string>(WatchRoom));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
             Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyStroke));
@@ -121,9 +120,6 @@ namespace SandRibbon.Components
         {
             Commands.CheckExtendedDesktop.ExecuteAsync(null);
         }
-        private void WatchRoom(string slide) {
-            client.WatchRoom(slide);
-        }   
         private void SendDirtyImage(TargettedDirtyElement tde)
         {
             client.SendDirtyImage(tde);

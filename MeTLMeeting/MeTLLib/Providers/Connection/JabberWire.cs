@@ -305,10 +305,10 @@ namespace MeTLLib.Providers.Connection
                                 conn.OnWriteXml -= WriteXml;
                 */
             }
-            this.conn = new MeTLXmppClientConnection(jid.Server,metlServerAddress.xmppHost);
+            this.conn = new MeTLXmppClientConnection(jid.Server, metlServerAddress.xmppHost);
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
-            conn.OnMessage += OnMessage;            
+            conn.OnMessage += OnMessage;
             conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
             conn.OnError += ErrorError;
@@ -429,7 +429,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void ErrorError(object sender, Exception ex)
         {
-            Trace.TraceError(String.Format("XmppConnection ErrorError: {0}\nException: {1}",conn.description,ex.Message));
+            Trace.TraceError(String.Format("XmppConnection ErrorError: {0}\nException: {1}", conn.description, ex.Message));
             Reset("JabberWire::ErrorError");
         }
 
@@ -616,20 +616,6 @@ namespace MeTLLib.Providers.Connection
             joinRooms();
             receiveEvents.receiveConversationDetails(ConversationDetails.Empty);
         }
-        public void WatchRoom(string slide)
-        {
-            joinRoom(new Jid(slide, metlServerAddress.muc, jid.Resource));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
-            historyProvider.Retrieve<PreParser>(
-                    onStart,
-                    onProgress,
-                    finishedParser =>
-                    {
-                        receiveEvents.receivePreParser(finishedParser);
-                        cachedHistoryProvider.PopulateFromHistory(finishedParser);
-                    },
-                    slide);
-        }
         private void joinRooms()
         {
             foreach (var roomJid in CurrentRooms)
@@ -641,7 +627,6 @@ namespace MeTLLib.Providers.Connection
         public HashSet<Jid> CurrentRooms { get; protected set; } = new HashSet<Jid>();
         private void joinRoom(Jid room)
         {
-            Trace.TraceInformation("Joining room {0}", room);
             try
             {
                 var alias = credentials.name + conn.Resource;
@@ -733,7 +718,7 @@ namespace MeTLLib.Providers.Connection
             {
                 return auditor.wrapFunction((a) =>
                 {
-                    return conn.XmppConnectionState ==  XmppConnectionState.SessionStarted && webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok"; //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
+                    return conn.XmppConnectionState == XmppConnectionState.SessionStarted && webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok"; //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
                 }, "healthCheck", "xmpp");
             }
             catch (Exception e)
@@ -927,7 +912,7 @@ namespace MeTLLib.Providers.Connection
                     pingIq.GenerateId();
                     unrespondedPings.Add(pingIq.Id);
                     conn.Send(pingIq);// new agsXMPP.protocol.extensions.ping.PingIq(new Jid(metlServerAddress.xmppDomain),jid));
-            }, null, Timeout.Infinite, Timeout.Infinite);
+                }, null, Timeout.Infinite, Timeout.Infinite);
             }
             pingTimer.Change(pingTimeout, pingTimeout);
         }
@@ -1145,7 +1130,7 @@ namespace MeTLLib.Providers.Connection
                 cachedHistoryProvider.HandleMessage(location.currentSlide, element);
             }
             ActOnUntypedMessage(element);
-        }        
+        }
         public void ActOnUntypedMessage(MeTLStanzas.TimestampedMeTLElement timestampedElement)
         {
             foreach (var status in timestampedElement.element.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))

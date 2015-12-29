@@ -12,7 +12,6 @@ using MeTLLib.DataTypes;
 using System.Windows.Data;
 using MeTLLib.Utilities;
 using System.Windows.Threading;
-using SandRibbon.Pages.Collaboration;
 using SandRibbon.Pages;
 
 namespace SandRibbon.Components
@@ -108,7 +107,7 @@ namespace SandRibbon.Components
                 thumbnailList = new ObservableCollection<Slide>(rootPage.ConversationDetails.Slides);
                 slides.ItemsSource = thumbnailList;
                 /*Observe this ordering or you'll fall into an infinite loop*/
-                
+
                 slides.SelectionChanged += slides_SelectionChanged;
                 slides.SelectedItem = rootPage.Slide;
 
@@ -154,8 +153,8 @@ namespace SandRibbon.Components
                 var context = rootPage.ConversationDetails.Slides.OrderBy(s => s.index).ToList();
                 if (view != null)
                 {
-                    var top = view.VerticalOffset;
-                    var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
+                    var top = view.HorizontalOffset;
+                    var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportWidth));
                     for (var i = (int)Math.Floor(top); i <= bottom; i++)
                     {
                         var id = context[i].id;
@@ -257,8 +256,7 @@ namespace SandRibbon.Components
         private bool canAddSlide(object _slide)
         {
             if (rootPage.ConversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
-            if (String.IsNullOrEmpty(rootPage.NetworkController.credentials.name)) return false;
-            return (rootPage.ConversationDetails.Permissions.studentCanUploadAttachment || rootPage.ConversationDetails.isAuthor(rootPage.NetworkController.credentials.name));
+            return (rootPage.ConversationDetails.Permissions.studentCanAddPage || rootPage.IsAuthor);
         }
         private void addSlide(object _slide)
         {
@@ -432,38 +430,44 @@ namespace SandRibbon.Components
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var addedItems = e.AddedItems;
-            if (addedItems.Count > 0)
+            App.auditor.wrapAction(g =>
             {
-                var removed = e.RemovedItems;         
-                var selected = (Slide)addedItems[0];
-                if (isWithinTeachersRange(selected))
+                g(MeTLLib.GaugeStatus.Started, 0);            
+                var addedItems = e.AddedItems;
+                if (addedItems.Count > 0)
                 {
-                    rootPage.Slide = selected;
-                    rootPage.NetworkController.client.location.currentSlide = selected.id;
-
-                    checkMovementLimits();
-
-                    foreach (var left in removed) {
-                        var s = left as Slide;
-                        rootPage.NetworkController.client.LeaveRoom(s.id.ToString());
-                        rootPage.NetworkController.client.LeaveRoom(s.id.ToString() + rootPage.NetworkController.credentials.name);
-                    }                    
-                    
-                    rootPage.NetworkController.client.JoinRoom(selected.id.ToString());
-                    rootPage.NetworkController.client.JoinRoom(selected.id.ToString() + rootPage.NetworkController.credentials.name);
-
-                    Commands.SendSyncMove.Execute(selected.id);
-                    Commands.MovingTo.Execute(selected.id);                    
-                }
-                else if (sender is ListBox)
-                {
-                    if (removed.Count > 0)
+                    var removed = e.RemovedItems;
+                    var selected = (Slide)addedItems[0];
+                    if (isWithinTeachersRange(selected))
                     {
-                        ((ListBox)sender).SelectedItem = removed[0];
+                        rootPage.Slide = selected;
+                        rootPage.NetworkController.client.location.currentSlide = selected.id;
+
+                        checkMovementLimits();
+
+                        foreach (var left in removed)
+                        {
+                            var s = left as Slide;
+                            rootPage.NetworkController.client.LeaveRoom(s.id.ToString());
+                            rootPage.NetworkController.client.LeaveRoom(s.id.ToString() + rootPage.NetworkController.credentials.name);
+                        }
+
+                        rootPage.NetworkController.client.JoinRoom(selected.id.ToString());
+                        rootPage.NetworkController.client.JoinRoom(selected.id.ToString() + rootPage.NetworkController.credentials.name);
+
+                        Commands.SendSyncMove.Execute(selected.id);
+                        Commands.MovingTo.Execute(selected.id);
+                    }
+                    else if (sender is ListBox)
+                    {
+                        if (removed.Count > 0)
+                        {
+                            ((ListBox)sender).SelectedItem = removed[0];
+                        }
                     }
                 }
-            }
+                g(MeTLLib.GaugeStatus.Completed, 100);
+            }, "Changed slide", "Navigation");
         }
     }
 }

@@ -92,10 +92,10 @@
                     <Grid>
                         <StackPanel Height="25" Orientation="Horizontal">
                             <ProgressBar Width="100" Value="{Binding value, Mode=OneWay}" Minimum="0" Maximum="100"/>
-                            <Label Content="{Binding soFar, Mode=OneWay}"/>
-                            <Label Content="{Binding GaugeCategory, Mode=OneWay}"/>
-                            <Label Content="{Binding GaugeName, Mode=OneWay}"/>
-                            <Label Content="{Binding status, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding soFar, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding GaugeCategory, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding GaugeName, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding status, Mode=OneWay}"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

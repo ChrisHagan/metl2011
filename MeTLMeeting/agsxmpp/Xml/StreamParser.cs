@@ -34,81 +34,81 @@ using agsXMPP.Xml.Xpnet;
 using agsXMPP.protocol.client;
 
 namespace agsXMPP.Xml
-{	
-	public delegate void StreamError		(object sender, Exception ex);
-	public delegate void StreamHandler		(object sender, Node e);
-    		
-	/// <summary>
-	/// Stream Parser is a lighweight Streaming XML Parser.
-	/// </summary>
-	public class StreamParser 
-	{		
-		// Stream Event Handlers
-		public event StreamHandler		OnStreamStart;
-		public event StreamHandler		OnStreamEnd;
-		public event StreamHandler		OnStreamElement;
-		
+{
+    public delegate void StreamError(object sender, Exception ex);
+    public delegate void StreamHandler(object sender, Node e);
+
+    /// <summary>
+    /// Stream Parser is a lighweight Streaming XML Parser.
+    /// </summary>
+    public class StreamParser
+    {
+        // Stream Event Handlers
+        public event StreamHandler OnStreamStart;
+        public event StreamHandler OnStreamEnd;
+        public event StreamHandler OnStreamElement;
+
         /// <summary>
         /// Event for XML-Stream errors
         /// </summary>
-        public event StreamError		OnStreamError;
-        
+        public event StreamError OnStreamError;
+
         /// <summary>
         /// Event for general errors
         /// </summary>
-        public event ErrorHandler       OnError;
-			
-		private int						m_Depth;
-		private Node					m_root;
-	    private Element                 current;
-		
-		private static System.Text.Encoding utf = System.Text.Encoding.UTF8;
-		private Encoding        m_enc               = new UTF8Encoding();
-		private BufferAggregate m_buf               = new BufferAggregate();
-		private NamespaceStack  m_NamespaceStack    = new NamespaceStack();        
-		private bool            m_cdata;
+        public event ErrorHandler OnError;
 
-		public StreamParser()
-		{
-		}
-	
-		/// <summary>
-		/// Reset the XML Stream
-		/// </summary>
-		public void Reset()
-		{
-			m_Depth		= 0;
-			m_root		= null;			
-			current		= null;
-			m_cdata		= false;
-		
-			m_buf   = null;
-			m_buf	= new BufferAggregate();
-			
-			//m_buf.Clear(0);
-			m_NamespaceStack.Clear();		
-		}
+        private int m_Depth;
+        private Node m_root;
+        private Element current;
 
-		/// <summary>
-		/// Reset the XML Stream
-		/// </summary>
-		/// <param name="sr">new Stream that is used for parsing</param>
-		public long Depth
-		{
-			get { return m_Depth; }
-		}
+        private static System.Text.Encoding utf = System.Text.Encoding.UTF8;
+        private Encoding m_enc = new UTF8Encoding();
+        private BufferAggregate m_buf = new BufferAggregate();
+        private NamespaceStack m_NamespaceStack = new NamespaceStack();
+        private bool m_cdata;
+
+        public StreamParser()
+        {
+        }
+
+        /// <summary>
+        /// Reset the XML Stream
+        /// </summary>
+        public void Reset()
+        {
+            m_Depth = 0;
+            m_root = null;
+            current = null;
+            m_cdata = false;
+
+            m_buf = null;
+            m_buf = new BufferAggregate();
+
+            //m_buf.Clear(0);
+            m_NamespaceStack.Clear();
+        }
+
+        /// <summary>
+        /// Reset the XML Stream
+        /// </summary>
+        /// <param name="sr">new Stream that is used for parsing</param>
+        public long Depth
+        {
+            get { return m_Depth; }
+        }
 
         private Object thisLock = new Object();
 
-		/// <summary>
-		/// Put bytes into the parser.
-		/// </summary>
-		/// <param name="buf">The bytes to put into the parse stream</param>
-		/// <param name="offset">Offset into buf to start at</param>
-		/// <param name="length">Number of bytes to write</param>
-		public void Push(byte[] buf, int offset, int length)
-		{
-            
+        /// <summary>
+        /// Put bytes into the parser.
+        /// </summary>
+        /// <param name="buf">The bytes to put into the parse stream</param>
+        /// <param name="offset">Offset into buf to start at</param>
+        /// <param name="length">Number of bytes to write</param>
+        public void Push(byte[] buf, int offset, int length)
+        {
+
             // or assert, really, but this is a little nicer.
             if (length == 0)
                 return;
@@ -159,7 +159,7 @@ namespace agsXMPP.Xml
                             break;
                         case TOK.CHAR_PAIR_REF:
                             AddText(new string(new char[] {ct.RefChar1,
-															ct.RefChar2}));
+                                                            ct.RefChar2}));
                             break;
                         case TOK.COMMENT:
                             if (current != null)
@@ -191,9 +191,9 @@ namespace agsXMPP.Xml
 #if CF
 					    throw new util.NotImplementedException("Token type not implemented: " + tok);
 #else
-                        throw new System.NotImplementedException("Token type not implemented: " + tok);
+                            throw new System.NotImplementedException("Token type not implemented: " + tok);
 #endif                            
-                    }                    
+                    }
                     off = ct.TokenEnd;
                 }
             }
@@ -213,140 +213,140 @@ namespace agsXMPP.Xml
             finally
             {
                 m_buf.Clear(off);
-            }            
-		}		
-		
-		private void StartTag(byte[] buf, int offset,
-			ContentToken ct, TOK tok)
-		{
-			m_Depth++;
-			int colon;
-			string name;
-			string prefix;
-			Hashtable ht = new Hashtable();
-            
-			m_NamespaceStack.Push();
-            
-			// if i have attributes
-			if ((tok == TOK.START_TAG_WITH_ATTS) ||
-				(tok == TOK.EMPTY_ELEMENT_WITH_ATTS))
-			{
-				int start;
-				int end;
-				string val;
-				for (int i=0; i<ct.getAttributeSpecifiedCount(); i++)
-				{                    
-					start =  ct.getAttributeNameStart(i);
-					end = ct.getAttributeNameEnd(i);
-					name = utf.GetString(buf, start, end - start);
-                    
-					start = ct.getAttributeValueStart(i);
-					end =  ct.getAttributeValueEnd(i);
-					//val = utf.GetString(buf, start, end - start);
+            }
+        }
+
+        private void StartTag(byte[] buf, int offset,
+            ContentToken ct, TOK tok)
+        {
+            m_Depth++;
+            int colon;
+            string name;
+            string prefix;
+            Hashtable ht = new Hashtable();
+
+            m_NamespaceStack.Push();
+
+            // if i have attributes
+            if ((tok == TOK.START_TAG_WITH_ATTS) ||
+                (tok == TOK.EMPTY_ELEMENT_WITH_ATTS))
+            {
+                int start;
+                int end;
+                string val;
+                for (int i = 0; i < ct.getAttributeSpecifiedCount(); i++)
+                {
+                    start = ct.getAttributeNameStart(i);
+                    end = ct.getAttributeNameEnd(i);
+                    name = utf.GetString(buf, start, end - start);
+
+                    start = ct.getAttributeValueStart(i);
+                    end = ct.getAttributeValueEnd(i);
+                    //val = utf.GetString(buf, start, end - start);
 
                     val = NormalizeAttributeValue(buf, start, end - start);
                     // <foo b='&amp;'/>
-					// <foo b='&amp;amp;'
-					// TODO: if val includes &amp;, it gets double-escaped
-					if (name.StartsWith("xmlns:"))
-					{
-						colon = name.IndexOf(':');
-						prefix = name.Substring(colon+1);
-						m_NamespaceStack.AddNamespace(prefix, val);
-					}
-					else if (name == "xmlns")
-					{
-                        m_NamespaceStack.AddNamespace(string.Empty, val);						
-					}
-					else
-					{
-						ht.Add(name, val);
-					}
-				}
-			}
+                    // <foo b='&amp;amp;'
+                    // TODO: if val includes &amp;, it gets double-escaped
+                    if (name.StartsWith("xmlns:"))
+                    {
+                        colon = name.IndexOf(':');
+                        prefix = name.Substring(colon + 1);
+                        m_NamespaceStack.AddNamespace(prefix, val);
+                    }
+                    else if (name == "xmlns")
+                    {
+                        m_NamespaceStack.AddNamespace(string.Empty, val);
+                    }
+                    else
+                    {
+                        ht.Add(name, val);
+                    }
+                }
+            }
 
-			name = utf.GetString(buf,
-				offset + m_enc.MinBytesPerChar,
-				ct.NameEnd - offset - m_enc.MinBytesPerChar);
-			
+            name = utf.GetString(buf,
+                offset + m_enc.MinBytesPerChar,
+                ct.NameEnd - offset - m_enc.MinBytesPerChar);
+
             colon = name.IndexOf(':');
-			string ns = "";
-			prefix = null;
-			if (colon > 0)
-			{
-				prefix = name.Substring(0, colon);
-				name = name.Substring(colon + 1);
-				ns = m_NamespaceStack.LookupNamespace(prefix);
-			}
-			else
-			{
-				ns = m_NamespaceStack.DefaultNamespace;
-			}
-            			
-			Element newel = ElementFactory.GetElement(prefix, name, ns);
-			
-			foreach (string attrname in ht.Keys)
-			{
-				newel.SetAttribute(attrname, (string)ht[attrname]);                
-			}
-            
-			if (m_root == null)
-			{
-				m_root = newel;
-				//FireOnDocumentStart(m_root);
-				if (OnStreamStart!=null)
-					OnStreamStart(this, m_root);
-			}
-			else
-			{
-				if (current != null)
-					current.AddChild(newel);
-				current = newel;
-			}
-		}
+            string ns = "";
+            prefix = null;
+            if (colon > 0)
+            {
+                prefix = name.Substring(0, colon);
+                name = name.Substring(colon + 1);
+                ns = m_NamespaceStack.LookupNamespace(prefix);
+            }
+            else
+            {
+                ns = m_NamespaceStack.DefaultNamespace;
+            }
 
-		private void EndTag(byte[] buf, int offset,	ContentToken ct, TOK tok)
-		{
-			m_Depth--;
-			m_NamespaceStack.Pop();
+            Element newel = ElementFactory.GetElement(prefix, name, ns);
 
-			if (current == null)
-			{// end of doc
-				if (OnStreamEnd!=null)
-					OnStreamEnd(this, m_root);
-//				FireOnDocumentEnd();
-				return;
-			}
+            foreach (string attrname in ht.Keys)
+            {
+                newel.SetAttribute(attrname, (string)ht[attrname]);
+            }
 
-			string name = null;
+            if (m_root == null)
+            {
+                m_root = newel;
+                //FireOnDocumentStart(m_root);
+                if (OnStreamStart != null)
+                    OnStreamStart(this, m_root);
+            }
+            else
+            {
+                if (current != null)
+                    current.AddChild(newel);
+                current = newel;
+            }
+        }
 
-			if ((tok == TOK.EMPTY_ELEMENT_WITH_ATTS) ||
-				(tok == TOK.EMPTY_ELEMENT_NO_ATTS))
-				name = utf.GetString(buf,
-					offset + m_enc.MinBytesPerChar,
-					ct.NameEnd - offset -
-					m_enc.MinBytesPerChar);
-			else
-				name = utf.GetString(buf,
-					offset + m_enc.MinBytesPerChar*2,
-					ct.NameEnd - offset -
-					m_enc.MinBytesPerChar*2);
-                
+        private void EndTag(byte[] buf, int offset, ContentToken ct, TOK tok)
+        {
+            m_Depth--;
+            m_NamespaceStack.Pop();
 
-//			if (current.Name != name)
-//				throw new Exception("Invalid end tag: " + name +
-//					" != " + current.Name);
+            if (current == null)
+            {// end of doc
+                if (OnStreamEnd != null)
+                    OnStreamEnd(this, m_root);
+                //				FireOnDocumentEnd();
+                return;
+            }
 
-			Element parent = (Element) current.Parent;
-			if (parent == null)
-            {               
+            string name = null;
+
+            if ((tok == TOK.EMPTY_ELEMENT_WITH_ATTS) ||
+                (tok == TOK.EMPTY_ELEMENT_NO_ATTS))
+                name = utf.GetString(buf,
+                    offset + m_enc.MinBytesPerChar,
+                    ct.NameEnd - offset -
+                    m_enc.MinBytesPerChar);
+            else
+                name = utf.GetString(buf,
+                    offset + m_enc.MinBytesPerChar * 2,
+                    ct.NameEnd - offset -
+                    m_enc.MinBytesPerChar * 2);
+
+
+            //			if (current.Name != name)
+            //				throw new Exception("Invalid end tag: " + name +
+            //					" != " + current.Name);
+
+            Element parent = (Element)current.Parent;
+            if (parent == null)
+            {
                 DoRaiseOnStreamElement(current);
                 //if (OnStreamElement!=null)
                 //    OnStreamElement(this, current);
-				//FireOnElement(current);
-			}
-			current = parent;
-		}
+                //FireOnElement(current);
+            }
+            current = parent;
+        }
 
         /// <summary>
         /// If users didnt use the library correctly and had no local error handles
@@ -364,12 +364,12 @@ namespace agsXMPP.Xml
             catch (Exception ex)
             {
                 if (OnError != null)
-                    OnError(this, ex);                
+                    OnError(this, ex);
             }
         }
 
         private string NormalizeAttributeValue(byte[] buf, int offset, int length)
-        {            
+        {
             if (length == 0)
                 return null;
 
@@ -385,7 +385,7 @@ namespace agsXMPP.Xml
             try
             {
                 while (off < b.Length)
-                {                  
+                {
                     //tok = m_enc.tokenizeContent(b, off, b.Length, ct);
                     tok = m_enc.tokenizeAttributeValue(b, off, b.Length, ct);
 
@@ -393,17 +393,17 @@ namespace agsXMPP.Xml
                     {
                         case TOK.ATTRIBUTE_VALUE_S:
                         case TOK.DATA_CHARS:
-                        case TOK.DATA_NEWLINE:                            
+                        case TOK.DATA_NEWLINE:
                             val += (utf.GetString(b, off, ct.TokenEnd - off));
                             break;
                         case TOK.CHAR_REF:
-                        case TOK.MAGIC_ENTITY_REF:                        
+                        case TOK.MAGIC_ENTITY_REF:
                             val += new string(new char[] { ct.RefChar1 });
                             break;
-                        case TOK.CHAR_PAIR_REF:                            
-                            val += new string(new char[] {ct.RefChar1, ct.RefChar2});
-                            break;                        
-                        case TOK.ENTITY_REF:      
+                        case TOK.CHAR_PAIR_REF:
+                            val += new string(new char[] { ct.RefChar1, ct.RefChar2 });
+                            break;
+                        case TOK.ENTITY_REF:
 #if CF
 						    throw new util.NotImplementedException("Token type not implemented: " + tok);
 #else
@@ -428,21 +428,21 @@ namespace agsXMPP.Xml
             }
             finally
             {
-                buffer.Clear(off);               
+                buffer.Clear(off);
             }
             return val;
         }
 
-		private void AddText(string text)
-		{
-			if (text == "")
-				return;
+        private void AddText(string text)
+        {
+            if (text == "")
+                return;
 
             //Console.WriteLine("AddText:" + text);
             //Console.WriteLine(lastTOK);
 
-			if (current != null)
-			{		
+            if (current != null)
+            {
                 if (m_cdata)
                 {
                     Node last = current.LastNode;
@@ -453,18 +453,20 @@ namespace agsXMPP.Xml
                 }
                 else
                 {
-				    Node last = current.LastNode;
-				    if (last != null && last.NodeType == NodeType.Text)
-					    last.Value = last.Value + text;
-				    else
-					    current.AddChild(new Text(text));
+                    Node last = current.LastNode;
+                    if (last != null && last.NodeType == NodeType.Text)
+                        last.Value = last.Value + text;
+                    else
+                        current.AddChild(new Text(text));
                 }
-			}
+            }
             else
-			{
+            {
                 // this try-catch is added by Dave - I might remove it when I've had more time to examine why the streamParser's root LastNode is sometimes null, and I rather suspect it has something to do with the streamparser being reset.
-                try {
-                    // text in root element
+                // text in root element
+                /*This is modified by Chris to a more efficient null check so we don't have to freeze the stack on this condition*/
+                if (m_root != null)
+                {
                     Node last = ((Element)m_root).LastNode;
                     if (m_cdata)
                     {
@@ -472,18 +474,16 @@ namespace agsXMPP.Xml
                             last.Value = last.Value + text;
                         else
                             m_root.AddChild(new CData(text));
-                    } else
+                    }
+                    else
                     {
                         if (last != null && last.NodeType == NodeType.Text)
                             last.Value = last.Value + text;
                         else
                             m_root.AddChild(new Text(text));
                     }
-                } catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }

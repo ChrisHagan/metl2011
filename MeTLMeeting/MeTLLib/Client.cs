@@ -54,8 +54,6 @@ namespace MeTLLib
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         string UploadResource(Uri uri, string slideId);
-        void AsyncRetrieveHistoryOf(int room);
-        void WatchRoom(string slide);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
         void LoadQuizzes(string conversationJid);
@@ -122,7 +120,6 @@ namespace MeTLLib
         public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii) { }
         public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi) { }
         public string UploadResource(Uri uri, string slideId) { return ""; }
-        public void AsyncRetrieveHistoryOf(int room) { }
         public void MoveTo(int slide) { }
         public void LeaveLocation() { }
         public void LoadQuiz(int convesationJid, long quizId) { }
@@ -146,11 +143,6 @@ namespace MeTLLib
         public void SaveUserOptions(string username, UserOptions options) { }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults) { return new List<SearchConversationDetails>(); }
         public UserOptions UserOptionsFor(string username) { return UserOptions.DEFAULT; }
-
-        public void WatchRoom(string slide)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class ClientConnection : IClientBehaviour
@@ -334,6 +326,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+
                 wire.SendAttendance(where, att);
             };
             tryIfConnected(work);
@@ -506,15 +499,7 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void WatchRoom(string slide)
-        {
-            Action work = delegate
-            {
-                wire.WatchRoom(slide);
-            };
-            tryIfConnected(work);
-        }
-
+       
         public void HandleShutdown()
         {
             Action work = delegate
@@ -552,14 +537,6 @@ namespace MeTLLib
             {
                 if (String.IsNullOrEmpty(room)) return;
                 wire.LeaveRoom(room);
-            };
-            tryIfConnected(work);
-        }
-        public void AsyncRetrieveHistoryOf(int room)
-        {
-            Action work = delegate
-            {
-                wire.GetHistory(room);
             };
             tryIfConnected(work);
         }

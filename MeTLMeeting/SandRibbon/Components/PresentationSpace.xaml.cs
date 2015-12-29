@@ -103,12 +103,12 @@ namespace SandRibbon.Components
             workQueue.Clear();
             stack.Contextualise();
 
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), loc.ToString()));
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, loc)));
-            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, (parser) => PreParserAvailable(parser), rootPage.ConversationDetails.Jid));            
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, PreParserAvailable, loc.ToString()));
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, PreParserAvailable, String.Format("{0}/{1}", rootPage.NetworkController.credentials.name, loc)));
+            workQueue.Enqueue(() => p.Retrieve<PreParser>(delegate { }, delegate { }, PreParserAvailable, rootPage.ConversationDetails.Jid));            
             while (workQueue.Count() > 0)
             {                
-                Dispatcher.Invoke(workQueue.Dequeue());
+                Dispatcher.InvokeAsync(workQueue.Dequeue());
             }
         }
         private void MirrorPresentationSpace(object obj)
@@ -251,23 +251,28 @@ namespace SandRibbon.Components
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            Trace.TraceInformation("Parser for {0}",parser.location.currentSlide);
             App.auditor.wrapAction(a =>
             {
                 try
                 {
-                    a(GaugeStatus.InProgress, 25);
-                    stack.ReceiveStrokes(parser.ink);
-                    a(GaugeStatus.InProgress, 50);
-                    stack.ReceiveImages(parser.images.Values);
-                    a(GaugeStatus.InProgress, 75);
-                    foreach (var text in parser.text.Values)
-                        stack.DoText(text);
-                    stack.RefreshCanvas();
+                    if (parser.location.currentSlide != rootPage.Slide.id)
+                    {
+                        a(GaugeStatus.Failed, 100);
+                    }
+                    else {
+                        a(GaugeStatus.InProgress, 25);
+                        stack.ReceiveStrokes(parser.ink);
+                        a(GaugeStatus.InProgress, 50);
+                        stack.ReceiveImages(parser.images.Values);
+                        a(GaugeStatus.InProgress, 75);
+                        foreach (var text in parser.text.Values)
+                            stack.DoText(text);
+                        stack.RefreshCanvas();
+                    }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("exception in parser: {0}", e.Message);
+                    Trace.TraceError("exception in parser: {0}", e.Message);
                 }
             }, "renderCanvas", "frontend");
         }
