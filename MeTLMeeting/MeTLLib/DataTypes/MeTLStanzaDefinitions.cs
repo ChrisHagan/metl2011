@@ -1363,6 +1363,7 @@ namespace MeTLLib.DataTypes
                     SetTag(URL, INodeFix.StripServer(value.url));
                     SetTag(TIME, value.uploadTime);
                     SetTag(SIZE, value.size);
+                    SetTag(identityTag, value.identity);
                     SetTag(NAME, value.name);
                     SetTag(slideTag, value.conversationJid);
                 }
