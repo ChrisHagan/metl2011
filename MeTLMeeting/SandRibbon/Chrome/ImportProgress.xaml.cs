@@ -18,25 +18,31 @@ namespace SandRibbon
         {
             InitializeComponent();
             from.ItemsSource = fromStack;
-            Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>(PreParserAvailable));
-            Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.HideProgressBlocker.RegisterCommandToDispatcher(new DelegateCommand<object>(HideProgressBlocker));
+            Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<object>(PreParserAvailable));
+            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.HideProgressBlocker.RegisterCommand(new DelegateCommand<object>(HideProgressBlocker));
         }
-        private void HideProgressBlocker(object _arg) {
-            Visibility = Visibility.Collapsed;
-            reset(); 
+        private void HideProgressBlocker(object _arg)
+        {
+            Dispatcher.adopt(delegate
+            {
+                Visibility = Visibility.Collapsed;
+                reset();
+            });
         }
-        private void setProgress(double percentage) {
-            if(Visibility == Visibility.Collapsed)
+        private void setProgress(double percentage)
+        {
+            if (Visibility == Visibility.Collapsed)
                 Visibility = Visibility.Visible;
             progress.Value = percentage;
             progress.IsIndeterminate = false;
         }
-        private void setContent(string content) {
-            goldLabel.Content = content; 
+        private void setContent(string content)
+        {
+            goldLabel.Content = content;
         }
         private void reset()
         {
@@ -49,53 +55,71 @@ namespace SandRibbon
                 fromStack.Clear();
             });
         }
-        private void PrintConversation(object _arg) {
-            reset();
-            Visibility = Visibility.Visible;
-            setContent("Printing");
+        private void PrintConversation(object _arg)
+        {
+            Dispatcher.adopt(delegate{
+                reset();
+                Visibility = Visibility.Visible;
+                setContent("Printing");
+            });
         }
-        private void JoinConversation(object _arg) {
-            reset();
-            Visibility = Visibility.Visible;
-            setContent("Joining");
-            setProgress(100);
+        private void JoinConversation(object _arg)
+        {
+            Dispatcher.adopt(delegate
+            {
+                reset();
+                Visibility = Visibility.Visible;
+                setContent("Joining");
+                setProgress(100);
+            });
         }
-        private void PreParserAvailable(object _arg) {
-            Commands.RequerySuggested();
-            Visibility = Visibility.Collapsed;
+        private void PreParserAvailable(object _arg)
+        {
+            Dispatcher.adopt(delegate
+            {
+                Commands.RequerySuggested();
+                Visibility = Visibility.Collapsed;
+            });
         }
         private int slidesExtracted;
         private int slidesAnalyzed;
-        private void UpdatePowerpointProgress(PowerpointImportProgress progress) {
-            switch (progress.stage) { 
-                case PowerpointImportProgress.IMPORT_STAGE.DESCRIBED:
-                    reset();
-                    Visibility = Visibility.Visible;
-                    setContent("Importing");
-                    this.progress.IsIndeterminate = true;
-                    break;
-                case PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES:
-                    slidesExtracted++;
-                    setContent("Processing");
-                    setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
-                    break;
-                case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
-                   slidesAnalyzed++;
-                   setContent("Loading");
-                   setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
-                   break;
-                case PowerpointImportProgress.IMPORT_STAGE.PRINTING:
-                   slidesAnalyzed++;
-                   setContent("Printing");
-                   setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
-                   break;
-            }
+        private void UpdatePowerpointProgress(PowerpointImportProgress progress)
+        {
+            Dispatcher.adopt(delegate
+            {
+                switch (progress.stage)
+                {
+                    case PowerpointImportProgress.IMPORT_STAGE.DESCRIBED:
+                        reset();
+                        Visibility = Visibility.Visible;
+                        setContent("Importing");
+                        this.progress.IsIndeterminate = true;
+                        break;
+                    case PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES:
+                        slidesExtracted++;
+                        setContent("Processing");
+                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        break;
+                    case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
+                        slidesAnalyzed++;
+                        setContent("Loading");
+                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        break;
+                    case PowerpointImportProgress.IMPORT_STAGE.PRINTING:
+                        slidesAnalyzed++;
+                        setContent("Printing");
+                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        break;
+                }
+            });
         }
     }
-    public class SlideProgress {
+    public class SlideProgress
+    {
         public string uri { get; set; }
     }
-    public class SubtractionConverter : IValueConverter {
+    public class SubtractionConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return (double)value - (double)parameter;
@@ -105,7 +129,8 @@ namespace SandRibbon
             return value;
         }
     }
-    public class SlideDisplacementConverter : IValueConverter {
+    public class SlideDisplacementConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return (int)value * 30;

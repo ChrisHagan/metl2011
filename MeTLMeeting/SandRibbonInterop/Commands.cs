@@ -124,6 +124,7 @@ namespace SandRibbon
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand("Mark");
 
+        public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand("JoinConversation");
         public static DefaultableCompositeCommand CreateQuiz = new DefaultableCompositeCommand("CreateQuiz");
         public static DefaultableCompositeCommand OpenQuiz = new DefaultableCompositeCommand("OpenQuiz");
         public static DefaultableCompositeCommand ViewQuizResults = new DefaultableCompositeCommand("ViewQuizResults");
