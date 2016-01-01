@@ -152,11 +152,17 @@ namespace SandRibbon
             var uri = (string)value;
             if (String.IsNullOrEmpty(uri)) return null;
             BitmapImage bi = new BitmapImage();
-            bi.BeginInit();
-            bi.UriSource = new Uri(uri);
-            bi.CacheOption = BitmapCacheOption.OnLoad;
-            bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bi.EndInit();
+            try
+            {
+                bi.BeginInit();
+                bi.UriSource = new Uri(uri);
+                bi.CacheOption = BitmapCacheOption.OnLoad;
+                bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            }
+            finally
+            {
+                bi.EndInit();
+            }
             return bi;
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -544,9 +550,15 @@ namespace SandRibbon
         {
             var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
             var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = uri;
-            bitmap.EndInit();
+            try
+            {
+                bitmap.BeginInit();
+                bitmap.UriSource = uri;
+            }
+            finally
+            {
+                bitmap.EndInit();
+            }
             return bitmap;
         }
 

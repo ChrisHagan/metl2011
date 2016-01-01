@@ -166,12 +166,12 @@ namespace SandRibbon.Components
 
         private void UnregisterCommands()
         {
-            Commands.UpdateConversationDetails.UnregisterCommand(conversationDetailsCommand);
-            Commands.UpdateForeignConversationDetails.UnregisterCommand(conversationDetailsCommand);
-            Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
-            Commands.LeaveConversation.UnregisterCommand(leaveConversationCommand);
-            Commands.SetConversationPermissions.UnregisterCommand(setConversationPermissionsCommand);
-            Commands.BackstageModeChanged.UnregisterCommand(backstageModeChangedCommand);
+            if(conversationDetailsCommand != null) Commands.UpdateConversationDetails.UnregisterCommand(conversationDetailsCommand);
+            if(conversationDetailsCommand != null) Commands.UpdateForeignConversationDetails.UnregisterCommand(conversationDetailsCommand);
+            if(joinConversationCommand != null) Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
+            if(leaveConversationCommand != null) Commands.LeaveConversation.UnregisterCommand(leaveConversationCommand);
+            if(setConversationPermissionsCommand != null) Commands.SetConversationPermissions.UnregisterCommand(setConversationPermissionsCommand);
+            if(backstageModeChangedCommand != null) Commands.BackstageModeChanged.UnregisterCommand(backstageModeChangedCommand);
         }
 
         private void FillSearchResultsFromInput()

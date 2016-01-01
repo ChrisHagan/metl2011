@@ -105,13 +105,19 @@ namespace SandRibbon.Providers
                                     g(GaugeStatus.InProgress, 20);
                                     bitmap = new BitmapImage();
                                     g(GaugeStatus.InProgress, 30);
-                                    bitmap.BeginInit();
-                                    g(GaugeStatus.InProgress, 40);
-                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                    g(GaugeStatus.InProgress, 50);
-                                    bitmap.StreamSource = stream;
-                                    g(GaugeStatus.InProgress, 60);
-                                    bitmap.EndInit();
+                                    try
+                                    {
+                                        bitmap.BeginInit();
+                                        g(GaugeStatus.InProgress, 40);
+                                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                        g(GaugeStatus.InProgress, 50);
+                                        bitmap.StreamSource = stream;
+                                        g(GaugeStatus.InProgress, 60);
+                                    }
+                                    finally
+                                    {
+                                        bitmap.EndInit();
+                                    }
                                     g(GaugeStatus.InProgress, 70);
                                     bitmap.Freeze();
                                     g(GaugeStatus.InProgress, 80);

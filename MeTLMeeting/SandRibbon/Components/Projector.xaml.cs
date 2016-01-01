@@ -126,6 +126,8 @@ namespace SandRibbon.Components
         {
             //if (!isPrivate(parser))
             //{
+            try
+            {
                 BeginInit();
                 stack.ReceiveStrokes(parser.ink);
                 stack.ReceiveImages(parser.images.Values);
@@ -134,7 +136,11 @@ namespace SandRibbon.Components
                 stack.RefreshCanvas();
                 /*foreach (var moveDelta in parser.moveDeltas)
                     stack.ReceiveMoveDelta(moveDelta, processHistory: true);*/
+            }
+            finally
+            {
                 EndInit();
+            }
            //}
         }
 

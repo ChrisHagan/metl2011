@@ -39,15 +39,21 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-                BeginInit();
-                notepadStack.ReceiveStrokes(parser.ink);
-                notepadStack.ReceiveImages(parser.images.Values);
-                foreach (var text in parser.text.Values)
-                    notepadStack.DoText(text);
-                foreach (var moveDelta in parser.moveDeltas)
-                    notepadStack.ReceiveMoveDelta(moveDelta, processHistory: true);
+                try
+                {
+                    BeginInit();
+                    notepadStack.ReceiveStrokes(parser.ink);
+                    notepadStack.ReceiveImages(parser.images.Values);
+                    foreach (var text in parser.text.Values)
+                        notepadStack.DoText(text);
+                    foreach (var moveDelta in parser.moveDeltas)
+                        notepadStack.ReceiveMoveDelta(moveDelta, processHistory: true);
 
-                EndInit();
+                }
+                finally
+                {
+                    EndInit();
+                }
             });
         }
     }

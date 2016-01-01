@@ -195,9 +195,15 @@ namespace SandRibbon.Quizzing
                                     url = App.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                     var image = new Image();
                                     BitmapImage source = new BitmapImage();
-                                    source.BeginInit();
-                                    source.UriSource = new Uri(url);
-                                    source.EndInit();
+                                    try
+                                    {
+                                        source.BeginInit();
+                                        source.UriSource = new Uri(url);
+                                    }
+                                    finally
+                                    {
+                                        source.EndInit();
+                                    }
                                     image.Source = source;
                                     image.Width = 300;
                                     image.Height = 300;

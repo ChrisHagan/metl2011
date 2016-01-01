@@ -190,20 +190,25 @@ namespace SandRibbon.Components
                 {
                     Dispatcher.adopt(delegate
                     {
-                        BeginInit();
-                        a(GaugeStatus.InProgress, 25);
-                        stack.ReceiveStrokes(parser.ink);
-                        a(GaugeStatus.InProgress, 50);
-                        stack.ReceiveImages(parser.images.Values);
-                        a(GaugeStatus.InProgress, 75);
-                        foreach (var text in parser.text.Values)
-                            stack.DoText(text);
-                        /*foreach (var moveDelta in parser.moveDeltas)
-                            stack.ReceiveMoveDelta(moveDelta, processHistory: true);
-                        */
-                        stack.RefreshCanvas();
-                        EndInit();
-
+                        try
+                        {
+                            BeginInit();
+                            a(GaugeStatus.InProgress, 25);
+                            stack.ReceiveStrokes(parser.ink);
+                            a(GaugeStatus.InProgress, 50);
+                            stack.ReceiveImages(parser.images.Values);
+                            a(GaugeStatus.InProgress, 75);
+                            foreach (var text in parser.text.Values)
+                                stack.DoText(text);
+                            /*foreach (var moveDelta in parser.moveDeltas)
+                                stack.ReceiveMoveDelta(moveDelta, processHistory: true);
+                            */
+                            stack.RefreshCanvas();
+                        }
+                        finally
+                        {
+                            EndInit();
+                        }
                     });
                 }, "renderCanvas", "frontend");
             }

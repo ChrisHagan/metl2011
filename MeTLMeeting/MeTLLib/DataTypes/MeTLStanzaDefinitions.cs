@@ -2127,9 +2127,15 @@ namespace MeTLLib.DataTypes
                     image.Dispatcher.Invoke((Action)delegate
                         {
                             var source = new BitmapImage();
-                            source.BeginInit();
-                            source.StreamSource = new MemoryStream(bytes);
-                            source.EndInit();
+                            try
+                            {
+                                source.BeginInit();
+                                source.StreamSource = new MemoryStream(bytes);
+                            }
+                            finally
+                            {
+                                source.EndInit();
+                            }
                             image.Source = source;
                         });
                 }

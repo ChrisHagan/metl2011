@@ -10,7 +10,7 @@ namespace SandRibbon
             if(dispatcher.CheckAccess())
                 del();
             else
-                dispatcher.Invoke(del);
+                sdispatcher.Invoke(del);
         }
         public static void adoptAsync(this Dispatcher dispatcher, Action del)
         {

@@ -2123,10 +2123,16 @@ namespace SandRibbon.Components
             var image = new MeTLImage();
 
             var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.UriSource = uri;
-            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-            bitmapImage.EndInit();
+            try
+            {
+                bitmapImage.BeginInit();
+                bitmapImage.UriSource = uri;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            }
+            finally
+            {
+                bitmapImage.EndInit();
+            }
             //var newImageHeight = bitmapImage.DecodePixelHeight;
             var newImageHeight = bitmapImage.PixelHeight;
             //var newImageWidth = bitmapImage.DecodePixelWidth;
