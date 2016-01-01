@@ -38,25 +38,7 @@
         <GradientStop Color="#00FFFFFF" Offset="0.6"/>
         <GradientStop Color="#FF000000" Offset="1"/>
     </LinearGradientBrush>
-    <SandRibbonInterop:AutoShape x:Key="BlueAutoShape" Background="LightBlue" Foreground="DarkBlue">
-        <SandRibbonInterop:AutoShape.PathData>
-            <PathGeometry>
-                <PathGeometry.Figures>
-                    <PathFigureCollection>
-                        <PathFigure IsClosed="True" StartPoint="10,100">
-                            <PathFigure.Segments>
-                                <PathSegmentCollection>
-                                    <LineSegment Point="100,100" />
-                                    <LineSegment Point="100,50" />
-                                </PathSegmentCollection>
-                            </PathFigure.Segments>
-                        </PathFigure>
-                    </PathFigureCollection>
-                </PathGeometry.Figures>
-            </PathGeometry>
-        </SandRibbonInterop:AutoShape.PathData>
-    </SandRibbonInterop:AutoShape>
-
+    
     <SolidColorBrush x:Key="MiniMapSelectionBox" Color="#88FFFF00"/>
 
     <SolidColorBrush Color="LightGray" x:Key="MouseOverBorderBrush"/>

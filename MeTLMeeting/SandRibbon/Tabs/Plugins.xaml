@@ -8,9 +8,6 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>    
     </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="S15 Board Manager">
-        <sandpit:BoardManagerLauncher />
-    </sr:RibbonGroup>
     <sr:RibbonGroup Header="Diagnostics">
     </sr:RibbonGroup>
 <!--    <sr:RibbonGroup Header="Integration">

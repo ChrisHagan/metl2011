@@ -837,17 +837,7 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-
-        public void SneakInto(string room)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SneakOutOf(string room)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void AsyncRetrieveHistoryOf(int v)
         {
             throw new NotImplementedException();

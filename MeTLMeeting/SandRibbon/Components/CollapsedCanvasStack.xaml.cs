@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -14,8 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MeTLLib.DataTypes;
-using MeTLLib.Providers.Connection;
-using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using SandRibbon.Components.Utility;
@@ -29,7 +26,6 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
-using MeTLLib.Providers;
 
 namespace SandRibbon.Components
 {
@@ -2105,69 +2101,21 @@ namespace SandRibbon.Components
                 MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
-            Dispatcher.adoptAsync(() =>
-            {
-                var imagePos = new Point(0, 0);
-                MeTLImage image = null;
-                try
-                {
-                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute), useDefaultMargin);
+            if (origin.X < 50)
+                origin.X = 50;
+            if (origin.Y < 50)
+                origin.Y = 50;
+            var newPoint = OffsetNegativeCartesianPointTranslate(origin);
+            var width = 320;
+            var height = 240;
+            App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(
+                Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy),Globals.privacy), newPoint.X, newPoint.Y, width, height, fileName
+            ));
+        }
 
-                    if (useDefaultMargin)
-                    {
-                        if (imagePos.X < 50)
-                            imagePos.X = 50;
-                        if (imagePos.Y < 50)
-                            imagePos.Y = 50;
-                    }
-
-                    imagePos = positionUpdate(image, imagePos, count);
-                }
-                catch (Exception e)
-                {
-                    MeTLMessage.Warning("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
-                    return;
-                }
-                if (image == null)
-                    return;
-                // center the image horizonally if there is no margin set. this is only used for dropping quiz result images on the canvas
-                if (!useDefaultMargin)
-                {
-                    imagePos.X = (Globals.DefaultCanvasSize.Width / 2) - ((image.Width + (Globals.QuizMargin * 2)) / 2);
-                    //pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
-                }
-                InkCanvas.SetLeft(image, imagePos.X);
-                InkCanvas.SetTop(image, imagePos.Y);
-                //image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L));
-                image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, ""));
-                var currentSlide = Globals.slide;
-                var translatedImage = OffsetNegativeCartesianImageTranslate(image);
-
-                Action undo = () =>
-                                  {
-                                      ClearAdorners();
-                                      contentBuffer.RemoveImage(translatedImage, (img) => Work.Children.Remove(img));
-                                      dirtyImage(translatedImage);
-                                  };
-                Action redo = () =>
-                {
-                    ClearAdorners();
-                    if (!fileName.StartsWith("http"))
-                        App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, currentPrivacy, translatedImage, fileName, false));
-                    else
-                        sendImage(translatedImage);
-
-                    contentBuffer.AddImage(translatedImage, (img) =>
-                    {
-                        if (!Work.Children.Contains(img))
-                            Work.Children.Add(img);
-                    });
-                    Work.Select(new[] { translatedImage });
-                    AddAdorners();
-                };
-                redo();
-                UndoHistory.Queue(undo, redo, "Dropped Image");
-            });
+        private Point OffsetNegativeCartesianPointTranslate(Point origin)
+        {
+            return new Point(origin.X + contentBuffer.logicalX, origin.Y + contentBuffer.logicalY);
         }
 
         public MeTLImage createImageFromUri(Uri uri, bool useDefaultMargin)

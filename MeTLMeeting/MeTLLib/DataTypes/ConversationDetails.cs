@@ -230,8 +230,8 @@ namespace MeTLLib.DataTypes
         public string Tag { get; set; }
         public string Subject { get; set; }
 
-        public List<Slide> Slides { get; set; }
-        public List<string> blacklist { get; set; }
+        public List<Slide> Slides { get; set; } = new List<Slide>();
+        public List<string> blacklist { get; set; } = new List<string>();
         public byte[] GetBytes()
         {
             return Encoding.UTF8.GetBytes(WriteXml().ToString(SaveOptions.DisableFormatting));
@@ -501,6 +501,7 @@ namespace MeTLLib.DataTypes
         public bool studentCanAddPage = false;
         private static string CANSUBMITSCREENSHOT = "studentCanSubmitScreenshot";
         public bool studentCanSubmitScreenshot = false;
+        public bool studentCanPublish;
 
         public static Permissions ReadXml(XElement doc)
         {

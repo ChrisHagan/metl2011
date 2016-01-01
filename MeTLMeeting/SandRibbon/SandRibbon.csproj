@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- set up the path for the msbuild extension pack -->
     <MSBuildExtensionsPath>..\..\MSBuildExtensions\</MSBuildExtensionsPath>
@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SandRibbon</RootNamespace>
     <AssemblyName>MeTL</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -516,12 +516,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Sandpit\BoardManagerLauncher.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\ScrollBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -818,10 +812,6 @@
     <Compile Include="Components\Projector.xaml.cs">
       <DependentUpon>Projector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Sandpit\BoardManager.cs" />
-    <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
-      <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\ScrollBar.xaml.cs">
       <DependentUpon>ScrollBar.xaml</DependentUpon>
     </Compile>
@@ -948,11 +938,11 @@
       <Name>MeTLLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\SandRibbonInterop\SandRibbonInterop.csproj">
-      <Project>{936C46AC-5A2F-4476-A89C-52537260DBE4}</Project>
+      <Project>{936c46ac-5a2f-4476-a89c-52537260dbe4}</Project>
       <Name>SandRibbonInterop</Name>
     </ProjectReference>
     <ProjectReference Include="..\SandRibbonObjects\SandRibbonObjects.csproj">
-      <Project>{87F30CE0-8265-4934-8E1E-CF90B26B2562}</Project>
+      <Project>{87f30ce0-8265-4934-8e1e-cf90b26b2562}</Project>
       <Name>SandRibbonObjects</Name>
     </ProjectReference>
   </ItemGroup>
@@ -1272,6 +1262,9 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\Sandpit\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(TPath)" />

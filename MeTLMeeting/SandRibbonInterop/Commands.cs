@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using MeTLLib.DataTypes;
-using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 
 namespace SandRibbon
@@ -124,6 +123,7 @@ namespace SandRibbon
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand("Mark");
 
+        public static DefaultableCompositeCommand ProxyJoinConversation = new DefaultableCompositeCommand("ProxyJoinConversation");
         public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand("LeaveAllRooms");
         public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand("LeaveAllRooms");
         public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand("LeaveAllRooms");

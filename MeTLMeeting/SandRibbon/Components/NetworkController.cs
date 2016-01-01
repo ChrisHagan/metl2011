@@ -4,8 +4,6 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using Application = System.Windows.Application;
-using System.Diagnostics;
-using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
@@ -167,11 +165,11 @@ namespace SandRibbon.Components
         }
         private void SendQuiz(QuizQuestion qq)
         {
-            client.SendQuizQuestion(qq);
+            client.SendQuizQuestion(qq, Globals.conversationDetails.Jid);
         }
         private void SendQuizAnswer(QuizAnswer qa)
         {
-            client.SendQuizAnswer(qa);
+            client.SendQuizAnswer(qa, Globals.conversationDetails.Jid);
         }
         private void SendSubmission(TargettedSubmission ts)
         {
