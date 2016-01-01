@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components;
 using SandRibbon.Quizzing;
 using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
