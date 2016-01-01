@@ -55,7 +55,7 @@ namespace SandRibbon
         public static bool isStaging = false;
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-        public static MetlConfigurationManager metlConfigManager = new LocalAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
+        public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
 
 #if DEBUG
         public static string OverrideUsername { get; private set; }

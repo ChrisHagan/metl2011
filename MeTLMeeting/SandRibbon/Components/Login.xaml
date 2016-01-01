@@ -9,33 +9,6 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
     <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray">
-            <Grid>
-                <!--<Image HorizontalAlignment="Left" Stretch="None" Source="\Resources\MonashLogo.jpg"/>-->
-                <StackPanel HorizontalAlignment="Right">
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=ContactUrl, Mode=OneWay}">Contact us</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=DescriptionUrl, Mode=OneWay}">What is MeTL?</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=StudentUsagePolicyUrl, Mode=OneWay}">Acceptable use of information technology facilities by students policy</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=StaffUsagePolicyUrl, Mode=OneWay}">IT Use policy for staff and other authorised users</Hyperlink>
-                    </TextBlock>
-                    <TextBlock FontSize="9" HorizontalAlignment="Right">
-                                    Copyright © 2012
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=CompanyUrl, Mode=OneWay}">Monash University</Hyperlink>
-                                    -
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=LegalsUrl, Mode=OneWay}">Caution</Hyperlink>
-                                    -
-                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="{Binding Source={x:Static p:Settings.Default}, Path=PrivacyUrl, Mode=OneWay}">Privacy Policy</Hyperlink>
-                    </TextBlock>
-                </StackPanel>
-            </Grid>
-        </Border>
         <Grid x:Name="commandEscape" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid x:Name="logonBrowserContainer" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             <Grid x:Name="loadingImage" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto">
@@ -52,8 +25,7 @@
                 </StackPanel>
             </Grid>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
-                <TextBlock>Please select a server against which to work.</TextBlock>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Visibility="Collapsed">
                     <TextBox x:Name="customServer"/>
                     <Button x:Name="customServerAccept" Click="SetCustomServer" Content="Login to custom server"/>
                 </StackPanel>
@@ -66,20 +38,30 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="200" Width="400">
-                                <Button Click="SetBackend" DataContext="{Binding}" IsEnabled="{Binding NetworkReady}">
-                                    <Grid>
-                                        <Image Grid.Row="0" Source="{Binding Path=imageUrl}"/>
-                                        <TextBlock Grid.Row="1" Text="{Binding Path=name}" />
+                            <Button Click="SetBackend" Visibility="{Binding Path=visible}" 
+                            IsEnabled="{Binding Path=enabled}"  Margin="0 50"                           
+                            MaxWidth="400">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Viewbox Grid.Row="0">
+                                            <Image Source="{Binding Path=imageUri}" Height="300"/>
+                                        </Viewbox>
+                                        <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding Path=name}" />
                                     </Grid>
-                                </Button>
-                                <Image Source="\Resources\WarningIconMine.png" Visibility="{Binding ShouldBlockInput, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Grid>
+                                    <Image Source="\Resources\appbar_heart_break.png" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                </Grid>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <!--<Button x:Name="connect" Content="Connect" Click="SetBackend" />-->
             </StackPanel>
+            <Grid Grid.Row="1" x:Name="internetCheckLabel" IsHitTestVisible="False" Visibility="Hidden">
+                <Label >No MeTL servers available.  Please check your internet connection.</Label>
+            </Grid>
         </Grid>
     </DockPanel>
 </UserControl>

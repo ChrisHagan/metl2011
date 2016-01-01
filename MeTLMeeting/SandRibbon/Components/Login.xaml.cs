@@ -19,6 +19,8 @@ using System.Xml.Linq;
 using System.Linq;
 using System.Collections.Generic;
 using mshtml;
+using System.Windows.Media;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon.Components
 {
@@ -52,40 +54,115 @@ namespace SandRibbon.Components
         }
     }
 
-
-    class ServerDisplay : INotifyPropertyChanged
+    public class ServerChoice : DependencyObject
     {
-        public ServerDisplay(MeTLConfigurationProxy server)
+        public string name { get; protected set; }
+        public Uri baseUri { get; protected set; }
+        public Uri imageUri { get; protected set; }
+        public MeTLConfigurationProxy server { get; protected set; }
+        public ServerChoice(MeTLConfigurationProxy _server, bool _alwaysShow)
         {
-            imageUrl = server.imageUrl;
-            name = server.name;
-            host = server.host;
-            config = server;
+            server = _server;
+            imageUri = _server.imageUrl;
+            baseUri = _server.host;
+            name = _server.name;
+            alwaysShow = _alwaysShow;
+            ready = false;
         }
-        protected bool _networkReady = false;
-        public bool NetworkReady
+        protected bool _ready = false;
+        public bool ready
         {
-            get { return _networkReady; }
+            get
+            { return _ready; }
             set
             {
-                _networkReady = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("NetworkReady"));
-                PropertyChanged(this, new PropertyChangedEventArgs("ShouldBlockInput"));
+                Dispatcher.adopt(delegate
+                {
+                    SetValue(enabledProperty, value);
+                    if (!alwaysShow)
+                    {
+                        SetValue(visibleProperty, value ? Visibility.Visible : Visibility.Collapsed);
+                    }
+                    else
+                    {
+                        SetValue(visibleProperty, Visibility.Visible);
+
+                    }
+                    SetValue(loadingVisibleProperty, value ? Visibility.Collapsed : Visibility.Visible);
+                    _ready = value;
+                });
             }
         }
-        public bool ShouldBlockInput
+        public bool alwaysShow { get; protected set; }
+        public Visibility visible
         {
-            get { return !_networkReady; }
+            get { return (Visibility)GetValue(visibleProperty); }
+            set { SetValue(visibleProperty, value); }
+        }
+        public Visibility loadingVisible
+        {
+            get { return (Visibility)GetValue(visibleProperty) == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible; }
+            set { SetValue(visibleProperty, value == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public bool enabled
+        {
+            get { return (bool)GetValue(enabledProperty); }
+            set { SetValue(enabledProperty, value); }
+        }
 
-        public Uri imageUrl { get; protected set; }
-        public string name { get; protected set; }
-        public Uri host { get; protected set; }
-        public Uri serverStatus { get { return config.serverStatus; } }
-        public MeTLConfigurationProxy config { get; protected set; }
+        // Using a DependencyProperty as the backing store for enabled.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty enabledProperty = DependencyProperty.Register("enabled", typeof(bool), typeof(ServerChoice), new PropertyMetadata(false));
+        public static readonly DependencyProperty visibleProperty = DependencyProperty.Register("visible", typeof(Visibility), typeof(ServerChoice), new PropertyMetadata(Visibility.Collapsed));
+        public static readonly DependencyProperty loadingVisibleProperty = DependencyProperty.Register("loadingVisible", typeof(Visibility), typeof(ServerChoice), new PropertyMetadata(Visibility.Collapsed));
+
+
+
+        public ImageSource imageSource
+        {
+            get { return (ImageSource)GetValue(imageSourceProperty); }
+            set
+            {
+                SetValue(imageSourceProperty, value);
+            }
+        }
+
+        // Using a DependencyProperty as the backing store for imageSource.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty imageSourceProperty = DependencyProperty.Register("imageSource", typeof(ImageSource), typeof(ServerChoice), new PropertyMetadata(null));
     }
+
+    public class ServerCollection : ObservableCollection<ServerChoice>
+    {
+        public void refreshDisplay(ServerChoice s, bool removed)
+        {
+            if (!s.alwaysShow)
+            {
+                if (removed)
+                {
+                    if (Items.Contains(s))
+                    {
+                        OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Remove, s));
+                    }
+                }
+                else
+                {
+                    if (!Items.Contains(s))
+                    {
+                        OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Add, s));
+                    }
+                }
+            }
+        }
+        public int enabledServers
+        {
+            get
+            {
+                var newCount = this.Count(s => s.alwaysShow || s.ready);
+                return newCount;
+            }
+        }
+    }
+
     public partial class Login : UserControl
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
@@ -93,7 +170,18 @@ namespace SandRibbon.Components
         public string Version { get; private set; }
         protected WebBrowser logonBrowser;
         protected List<Uri> browseHistory = new List<Uri>();
-        ObservableWithPropertiesCollection<ServerDisplay> serverConfigs = new ObservableWithPropertiesCollection<ServerDisplay>();
+        ServerCollection serverConfigs = new ServerCollection();
+
+        protected Timer refreshTimer;
+        protected List<Timer> timers;
+        protected int pollServersTimeout = 5 * 1000;
+        protected Timer showTimeoutButton;
+        protected int loginTimeout = 5 * 1000;
+
+        protected Timer maintainKeysTimer;
+        protected int maintainKeysTimerTimeout = 30 * 1000;
+        protected ServerChoice localServer = new ServerChoice(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new System.Uri("http://localhost:8080", UriKind.Absolute)), false);
+
         public Login()
         {
             InitializeComponent();
@@ -103,39 +191,68 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             servers.ItemsSource = serverConfigs;
-            serverConfigs.Add(new ServerDisplay(new MeTLConfigurationProxy("localhost", new Uri("http://localhost:8080/static/images/puppet.jpg"), new Uri("http://localhost:8080"))));
-            App.availableServers().ForEach(s => serverConfigs.Add(new ServerDisplay(s)));
-            Commands.AddWindowEffect.ExecuteAsync(null);
-            pollServers = new System.Threading.Timer((s) =>
+            buildServerList();
+            refreshTimer = new Timer(delegate
             {
-                var wc = new WebClient();
-                foreach (ServerDisplay server in serverConfigs)
+                buildServerList();
+            }, null, pollServersTimeout, Timeout.Infinite);
+            Commands.AddWindowEffect.ExecuteAsync(null);
+        }
+        private void buildServerList()
+        {
+            if (serverConfigs.Count == 0 || serverConfigs.All(sc => sc == localServer))
+            {
+                Dispatcher.adopt(delegate
                 {
-                    var success = false;
+                    serverConfigs.Clear();
+                    foreach (var p in App.availableServers())
+                    {
+                        serverConfigs.Add(new ServerChoice(p, true));
+                    }
+                    internetCheckLabel.Visibility = (serverConfigs.Count == 0 || serverConfigs.All(sc => sc == localServer)) ? Visibility.Visible : Visibility.Hidden;
+
+                    timers = serverConfigs.Concat(new List<ServerChoice> {
+                    localServer
+                }).ToList().Select(sc => new Timer(delegate
+                {
+                    var wc = new WebClient();
+                    var oldState = sc.ready;
+                    var newState = false;
                     try
                     {
-                        var newUri = server.serverStatus;
-                        success = wc.DownloadString(newUri).Trim().ToLower() == "ok";
+                        newState = wc.DownloadString(sc.server.serverStatus).Trim().ToLower() == "ok";
                     }
                     catch
                     {
-                        success = false;
                     }
-                    //success = (new Random((int)DateTime.Now.Ticks).Next(1, 5) > 3);
-                    Dispatcher.adopt(delegate
+                    sc.ready = newState;
+                    if (oldState != newState && !sc.alwaysShow)
                     {
-                        server.NetworkReady = success;
-                    });
-                }
-            }, null, 0, pollServersTimeout);
+                        Dispatcher.adopt(delegate
+                        {
+                            if (newState)
+                            {
+                                if (!serverConfigs.Contains(sc))
+                                    serverConfigs.Add(sc);
+                            }
+                            else
+                            {
+                                if (serverConfigs.Contains(sc))
+                                    serverConfigs.Remove(sc);
+                            }
+                        });
+                    }
+                }, null, 0, pollServersTimeout)).ToList();
+                });
+            }
+            else
+            {
+                Dispatcher.adopt(delegate
+                {
+                    internetCheckLabel.Visibility = Visibility.Hidden;
+                });
+            }
         }
-        protected Timer pollServers;
-        protected int pollServersTimeout = 5 * 1000;
-        protected Timer showTimeoutButton;
-        protected int loginTimeout = 5 * 1000;
-
-        protected Timer maintainKeysTimer;
-        protected int maintainKeysTimerTimeout = 30 * 1000;
         protected void restartLoginProcess(object sender, RoutedEventArgs e)
         {
             ResetWebBrowser(null);
@@ -232,7 +349,7 @@ namespace SandRibbon.Components
         protected LoadCompletedEventHandler keyMaintainAction;
         protected void ResetWebBrowser(object _unused)
         {
-            var loginUri = new Uri(App.getCurrentServer.host, new Uri("/authenticationState",UriKind.Relative));// App.controller.config.authenticationUrl;
+            var loginUri = new Uri(App.getCurrentServer.host, new Uri("/authenticationState", UriKind.Relative));// App.controller.config.authenticationUrl;
             DestroyWebBrowser(null);
             DeleteCookieForUrl(loginUri);
             logonBrowser = new WebBrowser();
@@ -331,7 +448,7 @@ namespace SandRibbon.Components
                     this.Visibility = Visibility.Collapsed;
                     if (App.controller != null)
                         App.controller.credentials.update(credentials);
-                        //App.controller.credentials.cookie = credentials.cookie;
+                    //App.controller.credentials.cookie = credentials.cookie;
 
                     Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
                     logonBrowserContainer.Visibility = Visibility.Collapsed;
@@ -341,11 +458,12 @@ namespace SandRibbon.Components
                 {
                     try
                     {
-                        if (doc.url == new Uri(App.getCurrentServer.host,new Uri("/authenticationState",UriKind.Relative)).ToString())
+                        if (doc.url == new Uri(App.getCurrentServer.host, new Uri("/authenticationState", UriKind.Relative)).ToString())
                         {
                             showBrowser();
                             this.Visibility = Visibility.Visible;
-                        } else
+                        }
+                        else
                         {
                             maintainKeysTimer.Change(100, Timeout.Infinite);
                         }
@@ -404,7 +522,7 @@ namespace SandRibbon.Components
             {
                 var uri = new Uri(url);
                 browseHistory.Add(uri);
-                var authenticationUri = new Uri(App.getCurrentServer.host,new Uri("authenticationState",UriKind.Relative));
+                var authenticationUri = new Uri(App.getCurrentServer.host, new Uri("authenticationState", UriKind.Relative));
                 return uri.Scheme == authenticationUri.Scheme && uri.AbsolutePath == authenticationUri.AbsolutePath && uri.Authority == authenticationUri.Authority;
             }
             catch (Exception e)
@@ -444,9 +562,11 @@ namespace SandRibbon.Components
                         var authGroups = authGroupsNodes.Select((xel) => new AuthorizedGroup(xel.Attribute("name").Value.ToString(), xel.Attribute("type").Value.ToString())).ToList();
                         var emailAddressNode = infoGroupsNodes.Find((xel) => xel.Attribute("type").Value.ToString().Trim().ToLower() == "emailaddress");
                         var xmppPassword = "";
-                        try {
+                        try
+                        {
                             xmppPassword = getElementsByTag(authData, "xmppPassword").First().Value.ToString();
-                        } catch
+                        }
+                        catch
                         {
                             Console.WriteLine("couldn't fetch xmpp credentials from authenticationState page");
                         }
@@ -503,27 +623,25 @@ namespace SandRibbon.Components
         private void SetBackend(object sender, RoutedEventArgs e)
         {
             serversContainer.Visibility = Visibility.Collapsed;
-            if (pollServers != null)
+            foreach (var timer in timers)
             {
-                pollServers.Change(Timeout.Infinite, Timeout.Infinite);
-                pollServers.Dispose();
-                pollServers = null;
+                timer.Change(Timeout.Infinite, Timeout.Infinite);
             }
+            timers.Clear();
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var serverDisplay = (sender as Button).DataContext as ServerDisplay;
-            var server = serverDisplay.config;
+            var serverDisplay = (sender as Button).DataContext as ServerChoice;
+            var server = serverDisplay.server;
             App.SetBackendProxy(server);
             ResetWebBrowser(null);
         }
         private void SetCustomServer(object sender, RoutedEventArgs e)
         {
             serversContainer.Visibility = Visibility.Collapsed;
-            if (pollServers != null)
+            foreach (var timer in timers)
             {
-                pollServers.Change(Timeout.Infinite, Timeout.Infinite);
-                pollServers.Dispose();
-                pollServers = null;
+                timer.Change(Timeout.Infinite, Timeout.Infinite);
             }
+            timers.Clear();
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             var server = new MeTLConfigurationProxy(customServer.Text, new Uri(customServer.Text + "/static/images/server.png"), new Uri(customServer.Text + "/authenticationState"));
             App.SetBackendProxy(server);

@@ -50,7 +50,7 @@ namespace SandRibbon.Components
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                return activeConversation == ((MeTLLib.DataTypes.ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
+                return activeConversation == ((ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
             }
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
@@ -100,10 +100,8 @@ namespace SandRibbon.Components
             get { return (string)GetValue(ErrorsProperty); }
             set { SetValue(ErrorsProperty, value); }
         }
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ErrorsProperty =
             DependencyProperty.Register("Errors", typeof(string), typeof(ConversationSearchBox), new UIPropertyMetadata(""));
-        public string Version { get; set; }
         private static string me;
         private System.Threading.Timer refreshTimer;
         private ListCollectionView sortedConversations;
@@ -113,8 +111,6 @@ namespace SandRibbon.Components
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Version = ConfigurationProvider.instance.getMetlVersion();
-            versionNumber.DataContext = Version;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
