@@ -1349,8 +1349,7 @@ namespace MeTLLib.DataTypes
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? ElementParser.getPrivacy(this) : Privacy.Public;
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
-                    var url = server.host + "/" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
-                    //var url = server.protocol + "://" + server.host + ":" + server.port + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
+                    var url = GetTag(URL);
                     var identity = HasTag(identityTag) ? GetTag(identityTag) : url + fileuploadTime + filename;
                     var slideInt = 0;
                     Int32.TryParse(GetTag(slideTag), out slideInt);
@@ -1360,7 +1359,7 @@ namespace MeTLLib.DataTypes
                 set
                 {
                     SetTag(AUTHOR, value.author);
-                    SetTag(URL, INodeFix.StripServer(value.url));
+                    SetTag(URL, value.url);
                     SetTag(TIME, value.uploadTime);
                     SetTag(SIZE, value.size);
                     SetTag(identityTag, value.identity);
