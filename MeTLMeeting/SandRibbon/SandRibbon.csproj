@@ -119,9 +119,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="agsXMPP, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
-      <HintPath>lib\agsXMPP.dll</HintPath>
-    </Reference>
     <Reference Include="Akka">
       <HintPath>lib\Akka.dll</HintPath>
     </Reference>
@@ -942,8 +939,12 @@
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\agsxmpp\agsXMPP2013.csproj">
+      <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
+      <Name>agsXMPP2013</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
-      <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
+      <Project>{4aa915ed-26db-4f8f-ac7e-9cab5df7f7cd}</Project>
       <Name>MeTLLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\SandRibbonInterop\SandRibbonInterop.csproj">

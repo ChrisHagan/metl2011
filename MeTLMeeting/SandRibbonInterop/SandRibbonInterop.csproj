@@ -120,7 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
-      <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
+      <Project>{4aa915ed-26db-4f8f-ac7e-9cab5df7f7cd}</Project>
       <Name>MeTLLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\SandRibbonObjects\SandRibbonObjects.csproj">
