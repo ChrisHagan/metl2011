@@ -31,6 +31,7 @@ namespace SandRibbon.Components.Submissions
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
+            Commands.InitiateScreenshot.RegisterCommand(new DelegateCommand<object>(generateScreenshot));
             conversationChanged(null);
         }
         private void viewSubmissions(object _obj)
@@ -86,13 +87,11 @@ namespace SandRibbon.Components.Submissions
         }
         private void amTeacher()
         {
-            submitSubmission.Visibility = Visibility.Collapsed;
             viewSubmission.Visibility = Visibility.Visible;
 
         }
         private void amStudent()
         {
-            submitSubmission.Visibility = Visibility.Visible;
             viewSubmission.Visibility = Visibility.Collapsed;
         }
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
@@ -106,13 +105,13 @@ namespace SandRibbon.Components.Submissions
                 Commands.RequerySuggested(Commands.ViewSubmissions);
             }
         }
-        private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
+        private bool IHaveThisSubmission(TargettedSubmission submission)
         {
             if (submissionList.Where(s => s.time == submission.time && s.author == submission.author && s.url == submission.url).ToList().Count > 0)
                 return true;
             return false;
         }
-        private void generateScreenshot(object sender, RoutedEventArgs e)
+        private void generateScreenshot(object sender)
         {
             Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;

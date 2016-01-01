@@ -5,14 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
     
     <StackPanel Orientation="Horizontal">
-        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <dict:Button x:Name="submitSubmission" 
                 Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
-                                  ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
+                Command="{x:Static api:Commands.InitiateScreenshot}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
         <dict:Button x:Name="viewSubmission" Command="{x:Static api:Commands.ViewSubmissions}" 
                                   Text="View Submissions" Icon="\Resources\ViewSubmission.png"
-                                  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                                   ToolTip="{DynamicResource ViewSubmissionToolTip}"/>
     </StackPanel>
 </UserControl>

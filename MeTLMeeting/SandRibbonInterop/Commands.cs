@@ -188,6 +188,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand Highlight = new DefaultableCompositeCommand("Highlight");
         public static DefaultableCompositeCommand RemoveHighlight = new DefaultableCompositeCommand("RemoveHighlight");
 
+        public static DefaultableCompositeCommand InitiateScreenshot = new DefaultableCompositeCommand("InitiateScreenshot");
         public static DefaultableCompositeCommand ServersDown = new DefaultableCompositeCommand("ServersDown");
         public static DefaultableCompositeCommand SubmitScreenshotSubmission = new DefaultableCompositeCommand("SubmitScreenshotSubmission");
         public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand("GenerateScreenshot");
