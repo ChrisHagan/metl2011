@@ -24,7 +24,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <ApplicationIcon>MeTLLogo-bronze.ico</ApplicationIcon>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
@@ -1031,6 +1031,8 @@
     <Resource Include="Resources\Collaborate.png" />
     <Resource Include="Resources\ban-management-icon.png" />
     <Resource Include="Resources\banhammer.png" />
+    <Resource Include="favicon.ico" />
+    <Resource Include="Resources\appButton.png" />
     <Content Include="Resources\empty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

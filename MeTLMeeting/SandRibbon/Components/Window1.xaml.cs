@@ -19,11 +19,8 @@ using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Tabs.Groups;
 using SandRibbon.Components.Utility;
 using System.Windows.Documents;
-using MeTLLib;
 using MeTLLib.Providers.Connection;
 using System.Windows.Media.Imaging;
-using System.Windows.Interop;
-using SandRibbon.Components.Sandpit;
 using System.Threading;
 using SandRibbon.Properties;
 
@@ -65,9 +62,9 @@ namespace SandRibbon
             try
             {
                 //Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
-                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\MeTL Presenter.ico");
+                //Icon = (ImageSource)new ImageSourceConverter().ConvertFromString(@"resources\favicon.ico");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
             }
