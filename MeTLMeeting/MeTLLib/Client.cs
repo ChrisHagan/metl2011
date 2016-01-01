@@ -521,16 +521,6 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void LeaveConversation(string conversation)
-        {
-            Action work = delegate
-            {
-                if (String.IsNullOrEmpty(conversation)) return;
-                if (conversation == wire.location.activeConversation)
-                    wire.resetLocation();
-            };
-            tryIfConnected(work);
-        }        
         public void JoinRoom(string room)
         {
             Action work = delegate
@@ -759,19 +749,75 @@ namespace MeTLLib
             return res;
         }
 
-        public void LeaveAllRooms()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void JoinConversation(string jid)
-        {
-            throw new NotImplementedException();
-        }
-
         public void MoveTo(int slide)
         {
-            throw new NotImplementedException();
+            Action work = delegate
+            {
+                wire.MoveTo(slide);
+            };
+            tryIfConnected(work);
+        }
+        public void LeaveAllRooms()
+        {
+            Action work = delegate
+            {
+                wire.leaveRooms();
+            };
+            tryIfConnected(work);
+        }
+        public void LeaveConversation(string conversation)
+        {
+            Action work = delegate
+            {
+                if (String.IsNullOrEmpty(conversation)) return;
+                if (conversation == wire.location.activeConversation)
+                    wire.resetLocation();
+            };
+            tryIfConnected(work);
+        }
+        public void JoinConversation(string conversation)
+        {
+            Action work = delegate
+            {
+                auditor.wrapAction((a =>
+                {
+                    if (String.IsNullOrEmpty(conversation)) return;
+                    //                    Trace.TraceInformation("JoinConversation {0}", conversation);
+                    var cd = conversationDetailsProvider.DetailsOf(conversation);
+                    a(GaugeStatus.InProgress, 25);
+                    location.activeConversation = cd.Jid;
+                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+                    if (location.availableSlides.Count > 0)
+                        location.currentSlide = location.availableSlides[0];
+                    else
+                    {
+                        Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
+                    }
+                    a(GaugeStatus.InProgress, 50);
+                    wire.JoinConversation();
+                    a(GaugeStatus.InProgress, 75);
+                    events.receiveConversationDetails(cd);
+                }), "joinConversation: " + conversation, "clientConnection");
+            };
+            tryIfConnected(work);
+        }
+        public void SneakInto(string room)
+        {
+            Action work = delegate
+            {
+                if (String.IsNullOrEmpty(room)) return;
+                wire.SneakInto(room);
+            };
+            tryIfConnected(work);
+        }
+        public void SneakOutOf(string room)
+        {
+            Action work = delegate
+            {
+                if (String.IsNullOrEmpty(room)) return;
+                wire.SneakOutOf(room);
+            };
+            tryIfConnected(work);
         }
     }
 }
