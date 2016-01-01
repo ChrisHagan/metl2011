@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using Ninject;
 using System.Net;
 using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;

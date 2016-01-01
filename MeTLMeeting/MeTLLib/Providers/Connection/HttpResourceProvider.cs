@@ -1,16 +1,14 @@
 ﻿using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using System.Linq;
 using System;
-using System.Threading;
 using System.Diagnostics;
 using MeTLLib.DataTypes;
-//using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
     public class WebClientWithTimeout : WebClient
     {
+        protected static readonly int maxAttempts = 3;
         protected Credentials metlCreds;
         public WebClientWithTimeout(Credentials _metlCreds)
         {
@@ -18,20 +16,50 @@ namespace MeTLLib.Providers.Connection
         }
         protected override WebRequest GetWebRequest(Uri address)
         {
-            //Permissions failure appeared here.
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
-            if (metlCreds.cookie != "") {
-                request.Headers.Add("Cookie", metlCreds.cookie);
-            }
-            (request as HttpWebRequest).KeepAlive = false;
+            var request = (HttpWebRequest)base.GetWebRequest(address);
+            request.Headers.Add(HttpRequestHeader.Cookie, metlCreds.cookie);
+            request.KeepAlive = false;
             request.Timeout = int.MaxValue;
             return request;
+        }
+        protected override WebResponse GetWebResponse(WebRequest request)
+        {
+            return RetryingGetWebResponse(request, 1);
+            //return base.GetWebResponse(request);
+        }
+        protected WebResponse RetryingGetWebResponse(WebRequest request, int attempt = 1)
+        {
+            try
+            {
+                var response = base.GetWebResponse(request);
+                var sc = (response as HttpWebResponse).StatusCode;
+                if (sc == HttpStatusCode.InternalServerError || sc == HttpStatusCode.BadGateway || sc == HttpStatusCode.Forbidden || sc == HttpStatusCode.GatewayTimeout || sc == HttpStatusCode.HttpVersionNotSupported || sc == HttpStatusCode.NoContent || sc == HttpStatusCode.NotFound || sc == HttpStatusCode.NotImplemented || sc == HttpStatusCode.RequestTimeout || sc == HttpStatusCode.ServiceUnavailable)
+                {
+                    return RetryingGetWebResponse(request, attempt + 1);
+                }
+                else
+                {
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                if (attempt + 1 <= maxAttempts)
+                {
+                    return RetryingGetWebResponse(request, attempt + 1);
+                }
+                else
+                {
+                    throw e;
+                }
+
+            }
         }
     }
     public class MeTLWebClient : IWebClient
     {
         WebClientWithTimeout client;
-        public MeTLWebClient(ICredentials credentials,Credentials metlCreds)
+        public MeTLWebClient(ICredentials credentials, Credentials metlCreds)
         {
             this.client = new WebClientWithTimeout(metlCreds);
             this.client.Credentials = credentials;
@@ -60,6 +88,7 @@ namespace MeTLLib.Providers.Connection
             request.Credentials = client.Credentials;
             request.KeepAlive = false;
             request.Method = "HEAD";
+            request.KeepAlive = false;
             // use the default timeout
             //request.Timeout = 5 * 1000;
             try
@@ -157,7 +186,7 @@ namespace MeTLLib.Providers.Connection
         //private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
         protected ICredentials credentials;
         protected Credentials metlCreds;
-        public WebClientFactory(ICredentials credentials, IAuditor auditor,Credentials _metlCreds)
+        public WebClientFactory(ICredentials credentials, IAuditor auditor, Credentials _metlCreds)
         {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
@@ -171,7 +200,7 @@ namespace MeTLLib.Providers.Connection
         }
         public IWebClient client()
         {
-            return new MeTLWebClient(this.credentials,metlCreds);
+            return new MeTLWebClient(this.credentials, metlCreds);
         }
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {

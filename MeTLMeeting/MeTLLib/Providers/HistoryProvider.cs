@@ -3,22 +3,37 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows;
 using agsXMPP.Xml;
-using Ionic.Zip;
-using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using System.Xml.Linq;
-//using Ninject;
 
 namespace MeTLLib.Providers
 {
+    public class HistorySummary{
+        public int ActivityCount { get; set; }
+        public string Id { get; set; }
+        public List<String> Viewers { get; set; } = new List<String>();
+        public List<String> Actors { get; set; } = new List<String>();
+        public List<String> Spectators { get; set; } = new List<String>();
+        public int ViewersCount { get { return Viewers.Count(); } }
+        public int ActorsCount { get { return Actors.Count(); } }
+        public int SpectatorsCount { get { return Spectators.Count(); } }
 
+        public static HistorySummary parse(string xml) {
+            var x = XElement.Parse(xml);
+            var summary = new HistorySummary {
+                Id = x.Descendants("jid").First().Value,
+                ActivityCount = Int32.Parse(x.Descendants("stanzaCount").First().Value),
+                Viewers = x.Descendants("occupant").SelectMany(o => o.Descendants("name").Select(d => d.Value)).ToList(),
+                Actors = x.Descendants("publisher").SelectMany(o => o.Descendants("name").Select(d => d.Value)).ToList()
+            };
+            summary.Spectators = summary.Viewers.Except(summary.Actors).ToList();
+            return summary;
+        }        
+    }
     public interface IHistoryProvider
     {
         void Retrieve<T>(
@@ -34,6 +49,7 @@ namespace MeTLLib.Providers
             string author,
             string room
         ) where T : PreParser;
+        HistorySummary Describe(int id);
     }
     public abstract class BaseHistoryProvider : IHistoryProvider
     {
@@ -68,6 +84,11 @@ namespace MeTLLib.Providers
         ) where T : PreParser
         {
             this.Retrieve(retrievalBeginning, retrievalProceeding, retrievalComplete, string.Format("{0}/{1}", author, room));
+        }
+
+        public HistorySummary Describe(int id)
+        {
+            return HistorySummary.parse(resourceProvider.secureGetString(serverAddress.getSummary(id.ToString())));
         }
     }
     public class CachedHistoryProvider : BaseHistoryProvider
@@ -185,7 +206,7 @@ namespace MeTLLib.Providers
                 {
                     auditor.wrapAction((g =>
                     {
-                        var directoryUri = serverAddress.getRoomHistory(room); 
+                        var directoryUri = serverAddress.getRoomHistory(roomJid); 
                         var xmlString = resourceProvider.secureGetString(directoryUri);
                         using (var stream = GenerateStreamFromString(xmlString)) {
                             parseHistoryItem(stream, accumulatingParser);

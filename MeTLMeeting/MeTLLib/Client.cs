@@ -5,14 +5,11 @@ using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers.Structure;
 using MeTLLib.DataTypes;
-using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
 //using Ninject;
 using agsXMPP.Xml.Dom;
 using System.Net;
-using System.Xml.Linq;
-using System.Web;
 
 namespace MeTLLib
 {
@@ -31,8 +28,8 @@ namespace MeTLLib
         HttpResourceProvider resourceProvider { get; }
         void AskForTeachersStatus(string teacher, string where);
         Location location { get; }
-        void LeaveAllRooms();
-        Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
+        void HandleShutdown();
+        string UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
         void LeaveConversation(string conversation);
         void UpdateSlideCollection(Int32 conversationJid);
         bool Connect(Credentials credentials);
@@ -50,16 +47,13 @@ namespace MeTLLib
         void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
         void SendAttendance(string where, Attendance att);
-        void SendQuizAnswer(QuizAnswer qa);
-        void SendQuizQuestion(QuizQuestion qq);
+        void SendQuizAnswer(QuizAnswer qa, string jid);
+        void SendQuizQuestion(QuizQuestion qq, string jid);
         void SendFile(TargettedFile tf);
         void SendSyncMove(int slide);
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
-        Uri UploadResource(Uri uri, string slideId);
-        void AsyncRetrieveHistoryOf(int room);
-        void MoveTo(int slide);
-        void JoinConversation(string conversation);
+        string UploadResource(Uri uri, string slideId);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
         void LoadQuizzes(string conversationJid);
@@ -74,8 +68,8 @@ namespace MeTLLib
         ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide);
         ConversationDetails DuplicateConversation(ConversationDetails conversation);
         ConversationDetails DetailsOf(String jid);
-        void SneakInto(string room);
-        void SneakOutOf(string room);
+        void JoinRoom(string room);
+        void LeaveRoom(string room);
         string NoAuthUploadResource(Uri file, int Room);
         string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
         string NoAuthUploadResource(byte[] data, string filename, int Room);
@@ -99,8 +93,8 @@ namespace MeTLLib
         public HttpResourceProvider resourceProvider { get; }
         protected static readonly Uri DisconnectedUri = new Uri("noscheme://not.a.uri");
         public Location location { get { return Location.Empty; } }
-        public void LeaveAllRooms() { }
-        public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return DisconnectedUri; }
+        public void HandleShutdown() { }
+        public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return ""; }
         public void LeaveConversation(string conversation) { }
         public void UpdateSlideCollection(Int32 conversationJid) { }
         public void AskForTeachersStatus(string teacher, string where) { }
@@ -119,16 +113,14 @@ namespace MeTLLib
         public void GetAllSubmissionsForConversation(string conversationJid) { }
         public void SendStanza(string where, Element stanza) { }
         public void SendAttendance(string where, Attendance att) { }
-        public void SendQuizAnswer(QuizAnswer qa) { }
-        public void SendQuizQuestion(QuizQuestion qq) { }
+        public void SendQuizAnswer(QuizAnswer qa, string jid) { }
+        public void SendQuizQuestion(QuizQuestion qq, string jid) { }
         public void SendFile(TargettedFile tf) { }
         public void SendSyncMove(int slide) { }
         public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii) { }
         public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi) { }
-        public Uri UploadResource(Uri uri, string slideId) { return DisconnectedUri; }
-        public void AsyncRetrieveHistoryOf(int room) { }
+        public string UploadResource(Uri uri, string slideId) { return ""; }
         public void MoveTo(int slide) { }
-        public void JoinConversation(string conversation) { }
         public void LeaveLocation() { }
         public void LoadQuiz(int convesationJid, long quizId) { }
         public void LoadQuizzes(string conversationJid) { }
@@ -143,15 +135,14 @@ namespace MeTLLib
         public ConversationDetails DetailsOf(String jid) { return ConversationDetails.Empty; }
         public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) { return ConversationDetails.Empty; }
         public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
-        public void SneakInto(string room) { }
-        public void SneakOutOf(string room) { }
+        public void JoinRoom(string room) { }
+        public void LeaveRoom(string room) { }
         public string NoAuthUploadResource(Uri file, int Room) { return ""; }
         public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return ""; }
         public string NoAuthUploadResource(byte[] data, string filename, int Room) { return ""; }
         public void SaveUserOptions(string username, UserOptions options) { }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults) { return new List<SearchConversationDetails>(); }
         public UserOptions UserOptionsFor(string username) { return UserOptions.DEFAULT; }
-
     }
 
     public class ClientConnection : IClientBehaviour
@@ -331,9 +322,11 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void SendAttendance(string where, Attendance att) {
+        public void SendAttendance(string where, Attendance att)
+        {
             Action work = delegate
             {
+
                 wire.SendAttendance(where, att);
             };
             tryIfConnected(work);
@@ -371,7 +364,7 @@ namespace MeTLLib
                     try
                     {
                         var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
-                        a(GaugeStatus.InProgress,33);
+                        a(GaugeStatus.InProgress, 33);
                         wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                         a(GaugeStatus.InProgress, 66);
                         if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
@@ -401,19 +394,19 @@ namespace MeTLLib
                               };
             tryIfConnected(work);
         }
-        public void SendQuizAnswer(QuizAnswer qa)
+        public void SendQuizAnswer(QuizAnswer qa, string jid)
         {
             Action work = delegate
             {
-                wire.SendQuizAnswer(qa);
+                wire.SendQuizAnswer(qa, jid);
             };
             tryIfConnected(work);
         }
-        public void SendQuizQuestion(QuizQuestion qq)
+        public void SendQuizQuestion(QuizQuestion qq, string jid)
         {
             Action work = delegate
             {
-                wire.SendQuiz(qq);
+                wire.SendQuiz(qq, jid);
             };
             tryIfConnected(work);
         }
@@ -441,16 +434,19 @@ namespace MeTLLib
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
 
-                    MeTLImage newImage = lii.image;
-                    var previousTag = newImage.tag();
-                    previousTag.resourceIdentity = newPath;
-                    lii.image.tag(previousTag);
+                    //MeTLImage newImage = lii.image;
+                    //var previousTag = newImage.tag();
+                    //previousTag.resourceIdentity = newPath;
+                    //lii.image.tag(previousTag);
 
+                    /*
                     newImage.Dispatcher.adopt(() =>
                     {
-                        newImage.tag(lii.image.tag());
+                        //newImage.tag(lii.image.tag());
                         wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, newPath, lii.image.tag().timestamp));
                     });
+                    */
+                    wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newPath, lii.X,lii.Y,lii.Width,lii.Height, newPath, -1L));
                 }
                 catch (Exception e)
                 {
@@ -470,23 +466,25 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public Uri UploadResource(Uri file, string muc)
+        public string UploadResource(Uri file, string muc)
         {
-            System.Uri returnValue = server.host;
+
+            string returnValue = "";
             Action work = delegate
             {
-                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString));
+                returnValue = resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString);
             };
             tryIfConnected(work);
             return returnValue;
         }
 
-        public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
+        public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
-            System.Uri returnValue = server.host;
+
+            string returnValue = "";
             Action work = delegate
             {
-                returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
+                returnValue = resourceUploader.uploadResourceToPath(data, file, name, overwrite);
             };
             tryIfConnected(work);
             return returnValue;
@@ -501,15 +499,8 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void MoveTo(int slide)
-        {
-            Action work = delegate
-            {
-                wire.MoveTo(slide);
-            };
-            tryIfConnected(work);
-        }
-        public void LeaveAllRooms()
+       
+        public void HandleShutdown()
         {
             Action work = delegate
             {
@@ -526,56 +517,26 @@ namespace MeTLLib
                     wire.resetLocation();
             };
             tryIfConnected(work);
-        }
-        public void JoinConversation(string conversation)
+        }        
+        public void JoinRoom(string room)
         {
             Action work = delegate
             {
-                auditor.wrapAction((a =>
+                if (String.IsNullOrEmpty(room))
                 {
-                    if (String.IsNullOrEmpty(conversation)) return;
-//                    Trace.TraceInformation("JoinConversation {0}", conversation);
-                    var cd = conversationDetailsProvider.DetailsOf(conversation);
-                    a(GaugeStatus.InProgress, 25);
-                    location.activeConversation = cd.Jid;
-                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                    if (location.availableSlides.Count > 0)
-                        location.currentSlide = location.availableSlides[0];
-                    else
-                    {
-                        Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
-                    }
-                    a(GaugeStatus.InProgress, 50);
-                    wire.JoinConversation();
-                    a(GaugeStatus.InProgress, 75);
-                    events.receiveConversationDetails(cd);
-                }), "joinConversation: " + conversation, "clientConnection");
+                    Trace.TraceError("ERROR: Cannot join empty room");
+                    return;
+                }
+                wire.JoinRoom(room);
             };
             tryIfConnected(work);
         }
-        public void SneakInto(string room)
+        public void LeaveRoom(string room)
         {
             Action work = delegate
             {
                 if (String.IsNullOrEmpty(room)) return;
-                wire.SneakInto(room);
-            };
-            tryIfConnected(work);
-        }
-        public void SneakOutOf(string room)
-        {
-            Action work = delegate
-            {
-                if (String.IsNullOrEmpty(room)) return;
-                wire.SneakOutOf(room);
-            };
-            tryIfConnected(work);
-        }
-        public void AsyncRetrieveHistoryOf(int room)
-        {
-            Action work = delegate
-            {
-                wire.GetHistory(room);
+                wire.LeaveRoom(room);
             };
             tryIfConnected(work);
         }
@@ -633,7 +594,8 @@ namespace MeTLLib
 
             return ConversationDetails.Empty;
         }
-        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide) {
+        public ConversationDetails DuplicateSlide(ConversationDetails details, Slide slide)
+        {
             return tryUntilConnected<ConversationDetails>(() =>
             {
                 var newConv = conversationDetailsProvider.DuplicateSlide(details, slide);
@@ -641,7 +603,8 @@ namespace MeTLLib
                 return newConv;
             });
         }
-        public ConversationDetails DuplicateConversation(ConversationDetails conversation) {
+        public ConversationDetails DuplicateConversation(ConversationDetails conversation)
+        {
             return tryUntilConnected<ConversationDetails>(() =>
             {
                 var newConv = conversationDetailsProvider.DuplicateConversation(conversation);
@@ -653,17 +616,30 @@ namespace MeTLLib
         public ConversationDetails AppendSlide(string Jid)
         {
             return tryUntilConnected<ConversationDetails>(() =>
-                conversationDetailsProvider.AppendSlide(Jid));
+            {
+                var newConv = conversationDetailsProvider.AppendSlide(Jid);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
             return tryUntilConnected<ConversationDetails>(() =>
-                conversationDetailsProvider.AppendSlideAfter(slide, Jid));
+            {
+                var newConv = conversationDetailsProvider.AppendSlideAfter(slide,Jid);
+                /*If you don't fire this on yourself, you'll have to wait until it comes back dirty.  Then you'll know that everyone else has it too.*/
+                //events.receiveConversationDetails(newConv);
+                return newConv;
+            });            
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
             return tryUntilConnected<ConversationDetails>(() =>
-                conversationDetailsProvider.AppendSlideAfter(slide, Jid, type));
+            {
+                var newConv = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
+                events.receiveConversationDetails(newConv);
+                return newConv;
+            });
         }
         #endregion
         #region UserCommands
@@ -686,7 +662,13 @@ namespace MeTLLib
         {
             try
             {
-                action();
+                if (wire.IsConnected())
+                {
+                    action();
+                } else
+                {
+                    requeue(action);
+                }
             }
             catch (WebException e)
             {

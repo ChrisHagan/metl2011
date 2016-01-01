@@ -41,7 +41,6 @@ namespace MeTLLib.Providers.Structure
             credentials = creds;
             jabberWireFactory = _jabberWireFactory;
         }
-        private static readonly string DETAILS = "details.xml";
         public bool isAccessibleToMe(string jid)
         {
             var myGroups = credentials.authorizedGroups.Select(g => g.groupKey.ToLower());
@@ -165,7 +164,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}/search?query={1}", server.host, HttpUtility.UrlEncode(query))), UriKind.RelativeOrAbsolute);
+                var uri = server.conversationQuery(query);
                 Console.WriteLine("ConversationsFor: {0}", uri);
                 var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
