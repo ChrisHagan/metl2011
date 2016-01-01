@@ -166,7 +166,7 @@ namespace MeTLLib.Providers.Connection
         Live
     }
 
-    public partial class JabberWire : INotifyPropertyChanged
+    public partial class JabberWire //: INotifyPropertyChanged
     {
         protected const string WORM = "/WORM_MOVES";
         protected const string SUBMISSION = "/SUBMISSION";
@@ -594,13 +594,35 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceWarning(string.Format("++++: JabberWire::Reset: Called {0} times.", resetInProgress));
             }
         }
-        public void leaveRooms()
+        public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
         {
-            foreach (var roomJid in CurrentRooms.ToList())
+            var rooms = new List<Jid>();
+            if (location != null)
             {
-                leaveRoom(roomJid);
+                rooms.AddRange(
+                    new[]{
+                        new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
+                        new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
+                    });
+                if (location.currentSlide != 1 && location.activeConversation != "0" && location.availableSlides.Exists(s => s == location.currentSlide))
+                    SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), false, -1L));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
+            if (!stayInActiveConversation)
+            {
+                rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
+                if (location != null && location.activeConversation != null && location.activeConversation != "0")
+                    SendAttendance("global", new Attendance(credentials.name, location.activeConversation, false, -1L));
+            }
+            if (!stayInGlobal)
+            {
+                rooms.Add(new Jid(metlServerAddress.globalMuc));
+                //rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
+            }
+
+            foreach (var room in rooms)
+            {
+                leaveRoom(room);
+            }
         }
         private void leaveRoom(Jid room)
         {
@@ -616,13 +638,37 @@ namespace MeTLLib.Providers.Connection
             joinRooms();
             receiveEvents.receiveConversationDetails(ConversationDetails.Empty);
         }
-        private void joinRooms()
+        protected bool isLocationValid()
         {
-            foreach (var roomJid in CurrentRooms)
+            return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0 && !location.ValueEquals(Location.Empty));
+        }
+        private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
+        {
+            if (!fastJoin)
             {
-                joinRoom(roomJid);
+                leaveRooms();
+                joinRoom(new Jid(metlServerAddress.globalMuc));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentRooms"));
+            if (isLocationValid())
+            {
+                var rooms = new List<Jid>();
+                if (!alreadyInConversation)
+                {
+                    rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
+                }
+                rooms.AddRange(new[]
+                {
+                    //new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
+                    new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
+                    new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
+                });
+                foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
+                {
+                    joinRoom(room);
+                }
+                SendAttendance("global", new Attendance(credentials.name, location.activeConversation, true, -1L));
+                SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), true, -1L));
+            }
         }
         public HashSet<Jid> CurrentRooms { get; protected set; } = new HashSet<Jid>();
         private void joinRoom(Jid room)
@@ -1342,6 +1388,83 @@ namespace MeTLLib.Providers.Connection
             onProgress,
             finishedParser => receiveEvents.receieveQuiz(finishedParser, quizId),
             conversationJid.ToString());
+        }
+        public void SneakInto(string room)
+        {
+            var muc = new MucManager(conn);
+            joinRoom(new Jid(room + "@" + metlServerAddress.muc));
+        }
+        public void SneakOutOf(string room)
+        {
+            var muc = new MucManager(conn);
+            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
+        }
+        public void JoinConversation()
+        {
+            try
+            {
+                leaveRooms();
+                joinRooms();
+            }
+            catch (Exception e)
+            {
+                Trace.TraceInformation("CRASH: MeTLLib::JabberWire:JoinConversation {0}", e.Message);
+            }
+        }
+
+        public void MoveTo(int where)
+        {
+            auditor.wrapAction((a) =>
+            {
+
+                try
+                {
+                    a(GaugeStatus.InProgress, 12);
+                    leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
+                    a(GaugeStatus.InProgress, 24);
+                    /*
+                    new MucManager(conn).LeaveRoom(
+                        new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
+                        */
+                    a(GaugeStatus.InProgress, 36);
+                    var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
+                    location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
+                    var oldLocation = location.currentSlide.ToString();
+                    location.currentSlide = where;
+                    //Globals.conversationDetails = currentDetails;
+                    //Globals.slide = where;
+                    joinRooms(fastJoin: true, alreadyInConversation: true);
+                    a(GaugeStatus.InProgress, 48);
+                    cachedHistoryProvider.ClearCache(oldLocation);
+                    a(GaugeStatus.InProgress, 60);
+                    cachedHistoryProvider.ClearCache(where.ToString());
+                    a(GaugeStatus.InProgress, 72);
+                    historyProvider.Retrieve<PreParser>(
+                        onStart,
+                        onProgress,
+                        finishedParser =>
+                        {
+                            receiveEvents.receivePreParser(finishedParser);
+                            cachedHistoryProvider.PopulateFromHistory(finishedParser);
+                        },
+                        location.currentSlide.ToString());
+                    a(GaugeStatus.InProgress, 84);
+                    historyProvider.RetrievePrivateContent<PreParser>(
+                        onStart,
+                        onProgress,
+                        finishedParser =>
+                        {
+                            receiveEvents.receivePreParser(finishedParser);
+                            cachedHistoryProvider.PopulateFromHistory(finishedParser);
+                        },
+                        credentials.name,
+                        location.currentSlide.ToString());
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
+                }
+            }, "moveTo", "xmpp");
         }
     }
 }
