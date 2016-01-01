@@ -13,9 +13,6 @@
     Closing="createAQuiz_Closing"
     Loaded="createAQuiz_Loaded"
     SizeToContent="WidthAndHeight">
-    <Window.CommandBindings>
-        <CommandBinding Command="{x:Static SandRibbon:Commands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
-    </Window.CommandBindings>
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >

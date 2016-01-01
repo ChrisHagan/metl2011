@@ -2109,7 +2109,7 @@ namespace SandRibbon.Components
             var width = 320;
             var height = 240;
             App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(
-                Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy),Globals.privacy), newPoint.X, newPoint.Y, width, height, fileName
+                Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy),Globals.privacy,true), newPoint.X, newPoint.Y, width, height, fileName
             ));
         }
 

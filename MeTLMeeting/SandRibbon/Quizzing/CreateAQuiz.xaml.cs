@@ -32,6 +32,7 @@ namespace SandRibbon.Quizzing
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.CreateQuizStructure.RegisterCommand(new DelegateCommand<object>(CreateQuizQuestion, canCreateQuizQuestion));
             question.Focus();
         }
         private void JoinConversation(object obj)
@@ -47,13 +48,13 @@ namespace SandRibbon.Quizzing
             Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             this.Close();
         }
-        private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
+        private bool canCreateQuizQuestion(object sender)
         {
-            if (question == null) return;
+            if (question == null) return false;
             var activeOptions = options.Where(o => o.optionText.Length > 0).ToList();
-            e.CanExecute = !String.IsNullOrEmpty(question.Text) && activeOptions.Count >= 2;
+            return !String.IsNullOrEmpty(question.Text) && activeOptions.Count >= 2;
         }
-        private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
+        private void CreateQuizQuestion(object sender)
         {
             var creationTimeAndId = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", Globals.me, question.Text, new List<Option>());
@@ -198,13 +199,16 @@ namespace SandRibbon.Quizzing
                                     try
                                     {
                                         source.BeginInit();
-                                        source.UriSource = new Uri(url);
+                                        source.UriSource = App.controller.config.getResource(url);
+                                        image.Source = source;
+                                    }
+                                    catch (Exception ex) {
+                                        Trace.TraceError("Quiz screenshot failure: {0}", ex.Message);
                                     }
                                     finally
                                     {
                                         source.EndInit();
                                     }
-                                    image.Source = source;
                                     image.Width = 300;
                                     image.Height = 300;
                                     questionSnapshotContainer.Children.Add(image);
