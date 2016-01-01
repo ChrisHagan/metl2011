@@ -68,7 +68,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
+                                      if ((details.Permissions.studentCanWorkPublicly && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
                                       {
                                           publicMode.IsEnabled = true;
                                           var privacy = Globals.isAuthor ? Globals.PUBLIC : Globals.PRIVATE;
@@ -94,7 +94,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                return (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
+                return (Globals.conversationDetails.Permissions.studentCanWorkPublicly || Globals.conversationDetails.Author == Globals.me);
             }
             catch (Exception)
             {
@@ -106,7 +106,7 @@ namespace SandRibbon.Components
             try
             {
                 return privacy != (string)GetValue(PrivateProperty)
-                && ((Globals.conversationDetails.Permissions.studentCanPublish && !Globals.conversationDetails.blacklist.Contains(Globals.me)) || Globals.conversationDetails.Author == Globals.me);
+                && ((Globals.conversationDetails.Permissions.studentCanWorkPublicly && !Globals.conversationDetails.blacklist.Contains(Globals.me)) || Globals.conversationDetails.Author == Globals.me);
             }
             catch (Exception)
             {

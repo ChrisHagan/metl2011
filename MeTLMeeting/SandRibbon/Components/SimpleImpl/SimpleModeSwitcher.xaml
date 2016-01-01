@@ -5,7 +5,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
     <StackPanel Orientation="Horizontal">
         <dict:RibbonPanel>
-            <dict:RadioButton x:Name="View" ToolTip="{DynamicResource ViewToolTip}" Icon="\Resources\Hand tool.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
+            <dict:RadioButton x:Name="View" ToolTip="{DynamicResource ViewToolTip}" Icon="\Resources\Hand tool.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" Visibility="Collapsed" />
             <dict:RadioButton x:Name="Select" ToolTip="{DynamicResource SelectToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetLayer" CommandParameter="Select" />
             <dict:RadioButton x:Name="Pen" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
             <dict:RadioButton x:Name="Text" ToolTip="{DynamicResource TextModeToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />

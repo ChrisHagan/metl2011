@@ -65,9 +65,9 @@ namespace SandRibbon.Chrome
                     else
                     {
                         status = details.IsEmpty || String.IsNullOrEmpty(Globals.location.activeConversation) ? Strings.Global_ProductName : string.Format(
-                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                             "{3} is working {0}ly with collaboration {1}, in a conversation whose participants are {2}",
                              Globals.privacy,
-                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
+                             details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED",
                              details.Subject, Globals.me);
                     }
 #if DEBUG

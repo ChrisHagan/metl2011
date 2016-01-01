@@ -710,10 +710,9 @@ namespace SandRibbon
         }
         private string messageFor(ConversationDetails details)
         {
-            var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             if (details.Equals(ConversationDetails.Empty))
                 return Strings.Global_ProductName;
-            return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
+            return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED", details.Author, details.Title);
         }
         private void MoveTo(int slide)
         {
@@ -772,7 +771,7 @@ namespace SandRibbon
         private bool conversationSearchMustBeClosedAndMustBeAllowedToPublish(object _obj)
         {
             if (conversationSearchMustBeClosed(null))
-                return Globals.isAuthor || Globals.conversationDetails.Permissions.studentCanPublish;
+                return Globals.isAuthor || Globals.conversationDetails.Permissions.studentCanWorkPublicly;
             else return false;
         }
         private bool mustBeInConversationAndBeAuthor(object _arg)

@@ -250,7 +250,7 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             if (details.ValueEquals(ConversationDetails.Empty)) return false;
             if (String.IsNullOrEmpty(Globals.me)) return false;
-            return (details.Permissions.studentCanPublish || details.Author == Globals.me);
+            return (details.Permissions.studentCanWorkPublicly || details.Author == Globals.me);
         }
         private void addSlide(object _slide)
         {

@@ -110,7 +110,7 @@ namespace SandRibbon.Utils
             queryString["version"] = ConfigurationProvider.instance.getMetlVersion();
             queryString["content"] = content;
             queryString["user"] = user;
-            queryString["collaborationLevel"] = Globals.conversationDetails != null ? Globals.conversationDetails.Permissions.studentCanPublish ? "Enabled" : "Disabled" : "None";
+            queryString["collaborationLevel"] = Globals.conversationDetails != null ? Globals.conversationDetails.Permissions.studentCanWorkPublicly ? "Enabled" : "Disabled" : "None";
             queryString["server"] = server;
             queryString["slide"] = Convert.ToString(slide);
 

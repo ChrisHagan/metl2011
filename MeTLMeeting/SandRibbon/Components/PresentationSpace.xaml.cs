@@ -615,36 +615,6 @@ namespace SandRibbon.Components
 
             return rect;
         }
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new PresentationSpaceAutomationPeer(this);
-        }
-    }
-    public class PresentationSpaceAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
-    {
-        public PresentationSpaceAutomationPeer(FrameworkElement parent) : base(parent) { }
-        public PresentationSpace PresentationSpace
-        {
-            get { return (PresentationSpace)base.Owner; }
-        }
-        public override object GetPattern(PatternInterface patternInterface)
-        {
-            if (patternInterface == PatternInterface.Value)
-                return this;
-            return base.GetPattern(patternInterface);
-        }
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
-        public string Value
-        {
-            get { return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
-        }
-        public void SetValue(string value)
-        {
-            throw new NotImplementedException();
-        }
     }
     public class UnscaledThumbnailData
     {

@@ -196,7 +196,7 @@ namespace SandRibbon.Components.Utility
                     }), stroke.DrawingAttributes.Width * 4);
             this.target = target; 
             this.tag(stroke.tag());
-            shouldShowPrivacy = (this.tag().author == Globals.conversationDetails.Author || Globals.conversationDetails.Permissions.studentCanPublish);
+            shouldShowPrivacy = (this.tag().author == Globals.conversationDetails.Author || Globals.conversationDetails.Permissions.studentCanWorkPublicly);
             
             if (!isPrivate) return;
 

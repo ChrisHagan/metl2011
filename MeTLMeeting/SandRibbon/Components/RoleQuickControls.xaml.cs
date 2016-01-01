@@ -46,7 +46,7 @@ namespace SandRibbon.Components
         {
             var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
             var cd = Globals.conversationDetails;
-            cd.Permissions.studentCanPublish = studentsCanPublishValue;
+            cd.Permissions.studentCanWorkPublicly = studentsCanPublishValue;
             App.controller.client.UpdateConversationDetails(cd);
         }
         private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
@@ -71,7 +71,7 @@ namespace SandRibbon.Components
                     participantQuickControls.Visibility = Visibility.Visible;
 
                 }
-                studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanPublish;
+                studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanWorkPublicly;
                 studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
             }); ;
         }

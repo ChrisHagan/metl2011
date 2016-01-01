@@ -400,6 +400,7 @@ namespace MeTLLib.DataTypes
         public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced)
         {
             Label = newLabel;
+            studentCanWorkPublicly = newStudentsCanPublish;
             studentCanOpenFriends = newStudentsCanOpenFriends;
             studentCanUploadAttachment = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
@@ -407,6 +408,8 @@ namespace MeTLLib.DataTypes
         public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced, String newConversationGroup)
         {
             Label = newLabel;
+
+            studentCanWorkPublicly = newStudentsCanPublish;
             studentCanOpenFriends = newStudentsCanOpenFriends;
             studentCanUploadAttachment = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
@@ -416,19 +419,12 @@ namespace MeTLLib.DataTypes
         public Permissions(Permissions copyPermissions)
         {
             this.Label = copyPermissions.Label;
+
+            studentCanWorkPublicly = copyPermissions.studentCanWorkPublicly;
             this.studentCanOpenFriends = copyPermissions.studentCanOpenFriends;
             this.NavigationLocked = copyPermissions.NavigationLocked;
             this.usersAreCompulsorilySynced = copyPermissions.usersAreCompulsorilySynced;
             this.conversationGroup = copyPermissions.conversationGroup;
-        }
-        public static Permissions InferredTypeOf(Permissions permissions)
-        {
-            var typeOfPermissions = new[] { LECTURE_PERMISSIONS, LABORATORY_PERMISSIONS, TUTORIAL_PERMISSIONS, MEETING_PERMISSIONS }.Where(
-                   p => p.studentCanOpenFriends == permissions.studentCanOpenFriends &&
-                       p.studentCanUploadAttachment == permissions.studentCanUploadAttachment &&
-                       p.usersAreCompulsorilySynced == permissions.usersAreCompulsorilySynced).FirstOrDefault();
-            if (typeOfPermissions != null) return typeOfPermissions;
-            return CUSTOM_PERMISSIONS;
         }
         public override bool Equals(object obj)
         {
@@ -456,6 +452,7 @@ namespace MeTLLib.DataTypes
         public void applyTuteStyle()
         {
             Label = "tutorial";
+            studentCanWorkPublicly = true;
             studentCanOpenFriends = true;
             studentCanUploadAttachment = true;
             usersAreCompulsorilySynced = false;
@@ -463,6 +460,7 @@ namespace MeTLLib.DataTypes
         public void applyLectureStyle()
         {
             Label = "lecture";
+            studentCanWorkPublicly = false;
             studentCanOpenFriends = false;
             studentCanUploadAttachment = false;
             usersAreCompulsorilySynced = true;
@@ -501,7 +499,6 @@ namespace MeTLLib.DataTypes
         public bool studentCanAddPage = false;
         private static string CANSUBMITSCREENSHOT = "studentCanSubmitScreenshot";
         public bool studentCanSubmitScreenshot = false;
-        public bool studentCanPublish;
 
         public static Permissions ReadXml(XElement doc)
         {

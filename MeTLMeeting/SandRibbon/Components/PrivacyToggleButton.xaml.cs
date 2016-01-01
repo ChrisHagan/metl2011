@@ -25,7 +25,7 @@ namespace SandRibbon.Components
 
             if (mode.AdornerTarget == "presentationSpace")
             {
-                if ((!Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.blacklist.Contains(Globals.me)) && !Globals.isAuthor)
+                if ((!Globals.conversationDetails.Permissions.studentCanWorkPublicly || Globals.conversationDetails.blacklist.Contains(Globals.me)) && !Globals.isAuthor)
                 {
                     showButton.Visibility = Visibility.Collapsed;
                     hideButton.Visibility = Visibility.Collapsed;
