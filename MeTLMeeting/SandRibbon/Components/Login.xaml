@@ -39,8 +39,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button Click="SetBackend" Visibility="{Binding Path=visible}" 
-                            IsEnabled="{Binding Path=enabled}"  Margin="0 50"                           
-                            MaxWidth="400">
+                            IsEnabled="{Binding Path=enabled}"  Margin="50" Background="{StaticResource BackgroundBlueGradient}" 
+                            Foreground="Black"                           
+                            MaxWidth="400" MinWidth="300" MinHeight="400" FontSize="20">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                         <Grid.RowDefinitions>

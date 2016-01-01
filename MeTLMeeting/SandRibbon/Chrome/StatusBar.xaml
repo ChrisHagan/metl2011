@@ -1,14 +1,21 @@
 ﻿<sr:StatusBar x:Class="SandRibbon.Chrome.StatusBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon" xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-              x:Name="statusBar">
+    x:Name="statusBar">
     <Grid Width="{Binding ElementName=statusBar, Path=ActualWidth}" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,160,0" >
-            <sandpit:Pedagogicometer Visibility="Collapsed"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+            <Button ToolTip="{DynamicResource CreateLectureToolTip}" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" ToolTipService.ShowDuration="10000" Margin="10 5">
+                <Image Source="\Resources\NoCollaborate.png" />
+            </Button>
+            <Button ToolTip="{DynamicResource CreateTutorialToolTip}" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="meeting" ToolTipService.ShowDuration="10000" Margin="10 5">
+                <Image Source="\Resources\Collaborate.png" VerticalAlignment="Stretch" />
+            </Button>
             <sr:Label x:Name="StatusLabel" ToolTip="Current Mode"/>
         </StackPanel>
+        <sandpit:Pedagogicometer Visibility="Collapsed"/>
         <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>
         <components:ZoomControls HorizontalAlignment="Right" Margin="0 0 25 0"/>
         <components:CommandBridge HorizontalAlignment ="Right" Height="25" Width="25"/>
