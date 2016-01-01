@@ -161,19 +161,25 @@ namespace SandRibbon
             //Asserting new permission set to all referenced assemblies
             set.Assert();
         }
-        private void NoNetworkConnectionAvailable()
+        private void NoNetworkConnectionAvailable(object o)
         {
-            MeTLMessage.Error("MeTL cannot contact the server.  Please check your internet connection.");
+            Dispatcher.adopt(delegate
+            {
+                MeTLMessage.Error("MeTL cannot contact the server.  Please check your internet connection.");
+            });
         }
         private void LogOut(object showErrorMessage)
         {
-            if (showErrorMessage != null && (bool)showErrorMessage)
+            Dispatcher.adopt(delegate
             {
-                MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
-            }
-            Trace.TraceInformation("LoggingOut");
-            WorkspaceStateProvider.ClearSettings();
-            Application.Current.Shutdown();
+                if (showErrorMessage != null && (bool)showErrorMessage)
+                {
+                    MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
+                }
+                Trace.TraceInformation("LoggingOut");
+                WorkspaceStateProvider.ClearSettings();
+                Application.Current.Shutdown();
+            });
         }
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -183,8 +189,8 @@ namespace SandRibbon
             isStaging = false;
 #endif
             base.OnStartup(e);
-            Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
-            Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
+            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
+            Commands.NoNetworkConnectionAvailable.RegisterCommand(new DelegateCommand<object>(NoNetworkConnectionAvailable));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);

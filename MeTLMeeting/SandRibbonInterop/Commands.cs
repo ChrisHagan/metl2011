@@ -124,6 +124,10 @@ namespace SandRibbon
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand("Mark");
 
+        public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand("LeaveAllRooms");
+        public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand("LeaveAllRooms");
+        public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand("LeaveAllRooms");
+        public static DefaultableCompositeCommand MoveTo = new DefaultableCompositeCommand("MoveTo");
         public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand("JoinConversation");
         public static DefaultableCompositeCommand CreateQuiz = new DefaultableCompositeCommand("CreateQuiz");
         public static DefaultableCompositeCommand OpenQuiz = new DefaultableCompositeCommand("OpenQuiz");

@@ -3,7 +3,6 @@ using SandRibbon.Properties;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System;
-using MeTLLib;
 
 namespace SandRibbon.Chrome
 {
@@ -14,13 +13,16 @@ namespace SandRibbon.Chrome
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => SetIdentity()));
-            Commands.BanhammerActive.RegisterCommandToDispatcher(new DelegateCommand<bool>((_unused) => BanhammerActive()));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
+            Commands.BanhammerActive.RegisterCommand(new DelegateCommand<object>(BanhammerActive));
         }
-        private void SetIdentity()
+        private void SetIdentity(object o)
         {
-            showDetails();
+            Dispatcher.adopt(delegate
+            {
+                showDetails();
+            });
         }
         private void SetPrivacy(string _privacy)
         {
@@ -30,15 +32,19 @@ namespace SandRibbon.Chrome
         {
             showDetails();
         }
-        private void BanhammerActive() 
+        private void BanhammerActive(object b) 
         {
-            showDetails();
+            Dispatcher.adopt(delegate
+            {
+                showDetails();
+            });
         }
         private void UpdateConversationDetails(ConversationDetails details) 
         {
-            // commented out next line because we want to update the status bar if the details have changed in all cases
-            //if (details.IsEmpty) return;
-            showDetails();
+            Dispatcher.adopt(delegate
+            {
+                showDetails();
+            });
         }
         private void showDetails()
         {

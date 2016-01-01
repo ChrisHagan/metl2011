@@ -26,7 +26,7 @@ namespace SandRibbon.Components
             contentVisibilitySelectors.ItemsSource = visibilities;
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((cd) => { UpdateConversationDetails(cd); }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((loc) => { MoveTo(loc); }));
-            Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
+            Commands.UpdateContentVisibility.RegisterCommand(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
             Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
         }
 
@@ -46,62 +46,57 @@ namespace SandRibbon.Components
 
         protected void potentiallyRefresh()
         {
-            var thisSlide = conversation.Slides.Find(s => s.id == slide);
-            if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
+            Dispatcher.adopt(delegate
             {
-                var oldGroupSets = groupSets;
-                var currentState = new Dictionary<string, bool>();
-                foreach (var vis in visibilities)
+                var thisSlide = conversation.Slides.Find(s => s.id == slide);
+                if (thisSlide != default(Slide) && thisSlide.type == Slide.TYPE.GROUPSLIDE)
                 {
-                    if (vis.GroupId != "")
+                    var oldGroupSets = groupSets;
+                    var currentState = new Dictionary<string, bool>();
+                    foreach (var vis in visibilities)
                     {
-                        currentState.Add(vis.GroupId, vis.Subscribed);
-                    }
-                }
-                var newSlide = conversation.Slides.Find(s => s.id == slide);
-                if (newSlide != null)
-                {
-                    groupSets = newSlide.GroupSets;
-                    var newGroupDefs = new List<ContentVisibilityDefinition>();
-                    groupSets.ForEach(gs =>
-                    {
-                        var oldGroupSet = oldGroupSets.Find(oldGroup => oldGroup.id == gs.id);
-                        gs.Groups.ForEach(g =>
+                        if (vis.GroupId != "")
                         {
-                            var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
-                            var wasSubscribed = currentState[g.id];
-                            if (Globals.isAuthor || g.GroupMembers.Contains(Globals.me))
-                            {
-                                var groupDescription = Globals.isAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
-                                newGroupDefs.Add(
-                                    new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (a, p, c, s) => g.GroupMembers.Contains(a))
-                                );
-                            }
-                        });
-                    });
-                    Dispatcher.adopt(delegate
+                            currentState.Add(vis.GroupId, vis.Subscribed);
+                        }
+                    }
+                    var newSlide = conversation.Slides.Find(s => s.id == slide);
+                    if (newSlide != null)
                     {
+                        groupSets = newSlide.GroupSets;
+                        var newGroupDefs = new List<ContentVisibilityDefinition>();
+                        groupSets.ForEach(gs =>
+                        {
+                            var oldGroupSet = oldGroupSets.Find(oldGroup => oldGroup.id == gs.id);
+                            gs.Groups.ForEach(g =>
+                            {
+                                var oldGroup = oldGroupSet.Groups.Find(ogr => ogr.id == g.id);
+                                var wasSubscribed = currentState[g.id];
+                                if (Globals.isAuthor || g.GroupMembers.Contains(Globals.me))
+                                {
+                                    var groupDescription = Globals.isAuthor ? String.Format("Group {0}: {1}", g.id, g.GroupMembers.Aggregate("", (acc, item) => acc + " " + item)) : String.Format("Group {0}", g.id);
+                                    newGroupDefs.Add(
+                                        new ContentVisibilityDefinition("Group " + g.id, groupDescription, g.id, wasSubscribed, (a, p, c, s) => g.GroupMembers.Contains(a))
+                                    );
+                                }
+                            });
+                        });
                         visibilities.Clear();
                         foreach (var nv in newGroupDefs.Concat(ContentFilterVisibility.defaultGroupVisibilities))
                         {
                             visibilities.Add(nv);
                         }
-                    });
+                    }
                 }
-            }
-            else
-            {
-                Dispatcher.adopt(delegate
+                else
                 {
                     visibilities.Clear();
                     foreach (var nv in ContentFilterVisibility.defaultVisibilities)
                     {
                         visibilities.Add(nv);
                     }
-                }); 
-
-            }
-
+                }
+            });
         }
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {

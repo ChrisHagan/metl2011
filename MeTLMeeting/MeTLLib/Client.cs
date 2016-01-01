@@ -76,6 +76,9 @@ namespace MeTLLib
         void SaveUserOptions(string username, UserOptions options);
         List<SearchConversationDetails> ConversationsFor(String query, int maxResults);
         UserOptions UserOptionsFor(string username);
+        void LeaveAllRooms();
+        void JoinConversation(string jid);
+        void MoveTo(int slide);
         //List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
     }
     public class DisconnectedClientConnection : IClientBehaviour
@@ -143,6 +146,16 @@ namespace MeTLLib
         public void SaveUserOptions(string username, UserOptions options) { }
         public List<SearchConversationDetails> ConversationsFor(String query, int maxResults) { return new List<SearchConversationDetails>(); }
         public UserOptions UserOptionsFor(string username) { return UserOptions.DEFAULT; }
+
+        public void LeaveAllRooms()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void JoinConversation(string jid)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class ClientConnection : IClientBehaviour
@@ -744,6 +757,21 @@ namespace MeTLLib
             };
             tryIfConnected(work);
             return res;
+        }
+
+        public void LeaveAllRooms()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void JoinConversation(string jid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveTo(int slide)
+        {
+            throw new NotImplementedException();
         }
     }
 }

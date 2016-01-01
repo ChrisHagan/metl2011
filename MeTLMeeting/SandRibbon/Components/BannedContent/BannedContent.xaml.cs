@@ -120,18 +120,24 @@ namespace SandRibbon.Components.BannedContent
         public BannedContent()
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(JoinConversation));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
         }
 
         private void closeMe(object obj)
         {
-            Close();
+            Dispatcher.adopt(delegate
+            {
+                Close();
+            });
         }
         private void JoinConversation(string jid)
         {
-            Close();
+            Dispatcher.adopt(delegate
+            {
+                Close();
+            });
         }
 
         private List<PrivacyWrapper> WrapSubmissions(List<TargettedSubmission> submissions)
@@ -186,11 +192,14 @@ namespace SandRibbon.Components.BannedContent
         
         private void ReceiveSubmission(TargettedSubmission submission)
         {
-            if (submission.target != "bannedcontent")
-                return;
+            Dispatcher.adopt(delegate
+            {
+                if (submission.target != "bannedcontent")
+                    return;
 
-            submissionList.Add(new PrivacyWrapper(submission, userMapping));
-        }
+                submissionList.Add(new PrivacyWrapper(submission, userMapping));
+            });
+            }
 
         private List<CheckBox> GetBannedUserCheckboxes()
         {

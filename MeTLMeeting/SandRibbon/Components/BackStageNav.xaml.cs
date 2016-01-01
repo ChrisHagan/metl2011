@@ -15,9 +15,9 @@ namespace SandRibbon.Components
         public BackStageNav()
         {
             InitializeComponent();
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
-            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
+            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
         private void setMyConversationVisibility()
         {
@@ -27,45 +27,50 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+            Dispatcher.adopt(delegate
             {
-                current.Visibility = Visibility.Collapsed;
-                currentConversation.Visibility = Visibility.Collapsed;
-                separator2.Visibility = Visibility.Collapsed;
-            }
-            if (details.IsEmpty) return;
-
-            // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
-            if (details.IsJidEqual(Globals.location.activeConversation))
-            {
-                if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
+                if (String.IsNullOrEmpty(Globals.location.activeConversation))
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
                     separator2.Visibility = Visibility.Collapsed;
-                    Commands.ShowConversationSearchBox.Execute("find");
                 }
-            }
-            //setMyConversationVisibility();
+                if (details.IsEmpty) return;
+
+                // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
+                if (details.IsJidEqual(Globals.location.activeConversation))
+                {
+                    if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
+                    {
+                        current.Visibility = Visibility.Collapsed;
+                        currentConversation.Visibility = Visibility.Collapsed;
+                        separator2.Visibility = Visibility.Collapsed;
+                        Commands.ShowConversationSearchBox.Execute("find");
+                    }
+                }
+            });
         }
         private void ShowConversationSearchBox(object mode)
         {
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+            Dispatcher.adopt(delegate
             {
-                current.Visibility = Visibility.Collapsed;
-                currentConversation.Visibility = Visibility.Collapsed;
-                separator2.Visibility = Visibility.Collapsed;
+                if (String.IsNullOrEmpty(Globals.location.activeConversation))
+                {
+                    current.Visibility = Visibility.Collapsed;
+                    currentConversation.Visibility = Visibility.Collapsed;
+                    separator2.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    current.Visibility = Visibility.Visible;
+                    currentConversation.Visibility = Visibility.Visible;
+                    separator2.Visibility = Visibility.Visible;
+                }
+                openCorrectTab((string)mode);
+                //setMyConversationVisibility();
+                App.mark("Conversation Search is open for business");
+            });
             }
-            else
-            {
-                current.Visibility = Visibility.Visible;
-                currentConversation.Visibility = Visibility.Visible;
-                separator2.Visibility = Visibility.Visible;
-            }
-            openCorrectTab((string)mode);
-            //setMyConversationVisibility();
-            App.mark("Conversation Search is open for business");
-        }
         private void openMyConversations()
         {
             mine.IsChecked = true;

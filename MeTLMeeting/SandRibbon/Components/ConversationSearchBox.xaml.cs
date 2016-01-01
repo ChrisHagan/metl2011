@@ -110,9 +110,9 @@ namespace SandRibbon.Components
         public ConversationSearchBox()
         {
             InitializeComponent();
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Version = ConfigurationProvider.instance.getMetlVersion();
             versionNumber.DataContext = Version;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
@@ -156,8 +156,8 @@ namespace SandRibbon.Components
                 backstageModeChangedCommand = new DelegateCommand<string>(BackstageModeChanged);
             }
 
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(conversationDetailsCommand);
-            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(conversationDetailsCommand);
+            Commands.UpdateConversationDetails.RegisterCommand(conversationDetailsCommand);
+            Commands.UpdateForeignConversationDetails.RegisterCommand(conversationDetailsCommand);
             Commands.JoinConversation.RegisterCommand(joinConversationCommand);
             Commands.LeaveConversation.RegisterCommand(leaveConversationCommand);
             Commands.SetConversationPermissions.RegisterCommand(setConversationPermissionsCommand);
@@ -298,41 +298,51 @@ namespace SandRibbon.Components
 
         private void ShowConversationSearchBox(object o)
         {
-            RegisterCommands();
-            RestartRefreshTimer();
-
-            var currentConversationDetails = Globals.conversationDetails;
-            activeConversation = Globals.location.activeConversation;
-            me = Globals.me;
-
-            if (String.IsNullOrEmpty(activeConversation) || (currentConversationDetails != null && currentConversationDetails.isDeleted))
-                currentConversation.Visibility = Visibility.Collapsed;
-            else
+            Dispatcher.adopt(delegate
             {
-                currentConversation.Visibility = Visibility.Visible;
-            }
-            this.Visibility = Visibility.Visible;
-            clearState();
+                RegisterCommands();
+                RestartRefreshTimer();
 
-            if (!string.IsNullOrEmpty((string)o) && (string)o == "MyConversations")
-            {
-                BackstageModeChanged("mine");
-            }
+                var currentConversationDetails = Globals.conversationDetails;
+                activeConversation = Globals.location.activeConversation;
+                me = Globals.me;
 
-            Dispatcher.queueFocus(SearchInput);
+                if (String.IsNullOrEmpty(activeConversation) || (currentConversationDetails != null && currentConversationDetails.isDeleted))
+                    currentConversation.Visibility = Visibility.Collapsed;
+                else
+                {
+                    currentConversation.Visibility = Visibility.Visible;
+                }
+                this.Visibility = Visibility.Visible;
+                clearState();
+
+                if (!string.IsNullOrEmpty((string)o) && (string)o == "MyConversations")
+                {
+                    BackstageModeChanged("mine");
+                }
+
+                Dispatcher.queueFocus(SearchInput);
+            });
         }
         private void HideConversationSearchBox(object o)
         {
-            UnregisterCommands();
-            PauseRefreshTimer();
-            editInProgress = false;
-            this.Visibility = Visibility.Collapsed;
-            Commands.RequerySuggested();
+            Dispatcher.adopt(delegate
+            {
+                UnregisterCommands();
+                PauseRefreshTimer();
+                editInProgress = false;
+                this.Visibility = Visibility.Collapsed;
+                Commands.RequerySuggested();
+            });
         }
         private void JoinConversation(object o)
         {
-            editInProgress = false;
-            CloseConversationSearchBox();
+            Dispatcher.adopt(delegate
+            {
+                editInProgress = false;
+                CloseConversationSearchBox();
+            }
+            );
         }
         private void CloseConversationSearchBox()
         {
@@ -344,33 +354,36 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-            if (details.IsEmpty) return;
-            // can I use the following test to determine if we're in a conversation?
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
-                return;
-
-            /*if (!details.isDeleted)
-                searchResultsObserver.Add(new SearchConversationDetails(details));
-             */
-            //if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
-            // was the above line but this doesn't handle the case of bug #1492
-            // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
-            if (details.IsJidEqual(Globals.location.activeConversation))
+            Dispatcher.adopt(delegate
             {
-                if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))//(!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
+                if (details.IsEmpty) return;
+                // can I use the following test to determine if we're in a conversation?
+                if (String.IsNullOrEmpty(Globals.location.activeConversation))
+                    return;
+
+                /*if (!details.isDeleted)
+                    searchResultsObserver.Add(new SearchConversationDetails(details));
+                 */
+                //if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
+                // was the above line but this doesn't handle the case of bug #1492
+                // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
+                if (details.IsJidEqual(Globals.location.activeConversation))
                 {
-                    currentConversation.Visibility = Visibility.Collapsed;
-                    // really don't like the following line, but it stops the backstagemode changing if already switched to it
-                    if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
-                        Commands.BackstageModeChanged.ExecuteAsync("find");
+                    if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))//(!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
+                    {
+                        currentConversation.Visibility = Visibility.Collapsed;
+                        // really don't like the following line, but it stops the backstagemode changing if already switched to it
+                        if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
+                            Commands.BackstageModeChanged.ExecuteAsync("find");
+                    }
+                    if (!shouldShowConversation(details) || details.isDeleted)
+                    {
+                        Commands.RequerySuggested();
+                        this.Visibility = Visibility.Visible;
+                    }
                 }
-                if (!shouldShowConversation(details) || details.isDeleted)
-                {
-                    Commands.RequerySuggested();
-                    this.Visibility = Visibility.Visible;
-                }
-            }
-            RefreshSortedConversationsList();
+                RefreshSortedConversationsList();
+            });
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {

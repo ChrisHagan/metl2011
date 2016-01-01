@@ -37,11 +37,11 @@ namespace SandRibbon.Components
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             //Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
@@ -124,19 +124,22 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details.IsEmpty) return;
-            if (string.IsNullOrEmpty(details.Jid) || !(details.UserHasPermission(Globals.credentials))) return;
-            try
+            Dispatcher.adopt(delegate
             {
-                if (Globals.conversationDetails == null)
+                if (details.IsEmpty) return;
+                if (string.IsNullOrEmpty(details.Jid) || !(details.UserHasPermission(Globals.credentials))) return;
+                try
+                {
+                    if (Globals.conversationDetails == null)
+                        Commands.SetPrivacy.ExecuteAsync("private");
+                    else if (Globals.conversationDetails.Author == Globals.me)
+                        Commands.SetPrivacy.ExecuteAsync("public");
+                }
+                catch (NotSetException)
+                {
                     Commands.SetPrivacy.ExecuteAsync("private");
-                else if (Globals.conversationDetails.Author == Globals.me)
-                    Commands.SetPrivacy.ExecuteAsync("public");
-            }
-            catch (NotSetException)
-            {
-                Commands.SetPrivacy.ExecuteAsync("private");
-            }
+                }
+            });
         }
         private FrameworkElement GetAdorner()
         {
@@ -252,8 +255,11 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-            ClearAdorners();
-            stack.Flush();
+            Dispatcher.adopt(delegate
+            {
+                ClearAdorners();
+                stack.Flush();
+            });
         }
         private void ClearAdorners()
         {

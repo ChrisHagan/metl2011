@@ -42,17 +42,20 @@ namespace SandRibbon.Components
             }
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
+            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
             DataContext = this;
         }
 
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
-            if (info.Target == "presentationSpace")
+            Dispatcher.adopt(delegate
             {
-                string setPrivacy = info.IsPrivate ? "private" : "public";
-                Commands.SetPrivacy.ExecuteAsync(setPrivacy);
-            }           
+                if (info.Target == "presentationSpace")
+                {
+                    string setPrivacy = info.IsPrivate ? "private" : "public";
+                    Commands.SetPrivacy.ExecuteAsync(setPrivacy);
+                }
+            });
         }
 
         private void updateConversationDetails(ConversationDetails details)
