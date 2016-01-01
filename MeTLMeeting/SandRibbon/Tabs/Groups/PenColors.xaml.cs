@@ -399,89 +399,95 @@ namespace SandRibbon.Tabs.Groups
             this.DataContext = this;
             Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return StateHelper.mustBeInConversation(); }));
             SetupPreviousColoursWithDefaults();
-            Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
-            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
-            Commands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
+            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(SetDrawingAttributes));
 
-            Commands.SaveUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SaveUIState));
-            Commands.RestoreUIState.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(RestoreUIState));
+            Commands.SaveUIState.RegisterCommand(new DelegateCommand<object>(SaveUIState));
+            Commands.RestoreUIState.RegisterCommand(new DelegateCommand<object>(RestoreUIState));
 
             InvokeAlteredPreset(2);
         }
 
         private void SaveUIState(object parameter)
         {
-            // save selected pen, size and color   
-            var saveState = new PenColorsUIState();
+            Dispatcher.adopt(delegate
+            {
+                // save selected pen, size and color   
+                var saveState = new PenColorsUIState();
 
-            saveState.CurrentDrawingAttributes = currentAttributes;
-            saveState.CurrentColorValues = currentColourValues;
-            
-            var penMode = PenMode.Draw;
-            /*
-            if (drawRadio.IsChecked ?? false)
-                penMode = PenMode.Draw;
-            if (selectRadio.IsChecked ?? false)
-                penMode = PenMode.Select;
-                */
-            if (eraseRadio.IsChecked ?? false)
-                penMode = PenMode.Erase;
+                saveState.CurrentDrawingAttributes = currentAttributes;
+                saveState.CurrentColorValues = currentColourValues;
 
-            saveState.CurrentPenMode = penMode;
-            saveState.CurrentSelectedColor = ColourChooser.SelectedIndex;
-            saveState.CurrentSelectedSize = SizeChooser.SelectedIndex;
-            saveState.CurrentSelectedPen = defaultColours.SelectedIndex;
-            saveState.CurrentChosenColor = ColourSettingPopup.Tag as string;
+                var penMode = PenMode.Draw;
+                /*
+                if (drawRadio.IsChecked ?? false)
+                    penMode = PenMode.Draw;
+                if (selectRadio.IsChecked ?? false)
+                    penMode = PenMode.Select;
+                    */
+                if (eraseRadio.IsChecked ?? false)
+                    penMode = PenMode.Erase;
 
-            Globals.StoredUIState.PenColorsUIState = saveState;
+                saveState.CurrentPenMode = penMode;
+                saveState.CurrentSelectedColor = ColourChooser.SelectedIndex;
+                saveState.CurrentSelectedSize = SizeChooser.SelectedIndex;
+                saveState.CurrentSelectedPen = defaultColours.SelectedIndex;
+                saveState.CurrentChosenColor = ColourSettingPopup.Tag as string;
+
+                Globals.StoredUIState.PenColorsUIState = saveState;
+            });
         }
 
         private void RestoreUIState(object parameter)
         {
-            // restore saved state
-            var saveState = Globals.StoredUIState.PenColorsUIState;
-
-            var penMode = "Ink";
-            if (saveState != null)
+            Dispatcher.adopt(delegate
             {
-                currentAttributes = saveState.CurrentDrawingAttributes;
-                _currentColourValues = saveState.CurrentColorValues;
+                // restore saved state
+                var saveState = Globals.StoredUIState.PenColorsUIState;
 
-                switch (saveState.CurrentPenMode)
+                var penMode = "Ink";
+                if (saveState != null)
                 {
-                    case PenMode.Draw:
-                        penMode = "Ink";
-                        //drawRadio.IsChecked = true;
-                        break;
-                
-                    case PenMode.Select:
-                        penMode = "Select";
-                        //selectRadio.IsChecked = true;
-                        break;
-                
-                    case PenMode.Erase:
-                        penMode = "EraseByStroke";
-                        eraseRadio.IsChecked = true;
-                        break;
-                    
-                    default:
-                        penMode = "Ink";
-                        //drawRadio.IsChecked = true;
-                        break;
+                    currentAttributes = saveState.CurrentDrawingAttributes;
+                    _currentColourValues = saveState.CurrentColorValues;
+
+                    switch (saveState.CurrentPenMode)
+                    {
+                        case PenMode.Draw:
+                            penMode = "Ink";
+                            //drawRadio.IsChecked = true;
+                            break;
+
+                        case PenMode.Select:
+                            penMode = "Select";
+                            //selectRadio.IsChecked = true;
+                            break;
+
+                        case PenMode.Erase:
+                            penMode = "EraseByStroke";
+                            eraseRadio.IsChecked = true;
+                            break;
+
+                        default:
+                            penMode = "Ink";
+                            //drawRadio.IsChecked = true;
+                            break;
+                    }
+
+                    ColourChooser.SelectedIndex = saveState.CurrentSelectedColor;
+                    SizeChooser.SelectedIndex = saveState.CurrentSelectedSize;
+                    defaultColours.SelectedIndex = saveState.CurrentSelectedPen;
+                    ColourSettingPopup.Tag = saveState.CurrentChosenColor;
+
+                    //ChangeColour(ColourChooser, null);
+                    //ChangeColorFromPreset(defaultColours, null);
+
+                    Commands.SetInkCanvasMode.ExecuteAsync(penMode);
+                    Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
                 }
-
-                ColourChooser.SelectedIndex = saveState.CurrentSelectedColor;
-                SizeChooser.SelectedIndex = saveState.CurrentSelectedSize;
-                defaultColours.SelectedIndex = saveState.CurrentSelectedPen;
-                ColourSettingPopup.Tag = saveState.CurrentChosenColor;
-
-                //ChangeColour(ColourChooser, null);
-                //ChangeColorFromPreset(defaultColours, null);
-
-                Commands.SetInkCanvasMode.ExecuteAsync(penMode);
-                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
-            }
+            });
         }
 
         private void checkDraw()
@@ -492,27 +498,39 @@ namespace SandRibbon.Tabs.Groups
         }
         private void JoinConversation(object obj)
         {
-            checkDraw();
+            Dispatcher.adopt(delegate
+            {
+                checkDraw();
+            });
         }
         private void SetDrawingAttributes(object obj)
         {
-            checkDraw();
+            Dispatcher.adopt(delegate
+            {
+                checkDraw();
+            });
         }
         private void SetInkCanvasMode(string mode)
         {
-            if (mode != "Ink")
+            Dispatcher.adopt(delegate
             {
-                defaultColours.SelectedIndex = -1;
-            }
+                if (mode != "Ink")
+                {
+                    defaultColours.SelectedIndex = -1;
+                }
+            });
         }
         private void SetLayer(string layer)
         {
-            if (layer == "Sketch")
+            Dispatcher.adopt(delegate
             {
-                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
-            }
-            else
-                Visibility = Visibility.Collapsed;
+                if (layer == "Sketch")
+                {
+                    Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+                }
+                else
+                    Visibility = Visibility.Collapsed;
+            });
         }
         private void updatePreviousDrawingAttributes(DrawingAttributes attributes)
         {

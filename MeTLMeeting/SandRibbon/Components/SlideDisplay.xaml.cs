@@ -129,17 +129,17 @@ namespace SandRibbon.Components
             InitializeComponent();
             DataContext = this;
             slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
-            Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
+            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(MoveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); }));
-            Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
-            Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.ReceiveTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); }));
+            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation));
+            Commands.UpdateNewSlideOrder.RegisterCommand(new DelegateCommand<int>(reorderSlides));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             var paste = new CompositeCommand();
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
@@ -193,17 +193,20 @@ namespace SandRibbon.Components
         }
         private void receivedStatus(TeacherStatus status)
         {
-            Globals.UpdatePresenceListing(new MeTLPresence
-                                              {
-                                                  Joining = true,
-                                                  Who = status.Teacher,
-                                                  Where = status.Conversation
-                                              });
-            if (status.Conversation == Globals.location.activeConversation && status.Teacher == Globals.conversationDetails.Author)
+            Dispatcher.adopt(delegate
             {
-                TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, status.Slide);
-                IsNavigationLocked = calculateNavigationLocked();
-            }
+                Globals.UpdatePresenceListing(new MeTLPresence
+                {
+                    Joining = true,
+                    Who = status.Teacher,
+                    Where = status.Conversation
+                });
+                if (status.Conversation == Globals.location.activeConversation && status.Teacher == Globals.conversationDetails.Author)
+                {
+                    TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, status.Slide);
+                    IsNavigationLocked = calculateNavigationLocked();
+                }
+            });
         }
 
         private int calculateTeacherSlideIndex(int myIndex, string jid)
@@ -234,9 +237,12 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object obj)
         {
-            myMaxSlideIndex = -1;
-            TeachersCurrentSlideIndex = -1;
-            thumbnailList.Clear();
+            Dispatcher.adopt(delegate
+            {
+                myMaxSlideIndex = -1;
+                TeachersCurrentSlideIndex = -1;
+                thumbnailList.Clear();
+            });
         }
 
         private bool canAddSlide(object _slide)
@@ -288,24 +294,27 @@ namespace SandRibbon.Components
 
         private void MoveToTeacher(int where)
         {
-            if (Globals.isAuthor) return;
-            if (!Globals.synched) return;
-            if (where == Globals.slide) return; // don't move if we're already on the slide requested
-            TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
-            checkMovementLimits();
-            var action = (Action)(() => Dispatcher.adoptAsync(() =>
-                                                                  {
-                                                                      try
+            Dispatcher.adopt(delegate
+            {
+                if (Globals.isAuthor) return;
+                if (!Globals.synched) return;
+                if (where == Globals.slide) return; // don't move if we're already on the slide requested
+                TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
+                checkMovementLimits();
+                var action = (Action)(() => Dispatcher.adoptAsync(() =>
                                                                       {
-                                                                          var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
-                                                                          slides.SelectedIndex = index;
-                                                                          slides.ScrollIntoView(slides.SelectedItem);
-                                                                      }
-                                                                      catch (Exception)
-                                                                      {
-                                                                      }
-                                                                  }));
-            GlobalTimers.SetSyncTimer(action);
+                                                                          try
+                                                                          {
+                                                                              var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
+                                                                              slides.SelectedIndex = index;
+                                                                              slides.ScrollIntoView(slides.SelectedItem);
+                                                                          }
+                                                                          catch (Exception)
+                                                                          {
+                                                                          }
+                                                                      }));
+                GlobalTimers.SetSyncTimer(action);
+            });
         }
         private bool slideInConversation(int slide)
         {
@@ -344,15 +353,18 @@ namespace SandRibbon.Components
         }
         private void reorderSlides(int conversationJid)
         {
-            if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
-            IsNavigationLocked = calculateNavigationLocked();
-            var details = Globals.conversationDetails;
-            thumbnailList.Clear();
-            foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+            Dispatcher.adopt(delegate
             {
-                thumbnailList.Add(slide);
-            }
-            checkMovementLimits();
+                if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
+                IsNavigationLocked = calculateNavigationLocked();
+                var details = Globals.conversationDetails;
+                thumbnailList.Clear();
+                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+                {
+                    thumbnailList.Add(slide);
+                }
+                checkMovementLimits();
+            });
         }
         public void checkMovementLimits()
         {
@@ -361,51 +373,59 @@ namespace SandRibbon.Components
         }
         public void EditConversation(object _obj)
         {
-            var editConversation = new EditConversation();
-            editConversation.Owner = Window.GetWindow(this);
-            editConversation.ShowDialog();
+            Dispatcher.adopt(delegate
+            {
+                var editConversation = new EditConversation();
+                editConversation.Owner = Window.GetWindow(this);
+                editConversation.ShowDialog();
+            });
         }
         public void Display(ConversationDetails details)
-        {//We only display the details of our current conversation (or the one we're entering)
-            if (details.IsEmpty)
-                return;
-            if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
+        {
+            Dispatcher.adopt(delegate
             {
-                thumbnailList.Clear();
-                return;
-            }
-            Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = Globals.conversationDetails.Jid, Slide = "0", Teacher = Globals.conversationDetails.Author });
-            IsNavigationLocked = calculateNavigationLocked();
-            checkMovementLimits();
-            if (thumbnailList.Count == 0)
-            {
-                var joined = false;
-                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+                //We only display the details of our current conversation (or the one we're entering)
+                if (details.IsEmpty)
+                    return;
+                if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
                 {
-                    if (!joined) {
-                        slides.SelectedItem = slide;
-                        joined = true;
-                    }
-                    thumbnailList.Add(slide);
+                    thumbnailList.Clear();
+                    return;
                 }
-            }
-            else if (thumbnailList.Count < details.Slides.Count)
-            {
-                var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
-                foreach (var newSlide in newSlides)
-                    thumbnailList.Insert(newSlide.index, newSlide);
-            }
-            foreach (var slide in thumbnailList)
-            {
-                foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
+                Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = Globals.conversationDetails.Jid, Slide = "0", Teacher = Globals.conversationDetails.Author });
+                IsNavigationLocked = calculateNavigationLocked();
+                checkMovementLimits();
+                if (thumbnailList.Count == 0)
                 {
-                    if (slide.index != relatedSlide.index)
+                    var joined = false;
+                    foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
                     {
-                        slide.index = relatedSlide.index;
-                        slide.refreshIndex();
+                        if (!joined)
+                        {
+                            slides.SelectedItem = slide;
+                            joined = true;
+                        }
+                        thumbnailList.Add(slide);
                     }
                 }
-            }
+                else if (thumbnailList.Count < details.Slides.Count)
+                {
+                    var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
+                    foreach (var newSlide in newSlides)
+                        thumbnailList.Insert(newSlide.index, newSlide);
+                }
+                foreach (var slide in thumbnailList)
+                {
+                    foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
+                    {
+                        if (slide.index != relatedSlide.index)
+                        {
+                            slide.index = relatedSlide.index;
+                            slide.refreshIndex();
+                        }
+                    }
+                }
+            });
         }
         private bool isWithinTeachersRange(Slide possibleSlide)
         {

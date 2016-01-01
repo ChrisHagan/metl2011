@@ -22,16 +22,21 @@ using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Utils
 {
-    public class WebThreadPool {
-        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool { 
-            MaxThreads=4
+    public class WebThreadPool
+    {
+        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool
+        {
+            MaxThreads = 4
         };
-        public static void QueueUserWorkItem(Amib.Threading.Action action){
+        public static void QueueUserWorkItem(Amib.Threading.Action action)
+        {
             pool.QueueWorkItem(action);
         }
     }
-    public class SneakyImage : MeTLStanzas.Image{
-        public SneakyImage(String target,ImageTag tag,Uri src,double x, double y, int slide) : base(){ 
+    public class SneakyImage : MeTLStanzas.Image
+    {
+        public SneakyImage(String target, ImageTag tag, Uri src, double x, double y, int slide) : base()
+        {
             SetTag(MeTLStanzas.tagTag, JsonConvert.SerializeObject(tag));
             SetTag(sourceTag, src.LocalPath);
             SetTag(MeTLStanzas.xTag, x);
@@ -42,16 +47,20 @@ namespace SandRibbon.Utils
             SetTag(MeTLStanzas.slideTag, slide);
             SetTag(MeTLStanzas.identityTag, tag.id);
         }
-        public void SetWidth(double width) {
+        public void SetWidth(double width)
+        {
             SetTag(widthTag, width);
         }
-        public void SetHeight(double height) {
+        public void SetHeight(double height)
+        {
             SetTag(heightTag, height);
         }
     }
-    public class SneakyText : MeTLStanzas.TextBox {
+    public class SneakyText : MeTLStanzas.TextBox
+    {
         public SneakyText(String target, String text, String family, double size,
-            String color, TextTag tag, double x,double y,int slide) { 
+            String color, TextTag tag, double x, double y, int slide)
+        {
             SetTag(MeTLStanzas.xTag, x);
             SetTag(MeTLStanzas.yTag, y);
             this.SetTag(MeTLStanzas.TextBox.textTag, text);
@@ -68,10 +77,12 @@ namespace SandRibbon.Utils
             this.SetTag(MeTLStanzas.TextBox.weightTag, "Normal");
             this.SetTag(MeTLStanzas.TextBox.styleTag, "Normal");
         }
-        public void SetWidth(double width) {
+        public void SetWidth(double width)
+        {
             SetTag(widthTag, width);
         }
-        public void SetHeight(double height) {
+        public void SetHeight(double height)
+        {
             SetTag(heightTag, height);
         }
     }
@@ -90,17 +101,17 @@ namespace SandRibbon.Utils
             slideId = CurrentSlide;
         }
         public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, int TotalSlides)
-            :this(Stage,CurrentSlide)
+            : this(Stage, CurrentSlide)
         {
             totalSlides = TotalSlides;
         }
         public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, string thumbnail)
-            :this(Stage,CurrentSlide)
+            : this(Stage, CurrentSlide)
         {
             slideThumbnailSource = thumbnail;
         }
-        public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, int TotalSlides,string thumbnail)
-            :this(Stage,CurrentSlide)
+        public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, int TotalSlides, string thumbnail)
+            : this(Stage, CurrentSlide)
         {
             totalSlides = TotalSlides;
             slideThumbnailSource = thumbnail;
@@ -109,7 +120,7 @@ namespace SandRibbon.Utils
         public int totalSlides;
         public enum IMPORT_STAGE { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED, PRINTING };
         public IMPORT_STAGE stage;
-        public string slideThumbnailSource{get;set;}
+        public string slideThumbnailSource { get; set; }
     }
     public class PowerPointLoader
     {
@@ -126,21 +137,24 @@ namespace SandRibbon.Utils
         }
         public PowerPointLoader()
         {
-            Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
+            Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             clientConnection = App.controller.client;
         }
-        private class PowerpointLoadTracker {
+        private class PowerpointLoadTracker
+        {
             private int slidesUploaded = 0;
             private readonly int target;
             private String conversationJid;
             private DelegateCommand<object> cancel = new DelegateCommand<object>(delegate { }, _unused => false);
-            public PowerpointLoadTracker(int _target, String _conversation) {
+            public PowerpointLoadTracker(int _target, String _conversation)
+            {
                 target = _target;
                 conversationJid = _conversation;
                 Commands.ReceiveImage.RegisterCommand(cancel);
                 Commands.ReceiveTextBox.RegisterCommand(cancel);
             }
-            public void increment() {
+            public void increment()
+            {
                 Interlocked.Increment(ref slidesUploaded);
                 if (slidesUploaded == target)
                 {
@@ -155,50 +169,53 @@ namespace SandRibbon.Utils
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
-            if (IsPowerPointRunning())
+            System.Windows.Application.Current.Dispatcher.adopt(delegate
             {
-                MeTLMessage.Information("PowerPoint seems to be running, please close the program before importing a presentation");
-                return;
-            }
-
-            var app = GetPowerPointApplication();
-            if (app == null)
-                return;
-            
-            var conversation = App.controller.client.CreateConversation(spec.Details);
-            var worker = new Thread(new ParameterizedThreadStart(
-                delegate
+                if (IsPowerPointRunning())
                 {
-                    try
-                    {
-                        progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
-                        switch (spec.Type)
-                        {
-                            case PowerpointImportType.HighDefImage:
-                                Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
-                                Logger.Log(string.Format("ImportingPowerpoint HighDef {0}", spec.File));
-                                LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
-                                break;
-                            case PowerpointImportType.Image:
-                                Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
-                                Logger.Log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File));
-                                LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
-                                break;
-                            case PowerpointImportType.Shapes:
-                                Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
-                                Logger.Log(string.Format("ImportingPowerpoint Flexible {0}", spec.File));
-                                LoadPowerpoint(app, spec.File, conversation);
-                                break;
-                        }
+                    MeTLMessage.Information("PowerPoint seems to be running, please close the program before importing a presentation");
+                    return;
+                }
 
-                    }
-                    catch (Exception)
+                var app = GetPowerPointApplication();
+                if (app == null)
+                    return;
+
+                var conversation = App.controller.client.CreateConversation(spec.Details);
+                var worker = new Thread(new ParameterizedThreadStart(
+                    delegate
                     {
-                        App.controller.client.DeleteConversation(conversation);
-                    }
-                }));
-            worker.SetApartmentState(ApartmentState.STA);
-            worker.Start();
+                        try
+                        {
+                            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
+                            switch (spec.Type)
+                            {
+                                case PowerpointImportType.HighDefImage:
+                                    Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
+                                    Logger.Log(string.Format("ImportingPowerpoint HighDef {0}", spec.File));
+                                    LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
+                                    break;
+                                case PowerpointImportType.Image:
+                                    Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
+                                    Logger.Log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File));
+                                    LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
+                                    break;
+                                case PowerpointImportType.Shapes:
+                                    Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
+                                    Logger.Log(string.Format("ImportingPowerpoint Flexible {0}", spec.File));
+                                    LoadPowerpoint(app, spec.File, conversation);
+                                    break;
+                            }
+
+                        }
+                        catch (Exception)
+                        {
+                            App.controller.client.DeleteConversation(conversation);
+                        }
+                    }));
+                worker.SetApartmentState(ApartmentState.STA);
+                worker.Start();
+            });
         }
         public void CreateBlankConversation()
         {
@@ -325,7 +342,7 @@ namespace SandRibbon.Utils
             }
             var startingId = conversation.Slides.First().id;
             var index = 0;
-            conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+            conversation.Slides = convDescriptor.Xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
             var updatedConversation = App.controller.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
@@ -368,7 +385,7 @@ namespace SandRibbon.Utils
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId));
         }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides) 
+        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides)
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
         }
@@ -411,16 +428,17 @@ namespace SandRibbon.Utils
                     ppt.Close();
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Logger.Crash(e);
             }
         }
-        
+
         private void sendSlide(int id, XElement slide, ConversationDescriptor conversationDescriptor)
         {
-            bool hasPrivate = conversationDescriptor.HasPrivateContent; 
+            bool hasPrivate = conversationDescriptor.HasPrivateContent;
             var privateRoom = string.Format("{0}{1}", id, Globals.me);
-            if(hasPrivate) 
+            if (hasPrivate)
                 clientConnection.SneakInto(privateRoom);
             clientConnection.SneakInto(id.ToString());
             sneakilySendShapes(id, slide.Descendants("shape"));
@@ -445,20 +463,21 @@ namespace SandRibbon.Utils
                 var size = Double.Parse(font.Attribute("size").Value);
                 var color = (font.Attribute("color").Value).ToString();
                 var tag = new TextTag
-                    {
-                        author = Globals.me,
-                        id = textBoxIdentity,
-                        privacy = privacy
-                    };
-                var stanza = new SneakyText(target,content,family,size,color,tag,x,y,id);
+                {
+                    author = Globals.me,
+                    id = textBoxIdentity,
+                    privacy = privacy
+                };
+                var stanza = new SneakyText(target, content, family, size, color, tag, x, y, id);
                 if (text.Attributes("height").Count() > 0)
                     stanza.SetHeight(Double.Parse(text.Attribute("height").Value));
                 if (text.Attributes("width").Count() > 0)
                     stanza.SetWidth(Double.Parse(text.Attribute("width").Value));
-                clientConnection.SendStanza(id.ToString(),stanza);
+                clientConnection.SendStanza(id.ToString(), stanza);
             }
         }
-        private void sneakilySendShapes(int id, IEnumerable<XElement> shapes) { 
+        private void sneakilySendShapes(int id, IEnumerable<XElement> shapes)
+        {
             int shapeCount = 0;
             var me = Globals.me;
             var target = "presentationSpace";
@@ -467,7 +486,8 @@ namespace SandRibbon.Utils
                 bool isBackgroundImage = false;
                 if (shape.Attribute("background") != null && shape.Attribute("background").Value.ToLower() == "true")
                     isBackgroundImage = true;
-                var tag = new ImageTag {
+                var tag = new ImageTag
+                {
                     id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, shapeCount++),
                     author = me,
                     privacy = (Privacy)Enum.Parse(typeof(Privacy), shape.Attribute("privacy").Value, true),
@@ -476,11 +496,11 @@ namespace SandRibbon.Utils
                 var uri = new Uri(shape.Attribute("uri").Value);
                 var x = Double.Parse(shape.Attribute("x").Value);
                 var y = Double.Parse(shape.Attribute("y").Value);
-                var stanza = new SneakyImage(target,tag,uri,x,y,id);
+                var stanza = new SneakyImage(target, tag, uri, x, y, id);
                 if (shape.Attributes("width").Count() > 0)
-                    stanza.SetWidth( Double.Parse(shape.Attribute("width").Value));
+                    stanza.SetWidth(Double.Parse(shape.Attribute("width").Value));
                 if (shape.Attributes("height").Count() > 0)
-                    stanza.SetHeight( Double.Parse(shape.Attribute("height").Value));
+                    stanza.SetHeight(Double.Parse(shape.Attribute("height").Value));
                 clientConnection.SendStanza(id.ToString(), stanza);
             }
         }
@@ -656,7 +676,7 @@ namespace SandRibbon.Utils
                 if (textFrame.TextRange.Text.Length > 0)
                     pptcolour = textFrame.TextRange.Runs(0, 1).Font.Color.RGB;
                 else
-                     pptcolour = textFrame.TextRange.Font.Color.RGB;
+                    pptcolour = textFrame.TextRange.Font.Color.RGB;
                 var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
                 var safeColour = (new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B }).ToString();
                 string safeFont = "arial";

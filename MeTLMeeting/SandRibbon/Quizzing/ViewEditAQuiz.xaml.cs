@@ -99,15 +99,18 @@ namespace SandRibbon.Quizzing
 
         public ViewEditAQuiz(QuizQuestion thisQuiz)
         {
-            DataContext = thisQuiz;
+            Dispatcher.adopt(delegate
+            {
+                DataContext = thisQuiz;
 
-            InitializeComponent();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
+                InitializeComponent();
+                Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { Close(); }));
+                Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>((_unused) => { Close(); }));
 
-            question.Options.CollectionChanged += UpdateOptionError;
-            //QuestionError = false;
-            ResultsExist = CheckResultsExist(question);
+                question.Options.CollectionChanged += UpdateOptionError;
+                //QuestionError = false;
+                ResultsExist = CheckResultsExist(question);
+            });
         }
 
         private void UpdateOptionError(object sender, NotifyCollectionChangedEventArgs e)

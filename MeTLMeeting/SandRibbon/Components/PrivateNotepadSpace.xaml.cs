@@ -23,26 +23,32 @@ namespace SandRibbon.Components
         public PrivateNotepadSpace()
         {
             InitializeComponent();
-            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
         }
 
         private void MoveTo(int slide)
         {
-            notepadStack.Flush();
+            Dispatcher.adopt(delegate
+            {
+                notepadStack.Flush();
+            });
         }
 
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            BeginInit();
-            notepadStack.ReceiveStrokes(parser.ink);
-            notepadStack.ReceiveImages(parser.images.Values);
-            foreach (var text in parser.text.Values)
-                notepadStack.DoText(text);
-            foreach (var moveDelta in parser.moveDeltas)
-                notepadStack.ReceiveMoveDelta(moveDelta, processHistory: true);
+            Dispatcher.adopt(delegate
+            {
+                BeginInit();
+                notepadStack.ReceiveStrokes(parser.ink);
+                notepadStack.ReceiveImages(parser.images.Values);
+                foreach (var text in parser.text.Values)
+                    notepadStack.DoText(text);
+                foreach (var moveDelta in parser.moveDeltas)
+                    notepadStack.ReceiveMoveDelta(moveDelta, processHistory: true);
 
-            EndInit();
+                EndInit();
+            });
         }
     }
 }

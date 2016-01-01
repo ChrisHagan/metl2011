@@ -19,8 +19,8 @@ namespace SandRibbon.Tabs
         public ConversationManagement()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
@@ -53,14 +53,20 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
-            banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
-            bannedContentManagement.Visibility = banContent.Visibility;
+            Dispatcher.adopt(delegate
+            {
+                editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
+                banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+                bannedContentManagement.Visibility = banContent.Visibility;
+            });
         }
 
         private void JoinConversation(string jid)
         {
-            submissionList.Clear();
+            Dispatcher.adopt(delegate
+            {
+                submissionList.Clear();
+            });
         }
 
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)

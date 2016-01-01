@@ -79,6 +79,9 @@ namespace MeTLLib
         void LeaveAllRooms();
         void JoinConversation(string jid);
         void MoveTo(int slide);
+        void SneakInto(string room);
+        void SneakOutOf(string room);
+        void AsyncRetrieveHistoryOf(int v);
         //List<MeTLUserInformation> getMeTLUserInformations(List<string> usernames);
     }
     public class DisconnectedClientConnection : IClientBehaviour
@@ -153,6 +156,21 @@ namespace MeTLLib
         }
 
         public void JoinConversation(string jid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SneakInto(string room)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SneakOutOf(string room)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AsyncRetrieveHistoryOf(int v)
         {
             throw new NotImplementedException();
         }
@@ -770,6 +788,21 @@ namespace MeTLLib
         }
 
         public void MoveTo(int slide)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SneakInto(string room)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SneakOutOf(string room)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AsyncRetrieveHistoryOf(int v)
         {
             throw new NotImplementedException();
         }

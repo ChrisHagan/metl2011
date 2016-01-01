@@ -88,18 +88,24 @@ namespace SandRibbon.Components.Submissions
         public ViewSubmissions()
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(joinConversation));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
         }
         private void closeMe(object obj)
         {
-            Close();
+            Dispatcher.adopt(delegate
+            {
+                Close();
+            });
         }
         private void joinConversation(string obj)
         {
-            this.Close();
-            UpdateLayout();
+            Dispatcher.adopt(delegate
+            {
+                this.Close();
+                UpdateLayout();
+            });
         }
         private readonly long fiveMinuteTicks = new TimeSpan(0, 5, 0).Ticks; 
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
@@ -167,30 +173,33 @@ namespace SandRibbon.Components.Submissions
 
         private void recieveSubmission(TargettedSubmission submission)
         {
-            if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
-                return;
-
-            var addedToBucket = false;
-
-            // find the bucket the submission belongs to
-            foreach (var bucket in submissionList)
+            Dispatcher.adopt(delegate
             {
-                if (!bucket.IsAllSubmissionsBucket && bucket.TimeInBucketRange(submission.time))
+                if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
+                    return;
+
+                var addedToBucket = false;
+
+                // find the bucket the submission belongs to
+                foreach (var bucket in submissionList)
                 {
-                    bucket.submissions.Add(submission);
-                    addedToBucket = true;
-                    break;
+                    if (!bucket.IsAllSubmissionsBucket && bucket.TimeInBucketRange(submission.time))
+                    {
+                        bucket.submissions.Add(submission);
+                        addedToBucket = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!addedToBucket)
-            {
-                var bucket = new SubmissionBucket(new DateTime(submission.time), new DateTime(submission.time + fiveMinuteTicks));
-                bucket.submissions.Add(submission);
-                submissionList.Insert(submissionList.Count - 2, bucket); // zero-based index. Count - 1 is last item, Count - 2 is second last.
-            }
+                if (!addedToBucket)
+                {
+                    var bucket = new SubmissionBucket(new DateTime(submission.time), new DateTime(submission.time + fiveMinuteTicks));
+                    bucket.submissions.Add(submission);
+                    submissionList.Insert(submissionList.Count - 2, bucket); // zero-based index. Count - 1 is last item, Count - 2 is second last.
+                }
 
-            UpdateAllBucket(submission);
+                UpdateAllBucket(submission);
+            });
         }
         
         private void importAllSubmissionsInBucket(object sender, ExecutedRoutedEventArgs e)

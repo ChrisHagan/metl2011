@@ -51,11 +51,11 @@ namespace SandRibbon.Components
             InitializeComponent();
             Loaded += Projector_Loaded;
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
         }
         private string generateTitle(ConversationDetails details)
         {
@@ -67,13 +67,16 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details.IsEmpty) return;
-            conversationLabel.Text = generateTitle(details);
-            
-            if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
+            Dispatcher.adopt(delegate
             {
-                shutdown(null);
-            }
+                if (details.IsEmpty) return;
+                conversationLabel.Text = generateTitle(details);
+
+                if (((details.isDeleted || Globals.authorizedGroups.Where(g => g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
+                {
+                    shutdown(null);
+                }
+            });
         }
 
         private void shutdown(object obj)
@@ -92,9 +95,12 @@ namespace SandRibbon.Components
 
         private void moveTo(object obj)
         {
-            conversationLabel.Text = generateTitle(Globals.conversationDetails);
-            
-            stack.Flush();
+            Dispatcher.adopt(delegate
+            {
+                conversationLabel.Text = generateTitle(Globals.conversationDetails);
+
+                stack.Flush();
+            });
         }
         private void Projector_Loaded(object sender, RoutedEventArgs e)
         {

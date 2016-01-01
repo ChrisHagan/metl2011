@@ -27,7 +27,7 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(detailsChanged));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(detailsChanged));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
@@ -50,18 +50,21 @@ namespace SandRibbon.Components.Submissions
         }
         private void detailsChanged(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
-            try
+            Dispatcher.adopt(delegate
             {
-                if (Globals.conversationDetails.Author == Globals.me)
-                    amTeacher();
-                else
-                    amStudent();
-            }
-            catch(NotSetException)
-            {
-            }
-      
+                if (ConversationDetails.Empty.Equals(details)) return;
+                try
+                {
+                    if (Globals.conversationDetails.Author == Globals.me)
+                        amTeacher();
+                    else
+                        amStudent();
+                }
+                catch (NotSetException)
+                {
+                }
+
+            });
         }
         private void conversationChanged(object details)
         {

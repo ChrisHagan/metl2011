@@ -81,7 +81,7 @@ namespace SandRibbon
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
@@ -99,12 +99,12 @@ namespace SandRibbon
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
+            Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rect>(SetZoomRect));
 
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
 
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
 
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
@@ -112,8 +112,8 @@ namespace SandRibbon
             Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
 
-            Commands.BlockSearch.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => BlockSearch()));
-            Commands.UnblockSearch.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => UnblockSearch()));
+            Commands.BlockSearch.RegisterCommand(new DelegateCommand<object>((_unused) => BlockSearch()));
+            Commands.UnblockSearch.RegisterCommand(new DelegateCommand<object>((_unused) => UnblockSearch()));
 
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -121,13 +121,13 @@ namespace SandRibbon
             Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
-            Commands.RemoveWindowEffect.RegisterCommandToDispatcher(new DelegateCommand<object>(RemoveWindowEffect));
+            Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
 
             //canvas stuff
-            Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
+            Commands.MoveCanvasByDelta.RegisterCommand(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -145,11 +145,11 @@ namespace SandRibbon
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
             Commands.CheckExtendedDesktop.RegisterCommand(new DelegateCommand<object>((_unused) => { CheckForExtendedDesktop(); }));
 
-            Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
-            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
-            Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
-            Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
-            Commands.LaunchDiagnosticWindow.RegisterCommandToDispatcher(new DelegateCommand<object>(launchDiagnosticWindow));
+            Commands.Reconnecting.RegisterCommand(new DelegateCommand<bool>(Reconnecting));
+            Commands.SetUserOptions.RegisterCommand(new DelegateCommand<UserOptions>(SetUserOptions));
+            Commands.SetRibbonAppearance.RegisterCommand(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
+            Commands.PresentVideo.RegisterCommand(new DelegateCommand<object>(presentVideo));
+            Commands.LaunchDiagnosticWindow.RegisterCommand(new DelegateCommand<object>(launchDiagnosticWindow));
             Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
             {
                 duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
@@ -277,29 +277,33 @@ namespace SandRibbon
         }
         private void launchDiagnosticWindow(object _unused)
         {
-            if (App.diagnosticWindow != null) {
-                App.diagnosticWindow.Activate();
-            }
-            else
+            Dispatcher.adopt(delegate
             {
-                Thread newDiagnosticThread = new Thread(new ThreadStart(() =>
+                if (App.diagnosticWindow != null)
                 {
-                    SynchronizationContext.SetSynchronizationContext(
-                        new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
-                    var window = new DiagnosticWindow();
-                    App.diagnosticWindow = window;
-                    window.Closed += (s, a) =>
+                    App.diagnosticWindow.Activate();
+                }
+                else
+                {
+                    Thread newDiagnosticThread = new Thread(new ThreadStart(() =>
                     {
-                        System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
-                        App.diagnosticWindow = null;
-                    };
-                    window.Show();
-                    System.Windows.Threading.Dispatcher.Run();
-                }));
-                newDiagnosticThread.SetApartmentState(ApartmentState.STA);
-                newDiagnosticThread.IsBackground = true;
-                newDiagnosticThread.Start();
-            }
+                        SynchronizationContext.SetSynchronizationContext(
+                            new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
+                        var window = new DiagnosticWindow();
+                        App.diagnosticWindow = window;
+                        window.Closed += (s, a) =>
+                        {
+                            System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
+                            App.diagnosticWindow = null;
+                        };
+                        window.Show();
+                        System.Windows.Threading.Dispatcher.Run();
+                    }));
+                    newDiagnosticThread.SetApartmentState(ApartmentState.STA);
+                    newDiagnosticThread.IsBackground = true;
+                    newDiagnosticThread.Start();
+                }
+            });
         }
 
         #endregion
@@ -341,7 +345,10 @@ namespace SandRibbon
         }
         private void SetRibbonAppearance(RibbonAppearance appearance)
         {
-            Appearance = appearance;
+            Dispatcher.adopt(delegate
+            {
+                Appearance = appearance;
+            });
         }
         private void createBlankConversation(object obj)
         {
@@ -378,11 +385,14 @@ namespace SandRibbon
         }
         private void SetUserOptions(UserOptions options)
         {
-            //this next line should be removed.
-            SaveUserOptions(options);
+            Dispatcher.adopt(delegate
+            {
+                //this next line should be removed.
+                SaveUserOptions(options);
 
-            if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
-                ribbon.ToggleMinimize();
+                if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
+                    ribbon.ToggleMinimize();
+            });
         }
         private void SaveUserOptions(UserOptions options)
         {
@@ -409,58 +419,67 @@ namespace SandRibbon
 
         private void ShowConversationSearchBox(object _arg)
         {
-            if (!ribbon.IsMinimized)
-                ribbon.ToggleMinimize();
+            Dispatcher.adopt(delegate
+            {
+                if (!ribbon.IsMinimized)
+                    ribbon.ToggleMinimize();
+            });
         }
         private void HideConversationSearchBox(object _arg)
         {
-            if (ribbon.IsMinimized)
-                ribbon.ToggleMinimize();
+            Dispatcher.adopt(delegate
+            {
+                if (ribbon.IsMinimized)
+                    ribbon.ToggleMinimize();
+            });
         }
         private void Reconnecting(bool success)
         {
-            if (success)
+            Dispatcher.adopt(delegate
             {
-                try
+                if (success)
                 {
-                    hideReconnectingDialog();
-                    var details = Globals.conversationDetails;
-                    if (details == null || details.Equals(ConversationDetails.Empty))
+                    try
                     {
+                        hideReconnectingDialog();
+                        var details = Globals.conversationDetails;
+                        if (details == null || details.Equals(ConversationDetails.Empty))
+                        {
+                            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                        }
+                        else
+                        {
+                            var jid = Globals.conversationDetails.Jid;
+                            Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
+                            Commands.MoveTo.Execute(Globals.location.currentSlide);
+                            SlideDisplay.SendSyncMove(Globals.location.currentSlide);
+                            App.controller.client.historyProvider.Retrieve<PreParser>(
+                                        null,
+                                        null,
+                                        (parser) =>
+                                        {
+                                            Commands.PreParserAvailable.Execute(parser);
+                                            hideReconnectingDialog();
+                                        },
+                                        jid);
+                        }
+                    }
+                    catch (NotSetException e)
+                    {
+                        Logger.Crash(e);
                         Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                     }
-                    else
+                    catch (Exception e)
                     {
-                        var jid = Globals.conversationDetails.Jid;
-                        Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
-                        Commands.MoveTo.Execute(Globals.location.currentSlide);
-                        SlideDisplay.SendSyncMove(Globals.location.currentSlide);
-                        App.controller.client.historyProvider.Retrieve<PreParser>(
-                                    null,
-                                    null,
-                                    (parser) =>
-                                    {
-                                        Commands.PreParserAvailable.Execute(parser);
-                                        hideReconnectingDialog();
-                                    },
-                                    jid);
+                        Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
+                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                     }
                 }
-                catch (NotSetException e)
+                else
                 {
-                    Logger.Crash(e);
-                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                    showReconnectingDialog();
                 }
-                catch (Exception e)
-                {
-                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
-                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-                }
-            }
-            else
-            {
-                showReconnectingDialog();
-            }
+            });
         }
         /*
         private void ToggleFriendsVisibility(object unused)
@@ -574,26 +593,29 @@ namespace SandRibbon
         }
         private void GrabMove(Point moveDelta)
         {
-            if (moveDelta.X != 0)
-                scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + moveDelta.X);
-            if (moveDelta.Y != 0)
-                scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y);
-            try
+            Dispatcher.adopt(delegate
             {
                 if (moveDelta.X != 0)
-                {
-                    var HZoomRatio = (scroll.ExtentWidth / scroll.Width);
-                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X * HZoomRatio));
-                }
+                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + moveDelta.X);
                 if (moveDelta.Y != 0)
+                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y);
+                try
                 {
-                    var VZoomRatio = (scroll.ExtentHeight / scroll.Height);
-                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
+                    if (moveDelta.X != 0)
+                    {
+                        var HZoomRatio = (scroll.ExtentWidth / scroll.Width);
+                        scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X * HZoomRatio));
+                    }
+                    if (moveDelta.Y != 0)
+                    {
+                        var VZoomRatio = (scroll.ExtentHeight / scroll.Height);
+                        scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
+                    }
                 }
-            }
-            catch (Exception)
-            {//out of range exceptions and the like 
-            }
+                catch (Exception)
+                {//out of range exceptions and the like 
+                }
+            });
         }
         private void BroadcastZoom()
         {
@@ -613,22 +635,31 @@ namespace SandRibbon
 
         private void BlockSearch()
         {
-            SearchBlocker.Visibility = Visibility.Visible;
+            Dispatcher.adopt(delegate
+            {
+                SearchBlocker.Visibility = Visibility.Visible;
+            });
         }
 
         private void UnblockSearch()
         {
-            SearchBlocker.Visibility = Visibility.Collapsed;
+            Dispatcher.adopt(delegate
+            {
+                SearchBlocker.Visibility = Visibility.Collapsed;
+            });
         }
 
         private void SetZoomRect(Rect viewbox)
         {
-            scroll.Width = viewbox.Width;
-            scroll.Height = viewbox.Height;
-            scroll.UpdateLayout();
-            scroll.ScrollToHorizontalOffset(viewbox.X);
-            scroll.ScrollToVerticalOffset(viewbox.Y);
-            Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+            Dispatcher.adopt(delegate
+            {
+                scroll.Width = viewbox.Width;
+                scroll.Height = viewbox.Height;
+                scroll.UpdateLayout();
+                scroll.ScrollToHorizontalOffset(viewbox.X);
+                scroll.ScrollToVerticalOffset(viewbox.Y);
+                Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+            });
         }
         private void AddWindowEffect(object _o)
         {
@@ -636,7 +667,10 @@ namespace SandRibbon
         }
         private void RemoveWindowEffect(object _o)
         {
-            CanvasBlocker.Visibility = Visibility.Collapsed;
+            Dispatcher.adopt(delegate
+            {
+                CanvasBlocker.Visibility = Visibility.Collapsed;
+            });
         }
 
         private void EnsureConversationTabSelected()
@@ -656,21 +690,26 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
-            try {
-                EnsureConversationTabSelected();
-
-                if (ribbon.SelectedTab != null)
-                    ribbon.SelectedTab = ribbon.Tabs[0];
-                var thisDetails = App.controller.client.DetailsOf(title);
-                App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
-                applyPermissions(thisDetails.Permissions);
-                Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
-                Commands.RequerySuggested(Commands.SetConversationPermissions);
-                Commands.SetLayer.ExecuteAsync("Sketch");
-            } catch
+            Dispatcher.adopt(delegate
             {
-                Console.WriteLine("couldn't join conversation: " + title);
-            }
+                try
+                {
+                    EnsureConversationTabSelected();
+
+                    if (ribbon.SelectedTab != null)
+                        ribbon.SelectedTab = ribbon.Tabs[0];
+                    var thisDetails = App.controller.client.DetailsOf(title);
+                    App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
+                    applyPermissions(thisDetails.Permissions);
+                    Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
+                    Commands.RequerySuggested(Commands.SetConversationPermissions);
+                    Commands.SetLayer.ExecuteAsync("Sketch");
+                }
+                catch
+                {
+                    Console.WriteLine("couldn't join conversation: " + title);
+                }
+            });
         }
         private string messageFor(ConversationDetails details)
         {
@@ -1181,76 +1220,79 @@ namespace SandRibbon
         }
         private void presentVideo(object _arg)
         {
-            var chooseVideo = new OpenFileDialog();
-            var result = chooseVideo.ShowDialog(Window.GetWindow(this));
-            if (result == true)
+            Dispatcher.adopt(delegate
             {
-                var popup = new Window();
-                var sp = new StackPanel();
-                var player = new MediaElement
+                var chooseVideo = new OpenFileDialog();
+                var result = chooseVideo.ShowDialog(Window.GetWindow(this));
+                if (result == true)
                 {
-                    Source = new Uri(chooseVideo.FileName),
-                    LoadedBehavior = MediaState.Manual
-                };
-                player.Play();
-                var buttons = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal
-                };
-                bool isPaused = false;
-                player.MouseLeftButtonUp += delegate
-                {
-                    if (isPaused)
-                        player.Play();
-                    else
-                        player.Pause();
-                };
-                Func<Func<Point>, RoutedEventHandler> handler = point =>
-                {
-                    return delegate
+                    var popup = new Window();
+                    var sp = new StackPanel();
+                    var player = new MediaElement
                     {
-                        var location = String.Format("{0}{1}.jpg", System.IO.Path.GetTempPath(), DateTime.Now.Ticks);
-                        if (player.HasVideo)
-                        {
-                            var width = Convert.ToInt32(player.ActualWidth);
-                            var height = Convert.ToInt32(player.ActualHeight);
-                            var rtb = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-                            rtb.Render(player);
-                            var encoder = new JpegBitmapEncoder();
-                            encoder.Frames.Add(BitmapFrame.Create(rtb));
-                            using (var fs = new FileStream(location, FileMode.CreateNew))
-                            {
-                                encoder.Save(fs);
-                            }
-                            Commands.ImageDropped.Execute(new ImageDrop
-                            {
-                                Filename = location,
-                                Point = point(),
-                                Position = 1,
-                                Target = "presentationSpace"
-                            });
-                        }
+                        Source = new Uri(chooseVideo.FileName),
+                        LoadedBehavior = MediaState.Manual
                     };
-                };
-                var under = new SandRibbon.Components.ResourceDictionaries.Button
-                {
-                    Text = "Drop"
-                };
-                under.Click += handler(() => popup.TranslatePoint(new Point(0, 0), canvasViewBox));
-                var fullScreen = new SandRibbon.Components.ResourceDictionaries.Button
-                {
-                    Text = "Fill"
-                };
-                fullScreen.Click += handler(() => new Point(0, 0));
-                buttons.Children.Add(under);
-                buttons.Children.Add(fullScreen);
-                sp.Children.Add(player);
-                sp.Children.Add(buttons);
-                popup.Content = sp;
-                popup.Topmost = true;
-                popup.Owner = Window.GetWindow(this);
-                popup.Show();
-            }
+                    player.Play();
+                    var buttons = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+                    bool isPaused = false;
+                    player.MouseLeftButtonUp += delegate
+                    {
+                        if (isPaused)
+                            player.Play();
+                        else
+                            player.Pause();
+                    };
+                    Func<Func<Point>, RoutedEventHandler> handler = point =>
+                    {
+                        return delegate
+                        {
+                            var location = String.Format("{0}{1}.jpg", System.IO.Path.GetTempPath(), DateTime.Now.Ticks);
+                            if (player.HasVideo)
+                            {
+                                var width = Convert.ToInt32(player.ActualWidth);
+                                var height = Convert.ToInt32(player.ActualHeight);
+                                var rtb = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                                rtb.Render(player);
+                                var encoder = new JpegBitmapEncoder();
+                                encoder.Frames.Add(BitmapFrame.Create(rtb));
+                                using (var fs = new FileStream(location, FileMode.CreateNew))
+                                {
+                                    encoder.Save(fs);
+                                }
+                                Commands.ImageDropped.Execute(new ImageDrop
+                                {
+                                    Filename = location,
+                                    Point = point(),
+                                    Position = 1,
+                                    Target = "presentationSpace"
+                                });
+                            }
+                        };
+                    };
+                    var under = new SandRibbon.Components.ResourceDictionaries.Button
+                    {
+                        Text = "Drop"
+                    };
+                    under.Click += handler(() => popup.TranslatePoint(new Point(0, 0), canvasViewBox));
+                    var fullScreen = new SandRibbon.Components.ResourceDictionaries.Button
+                    {
+                        Text = "Fill"
+                    };
+                    fullScreen.Click += handler(() => new Point(0, 0));
+                    buttons.Children.Add(under);
+                    buttons.Children.Add(fullScreen);
+                    sp.Children.Add(player);
+                    sp.Children.Add(buttons);
+                    popup.Content = sp;
+                    popup.Topmost = true;
+                    popup.Owner = Window.GetWindow(this);
+                    popup.Show();
+                }
+            });
         }
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {

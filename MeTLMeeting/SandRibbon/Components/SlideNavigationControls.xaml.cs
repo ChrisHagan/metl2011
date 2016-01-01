@@ -16,9 +16,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.PreviewKeyDown += KeyPressed;
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            //Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            //Commands.SetSync.Execute(false);
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)

@@ -42,20 +42,26 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(clearOutAttachments));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>((_unused) => { UploadFile(); }));
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details.IsEmpty) return;
-            if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
-                clearOutAttachments(null);
+            Dispatcher.adopt(delegate
+            {
+                if (details.IsEmpty) return;
+                if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
+                    clearOutAttachments(null);
+            });
         }
         private void clearOutAttachments(object obj)
         {
-            files = new ObservableCollection<FileInfo>();
-            attachments.ItemsSource = files;
+            Dispatcher.adopt(delegate
+            {
+                files = new ObservableCollection<FileInfo>();
+                attachments.ItemsSource = files;
+            });
         }
 
         private void preparserAvailable(PreParser preParser)

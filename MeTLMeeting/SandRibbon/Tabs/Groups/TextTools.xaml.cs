@@ -24,12 +24,12 @@ namespace SandRibbon.Tabs.Groups
             fontSize.SelectedIndex = 0;
             fontSize.SelectionChanged += fontSizeSelected;
             fontFamily.SelectionChanged += fontFamilySelected;
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
             //This is used only when a text box is selected
             //A seperate command is used because TextBoxFocused command calls updateprivacy method which is not needed when a text box is selected
-            Commands.TextboxSelected.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
+            Commands.TextboxSelected.RegisterCommand(new DelegateCommand<TextInformation>(update));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
@@ -58,28 +58,34 @@ namespace SandRibbon.Tabs.Groups
 
         private void MoveTo(object obj)
         {
-            if(Globals.currentTextInfo == null)
+            Dispatcher.adopt(delegate
             {
-                ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black); 
-                fontSize.SelectedItem = generateDefaultFontSize();
-            }            
+                if (Globals.currentTextInfo == null)
+                {
+                    ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
+                    fontSize.SelectedItem = generateDefaultFontSize();
+                }
+            });
         }
 
         private void update(TextInformation info)
         {
-            fontSize.SelectionChanged -= fontSizeSelected;
-            fontFamily.SelectionChanged -= fontFamilySelected;
-            TextBoldButton.IsChecked = info.Bold;
-            TextItalicButton.IsChecked = info.Italics;
-            TextUnderlineButton.IsChecked = info.Underline;
-            TextStrikethroughButton.IsChecked = info.Strikethrough;
-            ColourPickerBorder.BorderBrush = new SolidColorBrush(info.Color);
-            fontSize.SelectedItem = info.Size;
-            fontFamily.SelectedItem = info.Family.ToString();
-            fontSize.SelectionChanged += fontSizeSelected;
-            fontFamily.SelectionChanged += fontFamilySelected;
+            Dispatcher.adopt(delegate
+            {
+                fontSize.SelectionChanged -= fontSizeSelected;
+                fontFamily.SelectionChanged -= fontFamilySelected;
+                TextBoldButton.IsChecked = info.Bold;
+                TextItalicButton.IsChecked = info.Italics;
+                TextUnderlineButton.IsChecked = info.Underline;
+                TextStrikethroughButton.IsChecked = info.Strikethrough;
+                ColourPickerBorder.BorderBrush = new SolidColorBrush(info.Color);
+                fontSize.SelectedItem = info.Size;
+                fontFamily.SelectedItem = info.Family.ToString();
+                fontSize.SelectionChanged += fontSizeSelected;
+                fontFamily.SelectionChanged += fontFamilySelected;
 
-            Globals.currentTextInfo = new TextInformation(info);
+                Globals.currentTextInfo = new TextInformation(info);
+            });
         }
         private void sendValues()
         {
@@ -100,10 +106,13 @@ namespace SandRibbon.Tabs.Groups
 
         private void SetLayer(string layer)
         {
-            if (layer == "Text")
-                Visibility = Visibility.Visible;
-            else
-                Visibility = Visibility.Collapsed;
+            Dispatcher.adopt(delegate
+            {
+                if (layer == "Text")
+                    Visibility = Visibility.Visible;
+                else
+                    Visibility = Visibility.Collapsed;
+            });
         }
         private void setUpTools(object sender, RoutedEventArgs e)
         {

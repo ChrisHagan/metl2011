@@ -31,13 +31,16 @@ namespace SandRibbon.Quizzing
             question.GotFocus += selectAll;
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             question.Focus();
         }
         private void JoinConversation(object obj)
         {
-            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
-            Close();
+            Dispatcher.adopt(delegate
+            {
+                Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
+                Close();
+            });
         }
         private void Close(object sender, RoutedEventArgs e)
         {

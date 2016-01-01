@@ -23,40 +23,49 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(joinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>(SetIdentity));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
         }
         private void SetIdentity(object obj)
         {
-            RedrawList(null);
+            Dispatcher.adopt(delegate
+            {
+                RedrawList(null);
+            });
         }
         private void joinConversation(string jid)
         {
-            var details = App.controller.client.DetailsOf(jid);
-            details.LastAccessed = DateTime.Now;
-            if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
-                recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
-            else
+            Dispatcher.adopt(delegate
             {
-                recentConversations = recentConversations.Concat(new[] {details});
-            }
-            RecentConversationProvider.addRecentConversation(details, Globals.me);
-            conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
+                var details = App.controller.client.DetailsOf(jid);
+                details.LastAccessed = DateTime.Now;
+                if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
+                    recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
+                else
+                {
+                    recentConversations = recentConversations.Concat(new[] { details });
+                }
+                RecentConversationProvider.addRecentConversation(details, Globals.me);
+                conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
+            });
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
-            if (recentConversations.Where(c => c.IsJidEqual(details.Jid)).Count() == 0) return;
-            if (details.isDeleted)
+            Dispatcher.adopt(delegate
             {
-                recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
-                RecentConversationProvider.removeRecentConversation(details.Jid);
-            }
-            else
-                recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
-            conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
+                if (ConversationDetails.Empty.Equals(details)) return;
+                if (recentConversations.Where(c => c.IsJidEqual(details.Jid)).Count() == 0) return;
+                if (details.isDeleted)
+                {
+                    recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
+                    RecentConversationProvider.removeRecentConversation(details.Jid);
+                }
+                else
+                    recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
+                conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
+            });
         }
         private void RedrawList(object _unused)
         {

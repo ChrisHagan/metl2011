@@ -23,26 +23,32 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             DataContext = this;
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            NavigationIsLocked = details.Permissions.NavigationLocked;
-            /*
-            if (details.Permissions.studentCanPublish)
+            Dispatcher.adopt(delegate
             {
-                tutorialStyle.IsChecked = true;
-            }
-            else {
-                lectureStyle.IsChecked = true;
-            }
-            */
+                NavigationIsLocked = details.Permissions.NavigationLocked;
+                /*
+                if (details.Permissions.studentCanPublish)
+                {
+                    tutorialStyle.IsChecked = true;
+                }
+                else {
+                    lectureStyle.IsChecked = true;
+                }
+                */
+            });
         }
         private void joinConversation(object obj)
         {
-            this.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
-            NavigationIsLocked = Globals.conversationDetails.Permissions.NavigationLocked;
+            Dispatcher.adopt(delegate
+            {
+                this.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+                NavigationIsLocked = Globals.conversationDetails.Permissions.NavigationLocked;
+            });
         }
     }
 }

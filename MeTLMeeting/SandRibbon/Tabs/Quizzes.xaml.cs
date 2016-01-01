@@ -22,8 +22,8 @@ namespace SandRibbon.Tabs
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = Globals.quiz.activeQuizzes;
             SetupUI();
@@ -47,8 +47,11 @@ namespace SandRibbon.Tabs
         }
         private void JoinConversation(object _jid)
         {
-            Globals.quiz.activeQuizzes.Clear();
-            SetupUI();
+            Dispatcher.adopt(delegate
+            {
+                Globals.quiz.activeQuizzes.Clear();
+                SetupUI();
+            });
         }
         private void amAuthor()
         {
@@ -68,26 +71,29 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            if (details.IsEmpty) return;
-            try
+            Dispatcher.adopt(delegate
             {
-                if (Globals.isAuthor)
+                if (details.IsEmpty) return;
+                try
                 {
-                    amAuthor();            
+                    if (Globals.isAuthor)
+                    {
+                        amAuthor();
+                    }
+                    else
+                    {
+                        amRespondent();
+                    }
                 }
-                else
+                catch (NotSetException)
                 {
-                    amRespondent();
                 }
-            }
-            catch (NotSetException)
-            {
-            }
-            if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
-            {
-                Globals.quiz.answers.Clear();
-                Globals.quiz.activeQuizzes.Clear();
-            }
+                if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
+                {
+                    Globals.quiz.answers.Clear();
+                    Globals.quiz.activeQuizzes.Clear();
+                }
+            });
         }
         private void preparserAvailable(PreParser preParser)
         {
