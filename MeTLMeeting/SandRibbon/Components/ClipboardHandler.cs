@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Ink;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
-using System.Windows.Controls;
 using System.Windows.Media;
-using SandRibbonObjects;
 
 namespace SandRibbon.Components
 {

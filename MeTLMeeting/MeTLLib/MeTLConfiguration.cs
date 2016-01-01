@@ -1,9 +1,315 @@
 ﻿namespace MeTLLib
 {
+    using mshtml;
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
+    using System.Linq;
+    using System.Net;
+    using System.Web;
+    using System.Windows;
+    using System.Xml.Linq;
 
+    public class MeTLConfigurationProxy
+    {
+        public MeTLConfigurationProxy(
+            string _name,
+            Uri _imageUrl,
+            Uri _host
+        )
+        {
+            name = _name;
+            imageUrl = _imageUrl;
+            host = _host;
+        }
+        public string name { get; protected set; }
+        public Uri imageUrl { get; protected set; }
+        public Uri host { get; protected set; }
+        public Uri serverStatus
+        {
+            get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
+        }
+        public Uri authenticationUrl
+        {
+            get
+            {
+                return new Uri(host, new Uri("/authenticationState", UriKind.Relative));
+            }
+        }
+    }
+    public class MetlConfiguration
+    {
+        public MetlConfiguration(
+            string _name,
+            string _imageUrl,
+            string _xmppDomain,
+            string _xmppUsername,
+            string _xmppPassword,
+            Uri _host
+       )
+        {
+            name = _name;
+            imageUrl = _imageUrl;
+            xmppDomain = _xmppDomain;
+            xmppUsername = _xmppUsername;
+            xmppPassword = _xmppPassword;
+            host = _host;
+        }
+
+        public Uri themes(int id)
+        {
+            return new Uri(host, string.Format("/themes?source={0}", id));
+        }
+
+        public string name { get; protected set; }
+        public string imageUrl { get; protected set; }
+        public string xmppDomain { get; protected set; }
+        public string xmppUsername { get; protected set; }
+        public string xmppPassword { get; protected set; }
+        public Uri host { get; protected set; }
+        public string xmppHost
+        {
+            get { return host.Host; }
+        }
+        public Uri getSummary(string slideJid) {
+            return new Uri(host, new Uri(string.Format("/describeHistory?source={0}",slideJid), UriKind.Relative));
+        }
+        public Uri getResource(string identity)
+        {
+            return new Uri(host, new Uri(String.Format("/resourceProxy/{0}", HttpUtility.UrlEncode(identity)), UriKind.Relative));
+        }
+        public Uri getImage(string jid, string url)
+        {
+            return new Uri(host, new Uri(String.Format("/proxyImageUrl/{0}?source={1}", jid, HttpUtility.UrlEncode(url)), UriKind.Relative));
+        }
+        public Uri thumbnailUri(string jid)
+        {
+            return new Uri(host, new Uri(String.Format("/thumbnail/{0}", jid), UriKind.Relative));
+        }
+        public Uri renderUri(string jid, int width, int height)
+        {
+            return new Uri(host, new Uri(String.Format("/render/{0}/{1}/{2}", jid, width, height), UriKind.Relative));
+        }
+        public Uri widgetUri
+        {
+            get
+            {
+                return new Uri(host, "/static/widget.html");
+            }
+        }
+        public Uri authenticationUrl
+        {
+            get
+            {
+                return new Uri(host, new Uri("/authenticationState", UriKind.Relative));
+            }
+        }
+        public Uri conversationDetails(string jid)
+        {
+            return new System.Uri(host, new Uri(String.Format("/details/{0}", jid), UriKind.Relative));
+        }
+        public Uri conversationQuery(string query)
+        {
+            return new Uri(host, new Uri(String.Format("/search?query={0}", HttpUtility.UrlEncode(query)), UriKind.Relative));
+        }
+        public Uri uploadResource(string preferredFilename, string jid)
+        {
+            return new Uri(host, new Uri(String.Format("/upload?filename={0}&jid={1}", preferredFilename, jid), UriKind.Relative));
+        }
+        public Uri addSlideAtIndex(string jid, int currentSlideId)
+        {
+            return new System.Uri(host, new Uri(String.Format("/addSlideAtIndex/{0}/{1}", jid, currentSlideId), UriKind.Relative));
+        }
+        public Uri duplicateSlide(int slideId, string conversationJid)
+        {
+            return new Uri(host, new Uri(String.Format("/duplicateSlide/{0}/{1}", slideId.ToString(), conversationJid), UriKind.Relative));
+        }
+        public Uri duplicateConversation(string conversationJid)
+        {
+            return new Uri(host, new Uri(String.Format("/duplicateConversation/{0}", conversationJid), UriKind.Relative));
+        }
+        public Uri updateConversation(string conversationJid)
+        {
+            return new System.Uri(host, new Uri(String.Format("/updateConversation/{0}", conversationJid), UriKind.Relative));
+        }
+        public Uri createConversation(string title)
+        {
+            return new Uri(host, new Uri(String.Format("/createConversation/{0}", HttpUtility.UrlEncode(title)), UriKind.Relative));
+        }
+        public Uri serverStatus
+        {
+            get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
+        }
+        public Uri getRoomHistory(string jid)
+        {
+            return new Uri(host, new Uri("/fullClientHistory?source=" + HttpUtility.UrlEncode(jid), UriKind.Relative));
+        }
+        public Uri importConversation()
+        {
+            return new Uri(host, new Uri("/conversationImportAsMe",UriKind.Relative));
+        }
+        public Uri importPowerpoint(string title, int magnification)
+        {
+            return new Uri(host, new Uri(String.Format("/powerpointImport?title={0}&magnification={1}", HttpUtility.UrlEncode(title), magnification.ToString()), UriKind.Relative));
+        }
+        public Uri importPowerpointFlexible(string title)
+        {
+            return new Uri(host, new Uri(String.Format("/powerpointImportFlexible?title={0}",HttpUtility.UrlEncode(title)), UriKind.Relative));
+        }
+        public string muc
+        {
+            get { return "conference." + xmppDomain; }
+        }
+        public string globalMuc
+        {
+            get { return "global@" + muc; }
+        }
+        public static readonly MetlConfiguration empty = new MetlConfiguration("", "", "", "", "", new Uri("http://localhost:8080/"));
+
+    }
+    public abstract class MetlConfigurationManager
+    {
+        public MetlConfigurationManager()
+        {
+            reload();
+        }
+        public MetlConfiguration getConfigFor(MeTLConfigurationProxy server)
+        {
+            return internalGetConfigFor(server);
+        }
+        public List<MeTLConfigurationProxy> servers { get; protected set; }
+        protected abstract MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server);
+        protected abstract void internalGetServers();
+        public void reload()
+        {
+            internalGetServers();
+        }
+        protected List<XElement> getElementsByTag(List<XElement> x, String tagName)
+        {
+            // it's not recursive!
+            var children = x.Select(xel => { return getElementsByTag(xel.Elements().ToList(), tagName); });
+            var root = x.FindAll((xel) =>
+            {
+                return xel.Name.LocalName.ToString().Trim().ToLower() == tagName.Trim().ToLower();
+            });
+            foreach (List<XElement> child in children)
+            {
+                root.AddRange(child);
+            }
+            return root;
+        }
+        public List<MetlConfiguration> parseConfig(MeTLConfigurationProxy server, HTMLDocument doc)
+        {
+            var authDataContainer = doc.getElementById("authData");
+            if (authDataContainer == null)
+            {
+                return new List<MetlConfiguration>();
+            }
+            var html = authDataContainer.innerHTML;
+            if (html == null)
+            {
+                return new List<MetlConfiguration>();
+            }
+            var xml = XDocument.Parse(html).Elements().ToList();
+            var cc = getElementsByTag(xml, "clientConfig");
+            var xmppDomain = getElementsByTag(cc, "xmppDomain").First().Value;
+            var xmppUsername = getElementsByTag(cc, "xmppUsername").First().Value;
+            var xmppPassword = getElementsByTag(cc, "xmppPassword").First().Value;
+            var imageUrl = getElementsByTag(cc, "imageUrl").First().Value;
+            return new List<MetlConfiguration>
+            {
+                new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppDomain,xmppUsername,xmppPassword,server.host)
+            };
+        }
+        public List<MetlConfiguration> parseConfig(MeTLConfigurationProxy server, XElement doc)
+        {
+            var cc = doc.Descendants("clientconfig");
+            var xmppDomain = cc.Descendants("xmppdomain").First().Value;
+            var xmppUsername = cc.Descendants("xmppusername").First().Value;
+            var xmppPassword = cc.Descendants("xmpppassword").First().Value;
+            var imageUrl = cc.Descendants("imageurl").First().Value;
+            return new List<MetlConfiguration>
+            {
+                new MetlConfiguration(server.name,server.imageUrl.ToString(),xmppDomain,xmppUsername,xmppPassword,server.host)
+            };
+        }
+    }
+    public class RemoteAppMeTLConfigurationManager : MetlConfigurationManager
+    {
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server)
+        {
+            throw new NotImplementedException();
+        }
+        override protected void internalGetServers()
+        {
+            try
+            {
+                var wc = new WebClient();
+                var xml = wc.DownloadString(new Uri("http://setup.stackableregiments.com/metlServers/metlServers.xml", UriKind.Absolute));
+                var xdoc = XDocument.Parse(xml);
+                servers = xdoc.Descendants("metlServer").Select(xms =>
+                {
+                    var name = xms.Descendants("name").First().Value;
+                    var baseUrl = xms.Descendants("baseUrl").First().Value;
+                    var imageUrl = xms.Descendants("imageUrl").First().Value;
+                    return new MeTLConfigurationProxy(
+                        name,
+                        new Uri(imageUrl, UriKind.Absolute),
+                        new Uri(baseUrl, UriKind.Absolute)
+                        );
+                }).ToList();
+            }
+            catch
+            {
+                servers = new List<MeTLConfigurationProxy>();
+            }
+        }
+    }
+    public class LocalAppMeTLConfigurationManager : MetlConfigurationManager
+    {
+        protected Dictionary<MeTLConfigurationProxy, MetlConfiguration> internalConfigs = new Dictionary<MeTLConfigurationProxy, MetlConfiguration>();
+        override protected void internalGetServers()
+        {
+            deprecatedLib.MeTLConfiguration.Load();
+            var config = deprecatedLib.MeTLConfiguration.Config;
+            internalConfigs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }
+            .Where(conf => !String.IsNullOrEmpty(conf.Host))
+            .Select(conf =>
+              {
+                  return new MetlConfiguration(
+                      conf.Name,
+                      conf.Image,
+                          conf.xmppServiceName,
+                          config.XmppCredential.Username,
+                          config.XmppCredential.Password,
+                          new Uri(String.Format("{0}://{1}:{2}", conf.Protocol, conf.Host, conf.HistoryPort))
+                      );
+              }).ToDictionary<MetlConfiguration, MeTLConfigurationProxy>(mc =>
+              {
+                  return new MeTLConfigurationProxy(
+                      mc.name,
+                      new Uri(mc.imageUrl),
+                      mc.authenticationUrl
+                      );
+              });
+            servers = internalConfigs.Keys.ToList();
+        }
+        override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server)
+        {
+            return internalConfigs[server];
+        }
+    }
+}
+
+namespace deprecatedLib
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Diagnostics;
+    using MeTLLib;
+    using System.Linq;
     public static class MeTLConfiguration
     {
         private static MeTLConfigurationSection conf = null;
@@ -22,7 +328,8 @@
             }
             private set
             {
-                if (value == null) {
+                if (value == null)
+                {
                     throw new InvalidOperationException("MeTLConfiguration cannot be set to a null value");
                 }
                 conf = value;
@@ -33,7 +340,12 @@
         {
             try
             {
-                Config = ConfigurationManager.GetSection("metlConfigurationGroup/metlConfiguration") as MeTLConfigurationSection;
+                var section = ConfigurationManager.GetSection("metlConfigurationGroup/metlConfiguration");
+                var mc = section as MeTLConfigurationSection;
+                if (mc != null)
+                {
+                    Config = mc;
+                }
             }
             catch (Exception e)
             {
@@ -45,6 +357,7 @@
 
     public class MeTLConfigurationSection : ConfigurationSection
     {
+        /*
         public MeTLServerAddress.serverMode ActiveStackEnum
         {
             get
@@ -52,7 +365,7 @@
                 return (MeTLServerAddress.serverMode)Enum.Parse(typeof(MeTLServerAddress.serverMode), ActiveStackConfig.Name, true);
             }
         }
-
+        */
         public StackServerElement ActiveStack
         {
             get
@@ -64,7 +377,7 @@
                     throw new ArgumentException(String.Format("Active Stack Server {0} specified not found", active));
             }
         }
-        
+
         [ConfigurationProperty("activeStackConfig")]
         public ActiveStackElement ActiveStackConfig
         {
@@ -118,7 +431,6 @@
         }
 
 
-
         [ConfigurationProperty("resourceCredential")]
         public CredentialElement ResourceCredential
         {
@@ -161,6 +473,19 @@
 
     public class StackServerElement : ConfigurationElement
     {
+        [ConfigurationProperty("displayIndex")]
+        public int DisplayIndex
+        {
+            get
+            {
+                return (int)this["displayIndex"];
+            }
+            set
+            {
+                this["displayIndex"] = value;
+            }
+        }
+
         [ConfigurationProperty("name", IsRequired = false)]
         public String Name
         {
@@ -171,6 +496,18 @@
             set
             {
                 this["name"] = value;
+            }
+        }
+        [ConfigurationProperty("imageUrl", IsRequired = false)]
+        public String Image
+        {
+            get
+            {
+                return (String)this["imageUrl"];
+            }
+            set
+            {
+                this["imageUrl"] = value;
             }
         }
 
@@ -248,19 +585,42 @@
             }
         }
 
-        [ConfigurationProperty("port", IsRequired = true)]
-        public String Port
+        [ConfigurationProperty("xmppPort", IsRequired = true)]
+        public String XmppPort
         {
             get
             {
-                return (String)this["port"];
+                return (String)this["xmppPort"];
             }
             set
             {
                 this["port"] = value;
             }
         }
-
+        [ConfigurationProperty("historyPort", IsRequired = true)]
+        public String HistoryPort
+        {
+            get
+            {
+                return (String)this["historyPort"];
+            }
+            set
+            {
+                this["port"] = value;
+            }
+        }
+        [ConfigurationProperty("resourcePort", IsRequired = true)]
+        public String ResourcePort
+        {
+            get
+            {
+                return (String)this["resourcePort"];
+            }
+            set
+            {
+                this["port"] = value;
+            }
+        }
         [ConfigurationProperty("xmppServiceName", IsRequired = true)]
         public String xmppServiceName
         {
@@ -377,3 +737,4 @@
         }
     }
 }
+

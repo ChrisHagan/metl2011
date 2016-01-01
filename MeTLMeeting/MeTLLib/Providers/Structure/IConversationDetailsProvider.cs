@@ -12,7 +12,9 @@ namespace MeTLLib.Providers.Structure
         ConversationDetails AppendSlide(string title);
         ConversationDetails AppendSlideAfter(int slideId, string title);
         ConversationDetails AppendSlideAfter(int slideId, string title, Slide.TYPE type);
-        ApplicationLevelInformation GetApplicationLevelInformation();
+        ConversationDetails DuplicateSlide(ConversationDetails conversation, Slide slide);
+        ConversationDetails DuplicateConversation(ConversationDetails conversation);
+        //ApplicationLevelInformation GetApplicationLevelInformation();
         bool isAccessibleToMe(string jid);
     }
 }

@@ -8,11 +8,19 @@ namespace MeTLLib.Providers
 {
     class Crypto
     {
-        private static readonly byte[] Key = Encoding.UTF8.GetBytes(MeTLConfiguration.Config.Crypto.Key);
-        private static readonly byte[] IV = Encoding.UTF8.GetBytes(MeTLConfiguration.Config.Crypto.IV);
-        private static Encoding encoding = Encoding.UTF8;
-            
-        public static string decrypt(string input)
+        public MetlConfiguration metlServer { get; protected set; }
+        private readonly Encoding encoding = Encoding.UTF8;
+        private readonly byte[] Key;
+        private readonly byte[] IV;
+
+        public Crypto(MetlConfiguration _metlServer)
+        {
+            metlServer = _metlServer;
+            Key = encoding.GetBytes("01234567");
+            encoding.GetBytes("01234567");
+        }
+
+        public string decrypt(string input)
         {
             if (String.IsNullOrEmpty(input))
                 return "";
@@ -28,7 +36,7 @@ namespace MeTLLib.Providers
             var decryptedStringFinal = decryptedString.Substring(0, paddingLength);
             return decryptedStringFinal;
         }
-        private static byte[] getLastBytes(byte[] input, int numberOfBytesToGet)
+        private byte[] getLastBytes(byte[] input, int numberOfBytesToGet)
         {
             var ListOfBytes = new List<byte>();
             for (int i = 0; i < input.Length; i++)
@@ -38,7 +46,7 @@ namespace MeTLLib.Providers
             }
             return ListOfBytes.ToArray();
         }
-        public static string encrypt(string input)
+        public string encrypt(string input)
         {
             if (String.IsNullOrEmpty(input))
                 return "";
@@ -54,7 +62,7 @@ namespace MeTLLib.Providers
             var Base64FinalString = ((Base64String.Replace("+", "-")).Replace("=", "_"));
             return Base64FinalString;
         }
-        private static byte[] encryptToByteArray(string input, Encoding encoding, byte[] Key, byte[] IV)
+        private byte[] encryptToByteArray(string input, Encoding encoding, byte[] Key, byte[] IV)
         {
             string CountPadding = ((input.Length).ToString()).PadLeft(8);
             DESCryptoServiceProvider key = new DESCryptoServiceProvider()
@@ -73,7 +81,7 @@ namespace MeTLLib.Providers
             ms.Close();
             return ms.ToArray();
         }
-        private static string decryptFromByteArray(byte[] input, Encoding encoding, byte[] Key, byte[] IV)
+        private string decryptFromByteArray(byte[] input, Encoding encoding, byte[] Key, byte[] IV)
         {
             DESCryptoServiceProvider key = new DESCryptoServiceProvider()
             {
@@ -89,7 +97,7 @@ namespace MeTLLib.Providers
             
             return decryptedString;
         }
-        private static string bytestostring(byte[] p, Encoding encoding)
+        private string bytestostring(byte[] p, Encoding encoding)
         {
             return encoding.GetString(p, 0, p.Length);
         }

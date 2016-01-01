@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using Divan;
 using MeTLLib.Providers;
 using System.Globalization;
+using System.Windows;
 
 namespace MeTLLib.DataTypes
 {
@@ -84,19 +85,19 @@ namespace MeTLLib.DataTypes
             return cd;
         }
 
-        public static SearchConversationDetails HydrateFromServer(ConversationDetails con)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn, ConversationDetails conv)
         {
-            if (con == null)
+            if (conv == null)
                 throw new ArgumentNullException();
 
-            return HydrateFromServer(new SearchConversationDetails(con));
+            return HydrateFromServer(conn, new SearchConversationDetails(conv));
         }
-        public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
+        public static SearchConversationDetails HydrateFromServer(IClientBehaviour conn, SearchConversationDetails scd)
         {
             if (scd == null)
                 throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");
 
-            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(scd.Jid);
+            var conversation = conn.DetailsOf(scd.Jid);
 
             scd.blacklist = conversation.blacklist;
             scd.CreatedAsTicks = conversation.CreatedAsTicks;
@@ -108,7 +109,22 @@ namespace MeTLLib.DataTypes
         }
     }
 
-    public class ConversationDetails : INotifyPropertyChanged
+    public class Attendance
+    {
+        public bool present { get; protected set; }
+        public string author { get; protected set; }
+        public string location { get; protected set; }
+        public long timestamp { get; set; }
+        public Attendance(string _author, string _location, bool _present, long _timestamp)
+        {
+            author = _author;
+            location = _location;
+            present = _present;
+            timestamp = _timestamp;
+        }
+    }
+
+    public class ConversationDetails
     {
         public bool isDeleted
         {
@@ -117,6 +133,12 @@ namespace MeTLLib.DataTypes
                 return Subject.ToLower().GetHashCode() == "deleted".GetHashCode();
             }
         }
+        public bool isAuthor(string user)
+        {
+            if (user == null || ValueEquals(Empty)) return false;
+            return user.ToLower() == Author.ToLower();
+        }
+
         public bool IsEmpty
         {
             get
@@ -136,7 +158,7 @@ namespace MeTLLib.DataTypes
             this.Title = title;
             this.Jid = jid;
             this.Author = author;
-            this.Slides = slides;
+            this.Slides = slides.OrderBy(s => s.index).ToList();
             this.Permissions = permissions;
             this.Subject = subject;
         }
@@ -184,95 +206,74 @@ namespace MeTLLib.DataTypes
         {
             return ReadXml(WriteXml());
         }
+
+
         public string Title { get; set; }
-        public string Jid { get; set; }/*The jid is a valid Xmpp jid.  If, for instance, you want
+
+        public string Jid { get; set; }
+
+        /*The jid is a valid Xmpp jid.  If, for instance, you want
                                        * to create a room specific to this conversation so that
                                        * you can restrict broadcast, this is safe to work in Jabber 
                                        * and on the filesystem, whereas the Title is NOT. 
                                        * (If anybody finds another character that breaks it - 
                                        * obvious when history stops working - add it to the illegals 
                                        * string in generateJid).  Never mind that, we're just using a number.*/
-        public string Author;
-        public Permissions Permissions { get; set; }
-        public System.DateTime Created;
-        public long CreatedAsTicks;
-        public System.DateTime LastAccessed;
 
-        // I want this to be an always valid string because we're comparing this with other conversation detail tags 
-        private string internalTag = string.Empty;
-        public string Tag
-        {
-            get
-            {
-                return internalTag;
-            }
-            set
-            {
-                if (value != null)
-                    internalTag = value;
-                else
-                    internalTag = string.Empty;
-            }
-        }
+
+        public string Author { get; set; }
+        public Permissions Permissions { get; set; }
+
+        public DateTime Created { get; set; }
+        public long CreatedAsTicks { get; set; }
+        public DateTime LastAccessed { get; set; }
+        public string Tag { get; set; }
         public string Subject { get; set; }
-        public List<Slide> Slides = new List<Slide>();
-        public List<string> blacklist = new List<string>();
+
+        public List<Slide> Slides { get; set; }
+        public List<string> blacklist { get; set; }
         public byte[] GetBytes()
         {
             return Encoding.UTF8.GetBytes(WriteXml().ToString(SaveOptions.DisableFormatting));
-        }
-        public void Refresh()
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs("Permissions"));
         }
         public bool IsValid
         {
             get
             {
-                if (String.IsNullOrEmpty(Jid) || (String.IsNullOrEmpty(Subject)) || String.IsNullOrEmpty(Title) || String.IsNullOrEmpty(Author)) return false;
-                else
-                    return true;
+                return !new[] { Jid, Subject, Title, Author }.Any(String.IsNullOrEmpty);
             }
         }
 
         public bool UserIsBlackListed(string userId)
         {
-            return blacklist.Any(user => user == userId);
+            return blacklist.Contains(userId);
         }
 
         public bool IsJidEqual(string thatJid)
         {
-            if (!String.IsNullOrEmpty(Jid) && String.IsNullOrEmpty(thatJid))
-                return false;
-
-            // Microsoft says we can use GetHashCode to safely compare two strings
-            return Jid.GetHashCode() == thatJid.GetHashCode();
+            return Jid == thatJid;
         }
-
 
         public bool UserHasPermission(Credentials credentials)
         {
-            if (!(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
+            if (!(credentials.name.ToLower() == Author.ToLower())
+                && !(credentials.authorizedGroups.Select(g => g.groupKey.ToLower()).Contains(Subject.ToLower()))
                 && Subject.ToLower() != "Unrestricted".ToLower()
                 && !(String.IsNullOrEmpty(Subject))
-                && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower()))) return false;
+                && !(credentials.authorizedGroups.Select(su => su.groupKey.ToLower()).Contains("Superuser".ToLower())))
+                return false;
             return true;
         }
-        public override bool Equals(object obj)
-        {
-            if (obj == null || !(obj is ConversationDetails)) return false;
-            return ((ConversationDetails)obj).Jid.GetHashCode() == Jid.GetHashCode();
-        }
+
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is ConversationDetails)) return false;
             var foreignConversationDetails = ((ConversationDetails)obj);
             return ((foreignConversationDetails.Author == Author)
-                && (foreignConversationDetails.Created == Created)
+                //&& (foreignConversationDetails.Created == Created)
                 && (foreignConversationDetails.IsValid == IsValid)
                 && (foreignConversationDetails.Jid == Jid)
-                && (foreignConversationDetails.LastAccessed.ToString() == LastAccessed.ToString())
+                //&& (foreignConversationDetails.LastAccessed.ToString() == LastAccessed.ToString())
                 && (foreignConversationDetails.Permissions.ValueEquals(Permissions))
                 && (foreignConversationDetails.Slides.All(s => s.ValueEquals(Slides[foreignConversationDetails.Slides.IndexOf(s)])))
                 && (foreignConversationDetails.Subject == Subject)
@@ -285,16 +286,11 @@ namespace MeTLLib.DataTypes
         {
         }
 
-        //private static readonly ConversationDetails empty = new ConversationDetails();
         public static ConversationDetails Empty
         {
             get { return new ConversationDetails(); }
         }
-        public override int GetHashCode()
-        {
-            if (string.IsNullOrEmpty(Jid)) return 0;
-            return Jid.GetHashCode();
-        }
+
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
         protected static readonly string CREATED_TAG = "created";
@@ -310,6 +306,17 @@ namespace MeTLLib.DataTypes
         private static readonly string DEFAULT_WIDTH = "defaultWidth";
         private static readonly string DEFAULT_HEIGHT = "defaultHeight";
         private static readonly string BLACKLIST_TAG = "blacklist";
+
+        private static readonly string GROUP_SET_TAG = "groupSet";
+        private static readonly string GROUP_SET_ID_TAG = "id";
+        private static readonly string GROUP_SET_LOCATION_TAG = "location";
+        private static readonly string GROUP_SET_SIZE_TAG = "groupSize";
+        private static readonly string GROUP_SET_GROUPS_TAG = "groups";
+        private static readonly string GROUP_TAG = "group";
+        private static readonly string GROUP_ID_TAG = "id";
+        private static readonly string GROUP_LOCATION_TAG = "location";
+        private static readonly string GROUP_MEMBERS_TAG = "members";
+        private static readonly string GROUP_MEMBER_TAG = "member";
         public static ConversationDetails ReadXml(XElement doc)
         {
             var Title = doc.Element(TITLE_TAG).Value;
@@ -334,7 +341,20 @@ namespace MeTLLib.DataTypes
                 Int32.Parse(d.Element(INDEX_TAG).Value),
                 d.Element(DEFAULT_WIDTH) != null ? float.Parse(d.Element(DEFAULT_WIDTH).Value) : 720,
                 d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
-                d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
+                d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true,
+                d.Element(GROUP_SET_TAG) != null ? d.Descendants(GROUP_SET_TAG).Select(gs => new GroupSet(
+                    gs.Element(GROUP_SET_ID_TAG).Value,
+                    gs.Element(GROUP_SET_LOCATION_TAG).Value,
+                    0,//Int32.Parse(gs.Element(GROUP_SET_SIZE_TAG).Value),
+                    gs.Element(GROUP_SET_GROUPS_TAG).Descendants(GROUP_TAG).Select(g => new Group(
+                            g.Element(GROUP_ID_TAG).Value,
+                            g.Element(GROUP_LOCATION_TAG).Value,
+                            g.Descendants(GROUP_MEMBERS_TAG).Select(gm =>
+                                gm.Element(GROUP_MEMBER_TAG).Value
+                            ).ToList()
+                        )
+                    ).ToList()
+                )).ToList() : new List<GroupSet>()
             )).ToList();
             var blacklistElements = doc.Elements(BLACKLIST_TAG);
             var blacklist = new List<string>();
@@ -361,25 +381,34 @@ namespace MeTLLib.DataTypes
                     new XElement(DEFAULT_HEIGHT, s.defaultHeight),
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
-                    new XElement(TYPE_TAG, s.type.ToString())))
-                    , blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
+                    new XElement(TYPE_TAG, s.type.ToString()),
+                    s.GroupSets.Select(gs => new XElement(GROUP_SET_TAG,
+                        new XElement(GROUP_SET_ID_TAG, gs.id),
+                        new XElement(GROUP_SET_LOCATION_TAG, gs.location),
+                        new XElement(GROUP_SET_SIZE_TAG, gs.groupSize.ToString()),
+                        new XElement(GROUP_SET_GROUPS_TAG, gs.Groups.Select(g => new XElement(GROUP_TAG,
+                             new XElement(GROUP_ID_TAG, g.id),
+                             new XElement(GROUP_LOCATION_TAG, g.location),
+                             new XElement(GROUP_MEMBERS_TAG, g.GroupMembers.Select(gm => new XElement(GROUP_MEMBER_TAG, gm)))
+                         ))))
+                ))),
+                blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
     public class Permissions
     {
-        public Permissions(String newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced)
+        public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced)
         {
             Label = newLabel;
             studentCanOpenFriends = newStudentsCanOpenFriends;
-            studentCanPublish = newStudentsCanPublish;
+            studentCanUploadAttachment = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
         }
-        public Permissions(String newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced, String newConversationGroup)
+        public Permissions(string newLabel, bool newStudentsCanOpenFriends, bool newStudentsCanPublish, bool newUsersAreCompulsorilySynced, String newConversationGroup)
         {
             Label = newLabel;
             studentCanOpenFriends = newStudentsCanOpenFriends;
-            studentCanPublish = newStudentsCanPublish;
+            studentCanUploadAttachment = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
             conversationGroup = newConversationGroup;
         }
@@ -396,7 +425,7 @@ namespace MeTLLib.DataTypes
         {
             var typeOfPermissions = new[] { LECTURE_PERMISSIONS, LABORATORY_PERMISSIONS, TUTORIAL_PERMISSIONS, MEETING_PERMISSIONS }.Where(
                    p => p.studentCanOpenFriends == permissions.studentCanOpenFriends &&
-                       p.studentCanPublish == permissions.studentCanPublish &&
+                       p.studentCanUploadAttachment == permissions.studentCanUploadAttachment &&
                        p.usersAreCompulsorilySynced == permissions.usersAreCompulsorilySynced).FirstOrDefault();
             if (typeOfPermissions != null) return typeOfPermissions;
             return CUSTOM_PERMISSIONS;
@@ -415,7 +444,7 @@ namespace MeTLLib.DataTypes
             if (obj == null || !(obj is Permissions)) return false;
             var foreignPermissions = ((Permissions)obj);
             return ((foreignPermissions.studentCanOpenFriends == studentCanOpenFriends)
-                && (foreignPermissions.studentCanPublish == studentCanPublish)
+                && (foreignPermissions.studentCanUploadAttachment == studentCanUploadAttachment)
                 && (foreignPermissions.usersAreCompulsorilySynced == usersAreCompulsorilySynced));
         }
         public static Permissions CUSTOM_PERMISSIONS = new Permissions("custom", false, false, false);
@@ -428,14 +457,14 @@ namespace MeTLLib.DataTypes
         {
             Label = "tutorial";
             studentCanOpenFriends = true;
-            studentCanPublish = true;
+            studentCanUploadAttachment = true;
             usersAreCompulsorilySynced = false;
         }
         public void applyLectureStyle()
         {
             Label = "lecture";
             studentCanOpenFriends = false;
-            studentCanPublish = false;
+            studentCanUploadAttachment = false;
             usersAreCompulsorilySynced = true;
         }
         private static readonly Permissions[] OPTIONS = new[]{
@@ -444,36 +473,117 @@ namespace MeTLLib.DataTypes
             TUTORIAL_PERMISSIONS,
             MEETING_PERMISSIONS};
         public static readonly string PERMISSIONS_TAG = "permissions";
-        public string Label;
-        public bool studentCanPublish = false;
-        private static string CANSHOUT = "studentCanPublish";
+        public string Label { get; set; }
+        public bool studentCanUploadAttachment = false;
+        private static string STUDENTCANUPLOAD = "studentCanUploadAttachment";
         public bool studentCanOpenFriends = false;
         private static string CANFRIEND = "studentCanOpenFriends";
         public bool usersAreCompulsorilySynced = true;
         private static string ALLSYNC = "usersAreCompulsorilySynced";
         public string conversationGroup = "";
+        private static string CANVIEWQUIZ = "studentCanViewQuiz";
+        private static string CANDISPLAYQUIZRESULTS = "studentCanDisplayQuizResults";
+        private static string CANDISPLAYQUIZ = "studentCanDisplayQuiz";
+        private static string CANANSWERQUIZ = "studentCanAnswerQuiz";
+        private static string CANCREATEQUIZ = "studentCanCreateQuiz";
         //private static string CONVERSATIONGROUP = "conversationGroup";
         public bool NavigationLocked;
         private static string NAVIGATIONLOCKED = "navigationlocked";
+        public bool studentsCanViewQuizResults = false;
+        public bool studentsCanDisplayQuizResults = false;
+        public bool studentsCanDisplayQuiz = false;
+        public bool studentsCanViewQuiz = false;
+        public bool studentsCanAnswerQuiz = false;
+        public bool studentsCanCreateQuiz = false;
+        private static string CANPUBLISH = "studentCanPublish";
+        public bool studentCanWorkPublicly = false;
+        private static string CANADDPAGE = "studentCanAddPage";
+        public bool studentCanAddPage = false;
+        private static string CANSUBMITSCREENSHOT = "studentCanSubmitScreenshot";
+        public bool studentCanSubmitScreenshot = false;
+
         public static Permissions ReadXml(XElement doc)
         {
-            var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).ValueOrDefault("false"));
+            var studentCanPublish = Boolean.Parse(doc.Element(CANPUBLISH).ValueOrDefault("false"));
             var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).ValueOrDefault("false"));
             var usersAreCompulsorilySynced = false;
             if (doc.Element(ALLSYNC) != null)
                 usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
-            var permission = new Permissions(null, studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
+            var permission = new Permissions("custom", studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
             if (doc.Element(NAVIGATIONLOCKED) != null)
                 permission.NavigationLocked = Boolean.Parse(doc.Element(NAVIGATIONLOCKED).Value);
+            permission.studentsCanViewQuizResults = Boolean.Parse(doc.Element(CANVIEWQUIZ).ValueOrDefault("false")); ;
+            permission.studentsCanDisplayQuizResults = Boolean.Parse(doc.Element(CANDISPLAYQUIZRESULTS).ValueOrDefault("false")); ;
+            permission.studentsCanDisplayQuiz = Boolean.Parse(doc.Element(CANDISPLAYQUIZ).ValueOrDefault("false")); ;
+            permission.studentsCanViewQuiz = Boolean.Parse(doc.Element(CANVIEWQUIZ).ValueOrDefault("true")); ;
+            permission.studentsCanAnswerQuiz = Boolean.Parse(doc.Element(CANANSWERQUIZ).ValueOrDefault("true")); ;
+            permission.studentsCanCreateQuiz = Boolean.Parse(doc.Element(CANCREATEQUIZ).ValueOrDefault("false")); ;
+            permission.studentCanUploadAttachment = Boolean.Parse(doc.Element(STUDENTCANUPLOAD).ValueOrDefault("false")); ;
+            permission.studentCanWorkPublicly = Boolean.Parse(doc.Element(CANPUBLISH).ValueOrDefault("false"));
+            permission.studentCanAddPage = Boolean.Parse(doc.Element(CANADDPAGE).ValueOrDefault("false"));
+            permission.studentCanSubmitScreenshot = Boolean.Parse(doc.Element(CANSUBMITSCREENSHOT).ValueOrDefault("true"));
+
             return permission;
         }
         public XElement WriteXml()
         {
             return new XElement(PERMISSIONS_TAG,
                 new XElement(NAVIGATIONLOCKED, NavigationLocked),
-                new XElement(CANSHOUT, studentCanPublish),
+                new XElement(CANPUBLISH, studentCanWorkPublicly),
                 new XElement(CANFRIEND, studentCanOpenFriends),
-                new XElement(ALLSYNC, usersAreCompulsorilySynced));
+                new XElement(ALLSYNC, usersAreCompulsorilySynced),
+                new XElement(CANVIEWQUIZ, studentsCanViewQuiz),
+                new XElement(CANDISPLAYQUIZRESULTS, studentsCanDisplayQuizResults),
+                new XElement(CANDISPLAYQUIZ, studentsCanDisplayQuiz),
+                new XElement(CANVIEWQUIZ, studentsCanViewQuiz),
+                new XElement(CANANSWERQUIZ, studentsCanAnswerQuiz),
+                new XElement(CANCREATEQUIZ, studentsCanCreateQuiz),
+                new XElement(STUDENTCANUPLOAD, studentCanUploadAttachment),
+                new XElement(CANADDPAGE, studentCanAddPage),
+                new XElement(CANSUBMITSCREENSHOT,studentCanSubmitScreenshot)
+                );
+        }
+    }
+    public class Group : INotifyPropertyChanged
+    {
+        public string id;
+        public string location;
+        public List<string> GroupMembers;
+        public Group(string _id, string _location, List<string> _members)
+        {
+            id = _id;
+            location = _location;
+            GroupMembers = _members;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refreshMembers()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GroupMembers"));
+        }
+    }
+    public class GroupSet : INotifyPropertyChanged
+    {
+        public string id;
+        public string location;
+        public int groupSize;
+        public List<Group> Groups;
+        public GroupSet(string _id, string _location, int _groupSize, List<Group> _groups)
+        {
+            id = _id;
+            location = _location;
+            groupSize = _groupSize;
+            Groups = _groups;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refreshSize()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("groupSize"));
+        }
+        public void refreshGroups()
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs("Groups"));
         }
     }
     public class Slide : INotifyPropertyChanged
@@ -508,15 +618,13 @@ namespace MeTLLib.DataTypes
             defaultWidth = newDefaultWidth;
             defaultHeight = newDefaultHeight;
         }
-        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed)
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight)
         {
-            id = newId;
-            author = newAuthor;
-            type = newType;
-            index = newIndex;
-            defaultWidth = newDefaultWidth;
-            defaultHeight = newDefaultHeight;
             exposed = newExposed;
+        }
+        public Slide(int newId, String newAuthor, TYPE newType, int newIndex, float newDefaultWidth, float newDefaultHeight, bool newExposed, List<GroupSet> newGroups) : this(newId, newAuthor, newType, newIndex, newDefaultWidth, newDefaultHeight, newExposed)
+        {
+            GroupSets = newGroups;
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void refresh()
@@ -541,7 +649,7 @@ namespace MeTLLib.DataTypes
             var sId = id.ToString();
             return Int32.Parse(string.Format("{0}400", sId.Substring(0, sId.Length - 3)));
         }
-        public enum TYPE { SLIDE, POLL, THOUGHT };
+        public enum TYPE { SLIDE, POLL, THOUGHT, GROUPSLIDE };
 
         public float defaultWidth;
         public float defaultHeight;
@@ -554,6 +662,7 @@ namespace MeTLLib.DataTypes
         public int index { get; set; }
         public TYPE type;
         public bool exposed;
+        public List<GroupSet> GroupSets = new List<GroupSet>();
     }
     public class ApplicationLevelInformation
     {

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Windows;
 using System.Diagnostics;
+using Xceed.Wpf.Toolkit;
 
 namespace MeTLLib.DataTypes
 {
@@ -53,13 +54,14 @@ namespace MeTLLib.DataTypes
 
     public struct ImageTag
     {
-        public ImageTag(string Author, Privacy Privacy, string Id, bool IsBackground, long Timestamp, int ZIndex = 0)
+        public ImageTag(string Author, Privacy Privacy, string Id, bool IsBackground, long Timestamp, string ResourceIdentity, int ZIndex = 0)
         {
             author = Author;
             privacy = Privacy; 
             id = Id;
             isBackground = IsBackground;
             zIndex = ZIndex;
+            resourceIdentity = ResourceIdentity;
             timestamp = Timestamp;
         }
         public ImageTag(ImageTag copyTag, Privacy newPrivacy)
@@ -70,6 +72,7 @@ namespace MeTLLib.DataTypes
             isBackground = copyTag.isBackground;
             zIndex = copyTag.zIndex;
             timestamp = copyTag.timestamp;
+            resourceIdentity = copyTag.resourceIdentity;
             privacy = newPrivacy;
         }
         public ImageTag(ImageTag copyTag, long Timestamp)
@@ -80,6 +83,7 @@ namespace MeTLLib.DataTypes
             isBackground = copyTag.isBackground;
             zIndex = copyTag.zIndex;
             privacy = copyTag.privacy;
+            resourceIdentity = copyTag.resourceIdentity;
             timestamp = Timestamp;
         }
         public bool ValueEquals(object obj)
@@ -87,6 +91,7 @@ namespace MeTLLib.DataTypes
             if (obj == null || !(obj is ImageTag)) return false;
             var foreignImageTag = ((ImageTag)obj);
             return ((foreignImageTag.author == author)
+                && (foreignImageTag.resourceIdentity == resourceIdentity)
                 && (foreignImageTag.id == id)
                 && (foreignImageTag.privacy == privacy)
                 && (foreignImageTag.isBackground == isBackground)
@@ -102,6 +107,7 @@ namespace MeTLLib.DataTypes
                     id = "unknown",
                     privacy = Privacy.Private,
                     isBackground = false,
+                    resourceIdentity = "",
                     zIndex = 1
                 };
             }
@@ -112,6 +118,7 @@ namespace MeTLLib.DataTypes
         public string id;
         public bool isBackground;
         public int zIndex;
+        public string resourceIdentity;
         public long timestamp;
     }
     public struct StrokeTag
@@ -185,11 +192,10 @@ namespace MeTLLib.DataTypes
         public string user;
     }
 
-
     public static class TextExtensions
     {
         //Image and TextTags are identical, reusing imagetag
-        public static TextTag tag(this TextBox box )
+        public static TextTag tag(this TextBox box)
         {
             var texttag = new TextTag();
             box.Dispatcher.adopt(delegate
@@ -308,6 +314,7 @@ namespace MeTLLib.DataTypes
                         id = imageInfo.id,
                         privacy = imageInfo.privacy,
                         isBackground = imageInfo.isBackground,
+                        resourceIdentity = imageInfo.resourceIdentity,
                         zIndex = imageInfo.zIndex
                     };
                 }
@@ -320,6 +327,7 @@ namespace MeTLLib.DataTypes
                         id = "unknown",
                         privacy = Privacy.Private,
                         isBackground = false,
+                        resourceIdentity = "",
                         zIndex = 1
                     };
                 }
