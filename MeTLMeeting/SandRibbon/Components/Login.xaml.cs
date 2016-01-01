@@ -186,6 +186,9 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             App.CloseSplashScreen();
+#if DEBUG
+            customServerContainer.Visibility = Visibility.Visible;
+#endif
             ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
@@ -643,7 +646,7 @@ namespace SandRibbon.Components
             }
             timers.Clear();
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            var server = new MeTLConfigurationProxy(customServer.Text, new Uri(customServer.Text + "/static/images/server.png"), new Uri(customServer.Text + "/authenticationState"));
+            var server = new MeTLConfigurationProxy(customServer.Text, new Uri(customServer.Text + "/static/images/server.png"), new Uri(customServer.Text));
             App.SetBackendProxy(server);
             ResetWebBrowser(null);
         }

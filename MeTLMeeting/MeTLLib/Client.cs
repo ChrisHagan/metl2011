@@ -838,9 +838,13 @@ namespace MeTLLib
             tryIfConnected(work);
         }
         
-        public void AsyncRetrieveHistoryOf(int v)
+        public void AsyncRetrieveHistoryOf(int room)
         {
-            throw new NotImplementedException();
+            Action work = delegate
+            {
+                wire.GetHistory(room);
+            };
+            tryIfConnected(work);
         }
     }
 }
