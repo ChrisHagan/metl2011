@@ -65,6 +65,7 @@ namespace SandRibbon.Utils
         private const int fileSizeLimit = 50;
         private void UploadFileForUse(string unMangledFilename)
         {
+            // not entirely sure why we're mangling filenames here, but we should also be aiming to not conflict on filenames too, when we do the copying.
             string filename = unMangledFilename + ".MeTLFileUpload";
             if (filename.Length > 260)
             {

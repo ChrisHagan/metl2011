@@ -56,7 +56,7 @@ namespace SandRibbon
         public static ExtractAuthorConverter ExtractAuthorConverter = new ExtractAuthorConverter();
         public static ExtractNameConverter ExtractNameConverter = new ExtractNameConverter();
         public static ExtractTypeConverter ExtractTypeConverter = new ExtractTypeConverter();
-        public static ExtractUrlConverter ExtractUrlConverter = new ExtractUrlConverter();
+        //public static ExtractUrlConverter ExtractUrlConverter = new ExtractUrlConverter();
         public static GetFileTooltip GetFileToolTip = new GetFileTooltip();
         public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
@@ -428,6 +428,7 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
+    /*
     public class ExtractUrlConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -441,6 +442,7 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
+    */
     public class ExtractSubmissionAuthorAndConvert : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
