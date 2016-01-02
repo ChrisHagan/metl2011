@@ -7,24 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SandRibbon.Components
 {
-    /// <summary>
-    /// Interaction logic for RoleQuickControls.xaml
-    /// </summary>
     public partial class RoleQuickControls : UserControl
     {
         public RoleQuickControls()
@@ -61,6 +50,12 @@ namespace SandRibbon.Components
                 cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
                 App.controller.client.UpdateConversationDetails(cd);
             }
+        }
+
+        private void toggleBanhammer(object sender, RoutedEventArgs e)
+        {
+            var banhammerActive = (bool)(sender as CheckBox).IsChecked;
+            Commands.BanhammerActive.Execute(banhammerActive);
         }
         protected void UpdatedConversationDetails(ConversationDetails conv)
         {

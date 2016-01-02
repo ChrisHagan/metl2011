@@ -12,10 +12,11 @@
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel>
             <StackPanel x:Name="ownerQuickControls">
-                <CheckBox x:Name="studentCanPublishCheckbox" Checked="StudentsCanPublishChecked" Content="Students can publish" 
+                <CheckBox x:Name="studentCanPublishCheckbox" Click="StudentsCanPublishChecked" 
+                          Content="Students can publish" 
                           Style="{StaticResource IconSizeCheckBox}"/>
-                <CheckBox x:Name="studentMustFollowTeacherCheckbox" Checked="StudentsMustFollowTeacherChecked" Content="Students must follow teacher" Style="{StaticResource IconSizeCheckBox}" />
-                <CheckBox Content="Administer content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" Style="{StaticResource IconSizeCheckBox}"/>
+                <CheckBox x:Name="studentMustFollowTeacherCheckbox" Click="StudentsMustFollowTeacherChecked" Content="Students must follow teacher" Style="{StaticResource IconSizeCheckBox}" />
+                <CheckBox Content="Administer content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Click="toggleBanhammer" Style="{StaticResource IconSizeCheckBox}"/>
                 <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" Style="{DynamicResource HorizontalRibbonButton}"/>
                 <dict:Button Text="DuplicateSlide" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}" Style="{StaticResource HorizontalRibbonButton}"/>
                 <dict:Button Text="DuplicateConversation" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"

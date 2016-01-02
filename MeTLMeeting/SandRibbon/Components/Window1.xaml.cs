@@ -84,10 +84,9 @@ namespace SandRibbon
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
 
             //zoom
-            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView, conversationSearchMustBeClosed));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
+            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView, conversationSearchMustBeClosed));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rect>(SetZoomRect));
@@ -897,6 +896,7 @@ namespace SandRibbon
                 scroll.ScrollToLeftEnd();
                 scroll.ScrollToTop();
             }
+            checkZoom();
         }
         private void FitToView(object _unused)
         {
@@ -904,6 +904,7 @@ namespace SandRibbon
             scroll.Width = double.NaN;
             canvas.Height = double.NaN;
             canvas.Width = double.NaN;
+            checkZoom();
         }
         private void FitToPageWidth(object _unused)
         {
@@ -913,6 +914,7 @@ namespace SandRibbon
                 scroll.Height = canvas.ActualWidth / ratio;
                 scroll.Width = canvas.ActualWidth;
             }
+            checkZoom();
         }
         private void ShowPowerpointBlocker(string explanation)
         {
@@ -934,7 +936,9 @@ namespace SandRibbon
         private bool canZoomOut(object sender)
         {
             if (scroll == null)
+            {
                 return false;
+            }
             else
             {
                 var cvHeight = adornerGrid.ActualHeight;
@@ -942,7 +946,6 @@ namespace SandRibbon
                 var cvRatio = cvWidth / cvHeight;
                 bool hTrue = scroll.ViewportWidth < scroll.ExtentWidth;
                 bool vTrue = scroll.ViewportHeight < scroll.ExtentHeight;
-                var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
                 return (hTrue || vTrue) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
             }
         }
