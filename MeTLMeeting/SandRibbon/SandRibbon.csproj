@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>E36E3F9E24ED46C32956EF51768980CABEB164E1</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SandRibbon_5_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>6294B12193542CFD621549B0CF9F3AFE6D67EDE2</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_6_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -928,6 +928,7 @@
     <None Include="SandRibbon_3_TemporaryKey.pfx" />
     <None Include="SandRibbon_4_TemporaryKey.pfx" />
     <None Include="SandRibbon_5_TemporaryKey.pfx" />
+    <None Include="SandRibbon_6_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\agsxmpp\agsXMPP2013.csproj">

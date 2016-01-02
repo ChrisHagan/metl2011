@@ -238,7 +238,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="{x:Type RadioButton}" TargetType="RadioButton">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
@@ -286,7 +286,7 @@
         </Setter>
     </Style>
 
-    
+
     <Style TargetType="{x:Type dict:ToggleButton}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
@@ -697,6 +697,59 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type CheckBox}" x:Key="IconSizeCheckBox">
+        <Setter Property="Cursor" Value="Hand"></Setter>
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisual}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <BulletDecorator Background="Transparent">
+                        <BulletDecorator.Bullet>
+                            <Border x:Name="Border"
+              Width="13" 
+              Height="13" 
+              CornerRadius="0" 
+              Background="White"
+              BorderThickness="1"
+                                    Margin="4 0 0 0"
+              BorderBrush="Black">
+                                <Border.LayoutTransform>
+                                    <ScaleTransform ScaleX="3" ScaleY="3" />
+                                </Border.LayoutTransform>
+                                <Path 
+                Width="7" Height="7"
+                                    x:Name="CheckMark"
+                SnapsToDevicePixels="False" 
+                Stroke="Black"
+                StrokeThickness="1"
+                Data="M 0 0 L 7 7 M 0 7 L 7 0" />
+                            </Border>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter Margin="44,0,0,0"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            RecognizesAccessKey="True"/>
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="false">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="CheckMark" Property="Data" Value="M 0 0 L 7 7 M 0 7 L 7 0" />
+                        </Trigger>
+                         <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="DarkGray" />
+                            <Setter Property="Foreground" Value="DarkGray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type dict:CheckBox}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
@@ -908,6 +961,53 @@
                             <Setter TargetName="bg" Property="Orientation" Value="Horizontal"/>
                             <Setter TargetName="bg" Property="Height" Value="15"/>
                             <Setter TargetName="bg" Property="VerticalAlignment" Value="Top"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="HorizontalRibbonButton" TargetType="{x:Type dict:Button}">
+        <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
+        <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
+        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type dict:Button}">
+                    <Border x:Name="border" Background="Transparent" BorderBrush="Transparent" Padding="2" CornerRadius="2" BorderThickness="1">
+                        <StackPanel x:Name="bg" Background="Transparent" Orientation="Horizontal">
+                            <Image x:Name="icon" Width="40" Source="{TemplateBinding Icon}" VerticalAlignment="Center"/>
+                            <TextBlock Margin="16 0 0 0" x:Name="text" Text="{TemplateBinding Text}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PressedBorderBrush}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="False"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource MouseOverGradient}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource MouseOverBorderBrush}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PressedBorderBrush}"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="icon" Property="Opacity" Value="0.2"/>
+                            <Setter TargetName="text" Property="Opacity" Value="0.2"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

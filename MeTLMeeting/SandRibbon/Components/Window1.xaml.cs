@@ -55,19 +55,13 @@ namespace SandRibbon
             {
                 App.mark("Window1 knows about identity");
             }));
+            Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
+            Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
+
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
             Title = Strings.Global_ProductName;
-            try
-            {
-                //Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
-                //Icon = (ImageSource)new ImageSourceConverter().ConvertFromString(@"resources\favicon.ico");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
-            }
             PreviewKeyDown += new KeyEventHandler(KeyPressed);
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
@@ -933,14 +927,14 @@ namespace SandRibbon
             ProgressDisplay.Children.Clear();
             InputBlocker.Visibility = Visibility.Collapsed;
         }
-        private void canZoomIn(object sender, CanExecuteRoutedEventArgs e)
+        private bool canZoomIn(object sender)
         {
-            e.CanExecute = !(scroll == null) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
+            return !(scroll == null) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
         }
-        private void canZoomOut(object sender, CanExecuteRoutedEventArgs e)
+        private bool canZoomOut(object sender)
         {
             if (scroll == null)
-                e.CanExecute = false;
+                return false;
             else
             {
                 var cvHeight = adornerGrid.ActualHeight;
@@ -949,19 +943,11 @@ namespace SandRibbon
                 bool hTrue = scroll.ViewportWidth < scroll.ExtentWidth;
                 bool vTrue = scroll.ViewportHeight < scroll.ExtentHeight;
                 var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
-                if (scrollRatio > cvRatio)
-                {
-                    e.CanExecute = hTrue;
-                }
-                if (scrollRatio < cvRatio)
-                {
-                    e.CanExecute = vTrue;
-                }
-                e.CanExecute = (hTrue || vTrue) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
+                return (hTrue || vTrue) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
             }
         }
 
-        private void doZoomIn(object sender, ExecutedRoutedEventArgs e)
+        private void doZoomIn(object sender)
         {
             Trace.TraceInformation("ZoomIn pressed");
             var ZoomValue = 0.9;
@@ -1010,8 +996,9 @@ namespace SandRibbon
             }
             scroll.ScrollToHorizontalOffset(scrollHOffset + ((oldWidth - newWidth) / 2));
             scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
+            checkZoom();
         }
-        private void doZoomOut(object sender, ExecutedRoutedEventArgs e)
+        private void doZoomOut(object sender)
         {
             Trace.TraceInformation("ZoomOut pressed");
             var ZoomValue = 1.1;
@@ -1060,6 +1047,10 @@ namespace SandRibbon
             }
             scroll.ScrollToHorizontalOffset(scrollHOffset + ((oldWidth - newWidth) / 2));
             scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
+            checkZoom();
+        }
+        private void checkZoom() {
+            Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
         }
         public Visibility GetVisibilityOf(UIElement target)
         {
