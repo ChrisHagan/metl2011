@@ -415,7 +415,8 @@ namespace SandRibbon.Components
                  {
                      Commands.AddWindowEffect.ExecuteAsync(null);
                      var config = default(MetlConfiguration);
-                     if (App.availableServers().Contains(App.getCurrentServer))
+                     
+                     if (App.metlConfigManager is LocalAppMeTLConfigurationManager && App.availableServers().Contains(App.getCurrentServer))
                      {
                          config = App.metlConfigManager.getConfigFor(App.getCurrentServer);
                      }
