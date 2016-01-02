@@ -516,12 +516,13 @@ namespace SandRibbon.Components
             originalContext = null;
             assignTemplate("viewing", sender);
         }
+        protected IEqualityComparer<ConversationDetails> jidComparer = new JidComparer();
         private string errorsFor(ConversationDetails proposedDetails)
         {
             proposedDetails.Title = proposedDetails.Title.Trim();
             var thisTitleIsASCII = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(proposedDetails.Title)).Equals(proposedDetails.Title);
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
-            var titleAlreadyUsed = searchResultsObserver.Except(new[] { proposedDetails }).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
+            var titleAlreadyUsed = searchResultsObserver.Except(new[] { proposedDetails },jidComparer).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
             var errorText = String.Empty;
             if (proposedDetails.Title.Length > 110) errorText += "Conversation titles have a maximum length of 110 characters";
             if (!thisTitleIsASCII)
@@ -572,6 +573,18 @@ namespace SandRibbon.Components
             {
                 cancelEdit(sender, null);
             }
+        }
+    }
+    public class JidComparer : IEqualityComparer<ConversationDetails>
+    {
+        public bool Equals(ConversationDetails x, ConversationDetails y)
+        {
+            return x.Jid == y.Jid;
+        }
+
+        public int GetHashCode(ConversationDetails obj)
+        {
+            return Int32.Parse(obj.Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer
