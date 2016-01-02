@@ -46,15 +46,21 @@ namespace SandRibbon.Components
         {
             var studentsCanPublishValue = (bool)(sender as CheckBox).IsChecked;
             var cd = Globals.conversationDetails;
-            cd.Permissions.studentCanWorkPublicly = studentsCanPublishValue;
-            App.controller.client.UpdateConversationDetails(cd);
+            if (cd.Permissions.studentCanWorkPublicly != studentsCanPublishValue)
+            {
+                cd.Permissions.studentCanWorkPublicly = studentsCanPublishValue;
+                App.controller.client.UpdateConversationDetails(cd);
+            }
         }
         private void StudentsMustFollowTeacherChecked(object sender, RoutedEventArgs e)
         {
             var studentsMustFollowTeacherValue = (bool)(sender as CheckBox).IsChecked;
             var cd = Globals.conversationDetails;
-            cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
-            App.controller.client.UpdateConversationDetails(cd);
+            if (cd.Permissions.usersAreCompulsorilySynced != studentsMustFollowTeacherValue)
+            {
+                cd.Permissions.usersAreCompulsorilySynced = studentsMustFollowTeacherValue;
+                App.controller.client.UpdateConversationDetails(cd);
+            }
         }
         protected void UpdatedConversationDetails(ConversationDetails conv)
         {
