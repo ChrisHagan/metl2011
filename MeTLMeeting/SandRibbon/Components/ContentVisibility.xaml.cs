@@ -27,7 +27,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((cd) => { UpdateConversationDetails(cd); }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((loc) => { MoveTo(loc); }));
             Commands.UpdateContentVisibility.RegisterCommand(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
-            Commands.SetContentVisibility.DefaultValue = ContentFilterVisibility.defaultVisibilities;
+            Commands.SetContentVisibility.DefaultValue = Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities;
         }
 
         protected int slide = -1;
@@ -82,7 +82,7 @@ namespace SandRibbon.Components
                             });
                         });
                         visibilities.Clear();
-                        foreach (var nv in newGroupDefs.Concat(ContentFilterVisibility.defaultGroupVisibilities))
+                        foreach (var nv in newGroupDefs.Concat(Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities))
                         {
                             visibilities.Add(nv);
                         }
@@ -91,7 +91,7 @@ namespace SandRibbon.Components
                 else
                 {
                     visibilities.Clear();
-                    foreach (var nv in ContentFilterVisibility.defaultVisibilities)
+                    foreach (var nv in Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities)
                     {
                         visibilities.Add(nv);
                     }
@@ -100,7 +100,7 @@ namespace SandRibbon.Components
         }
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {
-            Commands.SetContentVisibility.Execute(visibilities);
+            Commands.SetContentVisibility.Execute(Globals.isAuthor ? visibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : visibilities);
         }
     }
 }
