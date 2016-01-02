@@ -18,10 +18,6 @@
     MinHeight="240"
     MinWidth="320"
     Appearance="Office2007Blue" >
-    <sr:RibbonWindow.CommandBindings>
-        <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
-        <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
-    </sr:RibbonWindow.CommandBindings>
     <sr:RibbonWindow.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
         <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
@@ -82,16 +78,16 @@
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="LHSDrawerDefinition" Width="0" MaxWidth="200"/>
-                    <ColumnDefinition x:Name="LHSSplitterDefinition" Width="0"/>
+                    <ColumnDefinition x:Name="LHSDrawerDefinition" Width="Auto" />
+                    <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
                     <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
                     <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Collapsed">
+                <Grid Grid.Column="0" x:Name="leftDrawer">
                     <components:RoleQuickControls/>
                 </Grid>
-                <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
+                <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
                 <Grid Grid.Column="2">
                     <Grid x:Name="adornerGrid" Margin="0,0,27,27">
                         <Canvas x:Name="syncPageOverlay"/>
