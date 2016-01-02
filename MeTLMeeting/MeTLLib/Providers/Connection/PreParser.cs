@@ -27,11 +27,13 @@ namespace MeTLLib.Providers.Connection
         public List<MeTLStanzas.DirtyImage> dirtyImage = new List<MeTLStanzas.DirtyImage>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, IAuditor _auditor)
+        public int room { get; protected set; }
+        public PreParser(Credentials credentials, int _room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MetlConfiguration metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, IAuditor _auditor)
             : base(credentials, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider, false, _auditor)
         {
+            room = _room;
             if (this.location == null)
-                this.location = new Location("0", 1, new List<int> { 1 });
+                this.location = new Location("0", _room, new List<int> { _room });
             this.location.currentSlide = room;
             this.receiveEvents = receiveEvents;
         }
@@ -41,7 +43,7 @@ namespace MeTLLib.Providers.Connection
             {
                 var returnParser = (T)Activator.CreateInstance(typeof(T),
                     credentials,
-                    location.currentSlide,
+                    room,
                     conversationDetailsProvider,
                     historyProvider,
                     cachedHistoryProvider,

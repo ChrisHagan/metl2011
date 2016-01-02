@@ -67,8 +67,11 @@ namespace SandRibbon.Tabs
 
         private void preparserAvailable(PreParser preParser)
         {
-            foreach (var file in preParser.files)
-                receiveFile(file);
+            if (Globals.slide == preParser.room || Globals.conversationDetails.Jid == preParser.room.ToString())
+            {
+                foreach (var file in preParser.files)
+                    receiveFile(file);
+            }
         }
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
