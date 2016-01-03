@@ -65,19 +65,14 @@ namespace SandRibbon.Chrome
                     else
                     {
                         status = details.IsEmpty || String.IsNullOrEmpty(Globals.location.activeConversation) ? Strings.Global_ProductName : string.Format(
-                             "{3} is working {0}ly with collaboration {1}, in a conversation whose participants are {2}",
+                             "{0} is working {1}ly in an {2} conversation",
+                             Globals.me,
                              Globals.privacy,
-                             details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED",
-                             details.Subject, Globals.me);
+                             details.Subject 
+                             );
                     }
-#if DEBUG
-                    //var activeStack = //MeTLConfiguration.Config.ActiveStack;
-                    var currentServerName = "";
-                    if (App.getCurrentServer != null)
-                        currentServerName = App.getCurrentServer.name;
-                status += String.Format(" | ({0}) Connected to [{1}]", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me,
-                    currentServerName);
-#endif
+                    collaborationStatus.Text = string.Format("Collaboration {0}",details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED");
+                    followStatus.Text = string.Format("Following teacher {0}", details.Permissions.usersAreCompulsorilySynced ? "MANDATORY" : "OPTIONAL");
                     StatusLabel.Text = status;
                 });
             }

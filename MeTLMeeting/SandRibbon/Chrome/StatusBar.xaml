@@ -6,7 +6,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     x:Name="statusBar">
     <Grid Width="{Binding ElementName=statusBar, Path=ActualWidth}" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel Margin="0 0 10 0">
+                <sr:Label x:Name="collaborationStatus" />
+                <sr:Label x:Name="followStatus" />
+            </StackPanel>
             <sr:Label x:Name="StatusLabel" ToolTip="Current Mode"/>
         </StackPanel>
         <sandpit:Pedagogicometer Visibility="Collapsed"/>
