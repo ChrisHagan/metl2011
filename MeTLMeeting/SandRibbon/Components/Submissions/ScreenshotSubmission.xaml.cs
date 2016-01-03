@@ -15,10 +15,12 @@ namespace SandRibbon.Components.Submissions
 {
     public class ScreenshotDetails
     {
+        public string author;
         public string message;
         public long time;
         public bool showPrivate;
         public Size dimensions;
+        public Action<String> onGeneration;
     }
     public partial class ScreenshotSubmission : UserControl
     {
@@ -42,11 +44,11 @@ namespace SandRibbon.Components.Submissions
         }
         private bool canViewSubmissions(object _e)
         {
-           return submissionList.Count > 0;
+            return submissionList.Count > 0;
         }
         private void PreParserAvailable(PreParser parser)
         {
-            foreach(var submission in parser.submissions)
+            foreach (var submission in parser.submissions)
                 receiveSubmission(submission);
         }
         private void detailsChanged(ConversationDetails details)
@@ -69,21 +71,21 @@ namespace SandRibbon.Components.Submissions
         }
         private void conversationChanged(object details)
         {
-            Dispatcher.adoptAsync( delegate
-                                                {
-                                                    try
-                                                    {
-                                                        submissionList = new List<TargettedSubmission>();
-                                                        if (Globals.conversationDetails.Author == Globals.me)
-                                                            amTeacher();
-                                                        else
-                                                            amStudent();
-                                                    }
-                                                    catch(NotSetException)
-                                                    {
-                                                    }
-      
-                                                });
+            Dispatcher.adoptAsync(delegate
+                                               {
+                                                   try
+                                                   {
+                                                       submissionList = new List<TargettedSubmission>();
+                                                       if (Globals.conversationDetails.Author == Globals.me)
+                                                           amTeacher();
+                                                       else
+                                                           amStudent();
+                                                   }
+                                                   catch (NotSetException)
+                                                   {
+                                                   }
+
+                                               });
         }
         private void amTeacher()
         {
@@ -113,24 +115,20 @@ namespace SandRibbon.Components.Submissions
         }
         private void generateScreenshot(object sender)
         {
-            Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            DelegateCommand<string> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
-                             {
-                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                                 (App.controller.client.location.currentSlide,Globals.me,"submission",Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
-                                 MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
-                             });
-            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
-                                                    {
-                                                        time = time,
-                                                        message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
-                                                        showPrivate = true
-                                                    });
+            {
+                time = time,
+                message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
+                showPrivate = true,
+                author = Globals.me,
+                onGeneration = hostedFileName =>
+                {
+                    App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                    (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                    MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
+                }
+            });
         }
-     
     }
 }

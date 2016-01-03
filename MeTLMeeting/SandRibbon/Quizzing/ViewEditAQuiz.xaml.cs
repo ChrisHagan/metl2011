@@ -29,7 +29,7 @@ namespace SandRibbon.Quizzing
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return null;  
+            return null;
         }
     }
 
@@ -38,12 +38,12 @@ namespace SandRibbon.Quizzing
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return String.IsNullOrEmpty(value as String) ? Visibility.Hidden : Visibility.Visible; 
+            return String.IsNullOrEmpty(value as String) ? Visibility.Hidden : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return null; 
+            return null;
         }
     }
 
@@ -58,7 +58,7 @@ namespace SandRibbon.Quizzing
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
     }
 
@@ -66,27 +66,27 @@ namespace SandRibbon.Quizzing
     {
         #region DependencyProperties
 
-        public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof (bool), typeof (ViewEditAQuiz));
+        public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof(bool), typeof(ViewEditAQuiz));
 
         public bool OptionError
         {
-            get { return (bool) GetValue(OptionErrorProperty); }
+            get { return (bool)GetValue(OptionErrorProperty); }
             set { SetValue(OptionErrorProperty, value); }
         }
 
-        public static readonly DependencyProperty QuestionErrorProperty = DependencyProperty.Register("QuestionError", typeof (bool), typeof (ViewEditAQuiz));
+        public static readonly DependencyProperty QuestionErrorProperty = DependencyProperty.Register("QuestionError", typeof(bool), typeof(ViewEditAQuiz));
 
         public bool QuestionError
         {
-            get { return (bool) GetValue(QuestionErrorProperty); }
+            get { return (bool)GetValue(QuestionErrorProperty); }
             set { SetValue(QuestionErrorProperty, value); }
         }
 
-        public static readonly DependencyProperty ResultsExistProperty = DependencyProperty.Register("ResultsExist", typeof (bool), typeof (ViewEditAQuiz));
+        public static readonly DependencyProperty ResultsExistProperty = DependencyProperty.Register("ResultsExist", typeof(bool), typeof(ViewEditAQuiz));
 
         public bool ResultsExist
         {
-            get { return (bool) GetValue(ResultsExistProperty); }
+            get { return (bool)GetValue(ResultsExistProperty); }
             set { SetValue(ResultsExistProperty, value); }
         }
 
@@ -116,7 +116,7 @@ namespace SandRibbon.Quizzing
         private void UpdateOptionError(object sender, NotifyCollectionChangedEventArgs e)
         {
             var optionList = sender as ObservableCollection<Option>;
-            OptionError = (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count < 3 );
+            OptionError = (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count < 3);
         }
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
@@ -139,30 +139,11 @@ namespace SandRibbon.Quizzing
                 Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
-       }
-
+        }
         public void DisplayQuiz(object sender, RoutedEventArgs e)
         {
-            var quizDisplay = new DisplayAQuiz(question);
-            quizDisplay.Show();
-
-            try
-            {
-                var quiz = quizDisplay.SnapshotHost;
-                var dpi = 96;
-                var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
-                var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
-                var dv = new DrawingVisual();
-                using (var context = dv.RenderOpen())
-                    context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
-                bitmap.Render(dv);
-                Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
-            }
-            finally
-            {
-                quizDisplay.Close();
-                Close();
-            }
+            var url = App.controller.config.displayQuizOnNewSlideAtIndex(Globals.conversationDetails.Jid, Globals.slideDetails.index + 1, question.Id);
+            App.controller.client.resourceProvider.insecureGetString(url);
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
@@ -200,7 +181,7 @@ namespace SandRibbon.Quizzing
                 question.Delete();
                 Commands.SendQuiz.Execute(question);
                 Close();
-            }    
+            }
         }
 
         private void quizCommitButton_Click(object sender, RoutedEventArgs e)
@@ -261,24 +242,24 @@ namespace SandRibbon.Quizzing
         private bool shouldAddNewEmptyOption()
         {
             var emptyOptions = question.Options.Where(o => string.IsNullOrEmpty(o.optionText));
-            return emptyOptions.Count() == 0; 
+            return emptyOptions.Count() == 0;
         }
 
         private Color generateColor(int index)
         {
-            return index%2 == 0 ? Colors.White : (Color) ColorConverter.ConvertFromString("#FF4682B4");
+            return index % 2 == 0 ? Colors.White : (Color)ColorConverter.ConvertFromString("#FF4682B4");
         }
 
         private void AddNewEmptyOption()
         {
             if (!shouldAddNewEmptyOption()) return;
 
-            var newIndex =  1;
+            var newIndex = 1;
             var newName = Option.GetOptionNameFromIndex(0);
             if (question.Options.Count > 0)
             {
                 var lastOption = question.Options.Last();
-                newIndex = question.Options.IndexOf(lastOption) + 1; 
+                newIndex = question.Options.IndexOf(lastOption) + 1;
                 newName = Option.GetNextOptionName(lastOption.name);
             }
             var newOption = new Option(newName, String.Empty, false, generateColor(newIndex));

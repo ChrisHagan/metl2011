@@ -43,7 +43,7 @@ namespace SandRibbon.Components
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
-            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
+            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(GenerateScreenshot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));
@@ -79,21 +79,18 @@ namespace SandRibbon.Components
         private void GenerateBannedContentScreenshot(Dictionary<string, Color> blacklisted)
         {
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
-            DelegateCommand<string> sendScreenshot = null;
-            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
-                             {
-                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 var conn = App.controller.client;
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide, Globals.me, "bannedcontent",
-                                     Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
-                             });
-            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {
                 time = time,
                 message = string.Format("Banned content submission at {0}", new DateTime(time)),
                 showPrivate = false,
-                dimensions = new Size(1024, 768)
+                dimensions = new Size(1024, 768),
+                onGeneration = hostedFileName =>
+                {
+                    var conn = App.controller.client;
+                    conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide, Globals.me, "bannedcontent",
+                        Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
+                }
             });
         }
 
@@ -139,9 +136,10 @@ namespace SandRibbon.Components
                     return (FrameworkElement)child;
             return null;
         }
-        private void SendScreenShot(ScreenshotDetails details)
+        private void GenerateScreenshot(ScreenshotDetails details)
         {
-            Commands.ScreenshotGenerated.Execute(generateScreenshot(details));
+            var screenshot = generateScreenshot(details);
+            details.onGeneration(screenshot);
         }
         private string generateScreenshot(ScreenshotDetails details)
         {

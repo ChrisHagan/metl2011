@@ -42,7 +42,7 @@
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="False">
-                                    <Setter Property="Source" Value="{Binding Path=Url}" />
+                                    <Setter Property="Source" Value="{Binding Path=Url, Converter={x:Static metl:Converters.ConvertStringToImageSource}}" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="True">
                                     <Setter Property="Visibility" Value="Collapsed" />

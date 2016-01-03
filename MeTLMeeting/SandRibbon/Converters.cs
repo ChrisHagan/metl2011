@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
-using SandRibbon.Components.Submissions;
 using SandRibbon.Components.BannedContent;
 
 namespace SandRibbon

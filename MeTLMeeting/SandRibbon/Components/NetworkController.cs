@@ -10,7 +10,6 @@ namespace SandRibbon.Components
     public class NetworkController
     {
         public IClientBehaviour client { get; protected set; }
-        private Action deregister;
         public MetlConfiguration config { get; protected set; }
         public Credentials credentials { get; protected set; }
         public NetworkController(MetlConfiguration _config)

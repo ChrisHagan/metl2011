@@ -18,7 +18,7 @@ namespace SandRibbon.Quizzing
 {
     public partial class CreateAQuiz : Window
     {
-        private string url = "none";
+        private string identity = "";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
                                                          new Option("A",String.Empty,false,Colors.Blue)
@@ -58,7 +58,7 @@ namespace SandRibbon.Quizzing
         {
             var creationTimeAndId = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", Globals.me, question.Text, new List<Option>());
-            quiz.Url = url;
+            quiz.Url = identity;
             foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -81,8 +81,8 @@ namespace SandRibbon.Quizzing
         {
             if (itemContainer is FrameworkElement)
             {
-                var currentOption = (itemContainer as FrameworkElement).DataContext;    
-                return quizQuestions.ItemContainerGenerator.ContainerFromItem(currentOption) as FrameworkElement; 
+                var currentOption = (itemContainer as FrameworkElement).DataContext;
+                return quizQuestions.ItemContainerGenerator.ContainerFromItem(currentOption) as FrameworkElement;
             }
 
             return null;
@@ -91,7 +91,7 @@ namespace SandRibbon.Quizzing
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             var optionContainer = GetQuestionContainerFromItem(sender);
-            if (optionContainer != null) 
+            if (optionContainer != null)
                 optionContainer.Opacity = 1;
         }
 
@@ -137,7 +137,7 @@ namespace SandRibbon.Quizzing
         }
         private Color generateColor(int index)
         {
-            return index%2 == 0 ? Colors.White : (Color) ColorConverter.ConvertFromString("#FF4682B4");
+            return index % 2 == 0 ? Colors.White : (Color)ColorConverter.ConvertFromString("#FF4682B4");
         }
 
         private void AddNewEmptyOption()
@@ -145,16 +145,16 @@ namespace SandRibbon.Quizzing
             if (!shouldAddNewEmptyOption()) return;
             foreach (var option in options)
             {
-                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)); 
+                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option));
                 if (container != null) container.Opacity = 1;
             }
 
-            var newIndex =  1;
+            var newIndex = 1;
             var newName = Option.GetOptionNameFromIndex(0);
             if (options.Count > 0)
             {
                 var lastOption = options.Last();
-                newIndex = options.IndexOf(lastOption) + 1; 
+                newIndex = options.IndexOf(lastOption) + 1;
                 newName = Option.GetNextOptionName(lastOption.name);
             }
             var newOption = new Option(newName, String.Empty, false, generateColor(newIndex));
@@ -186,45 +186,40 @@ namespace SandRibbon.Quizzing
         }
         private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
         {
-            DelegateCommand<string> gotScreenshot = null;
-            gotScreenshot = new DelegateCommand<string>(hostedFilename =>
-                            {
-                                Dispatcher.adopt(() =>
-                                {
-                                    Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
-                                    
-                                    url = App.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
-                                    var image = new Image();
-                                    BitmapImage source = new BitmapImage();
-                                    try
-                                    {
-                                        source.BeginInit();
-                                        source.UriSource = App.controller.config.getResource(url);
-                                        image.Source = source;
-                                    }
-                                    catch (Exception ex) {
-                                        Trace.TraceError("Quiz screenshot failure: {0}", ex.Message);
-                                    }
-                                    finally
-                                    {
-                                        source.EndInit();
-                                    }
-                                    image.Width = 300;
-                                    image.Height = 300;
-                                    questionSnapshotContainer.Children.Add(image);
-                                    screenshot.Visibility = Visibility.Collapsed;
-                                    var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
-                                    if(isAutogeneratedTitle(question.Text))
-                                        question.Text = string.Format("Quiz referencing page {0}", slide.index + 1);
-                                });
-
-                            });
-            Commands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
             Commands.GenerateScreenshot.Execute(new ScreenshotDetails
-                                                    {
-                                                        time = SandRibbonObjects.DateTimeFactory.Now().Ticks,
-                                                        message = ""
-                                                    });
+            {
+                time = SandRibbonObjects.DateTimeFactory.Now().Ticks,
+                message = "",
+                author = Globals.me,
+                onGeneration = hostedFilename =>
+                                {
+                                    Dispatcher.adopt(() =>
+                                    {
+                                        identity = App.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
+                                        var image = new Image();
+                                        BitmapImage source = new BitmapImage();
+                                        try
+                                        {
+                                            source.BeginInit();
+                                            source.UriSource = App.controller.config.getResource(identity);
+                                            image.Source = source;
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Trace.TraceError("Quiz screenshot failure: {0}", ex.Message);
+                                        }
+                                        finally
+                                        {
+                                            source.EndInit();
+                                        }
+                                        questionSnapshotContainer.Child = image;
+                                        screenshot.Visibility = Visibility.Collapsed;
+                                        var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
+                                        if (isAutogeneratedTitle(question.Text))
+                                            question.Text = string.Format("Quiz referencing page {0}", slide.index + 1);
+                                    });
+                                }
+            });
         }
         private bool isAutogeneratedTitle(string text)
         {
@@ -239,22 +234,18 @@ namespace SandRibbon.Quizzing
         }
         private void refreshCollection()
         {
-            options = new ObservableCollection<Option>
-                                                     {
-                                                         new Option("A",String.Empty,false, Colors.Blue)/*,
-                                                         new Option("B",String.Empty,false, Colors.Red)*/
-                                                     };
+            options = new ObservableCollection<Option> {
+                                                         new Option("A",String.Empty,false, Colors.Blue)
+            };
         }
         private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             refreshCollection();
             Commands.UnblockInput.ExecuteAsync(null);
         }
-
         private void createAQuiz_Loaded(object sender, RoutedEventArgs e)
         {
             AddNewEmptyOption();
         }
-
     }
 }

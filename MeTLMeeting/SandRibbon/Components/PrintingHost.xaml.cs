@@ -5,8 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -16,39 +14,6 @@ namespace SandRibbon.Components
         public PrintingHost()
         {
             InitializeComponent();
-            Commands.QuizResultsAvailableForSnapshot.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
-        }
-        private void QuizResultsGenerated(UnscaledThumbnailData quizData)
-        {
-            Dispatcher.adopt(delegate
-            {
-                var bitmap = BitmapFrame.Create(quizData.data);
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(bitmap);
-                var stream = new MemoryStream();
-                encoder.Save(stream);
-                var frombitmap = new Bitmap(stream);
-                stream.Close();
-                string path = QuizPath(quizData.id);
-                saveUnscaledBitmapToDisk(path, frombitmap);
-                Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
-            });
-        }
-        public string QuizPath(int id)
-        {
-            if (!Directory.Exists("quizzes"))
-                Directory.CreateDirectory("quizzes");
-            var fullPath = string.Format("quizzes\\{0}", Globals.me);
-            if (!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
-            int quiznumber = 0;
-            string path = string.Format("{0}\\{1}_{2}.png", fullPath, id, quiznumber);
-            while (File.Exists(path))
-            {
-                quiznumber++;
-                path = string.Format("{0}\\{1}_{2}.png", fullPath, id, quiznumber);
-            }   
-            return path;
         }
         public void saveCanvasToDisk(FrameworkElement content, string path, int sourceWidth, int sourceHeight, int desiredWidth, int desiredHeight)
         {

@@ -8,7 +8,6 @@
     Title="Create a Quiz" 
     ShowInTaskbar="False"
     x:Name="createAQuiz"
-    MaxHeight="500"
     WindowStartupLocation="CenterOwner"
     Closing="createAQuiz_Closing"
     Loaded="createAQuiz_Loaded"
@@ -42,8 +41,9 @@
                                 <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
                                     <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
-                                <Grid  Grid.Column="1" x:Name="questionSnapshotContainer">
+                                <Grid Grid.Column="1">
                                     <dict:Button IsTabStop="False" x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="/Resources/AttachSnapshot.png" Text="Attach Current Page"/>
+                                    <Viewbox Height="250" x:Name="questionSnapshotContainer" />
                                 </Grid>
                             </Grid>
                         </StackPanel>
@@ -53,7 +53,7 @@
                             <DataTemplate>
                                 <Grid KeyboardNavigation.IsTabStop="False">
                                     <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" IsTabStop="False"/>
-                                    <StackPanel Orientation="Horizontal" KeyboardNavigation.IsTabStop="False"> 
+                                    <StackPanel Orientation="Horizontal" KeyboardNavigation.IsTabStop="False">
                                         <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" IsTabStop="False"/>
                                         <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" 
                                                  Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" 

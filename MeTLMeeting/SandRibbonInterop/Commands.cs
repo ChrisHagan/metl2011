@@ -192,7 +192,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ServersDown = new DefaultableCompositeCommand("ServersDown");
         public static DefaultableCompositeCommand SubmitScreenshotSubmission = new DefaultableCompositeCommand("SubmitScreenshotSubmission");
         public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand("GenerateScreenshot");
-        public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand("ScreenshotGenerated");
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand("SendScreenshotSubmission");
         public static DefaultableCompositeCommand ReceiveScreenshotSubmission = new DefaultableCompositeCommand("ReceiveScreenshotSubmission");
         public static DefaultableCompositeCommand ImportSubmissions = new DefaultableCompositeCommand("ImportSubmissions");
@@ -237,9 +236,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ReceiveQuiz = new DefaultableCompositeCommand("ReceiveQuiz");
         public static DefaultableCompositeCommand ReceiveQuizAnswer = new DefaultableCompositeCommand("ReceiveQuizAnswer");
         public static DefaultableCompositeCommand DisplayQuizResults = new DefaultableCompositeCommand("DisplayQuizResults");
-        public static DefaultableCompositeCommand QuizResultsAvailableForSnapshot = new DefaultableCompositeCommand("QuizResultsAvailableForSnapshot");
-        public static DefaultableCompositeCommand QuizResultsSnapshotAvailable = new DefaultableCompositeCommand("QuizResultsSnapshotAvailable");
-        //public static DefaultableCompositeCommand PlaceQuizSnapshot = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand ShowDiagnostics = new DefaultableCompositeCommand("ShowDiagnostics");
         public static DefaultableCompositeCommand SetInkCanvasMode = new DefaultableCompositeCommand("SetInkCanvasMode");

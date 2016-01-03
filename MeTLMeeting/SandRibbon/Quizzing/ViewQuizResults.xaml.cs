@@ -72,25 +72,8 @@ namespace SandRibbon.Quizzing
 
         private void DisplayResults(object sender, RoutedEventArgs e)
         {
-            PrepareForRender();
-
-            this.Hide();
-            var quiz = (AssessAQuiz)QuizResults.Children[0];
-            quiz.TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
-            quiz.SnapshotHost.UpdateLayout();
-            var dpi = 96;
-            var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz.SnapshotHost);
-            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
-            var dv = new DrawingVisual();
-            using (var context = dv.RenderOpen())
-                context.DrawRectangle(new VisualBrush(quiz.SnapshotHost), null, dimensions);
-            bitmap.Render(dv);
-            quiz.TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
-
-            RestoreAfterRender();
-
-            Trace.TraceInformation("DisplayingQuiz");
+            var quiz = quizzes.SelectedItem as QuizQuestion;
+            var url = App.controller.config.displayQuizResultsOnNewSlideAtIndex(Globals.conversationDetails.Jid,Globals.slideDetails.index + 1, quiz.Id);
             this.Close();
         }
     }

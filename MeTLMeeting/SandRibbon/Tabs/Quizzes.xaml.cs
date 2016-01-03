@@ -23,7 +23,6 @@ namespace SandRibbon.Tabs
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
-            Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = Globals.quiz.activeQuizzes;
             SetupUI();
         }
@@ -173,30 +172,12 @@ namespace SandRibbon.Tabs
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
-            var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
+            var thisQuiz = (QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
 
             var viewEditAQuiz = new ViewEditAQuiz(thisQuiz);
             viewEditAQuiz.Owner = Window.GetWindow(this);
             viewEditAQuiz.ShowDialog();
-        }
-        private void importQuizSnapshot(string filename)
-        {
-            DelegateCommand<PreParser> onPreparserAvailable = null;
-            onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
-            {
-                Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                Commands.ImageDropped.ExecuteAsync(new ImageDrop
-                {
-                    Filename = filename,
-                    Point = new Point(0,0),
-                    Position = 1,
-                    OverridePoint = false,
-                    Target = "presentationSpace"
-                });
-            });
-            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.ExecuteAsync(null);
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {

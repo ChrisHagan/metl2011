@@ -1883,12 +1883,8 @@ namespace MeTLLib.DataTypes
 
             private string ProcessedUrl()
             {
-                string url = HasTag(URL) ? GetTag(URL) : "none";
-                if (url.ToLower() != "none")
-                {
-                    url = new Uri(server.host, new Uri(GetTag(URL), UriKind.Relative)).ToString();
-                    //url = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/quizProxy/{0}/{1}",GetTag(""),GetTag(ID)), UriKind.Relative)).ToString();
-                }
+                string url = HasTag(URL) ? GetTag(URL) : "";
+                if (url.ToLower() == "none") url = "";
                 return url;
             }
 

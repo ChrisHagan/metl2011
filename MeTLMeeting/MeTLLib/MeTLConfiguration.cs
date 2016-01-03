@@ -137,6 +137,17 @@
         {
             return new Uri(host, new Uri(String.Format("/createConversation/{0}", HttpUtility.UrlEncode(title)), UriKind.Relative));
         }
+        public Uri displayQuizOnNewSlideAtIndex(string conversation,int index, long quizId) {
+            return new Uri(host, new Uri(String.Format("/addQuizViewSlideToConversationAtIndex/{0}/{1}/{2}", conversation,index, quizId), UriKind.Relative));
+        }
+        public Uri displayQuizResultsOnNewSlideAtIndex(string conversation, int index, long quizId)
+        {
+            return new Uri(host, new Uri(String.Format("/addQuizResultsViewSlideToConversationAtIndex/{0}/{1}/{2}", conversation,index, quizId), UriKind.Relative));
+        }
+        public Uri displaySubmissionOnNewSlideAtIndex(string conversation, int index, string identity)
+        {
+            return new Uri(host, new Uri(String.Format("/displaySubmissionOnNewSlideAtIndex/{0}/{1}/{2}", conversation,index, identity), UriKind.Relative));
+        }
         public Uri serverStatus
         {
             get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
