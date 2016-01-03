@@ -74,7 +74,6 @@ namespace SandRibbon
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
             Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
@@ -874,10 +873,6 @@ namespace SandRibbon
                 if (Commands.JoinConversation.CanExecute(details.Jid))
                     Commands.JoinConversation.ExecuteAsync(details.Jid);
             }
-        }
-        private void setSync(object _obj)
-        {
-            Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }
         private void OriginalView(object _unused)
         {

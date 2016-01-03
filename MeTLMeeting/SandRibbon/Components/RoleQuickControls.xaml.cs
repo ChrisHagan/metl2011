@@ -6,11 +6,9 @@ using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace SandRibbon.Components
 {
@@ -21,7 +19,6 @@ namespace SandRibbon.Components
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdatedConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            Commands.SetSync.Execute(false);
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>((obj) =>
             {
                 Commands.RequerySuggested(
@@ -70,39 +67,29 @@ namespace SandRibbon.Components
                 {
                     ownerQuickControls.Visibility = Visibility.Collapsed;
                     participantQuickControls.Visibility = Visibility.Visible;
-
                 }
                 studentCanPublishCheckbox.IsChecked = conv.Permissions.studentCanWorkPublicly;
                 studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
-            }); ;
+                if (conv.Permissions.usersAreCompulsorilySynced) {
+                    syncButton.IsEnabled = false;
+                    syncButton.IsChecked = true;
+                }
+            });
         }
         private void SetSync(bool sync)
         {
-            var synced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncRed.png");
-            var deSynced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncGreen.png");
-            BitmapImage source;
-            if (Globals.synched)
+            if (sync)
             {
-                source = new BitmapImage(synced);
-                try
-                {
-                    var teacherSlide = (int)Globals.teacherSlide;
-                    if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
-                        Commands.MoveTo.Execute((int)Globals.teacherSlide);
-                }
-                catch (NotSetException) { }
+                syncButton.IsChecked = true;
+                var teacherSlide = (int)Globals.teacherSlide;
+                if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
+                    Commands.MoveTo.Execute((int)Globals.teacherSlide);
             }
-            else
-            {
-                source = new BitmapImage(deSynced);
-            }
-            Dispatcher.adoptAsync(() => syncButton.Icon = source);
         }
         private void toggleSync(object sender, RoutedEventArgs e)
         {
-            var synch = !Globals.synched;
-            System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
-            Commands.SetSync.Execute(synch);
+            Globals.synched = !Globals.synched;
+            Commands.SetSync.Execute(Globals.synched);
         }
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {

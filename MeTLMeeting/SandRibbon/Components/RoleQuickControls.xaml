@@ -18,17 +18,19 @@
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Click="StudentsMustFollowTeacherChecked" Content="Students must follow teacher" Style="{StaticResource IconSizeCheckBox}" />
                 <CheckBox Content="Administer content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Click="toggleBanhammer" Style="{StaticResource IconSizeCheckBox}"/>
                 <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" Style="{DynamicResource HorizontalRibbonButton}"/>
+                <dict:Button x:Name="submitSubmission" Style="{StaticResource HorizontalRibbonButton}" 
+                    Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
+                    Click="generateScreenshot" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
                 <dict:Button Text="DuplicateSlide" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}" Style="{StaticResource HorizontalRibbonButton}"/>
                 <dict:Button Text="DuplicateConversation" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{x:Static providers:Globals.conversationDetails}"
                   Style="{StaticResource HorizontalRibbonButton}"/>
             </StackPanel>
-            <WrapPanel x:Name="participantQuickControls">
-                <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync"/>
+            <StackPanel x:Name="participantQuickControls">
+                <CheckBox Content="Follow teacher"  x:Name="syncButton" ToolTip="{DynamicResource SyncToolTip}" Click="toggleSync" Style="{StaticResource IconSizeCheckBox}"/>
                 <dict:Button x:Name="submitSubmission" Style="{StaticResource HorizontalRibbonButton}" 
                     Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                    Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
-                    ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
-            </WrapPanel>
+                    Click="generateScreenshot" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

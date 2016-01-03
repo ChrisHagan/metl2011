@@ -19,7 +19,6 @@ namespace SandRibbon.Components
         public PrivacyTools()
         {
             InitializeComponent();
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
             try
             {
                 if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
@@ -40,6 +39,7 @@ namespace SandRibbon.Components
             {
                 Commands.SetPrivacy.ExecuteAsync("Private");
             }
+            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
@@ -68,27 +68,22 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if ((details.Permissions.studentCanWorkPublicly && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
+                                      if (canBecomePublic() && !details.blacklist.Contains(Globals.me))
                                       {
                                           publicMode.IsEnabled = true;
-                                          var privacy = Globals.isAuthor ? Globals.PUBLIC : Globals.PRIVATE;
-                                          SetPrivacy(privacy);
                                       }
-
                                       else
                                       {
                                           publicMode.IsEnabled = false;
                                           SetPrivacy("private");
-
                                       }
-                                        
                                   });
         }
 
         private void setPedagogy(PedagogyLevel obj)
         {
             //if (!canBecomePublic())
-              //  WorkPubliclyButton.IsChecked = (Globals.privacy == "private") ? false : true;
+            //  WorkPubliclyButton.IsChecked = (Globals.privacy == "private") ? false : true;
         }
         private bool canBecomePublic()
         {
@@ -118,7 +113,6 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                                       {
                                           settingSelectedMode(p);
-                                          //WorkPubliclyButton.IsChecked = p == "public";
                                           SetValue(PrivateProperty, p);
                                           Commands.RequerySuggested(Commands.SetPrivacy);
                                       });

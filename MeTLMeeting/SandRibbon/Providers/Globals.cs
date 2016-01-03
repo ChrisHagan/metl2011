@@ -220,11 +220,8 @@ namespace SandRibbon.Providers
         }
         public static bool synched
         {
-            get
-            {
-                return (bool)Commands.SetSync.LastValue();
-            }
-        }
+            get; set;
+        } = false;
         public static int teacherSlide
         {
             get
