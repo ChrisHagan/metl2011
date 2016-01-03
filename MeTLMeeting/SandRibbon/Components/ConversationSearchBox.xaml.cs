@@ -162,12 +162,12 @@ namespace SandRibbon.Components
 
         private void UnregisterCommands()
         {
-            if(conversationDetailsCommand != null) Commands.UpdateConversationDetails.UnregisterCommand(conversationDetailsCommand);
-            if(conversationDetailsCommand != null) Commands.UpdateForeignConversationDetails.UnregisterCommand(conversationDetailsCommand);
-            if(joinConversationCommand != null) Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
-            if(leaveConversationCommand != null) Commands.LeaveConversation.UnregisterCommand(leaveConversationCommand);
-            if(setConversationPermissionsCommand != null) Commands.SetConversationPermissions.UnregisterCommand(setConversationPermissionsCommand);
-            if(backstageModeChangedCommand != null) Commands.BackstageModeChanged.UnregisterCommand(backstageModeChangedCommand);
+            if (conversationDetailsCommand != null) Commands.UpdateConversationDetails.UnregisterCommand(conversationDetailsCommand);
+            if (conversationDetailsCommand != null) Commands.UpdateForeignConversationDetails.UnregisterCommand(conversationDetailsCommand);
+            if (joinConversationCommand != null) Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
+            if (leaveConversationCommand != null) Commands.LeaveConversation.UnregisterCommand(leaveConversationCommand);
+            if (setConversationPermissionsCommand != null) Commands.SetConversationPermissions.UnregisterCommand(setConversationPermissionsCommand);
+            if (backstageModeChangedCommand != null) Commands.BackstageModeChanged.UnregisterCommand(backstageModeChangedCommand);
         }
 
         private void FillSearchResultsFromInput()
@@ -353,30 +353,25 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 if (details.IsEmpty) return;
-                // can I use the following test to determine if we're in a conversation?
-                if (String.IsNullOrEmpty(Globals.location.activeConversation))
-                    return;
-
-                /*if (!details.isDeleted)
-                    searchResultsObserver.Add(new SearchConversationDetails(details));
-                 */
-                //if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
-                // was the above line but this doesn't handle the case of bug #1492
-                // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
-                if (details.IsJidEqual(Globals.location.activeConversation))
+                if (!String.IsNullOrEmpty(Globals.location.activeConversation))
                 {
-                    if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))//(!Globals.credentials.authorizedGroups.Select(s => s.groupKey.ToLower()).Contains(details.Subject.ToLower()) && !details.isDeleted))
+                    if (details.IsJidEqual(Globals.location.activeConversation))
                     {
-                        currentConversation.Visibility = Visibility.Collapsed;
-                        // really don't like the following line, but it stops the backstagemode changing if already switched to it
-                        if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
-                            Commands.BackstageModeChanged.ExecuteAsync("find");
+                        if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
+                        {
+                            currentConversation.Visibility = Visibility.Collapsed;
+                            if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
+                                Commands.BackstageModeChanged.ExecuteAsync("find");
+                        }
+                        if (!shouldShowConversation(details) || details.isDeleted)
+                        {
+                            Commands.RequerySuggested();
+                            this.Visibility = Visibility.Visible;
+                        }
                     }
-                    if (!shouldShowConversation(details) || details.isDeleted)
-                    {
-                        Commands.RequerySuggested();
-                        this.Visibility = Visibility.Visible;
-                    }
+                }
+                if (!searchResultsObserver.Select(d => d.Jid).Contains(details.Jid)){
+                    searchResultsObserver.Add(details);
                 }
                 RefreshSortedConversationsList();
             });
@@ -522,7 +517,7 @@ namespace SandRibbon.Components
             proposedDetails.Title = proposedDetails.Title.Trim();
             var thisTitleIsASCII = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(proposedDetails.Title)).Equals(proposedDetails.Title);
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
-            var titleAlreadyUsed = searchResultsObserver.Except(new[] { proposedDetails },jidComparer).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
+            var titleAlreadyUsed = searchResultsObserver.Except(new[] { proposedDetails }, jidComparer).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
             var errorText = String.Empty;
             if (proposedDetails.Title.Length > 110) errorText += "Conversation titles have a maximum length of 110 characters";
             if (!thisTitleIsASCII)
@@ -534,7 +529,7 @@ namespace SandRibbon.Components
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             editInProgress = false;
-            var details = SearchConversationDetails.HydrateFromServer(App.controller.client,context(sender));
+            var details = SearchConversationDetails.HydrateFromServer(App.controller.client, context(sender));
 
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))

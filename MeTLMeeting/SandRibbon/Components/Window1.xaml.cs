@@ -144,12 +144,12 @@ namespace SandRibbon
                 duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
             }, (kvp) => {
                 try {
-                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAdministerConversation(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
+                    return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAddPage(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
                 } catch {
                     return false;
                 }
                 }));
-            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation,userMayAdministerConversation));
+            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation,userMayDuplicateConversation));
             Commands.CreateGrouping.RegisterCommand(new DelegateCommand<object>(createGrouping,(o) => mustBeInConversationAndBeAuthor(o)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
@@ -792,14 +792,16 @@ namespace SandRibbon
                 App.controller.client.DuplicateSlide(kvp.Key,kvp.Value);
             }
         }
-        private void duplicateConversation(ConversationDetails _conversationToDuplicate) {
-            var conversationToDuplicate = Globals.conversationDetails;
+        private void duplicateConversation(ConversationDetails conversationToDuplicate) {
             if (conversationToDuplicate.UserHasPermission(Globals.credentials))
             {
                 App.controller.client.DuplicateConversation(conversationToDuplicate);
             }
         }
-        private bool userMayAdministerConversation(ConversationDetails _conversation)
+        private bool userMayDuplicateConversation(ConversationDetails conversationToDuplicate) {
+            return conversationToDuplicate.UserHasPermission(Globals.credentials);
+        }
+        private bool userMayAddPage(ConversationDetails _conversation)
         {
             var conversation = Globals.conversationDetails;
             if (conversation == null)

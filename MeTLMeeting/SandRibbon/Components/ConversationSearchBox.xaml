@@ -34,6 +34,8 @@
             <StackPanel x:Name="conversationOptions" Orientation="Horizontal" HorizontalAlignment="Right">
                 <dict:Button x:Name="renameConversationButton" Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Command="{x:Static components:ConversationSearchBox.RenameConversation}" />
                 <dict:Button x:Name="shareConversationButton" Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Command="{x:Static components:ConversationSearchBox.ShareConversation}" />
+                <dict:Button Text="Duplicate" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{Binding}"
+                  InternalButtonSize="Medium"/>
                 <dict:Button x:Name="deleteConversationButton" Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Command="{x:Static components:ConversationSearchBox.DeleteConversation}"/>
             </StackPanel>
         </DataTemplate>
