@@ -5,6 +5,42 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     x:Class="SandRibbon.Components.ResourceDictionaries.TypedControlStylingEventHandlers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="heading" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="/Resources/advent-pro.thin.ttf#Advent Pro" />
+        <Setter Property="FontSize" Value="40" />
+    </Style>
+    <Style x:Key="subHeading" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource heading}">
+        <Setter Property="FontSize" Value="35" />
+    </Style>
+    <Style x:Key="minorHeading" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource heading}">
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+    <Thickness Top="50" x:Key="space"/>
+    <Thickness x:Key="nearBottom" Left="0" Right="0" Bottom="15" Top="0" />
+    <Thickness x:Key="nearRight" Left="0" Right="15" Bottom="0" Top="0" />
+    <Thickness x:Key="nearLeft" Left="15" Right="0" Bottom="0" Top="0" />
+    <Thickness x:Key="nearTop" Left="0" Right="0" Bottom="0" Top="15" />
+
+    <Thickness x:Key="clearBottom" Left="0" Right="0" Bottom="50" Top="0" />
+    <Thickness x:Key="clearRight" Left="0" Right="50" Bottom="0" Top="0" />
+    <Thickness x:Key="clearLeft" Left="50" Right="0" Bottom="0" Top="0" />
+    <Thickness x:Key="clearTop" Left="0" Right="0" Bottom="0" Top="50" />
+
+    <Thickness x:Key="insetTopLeft" Left="50" Right="0" Bottom="0" Top="50" />
+    <Style x:Key="medium" TargetType="{x:Type Label}">
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+    <Style x:Key="explanation" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource AccentColor}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <!--This area is for defining control templates and their triggers on specific controls-->
     <Style x:Key="ThicknessButton" TargetType="Button">
         <Setter Property="OverridesDefaultStyle" Value="True"/>

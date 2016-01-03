@@ -36,7 +36,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void viewSubmissions(object _obj)
         {
-            var view = new ViewSubmissions(submissionList);
+            var view = new ViewSubmissions();
             view.Owner = Window.GetWindow(this);
             view.Show();
         }

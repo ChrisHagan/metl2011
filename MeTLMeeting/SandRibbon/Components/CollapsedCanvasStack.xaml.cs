@@ -199,13 +199,6 @@ namespace SandRibbon.Components
         {
             if (_target == "presentationSpace")
             {
-                //if (Globals.conversationDetails.Permissions.studentCanPublish == false)
-                //{
-                //    if (Globals.conversationDetails.Author != Globals.me)
-                //    {
-                //        incomingPrivacy = Privacy.Private;
-                //    }
-                //}
                 return incomingPrivacy;
             }
             else
@@ -349,12 +342,6 @@ namespace SandRibbon.Components
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.ResetSyncTimer();
-            /*
-            if (Work.EditingMode == InkCanvasEditingMode.GestureOnly && !e.InAir)
-            {
-                e.
-            }
-            */
         }
 
         protected Point lastPosition = new Point(0, 0);
@@ -670,7 +657,7 @@ namespace SandRibbon.Components
         private void SelectionMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
             var inkCanvas = sender as InkCanvas;
-            inkCanvas.Select(new StrokeCollection(filterOnlyMineExceptIfHammering(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)), filterOnlyMine(inkCanvas.GetSelectedElements()));
+            inkCanvas.Select(new StrokeCollection(filterOnlyMineExceptIfHammering(inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).Select(s => s as Stroke)), filterOnlyMineExceptIfHammering(inkCanvas.GetSelectedElements()));
             bool shouldUpdateContentBounds = false;
             var newStrokes = inkCanvas.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
             var strokeEqualityCount = strokesAtTheStart.Select(s => s.tag().id).Union(newStrokes.Select(s => s.tag().id)).Count();
@@ -1077,15 +1064,7 @@ namespace SandRibbon.Components
                 return strokes.Where(s => s.tag().author == me).ToList();
             }
         }
-        private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements) where T : UIElement
-        {
-            var myText = elements.OfType<MeTLTextBox>().Where(t => t.tag().author == Globals.me);
-            var myImages = elements.OfType<MeTLImage>().Where(i => i.tag().author == Globals.me);
-            var myElements = new List<T>();
-            myElements.AddRange(myText.OfType<T>());
-            myElements.AddRange(myImages.OfType<T>());
-            return myElements;
-        }
+
         private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements, Func<T, string> authorExtractor) where T : UIElement
         {
             if (Globals.IsBanhammerActive)
@@ -1094,7 +1073,7 @@ namespace SandRibbon.Components
             }
             else
             {
-                return filterOnlyMine(elements, authorExtractor);
+                return elements.Where(e => authorExtractor(e).Trim().ToLower() == Globals.me.Trim().ToLower());
             }
         }
         private IEnumerable<T> filterOnlyMineExceptIfHammering<T>(IEnumerable<T> elements) where T : UIElement
@@ -1105,31 +1084,15 @@ namespace SandRibbon.Components
             }
             else
             {
-                return filterOnlyMine(elements);
+                var myText = elements.OfType<MeTLTextBox>().Where(t => t.tag().author == Globals.me);
+                var myImages = elements.OfType<MeTLImage>().Where(i => i.tag().author == Globals.me);
+                var myElements = new List<T>();
+                myElements.AddRange(myText.OfType<T>());
+                myElements.AddRange(myImages.OfType<T>());
+                return myElements;
             }
         }
-        private IEnumerable<T> filterOnlyMine<T>(IEnumerable<T> elements, Func<T, string> authorExtractor)
-        {
-            return elements.Where(e => authorExtractor(e).Trim().ToLower() == Globals.me.Trim().ToLower());
-        }
-        private T filterOnlyMine<T>(UIElement element) where T : UIElement
-        {
-            UIElement filteredElement = null;
-
-            if (element == null)
-                return null;
-
-            if (element is MeTLTextBox)
-            {
-                filteredElement = ((MeTLTextBox)element).tag().author == Globals.me ? element : null;
-            }
-            else if (element is Image)
-            {
-                filteredElement = ((Image)element).tag().author == Globals.me ? element : null;
-            }
-            return filteredElement as T;
-        }
-
+        
         private void selectionChanged(object sender, EventArgs e)
         {
             myTextBox = (MeTLTextBox)Work.GetSelectedTextBoxes().FirstOrDefault();
@@ -2376,10 +2339,10 @@ namespace SandRibbon.Components
             if (myTextBox == null)
                 myTextBox = (MeTLTextBox)Work.GetSelectedElements().Where(b => b is MeTLTextBox).First();
 
-            var currentTextBox = filterOnlyMine<MeTLTextBox>(myTextBox);
-            if (currentTextBox == null)
+            var currentTextBoxes = filterOnlyMineExceptIfHammering<MeTLTextBox>(new[] { myTextBox });
+            if (currentTextBoxes.Count() == 0)
                 return;
-
+            var currentTextBox = currentTextBoxes.First();
             var undoInfo = getInfoOfBox(currentTextBox);
             Action undo = () =>
             {
@@ -2421,7 +2384,7 @@ namespace SandRibbon.Components
             {
                 var selectedTextBoxes = new List<MeTLTextBox>();
                 selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
-                if (filterOnlyMine<MeTLTextBox>(myTextBox) != null)
+                if (filterOnlyMineExceptIfHammering(new[] { myTextBox }).FirstOrDefault(null) != null)
                     selectedTextBoxes.Add(myTextBox);
                 var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
 

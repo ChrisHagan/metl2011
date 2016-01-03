@@ -75,8 +75,6 @@ namespace SandRibbon.Providers
         {
             if (image == null)
                 return;
-            var slide = (Slide)image.DataContext;
-            var internalSlideId = slide.id;
             bool shouldPaintThumb = false;
             lock (cacheLock)
             {
@@ -90,7 +88,7 @@ namespace SandRibbon.Providers
             } else {
                 var server = App.controller.config;
                 var host = server.name;
-                var url = string.Format("{0}/thumbnail/{1}/{2}", server.host, host,internalSlideId);
+                var url = server.thumbnailUri(string.Format("{0}",slideId));
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
                     try

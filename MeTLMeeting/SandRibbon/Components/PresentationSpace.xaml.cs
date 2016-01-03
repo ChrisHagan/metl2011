@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -12,11 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Pedagogicometry;

@@ -4,78 +4,57 @@
     xmlns:SandRibbon="clr-namespace:SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-    Title="View Submissions"
-    x:Name="viewSubmissions"
-    SizeToContent="WidthAndHeight">
-    <Window.Resources>
-        <CollectionViewSource Source="{Binding ElementName=Buckets, Path=SelectedItem.submissions}" x:Key="sortedSubmissionsView">
-            <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription PropertyName="time"/>
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-    </Window.Resources>
-    <Window.CommandBindings>
-        <CommandBinding Command="{x:Static api:Commands.ImportSubmissions}" Executed="importAllSubmissionsInBucket"/>
-    </Window.CommandBindings>
-    <Border Background="{StaticResource BackgroundBlueGradient}">
-        <DockPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
-                <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmissions}" HorizontalAlignment="Right">Insert selected submissions as a new slide</Button>
-            </StackPanel>
-            <Grid MaxHeight="450">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="325"/>
-                    <ColumnDefinition MaxWidth="325"/>
-                    <ColumnDefinition MinWidth="500"/>
-                </Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" x:Name="Buckets" SelectionMode="Single" Background="Transparent" SelectedIndex="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Path=submissionList}" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListBox.ItemTemplate>
+    Title="View submissions"
+    x:Name="viewSubmissions">
+    <Grid Margin="{DynamicResource insetTopLeft}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Style="{DynamicResource heading}" Text="Submissions" Margin="{DynamicResource nearBottom}" 
+                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <DataGrid Grid.Column="0" Grid.Row="1" x:Name="Submissions" AutoGenerateColumns="False" 
+                  SelectionChanged="Submissions_SelectionChanged"                  
+                  CanUserAddRows="False" CanUserDeleteRows="False"
+                  ItemsSource="{Binding}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding BindsDirectlyToSource=True, Converter={x:Static SandRibbon:Converters.submissionCountConverter}}"></TextBlock>
-                                <TextBlock Margin="10 0 0 0 " Text="{Binding Path=From}"/>
-                                <TextBlock Margin="10 0 0 0 " Text="{Binding Path=To}"/>
-                            </StackPanel>
-
+                            <CheckBox IsChecked="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Click="CheckBox_Click"/>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <ListBox Grid.Column="1" x:Name="submissions" SelectionMode="Multiple" Background ="Transparent" 
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         ItemsSource="{Binding Source={StaticResource sortedSubmissionsView}}">
-                    <ListBox.ItemTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Path=Author}" Header="Author"/>
+                <DataGridTemplateColumn Header="Preview" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Viewbox Width="100" Height="100">
-                                    <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
-                                </Viewbox>
-                                <TextBlock Text="{Binding Path=author}" />
-                            </Grid>
+                            <Viewbox Width="Auto">
+                                <Border BorderBrush="Black" BorderThickness="1">
+                                    <Image Source="{Binding Path=Image}" Width="640"/>
+                                </Border>
+                            </Viewbox>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <ScrollViewer Grid.Column="2" >
-                    <ItemsControl ItemsSource="{Binding ElementName=submissions, Path=SelectedItems}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid x:Name="GridContainer" MinHeight="150">
-                                    <Viewbox Margin="0,35,0,0" Height="Auto" Width="{Binding ElementName=GridContainer, Path=ActualWidth}" VerticalAlignment="Top" HorizontalAlignment="Left" >
-                                        <Image x:Name="previewImage" Source="{Binding Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
-                                    </Viewbox>
-                                    <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                                        Content="{Binding Converter={x:Static SandRibbon:Converters.ExtractSubmissionAuthor}}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </Grid>
-        </DockPanel>
-    </Border>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Path=Message}" Header="Message"/>
+                <DataGridTextColumn Binding="{Binding Path=Date}" Header="Time"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="50"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch" 
+                      ShowsPreview="True" Visibility="Visible"  />
+        <Image x:Name="preview" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"/>
+        <Grid  Grid.Row="2" Grid.Column="0" >
+            <Button ToolTip="{DynamicResource DisplaySubmissionToolTip}" 
+                Command="{x:Static api:Commands.ImportSubmissions}" 
+                HorizontalAlignment="Right" Content="Insert selected submissions" />
+        </Grid>
+    </Grid>
 </Window>

@@ -8,231 +8,131 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using System.Diagnostics;
-using System.Windows.Data;
-using MeTLLib;
-using System.ComponentModel;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using SandRibbon.Providers;
 
 namespace SandRibbon.Components.Submissions
 {
-    public class SubmissionBucket : INotifyPropertyChanged
+    public class DisplayableSubmission : DependencyObject
     {
-        private DateTime _from;
-        private DateTime _to;
-        private bool _allSubmissionsBucket;
-        private readonly ObservableCollection<TargettedSubmission> _submissions = new ObservableCollection<TargettedSubmission>();
+        public BitmapImage Image { get; set; }
+        public string Author { get; set; }
+        public string Message { get; set; }
+        public string Date { get; set; }
 
-        public string From { get { return string.Format("From: {0}", _from.ToString()); } }
-        public string To { get { return string.Format("To: {0}", _to.ToString()); } }
-        public long ToInTicks { get { return _to.Ticks; } }
-        public long FromInTicks { get { return _from.Ticks; } }
-        public bool IsAllSubmissionsBucket // Flag to signify that all submissions will be added to this bucket
-        { 
-            get
-            {
-                return _allSubmissionsBucket;
-            } 
-            set
-            {
-                if (value != _allSubmissionsBucket)
-                {
-                    _allSubmissionsBucket = value;
-                    NotifyPropertyChanged("IsAllSubmissionsBucket");
-                }
-            }
-        }
-        public ObservableCollection<TargettedSubmission> submissions { get { return _submissions; } }
-
-        public int Count { get { return submissions.Count; } }
-    
-        #region Helper methods
-        public void UpdateToIfRequired(DateTime toTime)
+        public bool IsSelected
         {
-            if (IsAllSubmissionsBucket && toTime.Ticks > ToInTicks)
-            {
-                _to = toTime;
-                NotifyPropertyChanged("To");
-            }
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
         }
 
-        public bool TimeInBucketRange(long ticks)
-        {
-            return ticks >= FromInTicks && ticks <= ToInTicks;
-        }
-        #endregion
-    
-        public SubmissionBucket(DateTime from, DateTime to)
-        {
-            _from = from;
-            _to = to;
-            _allSubmissionsBucket = false;
-            _submissions.CollectionChanged += (_sender, _args) => { NotifyPropertyChanged("submissions"); };
-        }
+        public Uri Url { get; internal set; }
+        public string Source { get; internal set; }
 
-        #region INotifyPropertyChanged members
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(String propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-        #endregion
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected", typeof(bool), typeof(DisplayableSubmission), new PropertyMetadata(false));
     }
     public partial class ViewSubmissions : Window
     {
-        public ObservableCollection<SubmissionBucket> submissionList {get; set;}
-        private CollectionViewSource submissionsView;
+        public ObservableCollection<DisplayableSubmission> submissions { get; set; } = new ObservableCollection<DisplayableSubmission>();
         public ViewSubmissions()
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
-        }
-        private void closeMe(object obj)
-        {
-            Dispatcher.adopt(delegate
+            Submissions.DataContext = submissions;
+            var receiveLiveScreenshot = new DelegateCommand<TargettedSubmission>(recieveSubmission);
+            var displaySubmissions = new DelegateCommand<object>(importAllSubmissionsInBucket, canImportSubmission);
+            Loaded += delegate
             {
-                Close();
-            });
-        }
-        private void joinConversation(string obj)
-        {
-            Dispatcher.adopt(delegate
+                Commands.ReceiveScreenshotSubmission.RegisterCommand(receiveLiveScreenshot);
+                Commands.ImportSubmissions.RegisterCommand(displaySubmissions);
+                App.controller.client.historyProvider.Retrieve<PreParser>(delegate { }, delegate { }, parser =>
+                {
+                    foreach (var s in parser.submissions)
+                    {
+                        submissions.Add(load(s));
+                    }
+                }, Globals.location.activeConversation);
+            };
+            Unloaded += delegate
             {
-                this.Close();
-                UpdateLayout();
-            });
+                Commands.ReceiveScreenshotSubmission.UnregisterCommand(receiveLiveScreenshot);
+                Commands.ImportSubmissions.UnregisterCommand(displaySubmissions);
+            };
         }
-        private readonly long fiveMinuteTicks = new TimeSpan(0, 5, 0).Ticks; 
-        public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
-        {
-            Trace.TraceInformation("ViewingSubmissions");
-            submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
-            submissionList = new ObservableWithPropertiesCollection<SubmissionBucket>();
-            var sortedSubmissions = userSubmissions.ToList().OrderBy(s => s.time);
-            long start = sortedSubmissions.First().time;
-            int currentBucket = 0;
-            submissionList.Add(new SubmissionBucket(new DateTime(start), new DateTime(start + fiveMinuteTicks)));
-            foreach(var submission in sortedSubmissions)
-            {      
-               if(!(start <= submission.time && submission.time <= (start + fiveMinuteTicks)))
-               {
-                   currentBucket++;
-                   start = submission.time;
-                   submissionList.Add(new SubmissionBucket(new DateTime(start), new DateTime(start + fiveMinuteTicks)));
-               }
-               submissionList[currentBucket].submissions.Add(submission);
-            }
 
-            CreateAllBucket(sortedSubmissions);
-
-            submissions.SelectedIndex = 0;
-            DataContext = this;
-        }
-        
-        /// <remark>
-        /// CreateAllBucket must be called after adding all of the submissions into the submissionList 
-        /// </remark>
-        /// <param name="listOrderedBySubmissionTime">Ordered by submission time list</param>
-        private void CreateAllBucket(IOrderedEnumerable<TargettedSubmission> listOrderedBySubmissionTime)
+        private DisplayableSubmission load(TargettedSubmission submission)
         {
-            // add a bucket for all of the submissions at the end
-            var allBucket = new SubmissionBucket(new DateTime(FirstSubmissionTime()), new DateTime(LastSubmissionTime()));
-            var allBucketSubmissionList = allBucket.submissions;
-            foreach (var submission in listOrderedBySubmissionTime)
+            var uri = App.controller.config.getResource(submission.url);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = new System.IO.MemoryStream(App.controller.client.resourceProvider.secureGetData(uri));
+            bitmap.EndInit();
+            return new DisplayableSubmission
             {
-                allBucketSubmissionList.Add(submission);
-            }
-            allBucket.IsAllSubmissionsBucket = true;
-            submissionList.Add(allBucket);
-        }
-        
-        private long FirstSubmissionTime()
-        {
-            return submissionList.First().FromInTicks;
-        }
-
-        private long LastSubmissionTime()
-        {
-            return submissionList.Last().ToInTicks;
-        }
-
-        private void UpdateAllBucket(TargettedSubmission submission)
-        {
-            var allBucket = submissionList.Last();
-            Debug.Assert(allBucket.IsAllSubmissionsBucket);
-
-            allBucket.UpdateToIfRequired(new DateTime(submission.time + fiveMinuteTicks));
-            allBucket.submissions.Add(submission);
-            submissionsView.View.Refresh();
+                Image = bitmap,
+                Source = submission.url,
+                Url = uri,
+                Author = submission.author,
+                Message = submission.title,
+                Date = submission.timestamp.ToString()
+            };
         }
 
         private void recieveSubmission(TargettedSubmission submission)
         {
+            if (String.IsNullOrEmpty(submission.target) || submission.target != "submission") return;
             Dispatcher.adopt(delegate
             {
-                if (!String.IsNullOrEmpty(submission.target) && submission.target != "submission")
-                    return;
-
-                var addedToBucket = false;
-
-                // find the bucket the submission belongs to
-                foreach (var bucket in submissionList)
-                {
-                    if (!bucket.IsAllSubmissionsBucket && bucket.TimeInBucketRange(submission.time))
-                    {
-                        bucket.submissions.Add(submission);
-                        addedToBucket = true;
-                        break;
-                    }
-                }
-
-                if (!addedToBucket)
-                {
-                    var bucket = new SubmissionBucket(new DateTime(submission.time), new DateTime(submission.time + fiveMinuteTicks));
-                    bucket.submissions.Add(submission);
-                    submissionList.Insert(submissionList.Count - 2, bucket); // zero-based index. Count - 1 is last item, Count - 2 is second last.
-                }
-
-                UpdateAllBucket(submission);
+                submissions.Add(load(submission));
             });
         }
-        
-        private void importAllSubmissionsInBucket(object sender, ExecutedRoutedEventArgs e)
+        private void importAllSubmissionsInBucket(object o)
         {
-             var items = submissions.SelectedItems;
+            var items = Submissions.SelectedItems;
             DelegateCommand<PreParser> onPreparserAvailable = null;
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
-               {
-                   Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                   var imagesToDrop = new List<ImageDrop>();
-                   var height = 0;
-                   foreach(var elem in items)
-                   {
-                       var image = (TargettedSubmission) elem;
-                       imagesToDrop.Add( new ImageDrop
-                           {
-                               Filename = image.url.ToString(),
-                               Target = "presentationSpace",
-                               Point = new Point(0, height),
-                               Position = 1,
-                               OverridePoint = true
-                           });
-                       height += 540;
-                   }
-                   Commands.ImagesDropped.ExecuteAsync(imagesToDrop);
-               });
+            {
+                Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
+                var imagesToDrop = new List<ImageDrop>();
+                var height = 0;
+                foreach (var elem in items)
+                {
+                    var image = (TargettedSubmission)elem;
+                    imagesToDrop.Add(new ImageDrop
+                    {
+                        Filename = image.url.ToString(),
+                        Target = "presentationSpace",
+                        Point = new Point(0, height),
+                        Position = 1,
+                        OverridePoint = true
+                    });
+                    height += 540;
+                }
+                Commands.ImagesDropped.ExecuteAsync(imagesToDrop);
+                Close();
+            });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
             Commands.AddSlide.ExecuteAsync(null);
         }
-        private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)
+        private bool canImportSubmission(object obj)
         {
-            if (submissions != null)
-            e.CanExecute = submissions.SelectedItem != null;
+            return submissions.Any(s => s.IsSelected);
+        }
+
+        private void Submissions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var submission = e.AddedItems[0] as DisplayableSubmission;
+                preview.Source = submission.Image;
+            }
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            Trace.TraceInformation(String.Join(",", submissions.Select(s => s.IsSelected.ToString())));
+            Commands.RequerySuggested(Commands.ImportSubmissions);
         }
     }
 }
