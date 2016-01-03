@@ -53,7 +53,7 @@ namespace SandRibbon.Components
         {
             var banhammerActive = (bool)(sender as CheckBox).IsChecked;
             Commands.BanhammerActive.Execute(banhammerActive);
-            if(banhammerActive) Commands.SetInkCanvasMode.Execute("Select");
+            if(banhammerActive) Commands.SetLayer.Execute("Select");
         }
         protected void UpdatedConversationDetails(ConversationDetails conv)
         {

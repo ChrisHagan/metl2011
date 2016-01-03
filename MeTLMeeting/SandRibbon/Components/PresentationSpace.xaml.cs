@@ -122,17 +122,9 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 if (details.IsEmpty) return;
-                if (string.IsNullOrEmpty(details.Jid) || !(details.UserHasPermission(Globals.credentials))) return;
-                try
-                {
-                    if (Globals.conversationDetails == null)
-                        Commands.SetPrivacy.ExecuteAsync("private");
-                    else if (Globals.conversationDetails.Author == Globals.me)
-                        Commands.SetPrivacy.ExecuteAsync("public");
-                }
-                catch (NotSetException)
-                {
-                    Commands.SetPrivacy.ExecuteAsync("private");
+                if (string.IsNullOrEmpty(details.Jid)) return;
+                if (details.UserIsBlackListed(Globals.me)) {
+                    Commands.SetPrivacy.Execute("private");
                 }
             });
         }
