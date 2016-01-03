@@ -143,7 +143,6 @@ namespace MeTLLib.Providers
             {
                 cache[currentSlide] = jabberWireFactory.create<PreParser>(room);
             }
-            //cache[currentSlide].ActOnUntypedMessage(message, timestamp);
             cache[currentSlide].ActOnUntypedMessage(element);
         }
         public void PopulateFromHistory(PreParser preParser)

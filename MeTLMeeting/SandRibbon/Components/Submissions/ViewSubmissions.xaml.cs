@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
@@ -11,6 +9,8 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using SandRibbon.Providers;
+using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -89,31 +89,10 @@ namespace SandRibbon.Components.Submissions
         }
         private void importAllSubmissionsInBucket(object o)
         {
-            var items = Submissions.SelectedItems;
-            DelegateCommand<PreParser> onPreparserAvailable = null;
-            onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
-            {
-                Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                var imagesToDrop = new List<ImageDrop>();
-                var height = 0;
-                foreach (var elem in items)
-                {
-                    var image = (TargettedSubmission)elem;
-                    imagesToDrop.Add(new ImageDrop
-                    {
-                        Filename = image.url.ToString(),
-                        Target = "presentationSpace",
-                        Point = new Point(0, height),
-                        Position = 1,
-                        OverridePoint = true
-                    });
-                    height += 540;
-                }
-                Commands.ImagesDropped.ExecuteAsync(imagesToDrop);
-                Close();
-            });
-            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.ExecuteAsync(null);
+            var items = submissions.Where(s => s.IsSelected).Select(d => d.Source).ToList();
+            var url = App.controller.config.displaySubmissionOnNewSlideAtIndex(Globals.conversationDetails.Jid, Globals.slideDetails.index + 1);
+            var data = new JArray(items);
+            var newC = App.controller.client.resourceProvider.securePutData(url, Encoding.UTF8.GetBytes(data.ToString()));
         }
         private bool canImportSubmission(object obj)
         {

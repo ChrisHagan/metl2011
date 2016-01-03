@@ -144,9 +144,9 @@
         {
             return new Uri(host, new Uri(String.Format("/addQuizResultsViewSlideToConversationAtIndex/{0}/{1}/{2}", conversation,index, quizId), UriKind.Relative));
         }
-        public Uri displaySubmissionOnNewSlideAtIndex(string conversation, int index, string identity)
+        public Uri displaySubmissionOnNewSlideAtIndex(string conversation, int index)
         {
-            return new Uri(host, new Uri(String.Format("/displaySubmissionOnNewSlideAtIndex/{0}/{1}/{2}", conversation,index, identity), UriKind.Relative));
+            return new Uri(host, new Uri(String.Format("/addSubmissionSlideToConversationAtIndex/{0}/{1}", conversation,index), UriKind.Relative));
         }
         public Uri serverStatus
         {

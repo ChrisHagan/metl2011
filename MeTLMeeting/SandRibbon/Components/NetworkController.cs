@@ -70,7 +70,6 @@ namespace SandRibbon.Components
             Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
-            Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
             Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
             Commands.SendMoveDelta.RegisterCommand(new DelegateCommand<TargettedMoveDelta>(SendMoveDelta));

@@ -7,7 +7,7 @@
     <StackPanel Orientation="Horizontal">
         <dict:Button x:Name="submitSubmission" 
                 Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                Command="{x:Static api:Commands.InitiateScreenshot}" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
+                Click="generateScreenshot" ToolTip="{DynamicResource SubmitSubmissionToolTip}"/>
         <dict:Button x:Name="viewSubmission" Command="{x:Static api:Commands.ViewSubmissions}" 
                                   Text="View Submissions" Icon="\Resources\ViewSubmission.png"
                                   ToolTip="{DynamicResource ViewSubmissionToolTip}"/>

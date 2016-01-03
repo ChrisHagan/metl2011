@@ -403,7 +403,6 @@ namespace MeTLLib
                     catch (Exception e)
                     {
                         Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
-                        UploadAndSendSubmission(lii);
                     }
                 }), "uploadAndSendSubmission", "clientConnection");
             };

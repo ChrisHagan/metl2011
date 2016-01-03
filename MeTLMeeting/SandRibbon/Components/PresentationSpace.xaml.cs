@@ -138,15 +138,12 @@ namespace SandRibbon.Components
         }
         private void GenerateScreenshot(ScreenshotDetails details)
         {
-            var screenshot = generateScreenshot(details);
-            details.onGeneration(screenshot);
-        }
-        private string generateScreenshot(ScreenshotDetails details)
-        {
-            var dpi = 96;
-            var file = "";
             Dispatcher.adopt(() =>
             {
+                var target = FindResource("target") as string;
+                if ("presentationSpace" != target) return;
+
+                var dpi = 96;
                 var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack, details.dimensions);
                 var bitmap = new RenderTargetBitmap((int)targetSize.Width, (int)targetSize.Height, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
@@ -158,13 +155,13 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
+                var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);
                 }
+                details.onGeneration(file);
             });
-            return file;
         }
         private readonly object preParserRenderingLock = new object();
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)

@@ -1711,8 +1711,9 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
+                    SetTag(identityTag, value.url);
                     SetTag(AUTHOR, value.author);
-                    SetTag(URL, value.url);// strippedUrl);
+                    SetTag(URL, value.url);
                     SetTag(TITLE, value.title);
                     SetTag(targetTag, value.target);
                     SetTag(timestampTag, value.timestamp);

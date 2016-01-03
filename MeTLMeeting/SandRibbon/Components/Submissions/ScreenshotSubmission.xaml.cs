@@ -33,7 +33,6 @@ namespace SandRibbon.Components.Submissions
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
-            Commands.InitiateScreenshot.RegisterCommand(new DelegateCommand<object>(generateScreenshot));
             conversationChanged(null);
         }
         private void viewSubmissions(object _obj)
@@ -113,7 +112,7 @@ namespace SandRibbon.Components.Submissions
                 return true;
             return false;
         }
-        private void generateScreenshot(object sender)
+        private void generateScreenshot(object sender, RoutedEventArgs e)
         {
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
@@ -124,8 +123,17 @@ namespace SandRibbon.Components.Submissions
                 author = Globals.me,
                 onGeneration = hostedFileName =>
                 {
-                    App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                    (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                    App.controller.client.UploadAndSendSubmission(
+                        new MeTLStanzas.LocalSubmissionInformation(
+                            App.controller.client.location.currentSlide, 
+                            Globals.me, 
+                            "submission",
+                            Privacy.Public, 
+                            -1L, 
+                            hostedFileName, 
+                            Globals.conversationDetails.Title, 
+                            new Dictionary<string, Color>(), 
+                            Globals.generateId(hostedFileName)));
                     MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                 }
             });
