@@ -370,7 +370,8 @@ namespace SandRibbon.Components
                         }
                     }
                 }
-                if (!searchResultsObserver.Select(d => d.Jid).Contains(details.Jid)){
+                if (!searchResultsObserver.Select(d => d.Jid).Contains(details.Jid)
+                    && !details.isDeleted){
                     searchResultsObserver.Add(details);
                 }
                 RefreshSortedConversationsList();

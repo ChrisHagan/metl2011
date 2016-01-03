@@ -549,7 +549,8 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+            var identity = value as string;
+            var uri = App.controller.config.getResource(identity);
             var bitmap = new BitmapImage();
             try
             {

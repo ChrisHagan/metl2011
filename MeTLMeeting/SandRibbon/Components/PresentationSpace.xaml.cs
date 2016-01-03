@@ -68,7 +68,7 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var author in authorList)
             {
-                if (author != Globals.me && !details.blacklist.Contains(author))
+                if (author != Globals.me && !details.UserIsBlackListed(author))
                     details.blacklist.Add(author);
             }
             App.controller.client.UpdateConversationDetails(details);
@@ -84,8 +84,7 @@ namespace SandRibbon.Components
                              {
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  var conn = App.controller.client;
-                                 var slide = Globals.slides.Where(s => s.id == Globals.slide).First(); // grab the current slide index instead of the slide id
-                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(/*conn.location.currentSlide*/slide.index + 1, Globals.me, "bannedcontent",
+                                 conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide, Globals.me, "bannedcontent",
                                      Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

@@ -31,8 +31,6 @@ namespace SandRibbon.Tabs
             var bannedContent = new BannedContent(submissionList);
             bannedContent.Owner = Window.GetWindow(this);
             bannedContent.Show();
-            banContent.IsChecked = false;
-            Commands.BanhammerActive.Execute(false);
             ManageBannedContent.Execute(null, null);
         }
 
@@ -55,9 +53,8 @@ namespace SandRibbon.Tabs
         {
             Dispatcher.adopt(delegate
             {
-                editConversation.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
-                banContent.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
-                bannedContentManagement.Visibility = banContent.Visibility;
+                editConversation.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+                bannedContentManagement.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
@@ -86,16 +83,6 @@ namespace SandRibbon.Tabs
             if (submissionList.Where(s => s.time == submission.time && s.author == submission.author && s.url == submission.url).ToList().Count > 0)
                 return true;
             return false;
-        }
-
-        private void OnBanContentchanged(object sender, ExecutedRoutedEventArgs e)
-        {
-            var banMode = banContent.IsChecked ?? false;
-            Commands.BanhammerActive.Execute(banMode);
-            if (banMode)
-            {
-                Commands.SetInkCanvasMode.Execute("Select");
-            }
         }
     }
 }

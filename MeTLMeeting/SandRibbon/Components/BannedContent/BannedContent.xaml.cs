@@ -5,21 +5,16 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using MeTLLib;
 using MeTLLib.DataTypes;
 using MeTLLib.Utilities;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
-using MeTLLib.Providers;
-using System.Text;
 using System.Windows.Media;
-using System.Linq;
 
 namespace SandRibbon.Components.BannedContent
 {
@@ -156,12 +151,9 @@ namespace SandRibbon.Components.BannedContent
         private List<PrivateUser> WrapBlackList(List<string> blacklist)
         {
             var privateUsers = new List<PrivateUser>();
-            var alphabetSeq = new EnglishAlphabetSequence();
-
-            var labelIndex = 0;
             foreach (var user in blacklist)
             {
-                var displayName = "";
+                var displayName = user;
                 if (!userMapping.TryGetValue(user, out displayName))
                 {
                     displayName = user;
@@ -186,7 +178,6 @@ namespace SandRibbon.Components.BannedContent
             submissionsView = FindResource("sortedSubmissionsView") as CollectionViewSource;
             submissionList = new ObservableCollection<PrivacyWrapper>(WrapSubmissions(userSubmissions));
             blackList = new ObservableCollection<PrivateUser>(WrapBlackList(Globals.conversationDetails.blacklist));
-
             DataContext = this;
         }
         

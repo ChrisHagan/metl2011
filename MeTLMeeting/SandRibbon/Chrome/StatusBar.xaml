@@ -11,7 +11,7 @@
                 <sr:Label x:Name="collaborationStatus" />
                 <sr:Label x:Name="followStatus" />
             </StackPanel>
-            <sr:Label x:Name="StatusLabel" ToolTip="Current Mode"/>
+            <sr:Label x:Name="StatusLabel" ToolTip="Current Mode" VerticalAlignment="Top"/>
         </StackPanel>
         <sandpit:Pedagogicometer Visibility="Collapsed"/>
         <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>

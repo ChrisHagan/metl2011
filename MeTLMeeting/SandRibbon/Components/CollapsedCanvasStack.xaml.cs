@@ -1315,7 +1315,6 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-
                 if (CanvasHasActiveFocus())
                     deleteSelectedElements(null, null);
             });

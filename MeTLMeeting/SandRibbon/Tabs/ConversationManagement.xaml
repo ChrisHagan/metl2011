@@ -8,17 +8,12 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
     sr:KeyboardAccess.Keys="P" Text="Conversation Management" x:Name="conversationManagement">
-    <sr:RibbonTab.CommandBindings>
-        <CommandBinding Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" CanExecute="CheckManageBannedAllowed" Executed="OnBanContentchanged"/>
-    </sr:RibbonTab.CommandBindings>
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
         <dict:Button Text="Page Reorder" ToolTip="{DynamicResource PageReorderToolTip}" Icon="/Resources/NewSlide.png" x:Name="editConversation" 
                      Command="{x:Static api:Commands.EditConversation}" />
-        <dict:ToggleButton Icon="/Resources/Banhammer.png" Text="Administer Content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" 
-                           Command="{x:Static tabs:ConversationManagement.ManageBannedContent}" />
         <dict:Button Text="Manage banned content" Icon="/Resources/ban-management-icon.png" x:Name="bannedContentManagement" 
                      Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>
     </sr:RibbonGroup>

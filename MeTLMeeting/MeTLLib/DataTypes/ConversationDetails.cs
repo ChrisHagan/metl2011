@@ -293,6 +293,7 @@ namespace MeTLLib.DataTypes
 
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
+        private static readonly string USER_TAG = "user";
         protected static readonly string CREATED_TAG = "created";
         private static readonly string LAST_ACCESSED_TAG = "lastAccessed";
         private static readonly string TAG_TAG = "tag";
@@ -356,11 +357,8 @@ namespace MeTLLib.DataTypes
                     ).ToList()
                 )).ToList() : new List<GroupSet>()
             )).ToList();
-            var blacklistElements = doc.Elements(BLACKLIST_TAG);
-            var blacklist = new List<string>();
-            if (blacklistElements != null && blacklistElements.Count() > 0)
-                blacklist = blacklistElements.Select(d => d.Value).ToList();
-            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed, blacklist.ToList());
+            var blacklist = doc.Elements(BLACKLIST_TAG).Descendants(USER_TAG).Select(d => d.Value).ToList();
+            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed, blacklist);
         }
         public XElement WriteXml()
         {
@@ -392,7 +390,8 @@ namespace MeTLLib.DataTypes
                              new XElement(GROUP_MEMBERS_TAG, g.GroupMembers.Select(gm => new XElement(GROUP_MEMBER_TAG, gm)))
                          ))))
                 ))),
-                blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
+                new XElement(BLACKLIST_TAG,
+                    blacklist.Select(b => new XElement(USER_TAG, b))));
         }
     }
     public class Permissions

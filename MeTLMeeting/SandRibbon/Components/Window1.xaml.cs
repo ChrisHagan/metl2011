@@ -826,6 +826,13 @@ namespace SandRibbon
                                              Commands.LeaveLocation.Execute(null);
                                          }
                                      }
+                                     if (details.isAuthor(Globals.me))
+                                     {
+                                         ParticipantsTabItem.Visibility = Visibility.Visible;
+                                     }
+                                     else {
+                                         ParticipantsTabItem.Visibility = Visibility.Collapsed;
+                                     }
                                  });
         }
         private void UpdateTitle(ConversationDetails details)
