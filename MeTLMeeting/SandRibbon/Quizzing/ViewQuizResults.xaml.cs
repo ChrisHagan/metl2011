@@ -4,12 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using SandRibbon.Components;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using System;
 
 
 namespace SandRibbon.Quizzing
@@ -74,7 +71,7 @@ namespace SandRibbon.Quizzing
         {
             var quiz = quizzes.SelectedItem as QuizQuestion;
             var url = App.controller.config.displayQuizResultsOnNewSlideAtIndex(Globals.conversationDetails.Jid,Globals.slideDetails.index + 1, quiz.Id);
-            this.Close();
+            App.controller.client.resourceProvider.insecureGetString(url);
         }
     }
 }
