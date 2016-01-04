@@ -678,6 +678,8 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
+            var thisDetails = App.controller.client.DetailsOf(title);
+            App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
             Dispatcher.adopt(delegate
             {
                 try
@@ -686,8 +688,6 @@ namespace SandRibbon
 
                     if (ribbon.SelectedTab != null)
                         ribbon.SelectedTab = ribbon.Tabs[0];
-                    var thisDetails = App.controller.client.DetailsOf(title);
-                    App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
                     applyPermissions(thisDetails.Permissions);
                     Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
                     Commands.RequerySuggested(Commands.SetConversationPermissions);
@@ -877,9 +877,13 @@ namespace SandRibbon
                 details.Author = Globals.userInformation.credentials.name;
                 var connection = App.controller.client;
                 details = connection.CreateConversation(details);
+                connection.JoinConversation(details.Jid);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
-                    Commands.JoinConversation.ExecuteAsync(details.Jid);
+                {
+                    Commands.JoinConversation.Execute(details.Jid);
+                    Commands.UpdateConversationDetails.Execute(details);
+                }
             }
         }
         private void OriginalView(object _unused)

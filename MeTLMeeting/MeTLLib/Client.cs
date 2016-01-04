@@ -700,6 +700,8 @@ namespace MeTLLib
         }
         private T tryUntilConnected<T>(Func<T> function)
         {
+            return function();
+            /*
             var wait = new ManualResetEvent(false);
             T result = default(T);
             bool complete = false;
@@ -722,6 +724,7 @@ namespace MeTLLib
             if (!complete)
                 wait.WaitOne();
             return result;
+            */
         }
         private string decodeUri(Uri uri)
         {
@@ -799,12 +802,18 @@ namespace MeTLLib
                 {
                     if (String.IsNullOrEmpty(conversation)) return;
                     //                    Trace.TraceInformation("JoinConversation {0}", conversation);
+                    wire.leaveRooms(stayInGlobal: true);
                     var cd = conversationDetailsProvider.DetailsOf(conversation);
                     a(GaugeStatus.InProgress, 25);
                     location.activeConversation = cd.Jid;
                     location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+                    wire.location.activeConversation = location.activeConversation;
+                    wire.location.availableSlides = location.availableSlides;
                     if (location.availableSlides.Count > 0)
+                    {
+                        wire.location.currentSlide = location.currentSlide;
                         location.currentSlide = location.availableSlides[0];
+                    }
                     else
                     {
                         Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");

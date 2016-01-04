@@ -18,7 +18,7 @@ namespace MeTLLib.Providers.Connection
         {
             var request = (HttpWebRequest)base.GetWebRequest(address);
             request.Headers.Add(HttpRequestHeader.Cookie, metlCreds.cookie);
-            request.KeepAlive = false;
+            request.KeepAlive = true;
             request.Timeout = int.MaxValue;
             return request;
         }

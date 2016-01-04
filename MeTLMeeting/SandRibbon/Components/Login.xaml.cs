@@ -614,7 +614,7 @@ namespace SandRibbon.Components
                 Commands.SetUserOptions.Execute(options);
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
                 //DestroyWebBrowser(null);
-                App.controller.client.JoinRoom("global");
+                //App.controller.client.JoinRoom("global");
                 this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");

@@ -37,9 +37,9 @@ namespace SandRibbon.Components
         }
         private void joinConversation(string jid)
         {
+            var details = App.controller.client.DetailsOf(jid);
             Dispatcher.adopt(delegate
             {
-                var details = App.controller.client.DetailsOf(jid);
                 details.LastAccessed = DateTime.Now;
                 if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
                     recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;

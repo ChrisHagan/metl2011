@@ -251,10 +251,32 @@ namespace MeTLLib.Providers.Connection
             if (ConnectionTimeoutTimer == null) EstablishConnectionTimer();
             ConnectionTimeoutTimer.Change(TIMEOUT_PERIOD, TIMEOUT_PERIOD);
         }
-
+        protected bool httpIsConnected = false;
         private void checkConnection()
         {
-            if (!this.IsConnected()) Reset("resetting on heartbeat");
+            var httpWasConnected = httpIsConnected;
+            try
+            {
+                httpIsConnected = webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok";
+            }
+            catch (Exception e)
+            {
+                //remove the webexception clause and return only false, when all the server have their serverStatus endpoint enabled on their yaws and apache pages
+                Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
+                httpIsConnected = (e is WebException && (e as WebException).Response != null && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound);
+            }
+            if (!this.IsConnected())
+            {
+                Reset("resetting on heartbeat");
+            }
+            /*
+            else
+            {
+                catchUpDisconnectedWork();
+//                if (httpWasConnected == false)
+//                    receiveEvents.statusChanged(true, credentials);
+            }
+            */
         }
         private void listenToStatusChangedForReset(object sender, StatusChangedEventArgs e)
         {
@@ -317,11 +339,11 @@ namespace MeTLLib.Providers.Connection
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
             Console.WriteLine("XmppConnection: " + conn.description);
-            
 
-                        conn.OnReadXml += ReadXml;
-                        conn.OnWriteXml += WriteXml;
-            
+
+            conn.OnReadXml += ReadXml;
+            conn.OnWriteXml += WriteXml;
+
         }
         private void SendPing(string who)
         {
@@ -362,8 +384,10 @@ namespace MeTLLib.Providers.Connection
             {
                 if (pingTimer != null)
                     pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
-                if (heartbeat != null)
-                    heartbeat.Change(Timeout.Infinite, Timeout.Infinite);
+                /*
+                                if (heartbeat != null)
+                                    heartbeat.Change(Timeout.Infinite, Timeout.Infinite);
+                */
                 var resource = DateTimeFactory.Now().Ticks.ToString();
                 jid.Resource = resource;
                 makeAvailableNewSocket();
@@ -384,16 +408,19 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.statusChanged(true, this.credentials);
             joinRooms();
+            checkConnection();
             catchUpDisconnectedWork();
-            if (heartbeat != null)
-                heartbeat.Change(HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
+            /*            
+                        if (heartbeat != null)
+                            heartbeat.Change(HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
+            */
             if (pingTimer != null)
                 pingTimer.Change(pingTimeout, pingTimeout);
         }
 
         private void OnPresence(object sender, Presence pres)
         {
-            receiveEvents.receivePresence(new MeTLPresence { Joining = pres.Type.ToString().ToLower() != "unavailable", Who = pres.From.Resource, Where = pres.From.User });
+            //receiveEvents.receivePresence(new MeTLPresence { Joining = pres.Type.ToString().ToLower() != "unavailable", Who = pres.From.Resource, Where = pres.From.User });
         }
         private void OnMessage(object sender, Message message)
         {
@@ -518,7 +545,8 @@ namespace MeTLLib.Providers.Connection
                         var item = (Action)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
                         try
                         {
-                            System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
+                            //System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
+                            item();
                             actionsAfterRelogin.Dequeue(); //We only lift it off the top after successful execution.
                         }
                         catch (Exception ex)
@@ -557,7 +585,7 @@ namespace MeTLLib.Providers.Connection
 
         private void Reset(string caller)
         {
-            return; //for testing of the new agsModule
+            //return; //for testing of the new agsModule
             if (1 == Interlocked.Increment(ref resetInProgress))
             {
                 Trace.TraceWarning(string.Format("JabberWire::Reset.  {0}", caller));
@@ -565,17 +593,25 @@ namespace MeTLLib.Providers.Connection
                 if (conn != null)
                     switch (conn.XmppConnectionState)
                     {
+                        case XmppConnectionState.SessionStarted:
+                            // not killing off the current connection because everything's fine.
+//                            joinRooms();
+//                            catchUpDisconnectedWork();
+                            break;
                         case XmppConnectionState.Disconnected:
                             Trace.TraceWarning(string.Format("JabberWire::Reset: Disconnected.  {0}", caller));
                             openConnection();
                             break;
+                            /*
                         case XmppConnectionState.Connecting:
                             // Timed out trying to connect, so disconnect and start again
                             Trace.TraceWarning(string.Format("JabberWire::Reset: Connecting.  {0}", caller));
                             disconnectSocket();
                             openConnection();
                             break;
-                        case XmppConnectionState.Authenticating:
+                            */
+                        default:
+                        //case XmppConnectionState.Authenticating:
                             Trace.TraceWarning(string.Format("JabberWire::Reset: Authenticating.  {0}", caller));
                             disconnectSocket();
                             openConnection();
@@ -651,8 +687,10 @@ namespace MeTLLib.Providers.Connection
         }
         private void joinRooms(bool alreadyInConversation = false)
         {
+            joinRoom(new Jid(new Jid(metlServerAddress.globalMuc)));
             if (isLocationValid())
             {
+                SendAttendance("global", new Attendance(credentials.name, location.activeConversation, true, -1L));
                 var rooms = new List<Jid>();
                 if (!alreadyInConversation)
                 {
@@ -667,7 +705,6 @@ namespace MeTLLib.Providers.Connection
                 {
                     joinRoom(room);
                 }
-                SendAttendance("global", new Attendance(credentials.name, location.activeConversation, true, -1L));
                 SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), true, -1L));
             }
         }
@@ -677,7 +714,8 @@ namespace MeTLLib.Providers.Connection
             try
             {
                 var alias = credentials.name + conn.Resource;
-                new MucManager(conn).JoinRoom(room, alias, true);
+                var mm = new MucManager(conn);
+                mm.JoinRoom(room, alias, true);
                 CurrentRooms.Add(room);
                 Trace.TraceInformation("Joining room {0} makes {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
             }
@@ -722,7 +760,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void command(string conversationJid, string command, params string[] arguments)
         {
-            stanza(conversationJid, new MeTLStanzas.Command(new TargettedCommand(credentials.name,command,arguments)));
+            stanza(conversationJid, new MeTLStanzas.Command(new TargettedCommand(credentials.name, command, arguments)));
         }
         private void command(string message)
         {
@@ -762,19 +800,10 @@ namespace MeTLLib.Providers.Connection
         }
         public bool IsConnected()
         {
-            try
+            return auditor.wrapFunction((a) =>
             {
-                return auditor.wrapFunction((a) =>
-                {
-                    return conn.XmppConnectionState == XmppConnectionState.SessionStarted && webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok"; //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
-                }, "healthCheck", "xmpp");
-            }
-            catch (Exception e)
-            {
-                //remove the webexception clause and return only false, when all the server have their serverStatus endpoint enabled on their yaws and apache pages
-                Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
-                return (e is WebException && (e as WebException).Response != null && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound);
-            }
+                return conn.XmppConnectionState == XmppConnectionState.SessionStarted && httpIsConnected; //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
+            }, "healthCheck", "xmpp");
         }
         public void GetHistory(int where)
         {
@@ -1163,7 +1192,8 @@ namespace MeTLLib.Providers.Connection
         }
         public void ActOnUntypedMessage(MeTLStanzas.TimestampedMeTLElement timestampedElement)
         {
-            foreach (var command in timestampedElement.element.SelectElements<MeTLStanzas.Command>(true)) {
+            foreach (var command in timestampedElement.element.SelectElements<MeTLStanzas.Command>(true))
+            {
                 ReceiveCommand(command);
             }
             foreach (var status in timestampedElement.element.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
@@ -1329,7 +1359,8 @@ namespace MeTLLib.Providers.Connection
                 var where = Int32.Parse(command.parameters[0]);
                 receiveEvents.syncMoveRequested(where);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Trace.TraceError("Malformed sync move received: {0}", command);
             }
         }
@@ -1391,7 +1422,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                leaveRooms(stayInGlobal:true);
+                //leaveRooms(stayInGlobal: true);
                 joinRooms();
             }
             catch (Exception e)
