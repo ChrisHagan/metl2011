@@ -35,10 +35,10 @@ namespace SandRibbon.Utils
     }
     public class SneakyImage : MeTLStanzas.Image
     {
-        public SneakyImage(String target, ImageTag tag, Uri src, double x, double y, int slide) : base()
+        public SneakyImage(String target, ImageTag tag, string src, double x, double y, int slide) : base()
         {
             SetTag(MeTLStanzas.tagTag, JsonConvert.SerializeObject(tag));
-            SetTag(sourceTag, src.LocalPath);
+            SetTag(sourceTag, src);
             SetTag(MeTLStanzas.xTag, x);
             SetTag(MeTLStanzas.yTag, y);
             SetTag(MeTLStanzas.authorTag, tag.author);
@@ -363,10 +363,29 @@ namespace SandRibbon.Utils
                 var slideIndex = i;
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
-                    uploadXmlUrls(slideId, slideXml);
-                    sendSlide(slideId, slideXml, conversationDescriptor);
+                    bool hasPrivate = conversationDescriptor.HasPrivateContent;
+                    var privateRoom = string.Format("{0}{1}", slideId, Globals.me);
+                    if (hasPrivate)
+                        clientConnection.SneakInto(privateRoom);
+                    clientConnection.SneakInto(slideId.ToString());
+                    Thread.Sleep(1000);
+                    /*
+                    clientConnection.JoinRoom(privateRoom);
+                    clientConnection.JoinRoom(slideId.ToString());
+                    */
+                    var xdocUpdated = uploadXmlUrls(slideId, slideXml);
+                    sneakilySendShapes(slideId, xdocUpdated.Descendants("shape"));
+                    sneakilySendPublicTextBoxes(slideId, xdocUpdated.Descendants("publicText"));
                     progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, slideIndex, slideCount);
                     tracker.increment();
+                    Thread.Sleep(1000);
+                    if (hasPrivate)
+                        clientConnection.SneakOutOf(privateRoom);
+                    clientConnection.SneakOutOf(slideId.ToString());
+                    /*
+                    clientConnection.LeaveRoom(privateRoom);
+                    clientConnection.LeaveRoom(slideId.ToString());
+                    */
                 });
             }
         }
@@ -378,7 +397,8 @@ namespace SandRibbon.Utils
         }
         private static string createThumbnailFileStructure(string jid)
         {
-            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
+            var fullPath = "c:\\dev\\thumbs\\jid";
+            //var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
             return fullPath;
         }
         private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
@@ -434,19 +454,6 @@ namespace SandRibbon.Utils
             }
         }
 
-        private void sendSlide(int id, XElement slide, ConversationDescriptor conversationDescriptor)
-        {
-            bool hasPrivate = conversationDescriptor.HasPrivateContent;
-            var privateRoom = string.Format("{0}{1}", id, Globals.me);
-            if (hasPrivate)
-                clientConnection.SneakInto(privateRoom);
-            clientConnection.SneakInto(id.ToString());
-            sneakilySendShapes(id, slide.Descendants("shape"));
-            sneakilySendPublicTextBoxes(id, slide.Descendants("publicText"));
-            if (hasPrivate)
-                clientConnection.SneakOutOf(privateRoom);
-            clientConnection.SneakOutOf(id.ToString());
-        }
         private void sneakilySendPublicTextBoxes(int id, IEnumerable<XElement> shapes)
         {
             int shapeCount = 0;
@@ -478,30 +485,42 @@ namespace SandRibbon.Utils
         }
         private void sneakilySendShapes(int id, IEnumerable<XElement> shapes)
         {
-            int shapeCount = 0;
+            //int shapeCount = 0;
             var me = Globals.me;
             var target = "presentationSpace";
             foreach (var shape in shapes)
             {
+                /*
                 bool isBackgroundImage = false;
                 if (shape.Attribute("background") != null && shape.Attribute("background").Value.ToLower() == "true")
                     isBackgroundImage = true;
+                    */
+                var shapeId = shape.Attribute("uri").Value;
+                /*
                 var tag = new ImageTag
                 {
-                    id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, shapeCount++),
+                    id = shapeId,
+                    resourceIdentity = shapeId,
                     author = me,
                     privacy = (Privacy)Enum.Parse(typeof(Privacy), shape.Attribute("privacy").Value, true),
-                    isBackground = isBackgroundImage
+                    isBackground = isBackgroundImage,
+                    timestamp = -1,
+                    zIndex = -1
                 };
-                var uri = new Uri(shape.Attribute("uri").Value);
+                */
+                //var uri = shape.Attribute("uri").Value;
                 var x = Double.Parse(shape.Attribute("x").Value);
                 var y = Double.Parse(shape.Attribute("y").Value);
-                var stanza = new SneakyImage(target, tag, uri, x, y, id);
+                //var stanza = new SneakyImage(target, tag, uri, x, y, id);
+                var width = 0.0;
+                var height = 0.0;
                 if (shape.Attributes("width").Count() > 0)
-                    stanza.SetWidth(Double.Parse(shape.Attribute("width").Value));
+                    width = Double.Parse(shape.Attribute("width").Value);
                 if (shape.Attributes("height").Count() > 0)
-                    stanza.SetHeight(Double.Parse(shape.Attribute("height").Value));
-                clientConnection.SendStanza(id.ToString(), stanza);
+                    height = Double.Parse(shape.Attribute("height").Value);
+                var privacy = (Privacy)Enum.Parse(typeof(Privacy), shape.Attribute("privacy").Value, true);
+                clientConnection.SendImage(new TargettedImage(id, me, target, privacy, shapeId, x, y, width, height, shapeId, -1L));
+                //clientConnection.SendStanza(id.ToString(), stanza);
             }
         }
         private XElement uploadXmlUrls(int slide, XElement doc)

@@ -670,7 +670,8 @@ namespace MeTLLib.Providers.Connection
         private void leaveRoom(Jid room)
         {
             CurrentRooms.Remove(room);
-            Trace.TraceInformation("Leaving room {0} leaves {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
+            var currentRoomListing = CurrentRooms.ToList().Select(r => r.ToString());
+            Trace.TraceInformation("Leaving room {0} leaves {1}", room, String.Join(",", currentRoomListing));
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
         }
@@ -729,6 +730,7 @@ namespace MeTLLib.Providers.Connection
             auditor.wrapAction((a) =>
             {
                 send(new Message(new Jid(target + "@" + metlServerAddress.muc), jid, MessageType.groupchat, message));
+                refreshPingTimer();
             }, "send", "xmpp");
         }
         protected virtual void send(Message message)
@@ -744,6 +746,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void stanza(string target, Element stanza)
         {
+            if (target == null || target == "0" || target == "") return;
             var message = new Message();
             string modifiedTarget =
                 compareString(stanza.GetTag(MeTLStanzas.privacyTag), "private") ?
@@ -1411,12 +1414,13 @@ namespace MeTLLib.Providers.Connection
         public void SneakInto(string room)
         {
             var muc = new MucManager(conn);
-            joinRoom(new Jid(room + "@" + metlServerAddress.muc));
+            muc.JoinRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name + conn.Resource);
         }
         public void SneakOutOf(string room)
         {
             var muc = new MucManager(conn);
-            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
+            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name + conn.Resource);
+//            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
         }
         public void JoinConversation()
         {
