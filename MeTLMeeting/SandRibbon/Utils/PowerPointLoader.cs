@@ -397,8 +397,8 @@ namespace SandRibbon.Utils
         }
         private static string createThumbnailFileStructure(string jid)
         {
-            var fullPath = "c:\\dev\\thumbs\\jid";
-            //var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
+            //var fullPath = "c:\\dev\\thumbs\\jid";
+            var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
             return fullPath;
         }
         private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
@@ -485,17 +485,26 @@ namespace SandRibbon.Utils
         }
         private void sneakilySendShapes(int id, IEnumerable<XElement> shapes)
         {
-            //int shapeCount = 0;
+            int shapeCount = 0;
             var me = Globals.me;
             var target = "presentationSpace";
             foreach (var shape in shapes)
             {
+
+                var conn = App.controller.client;
+                var file = shape.Attribute("uri").Value;
+                var bytes = File.ReadAllBytes(file);
+                var proposedId = me + ":" + DateTime.Now.Ticks.ToString() + ":" + shapeCount;
+                var hostedFileUriXml = conn.resourceProvider.securePutData(App.controller.config.uploadResource(proposedId, id.ToString()), bytes);
+                var hostedFileUri =  XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
+                //var hostedFileUri =  conn.UploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide.ToString());
+
                 /*
                 bool isBackgroundImage = false;
                 if (shape.Attribute("background") != null && shape.Attribute("background").Value.ToLower() == "true")
                     isBackgroundImage = true;
                     */
-                var shapeId = shape.Attribute("uri").Value;
+                var shapeId = hostedFileUri;
                 /*
                 var tag = new ImageTag
                 {
@@ -531,12 +540,10 @@ namespace SandRibbon.Utils
             {
                 var shape = doc.Descendants("shape").ElementAt(i);
                 var file = shape.Attribute("snapshot").Value;
-                var hostedFileUri = conn.UploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide.ToString());
-                var uri = hostedFileUri;
                 if (shape.Attribute("uri") == null)
-                    shape.Add(new XAttribute("uri", uri));
+                    shape.Add(new XAttribute("uri", file));
                 else
-                    shape.Attribute("uri").Value = uri.ToString();
+                    shape.Attribute("uri").Value = file;
             }
             return doc;
         }
