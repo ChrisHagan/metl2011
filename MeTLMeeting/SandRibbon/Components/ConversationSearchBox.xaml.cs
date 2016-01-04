@@ -103,7 +103,7 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty ErrorsProperty =
             DependencyProperty.Register("Errors", typeof(string), typeof(ConversationSearchBox), new UIPropertyMetadata(""));
         private static string me;
-        private System.Threading.Timer refreshTimer;
+        private Timer refreshTimer;
         private ListCollectionView sortedConversations;
         public ConversationSearchBox()
         {

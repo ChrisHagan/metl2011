@@ -506,7 +506,7 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction deleteSelectedText(IEnumerable<MeTLTextBox> elements)
         {
-            var selectedElements = elements.Where(t => t.tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
+            var selectedElements = filterOnlyMineExceptIfHammering<MeTLTextBox>(elements).Select(b => ((MeTLTextBox)b).clone()).ToList();
             Action undo = () =>
                               {
                                   myTextBox = selectedElements.LastOrDefault();
@@ -1031,27 +1031,7 @@ namespace SandRibbon.Components
 
             return authorColor;
         }
-        private IEnumerable<T> filterExceptMine<T>(IEnumerable<T> elements) where T : UIElement
-        {
-            var me = Globals.me;
-            var myText = elements.Where(e => e is MeTLTextBox && (e as MeTLTextBox).tag().author != me);
-            var myImages = elements.Where(e => e is Image && (e as Image).tag().author != me);
-            var myElements = new List<T>();
-            myElements.AddRange(myText);
-            myElements.AddRange(myImages);
-            return myElements;
-        }
-        private IEnumerable<T> filterExceptMine<T>(IEnumerable<T> elements, Func<T, string> authorExtractor) where T : UIElement
-        {
-            var me = Globals.me.Trim().ToLower();
-            var myText = elements.Where(e => e is MeTLTextBox && authorExtractor(e).Trim().ToLower() == me);
-            var myImages = elements.Where(e => e is Image && authorExtractor(e).Trim().ToLower() == me);
-            var myElements = new List<T>();
-            myElements.AddRange(myText);
-            myElements.AddRange(myImages);
-            return myElements;
-        }
-
+        
         private IEnumerable<PrivateAwareStroke> filterOnlyMineExceptIfHammering(IEnumerable<PrivateAwareStroke> strokes)
         {
             var me = Globals.me;
@@ -1069,7 +1049,7 @@ namespace SandRibbon.Components
         {
             if (Globals.IsBanhammerActive)
             {
-                return filterExceptMine(elements, authorExtractor);
+                return elements.Where(e => authorExtractor(e).Trim().ToLower() != Globals.me.Trim().ToLower());
             }
             else
             {
@@ -1080,7 +1060,12 @@ namespace SandRibbon.Components
         {
             if (Globals.IsBanhammerActive)
             {
-                return filterExceptMine(elements);
+                var myText = elements.OfType<MeTLTextBox>().Where(t => t.tag().author != Globals.me);
+                var myImages = elements.OfType<MeTLImage>().Where(i => i.tag().author != Globals.me);
+                var myElements = new List<T>();
+                myElements.AddRange(myText.OfType<T>());
+                myElements.AddRange(myImages.OfType<T>());
+                return myElements;
             }
             else
             {
