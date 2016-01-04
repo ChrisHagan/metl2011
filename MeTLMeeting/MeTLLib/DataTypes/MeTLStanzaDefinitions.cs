@@ -2402,7 +2402,7 @@ namespace MeTLLib.DataTypes
         public class Command : Element
         {
             static readonly string TAG = "command";
-            static readonly string commandTag = "name";
+            static readonly string nameTag = "name";
             static readonly string parameterTag = "parameter";
             static readonly string parametersTag = "parameters";
             static Command() { agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Command)); }
@@ -2428,7 +2428,7 @@ namespace MeTLLib.DataTypes
                     }
                     return new TargettedCommand(
                         GetTag(authorTag),
-                        GetTag(commandTag),
+                        GetTag(nameTag),
                         ps.ToArray());
                 }
                 set
@@ -2439,7 +2439,7 @@ namespace MeTLLib.DataTypes
                         ps.AddChild(new Element(parameterTag, p));
                     }
                     SetTag(authorTag, value.author);
-                    SetTag(commandTag, value.command);
+                    SetTag(nameTag, value.command);
                     AddChild(ps);
                 }
             }

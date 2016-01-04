@@ -998,7 +998,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void SendDirtyConversationDetails(string jid)
         {
-            command(UPDATE_CONVERSATION_DETAILS + " " + (jid));
+            command(location.activeConversation, UPDATE_CONVERSATION_DETAILS, jid);
         }
         public bool CanWakeUp(string _param)
         {

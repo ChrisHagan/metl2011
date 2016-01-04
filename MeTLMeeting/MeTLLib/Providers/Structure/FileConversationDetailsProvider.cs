@@ -129,7 +129,6 @@ namespace MeTLLib.Providers.Structure
         }
         public ConversationDetails Update(ConversationDetails details)
         {
-            //var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", server.resourceUrl, server.uploadPath, server.structureDirectory, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
             var url = server.updateConversation(details.Jid);
             var response = securePutData(url, details.GetBytes());
             var responseDetails = ConversationDetails.ReadXml(XElement.Parse(response));
