@@ -26,8 +26,5 @@ namespace SandRibbon
             else
                 dispatcher.BeginInvoke(del);
         }
-        public static void queueFocus(this Dispatcher dispatcher, FrameworkElement el) {
-            dispatcher.Invoke(DispatcherPriority.Background, (Action)delegate { el.Focus(); });
-        }
     }
 }

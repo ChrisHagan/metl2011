@@ -58,7 +58,7 @@ namespace SandRibbon
             Commands.ZoomIn.RegisterCommand(new DelegateCommand<object>(doZoomIn, canZoomIn));
             Commands.ZoomOut.RegisterCommand(new DelegateCommand<object>(doZoomOut, canZoomOut));
 
-            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            Commands.UpdateConversationDetails.DefaultValue = ConversationDetails.Empty;
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
             Title = Strings.Global_ProductName;
@@ -178,7 +178,7 @@ namespace SandRibbon
         public static void Main()
         {
             // want to customise the main function so we'll create one here instead of the automatically generated one from app.g.cs
-            SandRibbon.App.ShowSplashScreen();
+            App.ShowSplashScreen();
             SandRibbon.App app = new SandRibbon.App();
 
             app.InitializeComponent();

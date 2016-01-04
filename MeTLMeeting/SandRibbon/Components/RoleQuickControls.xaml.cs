@@ -73,19 +73,31 @@ namespace SandRibbon.Components
                 studentMustFollowTeacherCheckbox.IsChecked = conv.Permissions.usersAreCompulsorilySynced;
                 if (conv.Permissions.usersAreCompulsorilySynced)
                 {
-                    syncButton.IsEnabled = false;
                     syncButton.IsChecked = true;
+                    syncButton.IsEnabled = false;
+                    Globals.synched = true;
+                    if (Globals.teacherSlide > 0)
+                    {
+                        if (Globals.location.currentSlide != Globals.teacherSlide)
+                        {
+                            Commands.MoveTo.Execute(Globals.teacherSlide);
+                        }
+                    }
+                }
+                else
+                {
+                    syncButton.IsEnabled = true;
                 }
             });
         }
         private void SetSync(bool sync)
         {
+            syncButton.IsChecked = sync;
             if (sync)
-            {
-                syncButton.IsChecked = true;
+            {   if (Globals.isAuthor) return;
                 var teacherSlide = (int)Globals.teacherSlide;
-                if (Globals.location.availableSlides.Contains(teacherSlide) && !Globals.isAuthor)
-                    Commands.MoveTo.Execute((int)Globals.teacherSlide);
+                if (Globals.location.availableSlides.Contains(teacherSlide))
+                    Commands.MoveTo.Execute(Globals.teacherSlide);
             }
         }
         private void toggleSync(object sender, RoutedEventArgs e)

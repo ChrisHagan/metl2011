@@ -316,8 +316,7 @@ namespace SandRibbon.Components
                 {
                     BackstageModeChanged("mine");
                 }
-
-                Dispatcher.queueFocus(SearchInput);
+                SearchInput.Focus();
             });
         }
         private void HideConversationSearchBox(object o)
