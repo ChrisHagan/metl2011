@@ -357,7 +357,6 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-
                 wire.SendAttendance(where, att);
             };
             tryIfConnected(work);

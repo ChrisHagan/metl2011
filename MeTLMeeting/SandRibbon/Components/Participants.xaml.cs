@@ -160,7 +160,7 @@ namespace SandRibbon.Components
         }
         protected void ReceivePresence(Attendance presence)
         {
-            if (/*Providers.Globals.conversationDetails.Jid == presence.location || */ Providers.Globals.conversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.location))
+            if (Providers.Globals.conversationDetails.Slides.Select(s => s.id.ToString()).Contains(presence.location))
             {
                 Dispatcher.adopt(delegate
                 {

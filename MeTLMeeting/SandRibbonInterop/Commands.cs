@@ -359,7 +359,6 @@ namespace SandRibbon
         public static DefaultableCompositeCommand JoiningConversation = new DefaultableCompositeCommand("JoinConversation");
 
         public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand("SyncedMoveRequested",0);
-        public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand("SendSyncMove");
         public static DefaultableCompositeCommand MoveToCollaborationPage = new DefaultableCompositeCommand("MoveToCollaborationPage",0);
         public static DefaultableCompositeCommand PreParserAvailable = new DefaultableCompositeCommand("PreParserAvaialble");
         public static DefaultableCompositeCommand SignedRegions = new DefaultableCompositeCommand("SignedRegions");

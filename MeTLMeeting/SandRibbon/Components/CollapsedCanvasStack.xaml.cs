@@ -2383,10 +2383,12 @@ namespace SandRibbon.Components
             {
                 var selectedTextBoxes = new List<MeTLTextBox>();
                 selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
-                if (filterOnlyMineExceptIfHammering(new[] { myTextBox }).FirstOrDefault(null) != null)
-                    selectedTextBoxes.Add(myTextBox);
+                if (myTextBox != null)
+                {
+                    if (filterOnlyMineExceptIfHammering(new[] { myTextBox }).FirstOrDefault(null) != null)
+                        selectedTextBoxes.Add(myTextBox);
+                }
                 var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
-
                 if (selectedTextBox != null)
                 {
                     // create a clone of the selected textboxes and their textinformation so we can keep a reference to something that won't be changed

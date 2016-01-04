@@ -76,10 +76,8 @@ namespace SandRibbon.Components
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
-            Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
-            Commands.SendAttendance.RegisterCommand(new DelegateCommand<Attendance>(SendAttendance));
         }
         /*
         private void RequestUserInformations(List<string> usernames)
@@ -95,10 +93,6 @@ namespace SandRibbon.Components
         private void sendNewSlideOrder(int conversationJid)
         {
             client.UpdateSlideCollection(conversationJid);
-        }
-        private void sendSyncMove(int slide)
-        {
-            client.SendSyncMove(slide);
         }
         private void leaveAllRooms(object _obj)
         {
@@ -127,13 +121,6 @@ namespace SandRibbon.Components
         private void SendDirtyImage(TargettedDirtyElement tde)
         {
             client.SendDirtyImage(tde);
-        }
-        private void SendAttendance(Attendance att)
-        {
-            if (Globals.conversationDetails.Jid == att.location)
-                client.SendAttendance("global", att);
-            else if (Globals.conversationDetails.Slides.Exists(s => att.location == s.id.ToString()))
-                client.SendAttendance(Globals.conversationDetails.Jid, att);
         }
         private void SendDirtyLiveWindow(TargettedDirtyElement tde)
         {

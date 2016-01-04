@@ -317,11 +317,11 @@ namespace MeTLLib.Providers.Connection
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
             Console.WriteLine("XmppConnection: " + conn.description);
-            /*
+            
 
                         conn.OnReadXml += ReadXml;
                         conn.OnWriteXml += WriteXml;
-            */
+            
         }
         private void SendPing(string who)
         {
@@ -605,23 +605,30 @@ namespace MeTLLib.Providers.Connection
                         new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
                     });
                 if (location.currentSlide != 1 && location.activeConversation != "0" && location.availableSlides.Exists(s => s == location.currentSlide))
-                    SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), false, -1L));
+                    if (CurrentRooms.Contains(location.activeConversation))
+                    {
+                        SendAttendance(location.activeConversation, new Attendance(credentials.name, location.currentSlide.ToString(), false, -1L));
+                    }
             }
             if (!stayInActiveConversation)
             {
                 rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
                 if (location != null && location.activeConversation != null && location.activeConversation != "0")
-                    SendAttendance("global", new Attendance(credentials.name, location.activeConversation, false, -1L));
+                    if (CurrentRooms.Contains("global"))
+                    {
+                        SendAttendance("global", new Attendance(credentials.name, location.activeConversation, false, -1L));
+                    }
             }
             if (!stayInGlobal)
             {
                 rooms.Add(new Jid(metlServerAddress.globalMuc));
-                //rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
             }
-
             foreach (var room in rooms)
             {
-                leaveRoom(room);
+                if (CurrentRooms.Contains(room))
+                {
+                    leaveRoom(room);
+                }
             }
         }
         private void leaveRoom(Jid room)
@@ -642,13 +649,8 @@ namespace MeTLLib.Providers.Connection
         {
             return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0 && !location.ValueEquals(Location.Empty));
         }
-        private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
+        private void joinRooms(bool alreadyInConversation = false)
         {
-            if (!fastJoin)
-            {
-                leaveRooms();
-                joinRoom(new Jid(metlServerAddress.globalMuc));
-            }
             if (isLocationValid())
             {
                 var rooms = new List<Jid>();
@@ -658,7 +660,6 @@ namespace MeTLLib.Providers.Connection
                 }
                 rooms.AddRange(new[]
                 {
-                    //new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
                     new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
                 });
@@ -678,6 +679,7 @@ namespace MeTLLib.Providers.Connection
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
                 CurrentRooms.Add(room);
+                Trace.TraceInformation("Joining room {0} makes {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
             }
             catch (Exception e)
             {
@@ -718,9 +720,9 @@ namespace MeTLLib.Providers.Connection
         {
             this.stanza(location.currentSlide.ToString(), stanza);
         }
-        private void command(string where, string message)
+        private void command(string conversationJid, string command, params string[] arguments)
         {
-            send(where, message);
+            stanza(conversationJid, new MeTLStanzas.Command(new TargettedCommand(credentials.name,command,arguments)));
         }
         private void command(string message)
         {
@@ -904,6 +906,7 @@ namespace MeTLLib.Providers.Connection
 
         public void SendAttendance(string target, Attendance attendance)
         {
+            Trace.TraceInformation("Sending attendance to {0}", target);
             stanza(target, new MeTLStanzas.Attendance(attendance));
         }
         public void SendStroke(TargettedStroke stroke)
@@ -923,7 +926,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void SendSyncMoveTo(int where)
         {
-            command(location.activeConversation, SYNC_MOVE + " " + where);
+            command(location.activeConversation, SYNC_MOVE, where.ToString());
         }
         public void SendImage(TargettedImage image)
         {
@@ -1403,7 +1406,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                leaveRooms();
+                leaveRooms(stayInGlobal:true);
                 joinRooms();
             }
             catch (Exception e)
@@ -1416,24 +1419,17 @@ namespace MeTLLib.Providers.Connection
         {
             auditor.wrapAction((a) =>
             {
-
                 try
                 {
                     a(GaugeStatus.InProgress, 12);
                     leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
                     a(GaugeStatus.InProgress, 24);
-                    /*
-                    new MucManager(conn).LeaveRoom(
-                        new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
-                        */
-                    a(GaugeStatus.InProgress, 36);
                     var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
                     location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
                     var oldLocation = location.currentSlide.ToString();
                     location.currentSlide = where;
-                    //Globals.conversationDetails = currentDetails;
-                    //Globals.slide = where;
-                    joinRooms(fastJoin: true, alreadyInConversation: true);
+                    a(GaugeStatus.InProgress, 36);
+                    joinRooms(alreadyInConversation: true);
                     a(GaugeStatus.InProgress, 48);
                     cachedHistoryProvider.ClearCache(oldLocation);
                     a(GaugeStatus.InProgress, 60);

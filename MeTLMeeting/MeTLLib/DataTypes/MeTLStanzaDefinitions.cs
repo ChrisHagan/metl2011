@@ -18,6 +18,7 @@ using MeTLLib.Utilities;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using System.Xml.Linq;
 
 namespace MeTLLib.DataTypes
 {
@@ -48,6 +49,7 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.InkIdentityStanza();
             new MeTLStanzas.ImageIdentityStanza();
             new MeTLStanzas.Attendance();
+            new MeTLStanzas.Command();
         }
     }
 
@@ -99,7 +101,19 @@ namespace MeTLLib.DataTypes
             return timestamp;
         }
     }
+    public class TargettedCommand : TimeStampedMessage
+    {
+        public string command;
+        public string[] parameters;
+        public string author;
 
+        public TargettedCommand(string author, string command, string[] parameters)
+        {
+            this.author = author;
+            this.command = command;
+            this.parameters = parameters;
+        }
+    }
     public class TargettedElement
     {
         public TargettedElement(int Slide, string Author, string Target, Privacy Privacy, string Identity, long Timestamp)
@@ -797,13 +811,16 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
-        public static class ElementParser {
-            public static Privacy getPrivacy(Element element) {
+        public static class ElementParser
+        {
+            public static Privacy getPrivacy(Element element)
+            {
                 var s = element.GetTag(privacyTag);
                 if (s == null) return Privacy.NotSet;
-                switch (s.ToLower()) {
+                switch (s.ToLower())
+                {
                     case "public": return Privacy.Public;
-                    case "private":return Privacy.Private;
+                    case "private": return Privacy.Private;
                     default: return Privacy.NotSet;
                 }
             }
@@ -2175,7 +2192,7 @@ namespace MeTLLib.DataTypes
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
                     Int32.TryParse(GetTag(slideTag), out slideInt);
-                    var targettedImage = new TargettedImage(slideInt, GetTag(authorTag), GetTag(targetTag),ElementParser.getPrivacy(this), this, GetTag(identityTag), long.Parse(timestamp, System.Globalization.NumberStyles.Float));
+                    var targettedImage = new TargettedImage(slideInt, GetTag(authorTag), GetTag(targetTag), ElementParser.getPrivacy(this), this, GetTag(identityTag), long.Parse(timestamp, System.Globalization.NumberStyles.Float));
                     return targettedImage;
                 }
                 set
@@ -2298,7 +2315,7 @@ namespace MeTLLib.DataTypes
                     var timestamp = HasTag(timestampTag) ? GetTag(timestampTag) : "-1";
                     var slideInt = 0;
                     Int32.TryParse(GetTag(slideTag), out slideInt);
-                    return new TargettedDirtyElement(slideInt, GetTag(authorTag), GetTag(targetTag),ElementParser.getPrivacy(this), GetTag(identityTag), long.Parse(timestamp));
+                    return new TargettedDirtyElement(slideInt, GetTag(authorTag), GetTag(targetTag), ElementParser.getPrivacy(this), GetTag(identityTag), long.Parse(timestamp));
                 }
                 set
                 {
@@ -2379,6 +2396,52 @@ namespace MeTLLib.DataTypes
                 : base(element)
             {
                 this.TagName = TAG;
+            }
+        }
+
+        public class Command : Element
+        {
+            static readonly string TAG = "command";
+            static readonly string commandTag = "command";
+            static readonly string parameterTag = "parameter";
+            static readonly string parametersTag = "parameters";
+            static Command() { agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Command)); }
+            public Command()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public Command(TargettedCommand command) : this()
+            {
+                this.command = command;
+            }
+
+            public TargettedCommand command
+            {
+                get
+                {
+                    var ps = new List<string>();
+                    foreach (var o in SelectElements(parameterTag, true))
+                    {
+                        var p = o as Element;
+                        ps.Add(p.Value);
+                    }
+                    return new TargettedCommand(
+                        GetTag(authorTag),
+                        GetTag(commandTag),
+                        ps.ToArray());
+                }
+                set
+                {
+                    var ps = new Element(parametersTag);
+                    foreach (var p in value.parameters)
+                    {
+                        ps.AddChild(new Element(parameterTag, p));
+                    }
+                    SetTag(authorTag, value.author);
+                    SetTag(commandTag, value.command);
+                    AddChild(ps);
+                }
             }
         }
     }

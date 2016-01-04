@@ -9,19 +9,13 @@ using SandRibbon.Components.Interfaces;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
-using System.Collections.Generic;
-using MeTLLib.Providers.Connection;
 using System.Windows.Data;
 using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Automation;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Threading;
-using System.Windows.Media;
 using MeTLLib.Utilities;
-using System.ComponentModel;
 using System.Windows.Threading;
 
 namespace SandRibbon.Components
@@ -447,8 +441,8 @@ namespace SandRibbon.Components
                         AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
 
                         Commands.MoveTo.ExecuteAsync(currentSlideId);
-                        SendSyncMove(currentSlideId);
                         checkMovementLimits();
+                        SendSyncMove(currentSlideId);
                     }
                     else if (sender is ListBox)
                     {
@@ -463,9 +457,9 @@ namespace SandRibbon.Components
 
         public static void SendSyncMove(int currentSlideId)
         {
-            if (Globals.isAuthor && Globals.synched)
+            if (Globals.isAuthor)
             {
-                Commands.SendSyncMove.ExecuteAsync(currentSlideId);
+                App.controller.client.SendSyncMove(currentSlideId);
             }
         }
 
