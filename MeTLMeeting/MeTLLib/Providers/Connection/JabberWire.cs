@@ -340,10 +340,10 @@ namespace MeTLLib.Providers.Connection
             conn.OnIq += OnIq;
             Console.WriteLine("XmppConnection: " + conn.description);
 
-
+            /*
             conn.OnReadXml += ReadXml;
             conn.OnWriteXml += WriteXml;
-
+            */
         }
         private void SendPing(string who)
         {
