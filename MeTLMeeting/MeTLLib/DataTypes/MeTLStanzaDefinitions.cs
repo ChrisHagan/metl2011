@@ -2402,7 +2402,7 @@ namespace MeTLLib.DataTypes
         public class Command : Element
         {
             static readonly string TAG = "command";
-            static readonly string commandTag = "command";
+            static readonly string commandTag = "name";
             static readonly string parameterTag = "parameter";
             static readonly string parametersTag = "parameters";
             static Command() { agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Command)); }

@@ -138,7 +138,7 @@ namespace MeTLLib.Providers.Connection
         {
             files.Add(resource.fileResource);
         }
-        public override void ReceiveCommand(Element el)
+        public override void ReceiveCommand(MeTLStanzas.Command command)
         {//Preparsers don't care about commands, they're not a valid part of history.
             return;
         }

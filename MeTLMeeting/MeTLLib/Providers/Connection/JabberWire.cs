@@ -1029,27 +1029,20 @@ namespace MeTLLib.Providers.Connection
             //    stanza(element.slide.ToString(), new MeTLStanzas.DirtyInk(element));
             stanza(new MeTLStanzas.DirtyInk(element));
         }
-        public virtual void ReceiveCommand(Element element)
+        public virtual void ReceiveCommand(MeTLStanzas.Command command)
         {
             try
             {
-                var command = element.SelectSingleElement("command").InnerXml;
-                switch (command)
+                switch (command.command.command)
                 {
-                    case TEACHER_IN_CONVERSATION:
-                        handleTeacherInConversation(element);
-                        break;
                     case SYNC_MOVE:
-                        handleSyncMoveReceived(element);
+                        handleSyncMoveReceived(command.command);
                         break;
                     case UPDATE_CONVERSATION_DETAILS:
-                        handleConversationDetailsUpdated(element);
-                        break;
-                    case UPDATE_SLIDE_COLLECTION:
-                        handleUpdateSlideCollection(element);
+                        handleConversationDetailsUpdated(command.command);
                         break;
                     default:
-                        handleUnknownMessage(element);
+                        handleUnknownMessage(command);
                         break;
                 }
             }
@@ -1124,14 +1117,6 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError("Wire received error message: {0}", message);
                 return;
             }
-            var command = message.SelectSingleElement("command");
-            if (command != null)
-            {
-                ReceiveCommand(command);
-                return;
-            }
-
-            //ActOnUntypedMessage(message, timestamp);
             ActOnUntypedMessage(element);
         }
 
@@ -1169,11 +1154,7 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError("Wire received error message: {0}", message);
                 return;
             }
-            if (message.SelectSingleElement("command") != null)
-            {
-                ReceiveCommand(message.SelectSingleElement("command"));
-                return;
-            }
+
             if (messageOrigin == MessageOrigin.Live)
             {
                 cachedHistoryProvider.HandleMessage(location.currentSlide, element);
@@ -1182,6 +1163,9 @@ namespace MeTLLib.Providers.Connection
         }
         public void ActOnUntypedMessage(MeTLStanzas.TimestampedMeTLElement timestampedElement)
         {
+            foreach (var command in timestampedElement.element.SelectElements<MeTLStanzas.Command>(true)) {
+                ReceiveCommand(command);
+            }
             foreach (var status in timestampedElement.element.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
                 actOnStatusRecieved(status);
 
@@ -1338,19 +1322,20 @@ namespace MeTLLib.Providers.Connection
         {
             leaveRoom(new Jid(room + "@" + metlServerAddress.muc));
         }
-        private void handleTeacherInConversation(Element el)
+        private void handleSyncMoveReceived(TargettedCommand command)
         {
-            var where = el.SelectElements("parameter", true).Item(0).InnerXml;
-            receiveEvents.teacherStatusRequest(where, "");
+            try
+            {
+                var where = Int32.Parse(command.parameters[0]);
+                receiveEvents.syncMoveRequested(where);
+            }
+            catch (Exception e) {
+                Trace.TraceError("Malformed sync move received: {0}", command);
+            }
         }
-        private void handleSyncMoveReceived(Element el)
+        private void handleConversationDetailsUpdated(TargettedCommand command)
         {
-            var where = Int32.Parse(el.SelectElements("parameter", true).Item(0).InnerXml);
-            receiveEvents.syncMoveRequested(where);
-        }
-        private void handleConversationDetailsUpdated(Element el)
-        {
-            var jid = el.SelectElements("parameter", true).Item(0).InnerXml;
+            var jid = command.parameters[0];
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
             receiveEvents.receiveConversationDetails(newDetails);
         }
