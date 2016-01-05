@@ -56,6 +56,7 @@ namespace SandRibbon.Components.Utility
         public static readonly ContentVisibilityDefinition peersPublic = new ContentVisibilityDefinition("Everyone else's", "", "", true, (a, p, c, s) => a != c.Author && a != Globals.me && p == Privacy.Public);
         public static readonly List<ContentVisibilityDefinition> defaultVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
         public static readonly List<ContentVisibilityDefinition> defaultGroupVisibilities = new List<ContentVisibilityDefinition> { myPublic, myPrivate, ownersPublic, peersPublic };
+        public static readonly List<ContentVisibilityDefinition> printVisibilities = new List<ContentVisibilityDefinition> { new ContentVisibilityDefinition("everything", "", "", true, (a, p, c, s) => true) };
 
         public static List<ContentVisibilityDefinition> allVisible = Globals.contentVisibility.ToArray().ToList().Select(cvd => { cvd.Subscribed = true; return cvd; }).ToList();
         public static void refreshVisibilities()

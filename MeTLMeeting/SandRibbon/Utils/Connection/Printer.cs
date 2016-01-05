@@ -53,7 +53,7 @@ namespace SandRibbon.Utils.Connection
         private void ResizeCanvas(MeTLInkCanvas canvas, ContentBuffer contentBuffer)
         {
             contentBuffer.AdjustContent();
-            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.allVisible);
+            ReAddFilteredContent(canvas, contentBuffer, ContentFilterVisibility.printVisibilities);
         }
 
         private void ReAddFilteredContent(MeTLInkCanvas canvas, ContentBuffer contentBuffer, List<ContentVisibilityDefinition> contentVisibility)
@@ -80,7 +80,8 @@ namespace SandRibbon.Utils.Connection
             }
             foreach (var image in images)
             {
-                var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
+                //var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
+                var imageToAdd = image.Value.imageSpecification.forceEvaluation();
                 imageToAdd.tag(image.Value.image.tag());
                 if ((includePublic && image.Value.privacy == Privacy.Public) || image.Value.target == target)
                 {
@@ -252,30 +253,38 @@ namespace SandRibbon.Utils.Connection
         {
             Application.Current.Dispatcher.adoptAsync((System.Action)delegate
               {
-                  var printer = new PrintDialog { PageRangeSelection = PageRangeSelection.AllPages };
-                  var result = printer.ShowDialog();
-                  if ((bool)result)
+                  try
                   {
-                      var myDocument = new FixedDocument();
-                      foreach (var visual in visuals)
+                      var printer = new PrintDialog { PageRangeSelection = PageRangeSelection.AllPages };
+                      var result = printer.ShowDialog();
+                      if ((bool)result)
                       {
-                          var pageContent = new PageContent();
-                          var page = new FixedPage
-                                         {
-                                             Width = printer.PrintableAreaWidth,
-                                             Height = printer.PrintableAreaHeight
-                                         };
-                          var viewbox = new Viewbox();
-                          viewbox.Width = page.Width;
-                          viewbox.Height = page.Height;
-                          viewbox.Child = (UIElement)visuallyAdjustedVisual(visual);
-                          page.Children.Add(viewbox);
-                          ((IAddChild)pageContent).AddChild(page);
-                          myDocument.Pages.Add(pageContent);
+                          var myDocument = new FixedDocument();
+                          foreach (var visual in visuals)
+                          {
+                              var pageContent = new PageContent();
+                              var page = new FixedPage
+                              {
+                                  Width = printer.PrintableAreaWidth,
+                                  Height = printer.PrintableAreaHeight
+                              };
+                              var viewbox = new Viewbox();
+                              viewbox.Width = page.Width;
+                              viewbox.Height = page.Height;
+                              viewbox.Child = (UIElement)visuallyAdjustedVisual(visual);
+                              page.Children.Add(viewbox);
+                              ((IAddChild)pageContent).AddChild(page);
+                              myDocument.Pages.Add(pageContent);
+                          }
+                          printer.PrintDocument(myDocument.DocumentPaginator, "A document");
                       }
-                      printer.PrintDocument(myDocument.DocumentPaginator, "A document");
+                  }catch (Exception ex)
+                  {
+                      Console.WriteLine("Exception during printing: " + ex.Message);
+                  } finally
+                  {
+                      Commands.HideProgressBlocker.Execute(null);
                   }
-                  Commands.HideProgressBlocker.Execute(null);
               });
         }
         private MeTLInkCanvas visuallyAdjustedVisual(MeTLInkCanvas visual)
