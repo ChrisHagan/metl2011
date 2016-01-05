@@ -19,43 +19,43 @@
         </Grid.ColumnDefinitions>
         <DataGrid x:Name="messages" Grid.Row="0" Grid.Column="0" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="message" Binding="{Binding message, Mode=OneTime}"/>
-                <DataGridTextColumn Header="category" Binding="{Binding category, Mode=OneTime}"/>
-                <DataGridTextColumn Header="when" Binding="{Binding when, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="message" Binding="{Binding message, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding category, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="when" Binding="{Binding when, Mode=OneTime}"/>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid x:Name="gauges" Grid.Row="0" Grid.Column="1" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="name" Binding="{Binding GaugeName, Mode=OneTime}"/>
-                <DataGridTextColumn Header="category" Binding="{Binding GaugeCategory, Mode=OneTime}"/>
-                <DataGridTextColumn Header="status" Binding="{Binding status, Mode=OneTime}"/>
-                <DataGridTextColumn Header="value" Binding="{Binding value, Mode=OneTime}"/>
-                <DataGridTextColumn Header="started" Binding="{Binding started, Mode=OneTime}"/>
-                <DataGridTextColumn Header="finished" Binding="{Binding finished, Mode=OneTime}"/>
-                <DataGridTextColumn Header="duration" Binding="{Binding duration, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="name" Binding="{Binding GaugeName, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding GaugeCategory, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="status" Binding="{Binding status, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="value" Binding="{Binding value, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="started" Binding="{Binding started, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="finished" Binding="{Binding finished, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="duration" Binding="{Binding duration, Mode=OneTime}"/>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid x:Name="nics" Grid.Row="1" Grid.Column="0">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="OutputQueueLength " Binding="{Binding OutputQueueLength , Mode=OneTime}"/>
-                <DataGridTextColumn Header="OutgoingPacketsWithErrors " Binding="{Binding OutgoingPacketsWithErrors , Mode=OneTime}"/>
-                <DataGridTextColumn Header="IncomingPacketsWithErrors" Binding="{Binding IncomingPacketsWithErrors, Mode=OneTime}"/>
-                <DataGridTextColumn Header="OutgoingPacketsDiscarded " Binding="{Binding OutgoingPacketsDiscarded , Mode=OneTime}"/>
-                <DataGridTextColumn Header="IncomingPacketsDiscarded " Binding="{Binding IncomingPacketsDiscarded , Mode=OneTime}"/>
-                <DataGridTextColumn Header="UnicastPacketsSent " Binding="{Binding UnicastPacketsSent , Mode=OneTime}"/>
-                <DataGridTextColumn Header="UnicastPacketsReceived " Binding="{Binding UnicastPacketsReceived , Mode=OneTime}"/>
-                <DataGridTextColumn Header="BytesSent " Binding="{Binding BytesReceived, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="OutputQueueLength " Binding="{Binding OutputQueueLength , Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="OutgoingPacketsWithErrors " Binding="{Binding OutgoingPacketsWithErrors , Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="IncomingPacketsWithErrors" Binding="{Binding IncomingPacketsWithErrors, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="OutgoingPacketsDiscarded " Binding="{Binding OutgoingPacketsDiscarded , Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="IncomingPacketsDiscarded " Binding="{Binding IncomingPacketsDiscarded , Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="UnicastPacketsSent " Binding="{Binding UnicastPacketsSent , Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="UnicastPacketsReceived " Binding="{Binding UnicastPacketsReceived , Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="BytesSent " Binding="{Binding BytesReceived, Mode=OneTime}"/>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid x:Name="procs" Grid.Row="1" Grid.Column="1" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ProcessName" Binding="{Binding Responding, Mode=OneTime}"/>
-                <DataGridTextColumn Header="Responding" Binding="{Binding ProcessName, Mode=OneTime}"/>
-                <DataGridTextColumn Header="Threads" Binding="{Binding Threads, Mode=OneTime}"/>
-                <DataGridTextColumn Header="WorkingSet64" Binding="{Binding WorkingSet64, Mode=OneTime}"/>
-                <DataGridTextColumn Header="PeakWorkingSet64" Binding="{Binding PeakWorkingSet64, Mode=OneTime}"/>
-                <DataGridTextColumn Header="UserProcessorTime" Binding="{Binding UserProcessorTime, Mode=OneTime}"/>
-                <DataGridTextColumn Header="TotalProcessorTime" Binding="{Binding TotalProcessorTime, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="ProcessName" Binding="{Binding Responding, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Responding" Binding="{Binding ProcessName, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Threads" Binding="{Binding Threads, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="WorkingSet64" Binding="{Binding WorkingSet64, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="PeakWorkingSet64" Binding="{Binding PeakWorkingSet64, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="UserProcessorTime" Binding="{Binding UserProcessorTime, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="TotalProcessorTime" Binding="{Binding TotalProcessorTime, Mode=OneTime}"/>
             </DataGrid.Columns>
         </DataGrid>
         <TextBox x:Name="console" Grid.Row="0" Grid.Column="2" />

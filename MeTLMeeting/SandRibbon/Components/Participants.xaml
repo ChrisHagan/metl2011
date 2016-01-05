@@ -12,10 +12,10 @@
         <ScrollViewer>
             <DataGrid x:Name="participantListBox" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="User" Binding="{Binding Path=username}" />
-                    <DataGridTextColumn Header="Activity" Binding="{Binding Path=activityCount}" />
-                    <DataGridTextColumn Header="Submissions" Binding="{Binding Path=submissionCount}" />
-                    <DataGridTextColumn Header="Slides" Binding="{Binding Path=slideLocation, Converter={x:Static components:Participants.slideCollectionDescriber}}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="User" Binding="{Binding Path=username, Mode=OneWay}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Activity" Binding="{Binding Path=activityCount, Mode=OneWay}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Submissions" Binding="{Binding Path=submissionCount, Mode=OneWay}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Slides" Binding="{Binding Path=slideLocation, Converter={x:Static components:Participants.slideCollectionDescriber}, Mode=OneWay}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
