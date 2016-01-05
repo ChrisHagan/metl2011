@@ -240,8 +240,9 @@ namespace SandRibbon.Utils
             {
                 return new PowerPoint.Application();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(String.Format("Exception during powerpoint load: {0}", e.Message));
                 MeTLMessage.Error("MeTL requires Microsoft PowerPoint to be installed to import a presentation");
                 Commands.HideProgressBlocker.ExecuteAsync(null);
             }
