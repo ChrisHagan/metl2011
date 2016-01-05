@@ -1,4 +1,4 @@
-﻿<sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Polls"
+﻿<sr:RibbonTab sr:KeyboardAccess.Keys="P" Text="Polls"
     x:Class="SandRibbon.Tabs.Quizzes"
     x:Name="quizzesTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

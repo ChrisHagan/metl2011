@@ -7,7 +7,7 @@
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
-    sr:KeyboardAccess.Keys="P" Text="Conversation Management" x:Name="conversationManagement">
+    sr:KeyboardAccess.Keys="C" Text="Conversation Management" x:Name="conversationManagement">
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>
     </sr:RibbonTab.Resources>
