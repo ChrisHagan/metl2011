@@ -9,7 +9,7 @@
     SizeToContent="WidthAndHeight"
     ShowInTaskbar="False"
     MaxHeight="500"
-    Title="Display Quiz">
+    Title="Display Poll">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >

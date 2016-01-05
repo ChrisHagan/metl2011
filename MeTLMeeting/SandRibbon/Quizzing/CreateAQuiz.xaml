@@ -5,7 +5,7 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:metl="clr-namespace:SandRibbon"
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    Title="Create a Quiz" 
+    Title="Create a Poll" 
     ShowInTaskbar="False"
     x:Name="createAQuiz"
     WindowStartupLocation="CenterOwner"

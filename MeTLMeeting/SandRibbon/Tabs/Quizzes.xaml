@@ -1,4 +1,4 @@
-﻿<sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes"
+﻿<sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Polls"
     x:Class="SandRibbon.Tabs.Quizzes"
     x:Name="quizzesTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -86,7 +86,7 @@
                                         <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
                                             <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
                                                 <Button.ToolTip>
-                                                    <dict:MeTLImageToolTip TitleText="View quiz" 
+                                                    <dict:MeTLImageToolTip TitleText="View poll" 
                                                                            ImageSource="\Resources\Ribbon-Quiz.png"
                                                                            ContentText="{Binding Path=Question}"/>
                                                 </Button.ToolTip>
@@ -121,7 +121,7 @@
                                            FontSize="12px"
                                            FontFamily="Verdana"
                                            Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
-                                           Content="There are currently no quizzes for this conversation"/>
+                                           Content="There are currently no polls for this conversation"/>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>

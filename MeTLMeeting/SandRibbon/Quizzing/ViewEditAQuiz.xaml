@@ -11,7 +11,7 @@
     MaxHeight="700"
     SizeToContent="WidthAndHeight"
     Closing="ViewEditAQuiz_Closing"
-    Title="Quiz">
+    Title="Poll">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <quiz:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
@@ -68,8 +68,8 @@
                 </ScrollViewer>
 
                 <StackPanel Grid.Row="3" x:Name="TeacherControls" Background="{StaticResource BackgroundBlueGradient}" Visibility="{Binding Source={StaticResource Globals}, Path=isAuthor, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button Click="Edit_Click">Edit quiz</Button>
-                    <Button Click="DisplayQuiz">Display quiz</Button>
+                    <Button Click="Edit_Click">Edit poll</Button>
+                    <Button Click="DisplayQuiz">Display poll</Button>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -88,9 +88,9 @@
                 </DockPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1">
-                    <Label Foreground="Red" HorizontalAlignment="Left" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A quiz must have a question"/>
-                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
-                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A quiz must have more than one option to choose from"/>
+                    <Label Foreground="Red" HorizontalAlignment="Left" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A poll must have a question"/>
+                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this poll"/>
+                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A poll must have more than one option to choose from"/>
                 </StackPanel>
 
                 <ScrollViewer Grid.Row="2" Margin="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
@@ -140,7 +140,7 @@
                 </ScrollViewer>
 
                 <DockPanel Grid.Row="3" Margin="5" Background="{StaticResource BackgroundBlueGradient}">
-                    <Button DockPanel.Dock="Left" FontWeight="Bold" Content="Delete Quiz" Click="deleteQuiz"/>
+                    <Button DockPanel.Dock="Left" FontWeight="Bold" Content="Delete Poll" Click="deleteQuiz"/>
                     <Button DockPanel.Dock="Right" MaxWidth="80" Click="CloseEdit" Content="Cancel"/>
                     <Button DockPanel.Dock="Right" HorizontalAlignment="Right" MaxWidth="120" x:Name="quizCommitButton" Content="Save Changes" Click="quizCommitButton_Click"/>
                 </DockPanel>
