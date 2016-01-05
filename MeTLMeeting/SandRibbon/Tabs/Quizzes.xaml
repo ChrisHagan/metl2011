@@ -33,7 +33,7 @@
             <dict:Button Command="{x:Static tabs:Quizzes.openQuizResults}" Icon="\Resources\Results.png" Text="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}"/>
         </StackPanel>
     </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
+    <sr:RibbonGroup Header="Polls" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="2"/>
             <sr:GroupVariant Variant="Medium" Priority="1"/>
