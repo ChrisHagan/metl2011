@@ -10,6 +10,7 @@ using System.Diagnostics;
 //using Ninject;
 using agsXMPP.Xml.Dom;
 using System.Net;
+using System.IO;
 
 namespace MeTLLib
 {
@@ -393,11 +394,12 @@ namespace MeTLLib
                 {
                     try
                     {
-                        var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, lii.file);
+                        var proposedIdentity = String.Format("{0}:{1}", lii.author, DateTime.Now.Ticks);
+                        var newPath = resourceUploader.uploadResource(lii.slide.ToString(), proposedIdentity, lii.bytes);// File.ReadAllBytes(lii.file));
                         a(GaugeStatus.InProgress, 33);
                         wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                         a(GaugeStatus.InProgress, 66);
-                        if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
+                        //if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
                     }
                     catch (Exception e)
                     {

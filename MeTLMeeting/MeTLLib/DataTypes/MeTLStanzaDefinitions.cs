@@ -1619,13 +1619,13 @@ namespace MeTLLib.DataTypes
 
         public class LocalSubmissionInformation
         {
-            public LocalSubmissionInformation(int Slide, string Author, string Target, Privacy Privacy, long Timestamp, string File, string CurrentConversationName, Dictionary<string, Color> Blacklisted, string Identity)
+            public LocalSubmissionInformation(int Slide, string Author, string Target, Privacy Privacy, long Timestamp, byte[] Bytes, string CurrentConversationName, Dictionary<string, Color> Blacklisted, string Identity)
             {
                 slide = Slide;
                 author = Author;
                 target = Target;
                 privacy = Privacy;
-                file = File;
+                bytes = Bytes;
                 identity = Identity;
                 timestamp = Timestamp;
                 currentConversationName = CurrentConversationName;
@@ -1637,7 +1637,7 @@ namespace MeTLLib.DataTypes
                 }
             }
             public string author;
-            public string file;
+            public byte[] bytes;
             public Privacy privacy;
             public int slide;
             public string identity;

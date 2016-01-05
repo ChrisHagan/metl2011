@@ -85,11 +85,11 @@ namespace SandRibbon.Components
                 message = string.Format("Banned content submission at {0}", new DateTime(time)),
                 showPrivate = false,
                 dimensions = new Size(1024, 768),
-                onGeneration = hostedFileName =>
+                onGeneration = bytes =>
                 {
                     var conn = App.controller.client;
                     conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide, Globals.me, "bannedcontent",
-                        Privacy.Private, -1L, hostedFileName, Globals.conversationDetails.Title, blacklisted, Globals.generateId(hostedFileName)));
+                        Privacy.Private, -1L, bytes, Globals.conversationDetails.Title, blacklisted, Globals.generateId()));
                 }
             });
         }
@@ -156,11 +156,12 @@ namespace SandRibbon.Components
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
-                using (Stream stream = File.Create(file))
+                using (MemoryStream stream = new MemoryStream())
                 {
                     encoder.Save(stream);
+                    stream.Position = 0;
+                    details.onGeneration(stream.ToArray());
                 }
-                details.onGeneration(file);
             });
         }
         private readonly object preParserRenderingLock = new object();

@@ -20,7 +20,7 @@ namespace SandRibbon.Components.Submissions
         public long time;
         public bool showPrivate;
         public Size dimensions;
-        public Action<String> onGeneration;
+        public Action<byte[]> onGeneration;
     }
     public partial class ScreenshotSubmission : UserControl
     {
@@ -121,7 +121,7 @@ namespace SandRibbon.Components.Submissions
                 message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
                 showPrivate = true,
                 author = Globals.me,
-                onGeneration = hostedFileName =>
+                onGeneration = bytes =>
                 {
                     App.controller.client.UploadAndSendSubmission(
                         new MeTLStanzas.LocalSubmissionInformation(
@@ -130,10 +130,10 @@ namespace SandRibbon.Components.Submissions
                             "submission",
                             Privacy.Public, 
                             -1L, 
-                            hostedFileName, 
+                            bytes, 
                             Globals.conversationDetails.Title, 
                             new Dictionary<string, Color>(), 
-                            Globals.generateId(hostedFileName)));
+                            Globals.generateId()));
                     MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                 }
             });

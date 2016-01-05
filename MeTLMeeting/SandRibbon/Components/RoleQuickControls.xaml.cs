@@ -115,10 +115,10 @@ namespace SandRibbon.Components
                 message = string.Format("Submission by {1} at {0}", new DateTime(time), Globals.me),
                 showPrivate = true,
                 author = Globals.me,
-                onGeneration = hostedFileName =>
+                onGeneration = bytes =>
                 {
                     App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                    (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, hostedFileName, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId(hostedFileName)));
+                    (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, bytes, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId()));
                     MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                 }
             });
