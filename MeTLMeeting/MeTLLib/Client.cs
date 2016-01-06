@@ -71,7 +71,7 @@ namespace MeTLLib
         ConversationDetails DetailsOf(String jid);
         void JoinRoom(string room);
         void LeaveRoom(string room);
-        string NoAuthUploadResource(Uri file, int Room);
+        string NoAuthUploadResource(Uri file, int Room, string preferredFilename);
         string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
         string NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
@@ -144,7 +144,7 @@ namespace MeTLLib
         public ConversationDetails DuplicateConversation(ConversationDetails conversation) { return ConversationDetails.Empty; }
         public void JoinRoom(string room) { }
         public void LeaveRoom(string room) { }
-        public string NoAuthUploadResource(Uri file, int Room) { return ""; }
+        public string NoAuthUploadResource(Uri file, int Room, string preferredFilename) { return ""; }
         public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload) { return ""; }
         public string NoAuthUploadResource(byte[] data, string filename, int Room) { return ""; }
         public void SaveUserOptions(string username, UserOptions options) { }
@@ -736,9 +736,9 @@ namespace MeTLLib
         }
         #endregion
         #region noAuth
-        public string NoAuthUploadResource(Uri file, int Room)
+        public string NoAuthUploadResource(Uri file, int Room, string preferredFilename)
         {
-            return resourceUploader.uploadResource(Room.ToString(), file.ToString(), file.ToString());
+            return resourceUploader.uploadResource(Room.ToString(), preferredFilename, file.ToString());
         }
         public string NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
         {

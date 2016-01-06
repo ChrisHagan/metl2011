@@ -1031,7 +1031,7 @@ namespace SandRibbon.Components
 
             return authorColor;
         }
-        
+
         private IEnumerable<PrivateAwareStroke> filterOnlyMineExceptIfHammering(IEnumerable<PrivateAwareStroke> strokes)
         {
             var me = Globals.me;
@@ -1077,7 +1077,7 @@ namespace SandRibbon.Components
                 return myElements;
             }
         }
-        
+
         private void selectionChanged(object sender, EventArgs e)
         {
             myTextBox = (MeTLTextBox)Work.GetSelectedTextBoxes().FirstOrDefault();
@@ -2053,11 +2053,20 @@ namespace SandRibbon.Components
             if (origin.Y < 50)
                 origin.Y = 50;
             var newPoint = OffsetNegativeCartesianPointTranslate(origin);
-            var width = 320;
-            var height = 240;
-            App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(
-                Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy),Globals.privacy,true), newPoint.X, newPoint.Y, width, height, fileName
-            ));
+
+            var width = 320.0;
+            var height = 240.0;
+            using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(fileName)))
+            {
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                var bmpFrame = BitmapFrame.Create(ms);
+                width = bmpFrame.Width;
+                height = bmpFrame.Height;
+            }
+            App.controller.client.UploadAndSendImage(
+                new MeTLStanzas.LocalImageInformation(
+                    Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true), newPoint.X, newPoint.Y, width, height, fileName
+                ));
         }
 
         private Point OffsetNegativeCartesianPointTranslate(Point origin)
@@ -2838,6 +2847,18 @@ namespace SandRibbon.Components
                 using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
                 {
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    var bmpFrame = BitmapFrame.Create(imageSource);
+                    encoder.Frames.Add(bmpFrame);
+                    encoder.Save(fileStream);
+                    var imageWidth = bmpFrame.Width;
+                    var imageHeight = bmpFrame.Height;
+                    App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(Globals.slide, Globals.me, _target, currentPrivacy, 15, 15, imageWidth, imageHeight, tmpFile));
+                }
+            }
+            /*
+                using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
+                {
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
                     encoder.Frames.Add(BitmapFrame.Create(imageSource));
                     encoder.Save(fileStream);
                 }
@@ -2845,7 +2866,7 @@ namespace SandRibbon.Components
                 {
                     var uri =
                         App.controller.client.NoAuthUploadResource(
-                            new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
+                            new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide, Globals.generateId());
                     var image = new MeTLImage
                     {
                         Source = new BitmapImage(App.controller.config.getImage(currentPrivacy == Privacy.Public ? Globals.slide.ToString() : Globals.slide.ToString() + Globals.me, uri)),
@@ -2860,6 +2881,8 @@ namespace SandRibbon.Components
                 }
             }
             return images;
+            */
+            return new List<MeTLImage>();
         }
         private void HandleImagePasteRedo(List<MeTLImage> selectedImages)
         {

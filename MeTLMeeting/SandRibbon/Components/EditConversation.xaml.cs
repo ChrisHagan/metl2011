@@ -85,7 +85,8 @@ namespace SandRibbon.Components
             var id = value.ToString();
             var server = App.controller.config;
             var host = server.name;
-            return new BitmapImage(new Uri(string.Format(server.host + "/thumbnail" + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
+            return new BitmapImage(server.thumbnailUri(id));
+            //return new BitmapImage(new Uri(string.Format(server.host + "/thumbnail" + "{0}/{1}", host, id),UriKind.RelativeOrAbsolute));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

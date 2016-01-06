@@ -148,13 +148,15 @@ namespace SandRibbon.Components
             var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToList();
             var top = view.VerticalOffset;
             var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
-            for (var i = (int) Math.Floor(top); i <= bottom; i++)
+            for (var i = (int)Math.Floor(top); i <= bottom; i++)
             {
                 var id = context[i].id;
                 var container = generator.ContainerFromIndex(i);
-                try {
+                try
+                {
                     ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
-                } catch { }
+                }
+                catch { }
             }
         }
 
@@ -231,12 +233,23 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object obj)
         {
+            myMaxSlideIndex = -1;
+            TeachersCurrentSlideIndex = -1;
             Dispatcher.adopt(delegate
             {
-                myMaxSlideIndex = -1;
-                TeachersCurrentSlideIndex = -1;
                 thumbnailList.Clear();
             });
+            try {
+                if (obj is string)
+                {
+                    var convJid = obj as string;
+                    var firstSlideJid = Int32.Parse(convJid) + 1;
+                    Commands.MoveTo.Execute(firstSlideJid);
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine(String.Format("failed to moveTo, based on joinConversation: {0} - {1}",obj,e.Message));
+            }
         }
 
         private bool canAddSlide(object _slide)
@@ -374,21 +387,43 @@ namespace SandRibbon.Components
                 editConversation.ShowDialog();
             });
         }
+        protected bool redrawing = false;
         public void Display(ConversationDetails details)
         {
+            //We only display the details of our current conversation (or the one we're entering)
+            if (details.IsEmpty)
+                return;
+            /*
+            if (currentSlideId == -1)
+            {
+                if (Globals.slide == -1)
+                {
+                    var newSlideId = details.Slides.First().id;
+                    Commands.MoveTo.DefaultValue = newSlideId;
+                }
+                currentSlideId = Globals.slide;
+            }
+            */
             Dispatcher.adopt(delegate
             {
-                //We only display the details of our current conversation (or the one we're entering)
-                if (details.IsEmpty)
-                    return;
                 if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
                 {
                     thumbnailList.Clear();
                     return;
                 }
-                Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = Globals.conversationDetails.Jid, Slide = "0", Teacher = Globals.conversationDetails.Author });
+                //Commands.RequestTeacherStatus.Execute(new TeacherStatus { Conversation = Globals.conversationDetails.Jid, Slide = "0", Teacher = Globals.conversationDetails.Author });
                 IsNavigationLocked = calculateNavigationLocked();
                 checkMovementLimits();
+                redrawing = true;
+                thumbnailList.Clear();
+                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+                {
+                    thumbnailList.Add(slide);
+                    if (slide.id == currentSlideId)
+                        slides.SelectedItem = slide;
+                }
+                redrawing = false;
+                /*
                 if (thumbnailList.Count == 0)
                 {
                     var joined = false;
@@ -419,6 +454,7 @@ namespace SandRibbon.Components
                         }
                     }
                 }
+                */
             });
         }
         private bool isWithinTeachersRange(Slide possibleSlide)
@@ -427,28 +463,31 @@ namespace SandRibbon.Components
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var addedItems = e.AddedItems;
-            if (addedItems.Count > 0)
+            if (!redrawing)
             {
-                var removedItems = e.RemovedItems;
-                var selected = (Slide)addedItems[0];
-                if (selected.id != currentSlideId)
+                var addedItems = e.AddedItems;
+                if (addedItems.Count > 0)
                 {
-                    if (isWithinTeachersRange(selected))
+                    var removedItems = e.RemovedItems;
+                    var selected = (Slide)addedItems[0];
+                    if (selected.id != currentSlideId)
                     {
-                        currentSlideId = selected.id;
-                        foreach (var slide in removedItems) ((Slide)slide).refresh();
-                        AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
-
-                        Commands.MoveTo.ExecuteAsync(currentSlideId);
-                        checkMovementLimits();
-                        SendSyncMove(currentSlideId);
-                    }
-                    else if (sender is ListBox)
-                    {
-                        if (removedItems.Count > 0)
+                        if (isWithinTeachersRange(selected))
                         {
-                            ((ListBox)sender).SelectedItem = removedItems[0];
+                            currentSlideId = selected.id;
+                            foreach (var slide in removedItems) ((Slide)slide).refresh();
+                            AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
+
+                            Commands.MoveTo.ExecuteAsync(currentSlideId);
+                            checkMovementLimits();
+                            SendSyncMove(currentSlideId);
+                        }
+                        else if (sender is ListBox)
+                        {
+                            if (removedItems.Count > 0)
+                            {
+                                ((ListBox)sender).SelectedItem = removedItems[0];
+                            }
                         }
                     }
                 }

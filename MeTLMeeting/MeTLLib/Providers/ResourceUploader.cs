@@ -84,7 +84,8 @@ namespace MeTLLib.Providers.Connection
             try
             {
                 var fullPath = path;
-                var res = _httpResourceProvider.securePutData(fullPath, File.ReadAllBytes(file));//  securePutFile(fullPath, file);
+                var fileLocation = new Uri(file).LocalPath;
+                var res = _httpResourceProvider.securePutData(fullPath, File.ReadAllBytes(fileLocation));//  securePutFile(fullPath, file);
                 return XElement.Parse(res).Value;
             }
             catch (WebException e)
