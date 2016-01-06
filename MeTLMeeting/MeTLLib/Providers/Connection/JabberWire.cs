@@ -300,12 +300,7 @@ namespace MeTLLib.Providers.Connection
 
         private void networkAvailabilityChanged(object sender, EventArgs e)
         {
-            if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                receiveEvents.statusChanged(true, this.credentials);
-                catchUpDisconnectedWork();
-            }
-            else
+            if (!NetworkInterface.GetIsNetworkAvailable())
                 receiveEvents.statusChanged(false, this.credentials);
         }
         private void makeAvailableNewSocket()
@@ -382,6 +377,7 @@ namespace MeTLLib.Providers.Connection
         {
             auditor.wrapAction((a) =>
             {
+                receiveEvents.statusChanged(false, credentials);
                 if (pingTimer != null)
                     pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 /*

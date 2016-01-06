@@ -729,8 +729,11 @@ namespace SandRibbon
         }
         private void hideReconnectingDialog()
         {
-            ProgressDisplay.Children.Clear();
-            InputBlocker.Visibility = Visibility.Collapsed;
+            Dispatcher.adopt(delegate
+            {
+                ProgressDisplay.Children.Clear();
+                InputBlocker.Visibility = Visibility.Collapsed;
+            });
         }
         private void showReconnectingDialog()
         {
@@ -840,7 +843,7 @@ namespace SandRibbon
                     {
                         ShowConversationSearchBox(null);
                     });
-                    Commands.LeaveLocation.Execute(null); 
+                    Commands.LeaveLocation.Execute(null);
                 }
             }
             Dispatcher.adopt(delegate

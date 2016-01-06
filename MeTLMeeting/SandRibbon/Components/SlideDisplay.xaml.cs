@@ -392,17 +392,6 @@ namespace SandRibbon.Components
             //We only display the details of our current conversation (or the one we're entering)
             if (details.IsEmpty)
                 return;
-            /*
-            if (currentSlideId == -1)
-            {
-                if (Globals.slide == -1)
-                {
-                    var newSlideId = details.Slides.First().id;
-                    Commands.MoveTo.DefaultValue = newSlideId;
-                }
-                currentSlideId = Globals.slide;
-            }
-            */
             Dispatcher.adopt(delegate
             {
                 if (details.IsEmpty || !details.UserHasPermission(Globals.credentials))
@@ -418,7 +407,6 @@ namespace SandRibbon.Components
                 {
                     thumbnailList.Remove(thumb);
                 }
-                //thumbnailList.Clear();
                 foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
                 {
                     var thumb = thumbnailList.FirstOrDefault(s => s.id == slide.id);
@@ -437,38 +425,6 @@ namespace SandRibbon.Components
                         slides.SelectedItem = slide;
                 }
                 redrawing = false;
-                /*
-                if (thumbnailList.Count == 0)
-                {
-                    var joined = false;
-                    foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
-                    {
-                        if (!joined)
-                        {
-                            slides.SelectedItem = slide;
-                            joined = true;
-                        }
-                        thumbnailList.Add(slide);
-                    }
-                }
-                else if (thumbnailList.Count < details.Slides.Count)
-                {
-                    var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
-                    foreach (var newSlide in newSlides)
-                        thumbnailList.Insert(newSlide.index, newSlide);
-                }
-                foreach (var slide in thumbnailList)
-                {
-                    foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
-                    {
-                        if (slide.index != relatedSlide.index)
-                        {
-                            slide.index = relatedSlide.index;
-                            slide.refreshIndex();
-                        }
-                    }
-                }
-                */
             });
         }
         private bool isWithinTeachersRange(Slide possibleSlide)
