@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Utils
 {
@@ -144,7 +145,7 @@ namespace SandRibbon.Utils
 
         public static void Instantiate(string loggingServer)
         {
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((where) => slide = where));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>((where) => slide = where.currentSlide.id));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>((who) => privacy = who));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = string.IsNullOrEmpty(Globals.me) ? unknownUser : Globals.me));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));

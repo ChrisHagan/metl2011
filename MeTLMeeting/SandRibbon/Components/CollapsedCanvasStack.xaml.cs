@@ -269,7 +269,7 @@ namespace SandRibbon.Components
 
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>(imageDropped));
             Commands.ImagesDropped.RegisterCommand(new DelegateCommand<List<ImageDrop>>(imagesDropped));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(MoveTo));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<Privacy>(changeSelectedItemsPrivacy));
@@ -281,7 +281,7 @@ namespace SandRibbon.Components
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute));
-            Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
+            Loaded += (_sender, _args) => this.Dispatcher.adopt(delegate
             {
                 if (_target == null)
                 {
@@ -368,14 +368,14 @@ namespace SandRibbon.Components
 
         private void extendCanvasBySize(SizeWithTarget newSize)
         {
-            Dispatcher.adopt(delegate
+            if (_target == newSize.Target)
             {
-                if (_target == newSize.Target)
-                {
-                    Height = newSize.Height;
-                    Width = newSize.Width;
-                }
+                Dispatcher.adopt(delegate
+            {
+                Height = newSize.Height;
+                Width = newSize.Width;
             });
+            }
         }
 
         private InkCanvasEditingMode currentMode;
@@ -550,11 +550,11 @@ namespace SandRibbon.Components
             IEnumerable<MeTLTextBox> selectedTextBoxes = null;
             IEnumerable<MeTLImage> selectedImages = null;
             List<PrivateAwareStroke> selectedStrokes = null;
-            Dispatcher.adopt(() =>
-                                 {
-                                     selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).ToList();
-                                     selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements());
-                                 });
+            Dispatcher.adopt(delegate
+            {
+                selectedStrokes = filterOnlyMineExceptIfHammering(Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke)).ToList();
+                selectedElements = filterOnlyMineExceptIfHammering(Work.GetSelectedElements());
+            });
             selectedTextBoxes = selectedElements.OfType<MeTLTextBox>();
             selectedImages = selectedElements.OfType<MeTLImage>();
 
@@ -591,7 +591,6 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-
                 Work.EditingMode = currentMode;
                 AddAdorners();
             });
@@ -602,25 +601,24 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 ClearAdorners();
-                if (ConversationDetails.Empty.Equals(details)) return;
-                Dispatcher.adoptAsync(delegate
-                      {
-                          foreach (MeTLImage image in Work.ImageChildren())
-                              image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy);
-                          foreach (var item in Work.TextChildren())
-                          {
-                              MeTLTextBox box = null;
-                              box = (MeTLTextBox)item;
-                              box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
-                          }
+            });
+            if (ConversationDetails.Empty.Equals(details)) return;
+            Dispatcher.adoptAsync(delegate
+            {
+                foreach (MeTLImage image in Work.ImageChildren())
+                    image.ApplyPrivacyStyling(contentBuffer, _target, image.tag().privacy);
+                foreach (var item in Work.TextChildren())
+                {
+                    MeTLTextBox box = null;
+                    box = (MeTLTextBox)item;
+                    box.ApplyPrivacyStyling(contentBuffer, _target, box.tag().privacy);
+                }
 
-                          if (myTextBox != null)
-                          {
-                              myTextBox.Focus();
-                              Keyboard.Focus(myTextBox);
-                          }
-
-                      });
+                if (myTextBox != null)
+                {
+                    myTextBox.Focus();
+                    Keyboard.Focus(myTextBox);
+                }
             });
         }
         private void SetPrivacy(string privacy)
@@ -629,9 +627,9 @@ namespace SandRibbon.Components
         }
         private void setInkCanvasMode(string modeString)
         {
+            if (me == Globals.PROJECTOR) return;
             Dispatcher.adopt(delegate
             {
-                if (me == Globals.PROJECTOR) return;
                 Work.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
                 Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
             });
@@ -1114,11 +1112,10 @@ namespace SandRibbon.Components
         #region ink
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {
+            if (logicalAttributes == null) return;
+            if (me.ToLower() == Globals.PROJECTOR) return;
             Dispatcher.adopt(delegate
             {
-
-                if (logicalAttributes == null) return;
-                if (me.ToLower() == Globals.PROJECTOR) return;
                 var zoomCompensatedAttributes = logicalAttributes.Clone();
                 try
                 {
@@ -1183,15 +1180,12 @@ namespace SandRibbon.Components
 
         public void SetContentVisibility(List<ContentVisibilityDefinition> contentVisibility)
         {
+            if (_target == "notepad")
+                return;
+            Commands.UpdateContentVisibility.Execute(contentVisibility);
             Dispatcher.adopt(delegate
             {
-                if (_target == "notepad")
-                    return;
-
-                Commands.UpdateContentVisibility.Execute(contentVisibility);
-
                 ClearAdorners();
-
                 var selectedStrokes = Work.GetSelectedStrokes().Select(stroke => stroke.tag().id);
                 var selectedImages = Work.GetSelectedImages().ToList().Select(image => image.tag().id);
                 var selectedTextBoxes = Work.GetSelectedTextBoxes().ToList().Select(textBox => textBox.tag().id);
@@ -1217,11 +1211,11 @@ namespace SandRibbon.Components
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
+            if (receivedStrokes.Count() == 0) return;
+            if (receivedStrokes.First().slide != Globals.slide) return;
+            var strokeTarget = _target;
             Dispatcher.adopt(delegate
             {
-                if (receivedStrokes.Count() == 0) return;
-                if (receivedStrokes.First().slide != Globals.slide) return;
-                var strokeTarget = _target;
                 foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
                 {
                     if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
@@ -1332,7 +1326,10 @@ namespace SandRibbon.Components
                         //doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                 }
-                Dispatcher.adopt(() => Work.Select(Work.EditingMode == InkCanvasEditingMode.Select ? new StrokeCollection(newStrokes.Select(s => s as Stroke)) : new StrokeCollection()));
+                Dispatcher.adopt(delegate
+                {
+                    Work.Select(Work.EditingMode == InkCanvasEditingMode.Select ? new StrokeCollection(newStrokes.Select(s => s as Stroke)) : new StrokeCollection());
+                });
             };
             Action undo = () =>
             {
@@ -1468,7 +1465,7 @@ namespace SandRibbon.Components
             List<UIElement> selectedElements = null;
             List<PrivateAwareStroke> selectedStrokes = null;
 
-            Dispatcher.adopt(() =>
+            Dispatcher.adopt(delegate
             {
                 selectedElements = Work.GetSelectedElements().ToList();
                 selectedStrokes = Work.GetSelectedStrokes().Where(s => s is PrivateAwareStroke).Select(s => s as PrivateAwareStroke).ToList();
@@ -1677,9 +1674,8 @@ namespace SandRibbon.Components
         }
         public void ReceiveMoveDelta(TargettedMoveDelta moveDelta, bool processHistory = false)
         {
-            Dispatcher.adopt(delegate
-            {
-                if (_target == "presentationSpace")
+            if (_target == "presentationSpace")
+                Dispatcher.adopt(delegate
                 {
                     // don't want to duplicate what has already been done locally
                     moveDeltaProcessor.ReceiveMoveDelta(moveDelta, me, processHistory);
@@ -1696,8 +1692,7 @@ namespace SandRibbon.Components
                     if(textIds.Count > 0)
                       contentBuffer.adjustTextsForMoveDelta(textIds);
                      */
-                }
-            });
+                });
         }
 
         public void ReceiveImages(IEnumerable<TargettedImage> images)
@@ -1709,11 +1704,12 @@ namespace SandRibbon.Components
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
+                        var receivedImage = image1.imageSpecification.forceEvaluation();
                         Dispatcher.adoptAsync(() =>
                         {
                             try
                             {
-                                var receivedImage = image1.imageSpecification.forceEvaluation();
+//                                var receivedImage = image1.imageSpecification.forceEvaluation();
                                 //image.clone();
                                 AddImage(Work, receivedImage);
                                 receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
@@ -1812,18 +1808,18 @@ namespace SandRibbon.Components
         }
         private void imageDropped(ImageDrop drop)
         {
-            Dispatcher.adopt(delegate
-            {
-                try
+            if (drop.Target.Equals(_target) && me != Globals.PROJECTOR)
+                Dispatcher.adopt(delegate
                 {
-                    if (drop.Target.Equals(_target) && me != Globals.PROJECTOR)
+                    try
+                    {
                         handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
-                }
-                catch (NotSetException)
-                {
-                    //YAY
-                }
-            });
+                    }
+                    catch (NotSetException)
+                    {
+                        //YAY
+                    }
+                });
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
@@ -2155,12 +2151,12 @@ namespace SandRibbon.Components
         }
         public void DoText(TargettedTextBox targettedBox)
         {
-            Dispatcher.adoptAsync(delegate
+            if (targettedBox.target != _target) return;
+            if (targettedBox.slide == Globals.slide &&
+                (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me)))
+            {
+                Dispatcher.adoptAsync(delegate
                                       {
-                                          if (targettedBox.target != _target) return;
-                                          if (targettedBox.slide == Globals.slide &&
-                                              (targettedBox.HasSamePrivacy(Privacy.Public) || targettedBox.HasSameAuthor(me)))
-                                          {
                                               var box = UpdateTextBoxWithId(targettedBox);
                                               if (box != null)
                                               {
@@ -2168,9 +2164,8 @@ namespace SandRibbon.Components
                                                       box.Focusable = false;
                                                   box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy);
                                               }
-                                          }
                                       });
-
+            }
         }
 
         private MeTLTextBox UpdateTextBoxWithId(TargettedTextBox textbox)
@@ -2685,10 +2680,10 @@ namespace SandRibbon.Components
         {
             if (!(element.target.Equals(_target))) return;
             if (element.slide != Globals.slide) return;
+            if (element.author == me) return;
             Dispatcher.adoptAsync(delegate
             {
                 if (myTextBox != null && element.HasSameIdentity(myTextBox.tag().id)) return;
-                if (element.author == me) return;
                 RemoveTextBoxWithMatchingId(element.identity);
             });
         }
@@ -2707,12 +2702,12 @@ namespace SandRibbon.Components
 
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
+            if (targettedBox.target != _target) return;
+
+            if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
+                return;
             Dispatcher.adopt(delegate
             {
-                if (targettedBox.target != _target) return;
-
-                if (me != Globals.PROJECTOR && TargettedTextBoxIsFocused(targettedBox))
-                    return;
 
                 /*if (targettedBox.HasSameAuthor(me) && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
                 {
@@ -3187,7 +3182,7 @@ namespace SandRibbon.Components
             UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
-        private void MoveTo(int _slide)
+        private void MoveTo(Location _location)
         {
             if (contentBuffer != null)
             {

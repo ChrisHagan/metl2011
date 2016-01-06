@@ -29,11 +29,13 @@ namespace SandRibbon.Tabs.Groups
         }
         private void joinConversation(object obj)
         {
+            /*
             Dispatcher.adopt(delegate
             {
                 //type.IsChecked = true;
-                Commands.SetTextCanvasMode.Execute("None");
             });
+            */
+            Commands.SetTextCanvasMode.Execute("None");
         }
         private void SetLayer(string layer)
         {
@@ -45,19 +47,28 @@ namespace SandRibbon.Tabs.Groups
                 {
                     case "Text":
                         //TextOptions.Visibility = Visibility.Visible;
-                        Commands.TogglePens.ExecuteAsync(false);
                         break;
                     case "Insert":
                         ImageOptions.Visibility = Visibility.Visible;
-                        Commands.TogglePens.ExecuteAsync(false);
                         break;
                     default:
                         this.Visibility = Visibility.Collapsed;
-                        Commands.TogglePens.ExecuteAsync(true);
                         //InkOptions.Visibility = Visibility.Visible;
                         break;
                 }
             });
+            switch (layer)
+            {
+                case "Text":
+                    Commands.TogglePens.ExecuteAsync(false);
+                    break;
+                case "Insert":
+                    Commands.TogglePens.ExecuteAsync(false);
+                    break;
+                default:
+                    Commands.TogglePens.ExecuteAsync(true);
+                    break;
+            }
         }
         private void hideAll()
         {

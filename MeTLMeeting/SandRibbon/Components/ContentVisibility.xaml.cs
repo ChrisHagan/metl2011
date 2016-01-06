@@ -25,7 +25,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             contentVisibilitySelectors.ItemsSource = visibilities;
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((cd) => { UpdateConversationDetails(cd); }));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((loc) => { MoveTo(loc); }));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>((loc) => { MoveTo(loc); }));
             Commands.UpdateContentVisibility.RegisterCommand(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
             Commands.SetContentVisibility.DefaultValue = Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities;
         }
@@ -33,9 +33,9 @@ namespace SandRibbon.Components
         protected int slide = -1;
         protected ConversationDetails conversation = ConversationDetails.Empty;
         protected List<GroupSet> groupSets = new List<GroupSet>();
-        protected void MoveTo(int s)
+        protected void MoveTo(Location loc)
         {
-            slide = s;
+            slide = loc.currentSlide.id;
             potentiallyRefresh();
         }
         protected void UpdateConversationDetails(ConversationDetails cd)

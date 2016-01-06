@@ -48,13 +48,11 @@ namespace SandRibbon.Components
 
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
-            Dispatcher.adopt(delegate
+            if (info.Target == "presentationSpace")
+                Dispatcher.adopt(delegate
             {
-                if (info.Target == "presentationSpace")
-                {
-                    string setPrivacy = info.IsPrivate ? "private" : "public";
-                    Commands.SetPrivacy.ExecuteAsync(setPrivacy);
-                }
+                string setPrivacy = info.IsPrivate ? "private" : "public";
+                Commands.SetPrivacy.ExecuteAsync(setPrivacy);
             });
         }
 
@@ -66,7 +64,7 @@ namespace SandRibbon.Components
 
         private void settingEnabledModes(ConversationDetails details)
         {
-            Dispatcher.adopt(() =>
+            Dispatcher.adopt(delegate
                                   {
                                       if (canBecomePublic() && !details.blacklist.Contains(Globals.me))
                                       {

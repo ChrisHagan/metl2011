@@ -31,7 +31,7 @@ namespace MeTLLib
         Location location { get; }
         void HandleShutdown();
         string UploadResourceToPath(byte[] data, string file, string name, bool overwrite);
-        void LeaveConversation(string conversation);
+        void LeaveConversation(ConversationDetails conversation);
         void UpdateSlideCollection(Int32 conversationJid);
         bool Connect(Credentials credentials);
         bool Disconnect();
@@ -78,8 +78,8 @@ namespace MeTLLib
         List<SearchConversationDetails> ConversationsFor(String query, int maxResults);
         UserOptions UserOptionsFor(string username);
         void LeaveAllRooms();
-        void JoinConversation(string jid);
-        void MoveTo(int slide);
+        void JoinConversation(ConversationDetails jid);
+        void MoveTo(ConversationDetails jid, Slide slide);
         void SneakInto(string room);
         void SneakOutOf(string room);
         void AsyncRetrieveHistoryOf(int v);
@@ -102,7 +102,7 @@ namespace MeTLLib
         public Location location { get { return Location.Empty; } }
         public void HandleShutdown() { }
         public string UploadResourceToPath(byte[] data, string file, string name, bool overwrite) { return ""; }
-        public void LeaveConversation(string conversation) { }
+        public void LeaveConversation(ConversationDetails conversation) { }
         public void UpdateSlideCollection(Int32 conversationJid) { }
         public void AskForTeachersStatus(string teacher, string where) { }
         public bool Connect(Credentials credentials) { return false; }
@@ -127,7 +127,7 @@ namespace MeTLLib
         public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii) { }
         public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi) { }
         public string UploadResource(Uri uri, string slideId) { return ""; }
-        public void MoveTo(int slide) { }
+        public void MoveTo(ConversationDetails details, Slide slide) { }
         public void LeaveLocation() { }
         public void LoadQuiz(int convesationJid, long quizId) { }
         public void LoadQuizzes(string conversationJid) { }
@@ -156,7 +156,7 @@ namespace MeTLLib
             throw new NotImplementedException();
         }
 
-        public void JoinConversation(string jid)
+        public void JoinConversation(ConversationDetails details)
         {
             throw new NotImplementedException();
         }
@@ -704,8 +704,7 @@ namespace MeTLLib
         }
         private T tryUntilConnected<T>(Func<T> function)
         {
-            return function();
-            /*
+            //return function(); //simple version
             var wait = new ManualResetEvent(false);
             T result = default(T);
             bool complete = false;
@@ -724,11 +723,16 @@ namespace MeTLLib
                 throw e;
             }
 
+            var maxAttemptsCount = 30;
+            var waitTimeout = 1000;
+            var attempts = 0;
             //TODO: Find out who would release this WaitHandle. If function causes an exception, wait is set in the catch block but complete is still false.
-            if (!complete)
-                wait.WaitOne();
+            while (!complete && attempts < maxAttemptsCount)
+            {
+                wait.WaitOne(waitTimeout);
+                attempts ++;
+            }
             return result;
-            */
         }
         private string decodeUri(Uri uri)
         {
@@ -772,11 +776,11 @@ namespace MeTLLib
             return res;
         }
 
-        public void MoveTo(int slide)
+        public void MoveTo(ConversationDetails details,Slide slide)
         {
             Action work = delegate
             {
-                wire.MoveTo(slide);
+                wire.MoveTo(details,slide);
             };
             tryIfConnected(work);
         }
@@ -788,29 +792,29 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void LeaveConversation(string conversation)
+        public void LeaveConversation(ConversationDetails conversation)
         {
             Action work = delegate
             {
-                if (String.IsNullOrEmpty(conversation)) return;
+                if (conversation.IsEmpty) return;
                 if (conversation == wire.location.activeConversation)
                     wire.resetLocation();
             };
             tryIfConnected(work);
         }
-        public void JoinConversation(string conversation)
+        public void JoinConversation(ConversationDetails conversation)
         {
             Action work = delegate
             {
                 auditor.wrapAction((a =>
                 {
-                    if (String.IsNullOrEmpty(conversation)) return;
+                    if (conversation.IsEmpty) return;
                     //                    Trace.TraceInformation("JoinConversation {0}", conversation);
                     wire.leaveRooms(stayInGlobal: true);
-                    var cd = conversationDetailsProvider.DetailsOf(conversation);
+                    var cd = conversation;// conversationDetailsProvider.DetailsOf(conversation);
                     a(GaugeStatus.InProgress, 25);
-                    location.activeConversation = cd.Jid;
-                    location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+                    location.activeConversation = cd;
+                    location.availableSlides = cd.Slides;
                     wire.location.activeConversation = location.activeConversation;
                     wire.location.availableSlides = location.availableSlides;
                     if (location.availableSlides.Count > 0)

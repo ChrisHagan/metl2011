@@ -116,7 +116,7 @@ namespace SandRibbon.Components.BannedContent
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
         }
 
@@ -127,7 +127,7 @@ namespace SandRibbon.Components.BannedContent
                 Close();
             });
         }
-        private void JoinConversation(string jid)
+        private void JoinConversation(ConversationDetails jid)
         {
             Dispatcher.adopt(delegate
             {
@@ -183,11 +183,10 @@ namespace SandRibbon.Components.BannedContent
         
         private void ReceiveSubmission(TargettedSubmission submission)
         {
+            if (submission.target != "bannedcontent")
+                return;
             Dispatcher.adopt(delegate
             {
-                if (submission.target != "bannedcontent")
-                    return;
-
                 submissionList.Add(new PrivacyWrapper(submission, userMapping));
             });
             }

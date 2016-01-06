@@ -78,9 +78,9 @@ namespace SandRibbon.Components
                     Globals.synched = true;
                     if (Globals.teacherSlide > 0)
                     {
-                        if (Globals.location.currentSlide != Globals.teacherSlide)
+                        if (Globals.location.currentSlide.id != Globals.teacherSlide)
                         {
-                            Commands.MoveTo.Execute(Globals.teacherSlide);
+                            Commands.MoveTo.Execute(new Location(Globals.location.activeConversation,Globals.location.availableSlides.Find(s => s.id == Globals.teacherSlide),Globals.location.availableSlides));
                         }
                     }
                 }
@@ -96,8 +96,8 @@ namespace SandRibbon.Components
             if (sync)
             {   if (Globals.isAuthor) return;
                 var teacherSlide = (int)Globals.teacherSlide;
-                if (Globals.location.availableSlides.Contains(teacherSlide))
-                    Commands.MoveTo.Execute(Globals.teacherSlide);
+                if (Globals.location.availableSlides.Exists(s => s.id == teacherSlide))
+                    Commands.MoveTo.Execute(new Location(Globals.location.activeConversation, Globals.location.availableSlides.Find(s => s.id == Globals.teacherSlide), Globals.location.availableSlides));
             }
         }
         private void toggleSync(object sender, RoutedEventArgs e)
@@ -118,7 +118,7 @@ namespace SandRibbon.Components
                 onGeneration = bytes =>
                 {
                     App.controller.client.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
-                    (App.controller.client.location.currentSlide, Globals.me, "submission", Privacy.Public, -1L, bytes, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId()));
+                    (App.controller.client.location.currentSlide.id, Globals.me, "submission", Privacy.Public, -1L, bytes, Globals.conversationDetails.Title, new Dictionary<string, Color>(), Globals.generateId()));
                     MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                 }
             });

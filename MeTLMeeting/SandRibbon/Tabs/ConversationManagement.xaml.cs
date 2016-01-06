@@ -20,7 +20,7 @@ namespace SandRibbon.Tabs
         {
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewBannedContent.RegisterCommand(new DelegateCommand<object>(viewBannedContent, canViewBannedContent));
@@ -58,7 +58,7 @@ namespace SandRibbon.Tabs
             });
         }
 
-        private void JoinConversation(string jid)
+        private void JoinConversation(ConversationDetails details)
         {
             Dispatcher.adopt(delegate
             {

@@ -272,7 +272,7 @@ namespace SandRibbon.Components
             };
             timer.Elapsed += (s, a) =>
             {
-                Dispatcher.adopt(delegate
+                App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
                     nics.ItemsSource = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces().Where(nic =>
                     {

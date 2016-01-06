@@ -5,6 +5,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Providers;
 using SandRibbon.Components.Utility;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Utils
 {
@@ -33,10 +34,10 @@ namespace SandRibbon.Utils
         {
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(Redo, CanRedo));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(
                 i =>
                 {
-                    currentSlide = i;
+                    currentSlide = i.currentSlide.id;
                     RaiseQueryHistoryChanged();
                     visualiser.ClearViews();
                 }

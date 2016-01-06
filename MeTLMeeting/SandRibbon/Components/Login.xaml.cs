@@ -205,10 +205,10 @@ namespace SandRibbon.Components
         {
             if (serverConfigs.Count == 0 || serverConfigs.All(sc => sc == localServer))
             {
+                App.metlConfigManager.reload();
                 Dispatcher.adopt(delegate
                 {
                     serverConfigs.Clear();
-                    App.metlConfigManager.reload();
                     foreach (var p in App.availableServers())
                     {
                         serverConfigs.Add(new ServerChoice(p, true));
@@ -457,7 +457,7 @@ namespace SandRibbon.Components
                     this.Visibility = Visibility.Collapsed;
                     if (App.controller != null)
                         App.controller.credentials.update(credentials);
-                    //App.controller.credentials.cookie = credentials.cookie;
+                    App.controller.credentials.cookie = credentials.cookie;
 
                     Commands.DiagnosticMessage.Execute(new DiagnosticMessage("new creds: " + credentials, "login", DateTime.Now));
                     logonBrowserContainer.Visibility = Visibility.Collapsed;
@@ -502,11 +502,13 @@ namespace SandRibbon.Components
             }, null, Timeout.Infinite, Timeout.Infinite);
             maintainKeysTimer = new System.Threading.Timer((s) =>
             {
-                App.controller.credentials.cookie = Application.GetCookie(loginUri);
+
+                // does anyone fire this?  I think this is a nothing timer.
                 Dispatcher.adopt(delegate
                 {
                     logonBrowser.LoadCompleted -= loginCheckingAction;
                     logonBrowser.Navigate(loginUri);
+                    App.controller.credentials.cookie = Application.GetCookie(loginUri);
                 });
             }, null, Timeout.Infinite, Timeout.Infinite);
             logonBrowser.Navigate(loginUri);
@@ -612,18 +614,18 @@ namespace SandRibbon.Components
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
+            var options = App.controller.client.UserOptionsFor(identity.name);
+            Commands.SetUserOptions.Execute(options);
+            Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
+            Commands.ShowConversationSearchBox.Execute(null);
             Dispatcher.adoptAsync(() =>
             {
                 logonBrowserContainer.Visibility = Visibility.Collapsed;
-                var options = App.controller.client.UserOptionsFor(identity.name);
-                Commands.SetUserOptions.Execute(options);
-                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
                 //DestroyWebBrowser(null);
                 //App.controller.client.JoinRoom("global");
                 this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");
-            Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

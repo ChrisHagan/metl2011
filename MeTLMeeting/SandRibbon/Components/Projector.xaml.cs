@@ -59,7 +59,7 @@ namespace SandRibbon.Components
         }
         private string generateTitle(ConversationDetails details)
         {
-            var possibleIndex = details.Slides.Where(s => s.id == Globals.location.currentSlide);
+            var possibleIndex = details.Slides.Where(s => s.id == Globals.location.currentSlide.id);
             int slideIndex = 1;
             if(possibleIndex.Count() != 0)
                 slideIndex = possibleIndex.First().index + 1;
@@ -67,12 +67,12 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (details.IsEmpty) return;
             Dispatcher.adopt(delegate
             {
-                if (details.IsEmpty) return;
                 conversationLabel.Text = generateTitle(details);
 
-                if (((details.isDeleted || Globals.authorizedGroups.Where(g => g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
+                if (((details.isDeleted || Globals.authorizedGroups.Where(g => g.groupKey.ToLower() == details.Subject.ToLower()).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || Globals.location.activeConversation.IsEmpty)
                 {
                     shutdown(null);
                 }

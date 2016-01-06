@@ -33,8 +33,8 @@ namespace MeTLLib.Providers.Connection
         {
             room = _room;
             if (this.location == null)
-                this.location = new Location("0", _room, new List<int> { _room });
-            this.location.currentSlide = room;
+                this.location = new Location(ConversationDetails.Empty, Slide.Empty, new List<Slide>());
+            //this.location.currentSlide = room;
             this.receiveEvents = receiveEvents;
         }
         public T merge<T>(T otherParser) where T : PreParser
@@ -127,7 +127,7 @@ namespace MeTLLib.Providers.Connection
                 receiveEvents.receiveFileResource(file);
             foreach (var attendance in attendances)
                 receiveEvents.attendanceReceived(attendance);
-            receiveEvents.allContentSent(location.currentSlide);
+            receiveEvents.allContentSent(location.currentSlide.id);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
         public override void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)

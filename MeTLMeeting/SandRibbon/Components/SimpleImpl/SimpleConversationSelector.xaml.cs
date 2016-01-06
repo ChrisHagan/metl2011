@@ -23,7 +23,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(joinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
@@ -35,14 +35,13 @@ namespace SandRibbon.Components
                 RedrawList(null);
             });
         }
-        private void joinConversation(string jid)
+        private void joinConversation(ConversationDetails details)
         {
-            var details = App.controller.client.DetailsOf(jid);
             Dispatcher.adopt(delegate
             {
                 details.LastAccessed = DateTime.Now;
-                if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
-                    recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
+                if (recentConversations.Where(c => c.Jid == details.Jid).Count() > 0)
+                    recentConversations.Where(c => c.Jid == details.Jid).First().LastAccessed = details.LastAccessed;
                 else
                 {
                     recentConversations = recentConversations.Concat(new[] { details });
@@ -53,10 +52,10 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
+            if (recentConversations.Where(c => c.IsJidEqual(details.Jid)).Count() == 0) return;
             Dispatcher.adopt(delegate
             {
-                if (ConversationDetails.Empty.Equals(details)) return;
-                if (recentConversations.Where(c => c.IsJidEqual(details.Jid)).Count() == 0) return;
                 if (details.isDeleted)
                 {
                     recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
@@ -69,7 +68,7 @@ namespace SandRibbon.Components
         }
         private void RedrawList(object _unused)
         {
-            Dispatcher.adopt(() =>
+            Dispatcher.adopt(delegate 
             {
                 var potentialConversations = RecentConversationProvider.loadRecentConversations();
                 if (potentialConversations != null && potentialConversations.Count() > 0)
@@ -124,7 +123,7 @@ namespace SandRibbon.Components
             }
             else
             {
-                Commands.JoinConversation.ExecuteAsync(conversationJid);
+                Commands.JoinConversation.ExecuteAsync(details);
             }
         }
         private void canJoinConversation(object sender, CanExecuteRoutedEventArgs e)

@@ -34,25 +34,30 @@ namespace SandRibbon.Chrome
             });
         }
         private void SetPedagogyLevel(PedagogyLevel level) 
-        { 
-            foreach(var i in Enumerable.Range(0, ((int)level.code) + 1))
+        {
+            Dispatcher.adopt(delegate
             {
-                switch (i)
+                foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
                 {
-                    case 0:
-                        clearUI();
-                        add("undo");
-                        add("redo");
-                        break;
-                    case 3:
-                        //add("friends");
-                        //add("notes");
-                        add("lectureStyle");
-                        add("tutorialStyle");
-                        //add("meetingStyle");
-                        break; 
+                    switch (i)
+                    {
+                        case 0:
+                            clearUI();
+                            add("undo");
+                            add("redo");
+                            break;
+                        case 3:
+                            //add("friends");
+                            //add("notes");
+                            /*
+                            add("lectureStyle");
+                            add("tutorialStyle");
+                            */
+                            //add("meetingStyle");
+                            break;
+                    }
                 }
-            }
+            });
         }
     }
 }

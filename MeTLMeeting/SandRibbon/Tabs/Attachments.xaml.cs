@@ -49,11 +49,11 @@ namespace SandRibbon.Tabs
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            Dispatcher.adopt(delegate
+            if (details.IsEmpty) return;
+            if (details.Jid == Globals.location.activeConversation.Jid && details.isDeleted)
+                Dispatcher.adopt(delegate
             {
-                if (details.IsEmpty) return;
-                if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
-                    clearOutAttachments(null);
+                clearOutAttachments(null);
             });
         }
         private void clearOutAttachments(object obj)
@@ -76,8 +76,6 @@ namespace SandRibbon.Tabs
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
             //if (!Globals.conversationDetails.IsJidEqual(fileInfo.conversationJid.ToString())) return;  // it appears that the files aren't holding their jids properly, which is not surprising, given that only C# thinks it's necessary for the element to know it, and I'm not sure what it's using it for, other than this check.
-            Dispatcher.adoptAsync(() =>
-            {
                 var fileInfoFileType = FileHelper.DetermineFileTypeFromExtension(fileInfo.name);
                 if (files.Select(f => f.identity).Contains(fileInfo.identity)) return;
                 var uploadTime = DateTime.Now;
@@ -95,6 +93,8 @@ namespace SandRibbon.Tabs
                     {
                     }
                 }
+            Dispatcher.adoptAsync(() =>
+            {
                 files.Add(new FileInfo
                 {
                     fileType = fileInfoFileType,

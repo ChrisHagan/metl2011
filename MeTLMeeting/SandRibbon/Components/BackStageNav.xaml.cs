@@ -29,7 +29,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-                if (String.IsNullOrEmpty(Globals.location.activeConversation))
+                if (Globals.location.activeConversation.IsEmpty)
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;
@@ -38,7 +38,7 @@ namespace SandRibbon.Components
                 if (details.IsEmpty) return;
 
                 // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
-                if (details.IsJidEqual(Globals.location.activeConversation))
+                if (details.Jid == Globals.location.activeConversation.Jid)
                 {
                     if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
                     {
@@ -54,7 +54,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-                if (String.IsNullOrEmpty(Globals.location.activeConversation))
+                if (Globals.location.activeConversation.IsEmpty)
                 {
                     current.Visibility = Visibility.Collapsed;
                     currentConversation.Visibility = Visibility.Collapsed;

@@ -301,6 +301,18 @@ namespace SandRibbon.Tabs.Groups
 
     public class PenColorsUIState
     {
+        /*
+        public PenColorsUIState()
+        {
+            CurrentDrawingAttributes = new DrawingAttributes();
+            CurrentColorValues = new CurrentColourValues();
+            CurrentPenMode = PenMode.Draw;
+            CurrentSelectedColor = 0;
+            CurrentSelectedPen = 0;
+            CurrentSelectedSize = 0;
+            CurrentChosenColor = "#FF000000";
+        }
+        */
         public DrawingAttributes CurrentDrawingAttributes;
         public CurrentColourValues CurrentColorValues;
         public PenMode CurrentPenMode;
@@ -319,7 +331,7 @@ namespace SandRibbon.Tabs.Groups
         public bool ShouldNotUpdateRGB;
         public DrawingAttributes currentAttributes;
 
-        private CurrentColourValues _currentColourValues; 
+        private CurrentColourValues _currentColourValues;
         public CurrentColourValues currentColourValues
         {
             get
@@ -339,13 +351,13 @@ namespace SandRibbon.Tabs.Groups
             {
                 if (_simpleColourSet == null)
                 {
-                    _simpleColourSet = new Brush[] 
+                    _simpleColourSet = new Brush[]
                     {
                         new SolidColorBrush(Colors.White), new SolidColorBrush(Colors.LightPink),new SolidColorBrush(Colors.PaleGreen),
                         new SolidColorBrush(Colors.Cyan), new SolidColorBrush(Colors.PaleVioletRed), new SolidColorBrush(Colors.LightYellow),
                         new SolidColorBrush(Colors.LightGray), new SolidColorBrush(Colors.Pink), new SolidColorBrush(Colors.LightGreen),
                         new SolidColorBrush(Colors.LightBlue), new SolidColorBrush(Colors.Violet), new SolidColorBrush(Colors.Yellow),
-                        new SolidColorBrush(Colors.DarkGray), new SolidColorBrush(Colors.Red), new SolidColorBrush(Colors.Green), 
+                        new SolidColorBrush(Colors.DarkGray), new SolidColorBrush(Colors.Red), new SolidColorBrush(Colors.Green),
                         new SolidColorBrush(Colors.Blue), new SolidColorBrush(Colors.Purple), new SolidColorBrush(Colors.Orange),
                         new SolidColorBrush(Colors.Black), new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.DarkGreen),
                         new SolidColorBrush(Colors.DarkBlue), new SolidColorBrush(Colors.Maroon), new SolidColorBrush(Colors.OrangeRed)
@@ -402,7 +414,7 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(SetDrawingAttributes));
+            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
 
             Commands.SaveUIState.RegisterCommand(new DelegateCommand<object>(SaveUIState));
             Commands.RestoreUIState.RegisterCommand(new DelegateCommand<object>(RestoreUIState));
@@ -442,15 +454,15 @@ namespace SandRibbon.Tabs.Groups
 
         private void RestoreUIState(object parameter)
         {
+            var penMode = "Ink";
             Dispatcher.adopt(delegate
             {
                 // restore saved state
                 var saveState = Globals.StoredUIState.PenColorsUIState;
+                currentAttributes = saveState.CurrentDrawingAttributes;
 
-                var penMode = "Ink";
                 if (saveState != null)
                 {
-                    currentAttributes = saveState.CurrentDrawingAttributes;
                     _currentColourValues = saveState.CurrentColorValues;
 
                     switch (saveState.CurrentPenMode)
@@ -484,10 +496,10 @@ namespace SandRibbon.Tabs.Groups
                     //ChangeColour(ColourChooser, null);
                     //ChangeColorFromPreset(defaultColours, null);
 
-                    Commands.SetInkCanvasMode.ExecuteAsync(penMode);
-                    Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
                 }
             });
+            Commands.SetInkCanvasMode.ExecuteAsync(penMode);
+            Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
         }
 
         private void checkDraw()
@@ -503,7 +515,7 @@ namespace SandRibbon.Tabs.Groups
                 checkDraw();
             });
         }
-        private void SetDrawingAttributes(object obj)
+        private void SetDrawingAttributes(DrawingAttributes obj)
         {
             Dispatcher.adopt(delegate
             {
@@ -512,25 +524,23 @@ namespace SandRibbon.Tabs.Groups
         }
         private void SetInkCanvasMode(string mode)
         {
-            Dispatcher.adopt(delegate
+            if (mode != "Ink")
+                Dispatcher.adopt(delegate
             {
-                if (mode != "Ink")
-                {
-                    defaultColours.SelectedIndex = -1;
-                }
+                defaultColours.SelectedIndex = -1;
             });
         }
         private void SetLayer(string layer)
         {
-            Dispatcher.adopt(delegate
+            if (layer == "Sketch")
             {
-                if (layer == "Sketch")
+                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+            }
+            else
+                Dispatcher.adopt(delegate
                 {
-                    Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
-                }
-                else
                     Visibility = Visibility.Collapsed;
-            });
+                });
         }
         private void updatePreviousDrawingAttributes(DrawingAttributes attributes)
         {
@@ -605,7 +615,7 @@ namespace SandRibbon.Tabs.Groups
                 var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
                 var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
                 currentAttributes = drawingAttributes;
-                Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
+                Commands.SetDrawingAttributes.Execute(drawingAttributes);
                 var msg = String.Format("Pen selected, Pen {0}, Colour {1}, Size {2}, isHighlighter {3}", IndexNumber.ToString(), drawingAttributes.Color.ToString(), drawingAttributes.Height.ToString(), drawingAttributes.IsHighlighter.ToString());
                 Trace.TraceInformation(msg);
                 e.Handled = true;
@@ -649,14 +659,19 @@ namespace SandRibbon.Tabs.Groups
         private void ChangeColour(object sender, RoutedEventArgs e)
         {
             if (OpeningPopup) return;
-            var Brush = ((Brush)((ListBox)sender).SelectedItem).ToString();
-            var Color = (Color)ColorConverter.ConvertFromString(Brush);
-            var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
-            ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).ColorValue = Color;
-            ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).XAMLColorName = Color.ToString();
-            defaultColours.Items.Refresh();
-            InvokeAlteredPreset(PresetToUpdate);
-            Trace.TraceInformation("Pen changed colour, Pen {0}, newColour {1}", PresetToUpdate.ToString(), Color.ToString());
+            try {
+                var Brush = ((Brush)((ListBox)sender).SelectedItem).ToString();
+                var Color = (Color)ColorConverter.ConvertFromString(Brush);
+                var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
+                ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).ColorValue = Color;
+                ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).XAMLColorName = Color.ToString();
+                defaultColours.Items.Refresh();
+                InvokeAlteredPreset(PresetToUpdate);
+                Trace.TraceInformation("Pen changed colour, Pen {0}, newColour {1}", PresetToUpdate.ToString(), Color.ToString());
+            } catch (Exception ex)
+            {
+                Trace.TraceInformation("Pen color changing failed: " + ex.Message);
+            }
         }
         private void InvokeAlteredPreset(int index)
         {
@@ -678,12 +693,17 @@ namespace SandRibbon.Tabs.Groups
         private void ChangeSize(object sender, RoutedEventArgs e)
         {
             if (OpeningPopup) return;
-            var newSize = ((double)((ListBox)sender).SelectedItem);
-            var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
-            ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
-            defaultColours.Items.Refresh();
-            InvokeAlteredPreset(PresetToUpdate);
-            Trace.TraceInformation("Pen changed size, Pen {0}, newSize {1}", PresetToUpdate.ToString(), newSize.ToString());
+            try {
+                var newSize = ((double)((ListBox)sender).SelectedItem);
+                var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
+                ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
+                defaultColours.Items.Refresh();
+                InvokeAlteredPreset(PresetToUpdate);
+                Trace.TraceInformation("Pen changed size, Pen {0}, newSize {1}", PresetToUpdate.ToString(), newSize.ToString());
+            } catch (Exception ex)
+            {
+                Trace.TraceInformation("Pen changed size failed: " + ex.Message);
+            }
         }
         private void SizeUp(object sender, MouseButtonEventArgs e)
         {
@@ -827,12 +847,12 @@ new StylusPoint[]{new StylusPoint(17.6666666666667,86,0.5f),new StylusPoint(18,8
                         return;
                     internalupdate = true;
                     attributes = new DrawingAttributes()
-                                     {
-                                         Color = ColorValue,
-                                         Height = PenSize,
-                                         IsHighlighter = ishighlighter,
-                                         Width = PenSize
-                                     };
+                    {
+                        Color = ColorValue,
+                        Height = PenSize,
+                        IsHighlighter = ishighlighter,
+                        Width = PenSize
+                    };
                     internalupdate = false;
                 }
             }

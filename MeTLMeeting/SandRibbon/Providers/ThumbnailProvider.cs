@@ -15,17 +15,23 @@ namespace SandRibbon.Providers
 {
     public class CachedThumbnail
     {
-        public BitmapImage image;
+        public ImageSource image;
         public long created;
-        public CachedThumbnail(BitmapImage i)
+        public CachedThumbnail(ImageSource i)
         {
             image = i;
             created = DateTime.Now.Ticks;
+        }
+        public CachedThumbnail(ImageSource i,long creationTime)
+        {
+            image = i;
+            created = creationTime;
         }
     }
     public class ThumbnailProvider
     {
         public static ImageSource emptyImage = new ImageSourceConverter().ConvertFromString("Resources/Slide_Not_Loaded.png") as ImageSource;
+        public static CachedThumbnail emptyCachedThumbnail = new CachedThumbnail(emptyImage, 0);
         private static Dictionary<int, CachedThumbnail> cache = new Dictionary<int, CachedThumbnail>();
         private static object cacheLock = new object();
         //acceptableStaleTime is measured in ticks
@@ -47,29 +53,30 @@ namespace SandRibbon.Providers
         }
         private static void paintThumb(Image image)
         {
-          image.Dispatcher.adopt(delegate
-          {
-              try
-              {
-                  var internalSlide = (Slide)image.DataContext;
-                  if (internalSlide != null)
-                  {
-                      lock (cacheLock)
-                      {
-                          if (cache.ContainsKey(internalSlide.id))
-                          {
-                              //Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
-                              image.Source = cache[internalSlide.id].image;
-                          }
-                      }
-                  }
-                  else
-                      image.Source = emptyImage;
-              }
-              catch (Exception e) { 
-                      image.Source = emptyImage;
-              }
-          });
+            image.Dispatcher.adopt(delegate
+            {
+                try
+                {
+                    var internalSlide = (Slide)image.DataContext;
+                    if (internalSlide != null)
+                    {
+                        lock (cacheLock)
+                        {
+                            if (cache.ContainsKey(internalSlide.id))
+                            {
+                                //Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
+                                image.Source = cache[internalSlide.id].image;
+                            }
+                        }
+                    }
+                    else
+                        image.Source = emptyImage;
+                }
+                catch (Exception e)
+                {
+                    image.Source = emptyImage;
+                }
+            });
         }
         public static void thumbnail(Image image, int slideId)
         {
@@ -83,22 +90,28 @@ namespace SandRibbon.Providers
                     shouldPaintThumb = true;
                 }
             }
-            if (shouldPaintThumb) {
+            if (shouldPaintThumb)
+            {
                 paintThumb(image);
-            } else {
+            }
+            else
+            {
                 var server = App.controller.config;
                 var host = server.name;
-                var url = server.thumbnailUri(string.Format("{0}",slideId));
+                var url = server.thumbnailUri(slideId.ToString());
                 WebThreadPool.QueueUserWorkItem(delegate
                 {
                     try
                     {
-                        App.auditor.wrapAction(g => { 
-                            using (var client = new WebClient())
+                        App.auditor.wrapAction(g =>
+                        {
+                            var client = App.controller.client.resourceProvider;
+                            BitmapImage bitmap = null;
+                            g(GaugeStatus.InProgress, 10);
+                            var bytes = client.secureGetData(url);
+                            if (bytes.Length > 0)
                             {
-                                BitmapImage bitmap = null;
-                                g(GaugeStatus.InProgress, 10);
-                                using (var stream = new MemoryStream(client.DownloadData(url)))
+                                using (var stream = new MemoryStream(bytes))
                                 {
                                     g(GaugeStatus.InProgress, 20);
                                     bitmap = new BitmapImage();
@@ -123,10 +136,15 @@ namespace SandRibbon.Providers
                                     g(GaugeStatus.InProgress, 85);
                                     addToCache(slideId, new CachedThumbnail(bitmap));
                                     g(GaugeStatus.InProgress, 90);
-
                                 }
-                                paintThumb(image);
                             }
+                            else
+                            {
+                                addToCache(slideId, emptyCachedThumbnail);
+                                g(GaugeStatus.InProgress, 90);
+                            }
+
+                            paintThumb(image);
                         }, "paintThumb", "frontend");
                     }
                     catch (Exception e)
@@ -135,6 +153,6 @@ namespace SandRibbon.Providers
                     }
                 });
             }
-        } 
+        }
     }
 }

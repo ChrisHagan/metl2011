@@ -124,13 +124,13 @@ namespace SandRibbon.Components
             DataContext = this;
             slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(MoveToTeacher));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
-            Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>((loc) => MoveTo(loc, true), (loc) => slideInConversation(loc)));
+            //Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
             Commands.ReceiveTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(receivedStatus, (_unused) => { return StateHelper.mustBeInConversation(); }));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation));
             Commands.UpdateNewSlideOrder.RegisterCommand(new DelegateCommand<int>(reorderSlides));
@@ -197,7 +197,7 @@ namespace SandRibbon.Components
                     Who = status.Teacher,
                     Where = status.Conversation
                 });
-                if (status.Conversation == Globals.location.activeConversation && status.Teacher == Globals.conversationDetails.Author)
+                if (status.Conversation == Globals.location.activeConversation.Jid && status.Teacher == Globals.conversationDetails.Author)
                 {
                     TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, status.Slide);
                     IsNavigationLocked = calculateNavigationLocked();
@@ -231,7 +231,7 @@ namespace SandRibbon.Components
         {
             currentSlideId = -1;
         }
-        private void JoinConversation(object obj)
+        private void JoinConversation(ConversationDetails details)
         {
             myMaxSlideIndex = -1;
             TeachersCurrentSlideIndex = -1;
@@ -239,17 +239,11 @@ namespace SandRibbon.Components
             {
                 thumbnailList.Clear();
             });
-            try {
-                if (obj is string)
-                {
-                    var convJid = obj as string;
-                    var firstSlideJid = Int32.Parse(convJid) + 1;
-                    Commands.MoveTo.Execute(firstSlideJid);
-                }
-            } catch (Exception e)
+            if (details.IsEmpty)
             {
-                Console.WriteLine(String.Format("failed to moveTo, based on joinConversation: {0} - {1}",obj,e.Message));
+                return;
             }
+            Commands.MoveTo.Execute(new Location(details,details.Slides.OrderBy(cd => cd.index).First(),details.Slides));
         }
 
         private bool canAddSlide(object _slide)
@@ -272,11 +266,14 @@ namespace SandRibbon.Components
             return thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
         }
 
-        private void MoveTo(int slide, bool _forceRefresh)
+        private void MoveTo(Location loc, bool _forceRefresh)
         {
-            myMaxSlideIndex = calculateMaxIndex(myMaxSlideIndex, indexOf(slide));
-            currentSlideId = slide;
-            checkMovementLimits();
+            if (slideInConversation(loc))
+            {
+                myMaxSlideIndex = calculateMaxIndex(myMaxSlideIndex, indexOf(loc.currentSlide.id));
+                currentSlideId = loc.currentSlide.id;
+                checkMovementLimits();
+            }
         }
 
         private int calculateMaxIndex(int myIndex, int index)
@@ -301,31 +298,33 @@ namespace SandRibbon.Components
 
         private void MoveToTeacher(int where)
         {
+            if (Globals.isAuthor) return;
+            if (!Globals.synched) return;
+            if (where == Globals.slide) return; // don't move if we're already on the slide requested
             Dispatcher.adopt(delegate
             {
-                if (Globals.isAuthor) return;
-                if (!Globals.synched) return;
-                if (where == Globals.slide) return; // don't move if we're already on the slide requested
                 TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
                 checkMovementLimits();
-                var action = (Action)(() => Dispatcher.adoptAsync(() =>
-                                                                      {
-                                                                          try
-                                                                          {
-                                                                              var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
-                                                                              slides.SelectedIndex = index;
-                                                                              slides.ScrollIntoView(slides.SelectedItem);
-                                                                          }
-                                                                          catch (Exception)
-                                                                          {
-                                                                          }
-                                                                      }));
-                GlobalTimers.SetSyncTimer(action);
             });
+            var action = (Action)(() => Dispatcher.adopt(() =>
+            {
+                try
+                {
+                    var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
+                    slides.SelectedIndex = index;
+                    slides.ScrollIntoView(slides.SelectedItem);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("syncTimer action threw exception: " + ex.Message);
+                }
+            }));
+            GlobalTimers.SetSyncTimer(action);
         }
-        private bool slideInConversation(int slide)
+        private bool slideInConversation(Location loc)
         {
-            return Globals.conversationDetails.Slides.Select(t => t.id).Contains(slide);
+            return loc.availableSlides.Exists(s => s.id == loc.currentSlide.id);
+            //return Globals.conversationDetails.Slides.Select(t => t.id).Contains(slide);
         }
         private bool isPrevious(object _object)
         {
@@ -360,9 +359,9 @@ namespace SandRibbon.Components
         }
         private void reorderSlides(int conversationJid)
         {
+            if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
             Dispatcher.adopt(delegate
             {
-                if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
                 IsNavigationLocked = calculateNavigationLocked();
                 var details = Globals.conversationDetails;
                 thumbnailList.Clear();
@@ -406,7 +405,7 @@ namespace SandRibbon.Components
             */
             Dispatcher.adopt(delegate
             {
-                if (string.IsNullOrEmpty(details.Jid) || !details.UserHasPermission(Globals.credentials))
+                if (details.IsEmpty || !details.UserHasPermission(Globals.credentials))
                 {
                     thumbnailList.Clear();
                     return;
@@ -478,7 +477,7 @@ namespace SandRibbon.Components
                             foreach (var slide in removedItems) ((Slide)slide).refresh();
                             AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
 
-                            Commands.MoveTo.ExecuteAsync(currentSlideId);
+                            Commands.MoveTo.ExecuteAsync(new Location(Globals.location.activeConversation,selected,Globals.location.availableSlides));// currentSlideId);
                             checkMovementLimits();
                             SendSyncMove(currentSlideId);
                         }

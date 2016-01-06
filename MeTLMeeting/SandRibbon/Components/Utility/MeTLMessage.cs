@@ -26,7 +26,20 @@ namespace SandRibbon.Components.Utility
 
             if (dialogOwner != null)
             {
-                result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+                if (dialogOwner.Dispatcher != null)
+                {
+                    dialogOwner.Dispatcher.adoptAsync(() =>
+                    {
+                        result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+                    });
+                } else
+                {
+                    Application.Current.Dispatcher.adoptAsync(() =>
+                    {
+                        result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+                    });
+
+                }
             }
             else
             {

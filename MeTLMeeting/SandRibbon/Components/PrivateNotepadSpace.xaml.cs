@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -24,10 +25,10 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(MoveTo));
         }
 
-        private void MoveTo(int slide)
+        private void MoveTo(Location loc)
         {
             Dispatcher.adopt(delegate
             {

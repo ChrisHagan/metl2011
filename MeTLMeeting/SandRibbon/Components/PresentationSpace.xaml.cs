@@ -33,7 +33,7 @@ namespace SandRibbon.Components
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
@@ -88,7 +88,7 @@ namespace SandRibbon.Components
                 onGeneration = bytes =>
                 {
                     var conn = App.controller.client;
-                    conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide, Globals.me, "bannedcontent",
+                    conn.UploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation(conn.location.currentSlide.id, Globals.me, "bannedcontent",
                         Privacy.Private, -1L, bytes, Globals.conversationDetails.Title, blacklisted, Globals.generateId()));
                 }
             });
@@ -116,15 +116,10 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            Dispatcher.adopt(delegate
-            {
-                if (details.IsEmpty) return;
-                if (string.IsNullOrEmpty(details.Jid)) return;
-                if (details.UserIsBlackListed(Globals.me))
-                {
-                    Commands.SetPrivacy.Execute("private");
-                }
-            });
+            if (details.IsEmpty) return;
+            if (string.IsNullOrEmpty(details.Jid)) return;
+            if (details.UserIsBlackListed(Globals.me))
+                Commands.SetPrivacy.Execute("private");
         }
         private FrameworkElement GetAdorner()
         {
@@ -139,7 +134,7 @@ namespace SandRibbon.Components
         }
         private void GenerateScreenshot(ScreenshotDetails details)
         {
-            Dispatcher.adopt(() =>
+            Dispatcher.adopt(delegate 
             {
                 var target = FindResource("target") as string;
                 if ("presentationSpace" != target) return;
@@ -215,8 +210,8 @@ namespace SandRibbon.Components
                 }
                 catch (NotSetException)
                 {
-                        //Fine it's not time yet anyway.  I don't care.
-                    }
+                    //Fine it's not time yet anyway.  I don't care.
+                }
             });
         }
         private static bool CanMirrorPresentationSpace(object _param)
@@ -245,7 +240,7 @@ namespace SandRibbon.Components
             w.Width = r.Width;
             w.Height = r.Height;
         }
-        private void MoveTo(int slide)
+        private void MoveTo(Location loc)
         {
             Dispatcher.adopt(delegate
             {

@@ -127,8 +127,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand("LeaveAllRooms");
         public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand("LeaveAllRooms");
         public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand("LeaveAllRooms");
-        public static DefaultableCompositeCommand MoveTo = new DefaultableCompositeCommand("MoveTo");
-        public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand("JoinConversation");
+        public static DefaultableCompositeCommand MoveTo = new DefaultableCompositeCommand("MoveTo",new Location(ConversationDetails.Empty,Slide.Empty,new List<Slide>()));
+        public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand("JoinConversation",ConversationDetails.Empty);
         public static DefaultableCompositeCommand CreateQuiz = new DefaultableCompositeCommand("CreateQuiz");
         public static DefaultableCompositeCommand OpenQuiz = new DefaultableCompositeCommand("OpenQuiz");
         public static DefaultableCompositeCommand ViewQuizResults = new DefaultableCompositeCommand("ViewQuizResults");
@@ -367,7 +367,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand("MoveToNext");
         public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand("SetConversationPermissions");
         public static DefaultableCompositeCommand ToggleNavigationLock = new DefaultableCompositeCommand("ToggleNavigationLock");
-        public static DefaultableCompositeCommand LeaveConversation = new DefaultableCompositeCommand("LeaveConversation");
+        public static DefaultableCompositeCommand LeaveConversation = new DefaultableCompositeCommand("LeaveConversation",ConversationDetails.Empty);
         public static DefaultableCompositeCommand LeaveLocation = new DefaultableCompositeCommand("LeaveLocation");
         public static DefaultableCompositeCommand SendDirtyConversationDetails = new DefaultableCompositeCommand("SendDirtyConversationDetails");
         public static DefaultableCompositeCommand UpdateConversationDetails = new DefaultableCompositeCommand("UpdateConversationDetails",ConversationDetails.Empty);

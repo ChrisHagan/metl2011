@@ -37,7 +37,7 @@ namespace SandRibbon.Tabs.Groups
         private void loadFonts()
         {
             fontList = new List<string>();
-            foreach(var font in System.Drawing.FontFamily.Families)
+            foreach (var font in System.Drawing.FontFamily.Families)
                 fontList.Add(font.Name);
         }
         private void togglebold(object obj)
@@ -58,13 +58,11 @@ namespace SandRibbon.Tabs.Groups
 
         private void MoveTo(object obj)
         {
-            Dispatcher.adopt(delegate
+            if (Globals.currentTextInfo == null)
+                Dispatcher.adopt(delegate
             {
-                if (Globals.currentTextInfo == null)
-                {
-                    ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
-                    fontSize.SelectedItem = generateDefaultFontSize();
-                }
+                ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
+                fontSize.SelectedItem = generateDefaultFontSize();
             });
         }
 
@@ -94,11 +92,11 @@ namespace SandRibbon.Tabs.Groups
             {
                 Size = (double)fontSize.SelectedItem,
                 Family = new FontFamily(fontFamily.SelectedItem.ToString()),
-                Bold =  TextBoldButton.IsChecked == true,
+                Bold = TextBoldButton.IsChecked == true,
                 Italics = TextItalicButton.IsChecked == true,
                 Underline = TextUnderlineButton.IsChecked == true,
                 Strikethrough = TextStrikethroughButton.IsChecked == true,
-                Color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
+                Color = ((SolidColorBrush)ColourPickerBorder.BorderBrush).Color
             };
             Globals.currentTextInfo = new TextInformation(info);
             Commands.UpdateTextStyling.Execute(info);
@@ -200,7 +198,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void restoreDefaults(object sender, RoutedEventArgs e)
         {
-            Commands.RestoreTextDefaults.Execute(null); 
+            Commands.RestoreTextDefaults.Execute(null);
         }
     }
 }

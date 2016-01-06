@@ -110,7 +110,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
             sortedConversations.Filter = isWhatWeWereLookingFor;
             sortedConversations.CustomSort = new ConversationComparator();
@@ -123,18 +123,16 @@ namespace SandRibbon.Components
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
-            Dispatcher.adopt(() =>
+            if (keyEventArgs.Key == Key.Enter)
+                Dispatcher.adopt(delegate
             {
-                if (keyEventArgs.Key == Key.Enter)
-                {
-                    RefreshSortedConversationsList();
-                    FillSearchResultsFromInput();
-                }
+                RefreshSortedConversationsList();
+                FillSearchResultsFromInput();
             });
         }
 
         DelegateCommand<ConversationDetails> conversationDetailsCommand = null;
-        DelegateCommand<string> joinConversationCommand = null;
+        DelegateCommand<ConversationDetails> joinConversationCommand = null;
         DelegateCommand<string> leaveConversationCommand = null;
         DelegateCommand<object> setConversationPermissionsCommand = null;
         DelegateCommand<string> backstageModeChangedCommand = null;
@@ -146,7 +144,7 @@ namespace SandRibbon.Components
             if (conversationDetailsCommand == null)
             {
                 conversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateAllConversations);
-                joinConversationCommand = new DelegateCommand<string>(JoinConversation);
+                joinConversationCommand = new DelegateCommand<ConversationDetails>(JoinConversation);
                 leaveConversationCommand = new DelegateCommand<string>(LeaveConversation);
                 setConversationPermissionsCommand = new DelegateCommand<object>(App.noop, canSetPermissions);
                 backstageModeChangedCommand = new DelegateCommand<string>(BackstageModeChanged);
@@ -300,7 +298,7 @@ namespace SandRibbon.Components
                 RestartRefreshTimer();
 
                 var currentConversationDetails = Globals.conversationDetails;
-                activeConversation = Globals.location.activeConversation;
+                activeConversation = Globals.location.activeConversation.Jid;
                 me = Globals.me;
 
                 if (String.IsNullOrEmpty(activeConversation) || (currentConversationDetails != null && currentConversationDetails.isDeleted))
@@ -330,7 +328,7 @@ namespace SandRibbon.Components
                 Commands.RequerySuggested();
             });
         }
-        private void JoinConversation(object o)
+        private void JoinConversation(ConversationDetails o)
         {
             Dispatcher.adopt(delegate
             {
@@ -349,32 +347,41 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-            Dispatcher.adopt(delegate
+            if (details.IsEmpty) return;
+            if (!Globals.location.activeConversation.IsEmpty)
             {
-                if (details.IsEmpty) return;
-                if (!String.IsNullOrEmpty(Globals.location.activeConversation))
+                if (details.Jid == Globals.location.activeConversation.Jid)
                 {
-                    if (details.IsJidEqual(Globals.location.activeConversation))
+                    if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
                     {
-                        if (details.isDeleted || (!details.UserHasPermission(Globals.credentials)))
+                        Dispatcher.adopt(delegate
                         {
                             currentConversation.Visibility = Visibility.Collapsed;
-                            if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
-                                Commands.BackstageModeChanged.ExecuteAsync("find");
-                        }
-                        if (!shouldShowConversation(details) || details.isDeleted)
+                        });
+                        if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
+                            Commands.BackstageModeChanged.ExecuteAsync("find");
+                    }
+                    if (!shouldShowConversation(details) || details.isDeleted)
+                    {
+                        Dispatcher.adopt(delegate
                         {
                             Commands.RequerySuggested();
                             this.Visibility = Visibility.Visible;
-                        }
+                        });
                     }
                 }
+            }
+            Dispatcher.adopt(delegate
+            {
+
                 if (!searchResultsObserver.Select(d => d.Jid).Contains(details.Jid)
-                    && !details.isDeleted){
+                    && !details.isDeleted)
+                {
                     searchResultsObserver.Add(details);
                 }
                 RefreshSortedConversationsList();
             });
+
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
@@ -444,7 +451,7 @@ namespace SandRibbon.Components
                 // Check that the permissions have not changed since user searched for the conversation
                 var conversation = App.controller.client.DetailsOf(requestedJid);
                 if (conversation.UserHasPermission(Globals.credentials))
-                    Commands.JoinConversation.ExecuteAsync(requestedJid);
+                    Commands.JoinConversation.ExecuteAsync(conversation);
                 else
                     MeTLMessage.Information("You no longer have permission to view this conversation.");
             }

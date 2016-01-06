@@ -56,9 +56,9 @@ namespace SandRibbon.Components
         {
             //Commands.RequestMeTLUserInformations.RegisterCommand(new DelegateCommand<List<string>>(RequestUserInformations));
             Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
+            Commands.LeaveConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(LeaveConversation));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(l => MoveTo(l.activeConversation,l.currentSlide)));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
@@ -99,18 +99,18 @@ namespace SandRibbon.Components
             detachFromClient(); // don't care about events anymore
             client.LeaveAllRooms();
         }
-        private void LeaveConversation(string Jid)
+        private void LeaveConversation(ConversationDetails details)
         {
-            client.LeaveConversation(Jid);
+            client.LeaveConversation(details);
         }
-        private void JoinConversation(string jid)
+        private void JoinConversation(ConversationDetails details)
         {
             Commands.CheckExtendedDesktop.ExecuteAsync(null);
-            client.JoinConversation(jid);
+            client.JoinConversation(details);
         }
-        private void MoveTo(int slide)
+        private void MoveTo(ConversationDetails details, Slide slide)
         {
-            client.MoveTo(slide);
+            client.MoveTo(details,slide);
         }
         private void SendChatMessage(object _obj)
         {
@@ -296,11 +296,11 @@ namespace SandRibbon.Components
 
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == client.location.activeConversation.GetHashCode())
+            if (e.conversationDetails != null && e.conversationDetails.Jid == client.location.activeConversation.Jid)
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else
             {
-                Application.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
+                Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
             }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)

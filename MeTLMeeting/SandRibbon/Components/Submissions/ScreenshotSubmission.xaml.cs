@@ -52,9 +52,9 @@ namespace SandRibbon.Components.Submissions
         }
         private void detailsChanged(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
             {
-                if (ConversationDetails.Empty.Equals(details)) return;
                 try
                 {
                     if (Globals.conversationDetails.Author == Globals.me)
@@ -125,7 +125,7 @@ namespace SandRibbon.Components.Submissions
                 {
                     App.controller.client.UploadAndSendSubmission(
                         new MeTLStanzas.LocalSubmissionInformation(
-                            App.controller.client.location.currentSlide, 
+                            App.controller.client.location.currentSlide.id, 
                             Globals.me, 
                             "submission",
                             Privacy.Public, 

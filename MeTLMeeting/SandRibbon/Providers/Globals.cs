@@ -138,7 +138,8 @@ namespace SandRibbon.Providers
             get
             {
                 var conversationDetails = Globals.conversationDetails;
-                return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
+                var sl = conversationDetails.Slides.Find(s => s.id == slide);
+                return new Location(conversationDetails, sl == null ? Slide.Empty : sl, conversationDetails.Slides);
             }
         }
         public static List<Slide> slides
@@ -233,7 +234,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return Commands.MoveTo.IsInitialised ? (int)Commands.MoveTo.LastValue() : -1;
+                return Commands.MoveTo.IsInitialised ? ((Location)Commands.MoveTo.LastValue()).currentSlide.id : -1;
             }
         }
         public static string me
@@ -284,6 +285,8 @@ namespace SandRibbon.Providers
                 if (_storedUIState == null)
                 {
                     _storedUIState = new StoredUIState();
+                    //_storedUIState.PenColorsUIState = new Tabs.Groups.PenColorsUIState();
+                    //_storedUIState.SimpleModeSwitcherUIState = new Components.SimpleImpl.SimpleModeSwitcherUIState();
                 }
 
                 return _storedUIState;

@@ -38,9 +38,9 @@ namespace SandRibbon.Quizzing
         }
         private void JoinConversation(object obj)
         {
+            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
             Dispatcher.adopt(delegate
             {
-                Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(JoinConversation));
                 Close();
             });
         }
@@ -197,9 +197,7 @@ namespace SandRibbon.Quizzing
                                     var proposedIdentity = String.Format("{0}:{1}", Globals.me, DateTime.Now.Ticks);
                                     var hostedFileUriXml = App.controller.client.resourceProvider.securePutData(App.controller.config.uploadResource(proposedIdentity, Globals.conversationDetails.Jid), bytes);
                                     identity = XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
-                                    Dispatcher.adopt(() =>
-                                    {
-
+                                    Dispatcher.adopt(delegate { 
                                         //identity = App.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                         var image = new Image();
                                         BitmapImage source = new BitmapImage();

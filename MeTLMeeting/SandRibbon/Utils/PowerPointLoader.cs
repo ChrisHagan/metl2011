@@ -144,12 +144,12 @@ namespace SandRibbon.Utils
         {
             private int slidesUploaded = 0;
             private readonly int target;
-            private String conversationJid;
+            private ConversationDetails conversation;
             private DelegateCommand<object> cancel = new DelegateCommand<object>(delegate { }, _unused => false);
-            public PowerpointLoadTracker(int _target, String _conversation)
+            public PowerpointLoadTracker(int _target, ConversationDetails _conversation)
             {
                 target = _target;
-                conversationJid = _conversation;
+                conversation = _conversation;
                 Commands.ReceiveImage.RegisterCommand(cancel);
                 Commands.ReceiveTextBox.RegisterCommand(cancel);
             }
@@ -163,7 +163,7 @@ namespace SandRibbon.Utils
                     Commands.ReceiveTextBox.UnregisterCommand(cancel);
 
                     // join successfully created conversation 
-                    Commands.JoinConversation.Execute(conversationJid);
+                    Commands.JoinConversation.Execute(conversation);
                 }
             }
         }
@@ -356,7 +356,7 @@ namespace SandRibbon.Utils
         {
             var xmlSlides = conversationDescriptor.Xml.Descendants("slide");
             var slideCount = xmlSlides.Count();
-            var tracker = new PowerpointLoadTracker(slideCount, conversationDescriptor.Details.Jid);
+            var tracker = new PowerpointLoadTracker(slideCount, conversationDescriptor.Details);
             for (var i = 0; i < slideCount; i++)
             {
                 var slideXml = xmlSlides.ElementAt(i);

@@ -75,7 +75,7 @@ namespace MeTLLib.DataTypes
     }
     public class Location
     {
-        public Location(string ActiveConversation, int CurrentSlide, List<int> AvailableSlides)
+        public Location(ConversationDetails ActiveConversation, Slide CurrentSlide, List<Slide> AvailableSlides)
         {
             activeConversation = ActiveConversation;
             currentSlide = CurrentSlide;
@@ -89,11 +89,11 @@ namespace MeTLLib.DataTypes
                 &&(foreignLocation.currentSlide == currentSlide)
                 &&(foreignLocation.availableSlides.TrueForAll(s=>s.Equals(availableSlides[foreignLocation.availableSlides.IndexOf(s)]))));
         }
-        public string activeConversation;
-        public int currentSlide;
-        public List<int> availableSlides = new List<int>();
+        public ConversationDetails activeConversation;
+        public Slide currentSlide;
+        public List<Slide> availableSlides = new List<Slide>();
         public static Location Empty {
-            get { return new Location("0", 1, new List<int> { 1 }); }
+            get { return new Location(ConversationDetails.Empty, Slide.Empty, new List<Slide> { Slide.Empty}); }
         }
     }
     public class Policy

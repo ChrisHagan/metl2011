@@ -121,9 +121,9 @@ namespace SandRibbon.Components.SimpleImpl
         }
         private void JoinConversation(object obj)
         {
+            Commands.SetLayer.ExecuteAsync("Sketch");
             Dispatcher.adopt(delegate
             {
-                Commands.SetLayer.ExecuteAsync("Sketch");
                 Pen.IsChecked = true;
             });
         }

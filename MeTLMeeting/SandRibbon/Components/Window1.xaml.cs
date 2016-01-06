@@ -71,8 +71,8 @@ namespace SandRibbon
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(ExecuteMoveTo));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
@@ -142,15 +142,19 @@ namespace SandRibbon
             Commands.DuplicateSlide.RegisterCommand(new DelegateCommand<object>((obj) =>
             {
                 duplicateSlide((KeyValuePair<ConversationDetails, Slide>)obj);
-            }, (kvp) => {
-                try {
+            }, (kvp) =>
+            {
+                try
+                {
                     return (kvp != null && ((KeyValuePair<ConversationDetails, Slide>)kvp).Key != null) ? userMayAddPage(((KeyValuePair<ConversationDetails, Slide>)kvp).Key) : false;
-                } catch {
+                }
+                catch
+                {
                     return false;
                 }
-                }));
-            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation,userMayDuplicateConversation));
-            Commands.CreateGrouping.RegisterCommand(new DelegateCommand<object>(createGrouping,(o) => mustBeInConversationAndBeAuthor(o)));
+            }));
+            Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation, userMayDuplicateConversation));
+            Commands.CreateGrouping.RegisterCommand(new DelegateCommand<object>(createGrouping, (o) => mustBeInConversationAndBeAuthor(o)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
             AddWindowEffect(null);
@@ -424,50 +428,53 @@ namespace SandRibbon
         }
         private void Reconnecting(bool success)
         {
-            Dispatcher.adopt(delegate
+            if (success)
             {
-                if (success)
+                try
                 {
-                    try
+                    Dispatcher.adopt(delegate
                     {
                         hideReconnectingDialog();
-                        var details = Globals.conversationDetails;
-                        if (details == null || details.Equals(ConversationDetails.Empty))
-                        {
-                            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-                        }
-                        else
-                        {
-                            var jid = Globals.conversationDetails.Jid;
-                            Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
-                            Commands.MoveTo.Execute(Globals.location.currentSlide);
-                            App.controller.client.historyProvider.Retrieve<PreParser>(
-                                        null,
-                                        null,
-                                        (parser) =>
-                                        {
-                                            Commands.PreParserAvailable.Execute(parser);
-                                            hideReconnectingDialog();
-                                        },
-                                        jid);
-                        }
-                    }
-                    catch (NotSetException e)
+                    });
+                    var details = Globals.conversationDetails;
+                    if (details == null || details.Equals(ConversationDetails.Empty))
                     {
-                        Logger.Crash(e);
                         Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
-                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                        var jid = Globals.conversationDetails.Jid;
+                        Commands.UpdateConversationDetails.Execute(App.controller.client.DetailsOf(jid));
+                        Commands.MoveTo.Execute(Globals.location);
+                        App.controller.client.historyProvider.Retrieve<PreParser>(
+                                    null,
+                                    null,
+                                    (parser) =>
+                                    {
+                                        Commands.PreParserAvailable.Execute(parser);
+                                        hideReconnectingDialog();
+                                    },
+                                    jid);
                     }
                 }
-                else
+                catch (NotSetException e)
+                {
+                    Logger.Crash(e);
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
+            }
+            else
+            {
+                Dispatcher.adopt(delegate
                 {
                     showReconnectingDialog();
-                }
-            });
+                });
+            }
         }
         /*
         private void ToggleFriendsVisibility(object unused)
@@ -526,7 +533,8 @@ namespace SandRibbon
             {
                 var adornerRect = new Rect(container.TranslatePoint(info.ElementBounds.TopLeft, viewbox), container.TranslatePoint(info.ElementBounds.BottomRight, viewbox));
                 if (LessThan(adornerRect.Right, 0, 0.001) || GreaterThan(adornerRect.Right, viewbox.ActualWidth, 0.001)
-                    || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, viewbox.ActualHeight, 0.001)) return;
+                    || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, viewbox.ActualHeight, 0.001))
+                    return;
                 var adornerLayer = AdornerLayer.GetAdornerLayer(viewbox);
                 adornerLayer.Add(new UIAdorner(viewbox, new PrivacyToggleButton(info, adornerRect)));
             });
@@ -562,7 +570,7 @@ namespace SandRibbon
             bool hasAdorners = false;
             AdornerLayer adornerLayer;
             var adorners = GetPrivacyAdorners(viewbox, out adornerLayer);
-            Dispatcher.adopt(() =>
+            Dispatcher.adopt(delegate
             {
                 if (adorners != null && adorners.Count() > 0)
                 {
@@ -672,32 +680,33 @@ namespace SandRibbon
             Dispatcher.Invoke(selectPagesTab, System.Windows.Threading.DispatcherPriority.Normal);
         }
 
-        private void ExecuteMoveTo(int slide)
+        private void ExecuteMoveTo(Location loc)
         {
-            MoveTo(slide);
+            MoveTo(loc.currentSlide.id);
         }
-        private void JoinConversation(string title)
+        private void JoinConversation(ConversationDetails thisDetails)
         {
-            var thisDetails = App.controller.client.DetailsOf(title);
-            App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(title));
-            Dispatcher.adopt(delegate
+            if (thisDetails.IsEmpty) return;
+            //var thisDetails = App.controller.client.DetailsOf(title);
+            App.controller.client.AsyncRetrieveHistoryOf(Int32.Parse(thisDetails.Jid));
+            try
             {
-                try
+                Dispatcher.adopt(delegate
                 {
                     EnsureConversationTabSelected();
 
                     if (ribbon.SelectedTab != null)
                         ribbon.SelectedTab = ribbon.Tabs[0];
                     applyPermissions(thisDetails.Permissions);
-                    Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
-                    Commands.RequerySuggested(Commands.SetConversationPermissions);
-                    Commands.SetLayer.ExecuteAsync("Sketch");
-                }
-                catch
-                {
-                    Console.WriteLine("couldn't join conversation: " + title);
-                }
-            });
+                });
+                Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
+                Commands.RequerySuggested(Commands.SetConversationPermissions);
+                Commands.SetLayer.ExecuteAsync("Sketch");
+            }
+            catch
+            {
+                Console.WriteLine("couldn't join conversation: " + thisDetails.Jid);
+            }
         }
         private string messageFor(ConversationDetails details)
         {
@@ -727,21 +736,21 @@ namespace SandRibbon
         {
             ProgressDisplay.Children.Clear();
             var majorHeading = new TextBlock
-                           {
-                               Foreground = Brushes.White,
-                               Text = "Connection lost...  Reconnecting",
-                               FontSize = 72,
-                               HorizontalAlignment = HorizontalAlignment.Center,
-                               VerticalAlignment = VerticalAlignment.Center
-                           };
+            {
+                Foreground = Brushes.White,
+                Text = "Connection lost...  Reconnecting",
+                FontSize = 72,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             var minorHeading = new TextBlock
-                           {
-                               Foreground = Brushes.White,
-                               Text = "You must have an active internet connection,\nand you must not be logged in twice with the same account.",
-                               FontSize = 30,
-                               HorizontalAlignment = HorizontalAlignment.Center,
-                               VerticalAlignment = VerticalAlignment.Center
-                           };
+            {
+                Foreground = Brushes.White,
+                Text = "You must have an active internet connection,\nand you must not be logged in twice with the same account.",
+                FontSize = 30,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             ProgressDisplay.Children.Add(majorHeading);
             ProgressDisplay.Children.Add(minorHeading);
             InputBlocker.Visibility = Visibility.Visible;
@@ -784,20 +793,23 @@ namespace SandRibbon
             return Globals.isAuthor;
         }
 
-        private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp) {
-            var kvp = new KeyValuePair<ConversationDetails,Slide>(Globals.conversationDetails, Globals.slideDetails);
+        private void duplicateSlide(KeyValuePair<ConversationDetails, Slide> _kvp)
+        {
+            var kvp = new KeyValuePair<ConversationDetails, Slide>(Globals.conversationDetails, Globals.slideDetails);
             if (kvp.Key.UserHasPermission(Globals.credentials) && kvp.Key.Slides.Exists(s => s.id == kvp.Value.id))
             {
-                App.controller.client.DuplicateSlide(kvp.Key,kvp.Value);
+                App.controller.client.DuplicateSlide(kvp.Key, kvp.Value);
             }
         }
-        private void duplicateConversation(ConversationDetails conversationToDuplicate) {
+        private void duplicateConversation(ConversationDetails conversationToDuplicate)
+        {
             if (conversationToDuplicate.UserHasPermission(Globals.credentials))
             {
                 App.controller.client.DuplicateConversation(conversationToDuplicate);
             }
         }
-        private bool userMayDuplicateConversation(ConversationDetails conversationToDuplicate) {
+        private bool userMayDuplicateConversation(ConversationDetails conversationToDuplicate)
+        {
             return conversationToDuplicate.UserHasPermission(Globals.credentials);
         }
         private bool userMayAddPage(ConversationDetails _conversation)
@@ -809,37 +821,46 @@ namespace SandRibbon
             }
             return conversation.UserHasPermission(Globals.credentials);
         }
-        private void createGrouping(object groupingDefinition) {
-        }  
+        private void createGrouping(object groupingDefinition)
+        {
+        }
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
+
+            if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || Globals.location.activeConversation.IsEmpty)
+            {
+                Dispatcher.adopt(delegate
+                {
+                    UpdateTitle(details);
+                });
+                if (!mustBeInConversation(null))
+                {
+                    Dispatcher.adopt(delegate
+                    {
+                        ShowConversationSearchBox(null);
+                    });
+                    Commands.LeaveLocation.Execute(null); 
+                }
+            }
             Dispatcher.adopt(delegate
-                                 {
-                                     if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
-                                     {
-                                         UpdateTitle(details);
-                                         if (!mustBeInConversation(null))
-                                         {
-                                             ShowConversationSearchBox(null);
-                                             Commands.LeaveLocation.Execute(null);
-                                         }
-                                     }
-                                     if (details.isAuthor(Globals.me))
-                                     {
-                                         ParticipantsTabItem.Visibility = Visibility.Visible;
-                                     }
-                                     else {
-                                         ParticipantsTabItem.Visibility = Visibility.Collapsed;
-                                     }
-                                 });
+            {
+                if (details.isAuthor(Globals.me))
+                {
+                    ParticipantsTabItem.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ParticipantsTabItem.Visibility = Visibility.Collapsed;
+                }
+            });
         }
         private void UpdateTitle(ConversationDetails details)
         {
             if (Globals.conversationDetails != null && mustBeInConversation(null))
             {
 #if DEBUG
-                    Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
+                Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
 #else
                 Title = messageFor(Globals.conversationDetails);
 #endif
@@ -858,10 +879,10 @@ namespace SandRibbon
         private void showPowerPointProgress(string progress)
         {
             var text = new TextBlock
-                           {
-                               Foreground = Brushes.WhiteSmoke,
-                               Text = progress
-                           };
+            {
+                Foreground = Brushes.WhiteSmoke,
+                Text = progress
+            };
             ProgressDisplay.Children.Add(text);
         }
         private void createConversation(object detailsObject)
@@ -877,11 +898,11 @@ namespace SandRibbon
                 details.Author = Globals.userInformation.credentials.name;
                 var connection = App.controller.client;
                 details = connection.CreateConversation(details);
-                connection.JoinConversation(details.Jid);
+                connection.JoinConversation(details);
                 CommandManager.InvalidateRequerySuggested();
-                if (Commands.JoinConversation.CanExecute(details.Jid))
+                if (Commands.JoinConversation.CanExecute(details))
                 {
-                    Commands.JoinConversation.Execute(details.Jid);
+                    Commands.JoinConversation.Execute(details);
                     Commands.UpdateConversationDetails.Execute(details);
                 }
             }
@@ -1059,7 +1080,8 @@ namespace SandRibbon
             scroll.ScrollToVerticalOffset(scrollVOffset + ((oldHeight - newHeight) / 2));
             checkZoom();
         }
-        private void checkZoom() {
+        private void checkZoom()
+        {
             Commands.RequerySuggested(Commands.ZoomIn, Commands.ZoomOut);
         }
         public Visibility GetVisibilityOf(UIElement target)
@@ -1141,10 +1163,11 @@ namespace SandRibbon
 
         public void SetupUI(PedagogyLevel level)
         {
-            Dispatcher.adoptAsync(() =>
+            Dispatcher.adopt(() =>
             {
+                ClearUI();
+                var editingOptions = new EditingOptions();
                 Commands.SaveUIState.Execute(null);
-
                 List<FrameworkElement> homeGroups = new List<FrameworkElement>();
                 List<FrameworkElement> tabs = new List<FrameworkElement>();
                 foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
@@ -1152,8 +1175,7 @@ namespace SandRibbon
                     switch (i)
                     {
                         case 0:
-                            ClearUI();
-                            homeGroups.Add(new EditingOptions());
+                            homeGroups.Add(editingOptions);
                             break;
                         case 1:
                             tabs.Add(new Tabs.Quizzes());
@@ -1194,8 +1216,8 @@ namespace SandRibbon
                 if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
                     ribbon.ToggleMinimize();
 
-                Commands.RestoreUIState.Execute(null);
             });
+            Commands.RestoreUIState.Execute(null);
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
         }

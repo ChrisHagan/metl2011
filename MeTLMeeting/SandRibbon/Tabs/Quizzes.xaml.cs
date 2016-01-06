@@ -69,9 +69,9 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
+            if (details.IsEmpty) return;
             Dispatcher.adopt(delegate
             {
-                if (details.IsEmpty) return;
                 try
                 {
                     if (Globals.isAuthor)
@@ -86,7 +86,7 @@ namespace SandRibbon.Tabs
                 catch (NotSetException)
                 {
                 }
-                if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
+                if (details.Jid == Globals.location.activeConversation.Jid && details.isDeleted)
                 {
                     Globals.quiz.answers.Clear();
                     Globals.quiz.activeQuizzes.Clear();
@@ -104,6 +104,7 @@ namespace SandRibbon.Tabs
         }
         private void ReceiveQuizAnswer(MeTLLib.DataTypes.QuizAnswer answer)
         {
+            // does this really need to be on the dispatcher?
             Dispatcher.adoptAsync(() =>
             {
                 if (Globals.quiz.answers.ContainsKey(answer.id))

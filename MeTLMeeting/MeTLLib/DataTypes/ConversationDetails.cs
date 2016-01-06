@@ -143,7 +143,7 @@ namespace MeTLLib.DataTypes
         {
             get
             {
-                return Equals(ConversationDetails.Empty);
+                return Jid == ConversationDetails.Empty.Jid;
             }
         }
         public static string DefaultName(string author)
@@ -634,6 +634,7 @@ namespace MeTLLib.DataTypes
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs("index"));
         }
+        public bool IsEmpty { get { return id == Slide.Empty.id; } }
         public static Slide Empty
         {
             get

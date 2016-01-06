@@ -52,7 +52,7 @@ namespace SandRibbon.Components.Submissions
                     {
                         submissions.Add(load(s));
                     }
-                }, Globals.location.activeConversation);
+                }, Globals.location.activeConversation.Jid);
             };
             Unloaded += delegate
             {

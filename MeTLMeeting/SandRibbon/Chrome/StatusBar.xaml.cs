@@ -12,39 +12,30 @@ namespace SandRibbon.Chrome
         {
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
             Commands.BanhammerActive.RegisterCommand(new DelegateCommand<object>(BanhammerActive));
         }
         private void SetIdentity(object o)
         {
-            Dispatcher.adopt(delegate
-            {
-                showDetails();
-            });
+            showDetails();
         }
         private void SetPrivacy(string _privacy)
         {
             showDetails();
         }
-        private void JoinConversation(string _jid)
+        private void JoinConversation(ConversationDetails _jid)
         {
             showDetails();
         }
-        private void BanhammerActive(object b) 
+        private void BanhammerActive(object b)
         {
-            Dispatcher.adopt(delegate
-            {
-                showDetails();
-            });
+            showDetails();
         }
-        private void UpdateConversationDetails(ConversationDetails details) 
+        private void UpdateConversationDetails(ConversationDetails details)
         {
-            Dispatcher.adopt(delegate
-            {
-                showDetails();
-            });
+            showDetails();
         }
         private void showDetails()
         {
@@ -64,19 +55,19 @@ namespace SandRibbon.Chrome
                     }
                     else
                     {
-                        status = details.IsEmpty || String.IsNullOrEmpty(Globals.location.activeConversation) ? Strings.Global_ProductName : string.Format(
+                        status = details.IsEmpty || Globals.location.activeConversation.IsEmpty ? Strings.Global_ProductName : string.Format(
                              "{0} is working {1}ly in an {2} conversation",
                              Globals.me,
                              Globals.privacy,
-                             details.Subject 
+                             details.Subject
                              );
                     }
-                    collaborationStatus.Text = string.Format("Collaboration {0}",details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED");
+                    collaborationStatus.Text = string.Format("Collaboration {0}", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED");
                     followStatus.Text = string.Format("Following teacher {0}", details.Permissions.usersAreCompulsorilySynced ? "MANDATORY" : "OPTIONAL");
                     StatusLabel.Text = status;
                 });
             }
-            catch(NotSetException)
+            catch (NotSetException)
             {
             }
         }
