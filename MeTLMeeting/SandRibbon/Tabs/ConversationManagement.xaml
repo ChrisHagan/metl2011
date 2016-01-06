@@ -17,5 +17,5 @@
         <dict:Button Text="Manage banned content" Icon="/Resources/ban-management-icon.png" x:Name="bannedContentManagement" 
                      Command="{x:Static api:Commands.ViewBannedContent}" ToolTip="{DynamicResource BanContentToolTip}"/>
     </sr:RibbonGroup>
-    <groups:CollaborationControlsHost/>
+    <!--<groups:CollaborationControlsHost/>-->
 </sr:RibbonTab>
