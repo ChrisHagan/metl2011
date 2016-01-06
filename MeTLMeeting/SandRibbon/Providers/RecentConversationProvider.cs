@@ -14,6 +14,7 @@ namespace SandRibbon.Providers
     public class RecentConversationProvider
     {
         public static MeTLLib.IClientBehaviour ConversationProvider = App.controller.client;
+        public static string serverId = App.controller.config.host.ToString();
         public static readonly string RECENT_DOCUMENTS = SandRibbon.Utils.LocalFileProvider.getUserFile(new string[]{},"recentDocuments.xml");
         
         public static IEnumerable<ConversationDetails> loadRecentConversations()
@@ -25,17 +26,17 @@ namespace SandRibbon.Providers
                 System.Globalization.CultureInfo current = System.Globalization.CultureInfo.GetCultureInfo("en-AU");
                 System.Threading.Thread.CurrentThread.CurrentCulture = current;
                 
-                var recentConversations = recentDocs.Descendants("conversation").Select(
+                var recentConversations = recentDocs.Descendants("conversation").Where(c => safeAttr(c,"server") == serverId && safeAttr(c,"deleted").Trim().ToLower() != "true").Select(
                     conversation => new ConversationDetails(
-                                conversation.Attribute("title").Value,
-                                conversation.Attribute("jid").Value,
-                                conversation.Attribute("author").Value,
+                                safeAttr(conversation,"title"),
+                                safeAttr(conversation,"jid"),
+                                safeAttr(conversation,"author"),
                                 new List<Slide>(),
                                 new Permissions("", false, false, false),
-                                conversation.Attribute("subject") == null ? String.Empty : conversation.Attribute("subject").Value,
+                                safeAttr(conversation,"subject"),
                                 new DateTime(),
-                                SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value))
-                        )/*.Where(conv => !ConversationProvider.DetailsOf(conv.Jid).isDeleted)*/.ToList();
+                                SandRibbonObjects.DateTimeFactory.Parse(safeAttr(conversation,"lastAccessTime")))
+                        ).ToList();
 
                 return recentConversations.Count > 0 ? recentConversations.OrderByDescending(c => c.LastAccessed).ToList() : new List<ConversationDetails>();
             }
@@ -50,14 +51,18 @@ namespace SandRibbon.Providers
                     return;
 
                 var recentDocs = XDocument.Load(RECENT_DOCUMENTS);
-                recentDocs.Descendants("conversation").Where(c => c.Attribute("jid").Value == jid).Remove();
+                recentDocs.Descendants("conversation").Where(c => safeAttr(c,"server") == serverId && safeAttr(c,"jid") == jid).Remove();
                 recentDocs.Save(RECENT_DOCUMENTS);
             }
             catch (IOException)
             {
             }
         }
-
+        protected static string safeAttr(XElement elem, string key)
+        {
+            var attr = elem.Attribute(key);
+            return (attr != null && attr.Value != null) ? attr.Value : "";
+        }
         public static void addRecentConversation(ConversationDetails document, String me)
         {
             try
@@ -67,19 +72,25 @@ namespace SandRibbon.Providers
                     new XDocument(new XElement("recentConversations")).Save(RECENT_DOCUMENTS);
                 var recentDocs = XDocument.Load(RECENT_DOCUMENTS);
                 var referencesToThisConversation = recentDocs.Descendants("conversation")
-                    .Where(c => c.Attribute("title").Value == document.Title);
+                    .Where(c => safeAttr(c,"jid") == document.Jid && safeAttr(c,"server") == serverId);
                 switch (referencesToThisConversation.Count())
                 {
                     case 0:
                         recentDocs.Root.Add(new XElement("conversation",
+                            new XAttribute("server", serverId),
                             new XAttribute("title", document.Title),
                             new XAttribute("author", document.Author),
                             new XAttribute("jid", document.Jid),
                             new XAttribute("subject", document.Subject),
+                            new XAttribute("deleted", document.isDeleted.ToString()),
                             new XAttribute("lastAccessTime", SandRibbonObjects.DateTimeFactory.Now().ToString())));
                         break;
                     case 1:
-                        referencesToThisConversation.Single().SetAttributeValue("lastAccessTime", SandRibbonObjects.DateTimeFactory.Now().ToString());
+                        var cd = referencesToThisConversation.Single();
+                        cd.SetAttributeValue("title", document.Title);
+                        cd.SetAttributeValue("subject", document.Subject);
+                        cd.SetAttributeValue("lastAccessTime", SandRibbonObjects.DateTimeFactory.Now().ToString());
+                        cd.SetAttributeValue("deleted",document.isDeleted.ToString());
                         break;
                     default:
                         MeTLMessage.Warning("Too many instances of " + document.Title + " in recent history.  Not listing.");

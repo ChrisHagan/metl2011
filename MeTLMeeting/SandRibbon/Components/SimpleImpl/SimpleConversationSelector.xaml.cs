@@ -27,6 +27,7 @@ namespace SandRibbon.Components
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
+            Commands.ProxyJoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(doJoinConversation, canJoinConversation));
         }
         private void SetIdentity(object obj)
         {
@@ -111,10 +112,9 @@ namespace SandRibbon.Components
         {
             return rawConversationList.Select(c => c.Title).ToList();
         }
-        private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
+        private void doJoinConversation(ConversationDetails partialDetails)
         {
-            var conversationJid = e.Parameter as string;
-            var details = App.controller.client.DetailsOf(conversationJid);
+            var details = App.controller.client.DetailsOf(partialDetails.Jid);
             if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
             {
                 // remove the conversation from the menu list
@@ -126,9 +126,14 @@ namespace SandRibbon.Components
                 Commands.JoinConversation.ExecuteAsync(details);
             }
         }
-        private void canJoinConversation(object sender, CanExecuteRoutedEventArgs e)
-        {//CommandParameter is conversation title
-            e.CanExecute = Commands.JoinConversation.CanExecute((string)e.Parameter);
+        private bool canJoinConversation(ConversationDetails details)
+        {
+            if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
+            {
+                UpdateConversationDetails(details);
+                return false;
+            }
+            return true;
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {

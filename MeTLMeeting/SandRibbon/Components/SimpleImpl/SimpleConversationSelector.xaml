@@ -7,9 +7,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--xmlns:objects="clr-namespace:SandRibbonObjects;assembly=SandRibbonObjects"
     -->
+    <!--
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ProxyJoinConversation}" Executed="doJoinConversation" CanExecute="canJoinConversation" />
     </UserControl.CommandBindings>
+    -->
     <UserControl.Resources>
          <Style TargetType="{x:Type ListBoxItem}" x:Key="separatorStyle">
             <Setter Property="Template">
@@ -26,7 +28,7 @@
             </Setter>
         </Style>
         <DataTemplate DataType="{x:Type metllib:ConversationDetails}">
-            <Button Command="{x:Static api:Commands.ProxyJoinConversation}" CommandParameter="{Binding Path=Jid}">
+            <Button Command="{x:Static api:Commands.ProxyJoinConversation}" CommandParameter="{Binding}">
                 <TextBlock Text="{Binding Converter={x:Static my:Converters.conversationNameExtractor}}" 
                        HorizontalAlignment="Left"
                        ToolTip="{Binding Converter={x:Static my:Converters.conversationTooltipExtractor}}" /> 
