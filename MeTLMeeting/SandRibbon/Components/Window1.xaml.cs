@@ -1196,7 +1196,7 @@ namespace SandRibbon
 #endif
                             break;
                         case 3:
-                            homeGroups.Add(new CollaborationControlsHost());
+                            //homeGroups.Add(new CollaborationControlsHost());
                             homeGroups.Add(new PrivacyToolsHost());
                             break;
                         case 4:

@@ -17,6 +17,7 @@ namespace SandRibbon.Components
 {
     public partial class ContentVisibility
     {
+        protected PropertyChangedEventHandler onVisibilityChecked = (s, e) => { };
         public ObservableCollection<ContentVisibilityDefinition> visibilities = new ObservableCollection<ContentVisibilityDefinition>();
         public ContentVisibility()
         {
@@ -28,6 +29,10 @@ namespace SandRibbon.Components
             Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>((loc) => { MoveTo(loc); }));
             Commands.UpdateContentVisibility.RegisterCommand(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
             Commands.SetContentVisibility.DefaultValue = Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities;
+            onVisibilityChecked = (s, e) =>
+            {
+                Commands.SetContentVisibility.Execute(visibilities.ToList());
+            };
         }
 
         protected int slide = -1;
@@ -81,19 +86,29 @@ namespace SandRibbon.Components
                                 }
                             });
                         });
+                        foreach (var nv in visibilities)
+                        {
+                            nv.PropertyChanged -= onVisibilityChecked;
+                        }
                         visibilities.Clear();
                         foreach (var nv in newGroupDefs.Concat(Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities))
                         {
                             visibilities.Add(nv);
+                            nv.PropertyChanged += onVisibilityChecked;
                         }
                     }
                 }
                 else
                 {
+                    foreach (var nv in visibilities)
+                    {
+                        nv.PropertyChanged -= onVisibilityChecked;
+                    }
                     visibilities.Clear();
                     foreach (var nv in Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities)
                     {
                         visibilities.Add(nv);
+                        nv.PropertyChanged += onVisibilityChecked;
                     }
                 }
             });

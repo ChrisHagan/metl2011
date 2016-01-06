@@ -24,7 +24,8 @@ namespace SandRibbon.Components.Utility
             }
             set {
                 _subscribed = value;
-                ContentFilterVisibility.refreshVisibilities();
+                PropertyChanged(this, new PropertyChangedEventArgs("Subscribed"));
+                //ContentFilterVisibility.refreshVisibilities();
             }
         }
         public string GroupId { get; protected set; }
