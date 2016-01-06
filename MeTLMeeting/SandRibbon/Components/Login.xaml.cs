@@ -194,11 +194,11 @@ namespace SandRibbon.Components
             Commands.LoginFailed.RegisterCommand(new DelegateCommand<object>(ResetWebBrowser));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             servers.ItemsSource = serverConfigs;
-            buildServerList();
             refreshTimer = new Timer(delegate
             {
                 buildServerList();
             }, null, pollServersTimeout, Timeout.Infinite);
+            buildServerList();
             Commands.AddWindowEffect.ExecuteAsync(null);
         }
         private void buildServerList()
@@ -208,6 +208,7 @@ namespace SandRibbon.Components
                 Dispatcher.adopt(delegate
                 {
                     serverConfigs.Clear();
+                    App.metlConfigManager.reload();
                     foreach (var p in App.availableServers())
                     {
                         serverConfigs.Add(new ServerChoice(p, true));
@@ -247,6 +248,10 @@ namespace SandRibbon.Components
                     }
                 }, null, 0, pollServersTimeout)).ToList();
                 });
+                if (serverConfigs.Count == 0 || serverConfigs.All(sc => sc == localServer))
+                {
+                    refreshTimer.Change(pollServersTimeout, Timeout.Infinite);
+                }
             }
             else
             {
