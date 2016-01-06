@@ -75,7 +75,7 @@ namespace SandRibbon.Components.Submissions
                 Url = uri,
                 Author = submission.author,
                 Message = submission.title,
-                Date = submission.timestamp.ToString()
+                Date = SandRibbonObjects.DateTimeFactory.FromMilis(submission.timestamp).ToString()
             };
         }
 

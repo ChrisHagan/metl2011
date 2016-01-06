@@ -19,6 +19,11 @@ namespace SandRibbonObjects
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
             return System.DateTime.Parse(s);
         }
+        public static DateTime FromMilis(long milis)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddMilliseconds(milis);
+        }
         public static System.DateTime Now()
         {
             try

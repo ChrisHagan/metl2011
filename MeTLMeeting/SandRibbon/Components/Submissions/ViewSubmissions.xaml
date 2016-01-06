@@ -31,20 +31,20 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Binding="{Binding Path=Author}" Header="Author"/>
+                <DataGridTextColumn Binding="{Binding Path=Author, Mode=OneTime}" IsReadOnly="True" Header="Author"/>
                 <DataGridTemplateColumn Header="Preview" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Viewbox Width="Auto">
                                 <Border BorderBrush="Black" BorderThickness="1">
-                                    <Image Source="{Binding Path=Image}" Width="640"/>
+                                    <Image Source="{Binding Path=Image, Mode=OneTime}" Width="640"/>
                                 </Border>
                             </Viewbox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Binding="{Binding Path=Message}" Header="Message"/>
-                <DataGridTextColumn Binding="{Binding Path=Date}" Header="Time"/>
+                <DataGridTextColumn Binding="{Binding Path=Message, Mode=OneTime}" IsReadOnly="True" Header="Message"/>
+                <DataGridTextColumn Binding="{Binding Path=Date, Mode=OneTime}" IsReadOnly="True" Header="Time"/>
             </DataGrid.Columns>
         </DataGrid>
         <GridSplitter Grid.Column="1" Grid.Row="1" Width="50"
