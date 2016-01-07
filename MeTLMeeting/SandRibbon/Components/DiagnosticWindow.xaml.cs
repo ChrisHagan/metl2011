@@ -30,6 +30,8 @@ namespace SandRibbon.Components
         protected readonly object errorLocker = new object();
         protected readonly object messageLocker = new object();
 
+        protected string dumpFileLocation = App.dumpFile;
+
         public List<DiagnosticGauge> getGauges()
         {
             return gauges.ToList();
@@ -49,11 +51,28 @@ namespace SandRibbon.Components
                 messages.Add(message);
             }
         }
+        protected List<string> describeException(Exception e)
+        {
+            var list = new List<string> { "caused by" };
+            if (e != null)
+            {
+                list.Add(e.Message);
+                list.Add(e.StackTrace);
+                if (e.InnerException != null)
+                {
+                    list.Concat(describeException(e.InnerException));
+                }
+            }
+            return list;
+        }
         public void AddError(ErrorMessage e)
         {
             lock (errorLocker)
             {
                 errors.Add(e);
+                File.AppendAllLines(dumpFileLocation, new List<string> {
+                    String.Format("{0} : {1} :: {2}",e.when,e.category,e.message)
+                }.Concat(describeException(e.exception)).Concat(new List<string> { "" }));
             }
         }
         public void updateGauge(DiagnosticGauge gauge)
@@ -101,6 +120,7 @@ namespace SandRibbon.Components
         public DiagnosticModel store = new DiagnosticModel();
         public DiagnosticsCollector()
         {
+            App.diagnosticStore = store;
             Receive<string>(s =>
             {
                 if (s == REQUESTHISTORY)
@@ -110,17 +130,17 @@ namespace SandRibbon.Components
             });
             Receive<DiagnosticMessage>(m =>
             {
-                target.Tell(m);
                 store.addMessage(m);
+                target.Tell(m);
             });
             Receive<DiagnosticGauge>(g =>
             {
-                target.Tell(g);
                 store.updateGauge(g);
+                target.Tell(g);
             });
             Receive<ErrorMessage>(e => {
-                target.Tell(e);
                 store.AddError(e);
+                target.Tell(e);
             });
         }
     }

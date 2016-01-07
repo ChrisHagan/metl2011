@@ -26,19 +26,16 @@ namespace SandRibbon
     {
         public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
         public static IActorRef diagnosticModelActor = actorSystem.ActorOf<DiagnosticsCollector>("diagnosticsCollector");
-        //public static DiagnosticModel dd = new DiagnosticModel();
         public static DiagnosticWindow diagnosticWindow = null;
-        public static IAuditor auditor = new FuncAuditor((g) =>
-        {
+        public static DiagnosticModel diagnosticStore { get; set; }
+        public static IAuditor auditor = new FuncAuditor((g) => {
             diagnosticModelActor.Tell(g);
-           //dd.updateGauge(g);
-        }, (m) =>
-        {
+        }, (m) => {
             diagnosticModelActor.Tell(m);
-           //dd.addMessage(m);
         }, (e) => {
             diagnosticModelActor.Tell(e);
         });
+        public static string dumpFile = String.Format(@"{0}\MonashMeTL\MeTL-diagnostics-{1}.txt", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DateTime.Now.Ticks);
 
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
         public static NetworkController controller;
@@ -47,21 +44,14 @@ namespace SandRibbon
         public static DateTime AccidentallyClosing = DateTime.Now;
         public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(auditor);
 
-#if DEBUG
-        public static string OverrideUsername { get; private set; }
-        public static string OverridePassword { get; private set; }
-#endif
-
         private static SplashScreen splashScreen;
         public static void ShowSplashScreen()
         {
-            //App.dd.addMessage(new DiagnosticMessage("splash screen shown", "aesthetic", DateTime.Now));
             splashScreen = new SplashScreen("resources/splashScreen.png");
             splashScreen.Show(false);
         }
         public static void CloseSplashScreen()
         {
-            //App.dd.addMessage(new DiagnosticMessage("splash screen removed", "aesthetic", DateTime.Now));
             splashScreen.Close(TimeSpan.Zero);
         }
 
@@ -71,10 +61,7 @@ namespace SandRibbon
         }
         public static void SetBackend(MetlConfiguration configuration)
         {
-            //App.dd.addMessage(new DiagnosticMessage("backend chosen: "+configuration.name, "connection", DateTime.Now));
             controller = new NetworkController(configuration);
-            //App.dd.addMessage(new DiagnosticMessage("network controller initiated: " + configuration.name, "connection", DateTime.Now));
-//            App.mark(String.Format("Starting on backend mode {0}", configuration.name));//.ToString()));
         }
         public static List<MeTLConfigurationProxy> availableServers()
         {
@@ -159,11 +146,6 @@ namespace SandRibbon
         }
         protected override void OnStartup(StartupEventArgs e)
         {
-#if DEBUG
-            isStaging = true;
-#else
-            isStaging = false;
-#endif
             base.OnStartup(e);
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
             Commands.NoNetworkConnectionAvailable.RegisterCommand(new DelegateCommand<object>(NoNetworkConnectionAvailable));
@@ -180,11 +162,12 @@ namespace SandRibbon
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
-            auditor.error("CurrentDomain_UnhandledException", "App", ex);
+            diagnosticStore.AddError(new ErrorMessage("CurrentDomain_UnhandledException", "App", DateTime.Now, ex));
             if (!falseAlarms.Any(m => ex.Message.StartsWith(m)))
             {
-                MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.");
+                MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.  Please find the exceptions at: "+dumpFile);
             }
+            Environment.Exit(1);
         }
         void Current_Exit(object sender, ExitEventArgs e)
         {
@@ -207,28 +190,16 @@ namespace SandRibbon
             var msg = e.Exception.Message;
             if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
             {
-
                 auditor.error("DispatcherUnhandledException - Handled", "App", e.Exception);
                 e.Handled = true;
             }
             else
-                auditor.error("DispatcherUnhandledException - Unhandled","App",e.Exception);
+            {
+                diagnosticStore.AddError(new ErrorMessage("DispatcherUnhandledException - Unhandled", "App", DateTime.Now,e.Exception));
+            }
         }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-#if DEBUG
-            if (e.Args.Length == 4)
-            {
-                if (e.Args[0] == "-user")
-                {
-                    OverrideUsername = e.Args[1];
-                }
-                if (e.Args[2] == "-pass")
-                {
-                    OverridePassword = e.Args[3];
-                }
-            }
-#endif
         }
     }
 }

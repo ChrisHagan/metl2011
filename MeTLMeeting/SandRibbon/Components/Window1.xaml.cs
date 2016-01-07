@@ -159,6 +159,9 @@ namespace SandRibbon
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
             displayDispatcherTimer = createExtendedDesktopTimer();
+
+            Commands.Explode.RegisterCommand(new DelegateCommand<object>(explode));
+            Commands.DispatcherExplode.RegisterCommand(new DelegateCommand<object>(dispatcherExplode));
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
@@ -1386,5 +1389,15 @@ namespace SandRibbon
         }
         // End of Awesomium comment out
         */
+        private void explode(object _arg)
+        {
+            throw new Exception("Explode!");
+        }
+        private void dispatcherExplode(object _arg)
+        {
+            Dispatcher.adopt(delegate {
+                explode(_arg);
+            });
+        }
     }
 }

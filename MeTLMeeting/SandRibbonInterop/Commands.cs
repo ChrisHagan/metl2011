@@ -433,6 +433,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand CloseFlyoutCard = new DefaultableCompositeCommand("CloseFlyoutCard");
         public static DefaultableCompositeCommand CreateDummyCard = new DefaultableCompositeCommand("CreateDummyCard"); // for testing only
 
+        public static DefaultableCompositeCommand Explode = new DefaultableCompositeCommand("Explode"); // for testing only
+        public static DefaultableCompositeCommand DispatcherExplode = new DefaultableCompositeCommand("DispatcherExplode"); // for testing only
 
         Commands()
         {
