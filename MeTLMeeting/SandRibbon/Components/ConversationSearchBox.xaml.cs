@@ -488,8 +488,11 @@ namespace SandRibbon.Components
         {
             var sentContext = context(sender);
             var presenter = view(sender);
-            presenter.Content = sentContext;
-            presenter.ContentTemplate = (DataTemplate)FindResource(dataTemplateResourceKey);
+            if (presenter != null)
+            {
+                presenter.Content = sentContext;
+                presenter.ContentTemplate = (DataTemplate)FindResource(dataTemplateResourceKey);
+            }
             originalContext = sentContext.Clone();
         }
         private void renameConversation(object sender, ExecutedRoutedEventArgs e)

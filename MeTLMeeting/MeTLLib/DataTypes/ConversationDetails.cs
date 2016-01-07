@@ -280,6 +280,14 @@ namespace MeTLLib.DataTypes
                 && (foreignConversationDetails.Tag == Tag)
                 && (foreignConversationDetails.Title == Title));
         }
+        public override bool Equals(object obj)
+        {
+            return obj is ConversationDetails && (obj as ConversationDetails).Jid == Jid;
+        }
+        public override int GetHashCode()
+        {
+            return Int32.Parse(Jid);
+        }
 
         public ConversationDetails()
             : this(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime())
