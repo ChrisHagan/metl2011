@@ -737,7 +737,7 @@
         <Setter Property="Cursor" Value="Hand"></Setter>
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisual}"/>
+        <!--<Setter Property="FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisual}"/>-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
