@@ -39,10 +39,11 @@ namespace SandRibbon.Chrome
         }
         private void showDetails()
         {
-            try
+            Dispatcher.adopt(() =>
             {
-                Dispatcher.adopt(() =>
+                try
                 {
+
                     var details = Globals.conversationDetails;
                     var status = "";
                     if (details.UserIsBlackListed(Globals.me))
@@ -65,11 +66,13 @@ namespace SandRibbon.Chrome
                     collaborationStatus.Text = string.Format("Collaboration {0}", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED");
                     followStatus.Text = string.Format("Following teacher {0}", details.Permissions.usersAreCompulsorilySynced ? "MANDATORY" : "OPTIONAL");
                     StatusLabel.Text = status;
-                });
-            }
-            catch (NotSetException)
-            {
-            }
+                }
+                catch (NotSetException e)
+                {
+                    App.auditor.error("showDetails", "StatusBar", e);
+                }
+            });
         }
     }
 }
+

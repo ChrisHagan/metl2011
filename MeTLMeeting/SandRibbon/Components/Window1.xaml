@@ -63,8 +63,10 @@
                     <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
                     <sr:MenuItem Text="Diagnostics" Command="{x:Static api:Commands.LaunchDiagnosticWindow}" ToolTip="{StaticResource LaunchDiagnosticWindowToolTip}" />
                     <sr:MenuItem Text="Logout and Exit" ToolTip="{StaticResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
+                    <!--
                     <sr:MenuItem Text="Explode" Command="{x:Static api:Commands.Explode}"/>
                     <sr:MenuItem Text="Dispatcher Explode" Command="{x:Static api:Commands.DispatcherExplode}"/>
+                    -->
                 </sr:ApplicationPopup>
             </sr:Ribbon.ApplicationPopup>
             <sr:Ribbon.ToolBar>
