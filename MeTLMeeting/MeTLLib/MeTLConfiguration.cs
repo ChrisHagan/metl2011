@@ -181,8 +181,10 @@
     }
     public abstract class MetlConfigurationManager
     {
-        public MetlConfigurationManager()
+        public IAuditor auditor { get; protected set; }
+        public MetlConfigurationManager(IAuditor _auditor)
         {
+            auditor = _auditor;
             reload();
         }
         public MetlConfiguration getConfigFor(MeTLConfigurationProxy server)
@@ -248,6 +250,7 @@
     }
     public class RemoteAppMeTLConfigurationManager : MetlConfigurationManager
     {
+        public RemoteAppMeTLConfigurationManager(IAuditor auditor) : base(auditor) { }
         override protected MetlConfiguration internalGetConfigFor(MeTLConfigurationProxy server)
         {
             throw new NotImplementedException();
@@ -279,11 +282,13 @@
     }
     public class LocalAppMeTLConfigurationManager : MetlConfigurationManager
     {
+        public LocalAppMeTLConfigurationManager(IAuditor auditor) : base(auditor) { }
         protected Dictionary<MeTLConfigurationProxy, MetlConfiguration> internalConfigs = new Dictionary<MeTLConfigurationProxy, MetlConfiguration>();
         override protected void internalGetServers()
         {
-            deprecatedLib.MeTLConfiguration.Load();
-            var config = deprecatedLib.MeTLConfiguration.Config;
+            var dmc = new deprecatedLib.MeTLConfiguration(auditor);
+            dmc.Load();
+            var config = dmc.Config;
             internalConfigs = new List<deprecatedLib.StackServerElement> { config.Production, config.Staging, config.External }
             .Where(conf => !String.IsNullOrEmpty(conf.Host))
             .Select(conf =>
@@ -321,10 +326,15 @@ namespace deprecatedLib
     using System.Diagnostics;
     using MeTLLib;
     using System.Linq;
-    public static class MeTLConfiguration
+    public class MeTLConfiguration
     {
-        private static MeTLConfigurationSection conf = null;
-        public static MeTLConfigurationSection Config
+        public IAuditor auditor { get; protected set; }
+        public MeTLConfiguration(IAuditor _auditor)
+        {
+            auditor = _auditor;
+        }
+        private MeTLConfigurationSection conf = null;
+        public MeTLConfigurationSection Config
         {
             get
             {
@@ -347,7 +357,7 @@ namespace deprecatedLib
             }
         }
 
-        public static void Load()
+        public void Load()
         {
             try
             {
@@ -360,7 +370,7 @@ namespace deprecatedLib
             }
             catch (Exception e)
             {
-                Trace.TraceError("Unable to load MeTL Configuration from app.config. Reason: " + e.Message);
+                auditor.error("Load","MeTLConfiguration",e);
                 throw e;
             }
         }

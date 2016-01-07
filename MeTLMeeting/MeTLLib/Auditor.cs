@@ -101,6 +101,14 @@ namespace MeTLLib
             when = _when;
         }
     }
+    public class ErrorMessage : DiagnosticMessage
+    {
+        public Exception exception { get; private set; }
+        public ErrorMessage(string _message, string _category, DateTime _when, Exception _exception) : base(_message, _category, _when)
+        {
+            exception = _exception;
+        }
+    }
 
     public interface IAuditor
     {
@@ -108,6 +116,11 @@ namespace MeTLLib
         void wrapAction(Action<Action<GaugeStatus, int>> action, string name, string category);
         T note<T>(Func<T> action, string name, string category);
         void updateGauge(DiagnosticGauge gauge);
+        void log(string name, string category);
+        void log(string name);
+        void error(string name, string category, Exception e);
+        void trace(string message);
+        void trace(string formattedMessage,params object[] args);
     }
     public class NoAuditor : IAuditor
     {
@@ -115,15 +128,22 @@ namespace MeTLLib
         public void wrapAction(Action<Action<GaugeStatus, int>> action, string name, string category) { action((gs, v) => { }); }
         public T note<T>(Func<T> action, string name, string category) { return action(); }
         public void updateGauge(DiagnosticGauge gauge) { }
+        public void log(string name, string category) { }
+        public void log(string name) { }
+        public void error(string name, string category, Exception e) { }
+        public void trace(string message) { }
+        public void trace(string formattedMessage, params object[] args) { }
     }
     public class FuncAuditor : IAuditor
     {
         protected Action<DiagnosticGauge> gpf;
         protected Action<DiagnosticMessage> mf;
-        public FuncAuditor(Action<DiagnosticGauge> gaugeProgressFunc, Action<DiagnosticMessage> messageFunc)
+        protected Action<ErrorMessage> ef;
+        public FuncAuditor(Action<DiagnosticGauge> gaugeProgressFunc, Action<DiagnosticMessage> messageFunc, Action<ErrorMessage> errorFunc)
         {
             gpf = gaugeProgressFunc;
             mf = messageFunc;
+            ef = errorFunc;
         }
         public void wrapAction(Action<Action<GaugeStatus, int>> action, string name, string category)
         {
@@ -171,6 +191,25 @@ namespace MeTLLib
         public void updateGauge(DiagnosticGauge gauge)
         {
             gpf(gauge);
+        }
+        public void log(string name, string category) {
+            mf(new DiagnosticMessage(name, category, DateTime.Now));
+        }
+        public void log(string name) {
+            log(name, "");
+        }
+        public void error(string name, string category, Exception e) {
+            ef(new ErrorMessage(name, category, DateTime.Now, e));
+        }
+        public void trace(string message) {
+#if TRACE
+            System.Diagnostics.Trace.TraceInformation(DateTime.Now.ToString() +": "+message);
+#endif
+        }
+        public void trace(string formattedMessage, params object[] args) {
+#if TRACE
+            trace(String.Format(formattedMessage, args));
+#endif
         }
     }
 }

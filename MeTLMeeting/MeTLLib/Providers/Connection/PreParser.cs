@@ -128,7 +128,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var attendance in attendances)
                 receiveEvents.attendanceReceived(attendance);
             receiveEvents.allContentSent(location.currentSlide.id);
-            Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
+            auditor.log(string.Format("{1} Regurgitate finished {0}", DateTimeFactory.Now(), this.room),"PreParser");
         }
         public override void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
         {
@@ -404,9 +404,9 @@ namespace MeTLLib.Providers.Connection
                 /*if (!dirtyText.Any(di => dirtiesThis(di, box)) && !moveDeltas.Any(md => dirtiesThis(md, box)))                   
                     text[box.identity] = box;*/
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException e)
             {
-                Trace.TraceError("Null reference in collecting text from preparser");
+                auditor.error("actOnTextReceived", "PreParser", e);
             }
         }
         public override void actOnLiveWindowReceived(LiveWindowSetup window)

@@ -623,7 +623,10 @@ namespace SandRibbon.Components
         }
         private void SetPrivacy(string privacy)
         {
-            AllowDrop = true;
+            Dispatcher.adopt(delegate
+            {
+                AllowDrop = true;
+            });
         }
         private void setInkCanvasMode(string modeString)
         {
@@ -776,7 +779,7 @@ namespace SandRibbon.Components
 
         private UndoHistory.HistoricalAction TextMovedOrResized(IEnumerable<MeTLTextBox> finalBoxes, List<MeTLTextBox> startBoxes)
         {
-            Trace.TraceInformation("MovedTextbox");
+            App.auditor.trace("MovedTextbox");
             var undoBoxesToAdd = startBoxes.Select(t => t.clone());
             var redoBoxesToAdd = finalBoxes.Select(b => b.clone());
             var undoBoxesToRemove = finalBoxes.Select(b => b.clone());
@@ -1129,7 +1132,7 @@ namespace SandRibbon.Components
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceInformation("Cursor failed (no crash):", e.Message);
+                    App.auditor.error("SetDrawingAttributes","CollapsedCanvasStack", e);
                 }
                 Work.DefaultDrawingAttributes = zoomCompensatedAttributes;
             });
@@ -1600,7 +1603,7 @@ namespace SandRibbon.Components
                     e.Cancel = true;
                     return;
                 }
-                Trace.TraceInformation("ErasingStroke {0}", e.Stroke.tag().id);
+                App.auditor.trace("ErasingStroke {0}", e.Stroke.tag().id);
                 doMyStrokeRemoved(e.Stroke as PrivateAwareStroke);
             }
             catch
@@ -1925,7 +1928,7 @@ namespace SandRibbon.Components
                     }
                 } catch (Exception ex)
                 {
-                    Console.WriteLine("Failed to drop FileDrop from dragAction: " + ex.Message);
+                    App.auditor.log("Failed to drop FileDrop from dragAction: " + ex.Message);
                 }
 
             }
@@ -1943,7 +1946,7 @@ namespace SandRibbon.Components
                     }
                 } catch (Exception ex)
                 {
-                    Console.WriteLine("failed to drop UniformResourceLocator from dragAction: "+ex.Message);
+                    App.auditor.log("failed to drop UniformResourceLocator from dragAction: "+ex.Message);
                 }
             }
             /*
@@ -2481,7 +2484,7 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                Logger.Fixed(string.Format("There was an ERROR:{0} INNER:{1}, it is now fixed", e, e.InnerException));
+                App.auditor.error("updateStyling", "CollapsedCanvasStack", e);
             }
 
         }

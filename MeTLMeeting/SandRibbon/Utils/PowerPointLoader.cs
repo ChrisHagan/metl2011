@@ -191,18 +191,15 @@ namespace SandRibbon.Utils
                             switch (spec.Type)
                             {
                                 case PowerpointImportType.HighDefImage:
-                                    Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
-                                    Logger.Log(string.Format("ImportingPowerpoint HighDef {0}", spec.File));
+                                    App.auditor.log(string.Format("ImportingPowerpoint HighDef {0}", spec.File),"PowerPointLoader");
                                     LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                                     break;
                                 case PowerpointImportType.Image:
-                                    Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
-                                    Logger.Log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File));
+                                    App.auditor.log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File),"PowerPointLoader");
                                     LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                                     break;
                                 case PowerpointImportType.Shapes:
-                                    Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
-                                    Logger.Log(string.Format("ImportingPowerpoint Flexible {0}", spec.File));
+                                    App.auditor.log(string.Format("ImportingPowerpoint Flexible {0}", spec.File),"PowerPointLoader");
                                     LoadPowerpoint(app, spec.File, conversation);
                                     break;
                             }
@@ -242,7 +239,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                Console.WriteLine(String.Format("Exception during powerpoint load: {0}", e.Message));
+                App.auditor.log(String.Format("Exception during powerpoint load: {0}", e.Message));
                 MeTLMessage.Error("MeTL requires Microsoft PowerPoint to be installed to import a presentation");
                 Commands.HideProgressBlocker.ExecuteAsync(null);
             }
@@ -335,7 +332,7 @@ namespace SandRibbon.Utils
             }
             catch (COMException e)
             {
-                Logger.Crash(e);
+                App.auditor.error("COMException while loading FlatSlides", "PowerPointLoader", e);
             }
             finally
             {
@@ -347,7 +344,7 @@ namespace SandRibbon.Utils
             var updatedConversation = App.controller.client.UpdateConversationDetails(conversation);
             if (!updatedConversation.ValueEquals(conversation))
             {
-                Trace.TraceInformation("PowerpointImport: Failed to update conversation");
+                App.auditor.log("PowerpointImport: Failed to update conversation","PowerPointLoader");
             }
             UploadFromXml(convDescriptor);
         }
@@ -442,7 +439,7 @@ namespace SandRibbon.Utils
                 }
                 catch (COMException e)
                 {
-                    Logger.Crash(e);
+                    App.auditor.error("COMException during LoadPowerpoint", "PowerPointLoader", e);
                 }
                 finally
                 {
@@ -451,7 +448,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                Logger.Crash(e);
+                App.auditor.error("LoadPowerpoint", "PowerPointLoader", e);
             }
         }
 
@@ -593,7 +590,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception ex)
             {
-                Trace.TraceError("SandRibbon::Utils::PowerpointLoader:Exception: " + ex);
+                App.auditor.error("importSlide", "PowerPointLoader", ex);
             }
             var SortedShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
             foreach (var shapeObj in slide.Shapes)
@@ -656,7 +653,7 @@ namespace SandRibbon.Utils
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceInformation("PowerpointLoader::LoadShape: Exception parsing private content: " + ex);
+                    App.auditor.error("ExportShape", "PowerPointLoader", ex);
                 }
             }
             else if (shape.Visible == MsoTriState.msoTrue)
@@ -689,7 +686,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                Trace.TraceError("Failed to export shape. Reason: " + e.Message);
+                App.auditor.error("addShape", "PowerPointLoader", e);
             }
         }
 

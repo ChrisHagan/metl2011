@@ -38,7 +38,7 @@ namespace SandRibbon.Quizzing
             quizzes.ItemsSource = activeQuizes;
             if (quizzes.Items.Count > 0)
                 quizzes.SelectedIndex = 0;
-            Trace.TraceInformation("ViewingQuizResults");
+            App.auditor.trace("ViewingQuizResults");
         }
         private void QuizChanged(object sender, SelectionChangedEventArgs e)
         {

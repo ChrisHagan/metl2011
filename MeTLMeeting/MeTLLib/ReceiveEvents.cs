@@ -146,8 +146,10 @@ namespace MeTLLib
 
     class ProductionReceiveEvents : IReceiveEvents
     {
-        public ProductionReceiveEvents()
+        public IAuditor auditor { get; protected set; }
+        public ProductionReceiveEvents(IAuditor _auditor)
         {
+            auditor = _auditor;
             this.PresenceAvailable += (sender, args) => { } ;
             this.SlideCollectionUpdated += (sender, args) => { };
             this.ChatAvailable += (sender, args) => { };
@@ -183,7 +185,7 @@ namespace MeTLLib
         }
         void IReceiveEvents.serversDown(Uri u)
         {
-            Trace.TraceError("CRASH: (Fixed) MeTLLib::ProductionReceiveEvents:ServersDown {0}", u);
+            auditor.log(String.Format("serversDown: {0}", u.ToString()), "ProductionReceiveEvents");
             statusChanged(false, null);
             ServersDown(this, new ServersDownEventArgs { uri = u });
         }

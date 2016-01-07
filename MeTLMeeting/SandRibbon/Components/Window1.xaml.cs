@@ -37,10 +37,6 @@ namespace SandRibbon
         private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-        public string log
-        {
-            get { return Logger.log; }
-        }
         public Window1()
         {
             DoConstructor();
@@ -76,8 +72,8 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
-            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
-            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Logger.CleanupLogQueue(); Application.Current.Shutdown(); }));
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Application.Current.Shutdown(); }));
+            Commands.CloseApplication.RegisterCommand(new DelegateCommand<object>((_unused) => { Application.Current.Shutdown(); }));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -248,7 +244,7 @@ namespace SandRibbon
             }
             catch (Exception e)
             {
-                Logger.Crash(e);
+                App.auditor.error("getDefaultSystemLanguage","Window1",e);
             }
         }
         #region helpLinks
@@ -270,33 +266,33 @@ namespace SandRibbon
         }
         private void launchDiagnosticWindow(object _unused)
         {
-            Dispatcher.adopt(delegate
+            if (App.diagnosticWindow != null)
             {
-                if (App.diagnosticWindow != null)
+                App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
                     App.diagnosticWindow.Activate();
-                }
-                else
+                });
+            }
+            else
+            {
+                Thread newDiagnosticThread = new Thread(new ThreadStart(() =>
                 {
-                    Thread newDiagnosticThread = new Thread(new ThreadStart(() =>
+                    SynchronizationContext.SetSynchronizationContext(
+                        new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
+                    var window = new DiagnosticWindow();
+                    App.diagnosticWindow = window;
+                    window.Closed += (s, a) =>
                     {
-                        SynchronizationContext.SetSynchronizationContext(
-                            new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
-                        var window = new DiagnosticWindow();
-                        App.diagnosticWindow = window;
-                        window.Closed += (s, a) =>
-                        {
-                            System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
-                            App.diagnosticWindow = null;
-                        };
-                        window.Show();
-                        System.Windows.Threading.Dispatcher.Run();
-                    }));
-                    newDiagnosticThread.SetApartmentState(ApartmentState.STA);
-                    newDiagnosticThread.IsBackground = true;
-                    newDiagnosticThread.Start();
-                }
-            });
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
+                        App.diagnosticWindow = null;
+                    };
+                    window.Show();
+                    System.Windows.Threading.Dispatcher.Run();
+                }));
+                newDiagnosticThread.SetApartmentState(ApartmentState.STA);
+                newDiagnosticThread.IsBackground = true;
+                newDiagnosticThread.Start();
+            }
         }
 
         #endregion
@@ -317,12 +313,12 @@ namespace SandRibbon
 
             catch (Exception e)
             {
-                Logger.Crash(e);
+                App.auditor.error("Change Language","App",e);
             }
         }
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
-            Trace.TraceInformation("UserOptionsDialog_Show");
+            App.auditor.trace("UserOptionsDialog_Show");
             if (mustBeLoggedIn(null))
             {
                 var userOptions = new UserOptionsDialog();
@@ -361,8 +357,9 @@ namespace SandRibbon
             {
                 Process.Start("http://monash.edu/eeducation/metl/help.html");
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                App.auditor.error("Launch Help", "Window1", e);
             }
         }
         private void PrintBinding(object sender, EventArgs e)
@@ -459,12 +456,12 @@ namespace SandRibbon
                 }
                 catch (NotSetException e)
                 {
-                    Logger.Crash(e);
+                    App.auditor.error("Reconnecting", "Window1", e);
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
+                    App.auditor.error("Reconnecting", "Window1", e);
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
             }
@@ -558,7 +555,9 @@ namespace SandRibbon
                     if (lastValue != null)
                         AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
                 }
-                catch (NotSetException) { }
+                catch (NotSetException e) {
+                    App.auditor.error("UpdatePrivacyAdorner", "Window1", e);
+                }
         }
 
         private bool RemovePrivacyAdorners(string targetName)
@@ -608,8 +607,9 @@ namespace SandRibbon
                         scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
                     }
                 }
-                catch (Exception)
-                {//out of range exceptions and the like 
+                catch (Exception e)
+                {
+                    App.auditor.error("GrabMove", "Window1", e);
                 }
             });
         }
@@ -654,7 +654,7 @@ namespace SandRibbon
                 scroll.UpdateLayout();
                 scroll.ScrollToHorizontalOffset(viewbox.X);
                 scroll.ScrollToVerticalOffset(viewbox.Y);
-                Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
+                App.auditor.trace("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
             });
         }
         private void AddWindowEffect(object _o)
@@ -705,7 +705,7 @@ namespace SandRibbon
             }
             catch
             {
-                Console.WriteLine("couldn't join conversation: " + thisDetails.Jid);
+                App.auditor.log("couldn't join conversation: " + thisDetails.Jid);
             }
         }
         private string messageFor(ConversationDetails details)
@@ -912,7 +912,7 @@ namespace SandRibbon
         }
         private void OriginalView(object _unused)
         {
-            Trace.TraceInformation("ZoomToOriginalView");
+            App.auditor.trace("ZoomToOriginalView");
             var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).FirstOrDefault();
             if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
@@ -983,7 +983,7 @@ namespace SandRibbon
 
         private void doZoomIn(object sender)
         {
-            Trace.TraceInformation("ZoomIn pressed");
+            App.auditor.trace("ZoomIn pressed");
             var ZoomValue = 0.9;
             var scrollHOffset = scroll.HorizontalOffset;
             var scrollVOffset = scroll.VerticalOffset;
@@ -1034,7 +1034,7 @@ namespace SandRibbon
         }
         private void doZoomOut(object sender)
         {
-            Trace.TraceInformation("ZoomOut pressed");
+            App.auditor.trace("ZoomOut pressed");
             var ZoomValue = 1.1;
             var scrollHOffset = scroll.HorizontalOffset;
             var scrollVOffset = scroll.VerticalOffset;
@@ -1101,8 +1101,9 @@ namespace SandRibbon
                 details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
                 App.controller.client.UpdateConversationDetails(details);
             }
-            catch (NotSetException)
+            catch (NotSetException e)
             {
+                App.auditor.error("ToggleNavigationLock", "Window1", e);
                 return;
             }
         }
@@ -1120,8 +1121,9 @@ namespace SandRibbon
                     details.Permissions.applyTuteStyle();
                 App.controller.client.UpdateConversationDetails(details);
             }
-            catch (NotSetException)
+            catch (NotSetException e)
             {
+                App.auditor.error("SetConversationPermissions", "Window1", e);
                 return;
             }
         }
@@ -1234,8 +1236,9 @@ namespace SandRibbon
                     var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
                     return x - y;
                 }
-                catch (FormatException)
+                catch (FormatException e)
                 {
+                    App.auditor.error("Compare", "PreferredDisplayIndexComparator", e);
                     return 0;
                 }
             }

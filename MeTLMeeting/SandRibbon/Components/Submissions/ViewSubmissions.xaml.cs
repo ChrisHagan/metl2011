@@ -110,7 +110,7 @@ namespace SandRibbon.Components.Submissions
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Trace.TraceInformation(String.Join(",", submissions.Select(s => s.IsSelected.ToString())));
+            App.auditor.trace(String.Join(",", submissions.Select(s => s.IsSelected.ToString())));
             Commands.RequerySuggested(Commands.ImportSubmissions);
         }
     }

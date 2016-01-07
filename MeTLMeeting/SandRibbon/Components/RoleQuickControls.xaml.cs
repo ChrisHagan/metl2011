@@ -107,7 +107,7 @@ namespace SandRibbon.Components
         }
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
-            Trace.TraceInformation("SubmittedScreenshot");
+            App.auditor.log("generateScreenshot","RoleQuickControls");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
             {

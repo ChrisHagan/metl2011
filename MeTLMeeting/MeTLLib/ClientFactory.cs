@@ -20,13 +20,13 @@ namespace MeTLLib
                 //var jabberCreds = new Credentials(config.xmppUsername, config.xmppPassword,new List<AuthorizedGroup>(),"");
                 var wcf = new WebClientFactory(webCreds,auditor,creds);
                 auditAction(GaugeStatus.InProgress,14);
-                var receiveEvents = new ProductionReceiveEvents();
+                var receiveEvents = new ProductionReceiveEvents(auditor);
                 auditAction(GaugeStatus.InProgress,21);
                 var authProvider = new AuthorisationProvider(wcf, config,auditor);
                 auditAction(GaugeStatus.InProgress,28);
                 var httpProvider = new HttpResourceProvider(wcf,auditor);
                 auditAction(GaugeStatus.InProgress,35);
-                var resourceUploaderFactory = new ProductionResourceUploaderFactory(config, httpProvider);
+                var resourceUploaderFactory = new ProductionResourceUploaderFactory(config, httpProvider,auditor);
                 auditAction(GaugeStatus.InProgress,42);
                 var resourceUploader = resourceUploaderFactory.get();
                 auditAction(GaugeStatus.InProgress,49);

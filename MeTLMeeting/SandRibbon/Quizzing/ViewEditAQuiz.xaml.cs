@@ -144,7 +144,7 @@ namespace SandRibbon.Quizzing
             {
                 var selection = ((Option)e.AddedItems[0]);
                 Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
-                Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
+                App.auditor.trace("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
                 Close();
             }
         }

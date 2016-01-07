@@ -626,7 +626,7 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            Console.WriteLine(value);
+            App.auditor.log(value.ToString());
             return value;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -1273,7 +1273,7 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            Console.WriteLine(value.GetType().Name);
+            App.auditor.log(value.GetType().Name);
             return ((Double)value) / 2;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

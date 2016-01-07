@@ -78,7 +78,7 @@ namespace SandRibbon.Quizzing
                     quiz.Options.Add(answer);
             }
             Commands.SendQuiz.ExecuteAsync(quiz);
-            Trace.TraceInformation("CreatedPollQuestion {0}", question.Text);
+            App.auditor.trace("CreatedPollQuestion {0}", question.Text);
             this.Close();
         }
         private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -221,7 +221,7 @@ namespace SandRibbon.Quizzing
                                         }
                                         catch (Exception ex)
                                         {
-                                            Trace.TraceError("Poll screenshot failure: {0}", ex.Message);
+                                            App.auditor.error("screenshotAsAQuestion", "CreateAQuiz", ex);
                                         }
                                         finally
                                         {

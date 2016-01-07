@@ -22,18 +22,6 @@ using Akka.Actor;
 
 namespace SandRibbon
 {
-    public class CouchTraceListener : TraceListener
-    {
-        public override void Write(string message)
-        {
-            Logger.Log(message);
-        }
-        public override void WriteLine(string message)
-        {
-            Logger.Log(message);
-        }
-    }
-
     public partial class App : Application
     {
         public static ActorSystem actorSystem = ActorSystem.Create("MeTLActors");
@@ -48,6 +36,8 @@ namespace SandRibbon
         {
             diagnosticModelActor.Tell(m);
            //dd.addMessage(m);
+        }, (e) => {
+            diagnosticModelActor.Tell(e);
         });
 
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
@@ -55,7 +45,7 @@ namespace SandRibbon
         public static bool isStaging = false;
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-        public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(); //change this to a remoteXml one when we're ready
+        public static MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(auditor);
 
 #if DEBUG
         public static string OverrideUsername { get; private set; }
@@ -106,20 +96,14 @@ namespace SandRibbon
         {
             try
             {
-                //App.dd.addMessage(new DiagnosticMessage("network controller connecting: " + controller.config.name, "connection", DateTime.Now));
-                //App.mark("start network controller and log in");
                 controller.connect(credentials);
-                //App.dd.addMessage(new DiagnosticMessage("network controller connected: " + controller.config.name, "connection", DateTime.Now));
                 if (!controller.client.Connect(credentials))
                 {
-                //    App.dd.addMessage(new DiagnosticMessage("credentials failed: " + controller.config.name, "connection", DateTime.Now));
                     Commands.LoginFailed.Execute(null);
                 }
                 else {
-                //    App.dd.addMessage(new DiagnosticMessage("identity set: " + controller.config.name, "connection", DateTime.Now));
                     Commands.SetIdentity.Execute(credentials);
                 }
-                //App.mark("finished logging in");
             }
             catch (TriedToStartMeTLWithNoInternetException)
             {
@@ -133,16 +117,9 @@ namespace SandRibbon
         public static void noop(params object[] args)
         {
         }
-        public static string Now(string message)
-        {
-            var now = SandRibbonObjects.DateTimeFactory.Now();
-            var s = string.Format("{2} {0}:{1}", now, now.Millisecond, message);
-            Trace.TraceInformation(s);
-            return s;
-        }
         public static void mark(string msg)
         {
-            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+            App.auditor.log(String.Format("{0} : {1}", msg, DateTime.Now - AccidentallyClosing));
         }
         public static readonly StringWriter outputWriter = new StringWriter();
 
@@ -158,7 +135,6 @@ namespace SandRibbon
         {
             var set = new PermissionSet(PermissionState.None);
             set.SetPermission(new UIPermission(UIPermissionWindow.AllWindows, UIPermissionClipboard.AllClipboard));
-            //Asserting new permission set to all referenced assemblies
             set.Assert();
         }
         private void NoNetworkConnectionAvailable(object o)
@@ -176,7 +152,7 @@ namespace SandRibbon
                 {
                     MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
                 }
-                Trace.TraceInformation("LoggingOut");
+                auditor.log("LoggingOut","App");
                 WorkspaceStateProvider.ClearSettings();
                 Application.Current.Shutdown();
             });
@@ -204,7 +180,7 @@ namespace SandRibbon
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
-            doCrash(ex);
+            auditor.error("CurrentDomain_UnhandledException", "App", ex);
             if (!falseAlarms.Any(m => ex.Message.StartsWith(m)))
             {
                 MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.");
@@ -231,17 +207,13 @@ namespace SandRibbon
             var msg = e.Exception.Message;
             if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
             {
-                Logger.Fixed(msg);
+
+                auditor.error("DispatcherUnhandledException - Handled", "App", e.Exception);
                 e.Handled = true;
             }
             else
-                doCrash(e.Exception);
+                auditor.error("DispatcherUnhandledException - Unhandled","App",e.Exception);
         }
-        private void doCrash(Exception e)
-        {
-            Logger.Crash(e);
-        }            
-
         private void Application_Startup(object sender, StartupEventArgs e)
         {
 #if DEBUG

@@ -617,7 +617,7 @@ namespace SandRibbon.Tabs.Groups
                 currentAttributes = drawingAttributes;
                 Commands.SetDrawingAttributes.Execute(drawingAttributes);
                 var msg = String.Format("Pen selected, Pen {0}, Colour {1}, Size {2}, isHighlighter {3}", IndexNumber.ToString(), drawingAttributes.Color.ToString(), drawingAttributes.Height.ToString(), drawingAttributes.IsHighlighter.ToString());
-                Trace.TraceInformation(msg);
+                App.auditor.trace(msg);
                 e.Handled = true;
             }
         }
@@ -625,7 +625,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void OpenColourSettingPopup(object sender, RoutedEventArgs e)
         {
-            Trace.TraceInformation("OpenedCustomColorDialog");
+            App.auditor.trace("OpenedCustomColorDialog");
             var newBrush = new SolidColorBrush();
             var AttributeNumber = Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
             InvokeAlteredPreset(AttributeNumber);
@@ -654,7 +654,7 @@ namespace SandRibbon.Tabs.Groups
                 }
             }
             OpeningPopup = false;
-            Trace.TraceInformation("Pen modifier popup open, Pen {0}", AttributeNumber.ToString());
+            App.auditor.trace("Pen modifier popup open, Pen {0}", AttributeNumber.ToString());
         }
         private void ChangeColour(object sender, RoutedEventArgs e)
         {
@@ -667,10 +667,10 @@ namespace SandRibbon.Tabs.Groups
                 ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).XAMLColorName = Color.ToString();
                 defaultColours.Items.Refresh();
                 InvokeAlteredPreset(PresetToUpdate);
-                Trace.TraceInformation("Pen changed colour, Pen {0}, newColour {1}", PresetToUpdate.ToString(), Color.ToString());
+                App.auditor.trace("Pen changed colour, Pen {0}, newColour {1}", PresetToUpdate.ToString(), Color.ToString());
             } catch (Exception ex)
             {
-                Trace.TraceInformation("Pen color changing failed: " + ex.Message);
+                App.auditor.error("ChangeColour", "PenColors", ex);
             }
         }
         private void InvokeAlteredPreset(int index)
@@ -688,7 +688,7 @@ namespace SandRibbon.Tabs.Groups
             ((DrawingAttributesEntry)(defaultColours.Items[PresetToUpdate])).Attributes = DrawingAttributes;
             defaultColours.Items.Refresh();
             InvokeAlteredPreset(PresetToUpdate);
-            Trace.TraceInformation("Pen Reset to Default, Pen {0}", PresetToUpdate.ToString());
+            App.auditor.trace("Pen Reset to Default, Pen {0}", PresetToUpdate.ToString());
         }
         private void ChangeSize(object sender, RoutedEventArgs e)
         {
@@ -699,23 +699,23 @@ namespace SandRibbon.Tabs.Groups
                 ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
                 defaultColours.Items.Refresh();
                 InvokeAlteredPreset(PresetToUpdate);
-                Trace.TraceInformation("Pen changed size, Pen {0}, newSize {1}", PresetToUpdate.ToString(), newSize.ToString());
+                App.auditor.trace("Pen changed size, Pen {0}, newSize {1}", PresetToUpdate.ToString(), newSize.ToString());
             } catch (Exception ex)
             {
-                Trace.TraceInformation("Pen changed size failed: " + ex.Message);
+                App.auditor.error("ChangeSize", "PenColors", ex);
             }
         }
         private void SizeUp(object sender, MouseButtonEventArgs e)
         {
             var CurrentPreset = Int32.Parse(ColourSettingPopup.Tag.ToString());
             InvokeAlteredPreset(CurrentPreset);
-            Trace.TraceInformation("Pen SizeUp, Pen {0}", CurrentPreset.ToString());
+            App.auditor.trace("Pen SizeUp, Pen {0}", CurrentPreset.ToString());
         }
         private void ColourUp(object sender, MouseButtonEventArgs e)
         {
             var CurrentPreset = Int32.Parse(ColourSettingPopup.Tag.ToString());
             InvokeAlteredPreset(CurrentPreset);
-            Trace.TraceInformation("Pen ColourUp, Pen {0}", CurrentPreset.ToString());
+            App.auditor.trace("Pen ColourUp, Pen {0}", CurrentPreset.ToString());
         }
 
         public class DrawingAttributesEntry

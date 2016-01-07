@@ -233,10 +233,10 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(ConversationDetails details)
         {
-            myMaxSlideIndex = -1;
-            TeachersCurrentSlideIndex = -1;
             Dispatcher.adopt(delegate
             {
+                myMaxSlideIndex = -1;
+                TeachersCurrentSlideIndex = -1;
                 thumbnailList.Clear();
             });
             if (details.IsEmpty)
@@ -316,7 +316,7 @@ namespace SandRibbon.Components
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("syncTimer action threw exception: " + ex.Message);
+                    App.auditor.log("syncTimer action threw exception: " + ex.Message);
                 }
             }));
             GlobalTimers.SetSyncTimer(action);

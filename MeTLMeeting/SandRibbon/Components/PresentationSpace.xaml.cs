@@ -290,7 +290,7 @@ namespace SandRibbon.Components
         }
         private void InitiateGrabZoom(object _param)
         {
-            App.Now("GrabZoom pressed");
+            App.auditor.trace("GrabZoom pressed");
             withDragMarquee(marquee =>
             {
                 Commands.EndGrabZoom.ExecuteAsync(null);

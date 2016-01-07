@@ -44,10 +44,10 @@ namespace SandRibbon.Providers
                 if (cache.Keys.Count >= maximumCachedBitmaps)
                 {
                     var toRemove = cache.OrderBy(kvp => kvp.Value.created).First();
-                    //Console.WriteLine(String.Format("removing item from cache: {0} ({1})",toRemove.Key,toRemove.Value.created));
+                    //App.auditor.log(String.Format("removing item from cache: {0} ({1})",toRemove.Key,toRemove.Value.created));
                     cache.Remove(toRemove.Key);
                 }
-                //Console.WriteLine(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
+                //App.auditor.log(String.Format("adding item to cache: {0} ({1})", slideId, ct.created));
                 cache[slideId] = ct;
             }
         }
@@ -64,7 +64,7 @@ namespace SandRibbon.Providers
                         {
                             if (cache.ContainsKey(internalSlide.id))
                             {
-                                //Console.WriteLine(String.Format("painting thumbnail: {0}", internalSlide.id));
+                                //App.auditor.log(String.Format("painting thumbnail: {0}", internalSlide.id));
                                 image.Source = cache[internalSlide.id].image;
                             }
                         }
@@ -149,7 +149,7 @@ namespace SandRibbon.Providers
                     }
                     catch (Exception e)
                     {
-                        App.Now(string.Format("Error loading thumbnail: {0}", e.Message));
+                        App.auditor.error("thumbnail","ThumbnailProvider", e);
                     }
                 });
             }

@@ -403,7 +403,7 @@ namespace MeTLLib
                     }
                     catch (Exception e)
                     {
-                        Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}", e.Message);
+                        auditor.error("UploadAndSendSubmission", "ClientConnection", e);
                     }
                 }), "uploadAndSendSubmission", "clientConnection");
             };
@@ -451,7 +451,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.Message);
+                    auditor.error("SendFile", "ClientConnection", e);
                     SendFile(tf);
                 }
             };
@@ -465,24 +465,11 @@ namespace MeTLLib
                 {
                     var proposedIdentity = String.Format("{0}:{1}", lii.author, DateTime.Now.Ticks);
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), proposedIdentity, lii.bytes);
-
-                    //MeTLImage newImage = lii.image;
-                    //var previousTag = newImage.tag();
-                    //previousTag.resourceIdentity = newPath;
-                    //lii.image.tag(previousTag);
-
-                    /*
-                    newImage.Dispatcher.adopt(() =>
-                    {
-                        //newImage.tag(lii.image.tag());
-                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, lii.image.tag().id, newImage, newPath, lii.image.tag().timestamp));
-                    });
-                    */
                     wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newPath, lii.X,lii.Y,lii.Width,lii.Height, newPath, -1L));
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendImage: {0}", e.Message);
+                    auditor.error("UploadAndSendImage", "ClientConnection", e);
                     // rethrow the exeception so the action will be requeued
                     throw e;
                 }
@@ -547,7 +534,7 @@ namespace MeTLLib
             {
                 if (String.IsNullOrEmpty(room))
                 {
-                    Trace.TraceError("ERROR: Cannot join empty room");
+                    auditor.log("JoinRoom - ERROR: Cannot join empty room","ClientConnection");
                     return;
                 }
                 wire.JoinRoom(room);
@@ -824,7 +811,7 @@ namespace MeTLLib
                     }
                     else
                     {
-                        Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
+                        auditor.log("JoinConversation - CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements","ClientConnection");
                     }
                     a(GaugeStatus.InProgress, 50);
                     wire.JoinConversation();

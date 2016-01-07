@@ -61,7 +61,7 @@ namespace MeTLLib.DataTypes
 
             if (message.GetAttribute("type") == "error")
             {
-                Trace.TraceError("Wire received error message: {0}", message);
+                Trace.TraceInformation("ErrorMessage: {0}", message);
                 return timestamp;
             }
             if (message.HasAttribute("timestamp"))

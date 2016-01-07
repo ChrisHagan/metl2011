@@ -23,7 +23,7 @@ namespace SandRibbon.Quizzing
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
             if (answers == null || question == null) return;
-            Trace.TraceInformation("AssessAQuiz {0}", question.Id);
+            App.auditor.trace("AssessAQuiz {0}", question.Id);
             Dispatcher.adoptAsync(delegate
             {
                 var response = (answers.Count() > 1 || answers.Count() == 0) ? "({0} responses)" : "({0} response)"; 

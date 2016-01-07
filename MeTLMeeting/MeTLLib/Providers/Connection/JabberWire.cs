@@ -262,7 +262,7 @@ namespace MeTLLib.Providers.Connection
             catch (Exception e)
             {
                 //remove the webexception clause and return only false, when all the server have their serverStatus endpoint enabled on their yaws and apache pages
-                Console.WriteLine("JabberWire:IsConnected: {0}", e.Message);
+                auditor.log(String.Format("JabberWire:IsConnected:exception {0}", e.Message),"JabberWire");
                 httpIsConnected = (e is WebException && (e as WebException).Response != null && ((e as WebException).Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound);
             }
             if (!this.IsConnected())
@@ -322,7 +322,7 @@ namespace MeTLLib.Providers.Connection
                                 conn.OnWriteXml -= WriteXml;
                 */
             }
-            this.conn = new MeTLXmppClientConnection(jid.Server, metlServerAddress.xmppHost);
+            this.conn = new MeTLXmppClientConnection(jid.Server, metlServerAddress.xmppHost,auditor);
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
             conn.OnMessage += OnMessage;
@@ -333,7 +333,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnStreamError += ElementError;
             conn.OnClose += OnClose;
             conn.OnIq += OnIq;
-            Console.WriteLine("XmppConnection: " + conn.description);
+            auditor.log("XmppConnection: " + conn.description);
 
             /*
             conn.OnReadXml += ReadXml;
@@ -396,7 +396,7 @@ namespace MeTLLib.Providers.Connection
                 StartConnectionTimeoutTimer();
                 a(GaugeStatus.InProgress, 66);
                 conn.Open(credentials.name, credentials.password, resource, 1);
-                Console.WriteLine("XmppConnection: " + conn.description);
+                auditor.log("XmppConnection: " + conn.description, "JabberWire");
             }, "openConnection", "xmpp");
         }
 
@@ -431,15 +431,15 @@ namespace MeTLLib.Providers.Connection
             }
             if (iq.Type == IqType.result && unrespondedPings.Contains(iq.Id))
             {
-                Trace.TraceError("XmppConnection pinging: " + conn.description);
+                //auditor.log("XmppConnection pinging: " + conn.description);
                 unrespondedPings.RemoveAll(s => s == iq.Id);
-                Console.WriteLine("result ping IQ received: " + iq.ToString());
+                auditor.log("result ping IQ received: " + iq.Id.ToString(), "JabberWire");
             }
             if (iq.FirstChild != null && iq.FirstChild.Namespace == "urn:xmpp:ping")
             {
                 if (iq.Type == IqType.error)
                 {
-                    Console.WriteLine("error ping IQ received: " + iq.ToString());
+                    auditor.log("error ping IQ received: " + iq.ToString(),"JabberWire");
                 }
                 else
                 {
@@ -451,19 +451,18 @@ namespace MeTLLib.Providers.Connection
         }
         private void ErrorError(object sender, Exception ex)
         {
-            Trace.TraceError(String.Format("XmppConnection ErrorError: {0}\nException: {1}", conn.description, ex.Message));
+            auditor.error("ErrorError", "JabberWire", ex);
             Reset("JabberWire::ErrorError");
         }
 
         private void HandlerError(object sender, Exception ex)
         {
-            Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Handler error: {0}", ex.Message));
-            Trace.TraceError("XmppConnection: " + conn.description);
+            auditor.error("HandlerError", "JabberWire", ex);
             Reset("JabberWire::HandlerError");
         }
         private void Disconnect(object sender, Exception ex)
         {
-            Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Disconnect: {0}", ex.Message));
+            auditor.error("Disconnect", "JabberWire", ex);
             disconnectSocket();
         }
         private void disconnectSocket()
@@ -476,23 +475,23 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception ex)
             {
-                Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:disconnectSocket: {0}", ex.Message));
+                auditor.error("disconnectSocket", "JabberWire", ex);
             }
         }
         private void ElementError(object sender, Element element)
         {
-            Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Element error: {0}", element.ToString()));
+            auditor.log("ElementError - " + element.ToString(), "JabberWire");
             Reset("JabberWire::ElementError");
         }
         protected virtual void ReadXml(object sender, string xml)
         {
             if (!xml.Contains("/WORM_MOVES"))
-                Trace.TraceInformation("IN:" + xml);
+                auditor.trace("IN:" + xml);
         }
         protected virtual void WriteXml(object sender, string xml)
         {
             if (!xml.Contains("/WORM_MOVES"))
-                Trace.TraceInformation("OUT:" + xml);
+                auditor.trace("OUT:" + xml);
         }
         private void OnClose(object sender)
         {
@@ -546,7 +545,7 @@ namespace MeTLLib.Providers.Connection
                         }
                         catch (Exception ex)
                         {
-                            Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter Failed to execute item on relogin-queue.  Exception: " + ex.Message);
+                            auditor.error("catchUpTimer_Elapsed", "JabberWire", ex);
                             break;
                         }
                     }
@@ -583,8 +582,7 @@ namespace MeTLLib.Providers.Connection
             //return; //for testing of the new agsModule
             if (1 == Interlocked.Increment(ref resetInProgress))
             {
-                Trace.TraceWarning(string.Format("JabberWire::Reset.  {0}", caller));
-                Trace.TraceWarning("XmppConnection: " + conn.description);
+                auditor.log(String.Format("Reset - {0} - {1} : {2}", conn == null ? "nullConn" : conn.description, caller,conn == null ? "nullConn" : conn.XmppConnectionState.ToString()), "JabberWire");
                 if (conn != null)
                     switch (conn.XmppConnectionState)
                     {
@@ -594,27 +592,16 @@ namespace MeTLLib.Providers.Connection
 //                            catchUpDisconnectedWork();
                             break;
                         case XmppConnectionState.Disconnected:
-                            Trace.TraceWarning(string.Format("JabberWire::Reset: Disconnected.  {0}", caller));
                             openConnection();
                             break;
-                            /*
-                        case XmppConnectionState.Connecting:
-                            // Timed out trying to connect, so disconnect and start again
-                            Trace.TraceWarning(string.Format("JabberWire::Reset: Connecting.  {0}", caller));
-                            disconnectSocket();
-                            openConnection();
-                            break;
-                            */
                         default:
                         //case XmppConnectionState.Authenticating:
-                            Trace.TraceWarning(string.Format("JabberWire::Reset: Authenticating.  {0}", caller));
                             disconnectSocket();
                             openConnection();
                             break;
                     }
                 else
                 {
-                    Trace.TraceWarning(string.Format("JabberWire::Reset: Conn is null - openingConnection.  {0}", caller));
                     openConnection();
                 }
 
@@ -622,7 +609,7 @@ namespace MeTLLib.Providers.Connection
             }
             else
             {
-                Trace.TraceWarning(string.Format("++++: JabberWire::Reset: Called {0} times.", resetInProgress));
+                auditor.log(String.Format("Reset: Called {0} times.",resetInProgress),"JabberWire");
             }
         }
         public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
@@ -664,9 +651,10 @@ namespace MeTLLib.Providers.Connection
         }
         private void leaveRoom(Jid room)
         {
+            auditor.log("leaveRoom: " + room.ToString(), "JabbberWire");
             CurrentRooms.Remove(room);
             var currentRoomListing = CurrentRooms.ToList().Select(r => r.ToString());
-            Trace.TraceInformation("Leaving room {0} leaves {1}", room, String.Join(",", currentRoomListing));
+            auditor.trace("Leaving room {0} leaves {1}", room, String.Join(",", currentRoomListing));
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
         }
@@ -707,17 +695,18 @@ namespace MeTLLib.Providers.Connection
         public List<Jid> CurrentRooms { get; protected set; } = new List<Jid>();
         private void joinRoom(Jid room)
         {
+            auditor.log("joinRoom: " + room.ToString(), "JabbberWire");
             try
             {
                 var alias = credentials.name + conn.Resource;
                 var mm = new MucManager(conn);
                 mm.JoinRoom(room, alias, true);
                 CurrentRooms.Add(room);
-                Trace.TraceInformation("Joining room {0} makes {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
+                auditor.trace("Joining room {0} makes {1}", room, String.Join(",", CurrentRooms.Select(r => r.ToString())));
             }
             catch (Exception e)
             {
-                Trace.TraceError(string.Format("Couldn't join room {0}: {1}", room, e.Message));
+                auditor.error("joinRoom: " + room.ToString(), "JabberWire", e);
             }
         }
         private void send(string target, string message)
@@ -932,7 +921,7 @@ namespace MeTLLib.Providers.Connection
 
         public void SendAttendance(string target, Attendance attendance)
         {
-            Trace.TraceInformation("Sending attendance to {0}", target);
+            auditor.trace("Sending attendance to {0}", target);
             stanza(target, new MeTLStanzas.Attendance(attendance));
         }
         public void SendStroke(TargettedStroke stroke)
@@ -946,7 +935,7 @@ namespace MeTLLib.Providers.Connection
         public void AskForTeacherStatus(string teacher, string where)
         {
             /*
-            Console.WriteLine("Jabberwire:AskTeacherForStatus => sending on conversation: " + where);
+            auditor.log("Jabberwire:AskTeacherForStatus => sending on conversation: " + where,"JabberWire");
             command(where, TEACHER_IN_CONVERSATION + " "+ where);
              */
         }
@@ -1077,7 +1066,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Trace.TraceError(string.Format("Uncaught exception in ReceivedMessage: {0}", e.Message));
+                auditor.error("ReceiveCommaand", "JabberWire", e);
             }
         }
         public virtual void handlePing(string[] parts)
@@ -1096,7 +1085,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Trace.TraceError("wire received inappropriate jid in updateSlideCollection: " + e.Message);
+                auditor.error("handleUpdateSlideCollection", "JabberWire", e);
             }
         }
         public virtual void handleWakeUp(string[] parts)
@@ -1143,7 +1132,7 @@ namespace MeTLLib.Providers.Connection
 
             if (message.GetAttribute("type") == "error")
             {
-                Trace.TraceError("Wire received error message: {0}", message);
+                auditor.log("HistoryReceivedMessage error: " + message.ToString(), "JabberWire");
                 return;
             }
             ActOnUntypedMessage(element);
@@ -1180,7 +1169,7 @@ namespace MeTLLib.Providers.Connection
 
             if (message.GetAttribute("type") == "error")
             {
-                Trace.TraceError("Wire received error message: {0}", message);
+                auditor.log("ReceivedMessage error: " + message.ToString(), "JabberWire");
                 return;
             }
 
@@ -1361,7 +1350,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Trace.TraceError("Malformed sync move received: {0}", command);
+                auditor.error("handleSyncMoveReceived: "+command.ToString(), "JabberWire", e);
             }
         }
         private void handleConversationDetailsUpdated(TargettedCommand command)
@@ -1372,7 +1361,7 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void handleUnknownMessage(Element el)
         {
-            Trace.TraceWarning(string.Format("Received unknown message: {0}", el.ToString()));
+            auditor.log("handleUnknownMessage: " + el.ToString(), "JabberWire");
         }
 
         public void LoadSubmissions(string conversationJid)
@@ -1428,7 +1417,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Trace.TraceInformation("CRASH: MeTLLib::JabberWire:JoinConversation {0}", e.Message);
+                auditor.error("JoinConversation", "JabberWire", e);
             }
         }
 
@@ -1476,7 +1465,7 @@ namespace MeTLLib.Providers.Connection
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
+                    auditor.error("MoveTo", "JabberWire", e);
                 }
             }, "moveTo", "xmpp");
         }

@@ -91,7 +91,6 @@ namespace agsXMPP.Net
 
         private Timer connectTimeoutTimer;
 
-
         #region << Constructor >>
         public ClientSocket()
         {

@@ -33,8 +33,8 @@ namespace MeTLLib.Providers.Structure
         }
         private IResourceUploader resourceUploader;
         public Credentials credentials { get; protected set; }
-        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader,Credentials creds,IAuditor auditor,JabberWireFactory _jabberWireFactory)
-            : base(factory,auditor)
+        public FileConversationDetailsProvider(MetlConfiguration _server,IWebClientFactory factory, IResourceUploader uploader,Credentials creds,IAuditor _auditor,JabberWireFactory _jabberWireFactory)
+            : base(factory,_auditor)
         {
             server = _server;
             resourceUploader = uploader;
@@ -52,30 +52,30 @@ namespace MeTLLib.Providers.Structure
             ConversationDetails result = ConversationDetails.Empty;
             if (String.IsNullOrEmpty(conversationJid))
             {
-                Trace.TraceError("CRASH: Fixed: Argument cannot be null or empty - Reconnecting error that happens all the time");
+                _auditor.log("DetailsOf: null conversationJid", "FileConversationDetailsProvider");
                 return result;
             }
             try
             {
                 var url = server.conversationDetails(conversationJid);
-                Console.WriteLine("Details of: {0}", url);
+                _auditor.log(String.Format("Details of: {0}", url), "FileConversationDetailsProvider");
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
             catch (UriFormatException e)
             {
-                Trace.TraceError("CRASH: Could not create valid Uri for DetailsOf, using conversationJid: {0}: {1}", conversationJid, e.Message);
+                _auditor.error("DetailsOf: "+conversationJid, "FileConversationDetailsProvider", e);
             }
             catch (XmlException e)
             {
-                Trace.TraceError("CRASH: Could not parse retrieved details of {0}: {1}", conversationJid, e.Message);
+                _auditor.error("DetailsOf: " + conversationJid, "FileConversationDetailsProvider", e);
             }
             catch (WebException e)
             {
-                Trace.TraceError("CRASH: FileConversationDetailsProvider::DetailsOf: {0}", e.Message);
+                _auditor.error("DetailsOf: " + conversationJid, "FileConversationDetailsProvider", e);
             }
             catch (Exception e)
             {
-                Trace.TraceError("CRASH: Unknown Exception in retrieving the conversation details: {0}", e.Message);
+                _auditor.error("DetailsOf: " + conversationJid, "FileConversationDetailsProvider", e);
             }
             return result;
         }
@@ -88,31 +88,31 @@ namespace MeTLLib.Providers.Structure
             ConversationDetails result = ConversationDetails.Empty;
             if (String.IsNullOrEmpty(jid))
             {
-                Trace.TraceError("CRASH: Fixed: Argument cannot be null or empty - Reconnecting error that happens all the time");
+                _auditor.log("AppendSlideAfter: null jid", "FileConversationDetailsProvider");
                 return result;
             }
             try
             {
                 var url = server.addSlideAtIndex(jid,currentSlideId);
-                Console.WriteLine("Details of: {0}", url);
+                _auditor.log(String.Format("Details of: {0}", url),"FileConversationDetailsProvider");
                 result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
                 wire.SendDirtyConversationDetails(jid);
             }
             catch (UriFormatException e)
             {
-                Trace.TraceError("CRASH: Could not create valid Uri for DetailsOf, using conversationJid: {0}: {1}", jid, e.Message);
+                _auditor.error(String.Format("AppendSlideAfter: {0} {1} {2}",currentSlideId,jid, type), "FileConversationDetailsProvider", e);
             }
             catch (XmlException e)
             {
-                Trace.TraceError("CRASH: Could not parse retrieved details of {0}: {1}", jid, e.Message);
+                _auditor.error(String.Format("AppendSlideAfter: {0} {1} {2}", currentSlideId, jid, type), "FileConversationDetailsProvider", e);
             }
             catch (WebException e)
             {
-                Trace.TraceError("CRASH: FileConversationDetailsProvider::DetailsOf: {0}", e.Message);
+                _auditor.error(String.Format("AppendSlideAfter: {0} {1} {2}", currentSlideId, jid, type), "FileConversationDetailsProvider", e);
             }
             catch (Exception e)
             {
-                Trace.TraceError("CRASH: Unknown Exception in retrieving the conversation details: {0}", e.Message);
+                _auditor.error(String.Format("AppendSlideAfter: {0} {1} {2}", currentSlideId, jid, type), "FileConversationDetailsProvider", e);
             }
             return result;
         }
@@ -134,7 +134,7 @@ namespace MeTLLib.Providers.Structure
             var responseDetails = ConversationDetails.ReadXml(XElement.Parse(response));
             wire.SendDirtyConversationDetails(details.Jid);
             if (!DetailsAreAccurate(responseDetails))
-                Trace.TraceInformation("CRASH: ConversationDetails not successfully uploaded");
+                _auditor.log(String.Format("Update failed: {0}", details.Jid), "FileConversationDetailsProvider");
             return details;
         }
         class UniqueConversationComparator : IEqualityComparer<ConversationDetails>
@@ -164,7 +164,7 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var uri = server.conversationQuery(query);
-                Console.WriteLine("ConversationsFor: {0}", uri);
+                _auditor.log(String.Format("ConversationsFor: {0}", uri),"FileConversationDetailsProvider");
                 var data = insecureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
                 var deletedConversationJids = results.Where(c => c.isDeleted).Select(c => c.Jid);
@@ -177,7 +177,7 @@ namespace MeTLLib.Providers.Structure
             }
             catch (Exception e)
             {
-                Console.WriteLine(String.Format("FileConversationDetailsProvider:ConversationsFor {0}",e.Message));
+                _auditor.error("ConversationsFor","ConversationsFor",e);
                 return new List<SearchConversationDetails>();
             }
         }
@@ -186,13 +186,13 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var uri = server.createConversation(details.Title.ToString());
-                Console.WriteLine("createConvUri: {0}", uri);
+                _auditor.log(String.Format("createConvUri: {0}", uri),"FileConversationDetailsProvider");
                 var data = insecureGetString(uri);
                 return SearchConversationDetails.ReadXML(XElement.Parse(data));
             }
             catch (Exception e)
             {
-                Console.WriteLine(String.Format("FileConversationDetailsProvider:CreateConversation {0}", e.Message));
+                _auditor.error("CreateConversation","FileConversationDetailsProvider", e);
                 return ConversationDetails.Empty;
             }
         }
@@ -201,13 +201,13 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var uri = server.duplicateSlide(slide.id, conversation.Jid.ToString());
-                Console.WriteLine("DuplicateSlide: {0}", uri);
+                _auditor.log(String.Format("DuplicateSlide: {0}", uri),"FileConversationDetailsProvider");
                 var data = insecureGetString(uri);
                 return SearchConversationDetails.ReadXML(XElement.Parse(data));
             }
             catch (Exception e)
             {
-                Console.WriteLine(String.Format("FileConversationDetailsProvider:DuplicateSlide {0}", e.Message));
+                _auditor.error("DuplicateSlide","FileConversationDetailsProvider",e);
                 return ConversationDetails.Empty;
             }
         }
@@ -216,13 +216,13 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var uri = server.duplicateConversation(conversation.Jid.ToString());
-                Console.WriteLine("DuplicateConversation: {0}", uri);
+                _auditor.log(String.Format("DuplicateConversation: {0}", uri),"FileConversationDetailsProvider");
                 var data = insecureGetString(uri);
                 return SearchConversationDetails.ReadXML(XElement.Parse(data));
             }
             catch (Exception e)
             {
-                Console.WriteLine(String.Format("FileConversationDetailsProvider:DuplicateConversation {0}", e.Message));
+                _auditor.error("DuplicateConversation","FileConversationDetailsProvider", e);
                 return ConversationDetails.Empty;
             }
         }

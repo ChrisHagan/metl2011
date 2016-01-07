@@ -5,8 +5,10 @@ namespace MeTLLib.Providers.Connection
 {
     public class MeTLXmppClientConnection : XmppClientConnection
     {
-        public MeTLXmppClientConnection(string domain, string server) : base()
+        public IAuditor auditor { get; protected set; }
+        public MeTLXmppClientConnection(string domain, string server,IAuditor _auditor) : base()
         {
+            auditor = _auditor;
             this.Server = domain;
             this.ConnectServer = server;
             this.SocketConnectionType = agsXMPP.Net.SocketConnectionType.Direct;
@@ -17,7 +19,7 @@ namespace MeTLLib.Providers.Connection
             this.UseCompression = false;
             ClientSocket.OnError += (s, e) =>
             {
-                Console.WriteLine("ClientSocket Error: " + e.Message);
+                auditor.error("ClientSocket Error","MeTLXmppClientConnection",e);
             };
         }
         public string description

@@ -223,7 +223,7 @@ namespace MeTLLib.Providers
                         }
                         catch (Exception ex)
                         {
-                            Trace.TraceError("Exception on the retrievalComplete section: " + ex.Message.ToString());
+                            auditor.error("Retrieve: " + room, "PreParser", ex);
                         }
                     };
                 worker.RunWorkerAsync(null);

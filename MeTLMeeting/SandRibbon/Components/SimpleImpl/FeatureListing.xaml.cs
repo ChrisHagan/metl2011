@@ -27,7 +27,7 @@ namespace SandRibbon.Components.SimpleImpl
             var manifestFileName = getFeatureManifestPath();
             if (!File.Exists(manifestFileName))
             {
-                Console.WriteLine("Cannot find the manifest file");
+                App.auditor.log("Cannot find the manifest file");
                 return;
             }
             XDocument manifestDocument = XDocument.Load(manifestFileName);

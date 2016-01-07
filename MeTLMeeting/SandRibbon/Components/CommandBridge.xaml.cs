@@ -69,7 +69,7 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                Logger.Crash(e);
+                App.auditor.error("SetValue", "CommandBridgeAutomationPeer", e);
             }
         }
         bool IValueProvider.IsReadOnly

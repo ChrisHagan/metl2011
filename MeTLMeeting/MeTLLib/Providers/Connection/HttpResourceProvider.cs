@@ -59,7 +59,8 @@ namespace MeTLLib.Providers.Connection
     public class MeTLWebClient : IWebClient
     {
         WebClientWithTimeout client;
-        public MeTLWebClient(ICredentials credentials, Credentials metlCreds)
+        public IAuditor auditor { get; protected set; }
+        public MeTLWebClient(ICredentials credentials, Credentials metlCreds, IAuditor _auditor)
         {
             this.client = new WebClientWithTimeout(metlCreds);
             this.client.Credentials = credentials;
@@ -122,7 +123,7 @@ namespace MeTLLib.Providers.Connection
             catch (WebException e)
             {
                 if (e.Message.Contains("404")) { return new byte[0]; }
-                Trace.TraceError("HttpResourceProvider download data exception: {1} {0}", e.Message, resource.AbsoluteUri);
+                auditor.error("downloadData - "+ resource.AbsoluteUri.ToString(), "HttpResourceProvider", e);
                 throw e;
             }
         }
@@ -186,8 +187,10 @@ namespace MeTLLib.Providers.Connection
         //private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
         protected ICredentials credentials;
         protected Credentials metlCreds;
-        public WebClientFactory(ICredentials credentials, IAuditor auditor, Credentials _metlCreds)
+        public IAuditor auditor { get; protected set; }
+        public WebClientFactory(ICredentials credentials, IAuditor _auditor, Credentials _metlCreds)
         {
+            auditor = _auditor;
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
@@ -200,7 +203,7 @@ namespace MeTLLib.Providers.Connection
         }
         public IWebClient client()
         {
-            return new MeTLWebClient(this.credentials, metlCreds);
+            return new MeTLWebClient(this.credentials, metlCreds,auditor);
         }
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
@@ -219,8 +222,8 @@ namespace MeTLLib.Providers.Connection
     }
     public class HttpResourceProvider
     {
-        IWebClientFactory _clientFactory;
-        IAuditor _auditor;
+        public IWebClientFactory _clientFactory { get; protected set; }
+        public IAuditor _auditor { get; protected set; }
         public HttpResourceProvider(IWebClientFactory factory, IAuditor auditor)
         {
             _clientFactory = factory;

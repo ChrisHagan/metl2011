@@ -19,14 +19,16 @@ namespace MeTLLib.Providers.Connection
     {
         protected HttpResourceProvider provider;
         protected MetlConfiguration config;
-        public ProductionResourceUploaderFactory(MetlConfiguration _config, HttpResourceProvider _provider)
+        public IAuditor auditor { get; protected set; }
+        public ProductionResourceUploaderFactory(MetlConfiguration _config, HttpResourceProvider _provider,IAuditor _auditor)
         {
+            auditor = _auditor;
             provider = _provider;
             config = _config;
         }
         public IResourceUploader get()
         {
-            return new ProductionResourceUploader(config, provider);
+            return new ProductionResourceUploader(config, provider,auditor);
         }
     }
     public interface IResourceUploader
@@ -46,8 +48,10 @@ namespace MeTLLib.Providers.Connection
     {
         protected MetlConfiguration metlServerAddress;
         protected HttpResourceProvider _httpResourceProvider;
-        public ProductionResourceUploader(MetlConfiguration _metlServerAddress, HttpResourceProvider provider)
+        public IAuditor auditor { get; protected set; }
+        public ProductionResourceUploader(MetlConfiguration _metlServerAddress, HttpResourceProvider provider,IAuditor _auditor)
         {
+            auditor = _auditor;
             metlServerAddress = _metlServerAddress;
             _httpResourceProvider = provider;
         }
@@ -60,7 +64,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (WebException e)
             {
-                Trace.TraceError("Cannot upload resource: " + e.Message);
+                auditor.error("uploadResource: "+path, "ProductionResourceUploader", e);
                 throw e;
             }
         }
@@ -90,7 +94,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (WebException e)
             {
-                Trace.TraceError("Cannot upload resource: " + e.Message);
+                auditor.error("uploadResource: " + path.ToString(), "ProductionResourceUploader", e);
                 throw e;
             }
         }
@@ -104,7 +108,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (WebException e)
             {
-                Trace.TraceError("Cannot upload resource: " + e.Message);
+                auditor.error("uploadResource: " + path.ToString(), "ProductionResourceUploader", e);
                 throw e;
             }
         }

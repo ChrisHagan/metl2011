@@ -24,13 +24,16 @@ namespace MeTLLib.Providers.Connection
         public ITimerFactory timerFactory { get; protected set; }
         public IReceiveEvents receiveEvents { get; protected set; }
         public IWebClient client { get; protected set; }
+        public IAuditor auditor { get; protected set; }
         public ProductionProviderMonitor(
             MetlConfiguration _metlServerAddress,
             ITimerFactory _timerFactory,
             IReceiveEvents _receiveEvents,
-            IWebClient _webCleint
+            IWebClient _webCleint,
+            IAuditor _auditor
             )
         {
+            auditor = _auditor;
             metlServerAddress = _metlServerAddress;
             timerFactory = _timerFactory;
             client = _webCleint;
@@ -45,7 +48,7 @@ namespace MeTLLib.Providers.Connection
             {
                 if (healthyBehaviour == null)
                 {
-                    Trace.TraceError("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
+                    auditor.trace("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
                     return;
                 }
                 var uri = metlServerAddress.serverStatus;
@@ -55,7 +58,7 @@ namespace MeTLLib.Providers.Connection
                 }
                 else
                 {
-                    Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck could not ping {0}", uri);
+                    auditor.trace(String.Format("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck could not ping {0}", uri));
                     if (attempts >= maximum)
                     {
                         receiveEvents.serversDown(uri);
@@ -67,7 +70,7 @@ namespace MeTLLib.Providers.Connection
                 }
             }
             catch (Exception e) { 
-                Trace.TraceError("CRASH: MeTLLib::ProviderMonitor::HealthCheck threw {0}", e.Message);
+                auditor.error("HealthCheck", "ProductionProviderMonitor", e);
             }
         }
     }

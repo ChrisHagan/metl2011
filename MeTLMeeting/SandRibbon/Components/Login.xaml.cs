@@ -314,7 +314,7 @@ namespace SandRibbon.Components
                     }
                     catch (Exception e)
                     {
-                        System.Console.WriteLine("Failed to delete cookie for: " + uri.ToString());
+                        App.auditor.error("Failed to delete cookie for: " + uri.ToString(),"Login",e);
                     }
                 }
             }
@@ -322,7 +322,7 @@ namespace SandRibbon.Components
             {
                 if (e.Message.ToLower().Contains("no more data")) { }
                 else
-                    System.Console.WriteLine("Failed to read cookie prior to deletion for: " + uri.ToString());
+                    App.auditor.error("Failed to read cookie prior to deletion for: " + uri.ToString(),"Login",e);
             }
         }
         class UriHostComparer : IEqualityComparer<System.Uri>
@@ -375,7 +375,7 @@ namespace SandRibbon.Components
                 catch (Exception e)
                 {
                 }
-                Console.WriteLine(String.Format("{0} => {1}", args.Uri.ToString(), cookie));
+                App.auditor.log(String.Format("{0} => {1}", args.Uri.ToString(), cookie));
                 if (detectIEErrors(args.Uri))
                 {
                     if (browseHistory.Last() != null)
@@ -538,7 +538,7 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                System.Console.WriteLine("exception in checking uri: " + e.Message);
+                App.auditor.error("exception in checking uri","Login",e);
                 return false;
             }
         }
@@ -579,7 +579,7 @@ namespace SandRibbon.Components
                         }
                         catch
                         {
-                            Console.WriteLine("couldn't fetch xmpp credentials from authenticationState page");
+                            App.auditor.log("couldn't fetch xmpp credentials from authenticationState page");
                         }
                         var emailAddress = "";
                         if (emailAddressNode != null)
@@ -596,7 +596,7 @@ namespace SandRibbon.Components
                     }
                     catch (Exception e)
                     {
-                        System.Console.WriteLine("exception in checking auth response data: " + e.Message);
+                        App.auditor.error("exception in checking auth response data","Login", e);
                         onFailure();
                     }
                 }

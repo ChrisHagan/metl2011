@@ -280,7 +280,7 @@ namespace SandRibbon.Utils.Connection
                       }
                   }catch (Exception ex)
                   {
-                      Console.WriteLine("Exception during printing: " + ex.Message);
+                      App.auditor.log("Exception during printing: " + ex.Message);
                   } finally
                   {
                       Commands.HideProgressBlocker.Execute(null);
