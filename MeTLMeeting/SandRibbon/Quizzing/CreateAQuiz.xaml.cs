@@ -27,13 +27,24 @@ namespace SandRibbon.Quizzing
         public CreateAQuiz(int count)
         {
             InitializeComponent();
+            var joinConversationCommand = new DelegateCommand<object>(JoinConversation);
+            var createQuizStructureCommand = new DelegateCommand<object>(CreateQuizQuestion, canCreateQuizQuestion);
+            this.Loaded += (s, e) =>
+            {
+                Commands.JoinConversation.RegisterCommand(joinConversationCommand);
+                Commands.CreateQuizStructure.RegisterCommand(createQuizStructureCommand);
+
+            };
+            this.Unloaded += (s, e) =>
+            {
+                Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
+                Commands.CreateQuizStructure.UnregisterCommand(createQuizStructureCommand);
+            };
             question.Text = string.Format("Poll {0}", count + 1);
             options.First().color = Colors.White;
             question.GotFocus += selectAll;
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
-            Commands.CreateQuizStructure.RegisterCommand(new DelegateCommand<object>(CreateQuizQuestion, canCreateQuizQuestion));
             question.Focus();
         }
         private void JoinConversation(object obj)
@@ -197,7 +208,8 @@ namespace SandRibbon.Quizzing
                                     var proposedIdentity = String.Format("{0}:{1}", Globals.me, DateTime.Now.Ticks);
                                     var hostedFileUriXml = App.controller.client.resourceProvider.securePutData(App.controller.config.uploadResource(proposedIdentity, Globals.conversationDetails.Jid), bytes);
                                     identity = XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
-                                    Dispatcher.adopt(delegate { 
+                                    Dispatcher.adopt(delegate
+                                    {
                                         //identity = App.controller.client.NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                         var image = new Image();
                                         BitmapImage source = new BitmapImage();
