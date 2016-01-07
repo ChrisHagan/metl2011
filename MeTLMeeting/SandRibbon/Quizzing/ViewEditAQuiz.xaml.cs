@@ -104,9 +104,17 @@ namespace SandRibbon.Quizzing
                 DataContext = thisQuiz;
 
                 InitializeComponent();
-                Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { Close(); }));
-                Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>((_unused) => { Close(); }));
-
+                var closeCommand = new DelegateCommand<object>((_unused) => { Close(); });
+                this.Loaded += (s, e) =>
+                {
+                    Commands.JoinConversation.RegisterCommand(closeCommand);
+                    Commands.ShowConversationSearchBox.RegisterCommand(closeCommand);
+                };
+                this.Unloaded += (s, e) =>
+                {
+                    Commands.JoinConversation.UnregisterCommand(closeCommand);
+                    Commands.ShowConversationSearchBox.UnregisterCommand(closeCommand);
+                };
                 question.Options.CollectionChanged += UpdateOptionError;
                 //QuestionError = false;
                 ResultsExist = CheckResultsExist(question);
