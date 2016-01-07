@@ -52,7 +52,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationRevision>13</ApplicationRevision>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -60,7 +60,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <ProductName>MeTL</ProductName>
-    <MinimumRequiredVersion>2.0.0.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.0.0.13</MinimumRequiredVersion>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -72,8 +72,8 @@
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
     <ProductName>MeTL</ProductName>
-    <InstallUrl>http://metl-backend.stackableregiments.com/MeTL/</InstallUrl>
-    <UpdateUrl>http://metl-backend.stackableregiments.com/MeTL/</UpdateUrl>
+    <InstallUrl>http://setup.stackableregiments.com/windowsClients/sluBeta/</InstallUrl>
+    <UpdateUrl>http://setup.stackableregiments.com/windowsClients/sluBeta/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
