@@ -405,13 +405,12 @@ namespace MeTLLib.Providers.Connection
             receiveEvents.statusChanged(true, this.credentials);
             joinRooms();
             checkConnection();
+            refreshPingTimer();
             catchUpDisconnectedWork();
             /*            
                         if (heartbeat != null)
                             heartbeat.Change(HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
             */
-            if (pingTimer != null)
-                pingTimer.Change(pingTimeout, pingTimeout);
         }
 
         private void OnPresence(object sender, Presence pres)
@@ -723,16 +722,15 @@ namespace MeTLLib.Providers.Connection
         }
         private void send(string target, string message)
         {
-            auditor.wrapAction((a) =>
-            {
-                send(new Message(new Jid(target + "@" + metlServerAddress.muc), jid, MessageType.groupchat, message));
-                refreshPingTimer();
-            }, "send", "xmpp");
+            send(new Message(new Jid(target + "@" + metlServerAddress.muc), jid, MessageType.groupchat, message));
         }
         protected virtual void send(Message message)
         {
-            conn.Send(message);
-            refreshPingTimer();
+            auditor.wrapAction((a) =>
+            {
+                conn.Send(message);
+                refreshPingTimer();
+            }, "send", "xmpp");
         }
         private bool compareString(string a, string b)
         {
@@ -984,11 +982,14 @@ namespace MeTLLib.Providers.Connection
             {
                 pingTimer = new Timer((_state) =>
                 {
-                    var pingIq = new IQ(IqType.get, jid, new Jid(metlServerAddress.xmppDomain));
-                    pingIq.AddChild(new agsXMPP.protocol.extensions.ping.Ping());
-                    pingIq.GenerateId();
-                    unrespondedPings.Add(pingIq.Id);
-                    conn.Send(pingIq);// new agsXMPP.protocol.extensions.ping.PingIq(new Jid(metlServerAddress.xmppDomain),jid));
+                    auditor.wrapAction((a) =>
+                    {
+                        var pingIq = new IQ(IqType.get, jid, new Jid(metlServerAddress.xmppDomain));
+                        pingIq.AddChild(new agsXMPP.protocol.extensions.ping.Ping());
+                        pingIq.GenerateId();
+                        unrespondedPings.Add(pingIq.Id);
+                        conn.Send(pingIq);// new agsXMPP.protocol.extensions.ping.PingIq(new Jid(metlServerAddress.xmppDomain),jid));
+                    }, "xmppPing", "xmpp");
                 }, null, Timeout.Infinite, Timeout.Infinite);
             }
             pingTimer.Change(pingTimeout, pingTimeout);
