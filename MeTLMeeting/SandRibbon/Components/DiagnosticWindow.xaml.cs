@@ -138,7 +138,8 @@ namespace SandRibbon.Components
                 store.updateGauge(g);
                 target.Tell(g);
             });
-            Receive<ErrorMessage>(e => {
+            Receive<ErrorMessage>(e =>
+            {
                 store.AddError(e);
                 target.Tell(e);
             });
@@ -146,46 +147,106 @@ namespace SandRibbon.Components
     }
     public class DiagnosticWindowReceiver : ReceiveActor
     {
-        public DiagnosticWindowReceiver()
+        protected object historyLock = new object();
+        protected void addHistoryFromDiagnosticModel(DiagnosticModel dmModel)
         {
-            Receive<DiagnosticModel>(dm => {
-                if (App.diagnosticWindow != null)
+
+            if (App.diagnosticWindow != null)
+            {
+                App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    App.diagnosticWindow.Dispatcher.adopt(delegate
+                    lock (historyLock)
                     {
-                        App.diagnosticWindow.diagnosticModel = dm;
-                    });
-                }
-            });
-            Receive<ErrorMessage>(e => {
-                if (App.diagnosticWindow != null)
+                        dmModel.getErrors().ForEach(e => addError(e));
+                        dmModel.getMessages().ForEach(m => addMessage(m));
+                        foreach (var g in dmModel.getGauges().OrderByDescending(g => g.started))
+                        {
+                            addGaugeFromHistory(g);
+                        }
+                    };
+                });
+            }
+        }
+        protected void addError(ErrorMessage e)
+        {
+            if (App.diagnosticWindow != null)
+            {
+                App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    App.diagnosticWindow.Dispatcher.adopt(delegate
+                    lock (historyLock)
                     {
                         App.diagnosticWindow.errorSource.Add(e);
-                    });
-                }
-            });
-            Receive<DiagnosticMessage>(m =>
+                    };
+                });
+            }
+        }
+        protected void addMessage(DiagnosticMessage m)
+        {
+            if (App.diagnosticWindow != null)
             {
-                if (App.diagnosticWindow != null)
+                App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    App.diagnosticWindow.Dispatcher.adopt(delegate
+                    lock (historyLock)
                     {
                         App.diagnosticWindow.messageSource.Add(m);
-                    });
+                    };
+                });
 
-                }
-            });
-            Receive<DiagnosticGauge>(g =>
+            }
+        }
+        protected void addGaugeFromHistory(DiagnosticGauge g)
+        {
+            if (App.diagnosticWindow != null)
             {
-                if (App.diagnosticWindow != null)
+                App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    App.diagnosticWindow.Dispatcher.adopt(delegate
+                    lock (historyLock)
+                    {
+                        var oldFromTotal = App.diagnosticWindow.gaugeSource.ToList().Where(eg => eg.Equals(g));
+                        foreach (var oft in oldFromTotal)
+                        {
+                            App.diagnosticWindow.gaugeSource.Remove(oft);
+                        }
+                        var allOfThisGauge = oldFromTotal.Concat(new List<DiagnosticGauge> { g }).OrderByDescending(aotg => aotg.finished);
+                        var latest = allOfThisGauge.FirstOrDefault();
+                        if (latest != default(DiagnosticGauge))
+                            App.diagnosticWindow.gaugeSource.Add(latest);
+                        var old = App.diagnosticWindow.inProgressSource.FirstOrDefault(eg => eg.Equals(g));
+                        if (latest != default(DiagnosticGauge))
+                        {
+                            if (old != default(DiagnosticGauge))
+                                App.diagnosticWindow.inProgressSource.Remove(old);
+                            switch (latest.status)
+                            {
+                                case GaugeStatus.Started:
+                                    App.diagnosticWindow.inProgressSource.Add(latest);
+                                    break;
+                                case GaugeStatus.InProgress:
+                                    App.diagnosticWindow.inProgressSource.Add(latest);
+                                    break;
+                                case GaugeStatus.Completed:
+                                    break;
+                                case GaugeStatus.Failed:
+                                    break;
+                            }
+                        }
+                    };
+                });
+            }
+        }
+        protected void addGauge(DiagnosticGauge g)
+        {
+            if (App.diagnosticWindow != null)
+            {
+                App.diagnosticWindow.Dispatcher.adopt(delegate
+                {
+                    lock (historyLock)
                     {
                         var oldFromTotal = App.diagnosticWindow.gaugeSource.FirstOrDefault(eg => eg.Equals(g));
                         if (oldFromTotal != default(DiagnosticGauge))
+                        {
                             App.diagnosticWindow.gaugeSource.Remove(oldFromTotal);
+                        }
                         App.diagnosticWindow.gaugeSource.Add(g);
                         var old = App.diagnosticWindow.inProgressSource.FirstOrDefault(eg => eg.Equals(g));
                         switch (g.status)
@@ -207,10 +268,16 @@ namespace SandRibbon.Components
                                     App.diagnosticWindow.inProgressSource.Remove(old);
                                 break;
                         }
-
-                    });
-                }
-            });
+                    };
+                });
+            }
+        }
+        public DiagnosticWindowReceiver()
+        {
+            Receive<DiagnosticModel>(dm => addHistoryFromDiagnosticModel(dm));
+            Receive<ErrorMessage>(e => addError(e));
+            Receive<DiagnosticMessage>(m => addMessage(m));
+            Receive<DiagnosticGauge>(g => addGauge(g));
         }
     }
     public partial class DiagnosticWindow : Window
@@ -221,19 +288,11 @@ namespace SandRibbon.Components
         public ObservableCollection<ErrorMessage> errorSource = new ObservableCollection<ErrorMessage>();
         protected double refreshInterval = 5 * 1000;
         protected DiagnosticModel dmModel;
-        public DiagnosticModel diagnosticModel { get {
-                return dmModel;
-            } set {
-                dmModel = value;
-                dmModel.getErrors().ForEach(e => errorSource.Add(e));
-                dmModel.getMessages().ForEach(m => messageSource.Add(m));
-                dmModel.getGauges().ForEach(g => gaugeSource.Add(g));
-            }
-        }
         public DiagnosticWindow()
         {
             InitializeComponent();
-            this.Loaded += (s, e) => {
+            this.Loaded += (s, e) =>
+            {
                 App.diagnosticModelActor.Tell(DiagnosticsCollector.REQUESTHISTORY);
             };
             gauges.ItemsSource = gaugeSource;
