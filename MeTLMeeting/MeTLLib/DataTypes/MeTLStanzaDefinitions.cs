@@ -1387,13 +1387,13 @@ namespace MeTLLib.DataTypes
         }
         public class LocalFileInformation
         {
-            public LocalFileInformation(int Slide, string Author, string Target, Privacy Privacy, long Timestamp, string File, string Name, bool Overwrite, long Size, string UploadTime, string Identity)
+            public LocalFileInformation(int Slide, string Author, string Target, Privacy Privacy, long Timestamp, byte[] Bytes, string Name, bool Overwrite, long Size, string UploadTime, string Identity)
             {
                 slide = Slide;
                 author = Author;
                 target = Target;
                 privacy = Privacy;
-                file = File;
+                bytes = Bytes;
                 name = Name;
                 overwrite = Overwrite;
                 size = Size;
@@ -1402,7 +1402,7 @@ namespace MeTLLib.DataTypes
                 uploadTime = UploadTime;
             }
             public string author;
-            public string file;
+            public byte[] bytes;
             public bool overwrite;
             public string name;
             public Privacy privacy;
@@ -1419,7 +1419,7 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
-            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, double X, double Y, double Width, double Height, string File)
+            public LocalImageInformation(int Slide, string Author, string Target, Privacy Privacy, double X, double Y, double Width, double Height, byte[] Bytes)
             {
                 slide = Slide;
                 author = Author;
@@ -1429,14 +1429,14 @@ namespace MeTLLib.DataTypes
                 this.Height = Height;
                 this.X = X;
                 this.Y = Y;
-                file = File;
+                bytes = Bytes;
             }
             public string author;
             public double X;
             public double Y;
             public double Height;
             public double Width;
-            public string file;
+            public byte[] bytes;
             public Privacy privacy;
             public int slide;
             public string target;

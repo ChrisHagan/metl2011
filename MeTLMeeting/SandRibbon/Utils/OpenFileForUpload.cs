@@ -78,9 +78,10 @@ namespace SandRibbon.Utils
                 worker.DoWork += (s, e) =>
                  {
                      var target = "presentationSpace"; // looks like this can be "presentationSpace" or "notepad"
-                     System.IO.File.Copy(unMangledFilename, filename);
+                     var bytes = System.IO.File.ReadAllBytes(unMangledFilename);
+                     //System.IO.File.Copy(unMangledFilename, filename);
                      App.controller.client.UploadAndSendFile(
-                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, target, Privacy.Public, -1L, filename, System.IO.Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(filename)));
+                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, target, Privacy.Public, -1L, bytes, System.IO.Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(unMangledFilename).Length, SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), Globals.generateId()));
                      System.IO.File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => _owner.Dispatcher.Invoke(DispatcherPriority.Send,

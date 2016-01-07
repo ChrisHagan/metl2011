@@ -1704,12 +1704,12 @@ namespace SandRibbon.Components
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
-                        var receivedImage = image1.imageSpecification.forceEvaluation();
                         Dispatcher.adoptAsync(() =>
                         {
                             try
                             {
-//                                var receivedImage = image1.imageSpecification.forceEvaluation();
+                                //                      var receivedImage = image1.imageSpecification.forceEvaluation();
+                                var receivedImage = image1.imageSpecification.forceEvaluation();
                                 //image.clone();
                                 AddImage(Work, receivedImage);
                                 receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
@@ -1888,7 +1888,7 @@ namespace SandRibbon.Components
         {
             if (me == Globals.PROJECTOR) return;
             var validFormats = e.Data.GetFormats();
-            var fileNames = new string[0];
+            var images = new List<KeyValuePair<string,byte[]>>();
             validFormats.Select(vf =>
             {
                 var outputData = "";
@@ -1918,27 +1918,43 @@ namespace SandRibbon.Components
             if (validFormats.Contains(DataFormats.FileDrop))
             {
                 //local files will deliver filenames.  
-                fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            }
-            else if (validFormats.Contains("text/html"))
-            {
+                try {
+                    foreach (var filename in e.Data.GetData(DataFormats.FileDrop, true) as string[])
+                    {
+                        images.Add(new KeyValuePair<string, byte[]>(filename, File.ReadAllBytes(filename)));
+                    }
+                } catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to drop FileDrop from dragAction: " + ex.Message);
+                }
+
             }
             else if (validFormats.Contains("UniformResourceLocator"))
             {
-                //dragged pictures from chrome will deliver the urls of the objects.  Firefox and IE don't drag images.
-                var url = (MemoryStream)e.Data.GetData("UniformResourceLocator");
-                if (url != null)
+                try {
+                    //dragged pictures from chrome will deliver the urls of the objects.  Firefox and IE don't drag images.
+                    var urlStream = (MemoryStream)e.Data.GetData("UniformResourceLocator");
+                    if (urlStream != null)
+                    {
+                        var fileName = System.Text.Encoding.Default.GetString(urlStream.ToArray());
+                        var url = fileName.Substring(0, fileName.Length - 1); //Chrome puts a termination character on the end of the url.
+                        var bytes = App.controller.client.resourceProvider.secureGetData(new Uri(url));
+                        images.Add(new KeyValuePair<string, byte[]>(url, bytes));
+                    }
+                } catch (Exception ex)
                 {
-                    fileNames = new string[] { System.Text.Encoding.Default.GetString(url.ToArray()) };
+                    Console.WriteLine("failed to drop UniformResourceLocator from dragAction: "+ex.Message);
                 }
             }
-
-            if (fileNames.Length == 0)
+            /*
+            else if (validFormats.Contains("text/html"))
             {
+            }
+            */
+            if (images.Count == 0) { 
                 MeTLMessage.Information("Cannot drop this onto the canvas");
                 return;
             }
-
             Commands.SetLayer.ExecuteAsync("Insert");
             var pos = e.GetPosition(this);
             var origin = new Point(pos.X, pos.Y);
@@ -1966,10 +1982,10 @@ namespace SandRibbon.Components
                     return curPos;
                 };
             //lets try for a 4xN grid
-            for (var i = 0; i < fileNames.Count(); i++)
+            for (var i = 0; i < images.Count(); i++)
             {
-                var filename = fileNames[i];
-                handleDrop(filename, origin, true, i, positionUpdate);
+                var bytes = images[i];
+                handleDrop(bytes.Value,bytes.Key, origin, true, i, positionUpdate);
             }
             e.Handled = true;
         }
@@ -1979,6 +1995,22 @@ namespace SandRibbon.Components
             e.Handled = true;
         }
 
+        public void handleDrop(byte[] bytes,string fileName, Point origin, bool overridePoint, int count, Func<Image, Point, int, Point> positionUpdate)
+        {
+            FileType type = GetFileType(fileName);
+            origin = new Point(origin.X + contentBuffer.logicalX, origin.Y + contentBuffer.logicalY);
+            switch (type)
+            {
+                case FileType.Image:
+                    dropImageOnCanvas(bytes, origin, count, overridePoint, positionUpdate);
+                    break;
+                case FileType.Video:
+                    break;
+                default:
+                    uploadFileForUse(bytes,fileName);
+                    break;
+            }
+        }
         public void handleDrop(string fileName, Point origin, bool overridePoint, int count, Func<Image, Point, int, Point> positionUpdate)
         {
             FileType type = GetFileType(fileName);
@@ -1997,6 +2029,14 @@ namespace SandRibbon.Components
         }
         private const int KILOBYTE = 1024;
         private const int MEGABYTE = 1024 * KILOBYTE;
+        private bool isFileLessThanXMB(byte[] bytes, int size)
+        {
+            if (bytes.Length > size * MEGABYTE)
+            {
+                return false;
+            }
+            return true;
+        }
         private bool isFileLessThanXMB(string filename, int size)
         {
             if (filename.StartsWith("http")) return true;
@@ -2010,6 +2050,11 @@ namespace SandRibbon.Components
         private int fileSizeLimit = 50;
         private void uploadFileForUse(string unMangledFilename)
         {
+            uploadFileForUse(File.ReadAllBytes(unMangledFilename),unMangledFilename);
+        }
+        private void uploadFileForUse(byte[] bytes,string unMangledFilename)
+        {
+            /*
             string filePart = Path.GetFileName(unMangledFilename);
             string filename = LocalFileProvider.getUserFile(new string[] { }, filePart + ".MeTLFileUpload");
             if (filename.Length > 260)
@@ -2017,15 +2062,16 @@ namespace SandRibbon.Components
                 MeTLMessage.Warning("Sorry, your filename is too long, must be less than 260 characters");
                 return;
             }
-            if (isFileLessThanXMB(unMangledFilename, fileSizeLimit))
+            */
+            if (isFileLessThanXMB(bytes, fileSizeLimit))
             {
                 var worker = new BackgroundWorker();
                 worker.DoWork += (s, e) =>
                  {
-                     File.Copy(unMangledFilename, filename);
+                     //File.Copy(unMangledFilename, filename);
                      App.controller.client.UploadAndSendFile(
-                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, Privacy.Public, -1L, filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId(filename)));
-                     File.Delete(filename);
+                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, _target, Privacy.Public, -1L, bytes, Path.GetFileNameWithoutExtension(unMangledFilename), false, new FileInfo(unMangledFilename).Length, DateTimeFactory.Now().Ticks.ToString(), Globals.generateId()));
+                     //File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
                                                                                    (Action)(() => MeTLMessage.Information(string.Format("Finished uploading {0}.", unMangledFilename))));
@@ -2039,7 +2085,11 @@ namespace SandRibbon.Components
         }
         public void dropImageOnCanvas(string fileName, Point origin, int count, bool useDefaultMargin, Func<Image, Point, int, Point> positionUpdate)
         {
-            if (!isFileLessThanXMB(fileName, fileSizeLimit))
+            dropImageOnCanvas(File.ReadAllBytes(fileName), origin, count, useDefaultMargin, positionUpdate);
+        }
+        public void dropImageOnCanvas(byte[] bytes, Point origin, int count, bool useDefaultMargin, Func<Image, Point, int, Point> positionUpdate)
+        {
+            if (!isFileLessThanXMB(bytes, fileSizeLimit))
             {
                 MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
@@ -2052,7 +2102,7 @@ namespace SandRibbon.Components
 
             var width = 320.0;
             var height = 240.0;
-            using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(fileName)))
+            using (MemoryStream ms = new MemoryStream(bytes))
             {
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
                 var bmpFrame = BitmapFrame.Create(ms);
@@ -2061,7 +2111,7 @@ namespace SandRibbon.Components
             }
             App.controller.client.UploadAndSendImage(
                 new MeTLStanzas.LocalImageInformation(
-                    Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true), newPoint.X, newPoint.Y, width, height, fileName
+                    Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true), newPoint.X, newPoint.Y, width, height, bytes
                 ));
         }
 
@@ -2119,15 +2169,23 @@ namespace SandRibbon.Components
 
         public static FileType GetFileType(string fileName)
         {
-            string extension = System.IO.Path.GetExtension(fileName).ToLower();
             var imageExtensions = new List<string>() { ".jpg", ".jpeg", ".bmp", ".gif", ".png", ".dib" };
             var videoExtensions = new List<string>() { ".wmv" };
-
-            if (imageExtensions.Contains(extension))
-                return FileType.Image;
-            if (videoExtensions.Contains(extension))
-                return FileType.Video;
-            return FileType.NotSupported;
+            if (fileName.StartsWith("http://") || fileName.StartsWith("https://"))
+            {
+                if (imageExtensions.Exists(ie => fileName.EndsWith(ie)))
+                    return FileType.Image;
+                if (videoExtensions.Exists(ie => fileName.EndsWith(ie)))
+                    return FileType.Video;
+                return FileType.NotSupported;
+            } else {
+                string extension = System.IO.Path.GetExtension(fileName).ToLower();
+                if (imageExtensions.Contains(extension))
+                    return FileType.Image;
+                if (videoExtensions.Contains(extension))
+                    return FileType.Video;
+                return FileType.NotSupported;
+            }
         }
 
         #endregion
@@ -2839,15 +2897,16 @@ namespace SandRibbon.Components
             foreach (var imageSource in selectedImages)
             {
                 var tmpFile = LocalFileProvider.getUserFile(new string[] { }, "tmpImage.png");
-                using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
+                using (MemoryStream ms = new MemoryStream())
                 {
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
                     var bmpFrame = BitmapFrame.Create(imageSource);
                     encoder.Frames.Add(bmpFrame);
-                    encoder.Save(fileStream);
+                    encoder.Save(ms);
                     var imageWidth = bmpFrame.Width;
                     var imageHeight = bmpFrame.Height;
-                    App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(Globals.slide, Globals.me, _target, currentPrivacy, 15, 15, imageWidth, imageHeight, tmpFile));
+                    var bytes = ms.ToArray();
+                    App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(Globals.slide, Globals.me, _target, currentPrivacy, 15, 15, imageWidth, imageHeight, bytes));
                 }
             }
             /*

@@ -464,7 +464,7 @@ namespace MeTLLib
                 try
                 {
                     var proposedIdentity = String.Format("{0}:{1}", lii.author, DateTime.Now.Ticks);
-                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), proposedIdentity, lii.file);
+                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), proposedIdentity, lii.bytes);
 
                     //MeTLImage newImage = lii.image;
                     //var previousTag = newImage.tag();
@@ -494,7 +494,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 var proposedIdentity = String.Format("{0}:{1}", lfi.author, DateTime.Now.Ticks);
-                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), proposedIdentity, lfi.file);
+                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), proposedIdentity, lfi.bytes);
                 wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, newPath, lfi.timestamp, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);
