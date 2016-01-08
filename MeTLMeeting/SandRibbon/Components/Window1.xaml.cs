@@ -713,9 +713,10 @@ namespace SandRibbon
         }
         private string messageFor(ConversationDetails details)
         {
-            if (details.Equals(ConversationDetails.Empty))
+            if (details.IsEmpty)
                 return Strings.Global_ProductName;
-            return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED", details.Author, details.Title);
+            //return string.Format("Collaboration {0}  -  {1}'s \"{2}\" {3}", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED", details.Author, details.Title, Strings.Global_ProductName);
+            return string.Format("{3} : {1}'s \"{2}\"", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED", details.Author, details.Title, Strings.Global_ProductName);
         }
         private void MoveTo(int slide)
         {
@@ -834,12 +835,9 @@ namespace SandRibbon
         {
             if (details.IsEmpty) return;
 
-            if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || Globals.location.activeConversation.IsEmpty)
+            if (details.Jid.GetHashCode() == Globals.location.activeConversation.Jid.GetHashCode() || Globals.location.activeConversation.IsEmpty)
             {
-                Dispatcher.adopt(delegate
-                {
-                    UpdateTitle(details);
-                });
+                UpdateTitle(details);
                 if (!mustBeInConversation(null))
                 {
                     Dispatcher.adopt(delegate
@@ -863,16 +861,22 @@ namespace SandRibbon
         }
         private void UpdateTitle(ConversationDetails details)
         {
-            if (Globals.conversationDetails != null && mustBeInConversation(null))
+            if (!details.IsEmpty && mustBeInConversation(details))
             {
+                Dispatcher.adopt(delegate
+                {
 #if DEBUG
-                Title = String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), "not merc");//SandRibbon.Properties.HgID.Version); 
+                    Title = messageFor(details); //String.Format("{0} [Build: {1}]", messageFor(Globals.conversationDetails), Strings.Global_Version);//SandRibbon.Properties.HgID.Version); 
 #else
-                Title = messageFor(Globals.conversationDetails);
+                Title = messageFor(details);
 #endif
+                });
             }
             else
-                Title = Strings.Global_ProductName;
+                Dispatcher.adopt(delegate
+                {
+                    Title = Strings.Global_ProductName;
+                });
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private void applyPermissions(Permissions permissions)
