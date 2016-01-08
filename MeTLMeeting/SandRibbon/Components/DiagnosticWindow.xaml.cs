@@ -147,7 +147,9 @@ namespace SandRibbon.Components
     }
     public class DiagnosticWindowReceiver : ReceiveActor
     {
-        protected object historyLock = new object();
+        protected object errorHistoryLock = new object();
+        protected object messageHistoryLock = new object();
+        protected object gaugeHistoryLock = new object();
         protected void addHistoryFromDiagnosticModel(DiagnosticModel dmModel)
         {
 
@@ -155,10 +157,16 @@ namespace SandRibbon.Components
             {
                 App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    lock (historyLock)
+                    lock (errorHistoryLock)
                     {
                         dmModel.getErrors().ForEach(e => addError(e));
+                    }
+                    lock (messageHistoryLock)
+                    {
                         dmModel.getMessages().ForEach(m => addMessage(m));
+                    }
+                    lock (gaugeHistoryLock)
+                    {
                         foreach (var g in dmModel.getGauges().OrderByDescending(g => g.started))
                         {
                             addGaugeFromHistory(g);
@@ -173,7 +181,7 @@ namespace SandRibbon.Components
             {
                 App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    lock (historyLock)
+                    lock (errorHistoryLock)
                     {
                         App.diagnosticWindow.errorSource.Add(e);
                     };
@@ -186,7 +194,7 @@ namespace SandRibbon.Components
             {
                 App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    lock (historyLock)
+                    lock (messageHistoryLock)
                     {
                         App.diagnosticWindow.messageSource.Add(m);
                     };
@@ -200,7 +208,7 @@ namespace SandRibbon.Components
             {
                 App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    lock (historyLock)
+                    lock (gaugeHistoryLock)
                     {
                         var oldFromTotal = App.diagnosticWindow.gaugeSource.ToList().Where(eg => eg.Equals(g));
                         foreach (var oft in oldFromTotal)
@@ -240,7 +248,7 @@ namespace SandRibbon.Components
             {
                 App.diagnosticWindow.Dispatcher.adopt(delegate
                 {
-                    lock (historyLock)
+                    lock (gaugeHistoryLock)
                     {
                         var oldFromTotal = App.diagnosticWindow.gaugeSource.FirstOrDefault(eg => eg.Equals(g));
                         if (oldFromTotal != default(DiagnosticGauge))
