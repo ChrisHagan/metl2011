@@ -2435,7 +2435,7 @@ namespace SandRibbon.Components
                 selectedTextBoxes.AddRange(Work.GetSelectedElements().OfType<MeTLTextBox>());
                 if (myTextBox != null)
                 {
-                    if (filterOnlyMineExceptIfHammering(new[] { myTextBox }).FirstOrDefault(null) != null)
+                    if (filterOnlyMineExceptIfHammering(new[] { myTextBox }).FirstOrDefault(t => t != null) != default(MeTLTextBox))
                         selectedTextBoxes.Add(myTextBox);
                 }
                 var selectedTextBox = selectedTextBoxes.FirstOrDefault(); // only support changing style for one textbox at a time
