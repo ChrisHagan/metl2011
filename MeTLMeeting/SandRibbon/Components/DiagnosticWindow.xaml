@@ -17,35 +17,40 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="messages" Grid.Row="0" Grid.Column="0" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid x:Name="messages" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" AutoGenerateColumns="False" IsReadOnly="True" ColumnWidth="*">
             <DataGrid.Columns>
-                <DataGridTextColumn IsReadOnly="True" Header="message" Binding="{Binding message, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding category, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="when" Binding="{Binding when, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="message" Binding="{Binding message, Mode=OneTime}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding category, Mode=OneTime}" />
+                <DataGridTextColumn IsReadOnly="True" Header="when" Binding="{Binding when, Mode=OneTime}" Width="135"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="gauges" Grid.Row="0" Grid.Column="1" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid x:Name="gauges" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" AutoGenerateColumns="False" IsReadOnly="True" ColumnWidth="*">
             <DataGrid.Columns>
-                <DataGridTextColumn IsReadOnly="True" Header="name" Binding="{Binding GaugeName, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="name" Binding="{Binding GaugeName, Mode=OneTime}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding GaugeCategory, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="status" Binding="{Binding status, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="value" Binding="{Binding value, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="started" Binding="{Binding started, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="finished" Binding="{Binding finished, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="duration" Binding="{Binding duration, Mode=OneTime}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="status" Binding="{Binding status, Mode=OneTime}" Width="50"/>
+                <DataGridTextColumn IsReadOnly="True" Header="value" Binding="{Binding value, Mode=OneTime}" Width="50"/>
+                <DataGridTextColumn IsReadOnly="True" Header="started" Binding="{Binding started, Mode=OneTime}" Width="135"/>
+                <DataGridTextColumn IsReadOnly="True" Header="finished" Binding="{Binding finished, Mode=OneTime}" Width="135"/>
+                <DataGridTextColumn IsReadOnly="True" Header="duration" Binding="{Binding duration, Mode=OneTime}" Width="60"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="errors" Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn IsReadOnly="True" Header="name" Binding="{Binding message, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding category, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="when" Binding="{Binding when, Mode=OneTime}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="message" Binding="{Binding exception, Mode=OneTime}"/>
-                <!--<DataGridTextColumn IsReadOnly="True" Header="stackTrace" Binding="{Binding exception, Mode=OneTime}"/>-->
-            </DataGrid.Columns>
-        </DataGrid>
-        <UniformGrid Rows="2" Grid.Row="1" Grid.Column="1">
-            <DataGrid x:Name="nics" Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False" IsReadOnly="True">
+        <DockPanel Grid.Row="1" Grid.Column="0">
+            <DataGrid x:Name="nics" DockPanel.Dock="Bottom" AutoGenerateColumns="False" IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn IsReadOnly="True" Header="OutputQueueLength " Binding="{Binding OutputQueueLength , Mode=OneTime}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="OutgoingPacketsWithErrors " Binding="{Binding OutgoingPacketsWithErrors , Mode=OneTime}"/>
@@ -57,7 +62,31 @@
                     <DataGridTextColumn IsReadOnly="True" Header="BytesSent " Binding="{Binding BytesReceived, Mode=OneTime}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <DataGrid x:Name="procs" Grid.Row="1" Grid.Column="1" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid x:Name="errors" AutoGenerateColumns="False" IsReadOnly="True" ColumnWidth="*">
+                <DataGrid.Columns>
+                    <DataGridTextColumn IsReadOnly="True" Header="name" Binding="{Binding message, Mode=OneTime}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn IsReadOnly="True" Header="category" Binding="{Binding category, Mode=OneTime}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="message" Binding="{Binding exception, Mode=OneTime}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn IsReadOnly="True" Header="when" Binding="{Binding when, Mode=OneTime}" Width="135"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <DataGrid x:Name="procs" DockPanel.Dock="Bottom" AutoGenerateColumns="False" IsReadOnly="True" >
                 <DataGrid.Columns>
                     <DataGridTextColumn IsReadOnly="True" Header="ProcessName" Binding="{Binding Responding, Mode=OneTime}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Responding" Binding="{Binding ProcessName, Mode=OneTime}"/>
@@ -68,27 +97,26 @@
                     <DataGridTextColumn IsReadOnly="True" Header="TotalProcessorTime" Binding="{Binding TotalProcessorTime, Mode=OneTime}"/>
                 </DataGrid.Columns>
             </DataGrid>
-        </UniformGrid>
-        <TextBox x:Name="console" Grid.Row="0" Grid.Column="2" />
-        <ItemsControl x:Name="inProgress" Grid.Row="1" Grid.Column="2">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <StackPanel Height="25" Orientation="Horizontal">
-                            <ProgressBar Width="100" Value="{Binding value, Mode=OneWay}" Minimum="0" Maximum="100"/>
-                            <Label Content="{Binding soFar, Mode=OneWay}"/>
-                            <Label Content="{Binding GaugeCategory, Mode=OneWay}"/>
-                            <Label Content="{Binding GaugeName, Mode=OneWay}"/>
-                            <Label Content="{Binding status, Mode=OneWay}"/>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <ItemsControl x:Name="inProgress" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <StackPanel Height="25" Orientation="Horizontal">
+                                <ProgressBar Width="100" Value="{Binding value, Mode=OneWay}" Minimum="0" Maximum="100"/>
+                                <Label Content="{Binding soFar, Mode=OneWay}"/>
+                                <Label Content="{Binding GaugeCategory, Mode=OneWay}"/>
+                                <Label Content="{Binding GaugeName, Mode=OneWay}"/>
+                                <Label Content="{Binding status, Mode=OneWay}"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DockPanel>
     </Grid>
 </Window>

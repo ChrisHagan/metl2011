@@ -286,7 +286,7 @@ namespace SandRibbon.Components
         public ObservableCollection<DiagnosticGauge> inProgressSource = new ObservableCollection<DiagnosticGauge>();
         public ObservableCollection<DiagnosticMessage> messageSource = new ObservableCollection<DiagnosticMessage>();
         public ObservableCollection<ErrorMessage> errorSource = new ObservableCollection<ErrorMessage>();
-        protected double refreshInterval = 5 * 1000;
+        protected double refreshInterval = 2 * 1000;
         protected DiagnosticModel dmModel;
         public DiagnosticWindow()
         {
@@ -319,7 +319,6 @@ namespace SandRibbon.Components
                         return nic.GetIPv4Statistics();
                     });
                     procs.ItemsSource = Process.GetProcessesByName(thisProc.ProcessName).Union(Process.GetProcessesByName(App.proc.ProcessName));
-                    console.Text = App.outputWriter.ToString();
                 });
             };
             timer.Start();

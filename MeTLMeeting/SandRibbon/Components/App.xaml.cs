@@ -111,11 +111,25 @@ namespace SandRibbon
         public static readonly StringWriter outputWriter = new StringWriter();
 
         public static Process proc;
+        protected static double consoleInterval = 5 * 1000; // every 5 seconds should be perfectly acceptable for stealing the console logs.
+        protected static System.Timers.Timer consoleTimer = new System.Timers.Timer(consoleInterval);
         static App()
         {
             proc = Process.GetCurrentProcess();
             Console.SetOut(outputWriter);
+            consoleTimer.Start();
             App.mark("App static constructor runs");
+            consoleTimer.Elapsed += (s,e) =>
+            {
+                var sb = App.outputWriter.GetStringBuilder();
+                var text = sb.ToString();
+                sb.Remove(0, sb.Length);
+                App.outputWriter.Flush();
+                foreach (var msg in text.Split('\r', '\n').Where(i => i != null && i.Length > 0))
+                {
+                    App.auditor.log(msg, "Console");
+                }
+            };
             setDotNetPermissionState();
         }
         private static void setDotNetPermissionState()
@@ -184,6 +198,11 @@ namespace SandRibbon
                     diagnosticWindow.Close();
                 });
             }
+            try {
+                consoleTimer.Stop();
+                consoleTimer.Close();
+                consoleTimer.Dispose();
+            } catch { }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
