@@ -173,8 +173,8 @@ namespace SandRibbon.Utils
             {
                 if (IsPowerPointRunning())
                 {
-                    MeTLMessage.Information("PowerPoint seems to be running, please close the program before importing a presentation");
-                    return;
+                    MeTLMessage.Information("PowerPoint seems to be running.  Please do not work in PowerPoint while the conversation is importing - doing so may result in unexpected issues with the import into MeTL.");
+//                    return;
                 }
 
                 var app = GetPowerPointApplication();
