@@ -436,6 +436,10 @@ namespace SandRibbon
         public static DefaultableCompositeCommand Explode = new DefaultableCompositeCommand("Explode"); // for testing only
         public static DefaultableCompositeCommand DispatcherExplode = new DefaultableCompositeCommand("DispatcherExplode"); // for testing only
 
+        public static DefaultableCompositeCommand OpenRenameConversationUi = new DefaultableCompositeCommand("OpenRenameConversationUi");
+        public static DefaultableCompositeCommand OpenShareConversationUi = new DefaultableCompositeCommand("OpenShareConversationUi");
+        public static DefaultableCompositeCommand OpenDeleteConversationUi = new DefaultableCompositeCommand("OpenDeleteConversationUi");
+
         Commands()
         {
             NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => false));

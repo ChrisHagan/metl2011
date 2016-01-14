@@ -10,11 +10,13 @@
     xmlns:p="clr-namespace:SandRibbon.Properties"
     AutomationProperties.AutomationId="ConversationSearchBox"
     x:Name="root">
+    <!--
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static components:ConversationSearchBox.RenameConversation}"  CanExecute="CheckEditAllowed" Executed="renameConversation"/>
         <CommandBinding Command="{x:Static components:ConversationSearchBox.ShareConversation}" CanExecute="CheckEditAllowed" Executed="shareConversation"/>
         <CommandBinding Command="{x:Static components:ConversationSearchBox.DeleteConversation}" CanExecute="CheckEditAllowed" Executed="deleteConversation"/>
     </UserControl.CommandBindings>
+    -->
     <UserControl.Resources>
         <components:SearchResultsCountToStringConverter x:Key="SearchResultsCountToStringConverter" />
         
@@ -32,11 +34,18 @@
         <DataTemplate x:Key="nonAuthorOptions" />
         <DataTemplate x:Key="authorOptions">
             <StackPanel x:Name="conversationOptions" Orientation="Horizontal" HorizontalAlignment="Right">
+                <!--
                 <dict:Button x:Name="renameConversationButton" Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Command="{x:Static components:ConversationSearchBox.RenameConversation}" />
                 <dict:Button x:Name="shareConversationButton" Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Command="{x:Static components:ConversationSearchBox.ShareConversation}" />
+                -->
+                <dict:Button x:Name="renameConversationButton" Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Command="{x:Static api:Commands.OpenRenameConversationUi}" CommandParameter="{Binding}"/>
+                <dict:Button x:Name="shareConversationButton" Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Command="{x:Static api:Commands.OpenShareConversationUi}" CommandParameter="{Binding}"/>
                 <dict:Button Text="Duplicate" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateConversationToolTip}" x:Name="duplicateConversationButton" Command="{x:Static api:Commands.DuplicateConversation}" CommandParameter="{Binding}"
                   InternalButtonSize="Medium"/>
+                <!--
                 <dict:Button x:Name="deleteConversationButton" Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Command="{x:Static components:ConversationSearchBox.DeleteConversation}"/>
+                -->
+                    <dict:Button x:Name="deleteConversationButton" Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Command="{x:Static api:Commands.OpenDeleteConversationUi}" CommandParameter="{Binding}"/>
             </StackPanel>
         </DataTemplate>
         <Style TargetType="Border" x:Key="thinBlack">
@@ -60,11 +69,11 @@
             <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" MinWidth="600" Padding="3" Margin="0 10 0 0">
                 <StackPanel>
                     <Label Content="{Binding Path=Title}" Visibility="Collapsed" />
-                    <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
+                    <!--<Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}"> -->
                         <TextBox x:Name ="renameTitle" MinWidth="400" MaxWidth="800" Loaded="TextBox_Loaded"
                                  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" 
                                  Text="{Binding Path=Title}" TextWrapping="Wrap" TextChanged="EditTitleChanged" PreviewKeyDown="KeyPressedInTitleRename"/>
-                    </Button>
+                    <!-- </Button> -->
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>
                 </StackPanel>
             </Border>
@@ -72,12 +81,14 @@
         <DataTemplate x:Key="share">
             <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" MinWidth="600" Padding="3" Margin="0 10 0 0">
                 <Grid>
+                    <!--
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
-                        <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
+                    -->
+                        <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left" Height="150">
                             <Label FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Content="{Binding Path=Title}" />
-                            <ListBox x:Name="groupsList" ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" SelectedItem="{Binding Path=Subject}" />
+                            <ListBox x:Name="groupsList" ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" SelectedItem="{Binding Path=Subject}" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="130"/>
                         </StackPanel>
-                    </Button>
+                    <!--</Button>-->
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>
                 </Grid>
             </Border>
