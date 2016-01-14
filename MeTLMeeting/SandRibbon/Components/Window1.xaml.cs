@@ -810,9 +810,12 @@ namespace SandRibbon
         }
         private void duplicateConversation(ConversationDetails conversationToDuplicate)
         {
-            if (conversationToDuplicate.UserHasPermission(Globals.credentials))
+            if (conversationToDuplicate.UserHasPermission(Globals.credentials) )
             {
-                App.controller.client.DuplicateConversation(conversationToDuplicate);
+                if (MeTLMessage.Question("Are you sure you want to duplicate this conversation?  Only your content on each slide will be duplicated.") == MessageBoxResult.Yes)
+                {
+                    App.controller.client.DuplicateConversation(conversationToDuplicate);
+                }
             }
         }
         private bool userMayDuplicateConversation(ConversationDetails conversationToDuplicate)
