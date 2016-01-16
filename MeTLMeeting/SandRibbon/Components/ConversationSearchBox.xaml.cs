@@ -92,10 +92,6 @@ namespace SandRibbon.Components
                     e.CanExecute = !editInProgress;
                 }
           */
-        private bool CheckEditAllowed(ConversationDetails conversation)
-        {
-            return conversation.isAuthor(Globals.me) && !editInProgress;
-        }
 
         public static HideErrorsIfEmptyConverter HideErrorsIfEmpty = new HideErrorsIfEmptyConverter();
         public static IsMeConverter isMe = new IsMeConverter();
@@ -132,6 +128,11 @@ namespace SandRibbon.Components
             refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
             this.PreviewKeyUp += OnPreviewKeyUp;
             App.mark("Initialized conversation search");
+        }
+
+        protected bool CheckEditAllowed(ConversationDetails details)
+        {
+            return details.isAuthor(Globals.me);
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -336,7 +337,6 @@ namespace SandRibbon.Components
             {
                 UnregisterCommands();
                 PauseRefreshTimer();
-                editInProgress = false;
                 this.Visibility = Visibility.Collapsed;
                 Commands.RequerySuggested();
             });
@@ -345,14 +345,12 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(delegate
             {
-                editInProgress = false;
                 CloseConversationSearchBox();
             }
             );
         }
         private void CloseConversationSearchBox()
         {
-            editInProgress = false;
             Commands.HideConversationSearchBox.Execute(null);
         }
         private void LeaveConversation(string jid)
@@ -384,15 +382,23 @@ namespace SandRibbon.Components
                     }
                 }
             }
+
             Dispatcher.adopt(delegate
             {
-
-                if (!searchResultsObserver.Select(d => d.Jid).Contains(details.Jid)
-                    && !details.isDeleted)
-                {
-                    searchResultsObserver.Add(details);
+                    var preExistingItem = details;
+                    try
+                    {
+                        preExistingItem = searchResultsObserver.First(sr => sr.Jid == details.Jid);
+                    }
+                    catch {
+                    }
+                    if (preExistingItem.Title != details.Title || preExistingItem.Subject != details.Subject || preExistingItem.isDeleted != details.isDeleted)
+                    {
+                    searchResultsObserver.Remove(preExistingItem);
+                    if (isWhatWeWereLookingFor(details))
+                        searchResultsObserver.Insert(0, details);
+                    RefreshSortedConversationsList();
                 }
-                RefreshSortedConversationsList();
             });
 
         }
@@ -448,7 +454,6 @@ namespace SandRibbon.Components
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            editInProgress = false;
             if (originalContext != null)
             {
                 foreach (var result in SearchResults.ItemsSource)
@@ -526,7 +531,6 @@ namespace SandRibbon.Components
         }
         private void renameConversation(ConversationDetails details)
         {
-            editInProgress = true;
             assignTemplate("rename", details);
         }
         /*
@@ -543,7 +547,6 @@ namespace SandRibbon.Components
         */
         private void shareConversation(ConversationDetails details)
         {
-            editInProgress = true;
             assignTemplate("share", details);
         }
         /*
@@ -555,7 +558,6 @@ namespace SandRibbon.Components
         */
         private void cancelEdit(object sender, RoutedEventArgs e)
         {
-            editInProgress = false;
             if (sender == null)
                 return;
 
@@ -567,7 +569,6 @@ namespace SandRibbon.Components
         }
         private void cancelEdit(ConversationDetails details)
         {
-            editInProgress = false;
             assignTemplate("viewing", details);
         }
         protected IEqualityComparer<ConversationDetails> jidComparer = new JidComparer();
@@ -587,7 +588,6 @@ namespace SandRibbon.Components
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            editInProgress = false;
             var details = SearchConversationDetails.HydrateFromServer(App.controller.client, context(sender));
 
             var errors = errorsFor(details);
@@ -604,7 +604,6 @@ namespace SandRibbon.Components
         }
         private void saveEdit(ConversationDetails oldDetails)
         {
-            editInProgress = false;
             var details = SearchConversationDetails.HydrateFromServer(App.controller.client, oldDetails);// context(sender));
 
             var errors = errorsFor(details);
