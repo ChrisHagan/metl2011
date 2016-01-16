@@ -66,6 +66,7 @@ namespace SandRibbon.Chrome
                     collaborationStatus.Text = string.Format("Collaboration {0}", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED");
                     followStatus.Text = string.Format("Following teacher {0}", details.Permissions.usersAreCompulsorilySynced ? "MANDATORY" : "OPTIONAL");
                     StatusLabel.Text = status;
+                    ConversationLabel.Text = details.Title;
                 }
                 catch (NotSetException e)
                 {
