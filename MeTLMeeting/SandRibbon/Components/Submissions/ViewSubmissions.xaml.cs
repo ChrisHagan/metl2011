@@ -29,6 +29,7 @@ namespace SandRibbon.Components.Submissions
 
         public Uri Url { get; internal set; }
         public string Source { get; internal set; }
+        public string Identity { get; internal set; }
 
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected", typeof(bool), typeof(DisplayableSubmission), new PropertyMetadata(false));
@@ -73,6 +74,7 @@ namespace SandRibbon.Components.Submissions
                 Image = bitmap,
                 Source = submission.url,
                 Url = uri,
+                Identity = submission.identity,
                 Author = submission.author,
                 Message = submission.title,
                 Date = SandRibbonObjects.DateTimeFactory.FromMilis(submission.timestamp).ToString()
@@ -89,7 +91,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void importAllSubmissionsInBucket(object o)
         {
-            var items = submissions.Where(s => s.IsSelected).Select(d => d.Source).ToList();
+            var items = submissions.Where(s => s.IsSelected).Select(d => d.Identity).ToList();
             var url = App.controller.config.displaySubmissionOnNewSlideAtIndex(Globals.conversationDetails.Jid, Globals.slideDetails.index + 1);
             var data = new JArray(items);
             var newC = App.controller.client.resourceProvider.securePutData(url, Encoding.UTF8.GetBytes(data.ToString()));
