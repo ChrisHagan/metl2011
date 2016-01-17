@@ -50,7 +50,11 @@ namespace SandRibbon.Components
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                return activeConversation == ((ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
+                if ((ConversationDetails)value != null && activeConversation != null)
+                {
+                    return activeConversation == ((ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else return Visibility.Collapsed;
             }
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
