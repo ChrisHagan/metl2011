@@ -13,7 +13,10 @@
             </StackPanel>
             <StackPanel>
                 <sr:Label x:Name="StatusLabel" ToolTip="Current Mode" VerticalAlignment="Top"/>
-                <sr:Label x:Name="ConversationLabel" FontSize="32"/>
+                <StackPanel Orientation="Horizontal">
+                    <sr:Label x:Name="PageNumber" FontSize="32"/>
+                    <sr:Label x:Name="ConversationLabel" FontSize="32"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
         <sandpit:Pedagogicometer Visibility="Collapsed"/>

@@ -13,6 +13,7 @@ namespace SandRibbon.Chrome
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(loc => JoinConversation(loc.activeConversation)));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
             Commands.BanhammerActive.RegisterCommand(new DelegateCommand<object>(BanhammerActive));
@@ -66,6 +67,7 @@ namespace SandRibbon.Chrome
                     collaborationStatus.Text = string.Format("Collaboration {0}", details.Permissions.studentCanWorkPublicly ? "ENABLED" : "DISABLED");
                     followStatus.Text = string.Format("Following teacher {0}", details.Permissions.usersAreCompulsorilySynced ? "MANDATORY" : "OPTIONAL");
                     StatusLabel.Text = status;
+                    PageNumber.Text = details.IsEmpty || Globals.location.activeConversation.IsEmpty ? "" : String.Format("Page {0} of ",Globals.location.currentSlide.index + 1);
                     ConversationLabel.Text = details.Title;
                 }
                 catch (NotSetException e)
