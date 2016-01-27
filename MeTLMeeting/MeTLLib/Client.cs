@@ -259,16 +259,16 @@ namespace MeTLLib
 
         public void LoadQuiz(int conversationJid, long quizId)
         {
-            tryIfConnected(() => wire.LoadQuiz(conversationJid, quizId));
+            tryIfHttpWorks(() => wire.LoadQuiz(conversationJid, quizId));
         }
 
         public void LoadQuizzes(string conversationJid)
         {
-            tryIfConnected(() => wire.LoadQuizzes(conversationJid));
+            tryIfHttpWorks(() => wire.LoadQuizzes(conversationJid));
         }
         public void LoadAttachments(string conversationJid)
         {
-            tryIfConnected(() => wire.LoadAttachments(conversationJid));
+            tryIfHttpWorks(() => wire.LoadAttachments(conversationJid));
         }
         public void AskForTeachersStatus(string teacher, string jid)
         {
@@ -423,7 +423,7 @@ namespace MeTLLib
                               {
                                   wire.LoadSubmissions(conversationJid);
                               };
-            tryIfConnected(work);
+            tryIfHttpWorks(work);
         }
         public void SendQuizAnswer(QuizAnswer qa, string jid)
         {
@@ -494,7 +494,7 @@ namespace MeTLLib
             {
                 returnValue = resourceUploader.uploadResource(muc, file.OriginalString, file.OriginalString);
             };
-            tryIfConnected(work);
+            tryIfHttpWorks(work);
             return returnValue;
         }
 
@@ -506,7 +506,7 @@ namespace MeTLLib
             {
                 returnValue = resourceUploader.uploadResourceToPath(data, file, name, overwrite);
             };
-            tryIfConnected(work);
+            tryIfHttpWorks(work);
             return returnValue;
         }
         #endregion
@@ -586,7 +586,7 @@ namespace MeTLLib
             {
                 cd = conversationDetailsProvider.DetailsOf(room);
             };
-            tryIfConnected(work);
+            tryIfHttpWorks(work);
             return cd;
         }
         public ConversationDetails CreateConversation(ConversationDetails details)
@@ -667,6 +667,28 @@ namespace MeTLLib
                 wire.AddActionToReloginQueue(action);
             else
                 tryIfConnected(action);
+        }
+        private void tryIfHttpWorks(Action action)
+        {
+            try
+            {
+                if (wire.HttpWorked())
+                {
+                    action();
+                }
+                else
+                {
+                    requeue(action);
+                }
+            }
+            catch (WebException e)
+            {
+                requeue(action);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
         private void tryIfConnected(Action action)
         {
@@ -846,7 +868,7 @@ namespace MeTLLib
             {
                 wire.GetHistory(room);
             };
-            tryIfConnected(work);
+            tryIfHttpWorks(work);
         }
     }
 }

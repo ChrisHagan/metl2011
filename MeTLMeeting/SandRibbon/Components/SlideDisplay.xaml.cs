@@ -243,7 +243,13 @@ namespace SandRibbon.Components
             {
                 return;
             }
-            Commands.MoveTo.Execute(new Location(details,details.Slides.OrderBy(cd => cd.index).First(),details.Slides));
+            Display(details);
+            var currentSlide = details.Slides.OrderBy(cd => cd.index).First();
+            var newLoc = new Location(details, currentSlide, details.Slides);
+            MoveTo(newLoc,true);
+            AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
+            Commands.MoveTo.ExecuteAsync(newLoc);
+            //Commands.MoveTo.Execute(new Location(details,details.Slides.OrderBy(cd => cd.index).First(),details.Slides));
         }
 
         private bool canAddSlide(object _slide)

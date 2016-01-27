@@ -32,6 +32,7 @@ namespace SandRibbon.Components
                         attachToClient();
                         Commands.AllStaticCommandsAreRegistered();
                         client.events.StatusChanged -= checkValidity;
+                        Commands.SetIdentity.Execute(e.credentials);
                     }
                     else
                     {
@@ -43,6 +44,10 @@ namespace SandRibbon.Components
                 };
                 client.events.StatusChanged += checkValidity;
                 g(GaugeStatus.InProgress,66);
+                if (!client.Connect(credentials))
+                {
+                    Commands.LoginFailed.Execute(null);
+                }
                 return client;
             }, "networkController connect", "backend");
         }

@@ -84,13 +84,6 @@ namespace SandRibbon
             try
             {
                 controller.connect(credentials);
-                if (!controller.client.Connect(credentials))
-                {
-                    Commands.LoginFailed.Execute(null);
-                }
-                else {
-                    Commands.SetIdentity.Execute(credentials);
-                }
             }
             catch (TriedToStartMeTLWithNoInternetException)
             {

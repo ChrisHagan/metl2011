@@ -114,8 +114,15 @@ namespace SandRibbon.Components
         }
         private void doJoinConversation(ConversationDetails partialDetails)
         {
+            internalDoJoinConversation(partialDetails);
+        }
+        private void internalDoJoinConversation(ConversationDetails partialDetails,int attempt = 0)
+        {
             var details = App.controller.client.DetailsOf(partialDetails.Jid);
-            if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
+            if (details.IsEmpty)
+            {
+                MeTLMessage.Warning(String.Format("Failed to join conversation \"{0}\".  Please try again.", details.Title));
+            } else if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
             {
                 // remove the conversation from the menu list
                 UpdateConversationDetails(details);

@@ -347,6 +347,10 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(ConversationDetails o)
         {
+            if (o.IsEmpty)
+            {
+                return;
+            }
             Dispatcher.adopt(delegate
             {
                 CloseConversationSearchBox();

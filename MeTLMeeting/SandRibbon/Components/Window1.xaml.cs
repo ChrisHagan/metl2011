@@ -247,7 +247,7 @@ namespace SandRibbon
             }
             catch (Exception e)
             {
-                App.auditor.error("getDefaultSystemLanguage","Window1",e);
+                App.auditor.error("getDefaultSystemLanguage", "Window1", e);
             }
         }
         #region helpLinks
@@ -316,7 +316,7 @@ namespace SandRibbon
 
             catch (Exception e)
             {
-                App.auditor.error("Change Language","App",e);
+                App.auditor.error("Change Language", "App", e);
             }
         }
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
@@ -397,10 +397,12 @@ namespace SandRibbon
             DelegateCommand<object> hideRibbon = null;
             hideRibbon = new DelegateCommand<object>((_obj) =>
             {
-
                 Commands.SetPedagogyLevel.UnregisterCommand(hideRibbon);
-                if (!ribbon.IsMinimized)
-                    ribbon.ToggleMinimize();
+                Dispatcher.adopt(delegate
+                {
+                    if (!ribbon.IsMinimized)
+                        ribbon.ToggleMinimize();
+                });
             });
             Commands.SetPedagogyLevel.RegisterCommand(hideRibbon);
         }
@@ -558,7 +560,8 @@ namespace SandRibbon
                     if (lastValue != null)
                         AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
                 }
-                catch (NotSetException e) {
+                catch (NotSetException e)
+                {
                     App.auditor.error("UpdatePrivacyAdorner", "Window1", e);
                 }
         }
@@ -810,7 +813,7 @@ namespace SandRibbon
         }
         private void duplicateConversation(ConversationDetails conversationToDuplicate)
         {
-            if (conversationToDuplicate.UserHasPermission(Globals.credentials) )
+            if (conversationToDuplicate.UserHasPermission(Globals.credentials))
             {
                 if (MeTLMessage.Question("Are you sure you want to duplicate this conversation?  Only your content on each slide will be duplicated.") == MessageBoxResult.Yes)
                 {
@@ -1402,7 +1405,8 @@ namespace SandRibbon
         }
         private void dispatcherExplode(object _arg)
         {
-            Dispatcher.adopt(delegate {
+            Dispatcher.adopt(delegate
+            {
                 explode(_arg);
             });
         }

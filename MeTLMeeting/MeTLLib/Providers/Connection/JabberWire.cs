@@ -212,15 +212,15 @@ namespace MeTLLib.Providers.Connection
             if (activeWire)
             {
                 receiveEvents.StatusChanged += listenToStatusChangedForReset;
-                establishHeartBeat();
                 NetworkChange.NetworkAvailabilityChanged += networkAvailabilityChanged;
+                establishHeartBeat();
             }
         }
         public IAuditor auditor { get; protected set; }
 
         private void establishHeartBeat()
         {
-            heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
+            heartbeat = new Timer((_unused) => { checkConnection(); }, null, 0, HEARTBEAT_PERIOD);
         }
 
         private void shutdownHeartBeat()
@@ -784,11 +784,15 @@ namespace MeTLLib.Providers.Connection
         {
             stanza(new MeTLStanzas.DirtyImage(element));
         }
+        public bool HttpWorked()
+        {
+            return httpIsConnected;
+        }
         public bool IsConnected()
         {
             return auditor.wrapFunction((a) =>
             {
-                return conn.XmppConnectionState == XmppConnectionState.SessionStarted && httpIsConnected; //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
+                return conn.XmppConnectionState == XmppConnectionState.SessionStarted && HttpWorked(); //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
             }, "healthCheck", "xmpp");
         }
         public void GetHistory(int where)
