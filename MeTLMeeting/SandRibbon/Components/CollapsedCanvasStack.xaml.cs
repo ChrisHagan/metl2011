@@ -1132,7 +1132,7 @@ namespace SandRibbon.Components
                 }
                 catch (Exception e)
                 {
-                    App.auditor.error("SetDrawingAttributes","CollapsedCanvasStack", e);
+                    App.auditor.error("SetDrawingAttributes", "CollapsedCanvasStack", e);
                 }
                 Work.DefaultDrawingAttributes = zoomCompensatedAttributes;
             });
@@ -1707,20 +1707,32 @@ namespace SandRibbon.Components
                     TargettedImage image1 = image;
                     if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
-                        Dispatcher.adoptAsync(() =>
+                        WebThreadPool.QueueUserWorkItem(new Amib.Threading.Action(delegate
                         {
                             try
                             {
-                                //                      var receivedImage = image1.imageSpecification.forceEvaluation();
-                                var receivedImage = image1.imageSpecification.forceEvaluation();
-                                //image.clone();
-                                AddImage(Work, receivedImage);
-                                receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                                var receivedImage = image1.imageSpecification.forceEvaluation(Dispatcher);
+                                Dispatcher.adoptAsync(() =>
+                                {
+                                    try
+                                    {
+                                        //                      var receivedImage = image1.imageSpecification.forceEvaluation();
+                                        //image.clone();
+                                        //                                    var receivedImage = MeTLStanzas.Image.cloneOnDispatcher(tempImage, Dispatcher);
+                                        AddImage(Work, receivedImage);
+                                        receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e.Message);
+                                    }
+                                });
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                Console.WriteLine(ex.Message);
                             }
-                        });
+                        }));
                     }
                 }
             }
@@ -1891,7 +1903,7 @@ namespace SandRibbon.Components
         {
             if (me == Globals.PROJECTOR) return;
             var validFormats = e.Data.GetFormats();
-            var images = new List<KeyValuePair<string,byte[]>>();
+            var images = new List<KeyValuePair<string, byte[]>>();
             validFormats.Select(vf =>
             {
                 var outputData = "";
@@ -1921,12 +1933,14 @@ namespace SandRibbon.Components
             if (validFormats.Contains(DataFormats.FileDrop))
             {
                 //local files will deliver filenames.  
-                try {
+                try
+                {
                     foreach (var filename in e.Data.GetData(DataFormats.FileDrop, true) as string[])
                     {
                         images.Add(new KeyValuePair<string, byte[]>(filename, File.ReadAllBytes(filename)));
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     App.auditor.log("Failed to drop FileDrop from dragAction: " + ex.Message);
                 }
@@ -1934,7 +1948,8 @@ namespace SandRibbon.Components
             }
             else if (validFormats.Contains("UniformResourceLocator"))
             {
-                try {
+                try
+                {
                     //dragged pictures from chrome will deliver the urls of the objects.  Firefox and IE don't drag images.
                     var urlStream = (MemoryStream)e.Data.GetData("UniformResourceLocator");
                     if (urlStream != null)
@@ -1944,9 +1959,10 @@ namespace SandRibbon.Components
                         var bytes = App.controller.client.resourceProvider.secureGetData(new Uri(url));
                         images.Add(new KeyValuePair<string, byte[]>(url, bytes));
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
-                    App.auditor.log("failed to drop UniformResourceLocator from dragAction: "+ex.Message);
+                    App.auditor.log("failed to drop UniformResourceLocator from dragAction: " + ex.Message);
                 }
             }
             /*
@@ -1954,7 +1970,8 @@ namespace SandRibbon.Components
             {
             }
             */
-            if (images.Count == 0) { 
+            if (images.Count == 0)
+            {
                 MeTLMessage.Information("Cannot drop this onto the canvas");
                 return;
             }
@@ -1988,7 +2005,7 @@ namespace SandRibbon.Components
             for (var i = 0; i < images.Count(); i++)
             {
                 var bytes = images[i];
-                handleDrop(bytes.Value,bytes.Key, origin, true, i, positionUpdate);
+                handleDrop(bytes.Value, bytes.Key, origin, true, i, positionUpdate);
             }
             e.Handled = true;
         }
@@ -1998,7 +2015,7 @@ namespace SandRibbon.Components
             e.Handled = true;
         }
 
-        public void handleDrop(byte[] bytes,string fileName, Point origin, bool overridePoint, int count, Func<Image, Point, int, Point> positionUpdate)
+        public void handleDrop(byte[] bytes, string fileName, Point origin, bool overridePoint, int count, Func<Image, Point, int, Point> positionUpdate)
         {
             FileType type = GetFileType(fileName);
             origin = new Point(origin.X + contentBuffer.logicalX, origin.Y + contentBuffer.logicalY);
@@ -2010,7 +2027,7 @@ namespace SandRibbon.Components
                 case FileType.Video:
                     break;
                 default:
-                    uploadFileForUse(bytes,fileName);
+                    uploadFileForUse(bytes, fileName);
                     break;
             }
         }
@@ -2053,9 +2070,9 @@ namespace SandRibbon.Components
         private int fileSizeLimit = 50;
         private void uploadFileForUse(string unMangledFilename)
         {
-            uploadFileForUse(File.ReadAllBytes(unMangledFilename),unMangledFilename);
+            uploadFileForUse(File.ReadAllBytes(unMangledFilename), unMangledFilename);
         }
-        private void uploadFileForUse(byte[] bytes,string unMangledFilename)
+        private void uploadFileForUse(byte[] bytes, string unMangledFilename)
         {
             /*
             string filePart = Path.GetFileName(unMangledFilename);
@@ -2112,10 +2129,13 @@ namespace SandRibbon.Components
                 width = bmpFrame.Width;
                 height = bmpFrame.Height;
             }
-            App.controller.client.UploadAndSendImage(
-                new MeTLStanzas.LocalImageInformation(
-                    Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true), newPoint.X, newPoint.Y, width, height, bytes
-                ));
+            WebThreadPool.QueueUserWorkItem(new Amib.Threading.Action(delegate
+            {
+                App.controller.client.UploadAndSendImage(
+                    new MeTLStanzas.LocalImageInformation(
+                        Globals.slide, me, this._target, (Privacy)Enum.Parse(typeof(Privacy), Globals.privacy, true), newPoint.X, newPoint.Y, width, height, bytes
+                    ));
+            }));
         }
 
         private Point OffsetNegativeCartesianPointTranslate(Point origin)
@@ -2181,7 +2201,9 @@ namespace SandRibbon.Components
                 if (videoExtensions.Exists(ie => fileName.EndsWith(ie)))
                     return FileType.Video;
                 return FileType.NotSupported;
-            } else {
+            }
+            else
+            {
                 string extension = System.IO.Path.GetExtension(fileName).ToLower();
                 if (imageExtensions.Contains(extension))
                     return FileType.Image;
@@ -2218,13 +2240,13 @@ namespace SandRibbon.Components
             {
                 Dispatcher.adoptAsync(delegate
                                       {
-                                              var box = UpdateTextBoxWithId(targettedBox);
-                                              if (box != null)
-                                              {
-                                                  if (!(targettedBox.HasSameAuthor(me) && _focusable))
-                                                      box.Focusable = false;
-                                                  box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy);
-                                              }
+                                          var box = UpdateTextBoxWithId(targettedBox);
+                                          if (box != null)
+                                          {
+                                              if (!(targettedBox.HasSameAuthor(me) && _focusable))
+                                                  box.Focusable = false;
+                                              box.ApplyPrivacyStyling(contentBuffer, _target, targettedBox.privacy);
+                                          }
                                       });
             }
         }

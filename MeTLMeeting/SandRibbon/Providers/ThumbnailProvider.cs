@@ -53,7 +53,7 @@ namespace SandRibbon.Providers
         }
         private static void paintThumb(Image image)
         {
-            image.Dispatcher.adopt(delegate
+            image.Dispatcher.adoptAsync(delegate
             {
                 try
                 {

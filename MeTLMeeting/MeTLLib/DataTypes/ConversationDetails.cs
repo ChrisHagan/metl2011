@@ -286,7 +286,14 @@ namespace MeTLLib.DataTypes
         }
         public override int GetHashCode()
         {
-            return Int32.Parse(Jid);
+            if (Jid == "" || Jid == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return Int32.Parse(Jid);
+            }
         }
 
         public ConversationDetails()

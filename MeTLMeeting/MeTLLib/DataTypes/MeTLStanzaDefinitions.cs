@@ -1523,7 +1523,7 @@ namespace MeTLLib.DataTypes
                 return !(elemA == elemB);
             }
 
-            public static implicit operator string(ElementIdentity elemId)
+            public static implicit operator string (ElementIdentity elemId)
             {
                 return elemId.Identity;
             }
@@ -2123,39 +2123,87 @@ namespace MeTLLib.DataTypes
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public MeTLImage forceEvaluation()
+            public static MeTLImage cloneOnDispatcher(MeTLImage image, System.Windows.Threading.Dispatcher dispatcher)
+            {
+                ImageTag tag = new ImageTag();
+                ImageSource source = null;
+                double width = 0d;
+                double height = 0d;
+                double x = 0d;
+                double y = 0d;
+                image.Dispatcher.adopt(delegate
+                {
+                    tag = (ImageTag)image.tag();
+                    //image.Source.Freeze();
+                    source = (ImageSource)image.Source.GetAsFrozen();
+                    width = image.Width;
+                    height = image.Height;
+                    x = InkCanvas.GetLeft(image);
+                    y = InkCanvas.GetTop(image);
+                });
+                MeTLImage returnImage = null;
+                dispatcher.adopt(delegate
+                {
+                    returnImage = new MeTLImage
+                    {
+                        Tag = tag,
+                        Height = height,
+                        Width = width,
+                        Source = source,
+                        Stretch = Stretch.Fill
+                    };
+                    returnImage.tag(tag);
+                    InkCanvas.SetLeft(returnImage, x);
+                    InkCanvas.SetTop(returnImage, y);
+                    returnImage.Source = source;
+                });
+                return returnImage;
+            }
+            public MeTLImage forceEvaluation(System.Windows.Threading.Dispatcher dispatcher = null)
             {
                 //var sourceString = new Uri(new Uri(server.authenticationUrl, UriKind.Absolute), new Uri(String.Format("/resourceProxy/{1}", GetTag(slideTag), HttpUtility.UrlEncode(GetTag(identityTag))), UriKind.Relative));
                 var dynamicTag = this.tag.StartsWith("NOT_LOADED") ? this.tag : "NOT_LOADED::::" + identityTag + "::::" + this.tag;
-                MeTLImage image = new MeTLImage
-                {
-                    Tag = dynamicTag,
-                    Height = this.height,
-                    Width = this.width,
-                    Source = BackupSource,
-                    Stretch = Stretch.Fill
-                };
+                MeTLImage image = null;
                 var bytes = loadImageData();
-                if (bytes.Length != 0)
+
+                var action = new Action(delegate
                 {
-                    image.Dispatcher.Invoke((Action)delegate
-                        {
-                            var source = new BitmapImage();
-                            try
+                    image = new MeTLImage
+                    {
+                        Tag = dynamicTag,
+                        Height = this.height,
+                        Width = this.width,
+                        Source = BackupSource,
+                        Stretch = Stretch.Fill
+                    };
+                    if (bytes.Length != 0)
+                    {
+                        image.Dispatcher.Invoke((Action)delegate
                             {
-                                source.BeginInit();
-                                source.StreamSource = new MemoryStream(bytes);
-                            }
-                            finally
-                            {
-                                source.EndInit();
-                            }
-                            image.Source = source;
-                        });
+                                var source = new BitmapImage();
+                                try
+                                {
+                                    source.BeginInit();
+                                    source.StreamSource = new MemoryStream(bytes);
+                                }
+                                finally
+                                {
+                                    source.EndInit();
+                                }
+                                image.Source = source;
+                            });
+                    }
+                    image.tag(BuildImageTagFromXml(tag));
+                    InkCanvas.SetLeft(image, this.x);
+                    InkCanvas.SetTop(image, this.y);
+                });
+                if (dispatcher != null)
+                {
+                    dispatcher.adopt(action);
+                } else
+                {
+                    action();
                 }
-                image.tag(BuildImageTagFromXml(tag));
-                InkCanvas.SetLeft(image, this.x);
-                InkCanvas.SetTop(image, this.y);
                 return image;
             }
 
