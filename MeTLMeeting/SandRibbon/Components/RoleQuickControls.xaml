@@ -16,7 +16,7 @@
                           Content="Students can publish" 
                           Style="{StaticResource IconSizeCheckBox}"/>
                 <CheckBox x:Name="studentMustFollowTeacherCheckbox" Click="StudentsMustFollowTeacherChecked" Content="Students must follow teacher" Style="{StaticResource IconSizeCheckBox}" />
-                <CheckBox Content="Administer content" ToolTip="{DynamicResource BanContentToolTip}" x:Name="banContent" Click="toggleBanhammer" Style="{StaticResource IconSizeCheckBox}"/>
+                <CheckBox Content="Administer content" x:Name="banContent" Click="toggleBanhammer" Style="{StaticResource IconSizeCheckBox}"/>
                 <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}" Style="{DynamicResource HorizontalRibbonButton}"/>
                 <dict:Button Text="Duplicate page" Icon="/Resources/NewSlide.png" ToolTip="{DynamicResource DuplicateSlideToolTip}" x:Name="duplicateSlide" Command="{x:Static api:Commands.DuplicateSlide}" CommandParameter="{x:Static providers:Globals.slideDetailsInConversationDetails}" Style="{StaticResource HorizontalRibbonButton}"/>
                             </StackPanel>
