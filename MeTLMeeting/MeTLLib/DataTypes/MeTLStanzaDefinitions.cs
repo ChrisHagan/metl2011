@@ -2068,8 +2068,8 @@ namespace MeTLLib.DataTypes
 
         public class ImmutableResourceCache
         {
-            protected static long maxCacheAmount = 100 * 1024 * 1024; // 100MB
-            protected static long currentCacheAmount = 0;
+            public static readonly long maxCacheAmount = 100 * 1024 * 1024; // 100MB
+            public static long currentCacheAmount { get; protected set; } = 0;
             protected static Dictionary<Uri, byte[]> store = new Dictionary<Uri, byte[]>();
             protected static Queue<Uri> age = new Queue<Uri>();
             public static byte[] cache(Uri path, Func<Uri, byte[]> func)
@@ -2079,22 +2079,26 @@ namespace MeTLLib.DataTypes
                 if (output == null)
                 {
                     output = func(path);
-                    try {
-                        if (output.LongLength < maxCacheAmount)
+                    try
+                    {
+                        if (output.LongLength < maxCacheAmount) // don't cache things that are larger than the cache's maximum size
                         {
+                            //Console.WriteLine("caching: {0}", path);
                             age.Enqueue(path);
                             currentCacheAmount += output.LongLength;
-                            if (currentCacheAmount > maxCacheAmount)
+                            while (currentCacheAmount > maxCacheAmount && age.Peek() != null) // if this pushed the cache over the maximum size, then remove items from the cache until we're under again, or until there aren't any more items to remove.
                             {
                                 var uriToRemove = age.Dequeue();
+                                //Console.WriteLine("decaching: {0}", uriToRemove);
                                 currentCacheAmount -= store[uriToRemove].LongLength;
                                 store.Remove(uriToRemove);
                             }
+                            //Console.WriteLine("currentCacheSize: {0}", currentCacheAmount);
                             store[path] = output;
                         }
-                    } catch (Exception e)
-                    {
-                        Console.WriteLine("Exception while caching immutable image resource", e);
+                    }
+                    catch (Exception ex) {
+                        Console.WriteLine("Exception while caching bytes: {0}", ex.Message, ex.StackTrace);
                     }
                 }
                 return output;

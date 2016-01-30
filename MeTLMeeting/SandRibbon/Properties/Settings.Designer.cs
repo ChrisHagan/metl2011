@@ -139,5 +139,17 @@ namespace SandRibbon.Properties {
                 return ((string)(this["HelpUrl"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int ResourceCacheSizeMB {
+            get {
+                return ((int)(this["ResourceCacheSizeMB"]));
+            }
+            set {
+                this["ResourceCacheSizeMB"] = value;
+            }
+        }
     }
 }
