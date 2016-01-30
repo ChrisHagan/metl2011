@@ -171,6 +171,10 @@ namespace MeTLLib.DataTypes
         {
             return String.Compare(target, theirTarget, true) == 0;
         }
+        public bool HasSameLocation(Location location)
+        {
+            return location != null && location.currentSlide != null && location.currentSlide != Slide.Empty && this.slide == location.currentSlide.id;
+        }
 
         public string author { get; set; }
         public string identity { get; protected set; }
@@ -2062,6 +2066,41 @@ namespace MeTLLib.DataTypes
             }
         }
 
+        public class ImmutableResourceCache
+        {
+            protected static long maxCacheAmount = 100 * 1024 * 1024; // 100MB
+            protected static long currentCacheAmount = 0;
+            protected static Dictionary<Uri, byte[]> store = new Dictionary<Uri, byte[]>();
+            protected static Queue<Uri> age = new Queue<Uri>();
+            public static byte[] cache(Uri path, Func<Uri, byte[]> func)
+            {
+                byte[] output = null;
+                store.TryGetValue(path, out output);
+                if (output == null)
+                {
+                    output = func(path);
+                    try {
+                        if (output.LongLength < maxCacheAmount)
+                        {
+                            age.Enqueue(path);
+                            currentCacheAmount += output.LongLength;
+                            if (currentCacheAmount > maxCacheAmount)
+                            {
+                                var uriToRemove = age.Dequeue();
+                                currentCacheAmount -= store[uriToRemove].LongLength;
+                                store.Remove(uriToRemove);
+                            }
+                            store[path] = output;
+                        }
+                    } catch (Exception e)
+                    {
+                        Console.WriteLine("Exception while caching immutable image resource", e);
+                    }
+                }
+                return output;
+            }
+        }
+
         public class Image : Element
         {
             private IWebClient downloader;
@@ -2109,19 +2148,6 @@ namespace MeTLLib.DataTypes
             public Func<MeTLImage> curryEvaluation(MetlConfiguration server)
             {
                 return () => forceEvaluation();
-            }
-            public MeTLImage forceEvaluationForPrinting()
-            {//Broken.  We're moving printing serverside anyway
-                MeTLImage image = new MeTLImage
-                {
-                    Tag = "FOR_PRINTING_ONLY::::" + this.tag,
-                    Height = this.height,
-                    Width = this.width
-                    //Source = this.asynchronouslyLoadImageData()
-                };
-                InkCanvas.SetLeft(image, this.x);
-                InkCanvas.SetTop(image, this.y);
-                return image;
             }
             public static MeTLImage cloneOnDispatcher(MeTLImage image, System.Windows.Threading.Dispatcher dispatcher)
             {
@@ -2200,7 +2226,8 @@ namespace MeTLLib.DataTypes
                 if (dispatcher != null)
                 {
                     dispatcher.adopt(action);
-                } else
+                }
+                else
                 {
                     action();
                 }
@@ -2224,7 +2251,7 @@ namespace MeTLLib.DataTypes
                 try
                 {
                     var path = server.getResource(GetTag(sourceTag));
-                    var bytes = provider.secureGetData(path);
+                    var bytes = ImmutableResourceCache.cache(path, p => provider.secureGetData(p));
                     return bytes;
                 }
                 catch (Exception e)

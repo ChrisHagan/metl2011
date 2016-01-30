@@ -1221,7 +1221,7 @@ namespace SandRibbon.Components
             {
                 foreach (var targettedStroke in receivedStrokes.Where(targettedStroke => targettedStroke.target == strokeTarget))
                 {
-                    if (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public))
+                    if (targettedStroke.HasSameLocation(Globals.location) && (targettedStroke.HasSameAuthor(me) || targettedStroke.HasSamePrivacy(Privacy.Public)))
                         AddStrokeToCanvas(new PrivateAwareStroke(targettedStroke.stroke.Clone(), strokeTarget));
                 }
             });
@@ -1705,28 +1705,37 @@ namespace SandRibbon.Components
                 if (image.slide == Globals.slide && image.HasSameTarget(_target))
                 {
                     TargettedImage image1 = image;
-                    if (image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
+                    if (image.HasSameLocation(Globals.location) && image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
                         WebThreadPool.QueueUserWorkItem(new Amib.Threading.Action(delegate
                         {
                             try
                             {
-                                var receivedImage = image1.imageSpecification.forceEvaluation(Dispatcher);
-                                Dispatcher.adoptAsync(() =>
+                                if (image.HasSameLocation(Globals.location))
                                 {
-                                    try
+                                    var receivedImage = image1.imageSpecification.forceEvaluation(Dispatcher);
+                                    if (image.HasSameLocation(Globals.location))
                                     {
-                                        //                      var receivedImage = image1.imageSpecification.forceEvaluation();
-                                        //image.clone();
-                                        //                                    var receivedImage = MeTLStanzas.Image.cloneOnDispatcher(tempImage, Dispatcher);
-                                        AddImage(Work, receivedImage);
-                                        receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                                        Dispatcher.adoptAsync(() =>
+                                        {
+                                            try
+                                            {
+                                            //                      var receivedImage = image1.imageSpecification.forceEvaluation();
+                                            //image.clone();
+                                            //                                    var receivedImage = MeTLStanzas.Image.cloneOnDispatcher(tempImage, Dispatcher);
+                                            if (image.HasSameLocation(Globals.location))
+                                                {
+                                                    AddImage(Work, receivedImage);
+                                                    receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
+                                                }
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine(e.Message);
+                                            }
+                                        });
                                     }
-                                    catch (Exception e)
-                                    {
-                                        Console.WriteLine(e.Message);
-                                    }
-                                });
+                                }
                             }
                             catch (Exception ex)
                             {

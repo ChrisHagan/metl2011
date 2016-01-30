@@ -358,7 +358,7 @@ namespace SandRibbon
         {
             try
             {
-                Process.Start("http://monash.edu/eeducation/metl/help.html");
+                Process.Start(Properties.Settings.Default.HelpUrl);
             }
             catch (Exception e)
             {

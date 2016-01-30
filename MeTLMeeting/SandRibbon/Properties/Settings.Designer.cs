@@ -130,5 +130,14 @@ namespace SandRibbon.Properties {
                 return ((string)(this["TutorialUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.stackableregiments.com/metl/help.html")]
+        public string HelpUrl {
+            get {
+                return ((string)(this["HelpUrl"]));
+            }
+        }
     }
 }
