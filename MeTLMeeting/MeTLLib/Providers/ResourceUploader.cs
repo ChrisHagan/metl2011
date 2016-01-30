@@ -87,10 +87,14 @@ namespace MeTLLib.Providers.Connection
             if (string.IsNullOrEmpty(file)) throw new ArgumentNullException("file", "Argument cannot be null");
             try
             {
-                var fullPath = path;
                 var fileLocation = new Uri(file).LocalPath;
-                var res = _httpResourceProvider.securePutData(fullPath, File.ReadAllBytes(fileLocation));//  securePutFile(fullPath, file);
-                return XElement.Parse(res).Value;
+                var returnId = "";
+                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.cache(path, (fullPath) => {
+                    var bytes = File.ReadAllBytes(fileLocation);
+                    returnId = _httpResourceProvider.securePutData(fullPath, bytes);
+                    return bytes;
+                });
+                return XElement.Parse(returnId).Value;
             }
             catch (WebException e)
             {
@@ -102,9 +106,12 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                var fullPath = path;
-                var res = _httpResourceProvider.securePutData(fullPath, bytes);//  securePutFile(fullPath, file);
-                return XElement.Parse(res).Value;
+                var returnId = "";
+                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.cache(path, (fullPath) => {
+                    returnId = _httpResourceProvider.securePutData(fullPath, bytes);
+                    return bytes;
+                });
+                return XElement.Parse(returnId).Value;
             }
             catch (WebException e)
             {
