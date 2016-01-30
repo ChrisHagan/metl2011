@@ -59,8 +59,13 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                var res = _httpResourceProvider.securePutData(new Uri(path), bytes);//  securePutFile(fullPath, file);
-                return XElement.Parse(res).Value;
+                var returnId = "";
+                var fullPath = new Uri(path);
+                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.cache(fullPath, (p) => {
+                    returnId = _httpResourceProvider.securePutData(p, bytes);
+                    return bytes;
+                });
+                return XElement.Parse(returnId).Value;
             }
             catch (WebException e)
             {
