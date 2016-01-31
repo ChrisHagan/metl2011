@@ -792,7 +792,7 @@ namespace MeTLLib.Providers.Connection
         {
             return auditor.wrapFunction((a) =>
             {
-                return conn.XmppConnectionState == XmppConnectionState.SessionStarted && HttpWorked(); //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
+                return conn != null && conn.XmppConnectionState == XmppConnectionState.SessionStarted && HttpWorked(); //changing the check to SessionStarted, so that we only send messages when we're inside a fully set-up session, and not before, so that we don't interrupt SASL handshake or anything like that.
             }, "healthCheck", "xmpp");
         }
         public void GetHistory(int where)
