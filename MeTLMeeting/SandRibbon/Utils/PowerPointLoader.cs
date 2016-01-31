@@ -150,8 +150,8 @@ namespace SandRibbon.Utils
             {
                 target = _target;
                 conversation = _conversation;
-                Commands.ReceiveImage.RegisterCommand(cancel);
-                Commands.ReceiveTextBox.RegisterCommand(cancel);
+//                Commands.ReceiveImage.RegisterCommand(cancel);
+//                Commands.ReceiveTextBox.RegisterCommand(cancel);
             }
             public void increment()
             {
@@ -159,8 +159,8 @@ namespace SandRibbon.Utils
                 if (slidesUploaded == target)
                 {
                     // completed the import
-                    Commands.ReceiveImage.UnregisterCommand(cancel);
-                    Commands.ReceiveTextBox.UnregisterCommand(cancel);
+//                    Commands.ReceiveImage.UnregisterCommand(cancel);
+//                    Commands.ReceiveTextBox.UnregisterCommand(cancel);
 
                     // join successfully created conversation 
                     Commands.JoinConversation.Execute(conversation);
@@ -495,6 +495,7 @@ namespace SandRibbon.Utils
                 var proposedId = me + ":" + DateTime.Now.Ticks.ToString() + ":" + shapeCount;
                 var hostedFileUriXml = conn.resourceProvider.securePutData(App.controller.config.uploadResource(proposedId, id.ToString()), bytes);
                 var hostedFileUri =  XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
+                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(App.controller.config.getResource(hostedFileUri), bytes);
                 //var hostedFileUri =  conn.UploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide.ToString());
 
                 /*

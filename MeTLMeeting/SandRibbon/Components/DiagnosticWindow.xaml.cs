@@ -250,31 +250,34 @@ namespace SandRibbon.Components
                 {
                     lock (gaugeHistoryLock)
                     {
-                        var oldFromTotal = App.diagnosticWindow.gaugeSource.FirstOrDefault(eg => eg.Equals(g));
-                        if (oldFromTotal != default(DiagnosticGauge))
+                        if (App.diagnosticWindow != null)
                         {
-                            App.diagnosticWindow.gaugeSource.Remove(oldFromTotal);
-                        }
-                        App.diagnosticWindow.gaugeSource.Add(g);
-                        var old = App.diagnosticWindow.inProgressSource.FirstOrDefault(eg => eg.Equals(g));
-                        switch (g.status)
-                        {
-                            case GaugeStatus.Started:
-                                App.diagnosticWindow.inProgressSource.Add(g);
-                                break;
-                            case GaugeStatus.InProgress:
-                                if (old != default(DiagnosticGauge))
-                                    App.diagnosticWindow.inProgressSource.Remove(old);
-                                App.diagnosticWindow.inProgressSource.Add(g);
-                                break;
-                            case GaugeStatus.Completed:
-                                if (old != default(DiagnosticGauge))
-                                    App.diagnosticWindow.inProgressSource.Remove(old);
-                                break;
-                            case GaugeStatus.Failed:
-                                if (old != default(DiagnosticGauge))
-                                    App.diagnosticWindow.inProgressSource.Remove(old);
-                                break;
+                            var oldFromTotal = App.diagnosticWindow.gaugeSource.FirstOrDefault(eg => eg.Equals(g));
+                            if (oldFromTotal != default(DiagnosticGauge))
+                            {
+                                App.diagnosticWindow.gaugeSource.Remove(oldFromTotal);
+                            }
+                            App.diagnosticWindow.gaugeSource.Add(g);
+                            var old = App.diagnosticWindow.inProgressSource.FirstOrDefault(eg => eg.Equals(g));
+                            switch (g.status)
+                            {
+                                case GaugeStatus.Started:
+                                    App.diagnosticWindow.inProgressSource.Add(g);
+                                    break;
+                                case GaugeStatus.InProgress:
+                                    if (old != default(DiagnosticGauge))
+                                        App.diagnosticWindow.inProgressSource.Remove(old);
+                                    App.diagnosticWindow.inProgressSource.Add(g);
+                                    break;
+                                case GaugeStatus.Completed:
+                                    if (old != default(DiagnosticGauge))
+                                        App.diagnosticWindow.inProgressSource.Remove(old);
+                                    break;
+                                case GaugeStatus.Failed:
+                                    if (old != default(DiagnosticGauge))
+                                        App.diagnosticWindow.inProgressSource.Remove(old);
+                                    break;
+                            }
                         }
                     };
                 });

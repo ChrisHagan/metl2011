@@ -396,6 +396,7 @@ namespace MeTLLib
                     {
                         var proposedIdentity = String.Format("{0}:{1}", lii.author, DateTime.Now.Ticks);
                         var newPath = resourceUploader.uploadResource(lii.slide.ToString(), proposedIdentity, lii.bytes);// File.ReadAllBytes(lii.file));
+                        MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(server.getResource(newPath), lii.bytes);
                         a(GaugeStatus.InProgress, 33);
                         wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, lii.timestamp, lii.identity, newPath, lii.currentConversationName, DateTimeFactory.Now().Ticks, lii.blacklisted));
                         a(GaugeStatus.InProgress, 66);
@@ -465,6 +466,7 @@ namespace MeTLLib
                 {
                     var proposedIdentity = String.Format("{0}:{1}", lii.author, DateTime.Now.Ticks);
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), proposedIdentity, lii.bytes);
+                    MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(server.getResource(newPath), lii.bytes);
                     wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newPath, lii.X,lii.Y,lii.Width,lii.Height, newPath, -1L));
                 }
                 catch (Exception e)
@@ -482,6 +484,7 @@ namespace MeTLLib
             {
                 var proposedIdentity = String.Format("{0}:{1}", lfi.author, DateTime.Now.Ticks);
                 var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), proposedIdentity, lfi.bytes);
+                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(server.getResource(newPath), lfi.bytes);
                 wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, newPath, lfi.timestamp, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);

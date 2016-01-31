@@ -2079,29 +2079,34 @@ namespace MeTLLib.DataTypes
                 if (output == null)
                 {
                     output = func(path);
-                    try
-                    {
-                        if (output.LongLength < maxCacheAmount) // don't cache things that are larger than the cache's maximum size
-                        {
-                            //Console.WriteLine("caching: {0}", path);
-                            age.Enqueue(path);
-                            currentCacheAmount += output.LongLength;
-                            while (currentCacheAmount > maxCacheAmount && age.Peek() != null) // if this pushed the cache over the maximum size, then remove items from the cache until we're under again, or until there aren't any more items to remove.
-                            {
-                                var uriToRemove = age.Dequeue();
-                                //Console.WriteLine("decaching: {0}", uriToRemove);
-                                currentCacheAmount -= store[uriToRemove].LongLength;
-                                store.Remove(uriToRemove);
-                            }
-                            //Console.WriteLine("currentCacheSize: {0}", currentCacheAmount);
-                            store[path] = output;
-                        }
-                    }
-                    catch (Exception ex) {
-                        Console.WriteLine("Exception while caching bytes: {0}", ex.Message, ex.StackTrace);
-                    }
+                    updateCache(path, output);
                 }
                 return output;
+            }
+            public static void updateCache(Uri path, byte[] bytes)
+            {
+                try
+                {
+                    if (bytes.LongLength < maxCacheAmount) // don't cache things that are larger than the cache's maximum size
+                    {
+                        //Console.WriteLine("caching: {0}", path);
+                        age.Enqueue(path);
+                        currentCacheAmount += bytes.LongLength;
+                        while (currentCacheAmount > maxCacheAmount && age.Peek() != null) // if this pushed the cache over the maximum size, then remove items from the cache until we're under again, or until there aren't any more items to remove.
+                        {
+                            var uriToRemove = age.Dequeue();
+                            //Console.WriteLine("decaching: {0}", uriToRemove);
+                            currentCacheAmount -= store[uriToRemove].LongLength;
+                            store.Remove(uriToRemove);
+                        }
+                        //Console.WriteLine("currentCacheSize: {0}", currentCacheAmount);
+                        store[path] = bytes;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception while caching bytes: {0}", ex.Message, ex.StackTrace);
+                }
             }
         }
 

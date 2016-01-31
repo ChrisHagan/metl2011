@@ -20,7 +20,7 @@ namespace MeTLLib.Providers.Connection
         protected HttpResourceProvider provider;
         protected MetlConfiguration config;
         public IAuditor auditor { get; protected set; }
-        public ProductionResourceUploaderFactory(MetlConfiguration _config, HttpResourceProvider _provider,IAuditor _auditor)
+        public ProductionResourceUploaderFactory(MetlConfiguration _config, HttpResourceProvider _provider, IAuditor _auditor)
         {
             auditor = _auditor;
             provider = _provider;
@@ -28,13 +28,13 @@ namespace MeTLLib.Providers.Connection
         }
         public IResourceUploader get()
         {
-            return new ProductionResourceUploader(config, provider,auditor);
+            return new ProductionResourceUploader(config, provider, auditor);
         }
     }
     public interface IResourceUploader
     {
-        string uploadResource(string path, byte[] bytes);
-        string uploadResource(string path, string file);
+        //string uploadResource(string path, byte[] bytes);
+        //string uploadResource(string path, string file);
         //string uploadResource(string path, string file, bool overwrite);
         string uploadResourceToPath(byte[] data, string file, string name);
         string uploadResourceToPath(byte[] data, string file, string name, bool overwrite);
@@ -49,12 +49,13 @@ namespace MeTLLib.Providers.Connection
         protected MetlConfiguration metlServerAddress;
         protected HttpResourceProvider _httpResourceProvider;
         public IAuditor auditor { get; protected set; }
-        public ProductionResourceUploader(MetlConfiguration _metlServerAddress, HttpResourceProvider provider,IAuditor _auditor)
+        public ProductionResourceUploader(MetlConfiguration _metlServerAddress, HttpResourceProvider provider, IAuditor _auditor)
         {
             auditor = _auditor;
             metlServerAddress = _metlServerAddress;
             _httpResourceProvider = provider;
         }
+        /*
         public string uploadResource(string path, byte[] bytes)
         {
             try
@@ -77,6 +78,7 @@ namespace MeTLLib.Providers.Connection
         {
             return uploadResource(new Uri(path), file, false);
         }
+        */
         public string uploadResource(string jid, string preferredFilename, string file)
         {
             var fullPath = metlServerAddress.uploadResource(preferredFilename, jid);
@@ -93,12 +95,8 @@ namespace MeTLLib.Providers.Connection
             try
             {
                 var fileLocation = new Uri(file).LocalPath;
-                var returnId = "";
-                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.cache(path, (fullPath) => {
-                    var bytes = File.ReadAllBytes(fileLocation);
-                    returnId = _httpResourceProvider.securePutData(fullPath, bytes);
-                    return bytes;
-                });
+                var bytes = File.ReadAllBytes(fileLocation);
+                var returnId = _httpResourceProvider.securePutData(path, bytes);
                 return XElement.Parse(returnId).Value;
             }
             catch (WebException e)
@@ -111,11 +109,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                var returnId = "";
-                MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.cache(path, (fullPath) => {
-                    returnId = _httpResourceProvider.securePutData(fullPath, bytes);
-                    return bytes;
-                });
+                var returnId = _httpResourceProvider.securePutData(path, bytes);
                 return XElement.Parse(returnId).Value;
             }
             catch (WebException e)

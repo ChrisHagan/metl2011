@@ -246,8 +246,11 @@ namespace SandRibbon.Components
             Display(details);
             var currentSlide = details.Slides.OrderBy(cd => cd.index).First();
             var newLoc = new Location(details, currentSlide, details.Slides);
-            MoveTo(newLoc,true);
-            AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
+            MoveTo(newLoc, true);
+            Dispatcher.adopt(delegate
+            {
+                AutomationSlideChanged(this, slides.SelectedIndex, currentSlide.index);// indexOf(currentSlideId));
+            });
             Commands.MoveTo.ExecuteAsync(newLoc);
             //Commands.MoveTo.Execute(new Location(details,details.Slides.OrderBy(cd => cd.index).First(),details.Slides));
         }
@@ -421,11 +424,12 @@ namespace SandRibbon.Components
                         if (thumb.index != slide.index)
                         {
                             thumbnailList.Remove(thumb);
-                            thumbnailList.Insert(slide.index,slide);
+                            thumbnailList.Insert(slide.index, slide);
                         }
-                    } else
+                    }
+                    else
                     {
-                        thumbnailList.Insert(slide.index,slide);
+                        thumbnailList.Insert(slide.index, slide);
                     }
                     if (slide.id == currentSlideId)
                         slides.SelectedItem = slide;
@@ -454,7 +458,7 @@ namespace SandRibbon.Components
                             foreach (var slide in removedItems) ((Slide)slide).refresh();
                             AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
 
-                            Commands.MoveTo.ExecuteAsync(new Location(Globals.location.activeConversation,selected,Globals.location.availableSlides));// currentSlideId);
+                            Commands.MoveTo.ExecuteAsync(new Location(Globals.location.activeConversation, selected, Globals.location.availableSlides));// currentSlideId);
                             checkMovementLimits();
                             SendSyncMove(currentSlideId);
                         }
