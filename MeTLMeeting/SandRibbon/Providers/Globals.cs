@@ -137,9 +137,14 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var conversationDetails = Globals.conversationDetails;
-                var sl = conversationDetails.Slides.Find(s => s.id == slide);
-                return new Location(conversationDetails, sl == null ? Slide.Empty : sl, conversationDetails.Slides);
+                try {
+                    var conversationDetails = Globals.conversationDetails;
+                    var sl = conversationDetails.Slides.Find(s => s.id == slide);
+                    return new Location(conversationDetails, sl == null ? Slide.Empty : sl, conversationDetails.Slides);
+                } catch (Exception e)
+                {
+                    return Location.Empty;
+                }
             }
         }
         public static List<Slide> slides
@@ -234,7 +239,12 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return Commands.MoveTo.IsInitialised ? ((Location)Commands.MoveTo.LastValue()).currentSlide.id : -1;
+                try {
+                    return Commands.MoveTo.IsInitialised ? ((Location)Commands.MoveTo.LastValue()).currentSlide.id : -1;
+                } catch (Exception ex)
+                {
+                    return -1;
+                }
             }
         }
         public static string me

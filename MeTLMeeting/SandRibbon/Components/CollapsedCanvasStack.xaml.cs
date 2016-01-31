@@ -1698,6 +1698,8 @@ namespace SandRibbon.Components
                 });
         }
 
+        protected int workaroundImageZOrder = 0;
+
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
             foreach (var image in images)
@@ -1705,6 +1707,7 @@ namespace SandRibbon.Components
                 if (image.slide == Globals.slide && image.HasSameTarget(_target))
                 {
                     TargettedImage image1 = image;
+                    var imageZ = workaroundImageZOrder++;
                     if (image.HasSameLocation(Globals.location) && image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
                     {
                         WebThreadPool.QueueUserWorkItem(new Amib.Threading.Action(delegate
@@ -1720,11 +1723,9 @@ namespace SandRibbon.Components
                                         {
                                             try
                                             {
-                                            //                      var receivedImage = image1.imageSpecification.forceEvaluation();
-                                            //image.clone();
-                                            //                                    var receivedImage = MeTLStanzas.Image.cloneOnDispatcher(tempImage, Dispatcher);
-                                            if (image.HasSameLocation(Globals.location))
+                                                if (image.HasSameLocation(Globals.location))
                                                 {
+                                                    Canvas.SetZIndex(receivedImage, imageZ); // this is a temporary workaround until we put z-ordering in properly, or until we put down a better image-ordering strategy - this should ensure that items are added in the same order they used to be.
                                                     AddImage(Work, receivedImage);
                                                     receivedImage.ApplyPrivacyStyling(contentBuffer, _target, receivedImage.tag().privacy);
                                                 }
@@ -1753,9 +1754,13 @@ namespace SandRibbon.Components
             contentBuffer.AddImage(image, (img) =>
             {
                 var imageToAdd = img as MeTLImage;
-                var zIndex = imageToAdd.tag().isBackground ? -5 : 2;
+                if (imageToAdd.tag().isBackground) // this is part of the zIndex workaround to return parser-order determinacy.
+                {
+                    Canvas.SetZIndex(img, -5);
+                }
+                //var zIndex = imageToAdd.tag().isBackground ? -5 : 2;
 
-                Canvas.SetZIndex(img, zIndex);
+//                Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });
         }

@@ -78,7 +78,7 @@ namespace SandRibbon.Components
                     Globals.synched = true;
                     if (Globals.teacherSlide > 0)
                     {
-                        if (Globals.location.currentSlide.id != Globals.teacherSlide)
+                        if (Globals.location.currentSlide.id != Globals.teacherSlide && Globals.location.availableSlides.Exists(sl => sl.id == Globals.teacherSlide))
                         {
                             Commands.MoveTo.Execute(new Location(Globals.location.activeConversation,Globals.location.availableSlides.Find(s => s.id == Globals.teacherSlide),Globals.location.availableSlides));
                         }

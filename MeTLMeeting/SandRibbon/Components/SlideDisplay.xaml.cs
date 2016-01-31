@@ -456,7 +456,9 @@ namespace SandRibbon.Components
                         {
                             currentSlideId = selected.id;
                             foreach (var slide in removedItems) ((Slide)slide).refresh();
-                            AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
+                            Dispatcher.adopt(delegate {
+                                AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
+                            });
 
                             Commands.MoveTo.ExecuteAsync(new Location(Globals.location.activeConversation, selected, Globals.location.availableSlides));// currentSlideId);
                             checkMovementLimits();
