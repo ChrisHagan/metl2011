@@ -1698,7 +1698,7 @@ namespace SandRibbon.Components
                 });
         }
 
-        protected int workaroundImageZOrder = 0;
+        protected int workaroundImageZOrder = -1000000; //start at negative 1 million, to ensure that images remain behind inkStrokes.
 
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
@@ -1756,7 +1756,7 @@ namespace SandRibbon.Components
                 var imageToAdd = img as MeTLImage;
                 if (imageToAdd.tag().isBackground) // this is part of the zIndex workaround to return parser-order determinacy.
                 {
-                    Canvas.SetZIndex(img, -5);
+                    Canvas.SetZIndex(img, -1000001); //starting at -1 million and 1, so that it's definitely behind the other images.
                 }
                 //var zIndex = imageToAdd.tag().isBackground ? -5 : 2;
 
