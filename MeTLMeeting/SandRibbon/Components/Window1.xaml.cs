@@ -332,7 +332,7 @@ namespace SandRibbon
         }
         private void ImportPowerpoint(object obj)
         {
-            if (loader == null) loader = new PowerPointLoader();
+            if (loader == null) loader = new PowerPointLoader(App.controller.client);
             loader.ImportPowerpoint(this);
         }
         private void SetRibbonAppearance(RibbonAppearance appearance)
@@ -345,7 +345,7 @@ namespace SandRibbon
         private void createBlankConversation(object obj)
         {
             var element = Keyboard.FocusedElement;
-            if (loader == null) loader = new PowerPointLoader();
+            if (loader == null) loader = new PowerPointLoader(App.controller.client);
             loader.CreateBlankConversation();
         }
 

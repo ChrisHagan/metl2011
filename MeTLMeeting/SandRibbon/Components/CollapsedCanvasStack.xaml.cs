@@ -26,6 +26,7 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using System.IO.Compression;
 
 namespace SandRibbon.Components
 {
@@ -2948,33 +2949,15 @@ namespace SandRibbon.Components
                     App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(Globals.slide, Globals.me, _target, currentPrivacy, 15, 15, imageWidth, imageHeight, bytes));
                 }
             }
-            /*
-                using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
-                {
-                    PngBitmapEncoder encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(imageSource));
-                    encoder.Save(fileStream);
-                }
-                if (File.Exists(tmpFile))
-                {
-                    var uri =
-                        App.controller.client.NoAuthUploadResource(
-                            new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide, Globals.generateId());
-                    var image = new MeTLImage
-                    {
-                        Source = new BitmapImage(App.controller.config.getImage(currentPrivacy == Privacy.Public ? Globals.slide.ToString() : Globals.slide.ToString() + Globals.me, uri)),
-                        Width = imageSource.Width,
-                        Height = imageSource.Height,
-                        Stretch = Stretch.Fill
-                    };
-                    image.tag(new ImageTag(Globals.me, currentPrivacy, Globals.generateId(), false, -1L, uri.ToString(), -1)); // ZIndex was -1, timestamp is -1L
-                    InkCanvas.SetLeft(image, 15);
-                    InkCanvas.SetTop(image, 15);
-                    images.Add(image);
-                }
+            return new List<MeTLImage>();
+        }
+        private List<MeTLImage> createImages(List<ImageInfo> selectedImages)
+        {
+            var images = new List<MeTLImage>();
+            foreach (var imageSource in selectedImages)
+            {
+                App.controller.client.UploadAndSendImage(new MeTLStanzas.LocalImageInformation(Globals.slide, Globals.me, _target, currentPrivacy, imageSource.x, imageSource.y, imageSource.w, imageSource.h, imageSource.bytes));
             }
-            return images;
-            */
             return new List<MeTLImage>();
         }
         private void HandleImagePasteRedo(List<MeTLImage> selectedImages)
@@ -3064,6 +3047,46 @@ namespace SandRibbon.Components
             }
             return boxes;
         }
+        private List<MeTLTextBox> createPastedBoxes(List<TextInfo> selectedText)
+        {
+            var boxes = new List<MeTLTextBox>();
+            foreach (var text in selectedText)
+            {
+                System.Threading.Thread.Sleep(2);
+                MeTLTextBox box = createNewTextbox();
+                box.Width = text.w;
+                box.Height = text.h;
+                pos = new Point(text.x,text.y);
+                InkCanvas.SetLeft(box, pos.X);
+                InkCanvas.SetTop(box, pos.Y);
+                box.TextChanged -= SendNewText;
+                box.Text = text.text;
+                box.TextChanged += SendNewText;
+                boxes.Add(box);
+            }
+            return boxes;
+        }
+        struct ImageInfo
+        {
+            public double x;
+            public double y;
+            public double w;
+            public double h;
+            public byte[] bytes;
+            public string filename;
+        }
+        struct TextInfo
+        {
+            public string text;
+            public double x;
+            public double y;
+            public double w;
+            public double h;
+            public string fontfamily;
+            public string fontsize;
+            public string fontcolor;
+        }
+
         protected void HandlePaste(object _args)
         {
             if (me == Globals.PROJECTOR) return;
@@ -3097,7 +3120,85 @@ namespace SandRibbon.Components
             }
             else
             {
-                if (Clipboard.ContainsText())
+                // this was an experimental attmept to read data from the clipboard in native pptx format
+                /*
+                if (Clipboard.ContainsData("Art::GVML Clipformat"))
+                {
+                    using (var bytes = ((MemoryStream)Clipboard.GetData("Art::GVML Clipformat")))
+                    {
+                        using (ZipArchive archive = new ZipArchive(bytes))
+                        {
+                            var refs = new Dictionary<string, byte[]>();
+                            var textboxes = new List<TextInfo>();
+                            var images = new List<ImageInfo>();
+                            foreach (ZipArchiveEntry entry in archive.Entries)
+                            {
+                                try {
+                                    var bufferSize = 1;
+                                    using (var ds = entry.Open())
+                                    {
+                                        var buf = new byte[bufferSize];
+                                        var output = new List<byte>();
+                                        int len;
+                                        while ((len = ds.Read(buf, 0, buf.Length)) > 0)
+                                        {
+                                            output = output.Concat(buf).ToList();
+                                        }
+                                        if (entry.Name.EndsWith(".xml"))
+                                        {
+                                            var s = System.Text.Encoding.UTF8.GetString(output.ToArray());
+                                            var xml = System.Xml.Linq.XDocument.Parse(s);
+                                            foreach (var picNode in xml.Descendants("a:pic"))
+                                            {
+                                                //add an image
+                                                
+                                                //bytes = \\a:pic\a:blip\@[r:embed => fileLocation => bytes]
+                                                //x = \\a:pic\a:spPr\a:xfrm\a:off\@x (not yet sure of the units)
+                                                //y = \\a:pic\a:spPr\a:xfrm\a:off\@y (not yet sure of the units)
+                                                //w = \\a:pic\a:spPr\a:xfrm\a:off\@cx (not yet sure of the units)
+                                                //h = \\a:pic\a:spPr\a:xfrm\a:off\@cy (not yet sure of the units)
+                                                
+                                            }
+                                            foreach (var textNode in xml.Descendants("a:sp"))
+                                            {
+                                                //add a text
+                                                
+                                                //text = \\a:sp\a:txSp\a:txBody\\a:t (.text)
+                                                //fontfamily = // not sure
+                                                //fontcolor = // not sure
+                                                //fontsize = // not sure
+                                                //x = \\a:pic\a:spPr\a:xfrm\a:off\@x (not yet sure of the units)
+                                                //y = \\a:pic\a:spPr\a:xfrm\a:off\@y (not yet sure of the units)
+                                                //w = \\a:pic\a:spPr\a:xfrm\a:off\@cx (not yet sure of the units)
+                                                //h = \\a:pic\a:spPr\a:xfrm\a:off\@cy (not yet sure of the units)
+                                                
+                                            }
+                                        } else
+                                        {
+                                            refs.Add(entry.FullName, output.ToArray());
+                                        }
+                                    }
+                                } catch (Exception ex)
+                                {
+                                    Console.WriteLine("ex", ex);
+                                }
+                            }
+                            var imgs = createImages(images);
+                            var boxes = createPastedBoxes(textboxes);
+                            Action undo = () => {
+                                HandleTextPasteUndo(boxes, currentBox);
+                                HandleImagePasteUndo(imgs);
+                            };
+                            Action redo = () => {
+                                HandleImagePasteRedo(imgs);
+                                HandleTextPasteRedo(boxes, currentBox);
+                            };
+                            UndoHistory.Queue(undo, redo, "Pasted text and images");
+                            redo();
+                        }
+                    }
+                }
+                else*/ if (Clipboard.ContainsText())
                 {
                     var boxes = createPastedBoxes(new List<string> { Clipboard.GetText() });
                     Action undo = () => HandleTextPasteUndo(boxes, currentBox);
