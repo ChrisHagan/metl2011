@@ -279,6 +279,9 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideAdorners));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.PastePowerpointContent.RegisterCommand(new DelegateCommand<object>((o => {
+                var a = 1;
+            })));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute));

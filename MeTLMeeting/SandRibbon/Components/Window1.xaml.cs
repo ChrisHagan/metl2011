@@ -150,6 +150,7 @@ namespace SandRibbon
                 }
             }));
             Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation, userMayDuplicateConversation));
+            Commands.OpenPowerpointDialog.RegisterCommand(new DelegateCommand<object>(openPowerpointDialog, userMayOpenPowerpointDialog));
             Commands.CreateGrouping.RegisterCommand(new DelegateCommand<object>(createGrouping, (o) => mustBeInConversationAndBeAuthor(o)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
@@ -330,6 +331,31 @@ namespace SandRibbon
             }
             else MeTLMessage.Warning("You must be logged in to edit your options");
         }
+        private bool userMayOpenPowerpointDialog(object obj)
+        {
+            return true;
+        }
+        private void openPowerpointDialog(object obj) {
+            var pptLoader = new PowerPointLoader(App.controller.client);
+            var dialog = new OpenFileDialog
+            {
+                Filter = "PowerPoint files (*.ppt, *.pptx)|*.ppt; *.pptx|All files (*.*)|*.*",
+                FilterIndex = 0,
+                RestoreDirectory = true,
+                Multiselect = false
+            };
+            var response = dialog.ShowDialog(this.Owner);
+            if (response.HasValue)
+            {
+                Action<PowerpointImportProgress> progress = (PowerpointImportProgress p) => {
+                    Console.WriteLine(String.Format("PowerpointImport: {2} :: {0}/{1}",p.slideId,p.totalSlides,p.stage));
+                };
+                var convDesc = pptLoader.GetFlexibleDescriptor(dialog.FileName,progress);
+                var newWindow = new PowerPointContent(convDesc);
+                newWindow.Show();
+            }
+        }
+
         private void ImportPowerpoint(object obj)
         {
             if (loader == null) loader = new PowerPointLoader(App.controller.client);

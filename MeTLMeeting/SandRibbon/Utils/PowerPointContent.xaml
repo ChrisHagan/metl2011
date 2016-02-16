@@ -4,9 +4,32 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SandRibbon.Utils"
+        xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         mc:Ignorable="d"
         Title="PowerPointContent" Height="300" Width="300">
-    <Grid>
-        
-    </Grid>
+    <DataGrid IsReadOnly="True" AutoGenerateColumns="False" x:Name="ContentListing">
+        <DataGrid.Columns>
+            <DataGridTextColumn Binding="{Binding Slide}"/>
+            <DataGridTextColumn Binding="{Binding X}"/>
+            <DataGridTextColumn Binding="{Binding Y}"/>
+            <DataGridTextColumn Binding="{Binding Width}"/>
+            <DataGridTextColumn Binding="{Binding Height}"/>
+            <DataGridTextColumn Binding="{Binding Privacy}"/>
+            <DataGridTextColumn Binding="{Binding Target}"/>
+            <DataGridTemplateColumn>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding Visual}"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Button Command="{x:Static api:Commands.PastePowerpointContent}" CommandParameter="{Binding}">Paste</Button>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
 </Window>

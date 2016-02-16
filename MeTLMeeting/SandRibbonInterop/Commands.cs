@@ -123,6 +123,8 @@ namespace SandRibbon
     {
         public static DefaultableCompositeCommand Mark = new DefaultableCompositeCommand("Mark");
 
+        public static DefaultableCompositeCommand PastePowerpointContent = new DefaultableCompositeCommand("PastePowerpointContent");
+        public static DefaultableCompositeCommand OpenPowerpointDialog = new DefaultableCompositeCommand("OpenPowerpointDialog");
         public static DefaultableCompositeCommand ProxyJoinConversation = new DefaultableCompositeCommand("ProxyJoinConversation");
         public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand("LeaveAllRooms");
         public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand("LeaveAllRooms");

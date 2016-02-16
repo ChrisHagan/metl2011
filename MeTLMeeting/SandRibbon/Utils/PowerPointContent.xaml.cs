@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MeTLLib.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,65 @@ using System.Windows.Shapes;
 
 namespace SandRibbon.Utils
 {
-    /// <summary>
-    /// Interaction logic for PowerPointContent.xaml
-    /// </summary>
+    public class VisualizedPowerpointContent
+    {
+        public UIElement Visual { get; protected set; }
+        public double Width { get; protected set; }
+        public double Height { get; protected set; }
+        public double X { get; protected set; }
+        public double Y { get; protected set; }
+        public int Slide { get; protected set; }
+        public Privacy Privacy { get; protected set; }
+        public string Target { get; protected set; }
+        public VisualizedPowerpointContent(int s, double x, double y, double w, double h, Privacy p, string t)
+        {
+            Slide = s;
+            X = x;
+            Y = y;
+            Width = w;
+            Height = h;
+            Privacy = p;
+            Target = t;
+        }
+        public VisualizedPowerpointContent(int s, TextDescriptor text) : this(s, text.x, text.y, text.w, text.h,text.privacy,text.target)
+        {
+            Visual = new TextBlock
+            {
+                Text = text.content,
+                FontFamily = new FontFamily(text.fontFamily),
+                FontSize = text.fontSize,
+                Foreground = new SolidColorBrush(text.fontColor),
+                Width = text.w,
+                Height = text.h
+            };
+        }
+        public VisualizedPowerpointContent(int s, ImageDescriptor image) : this(s, image.x, image.y, image.w, image.h,image.privacy,image.target)
+        {
+            var source = new BitmapImage();
+            try
+            {
+                source.BeginInit();
+                source.StreamSource = new System.IO.MemoryStream(image.imageBytes);
+            }
+            finally
+            {
+                source.EndInit();
+            }
+            Visual = new Image
+            {
+                Width = image.w,
+                Height = image.h,
+                Source = source
+            };
+        }
+    }
+
     public partial class PowerPointContent : Window
     {
-        public PowerPointContent()
+        public PowerPointContent(ConversationDescriptor conversation)
         {
             InitializeComponent();
+            ContentListing.ItemsSource = conversation.slides.SelectMany(sl => sl.images.Select(i => new VisualizedPowerpointContent(sl.index, i)).Concat(sl.texts.Select(t => new VisualizedPowerpointContent(sl.index, t))));
         }
     }
 }

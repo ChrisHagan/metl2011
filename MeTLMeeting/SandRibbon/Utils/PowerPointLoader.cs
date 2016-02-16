@@ -179,6 +179,27 @@ namespace SandRibbon.Utils
                 }
             }
         }
+        public ConversationDescriptor GetFlexibleDescriptor(string filename, Action<PowerpointImportProgress> progress)
+        {
+            var convDescriptor = new ConversationDescriptor(filename);
+            return withPowerpoint((app) => LoadPowerpoint(app, filename, convDescriptor,progress));
+        }
+        public ConversationDescriptor GetFlatDescriptor(string filename,int magnification, Action<PowerpointImportProgress> progress)
+        {
+            var convDescriptor = new ConversationDescriptor(filename);
+            return withPowerpoint((app) => LoadPowerpointAsFlatSlides(app, filename, magnification, convDescriptor,progress));
+        }
+        protected T withPowerpoint<T>(Func<PowerPoint.Application,T> func)
+        {
+            if (IsPowerPointRunning())
+            {
+                MeTLMessage.Information("PowerPoint seems to be running.  Please do not work in PowerPoint while the conversation is importing - doing so may result in unexpected issues with the import into MeTL.");
+            }
+            var app = GetPowerPointApplication();
+            if (app == null)
+                return default(T);
+            return func(app);
+        }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
             System.Windows.Application.Current.Dispatcher.adopt(delegate
@@ -192,7 +213,7 @@ namespace SandRibbon.Utils
                 var app = GetPowerPointApplication();
                 if (app == null)
                     return;
-
+                Action<PowerpointImportProgress> progress = (PowerpointImportProgress p) => Commands.UpdatePowerpointProgress.Execute(p);
                 var conversation = spec.Details;
                 var convDescriptor = new ConversationDescriptor(spec.Details.Title);
                 var worker = new Thread(new ParameterizedThreadStart(
@@ -200,20 +221,20 @@ namespace SandRibbon.Utils
                     {
                         try
                         {
-                            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
+                            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0));
                             switch (spec.Type)
                             {
                                 case PowerpointImportType.HighDefImage:
                                     App.auditor.log(string.Format("ImportingPowerpoint HighDef {0}", spec.File), "PowerPointLoader");
-                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor), conversation);
+                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor,progress), conversation,progress);
                                     break;
                                 case PowerpointImportType.Image:
                                     App.auditor.log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File), "PowerPointLoader");
-                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor), conversation);
+                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor,progress), conversation,progress);
                                     break;
                                 case PowerpointImportType.Shapes:
                                     App.auditor.log(string.Format("ImportingPowerpoint Flexible {0}", spec.File), "PowerPointLoader");
-                                    UploadFromXml(LoadPowerpoint(app, spec.File, convDescriptor), conversation);
+                                    UploadFromXml(LoadPowerpoint(app, spec.File, convDescriptor,progress), conversation,progress);
                                     break;
                             }
                         }
@@ -264,7 +285,7 @@ namespace SandRibbon.Utils
             return procList.Count() != 0;
         }
 
-        public ConversationDescriptor LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, int MagnificationRating, ConversationDescriptor convDescriptor)
+        public ConversationDescriptor LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, int MagnificationRating, ConversationDescriptor convDescriptor,Action<PowerpointImportProgress> progress)
         {
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
@@ -321,7 +342,7 @@ namespace SandRibbon.Utils
                     {
                         ExportShape(convDescriptor, shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
                     }
-                    progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count);
+                    progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count));
                 }
             }
             catch (COMException e)
@@ -335,7 +356,7 @@ namespace SandRibbon.Utils
             return convDescriptor;
         }
         private ByteArrayValueComparer byteArrayComparer = new ByteArrayValueComparer();        
-        private void UploadFromXml(ConversationDescriptor conversationDescriptor, ConversationDetails details)
+        private void UploadFromXml(ConversationDescriptor conversationDescriptor, ConversationDetails details, Action<PowerpointImportProgress> progress)
         {
             var xmlSlides = conversationDescriptor.slides;
             var slideCount = xmlSlides.Count();
@@ -372,7 +393,7 @@ namespace SandRibbon.Utils
                         Thread.Sleep(1000);
                         sneakilySendShapes(slideId, slideXml.images, shapeMap);
                         sneakilySendPublicTextBoxes(slideId, slideXml.texts);
-                        progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, slideIndex, slideCount);
+                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, slideIndex, slideCount));
                         tracker.increment();
                         Thread.Sleep(1000);
                         if (hasPrivate)
@@ -406,19 +427,11 @@ namespace SandRibbon.Utils
             var fullPath = LocalFileProvider.getUserFolder(new string[] { "thumbs", Globals.me, jid });
             return fullPath;
         }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
-        {
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId));
-        }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides)
+        private void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides)
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
         }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalSlides, string imageSource)
-        {
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
-        }
-        public ConversationDescriptor LoadPowerpoint(PowerPoint.Application app, string file, ConversationDescriptor convDescriptor)
+        public ConversationDescriptor LoadPowerpoint(PowerPoint.Application app, string file, ConversationDescriptor convDescriptor, Action<PowerpointImportProgress> progress)
         {
             try
             {
@@ -428,7 +441,7 @@ namespace SandRibbon.Utils
                     foreach (var slide in ppt.Slides)
                     {
                         importSlide(convDescriptor, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
-                        progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count);//All the consumers count for themselves
+                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count));//All the consumers count for themselves
                     }
                 }
                 catch (COMException e)
