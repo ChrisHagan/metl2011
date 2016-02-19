@@ -342,7 +342,7 @@ namespace SandRibbon.Utils
                     {
                         ExportShape(convDescriptor, shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
                     }
-                    progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count));
+                    progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, slide.SlideIndex, ppt.Slides.Count));
                 }
             }
             catch (COMException e)
@@ -353,6 +353,7 @@ namespace SandRibbon.Utils
             {
                 ppt.Close();
             }
+            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 0, 0));
             return convDescriptor;
         }
         private ByteArrayValueComparer byteArrayComparer = new ByteArrayValueComparer();        
@@ -393,7 +394,7 @@ namespace SandRibbon.Utils
                         Thread.Sleep(1000);
                         sneakilySendShapes(slideId, slideXml.images, shapeMap);
                         sneakilySendPublicTextBoxes(slideId, slideXml.texts);
-                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, slideIndex, slideCount));
+                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideIndex, slideCount));
                         tracker.increment();
                         Thread.Sleep(1000);
                         if (hasPrivate)
@@ -401,7 +402,9 @@ namespace SandRibbon.Utils
                         clientConnection.SneakOutOf(slideId.ToString());
                     });
                 });
+                progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 0, 0));
             });
+            var imageUploadCounter = 0;
             foreach (var bytes in bytesToUpload)
             {
                 WebThreadPool.QueueUserWorkItem(delegate
@@ -411,6 +414,7 @@ namespace SandRibbon.Utils
                     var hostedFileUri = XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
                     MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(App.controller.config.getResource(hostedFileUri), bytes);
                     shapeMap[bytes] = hostedFileUri;
+                    progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, imageUploadCounter++ , bytesToUpload.Count()));
                     uploadTracker.increment();
                 });
             }
@@ -438,10 +442,10 @@ namespace SandRibbon.Utils
                 var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
                 try
                 {
-                    foreach (var slide in ppt.Slides)
+                    foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                     {
-                        importSlide(convDescriptor, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
-                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count));//All the consumers count for themselves
+                        importSlide(convDescriptor, (Microsoft.Office.Interop.PowerPoint.Slide)slide, progress);
+                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, slide.SlideIndex, ppt.Slides.Count));//All the consumers count for themselves
                     }
                 }
                 catch (COMException e)
@@ -457,6 +461,7 @@ namespace SandRibbon.Utils
             {
                 App.auditor.error("LoadPowerpoint", "PowerPointLoader", e);
             }
+            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 0, 0));
             return convDescriptor;
         }
 
@@ -507,7 +512,7 @@ namespace SandRibbon.Utils
         {
             return cond == MsoTriState.msoTrue;
         }
-        private void importSlide(ConversationDescriptor conversationDescriptor, Microsoft.Office.Interop.PowerPoint.Slide slide)
+        private void importSlide(ConversationDescriptor conversationDescriptor, Microsoft.Office.Interop.PowerPoint.Slide slide, Action<PowerpointImportProgress> progress)
         {
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
             var exportFormat = PpShapeFormat.ppShapeFormatPNG;

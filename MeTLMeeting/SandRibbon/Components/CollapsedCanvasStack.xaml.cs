@@ -279,9 +279,7 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideAdorners));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
-            Commands.PastePowerpointContent.RegisterCommand(new DelegateCommand<object>((o => {
-                var a = 1;
-            })));
+            Commands.PastePowerpointContent.RegisterCommand(new DelegateCommand<object>(PastePowerpointContent));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute));
@@ -1764,7 +1762,7 @@ namespace SandRibbon.Components
                 }
                 //var zIndex = imageToAdd.tag().isBackground ? -5 : 2;
 
-//                Canvas.SetZIndex(img, zIndex);
+                //                Canvas.SetZIndex(img, zIndex);
                 canvas.Children.Add(img);
             });
         }
@@ -3059,7 +3057,7 @@ namespace SandRibbon.Components
                 MeTLTextBox box = createNewTextbox();
                 box.Width = text.w;
                 box.Height = text.h;
-                pos = new Point(text.x,text.y);
+                pos = new Point(text.x, text.y);
                 InkCanvas.SetLeft(box, pos.X);
                 InkCanvas.SetTop(box, pos.Y);
                 box.TextChanged -= SendNewText;
@@ -3089,7 +3087,41 @@ namespace SandRibbon.Components
             public string fontsize;
             public string fontcolor;
         }
-
+        protected void PastePowerpointContent(object o)
+        {
+            Dispatcher.adopt(delegate
+            {
+                if (o is ImageDescriptor)
+                {
+                    var td = o as ImageDescriptor;
+                    var images = createImages(new List<ImageInfo> { new ImageInfo {
+                    h = td.h,
+                    w = td.w,
+                    x = td.x,
+                    y = td.y,
+                    bytes = td.imageBytes,
+                    filename = String.Format("fromPpt:{0}",DateTime.Now.Ticks)
+                } });
+                    HandleImagePasteRedo(images);
+                }
+                else if (o is TextDescriptor)
+                {
+                    var currentBox = myTextBox.clone();
+                    var td = o as TextDescriptor;
+                    var boxes = createPastedBoxes(new List<TextInfo> { new TextInfo {
+                    h = td.h,
+                    w = td.w,
+                    x = td.x,
+                    y = td.y,
+                    text = td.content,
+                    fontcolor = td.fontColor.ToString(),
+                    fontfamily = td.fontFamily,
+                    fontsize = td.fontSize.ToString()
+                } });
+                    HandleTextPasteRedo(boxes, currentBox);
+                }
+            });
+        }
         protected void HandlePaste(object _args)
         {
             if (me == Globals.PROJECTOR) return;
@@ -3201,7 +3233,8 @@ namespace SandRibbon.Components
                         }
                     }
                 }
-                else*/ if (Clipboard.ContainsText())
+                else*/
+                if (Clipboard.ContainsText())
                 {
                     var boxes = createPastedBoxes(new List<string> { Clipboard.GetText() });
                     Action undo = () => HandleTextPasteUndo(boxes, currentBox);

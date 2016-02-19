@@ -25,6 +25,7 @@ namespace SandRibbon.Utils
         public int Slide { get; protected set; }
         public Privacy Privacy { get; protected set; }
         public string Target { get; protected set; }
+        public CanvasContentDescriptor Descriptor { get; protected set; }
         public VisualizedPowerpointContent(int s, double x, double y, double w, double h, Privacy p, string t)
         {
             Slide = s;
@@ -46,6 +47,7 @@ namespace SandRibbon.Utils
                 Width = text.w,
                 Height = text.h
             };
+            Descriptor = text;
         }
         public VisualizedPowerpointContent(int s, ImageDescriptor image) : this(s, image.x, image.y, image.w, image.h,image.privacy,image.target)
         {
@@ -65,15 +67,36 @@ namespace SandRibbon.Utils
                 Height = image.h,
                 Source = source
             };
+            Descriptor = image;
         }
     }
 
     public partial class PowerPointContent : Window
     {
-        public PowerPointContent(ConversationDescriptor conversation)
+        public PowerPointContent()
         {
             InitializeComponent();
-            ContentListing.ItemsSource = conversation.slides.SelectMany(sl => sl.images.Select(i => new VisualizedPowerpointContent(sl.index, i)).Concat(sl.texts.Select(t => new VisualizedPowerpointContent(sl.index, t))));
+        }
+        public void updateProgress(PowerpointImportProgress progress)
+        {
+            this.Dispatcher.adopt(delegate {
+                progressBar.Maximum = progress.totalSlides;
+                progressBar.Value = progress.slideId;
+                progressLabel.Content = progress.stage.ToString();
+                if (progress.stage == PowerpointImportProgress.IMPORT_STAGE.ANALYSED)
+                {
+                    progressBarContainer.Visibility = Visibility.Collapsed;
+                } else {
+                    progressBarContainer.Visibility = Visibility.Visible;
+                }
+            });
+        }
+        public void updateContent(ConversationDescriptor conversation)
+        {
+            this.Dispatcher.adopt(delegate
+            {
+                ContentListing.ItemsSource = conversation.slides.SelectMany(sl => sl.images.Select(i => new VisualizedPowerpointContent(sl.index, i)).Concat(sl.texts.Select(t => new VisualizedPowerpointContent(sl.index, t))));
+            });
         }
     }
 }

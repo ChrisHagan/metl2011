@@ -7,29 +7,39 @@
         xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         mc:Ignorable="d"
         Title="PowerPointContent" Height="300" Width="300">
-    <DataGrid IsReadOnly="True" AutoGenerateColumns="False" x:Name="ContentListing">
-        <DataGrid.Columns>
-            <DataGridTextColumn Binding="{Binding Slide}"/>
-            <DataGridTextColumn Binding="{Binding X}"/>
-            <DataGridTextColumn Binding="{Binding Y}"/>
-            <DataGridTextColumn Binding="{Binding Width}"/>
-            <DataGridTextColumn Binding="{Binding Height}"/>
-            <DataGridTextColumn Binding="{Binding Privacy}"/>
-            <DataGridTextColumn Binding="{Binding Target}"/>
-            <DataGridTemplateColumn>
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ContentPresenter Content="{Binding Visual}"/>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTemplateColumn>
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <Button Command="{x:Static api:Commands.PastePowerpointContent}" CommandParameter="{Binding}">Paste</Button>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-        </DataGrid.Columns>
-    </DataGrid>
+    <Grid Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DataGrid IsReadOnly="True" AutoGenerateColumns="False" x:Name="ContentListing" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Slide}" Header="Slide" />
+                <DataGridTextColumn Binding="{Binding X}" Header="X"/>
+                <DataGridTextColumn Binding="{Binding Y}" Header="Y"/>
+                <DataGridTextColumn Binding="{Binding Width}" Header="Width"/>
+                <DataGridTextColumn Binding="{Binding Height}" Header="Height"/>
+                <DataGridTextColumn Binding="{Binding Privacy}" Header="Privacy"/>
+                <DataGridTextColumn Binding="{Binding Target}" Header="Target"/>
+                <DataGridTemplateColumn Header="Preview">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentPresenter Content="{Binding Visual}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Command="{x:Static api:Commands.PastePowerpointContent}" CommandParameter="{Binding Descriptor}">Paste</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid x:Name="progressBarContainer" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ProgressBar x:Name="progressBar" Width="Auto" HorizontalAlignment="Stretch"  Height="150" Grid.Row="0"/>
+            <Label x:Name="progressLabel" Width="Auto" HorizontalAlignment="Center"  Height="150" Grid.Row="1"/>
+        </Grid>
+    </Grid>
 </Window>

@@ -347,12 +347,33 @@ namespace SandRibbon
             var response = dialog.ShowDialog(this.Owner);
             if (response.HasValue)
             {
+                PowerPointContent window = null;
                 Action<PowerpointImportProgress> progress = (PowerpointImportProgress p) => {
-                    Console.WriteLine(String.Format("PowerpointImport: {2} :: {0}/{1}",p.slideId,p.totalSlides,p.stage));
+                    window.updateProgress(p);
                 };
-                var convDesc = pptLoader.GetFlexibleDescriptor(dialog.FileName,progress);
-                var newWindow = new PowerPointContent(convDesc);
-                newWindow.Show();
+                var waitEvent = new ManualResetEvent(false);
+                Thread newDiagnosticThread = new Thread(new ThreadStart(() =>
+                {
+                    SynchronizationContext.SetSynchronizationContext(
+                        new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
+                    window = new PowerPointContent();
+                    window.Closed += (s, a) =>
+                    {
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
+                    };
+                    window.Show();
+                    waitEvent.Set();
+                    System.Windows.Threading.Dispatcher.Run();
+                }));
+                newDiagnosticThread.SetApartmentState(ApartmentState.STA);
+                newDiagnosticThread.IsBackground = true;
+                newDiagnosticThread.Start();
+                waitEvent.WaitOne(5000);
+                if (window != null)
+                {
+                    var convDesc = pptLoader.GetFlexibleDescriptor(dialog.FileName, progress);
+                    window.updateContent(convDesc);
+                }
             }
         }
 
