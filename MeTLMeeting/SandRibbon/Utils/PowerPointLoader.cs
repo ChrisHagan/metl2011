@@ -311,11 +311,11 @@ namespace SandRibbon.Utils
                         }
                         else shape.Visible = MsoTriState.msoTrue;
                     }
-                    slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
+                    slide.Export(slidePath, "JPG", (int)backgroundWidth, (int)backgroundHeight);
                     var xSlide = new SlideDescriptor(slide.SlideIndex - 1, backgroundWidth, backgroundHeight);
                     xSlide.images.Add(new ImageDescriptor(0, 0, backgroundWidth, backgroundHeight, Privacy.Public, "presentationSpace", File.ReadAllBytes(slidePath)));
                     convDescriptor.slides.Add(xSlide);
-                    var exportFormat = PpShapeFormat.ppShapeFormatPNG;
+                    var exportFormat = PpShapeFormat.ppShapeFormatJPG;
                     var exportMode = PpExportMode.ppRelativeToSlide;
                     var actualBackgroundHeight = 540;
                     var actualBackgroundWidth = 720;
