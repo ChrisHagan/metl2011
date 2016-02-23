@@ -10,6 +10,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using System.Windows.Media;
+using System.Windows;
 
 namespace SandRibbon.Providers
 {
@@ -36,7 +37,11 @@ namespace SandRibbon.Providers
         private static object cacheLock = new object();
         //acceptableStaleTime is measured in ticks
         public static long acceptableStaleTime = (10 * 1000 * 1000)/* seconds */ * 5;
-        private static int maximumCachedBitmaps = 200;
+        private static int maximumCachedBitmaps = 500;
+        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool
+        {
+            MaxThreads = 8
+        };
         private static void addToCache(int slideId, CachedThumbnail ct)
         {
             lock (cacheLock)
@@ -78,6 +83,10 @@ namespace SandRibbon.Providers
                 }
             });
         }
+        public static void cancelAllThumbs()
+        {
+            pool.Cancel();
+        }
         public static void thumbnail(Image image, int slideId)
         {
             if (image == null)
@@ -99,7 +108,7 @@ namespace SandRibbon.Providers
                 var server = App.controller.config;
                 var host = server.name;
                 var url = server.thumbnailUri(slideId.ToString());
-                WebThreadPool.QueueUserWorkItem(delegate
+                pool.QueueWorkItem(delegate
                 {
                     try
                     {

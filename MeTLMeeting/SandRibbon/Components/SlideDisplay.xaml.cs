@@ -108,6 +108,7 @@ namespace SandRibbon.Components
         public int currentSlideId = -1;
         public ObservableCollection<Slide> thumbnailList { get; set; }
         public static SlideIndexConverter SlideIndex;
+
         public SlideDisplay()
         {
             refresher = new DispatcherTimer();
@@ -143,13 +144,17 @@ namespace SandRibbon.Components
 
         void refresherTick(object sender, EventArgs e)
         {
-            var view = UIHelper.FindVisualChild<ScrollViewer>(slides);
+            var pContext = Globals.conversationDetails.Slides;
+            if (pContext.Count == 0) return;
             var generator = slides.ItemContainerGenerator;
-            var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToList();
-            var top = view.VerticalOffset;
-            var bottom = Math.Min(context.Count - 1, Math.Ceiling(top + view.ViewportHeight));
-            for (var i = (int)Math.Floor(top); i <= bottom; i++)
-            {
+            var slideHeight = ((FrameworkElement)generator.ContainerFromIndex(0)).ActualHeight;
+            var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToArray();
+            var startingIndex = (int) Math.Floor(outerScroll.VerticalOffset / slideHeight);
+            var visibleSlideCount = (int) Math.Ceiling(outerScroll.ActualHeight / slideHeight);
+            var finalIndex = startingIndex + Math.Min(context.Count(),visibleSlideCount);
+            ThumbnailProvider.cancelAllThumbs();
+            /*Anything we were queueing that has gone offscreen is useless to us now anyway*/
+            for (var i = startingIndex; i < finalIndex; i ++) {
                 var id = context[i].id;
                 var container = generator.ContainerFromIndex(i);
                 try
@@ -456,7 +461,8 @@ namespace SandRibbon.Components
                         {
                             currentSlideId = selected.id;
                             foreach (var slide in removedItems) ((Slide)slide).refresh();
-                            Dispatcher.adopt(delegate {
+                            Dispatcher.adopt(delegate
+                            {
                                 AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
                             });
 
