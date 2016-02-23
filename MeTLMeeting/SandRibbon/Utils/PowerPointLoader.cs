@@ -221,7 +221,7 @@ namespace SandRibbon.Utils
                     {
                         try
                         {
-                            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0));
+                            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 1, 1));
                             switch (spec.Type)
                             {
                                 case PowerpointImportType.HighDefImage:
@@ -353,7 +353,7 @@ namespace SandRibbon.Utils
             {
                 ppt.Close();
             }
-            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 0, 0));
+            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 1, 1));
             return convDescriptor;
         }
         private ByteArrayValueComparer byteArrayComparer = new ByteArrayValueComparer();        
@@ -402,7 +402,7 @@ namespace SandRibbon.Utils
                         clientConnection.SneakOutOf(slideId.ToString());
                     });
                 });
-                progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 0, 0));
+                progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 1, 1));
             });
             var imageUploadCounter = 0;
             foreach (var bytes in bytesToUpload)
@@ -461,7 +461,7 @@ namespace SandRibbon.Utils
             {
                 App.auditor.error("LoadPowerpoint", "PowerPointLoader", e);
             }
-            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 0, 0));
+            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 1, 1));
             return convDescriptor;
         }
 
