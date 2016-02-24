@@ -3,15 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:components="clr-namespace:SandRibbon.Components"
-             xmlns:sr="clr-namespace:SandRibbon"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-
+             xmlns:sr="clr-namespace:SandRibbon">
     <StackPanel>
+        <Button Content="Add new group" Click="AddGroup"/>
+        <Button Content="Clear groups" Click="AddGroup"/>
         <ScrollViewer>
             <DataGrid x:Name="participantListBox" AutoGenerateColumns="False">
                 <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Groups">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ListBox ItemsSource="{Binding Path=Membership}">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Click="CheckBox_Click" IsChecked="{Binding Path=IsMember}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn IsReadOnly="True" Header="User" Binding="{Binding Path=username, Mode=OneWay}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Activity" Binding="{Binding Path=activityCount, Mode=OneWay}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Submissions" Binding="{Binding Path=submissionCount, Mode=OneWay}" />

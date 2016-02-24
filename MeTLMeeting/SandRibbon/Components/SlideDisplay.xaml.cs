@@ -148,7 +148,7 @@ namespace SandRibbon.Components
             if (pContext.Count == 0) return;
             var generator = slides.ItemContainerGenerator;
             var slideHeight = ((FrameworkElement)generator.ContainerFromIndex(0)).ActualHeight;
-            var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToArray();
+            var context = pContext.OrderBy(s => s.index).ToArray();
             var startingIndex = (int) Math.Floor(outerScroll.VerticalOffset / slideHeight);
             var visibleSlideCount = (int) Math.Ceiling(outerScroll.ActualHeight / slideHeight);
             var finalIndex = startingIndex + Math.Min(context.Count(),visibleSlideCount);

@@ -365,8 +365,8 @@ namespace MeTLLib.DataTypes
                     gs.Element(GROUP_SET_GROUPS_TAG).Descendants(GROUP_TAG).Select(g => new Group(
                             g.Element(GROUP_ID_TAG).Value,
                             g.Element(GROUP_LOCATION_TAG).Value,
-                            g.Descendants(GROUP_MEMBERS_TAG).Select(gm =>
-                                gm.Element(GROUP_MEMBER_TAG).Value
+                            g.Descendants(GROUP_MEMBERS_TAG).SelectMany(gm =>
+                                gm.Descendants(GROUP_MEMBER_TAG).Select(m => m.Value)
                             ).ToList()
                         )
                     ).ToList()
@@ -578,7 +578,9 @@ namespace MeTLLib.DataTypes
         public string id;
         public string location;
         public int groupSize;
-        public List<Group> Groups;
+        public List<Group> Groups {
+            get; set;
+        }
         public GroupSet(string _id, string _location, int _groupSize, List<Group> _groups)
         {
             id = _id;

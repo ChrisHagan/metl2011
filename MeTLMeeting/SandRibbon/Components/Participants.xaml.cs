@@ -6,11 +6,10 @@ using System.Windows.Controls;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.Providers.Connection;
-using System.IO;
-using System.Windows.Ink;
 using Iveonik.Stemmers;
 using System.Windows.Data;
 using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon.Components
 {
@@ -91,6 +90,10 @@ namespace SandRibbon.Components
 
         public static readonly DependencyProperty slideLocationProperty = DependencyProperty.Register("slideLocation", typeof(List<string>), typeof(MeTLUser), new UIPropertyMetadata(new List<string>()));
 
+        public ObservableCollection<AttributedGroup> Membership
+        {
+            get; set;
+        } = new ObservableCollection<AttributedGroup>();
 
         public MeTLUser(string user)
         {
@@ -99,6 +102,14 @@ namespace SandRibbon.Components
             activityCount = 0;
             submissionCount = 0;
         }
+    }
+
+    public class AttributedGroup
+    {
+        public string Person { get; set; }
+        public GroupSet GroupSet { get; set; }
+        public Group Group { get; set; }
+        public bool IsMember { get; set; }
     }
 
     public partial class Participants : UserControl
@@ -117,9 +128,35 @@ namespace SandRibbon.Components
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(ReceivePreParser));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(ReceiveConversationDetails));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>(MoveTo));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(ReceiveSubmission));
-            //Commands.ReceiveTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(ReceivePresence));
             Commands.ReceiveAttendance.RegisterCommand(new DelegateCommand<Attendance>(ReceivePresence));
+        }
+
+        private void MoveTo(Location loc)
+        {
+            UpdateGroups(loc);
+        }
+        private void UpdateGroups(Location loc)
+        {
+            foreach (var p in people.Values)
+            {
+                p.Membership.Clear();
+                foreach (var gs in loc.currentSlide.GroupSets)
+                {
+                    foreach (var g in gs.Groups)
+                    {
+                        p.Membership.Add(new AttributedGroup
+                        {
+                            Group = g,
+                            GroupSet = gs,
+                            Person = p.username,
+                            IsMember = g.GroupMembers.Contains(p.username)
+                        });
+                    }
+                }
+            }
+            participantListBox.ItemsSource = people.Values.ToList();
         }
         private void JoinConversation(ConversationDetails newJid)
         {
@@ -149,13 +186,19 @@ namespace SandRibbon.Components
         {
             if (details.Jid == SandRibbon.Providers.Globals.conversationDetails.Jid)
             {
-                foreach (var bannedUsername in details.blacklist)
+                Dispatcher.adopt(() =>
                 {
-                    Dispatcher.adoptAsync(() =>
+                    var slide = details.Slides.Where(s => s.id == Providers.Globals.slide).First();
+                    UpdateGroups(new Location(
+                        details,
+                        slide,
+                        new List<Slide>()
+                    ));
+                    foreach (var bannedUsername in details.blacklist)
                     {
                         constructPersonFromUsername(bannedUsername);
-                    });
-                }
+                    }
+                });
             }
         }
         protected void ReceivePresence(Attendance presence)
@@ -253,5 +296,28 @@ namespace SandRibbon.Components
             }
         }
 
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            var source = (FrameworkElement)sender;
+            var group = (AttributedGroup)source.DataContext;
+            foreach (var g in group.GroupSet.Groups)
+            {
+                g.GroupMembers.Remove(group.Person);
+            }
+            group.Group.GroupMembers.Add(group.Person);
+            App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
+        }
+
+        private void AddGroup(object sender, RoutedEventArgs e)
+        {
+            var s = Providers.Globals.slideDetails;
+            if (s.GroupSets.Count == 0)
+            {
+                s.GroupSets.Add(new GroupSet(System.Guid.NewGuid().ToString(), Providers.Globals.slide.ToString(), 5, new List<Group> { }));
+            }
+            var gs = s.GroupSets[0];
+            gs.Groups.Add(new Group(System.Guid.NewGuid().ToString(), Providers.Globals.slide.ToString(), new List<String>()));
+            App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
+        }
     }
 }
