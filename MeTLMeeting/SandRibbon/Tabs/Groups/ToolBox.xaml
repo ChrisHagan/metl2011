@@ -12,7 +12,10 @@
     -->
         <dict:RibbonPanel x:Name="ImageOptions">
             <dict:Button ToolTip="{DynamicResource AddImageToolTip}"  x:Name="addMedia" Icon="\Resources\AddImage.png" Text="Add Picture" Command="{x:Static api:Commands.AddImage}"/>
-            <dict:Button x:Name="addPowerpointContent" Text="Add Powerpoint" Command="{x:Static api:Commands.OpenPowerpointDialog}"/>
+            <dict:Button x:Name="addPowerpointContent" Text="Import PowerPoint objects" Command="{x:Static api:Commands.OpenPowerpointDialog}"
+                         CommandParameter="object" Icon="\Resources\ppObjects.png" />
+            <dict:Button x:Name="addPowerpointSlides" Text="Import PowerPoint slides" Command="{x:Static api:Commands.OpenPowerpointDialog}"
+                         CommandParameter="slide" Icon="\Resources\logo_microsoft_powerpoint_2013.jpg" />
             <!--<dict:Button x:Name="presentVideo" Icon="\Resources\LewMouthOpenHead.png" Text="Present Video" Command="api:Commands.PresentVideo"/>-->
         </dict:RibbonPanel>
         

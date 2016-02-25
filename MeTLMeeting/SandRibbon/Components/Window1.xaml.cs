@@ -150,7 +150,7 @@ namespace SandRibbon
                 }
             }));
             Commands.DuplicateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(duplicateConversation, userMayDuplicateConversation));
-            Commands.OpenPowerpointDialog.RegisterCommand(new DelegateCommand<object>(openPowerpointDialog, userMayOpenPowerpointDialog));
+            Commands.OpenPowerpointDialog.RegisterCommand(new DelegateCommand<string>(openPowerpointDialog, userMayOpenPowerpointDialog));
             Commands.CreateGrouping.RegisterCommand(new DelegateCommand<object>(createGrouping, (o) => mustBeInConversationAndBeAuthor(o)));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
@@ -335,7 +335,7 @@ namespace SandRibbon
         {
             return true;
         }
-        private void openPowerpointDialog(object obj) {
+        private void openPowerpointDialog(string mode) {
             var pptLoader = new PowerPointLoader(App.controller.client);
             var dialog = new OpenFileDialog
             {
@@ -345,7 +345,7 @@ namespace SandRibbon
                 Multiselect = false
             };
             var response = dialog.ShowDialog(this.Owner);
-            if (response.HasValue)
+            if (response.Value == true)
             {
                 PowerPointContent window = null;
                 Action<PowerpointImportProgress> progress = (PowerpointImportProgress p) => {
@@ -371,8 +371,15 @@ namespace SandRibbon
                 waitEvent.WaitOne(5000);
                 if (window != null)
                 {
-                    var convDesc = pptLoader.GetFlexibleDescriptor(dialog.FileName, progress);
-                    window.updateContent(convDesc);
+                    switch (mode)
+                    {
+                        case "object":
+                            window.updateContent(pptLoader.GetFlexibleDescriptor(dialog.FileName, progress));
+                            break;
+                        default:
+                            window.updateContent(pptLoader.GetFlatDescriptor(dialog.FileName, 1, progress));
+                            break;
+                    }
                 }
             }
         }
