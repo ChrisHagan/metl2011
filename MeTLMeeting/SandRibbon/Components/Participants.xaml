@@ -5,8 +5,10 @@
              xmlns:components="clr-namespace:SandRibbon.Components"
              xmlns:sr="clr-namespace:SandRibbon">
     <StackPanel>
-        <Button Content="Add new group" Click="AddGroup"/>
-        <Button Content="Clear groups" Click="ClearGroups"/>
+        <TextBlock Text="Make this slide into a group slide" />
+        <Button x:Name="nGroups" Content="Break class into N groups" Click="NGroups"/>
+        <Button x:Name="groupsOfN" Content="Break class into groups of N" Click="NGroups"/>
+        <Slider x:Name="groupN" Minimum="0" Maximum="6" Value="0" IsSnapToTickEnabled="True" TickFrequency="1" />
         <ScrollViewer>
             <DataGrid x:Name="participantListBox" AutoGenerateColumns="False">
                 <DataGrid.Columns>
@@ -21,7 +23,7 @@
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Click="CheckBox_Click" IsChecked="{Binding Path=IsMember}"/>
+                                            <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsMember}"/>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>

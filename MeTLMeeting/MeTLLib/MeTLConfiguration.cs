@@ -98,6 +98,13 @@
                 return new Uri(host, "/static/widget.html");
             }
         }
+        public Uri groupsOfNUri(string conversation, string slide, int n) {
+            return new Uri(host, new Uri(String.Format("/requestMaximumSizedGrouping/{0}/{1}/{2}", conversation, slide, n), UriKind.Relative));
+        }
+        public Uri nGroupsUri(string conversation, string slide, int n)
+        {
+            return new Uri(host, new Uri(String.Format("/requestClassroomSplitGrouping/{0}/{1}/{2}", conversation, slide, n), UriKind.Relative));
+        }
         public Uri authenticationUrl
         {
             get

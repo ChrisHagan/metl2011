@@ -299,40 +299,23 @@ namespace SandRibbon.Components
                 participantListBox.ItemsSource = people.Values.ToList();
             }
         }
-
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        
+        private void NGroups(object sender, RoutedEventArgs e)
         {
-            var source = (FrameworkElement)sender;
-            var group = (AttributedGroup)source.DataContext;
-            foreach (var g in group.GroupSet.Groups)
+            var c = Providers.Globals.conversationDetails.Jid;
+            var s = Providers.Globals.slide.ToString();
+            var n = Convert.ToInt16(groupN.Value);
+            if (n == 0) {
+                return;
+            }
+            if (sender == nGroups)
             {
-                g.GroupMembers.Remove(group.Person);
+                App.controller.client.resourceProvider.secureGetString(App.controller.config.nGroupsUri(c,s,n));
             }
-            group.Group.GroupMembers.Add(group.Person);
-            App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
-        }
-
-        private void AddGroup(object sender, RoutedEventArgs e)
-        {
-            var s = Providers.Globals.slideDetails;
-            if (s.GroupSets.Count == 0)
+            else if (sender == groupsOfN)
             {
-                s.GroupSets.Add(new GroupSet(System.Guid.NewGuid().ToString(), Providers.Globals.slide.ToString(), 5, new List<Group> { }));
+                App.controller.client.resourceProvider.secureGetString(App.controller.config.groupsOfNUri(c, s, n));
             }
-            var gs = s.GroupSets[0];
-            gs.Groups.Add(new Group(System.Guid.NewGuid().ToString(), Providers.Globals.slide.ToString(), new List<String>()));
-            App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
-        }
-
-        private void ClearGroups(object sender, RoutedEventArgs e)
-        {
-            foreach (var gs in Providers.Globals.slideDetails.GroupSets) {
-                foreach (var g in gs.Groups) {
-                    g.GroupMembers.Clear();
-                }
-                gs.Groups.Clear();
-            }
-            App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
         }
     }
 }

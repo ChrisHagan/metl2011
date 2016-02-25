@@ -1048,6 +1048,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\FogOfWar.png" />
+    <Resource Include="Resources\logo_microsoft_powerpoint_2013.jpg" />
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1172,6 +1173,7 @@
     <Resource Include="Resources\progressBackground.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\ppObjects.png" />
     <Content Include="Resources\Results.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

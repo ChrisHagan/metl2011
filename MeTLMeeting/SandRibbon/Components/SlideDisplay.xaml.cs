@@ -423,18 +423,19 @@ namespace SandRibbon.Components
                 }
                 foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
                 {
+                    var lastLegalPos = Math.Min(thumbnailList.Count, slide.index);
                     var thumb = thumbnailList.FirstOrDefault(s => s.id == slide.id);
                     if (thumb != null && thumb != default(Slide))
                     {
                         if (thumb.index != slide.index)
                         {
                             thumbnailList.Remove(thumb);
-                            thumbnailList.Insert(slide.index, slide);
+                            thumbnailList.Insert(lastLegalPos, slide);
                         }
                     }
                     else
                     {
-                        thumbnailList.Insert(slide.index, slide);
+                        thumbnailList.Insert(lastLegalPos, slide);
                     }
                     if (slide.id == currentSlideId)
                         slides.SelectedItem = slide;
