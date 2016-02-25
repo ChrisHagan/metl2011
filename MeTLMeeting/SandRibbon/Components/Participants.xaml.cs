@@ -139,6 +139,10 @@ namespace SandRibbon.Components
         }
         private void UpdateGroups(Location loc)
         {
+            foreach (var u in loc.currentSlide.GroupSets.SelectMany(gs => gs.Groups).SelectMany(g => g.GroupMembers))
+            {/*Ensure that any person who has had a group is still listed*/
+                constructPersonFromUsername(u);
+            }
             foreach (var p in people.Values)
             {
                 p.Membership.Clear();
@@ -317,6 +321,17 @@ namespace SandRibbon.Components
             }
             var gs = s.GroupSets[0];
             gs.Groups.Add(new Group(System.Guid.NewGuid().ToString(), Providers.Globals.slide.ToString(), new List<String>()));
+            App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
+        }
+
+        private void ClearGroups(object sender, RoutedEventArgs e)
+        {
+            foreach (var gs in Providers.Globals.slideDetails.GroupSets) {
+                foreach (var g in gs.Groups) {
+                    g.GroupMembers.Clear();
+                }
+                gs.Groups.Clear();
+            }
             App.controller.client.conversationDetailsProvider.Update(Providers.Globals.conversationDetails);
         }
     }

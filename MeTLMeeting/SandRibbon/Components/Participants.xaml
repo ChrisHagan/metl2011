@@ -6,7 +6,7 @@
              xmlns:sr="clr-namespace:SandRibbon">
     <StackPanel>
         <Button Content="Add new group" Click="AddGroup"/>
-        <Button Content="Clear groups" Click="AddGroup"/>
+        <Button Content="Clear groups" Click="ClearGroups"/>
         <ScrollViewer>
             <DataGrid x:Name="participantListBox" AutoGenerateColumns="False">
                 <DataGrid.Columns>
