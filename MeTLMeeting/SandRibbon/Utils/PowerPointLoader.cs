@@ -250,6 +250,7 @@ namespace SandRibbon.Utils
                             Console.WriteLine("Exception while loading powerpoint:", ex);
                             progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 1, 1));
                             Commands.HideProgressBlocker.Execute(null);
+                            MeTLMessage.Error("Error while loading powerpoint.  Import aborted.");
                         }
                     }));
                 worker.SetApartmentState(ApartmentState.STA);
