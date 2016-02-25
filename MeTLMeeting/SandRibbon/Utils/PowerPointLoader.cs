@@ -41,6 +41,7 @@ namespace SandRibbon.Utils
 
         public int GetHashCode(byte[] obj)
         {
+            //return obj.Take(5).Sum(b => (int)b).GetHashCode();
             return obj.Sum(b => (int)b);
         }
     }
@@ -150,6 +151,23 @@ namespace SandRibbon.Utils
         private const MsoTriState TRUE = MsoTriState.msoTrue;
         private int resource = 1;
         private MeTLLib.IClientBehaviour clientConnection;
+        private Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool
+        {
+            MaxThreads = 8
+        };
+        private Amib.Threading.SmartThreadPool slideJoinPool = new Amib.Threading.SmartThreadPool
+        {
+            MaxThreads = 32
+        };
+        public void QueueUserWorkItem(Amib.Threading.Action action)
+        {
+            pool.QueueWorkItem(action);
+        }
+        public void QueueSlideJoinItem(Amib.Threading.Action action)
+        {
+            slideJoinPool.QueueWorkItem(action);
+        }
+
         public enum PowerpointImportType
         {
             HighDefImage,
@@ -182,14 +200,14 @@ namespace SandRibbon.Utils
         public ConversationDescriptor GetFlexibleDescriptor(string filename, Action<PowerpointImportProgress> progress)
         {
             var convDescriptor = new ConversationDescriptor(filename);
-            return withPowerpoint((app) => LoadPowerpoint(app, filename, convDescriptor,progress));
+            return withPowerpoint((app) => LoadPowerpoint(app, filename, convDescriptor, progress));
         }
-        public ConversationDescriptor GetFlatDescriptor(string filename,int magnification, Action<PowerpointImportProgress> progress)
+        public ConversationDescriptor GetFlatDescriptor(string filename, int magnification, Action<PowerpointImportProgress> progress)
         {
             var convDescriptor = new ConversationDescriptor(filename);
-            return withPowerpoint((app) => LoadPowerpointAsFlatSlides(app, filename, magnification, convDescriptor,progress));
+            return withPowerpoint((app) => LoadPowerpointAsFlatSlides(app, filename, magnification, convDescriptor, progress));
         }
-        protected T withPowerpoint<T>(Func<PowerPoint.Application,T> func)
+        protected T withPowerpoint<T>(Func<PowerPoint.Application, T> func)
         {
             if (IsPowerPointRunning())
             {
@@ -226,20 +244,23 @@ namespace SandRibbon.Utils
                             {
                                 case PowerpointImportType.HighDefImage:
                                     App.auditor.log(string.Format("ImportingPowerpoint HighDef {0}", spec.File), "PowerPointLoader");
-                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor,progress), conversation,progress);
+                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor, progress), conversation, progress);
                                     break;
                                 case PowerpointImportType.Image:
                                     App.auditor.log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File), "PowerPointLoader");
-                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor,progress), conversation,progress);
+                                    UploadFromXml(LoadPowerpointAsFlatSlides(app, spec.File, spec.Magnification, convDescriptor, progress), conversation, progress);
                                     break;
                                 case PowerpointImportType.Shapes:
                                     App.auditor.log(string.Format("ImportingPowerpoint Flexible {0}", spec.File), "PowerPointLoader");
-                                    UploadFromXml(LoadPowerpoint(app, spec.File, convDescriptor,progress), conversation,progress);
+                                    UploadFromXml(LoadPowerpoint(app, spec.File, convDescriptor, progress), conversation, progress);
                                     break;
                             }
                         }
                         catch (Exception ex)
                         {
+                            Console.WriteLine("Exception while loading powerpoint:", ex);
+                            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 1, 1));
+                            Commands.HideProgressBlocker.Execute(null);
                         }
                     }));
                 worker.SetApartmentState(ApartmentState.STA);
@@ -285,7 +306,7 @@ namespace SandRibbon.Utils
             return procList.Count() != 0;
         }
 
-        public ConversationDescriptor LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, int MagnificationRating, ConversationDescriptor convDescriptor,Action<PowerpointImportProgress> progress)
+        public ConversationDescriptor LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, int MagnificationRating, ConversationDescriptor convDescriptor, Action<PowerpointImportProgress> progress)
         {
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = LocalFileProvider.getUserFolder("tmp");
@@ -356,7 +377,7 @@ namespace SandRibbon.Utils
             progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, 1, 1));
             return convDescriptor;
         }
-        private ByteArrayValueComparer byteArrayComparer = new ByteArrayValueComparer();        
+        private ByteArrayValueComparer byteArrayComparer = new ByteArrayValueComparer();
         private void UploadFromXml(ConversationDescriptor conversationDescriptor, ConversationDetails details, Action<PowerpointImportProgress> progress)
         {
             var xmlSlides = conversationDescriptor.slides;
@@ -372,49 +393,65 @@ namespace SandRibbon.Utils
             {
                 App.auditor.log("PowerpointImport: Failed to update conversation", "PowerPointLoader");
             }
-            var shapeMap = new Dictionary<byte[], string>();
+            var shapeMap = new System.Collections.Concurrent.ConcurrentDictionary<byte[], string>();
             var me = Globals.me;
-            int shapeCount = 0;
             var allBytes = conversationDescriptor.slides.SelectMany(slide => slide.images.Select(i => i.imageBytes));
             var bytesToUpload = allBytes.Distinct(byteArrayComparer);
             var uploadTracker = new PowerpointLoadTracker(bytesToUpload.Count(), () =>
             {
-                var tracker = new PowerpointLoadTracker(slideCount, () => Commands.JoinConversation.Execute(updatedConversation));
+                var tracker = new PowerpointLoadTracker(slideCount, () => {
+                    progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 1, 1));
+                    Commands.JoinConversation.Execute(updatedConversation);
+                });
                 conversationDescriptor.slides.ForEach(slideXml =>
                 {
                     var slideId = updatedConversation.Slides.Find(s => s.index == slideXml.index).id;
                     var slideIndex = slideXml.index;
-                    WebThreadPool.QueueUserWorkItem(delegate
+                    QueueSlideJoinItem(delegate
                     {
-                        bool hasPrivate = conversationDescriptor.hasPrivateContent;
-                        var privateRoom = string.Format("{0}{1}", slideId, Globals.me);
-                        if (hasPrivate)
-                            clientConnection.SneakInto(privateRoom);
-                        clientConnection.SneakInto(slideId.ToString());
-                        Thread.Sleep(1000);
-                        sneakilySendShapes(slideId, slideXml.images, shapeMap);
-                        sneakilySendPublicTextBoxes(slideId, slideXml.texts);
-                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideIndex, slideCount));
+                        try
+                        {
+                            bool hasPrivate = conversationDescriptor.hasPrivateContent;
+                            var privateRoom = string.Format("{0}{1}", slideId, Globals.me);
+                            if (hasPrivate)
+                                clientConnection.SneakInto(privateRoom);
+                            clientConnection.SneakInto(slideId.ToString());
+                            Thread.Sleep(1000);
+                            sneakilySendShapes(slideId, slideXml.images, shapeMap);
+                            sneakilySendPublicTextBoxes(slideId, slideXml.texts);
+                            progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideIndex, slideCount));
+                            Thread.Sleep(1000);
+                            if (hasPrivate)
+                                clientConnection.SneakOutOf(privateRoom);
+                            clientConnection.SneakOutOf(slideId.ToString());
+                        }
+                        catch (Exception ue)
+                        {
+                            Console.WriteLine("Exception while uploading slide:", ue);
+                        }
                         tracker.increment();
-                        Thread.Sleep(1000);
-                        if (hasPrivate)
-                            clientConnection.SneakOutOf(privateRoom);
-                        clientConnection.SneakOutOf(slideId.ToString());
                     });
                 });
-                progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 1, 1));
             });
             var imageUploadCounter = 0;
+            int shapeCount = 0;
             foreach (var bytes in bytesToUpload)
             {
-                WebThreadPool.QueueUserWorkItem(delegate
+                QueueUserWorkItem(delegate
                 {
-                    var proposedId = me + ":" + DateTime.Now.Ticks.ToString() + ":" + shapeCount;
-                    var hostedFileUriXml = clientConnection.resourceProvider.securePutData(App.controller.config.uploadResource(proposedId, updatedConversation.Jid), bytes);
-                    var hostedFileUri = XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
-                    MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(App.controller.config.getResource(hostedFileUri), bytes);
-                    shapeMap[bytes] = hostedFileUri;
-                    progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, imageUploadCounter++ , bytesToUpload.Count()));
+                    try
+                    {
+                        var proposedId = me + ":" + DateTime.Now.Ticks.ToString() + ":" + Interlocked.Increment(ref shapeCount);
+                        var hostedFileUriXml = clientConnection.resourceProvider.securePutData(App.controller.config.uploadResource(proposedId, updatedConversation.Jid), bytes);
+                        var hostedFileUri = XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
+                        MeTLLib.DataTypes.MeTLStanzas.ImmutableResourceCache.updateCache(App.controller.config.getResource(hostedFileUri), bytes);
+                        shapeMap[bytes] = hostedFileUri;
+                        progress(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, Interlocked.Increment(ref imageUploadCounter), bytesToUpload.Count()));
+                    }
+                    catch (Exception ue)
+                    {
+                        Console.WriteLine("Exception while uploading bytes:", ue);
+                    }
                     uploadTracker.increment();
                 });
             }
@@ -491,21 +528,35 @@ namespace SandRibbon.Utils
                 clientConnection.SendStanza(id.ToString(), stanza);
             }
         }
-        private void sneakilySendShapes(int id, IEnumerable<ImageDescriptor> shapes, Dictionary<byte[], string> shapeMap)
+        private void sneakilySendShapes(int id, IEnumerable<ImageDescriptor> shapes, System.Collections.Concurrent.ConcurrentDictionary<byte[], string> shapeMap)
         {
             var me = Globals.me;
             var target = "presentationSpace";
             foreach (var shape in shapes)
             {
-
-                var bytes = shape.imageBytes;
-                var shapeId = shapeMap[shapeMap.Keys.ToList().Find(k => byteArrayComparer.Equals(bytes, k))];
-                var x = shape.x;
-                var y = shape.y;
-                var width = shape.w;
-                var height = shape.h;
-                var privacy = shape.privacy;
-                clientConnection.SendImage(new TargettedImage(id, me, target, privacy, shapeId, x, y, width, height, shapeId, -1L));
+                try {
+                    var bytes = shape.imageBytes;
+                    var shapeId = "";
+                    try {
+                        var bytesKey = shapeMap.Keys.ToList().Find(k => byteArrayComparer.Equals(bytes, k));
+                        shapeId = shapeMap[bytesKey];
+                    } catch (Exception sssre)
+                    {
+                        Console.WriteLine("Exception while resolving shapeUrl, reuploading shape against unique Url", sssre);
+                        var proposedId = me + ":" + DateTime.Now.Ticks.ToString() + ":" + id;
+                        var hostedFileUriXml = clientConnection.resourceProvider.securePutData(App.controller.config.uploadResource(proposedId, id.ToString()), bytes);
+                        shapeId = XDocument.Parse(hostedFileUriXml).Descendants("resourceUrl").First().Value;
+                    }
+                    var x = shape.x;
+                    var y = shape.y;
+                    var width = shape.w;
+                    var height = shape.h;
+                    var privacy = shape.privacy;
+                    clientConnection.SendImage(new TargettedImage(id, me, target, privacy, shapeId, x, y, width, height, shapeId, -1L));
+                } catch (Exception ssse)
+                {
+                    Console.WriteLine("Exception while sending shapes:", ssse);
+                }
             }
         }
         private bool check(MsoTriState cond)

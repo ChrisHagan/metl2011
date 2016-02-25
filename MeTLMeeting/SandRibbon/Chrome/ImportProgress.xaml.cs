@@ -96,34 +96,28 @@ namespace SandRibbon
                         this.progress.IsIndeterminate = true;
                         break;
                     case PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES:
-                        slidesExtracted++;
                         setContent("Processing");
-                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        setProgress(Convert.ToDouble(progress.slideId) / Convert.ToDouble(progress.totalSlides) * 100);
                         break;
                     case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
-                        slidesAnalyzed++;
                         setContent("Loading");
-                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        setProgress(Convert.ToDouble(progress.slideId) / Convert.ToDouble(progress.totalSlides) * 100);
                         break;
                     case PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES:
-                        slidesAnalyzed++;
-                        setContent("Loading");
-                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        setContent("Uploading");
+                        setProgress(Convert.ToDouble(progress.slideId) / Convert.ToDouble(progress.totalSlides) * 100);
                         break;
                     case PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML:
-                        slidesAnalyzed++;
-                        setContent("Loading");
-                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        setContent("Updating");
+                        setProgress(Convert.ToDouble(progress.slideId) / Convert.ToDouble(progress.totalSlides) * 100);
                         break;
                     case PowerpointImportProgress.IMPORT_STAGE.FINISHED:
-                        slidesAnalyzed++;
                         setContent("Complete");
-                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        setProgress(Convert.ToDouble(progress.slideId) / Convert.ToDouble(progress.totalSlides) * 100);
                         break;
                     case PowerpointImportProgress.IMPORT_STAGE.PRINTING:
-                        slidesAnalyzed++;
                         setContent("Printing");
-                        setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                        setProgress(Convert.ToDouble(progress.slideId) / Convert.ToDouble(progress.totalSlides) * 100);
                         break;
                 }
             });
