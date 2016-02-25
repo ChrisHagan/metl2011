@@ -28,7 +28,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>((cd) => { UpdateConversationDetails(cd); }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<Location>((loc) => { MoveTo(loc); }));
             Commands.UpdateContentVisibility.RegisterCommand(new DelegateCommand<List<ContentVisibilityDefinition>>((_unused) => potentiallyRefresh()));
-            Commands.SetContentVisibility.DefaultValue = Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : ContentFilterVisibility.defaultVisibilities;
+            Commands.SetContentVisibility.DefaultValue = Globals.isAuthor ? ContentFilterVisibility.defaultVisibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic).ToList() : ContentFilterVisibility.defaultVisibilities;
             onVisibilityChecked = (s, e) =>
             {
                 Commands.SetContentVisibility.Execute(visibilities.ToList());
@@ -115,7 +115,7 @@ namespace SandRibbon.Components
         }
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {
-            Commands.SetContentVisibility.Execute(Globals.isAuthor ? visibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic) : visibilities);
+            Commands.SetContentVisibility.Execute(Globals.isAuthor ? visibilities.Where(cf => cf != ContentFilterVisibility.ownersPublic).ToList() : visibilities.ToList());
         }
     }
 }

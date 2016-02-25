@@ -1702,6 +1702,11 @@ namespace SandRibbon.Components
 
         protected int workaroundImageZOrder = -1000000; //start at negative 1 million, to ensure that images remain behind inkStrokes.
 
+        protected Amib.Threading.SmartThreadPool imageThreadPool = new Amib.Threading.SmartThreadPool
+        {
+            MaxThreads = 8
+        };
+
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
             foreach (var image in images)
@@ -1710,22 +1715,22 @@ namespace SandRibbon.Components
                 {
                     TargettedImage image1 = image;
                     var imageZ = workaroundImageZOrder++;
-                    if (image.HasSameLocation(Globals.location) && image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public))
+                    if (image.HasSameLocation(thisLocation/*Globals.location*/) && ( image.HasSameAuthor(me) || image.HasSamePrivacy(Privacy.Public)))
                     {
-                        WebThreadPool.QueueUserWorkItem(new Amib.Threading.Action(delegate
+                        imageThreadPool.QueueWorkItem(new Amib.Threading.Action(delegate
                         {
                             try
                             {
-                                if (image.HasSameLocation(Globals.location))
+                                if (image.HasSameLocation(thisLocation /*Globals.location*/))
                                 {
                                     var receivedImage = image1.imageSpecification.forceEvaluation(Dispatcher);
-                                    if (image.HasSameLocation(Globals.location))
+                                    if (image.HasSameLocation(thisLocation /*Globals.location*/))
                                     {
                                         Dispatcher.adoptAsync(() =>
                                         {
                                             try
                                             {
-                                                if (image.HasSameLocation(Globals.location))
+                                                if (image.HasSameLocation(thisLocation /*Globals.location*/))
                                                 {
                                                     Canvas.SetZIndex(receivedImage, imageZ); // this is a temporary workaround until we put z-ordering in properly, or until we put down a better image-ordering strategy - this should ensure that items are added in the same order they used to be.
                                                     AddImage(Work, receivedImage);
@@ -2145,7 +2150,7 @@ namespace SandRibbon.Components
                 width = bmpFrame.Width;
                 height = bmpFrame.Height;
             }
-            WebThreadPool.QueueUserWorkItem(new Amib.Threading.Action(delegate
+            imageThreadPool.QueueWorkItem(new Amib.Threading.Action(delegate
             {
                 App.controller.client.UploadAndSendImage(
                     new MeTLStanzas.LocalImageInformation(
@@ -3417,8 +3422,10 @@ namespace SandRibbon.Components
             UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
+        protected Location thisLocation = Location.Empty;
         private void MoveTo(Location _location)
         {
+            thisLocation = _location;
             if (contentBuffer != null)
             {
                 contentBuffer.Clear();
