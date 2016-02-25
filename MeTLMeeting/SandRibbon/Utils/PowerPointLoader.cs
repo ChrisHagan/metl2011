@@ -45,17 +45,6 @@ namespace SandRibbon.Utils
             return obj.Sum(b => (int)b);
         }
     }
-    public class WebThreadPool
-    {
-        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool
-        {
-            MaxThreads = 8
-        };
-        public static void QueueUserWorkItem(Amib.Threading.Action action)
-        {
-            pool.QueueWorkItem(action);
-        }
-    }
     public class SneakyImage : MeTLStanzas.Image
     {
         public SneakyImage(String target, ImageTag tag, string src, double x, double y, int slide) : base()
@@ -153,11 +142,11 @@ namespace SandRibbon.Utils
         private MeTLLib.IClientBehaviour clientConnection;
         private Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool
         {
-            MaxThreads = 8
+            MaxThreads = 4
         };
         private Amib.Threading.SmartThreadPool slideJoinPool = new Amib.Threading.SmartThreadPool
         {
-            MaxThreads = 32
+            MaxThreads = 16
         };
         public void QueueUserWorkItem(Amib.Threading.Action action)
         {
