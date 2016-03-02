@@ -147,18 +147,25 @@ namespace SandRibbon.Components
             var pContext = Globals.conversationDetails.Slides;
             if (pContext.Count == 0) return;
             var generator = slides.ItemContainerGenerator;
-            var slideHeight = ((FrameworkElement)generator.ContainerFromIndex(0)).ActualHeight;
+            var slideHeight = 120.0;
+            try
+            {
+                slideHeight = ((FrameworkElement)generator.ContainerFromIndex(0)).ActualHeight;
+            }
+            catch (Exception ex) {}
             var context = Globals.conversationDetails.Slides.OrderBy(s => s.index).ToArray();
-            var startingIndex = (int) Math.Floor(outerScroll.VerticalOffset / slideHeight);
-            var visibleSlideCount = (int) Math.Ceiling(outerScroll.ActualHeight / slideHeight);
-            var finalIndex = startingIndex + Math.Min(context.Count(),visibleSlideCount);
+            var startingIndex = (int)Math.Floor(outerScroll.VerticalOffset / slideHeight);
+            var visibleSlideCount = (int)Math.Ceiling(outerScroll.ActualHeight / slideHeight);
+            var finalIndex = startingIndex + Math.Min(context.Count(), visibleSlideCount);
             ThumbnailProvider.cancelAllThumbs();
             /*Anything we were queueing that has gone offscreen is useless to us now anyway*/
-            for (var i = startingIndex; i < finalIndex; i ++) {
-                var id = context[i].id;
-                var container = generator.ContainerFromIndex(i);
+            for (var i = startingIndex; i < finalIndex; i++)
+            {
                 try
                 {
+                    var id = context[i].id;
+                    var container = generator.ContainerFromIndex(i);
+
                     ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
                 }
                 catch { }
