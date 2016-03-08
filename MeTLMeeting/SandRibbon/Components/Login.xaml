@@ -24,42 +24,44 @@
                     </StackPanel>
                 </StackPanel>
             </Grid>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
-                <StackPanel x:Name="customServerContainer" Orientation="Horizontal" Visibility="Collapsed">
-                    <TextBox x:Name="customServer"/>
-                    <Button x:Name="customServerAccept" Click="SetCustomServer" Content="Login to custom server"/>
-                </StackPanel>
-                <ItemsControl x:Name="servers">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
-                            <!--<UniformGrid></UniformGrid>-->
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Click="SetBackend" Visibility="{Binding Path=visible}" 
+            <ScrollViewer>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="serversContainer">
+                    <StackPanel x:Name="customServerContainer" Orientation="Horizontal" Visibility="Collapsed">
+                        <TextBox x:Name="customServer"/>
+                        <Button x:Name="customServerAccept" Click="SetCustomServer" Content="Login to custom server"/>
+                    </StackPanel>
+                    <ItemsControl x:Name="servers">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                                <!--<UniformGrid></UniformGrid>-->
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Click="SetBackend" Visibility="{Binding Path=visible}" 
                             IsEnabled="{Binding Path=enabled}"  Margin="50" Background="{StaticResource BackgroundBlueGradient}" 
                             Foreground="Black"                           
                             MaxWidth="400" MinWidth="300" MinHeight="400" FontSize="20">
-                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Viewbox Grid.Row="0">
-                                            <Image Source="{Binding Path=imageUri}" Height="300"/>
-                                        </Viewbox>
-                                        <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding Path=name}" />
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Viewbox Grid.Row="0">
+                                                <Image Source="{Binding Path=imageUri}" Height="300"/>
+                                            </Viewbox>
+                                            <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding Path=name}" />
+                                        </Grid>
+                                        <Image Source="\Resources\appbar_heart_break.png" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                     </Grid>
-                                    <Image Source="\Resources\appbar_heart_break.png" Visibility="{Binding Path=loadingVisible}" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                </Grid>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
             <Grid Grid.Row="1" x:Name="internetCheckLabel" IsHitTestVisible="False" Visibility="Hidden">
                 <Label >No MeTL servers available.  Please check your internet connection.</Label>
             </Grid>

@@ -168,7 +168,8 @@ namespace SandRibbon.Components
 
                     ThumbnailProvider.thumbnail(UIHelper.FindVisualChild<Image>(container), id);
                 }
-                catch { }
+                catch(Exception ex) {  
+                }
             }
         }
 
