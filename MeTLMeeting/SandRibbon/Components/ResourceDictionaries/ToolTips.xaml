@@ -50,7 +50,7 @@
                                         ContentText="Show this selected content so that it is visible to everyone."/>
     <resources:MeTLImageToolTip x:Key="BanSelectedToolTip" 
                                         TitleText="Ban"
-                                        ImageSource="\Resources\banhammer.jpg" 
+                                        ImageSource="\Resources\banhammer.png" 
                                         ContentText="Ban this selected content."/>
     <resources:MeTLImageToolTip x:Key="ClosePopupToolTip" 
                                         TitleText="Close Palette"
@@ -117,7 +117,7 @@
                                         ContentText="View any submissions students have sent you in this conversation."/>
     <resources:MeTLImageToolTip x:Key="BanContentToolTip" 
                                         TitleText="Banned Content"
-                                        ImageSource="\Resources\banhammer.jpg" 
+                                        ImageSource="\Resources\banhammer.png" 
                                         ContentText="Banned content management."/>
     <resources:MeTLImageToolTip x:Key="SubmitSubmissionToolTip" 
                                         TitleText="Send Submission"
