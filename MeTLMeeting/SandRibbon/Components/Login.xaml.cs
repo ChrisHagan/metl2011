@@ -217,36 +217,41 @@ namespace SandRibbon.Components
 
                     timers = serverConfigs.Concat(new List<ServerChoice> {
                     localServer
-                }).ToList().Select(sc => new Timer(delegate
-                {
-                    var wc = new WebClient();
-                    var oldState = sc.ready;
-                    var newState = false;
-                    try
+                }).ToList().Select(sc => {
+                    var latency = 0L;
+                    return new Timer(delegate
                     {
-                        newState = wc.DownloadString(sc.server.serverStatus).Trim().ToLower() == "ok";
-                    }
-                    catch
-                    {
-                    }
-                    sc.ready = newState;
-                    if (oldState != newState && !sc.alwaysShow)
-                    {
-                        Dispatcher.adopt(delegate
+                        var wc = new WebClient();
+                        var oldState = sc.ready;
+                        var newState = false;
+                        try
                         {
-                            if (newState)
+                            var requestStart = DateTime.Now.Ticks;
+                            newState = wc.DownloadString(sc.server.serverStatus(latency)).Trim().ToLower() == "ok";
+                            latency = (int)((DateTime.Now.Ticks - requestStart) / TimeSpan.TicksPerMillisecond);
+                        }
+                        catch
+                        {
+                        }
+                        sc.ready = newState;
+                        if (oldState != newState && !sc.alwaysShow)
+                        {
+                            Dispatcher.adopt(delegate
                             {
-                                if (!serverConfigs.Contains(sc))
-                                    serverConfigs.Add(sc);
-                            }
-                            else
-                            {
-                                if (serverConfigs.Contains(sc))
-                                    serverConfigs.Remove(sc);
-                            }
-                        });
-                    }
-                }, null, 0, pollServersTimeout)).ToList();
+                                if (newState)
+                                {
+                                    if (!serverConfigs.Contains(sc))
+                                        serverConfigs.Add(sc);
+                                }
+                                else
+                                {
+                                    if (serverConfigs.Contains(sc))
+                                        serverConfigs.Remove(sc);
+                                }
+                            });
+                        }
+                    }, null, 0, pollServersTimeout);
+                    }).ToList();
                 });
                 if (serverConfigs.Count == 0 || serverConfigs.All(sc => sc == localServer))
                 {

@@ -252,12 +252,15 @@ namespace MeTLLib.Providers.Connection
             ConnectionTimeoutTimer.Change(TIMEOUT_PERIOD, TIMEOUT_PERIOD);
         }
         protected bool httpIsConnected = false;
+        int latency = 0;
         private void checkConnection()
         {
             var httpWasConnected = httpIsConnected;
             try
             {
-                httpIsConnected = webClientFactory.client().downloadString(metlServerAddress.serverStatus).Trim().ToLower() == "ok";
+                var startTime = DateTime.Now.Ticks;
+                httpIsConnected = webClientFactory.client().downloadString(metlServerAddress.serverStatus(latency)).Trim().ToLower() == "ok";
+                latency = (int)((DateTime.Now.Ticks - startTime) / TimeSpan.TicksPerMillisecond);
             }
             catch (Exception e)
             {

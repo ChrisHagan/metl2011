@@ -44,6 +44,8 @@ namespace MeTLLib.Providers.Connection
         private void HealthCheck(Action healthyBehaviour,int attempts)
         {
             var maximum = 3;
+            var latency = 0;
+            var startTime = DateTime.Now.Ticks;
             try
             {
                 if (healthyBehaviour == null)
@@ -51,10 +53,11 @@ namespace MeTLLib.Providers.Connection
                     auditor.trace("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
                     return;
                 }
-                var uri = metlServerAddress.serverStatus;
+                var uri = metlServerAddress.serverStatus(latency);
                 if (client.downloadString(uri).Trim().ToLower() == "ok")
                 {
                     healthyBehaviour();
+                    latency = (int)((DateTime.Now.Ticks - startTime) / TimeSpan.TicksPerMillisecond);
                 }
                 else
                 {

@@ -26,9 +26,9 @@
         public string name { get; protected set; }
         public Uri imageUrl { get; protected set; }
         public Uri host { get; protected set; }
-        public Uri serverStatus
+        public Uri serverStatus(long latency)
         {
-            get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
+            return new System.Uri(host, new System.Uri(String.Format("/serverStatus?latency={0}",latency), UriKind.Relative));
         }
         public Uri authenticationUrl
         {
@@ -148,9 +148,9 @@
         {
             return new Uri(host, new Uri(String.Format("/addSubmissionSlideToConversationAtIndex/{0}/{1}", conversation,index), UriKind.Relative));
         }
-        public Uri serverStatus
+        public Uri serverStatus(int latency)
         {
-            get { return new System.Uri(host, new System.Uri("/serverStatus", UriKind.Relative)); }
+            return new System.Uri(host, new System.Uri(String.Format("/serverStatus?latency={0}", latency), UriKind.Relative));
         }
         public Uri getRoomHistory(string jid)
         {
