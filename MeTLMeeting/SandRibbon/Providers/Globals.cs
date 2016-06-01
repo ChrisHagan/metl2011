@@ -132,8 +132,8 @@ namespace SandRibbon.Providers
         }
         public static OneNoteConfiguration OneNoteConfiguration { get; set; } = new OneNoteConfiguration
         {
-            apiKey = "exampleApiKey",
-            apiSecret = "exampleApiSecret"
+            apiKey = "apiKey",
+            apiSecret = "apiSecret"
         };
         public static PedagogyLevel pedagogy
         {
