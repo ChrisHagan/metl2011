@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using MeTLLib;
 using System.Windows.Threading;
-using System.Collections.ObjectModel;
 
 namespace SandRibbon
 {
@@ -41,7 +38,10 @@ namespace SandRibbon
                 status.Visibility = Visibility.Visible;
                 MetlConfigurationManager metlConfigManager = new RemoteAppMeTLConfigurationManager(null);
                 var servers = metlConfigManager.servers;
-                Console.WriteLine(String.Format("found servers: {0}", servers.Count));
+                if (servers.Count == 0)
+                {
+                    throw new Exception("could not find any servers.");
+                }
                 workingProgress.Visibility = Visibility.Collapsed;
                 status.Visibility = Visibility.Collapsed;
                 availableServers.Clear();

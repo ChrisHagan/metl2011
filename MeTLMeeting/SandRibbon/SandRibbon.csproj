@@ -290,130 +290,21 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\WarningIconMine.png" />
-    <Resource Include="Resources\visualize.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\close.png" />
-    <Resource Include="Resources\HighlighterShiny.png" />
-    <Resource Include="Resources\NewSlide.png" />
-    <Resource Include="Resources\Next.png" />
-    <Resource Include="Resources\Previous.png" />
-    <Resource Include="Resources\RedPenShiny.png" />
-    <Resource Include="Resources\ShinyEraser.png" />
-    <Resource Include="Resources\RedoShiny.png" />
-    <Resource Include="Resources\logo.png" />
-    <Resource Include="Resources\friendsplaceholder.png" />
-    <Resource Include="Resources\scratchpadplaceholderyellownotepad.png" />
-    <Resource Include="Resources\MagnifyingGlassShiny.png" />
-    <Resource Include="Resources\AnonHead.png" />
-    <Resource Include="Resources\SelectShiny.png" />
-    <Resource Include="Resources\ShinyRefresh.png" />
-    <Resource Include="Resources\bold.png" />
-    <Resource Include="Resources\changeFontColour.png" />
-    <Resource Include="Resources\clearFormatting.png" />
-    <Resource Include="Resources\decreaseFontSize.png" />
-    <Resource Include="Resources\increaseFontSize.png" />
-    <Resource Include="Resources\italic.png" />
-    <Resource Include="Resources\copy.png" />
-    <Resource Include="Resources\cut.png" />
-    <Resource Include="Resources\decreaseIndent.png" />
-    <Resource Include="Resources\increaseIndent.png" />
-    <Resource Include="Resources\paste.png" />
-    <Resource Include="Resources\fontFamily.png" />
-    <Resource Include="Resources\fontSize.png" />
-    <Resource Include="Resources\Ribbon-ApplicationButton.png" />
     <Resource Include="Resources\MeTL Collaborator.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\HandToolWide.png" />
     <Resource Include="Resources\Exit button mine.png" />
-    <Resource Include="Resources\Help.png" />
-    <Resource Include="Resources\logoutAndExit.png" />
-    <Resource Include="Resources\Attachment.png" />
-    <Resource Include="Resources\Back_arrow_black.png" />
-    <Resource Include="Resources\Edit.png" />
-    <Resource Include="Resources\Logout.png" />
-    <Resource Include="Resources\Collaborate.png" />
-    <Resource Include="Resources\ban-management-icon.png" />
-    <Resource Include="Resources\banhammer.png" />
     <Resource Include="favicon.ico" />
     <Resource Include="Resources\appButton.png" />
-    <Content Include="Resources\empty.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\FogOfWar.png" />
-    <Resource Include="Resources\logo_microsoft_powerpoint_2013.jpg" />
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Ribbon-Lecture.png" />
-    <Resource Include="Resources\Ribbon-Meeting.png" />
-    <Resource Include="Resources\Ribbon-Tutorial.png" />
-    <Resource Include="Resources\AddImage.png" />
-    <Resource Include="Resources\ImageMode.png" />
-    <Resource Include="Resources\Inking.png" />
-    <Resource Include="Resources\PlaceTextBox.png" />
-    <Resource Include="Resources\Ribbon-ExpandDown.png" />
-    <Resource Include="Resources\Ribbon-ExpandRight.png" />
-    <Resource Include="Resources\Ribbon-FitCanvas.png" />
-    <Resource Include="Resources\Ribbon-ZoomIn.png" />
-    <Resource Include="Resources\Ribbon-ZoomOut.png" />
-    <Resource Include="Resources\AddQuiz.png" />
-    <Resource Include="Resources\Ribbon-LivePreviewDraft02.png" />
-    <Resource Include="Resources\Ribbon-Quiz.png" />
-    <Resource Include="Resources\ArrowDown.png" />
-    <Resource Include="Resources\ArrowUp.png" />
-    <Resource Include="Resources\Ribbon-Private.png" />
-    <Resource Include="Resources\Ribbon-Public.png" />
-    <Resource Include="Resources\MonashLogo.jpg" />
     <Resource Include="Resources\CrudeMeTLMockup.png" />
-    <Resource Include="Resources\S15.png" />
-    <Resource Include="Resources\avatar.png" />
-    <Resource Include="Resources\Ribbon-SlideStack.png" />
-    <Resource Include="Resources\FitToPage.png" />
-    <Resource Include="Resources\FitToView.png" />
     <Resource Include="MeTLExperimenterIcon.ico" />
     <Resource Include="MeTLLogo-bronze.ico" />
-    <Content Include="Resources\AddVideo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\BenHead.png" />
-    <Resource Include="Resources\BlackPenShiny.png" />
-    <Resource Include="Resources\BluePenShiny.png" />
-    <Resource Include="Resources\ColorBars.png" />
-    <Resource Include="Resources\colourpicker.png" />
-    <Resource Include="Resources\createAQuizHelp.PNG" />
-    <Resource Include="Resources\ExtendCanvas.png" />
-    <Resource Include="Resources\GrabZoom.png" />
-    <Resource Include="Resources\Hand tool.png" />
-    <Resource Include="Resources\AttachSnapshot.png" />
-    <Resource Include="Resources\Delete.png" />
-    <Resource Include="Resources\ExactPowerpoint.png" />
-    <Resource Include="Resources\FlexiblePowerpoint.png" />
-    <Resource Include="Resources\Hide.png" />
-    <Resource Include="Resources\ArtistEasel.png" />
-    <Resource Include="Resources\ArtistPalette.png" />
-    <Content Include="Resources\ContentAndStrokesExperimentMeTL.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ContentOnlyExperimentMeTL.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Highlighter.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\homeloo_gear_clock_2.jpg" />
-    <Resource Include="Resources\LassooSelectShiny.png" />
     <Resource Include="Resources\MeTLLogo-bronze.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\NewQuiz.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\mimetype_readme.png" />
-    <Resource Include="Resources\MeTLPenOverlay.png" />
-    <Resource Include="Resources\MeTLHighlighterOverlay.png" />
     <Content Include="Resources\MeTL Presenter.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -421,93 +312,6 @@
     <Content Include="Resources\MeTLNewIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\mimeTypes\audio.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\document.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\gadget.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\image.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\publication.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\spreadsheet.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\text.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\unknown.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\video.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\mimeTypes\web.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\NoCollaborate.png" />
-    <Content Include="Resources\Pen.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\PenIn.png" />
-    <Resource Include="Resources\PenOut.png" />
-    <Resource Include="Resources\QuizResults.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Quizzes.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Print_w-out_notes.png" />
-    <Resource Include="Resources\Print_w_notes.png" />
-    <Resource Include="Resources\progressBackground.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\ppObjects.png" />
-    <Content Include="Resources\Results.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Ribbon-Palette.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\SelectInk.png" />
-    <Resource Include="Resources\SelectText.png" />
-    <Resource Include="Resources\showAll.png" />
-    <Resource Include="Resources\showOriginal.png" />
-    <Resource Include="Resources\Show.png" />
-    <Resource Include="Resources\SendSubmission.png" />
-    <Resource Include="Resources\sexyDelete.png" />
-    <Resource Include="Resources\Share.png" />
-    <Content Include="Resources\Slide_Not_Loaded.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\strikethrough.png" />
-    <Resource Include="Resources\subscript.png" />
-    <Resource Include="Resources\superscript.png" />
-    <Content Include="Resources\Spectrum.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\Submissions.png" />
-    <Content Include="Resources\SyncGreen.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\SyncRed.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\ViewSubmission.png" />
-    <Resource Include="Resources\Whiteboard.png" />
-    <Resource Include="Resources\TextMode.png" />
-    <Resource Include="Resources\thoughtOutline.png" />
-    <Resource Include="Resources\underline.png" />
-    <Resource Include="Resources\UndoShiny.png" />
-    <Resource Include="Resources\SyncShiny.png" />
-    <Resource Include="Resources\LewHandGlassesHead.png" />
-    <Resource Include="Resources\LewMouthOpenHead.png" />
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="Microsoft.Vbe.Interop">

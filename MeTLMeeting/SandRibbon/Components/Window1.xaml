@@ -8,30 +8,33 @@
     MinHeight="240"
     MinWidth="320"
     >
-    <StackPanel>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+            <Image HorizontalAlignment="Stretch" Width="Auto" MaxHeight="300" Source="/Resources/splashScreen.png"/>
+            <TextBlock HorizontalAlignment="Stretch" TextWrapping="Wrap" >
             The MeTL native client for Windows is now decommissioned.  
             All MeTL behaviours are now accessible from within the web client, and do not require a local installation to use.  
             Please find links below to access the same servers this client was able to access.
-        </TextBlock>
-        <ProgressBar Grid.Row="2" x:Name="workingProgress" Height="50" Visibility="Collapsed" IsIndeterminate="True"/>
-        <TextBlock Grid.Row="3" x:Name="status" Height="50" Visibility="Collapsed"/>
-        <ItemsControl Grid.Row="4" x:Name="possibleServers" ItemsSource="{Binding availableServers}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Click="Server_Click">
-                        <StackPanel>
-                            <Image Width="320" Height="240" Source="{Binding imageUrl}"/>
-                            <TextBlock Text="{Binding name}"></TextBlock>
-                        </StackPanel>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </StackPanel>
+            </TextBlock>
+            <ProgressBar x:Name="workingProgress" Height="50" Visibility="Collapsed" IsIndeterminate="True"/>
+            <TextBlock x:Name="status" Height="50" Visibility="Collapsed"/>
+            <ItemsControl x:Name="possibleServers" ItemsSource="{Binding availableServers}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="Server_Click">
+                            <StackPanel>
+                                <Image Width="200" Height="150" Source="{Binding imageUrl}"/>
+                                <TextBlock Text="{Binding name}"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
 </Window>
