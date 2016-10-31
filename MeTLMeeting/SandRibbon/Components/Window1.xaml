@@ -1,173 +1,37 @@
-﻿<sr:RibbonWindow x:Class="SandRibbon.Window1"
+﻿<Window x:Class="SandRibbon.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
-    xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
-    xmlns:my="clr-namespace:SandRibbon"
-    xmlns:chrome="clr-namespace:SandRibbon.Chrome"
-    xmlns:properties="clr-namespace:SandRibbon.Properties"
     Foreground="Black"
-    AllowDrop="True"
     Icon ="/favicon.ico"
-    Title="{x:Static properties:Strings.Global_ProductName}"
+    Title="Decommissioned MeTL"
     x:Name="ribbonWindow"
-    Closing="ribbonWindow_Closing"
-    WindowState="Maximized"
     MinHeight="240"
     MinWidth="320"
-    Appearance="Office2007Blue" >
-    <sr:RibbonWindow.InputBindings>
-        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
-        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
-        <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
-        <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
-        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
-        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
-        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
-        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
-        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
-        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
-        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
-        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
-        <KeyBinding Key="Up" Command="{x:Static api:Commands.MoveToPrevious}" />
-        <KeyBinding Key="PageUp" Command="{x:Static api:Commands.MoveToPrevious}" />
-        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
-        <KeyBinding Key="Down" Command="{x:Static api:Commands.MoveToNext}" />
-        <KeyBinding Key="PageDown" Command="{x:Static api:Commands.MoveToNext}" />
-        <KeyBinding Key="Delete" Command="{x:Static api:Commands.DeleteSelectedItems}"/>
-    </sr:RibbonWindow.InputBindings>
-    <sr:RibbonWindow.Ribbon>
-        <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
-                   PreviewMouseDoubleClick="ApplicationPopup_PreviewMouseDoubleClick"
-                   ApplicationButtonImage="\Resources\appButton.png">
-            <sr:Ribbon.ApplicationPopup>
-                <sr:ApplicationPopup 
-                    OptionsText="Options" ExitText="Quit MeTL" ShowOptions="ApplicationPopup_ShowOptions"
-                    x:Name="RibbonApplicationPopup">
-                    <sr:ApplicationPopup.RecentDocumentsControl>
-                        <StackPanel Width="350">
-                            <Grid>
-                                <quiz:GoldPlaque/>
-                                <TextBlock Margin="20,4,4,4" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Text="Recent conversations" />
-                            </Grid>
-                            <components:SimpleConversationSelector x:Name="recentDocuments" />
+    >
+    <StackPanel>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" >
+            The MeTL native client for Windows is now decommissioned.  
+            All MeTL behaviours are now accessible from within the web client, and do not require a local installation to use.  
+            Please find links below to access the same servers this client was able to access.
+        </TextBlock>
+        <ProgressBar Grid.Row="2" x:Name="workingProgress" Height="50" Visibility="Collapsed" IsIndeterminate="True"/>
+        <TextBlock Grid.Row="3" x:Name="status" Height="50" Visibility="Collapsed"/>
+        <ItemsControl Grid.Row="4" x:Name="possibleServers" ItemsSource="{Binding availableServers}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Click="Server_Click">
+                        <StackPanel>
+                            <Image Width="320" Height="240" Source="{Binding imageUrl}"/>
+                            <TextBlock Text="{Binding name}"></TextBlock>
                         </StackPanel>
-                    </sr:ApplicationPopup.RecentDocumentsControl>
-                    <sr:MenuItem Text="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
-                    <sr:MenuItem Text="Import PowerPoint" ToolTip="{StaticResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
-                    <sr:MenuItem Text="Search" ToolTip="{StaticResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
-                    <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
-                    <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" Command="ApplicationCommands.Help" />
-                    <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
-                    <sr:MenuItem Text="Diagnostics" Command="{x:Static api:Commands.LaunchDiagnosticWindow}" ToolTip="{StaticResource LaunchDiagnosticWindowToolTip}" />
-                    <sr:MenuItem Text="Logout and Exit" ToolTip="{StaticResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
-                    <!--
-                    <sr:MenuItem Text="Explode" Command="{x:Static api:Commands.Explode}"/>
-                    <sr:MenuItem Text="Dispatcher Explode" Command="{x:Static api:Commands.DispatcherExplode}"/>
-                    -->
-                </sr:ApplicationPopup>
-            </sr:Ribbon.ApplicationPopup>
-            <sr:Ribbon.ToolBar>
-                <chrome:ToolBar />
-            </sr:Ribbon.ToolBar>
-        </sr:Ribbon>
-    </sr:RibbonWindow.Ribbon>
-    <sr:RibbonWindow.StatusBar>
-        <chrome:StatusBar Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}"/>
-    </sr:RibbonWindow.StatusBar>
-    <Grid>
-        <MediaElement x:Name="player" Height="1" Width="1" Visibility="Hidden"/>
-        <Grid x:Name="EffectRoot">
-            <Grid x:Name="columns">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="LHSDrawerDefinition" Width="Auto" />
-                    <ColumnDefinition x:Name="LHSSplitterDefinition" Width="40"/>
-                    <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
-                    <ColumnDefinition x:Name="RHSSplitterDefinition" Width="40" />
-                    <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" x:Name="leftDrawer">
-                    <components:RoleQuickControls/>
-                </Grid>
-                <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
-                <Grid Grid.Column="2">
-                    <Grid x:Name="adornerGrid" Margin="0,0,27,27">
-                        <Canvas x:Name="syncPageOverlay"/>
-                        <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
-                            <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
-                            </ScrollViewer>
-                        </Viewbox>
-                        <Grid x:Name="dynamicContent" />
-                        <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}"/>
-                    </Grid>
-                    <components:ScrollBar x:Name="adornerScroll" ScrollViewer="{Binding ElementName=scroll}" Target="presentationSpace"/>
-                    <AdornerDecorator>
-                        <Canvas x:Name="privacyTools"/>
-                    </AdornerDecorator>
-                </Grid>
-                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="40" />
-                <Grid Grid.Column="4" x:Name="rightDrawer">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
-                    <!--components:Drawer/-->
-                    <TabControl Grid.Row="1" x:Name="contentTabs" TabStripPlacement="Bottom" Background="Transparent">
-                        <TabItem Header="Pages" Width="80">
-                            <components:SlideDisplay x:Name="slides" />
-                        </TabItem>
-                        <TabItem Header="Notes" Width="80">
-                            <Grid>
-                                <Grid x:Name="notesAdornerGrid" Margin="0,0,27,27">
-                                    <Viewbox x:Name="notesViewBox" SizeChanged="notepadSizeChanged">
-                                        <ScrollViewer x:Name="notesScroll" SizeChanged="notepadSizeChanged" ScrollChanged="notepadScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                            <components:PrivateNotepadSpace Height="auto" Width="auto" x:Name="privateNotes" />
-                                        </ScrollViewer>
-                                    </Viewbox>
-                                </Grid>
-                                <components:ScrollBar x:Name="notesAdornerScroll" ScrollViewer="{Binding ElementName=notesScroll}" Target="notepad"/>
-                                <AdornerDecorator>
-                                    <Canvas x:Name="notesPrivacyTools"/>
-                                </AdornerDecorator>
-                            </Grid>
-                        </TabItem>
-                        <TabItem x:Name="ParticipantsTabItem" Header="Participants">
-                            <components:Participants/>
-                        </TabItem>
-                    </TabControl>
-                </Grid>
-            </Grid>
-            <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}"/>
-        </Grid>
-        <Grid x:Name="loginParent">
-            <components:ConversationSearchBox x:Name="currentConversationSearchBox" Visibility="Collapsed"/>
-            <my:ProgressDialog Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" />
-            <components:Login x:Name="login"/>
-        </Grid>
-        <StackPanel Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
-            <StackPanel x:Name="ProgressDisplay" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </StackPanel>
-        <Grid Background="Transparent" IsHitTestVisible="True" x:Name="SearchBlocker" Visibility="Collapsed">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Border Grid.Row="1" Grid.Column="1" Width="200" Height="70" Background="White" BorderBrush="Black" BorderThickness="2" CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <DockPanel>
-                    <components:CircularProgressBar DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Margin="20,0,20,0"/>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Text="Searching..."></TextBlock>
-                </DockPanel>
-            </Border>
-        </Grid>
-    </Grid>
-</sr:RibbonWindow>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Window>
